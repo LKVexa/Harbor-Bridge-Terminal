@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 pushd "%~dp0"
-set HARBOR_ROOT=%CD%
+set "HARBOR_ROOT=%CD%"
 
 REM --- Bind DF fabric (New folder beside Desktop Harbor) ---
 if not defined DF_ROOT (
@@ -17,7 +17,6 @@ if not defined DF_ROOT (
 
 REM --- Qnode fleet ---
 set "QNODE_ROOT=%HARBOR_ROOT%\qnodes"
-set "HARBOR_ROOT=%HARBOR_ROOT%"
 
 REM --- Optional seed junction for rematerializing copies ---
 call "%~dp0scripts\link-qvm.cmd"
@@ -59,6 +58,14 @@ echo   Mobile/cubbies: BR projection on local 127 (MC-*); QN/CS cubbies; adb sid
 echo.
 
 cd /d "%HARBOR_ROOT%\bridge-terminal"
+if errorlevel 1 (
+  echo [START_HARBOR] ERROR: cannot cd to bridge-terminal under:
+  echo   "%HARBOR_ROOT%\bridge-terminal"
+  popd
+  echo.
+  pause
+  exit /b 1
+)
 where node >nul 2>&1 || (
   echo Node.js 20+ required. Nothing was started.
   popd
@@ -67,7 +74,7 @@ where node >nul 2>&1 || (
   exit /b 2
 )
 node tools\start-local.js %*
-set RC=%ERRORLEVEL%
+set "RC=%ERRORLEVEL%"
 if not "%RC%"=="0" (
   echo.
   echo [START_HARBOR] bridge exited with code %RC%.
