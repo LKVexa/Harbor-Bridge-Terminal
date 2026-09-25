@@ -6,7 +6,7 @@
  * roots, and starts the gateway.
  *   node tools/start-local.js [--port 10000] [--no-fabric]
  *
- * Note: gateway profile is LOCAL_VOLATILE — do not set VWS_SNAPSHOTS / VWS_SNAPSHOT_DIR (ConfigError).
+ * Note: gateway profile is LOCAL_VOLATILE â€” do not set VWS_SNAPSHOTS / VWS_SNAPSHOT_DIR (ConfigError).
  */
 const fs = require('node:fs');
 const path = require('node:path');
@@ -23,7 +23,13 @@ const pf = path.join(dataDir, 'principals.json');
 if (!fs.existsSync(pf)) {
   const token = crypto.randomBytes(32).toString('base64url');
   fs.writeFileSync(pf, JSON.stringify([{ sub: 'operator', tenant: 'local', tokenSha256: crypto.createHash('sha256').update(token).digest('hex'), capabilities: ['terminal', 'fabric'] }], null, 2), { mode: 0o600 });
-  console.log('\n  Access token (shown once; paste it into the sign-in box):\n\n    ' + token + '\n\n  Lost it? Delete .vws-local/principals.json and start again.\n');
+  try {
+    const tokenFile = path.join(harborRoot, 'ACCESS_TOKEN.txt');
+    fs.writeFileSync(tokenFile, token + '\n', { mode: 0o600 });
+    console.log('\n  Access token (shown once; paste it into the sign-in box):\n\n    ' + token + '\n\n  Also saved to: ' + tokenFile + '\n  Lost it? Delete bridge-terminal/.vws-local/principals.json and ACCESS_TOKEN.txt, then start again.\n');
+  } catch (e) {
+    console.log('\n  Access token (shown once; paste it into the sign-in box):\n\n    ' + token + '\n\n  Lost it? Delete .vws-local/principals.json and start again.\n');
+  }
 }
 
 function hasFabric(dir) {
@@ -51,7 +57,7 @@ async function pickPort(preferred) {
   let preferred = args.includes('--port') ? args[args.indexOf('--port') + 1] : (process.env.PORT || '10000');
   const port = await pickPort(preferred);
   if (port !== String(preferred)) {
-    console.log(`  note: port ${preferred} is in use — using ${port} instead\n`);
+    console.log(`  note: port ${preferred} is in use â€” using ${port} instead\n`);
   }
 
   let df = process.env.DF_ROOT || null;
