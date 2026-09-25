@@ -7,10 +7,33 @@ Think of the containership as the harbor yard and the virtual console as the bri
 
 ## Technical note
 
-**Full platform monograph (architecture, figures, verification / historical replay results):**
+**Full platform monograph v2.0** (architecture incl. mobile cubbies / Bottle Rocket projection / `brctl serve` APDU proxy, figures, verification / historical replay results):
 [docs/Harbor-Bridge-Terminal-Technical-Note.md](docs/Harbor-Bridge-Terminal-Technical-Note.md)
 
-Supporting artifacts: [docs/figures/](docs/figures/) (charts from the Qnode load audit JSON), [docs/verification/](docs/verification/) (session probe outputs), and [docs/verification/spiral-landing/](docs/verification/spiral-landing/) (live SPIRAL/landing HTTP + WS admission probes). Metrics in that note are taken only from repo files and commands that were actually run â€” no fabricated trading backtests.
+Supporting artifacts:
+- [docs/figures/](docs/figures/) — charts from the Qnode load audit JSON
+- [docs/verification/](docs/verification/) — session probe outputs
+- [docs/verification/spiral-landing/](docs/verification/spiral-landing/) — SPIRAL/landing HTTP + WS admission
+- [docs/MOBILE_CUBBY_PROJECTION.md](docs/MOBILE_CUBBY_PROJECTION.md), [docs/verification/mobile-cubby/](docs/verification/mobile-cubby/), [docs/verification/brctl-serve-proxy/](docs/verification/brctl-serve-proxy/) — mobile cubby gate + serve proxy (**12/12** and **8/8** PASS cited in the note)
+- [fleet/CUBBIES.json](fleet/CUBBIES.json), [fleet/MOBILE_PLATFORM.json](fleet/MOBILE_PLATFORM.json)
+
+Metrics in that note are taken only from repo files and commands that were actually run — no fabricated trading backtests.
+
+## Windows checkout (MAX_PATH)
+
+GitHub **ZIP downloads** and some deep clones can fail on Windows when relative paths approach the legacy **260**-character `MAX_PATH` limit (especially under `containership/edge/...`).
+
+**Prefer:**
+
+```bat
+git clone https://github.com/LKVexa/Harbor-Bridge-Terminal.git
+cd Harbor-Bridge-Terminal
+git config core.longpaths true
+```
+
+Enabling long paths is a **secondary** mitigation. This repo also **shortens** the worst tracked paths (flattened duplicate atom/variant folders, shortened checklist names, dropped `build/` / `*.egg-info` artifacts from tracking). Aim: relative paths comfortably under ~160–170 characters so a ~80-character Windows prefix still fits under 260. See `docs/verification/path-length-after.txt` after the path-hygiene commit.
+
+Do **not** commit bulky junctions (`mobile-platform/**/product/`, `optical-desktop/portable/`, compiler `out/` / sessions).
 
 ## Layout
 
@@ -186,7 +209,7 @@ scripts\deliver-mobile-vm-node.cmd --manifest <COMPILE_MANIFEST.json> --platform
 - **brctl:** `assemble` = cubby image prep; `serve` = advanced host-state hint. Harbor projection page is the browser path.
 - **SPIRAL hook:** `bridge-terminal/gateway/mobile-auth-hook.js` (default ON). Disable: `set HARBOR_MOBILE_AUTH_HOOK=0`.
 - **Access gate:** `bridge-terminal/gateway/cubby-access-gate.js` â€” mobile â†’ QN/CS without live `MC-*` â†’ **403** `mobile_br_cubby_required`.
-- Honest scope: projection stub proves cubby + session; full BR UI-in-browser is optional/gap. Sideload never fakes success without real `adb`/`idevice`.
+- Honest scope: `MC-*` projection proxies `brctl serve` hex-APDU REPL (not a framebuffer); full BR host UI-in-browser remains a gap. Sideload never fakes success without real `adb`/`idevice`.
 
 ## Qnode fleet (50Ã— full QVM 8.1.0-alpha copies)
 

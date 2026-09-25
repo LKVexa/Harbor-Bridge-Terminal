@@ -3,29 +3,30 @@
 | Field | Value |
 |-------|-------|
 | **Document** | Harbor Bridge Terminal Technical Note |
-| **Version** | 1.1 (Product Preview) |
-| **Date** | 2026-09-25 (America/Los_Angeles / PT) |
+| **Version** | 2.0 (Product Preview) |
+| **Date** | 2026-09-25 ~14:45 (America/Los_Angeles / PT) |
 | **Classification** | Product Preview — Tester evaluation |
 | **Authors / Attribution** | David Paul Russell / Russell Philip Smithson (LK/Vexa, Linear Finance) |
 | **Repository** | https://github.com/LKVexa/Harbor-Bridge-Terminal |
 | **License** | Product Preview Tester License 1.0 (root `LICENSE`) |
-| **Companion artifacts** | `docs/figures/`, `docs/verification/`, `fleet/QNODE_LOAD_AUDIT.*` |
+| **Companion artifacts** | `docs/figures/`, `docs/verification/`, `docs/MOBILE_CUBBY_PROJECTION.md`, `fleet/CUBBIES.json`, `fleet/MOBILE_PLATFORM.json`, `fleet/HARBOR_FLEET.json`, `fleet/QNODE_LOAD_AUDIT.*` |
 
 ---
 
 ## 1. Abstract / executive technical summary
 
-**Harbor Bridge Terminal** is a combined local workspace that collocates five operational surfaces under one operator launch path:
+**Harbor Bridge Terminal** is a combined local workspace that collocates **six** operational surfaces under one operator launch path:
 
 1. **Unikernel Containership UC-2.8.0** (`containership/`) — edge-atom shipyard for berths, hull, verify, and fabric ticks.
 2. **HERMIT / SPIRAL bridge-terminal** (`bridge-terminal/`, package `hermit-spiral-terminal` **2.0.0-ramws.1**) — virtual terminal + RAM-resident virtual WebSocket (RAMWS) gateway on loopback.
-3. **50× full-copy QVM Qnodes** (`qnodes/QN-01`…`QN-50`) — independent QVM **8.1.0-alpha** product trees with Harbor `IDENTITY.json` / `QNODE.cmd`.
-4. **DF fabric focus surface** — containers `ns` / `nm` / `nl` / `nx` / `nf` bound via `DF_ROOT`.
+3. **50× full-copy QVM Qnodes** (`qnodes/QN-01`…`QN-50`) — independent QVM **8.1.0-alpha** product trees with Harbor `IDENTITY.json` / `QNODE.cmd` (also **Qnode cubbies**).
+4. **DF fabric focus surface** — containers `ns` / `nm` / `nl` / `nx` / `nf` bound via `DF_ROOT` (also **containership cubbies**).
 5. **VB-JA21 Portable Optical Desktop 9.8.7** (`optical-desktop/`) — Harbor browser (omni-bin); **not** the system default browser.
+6. **Mobile platform + cubbies** (`mobile-platform/`) — Bottle Rocket VM substrate; Android/iOS LCTL app nodes; RODEO as Linear Android Gradle-substitute **sidecar**; mobile `MC-*` cubbies **projected** to the device browser on local 127 (**no VM download**); per-cubby `brctl serve` hex-APDU REPL proxied into the projection page.
 
-The primary operator entry is `START_HARBOR.cmd` → `bridge-terminal/tools/start-local.js`, which mints (or reuses) a loopback access token, binds fleet roots, starts `gateway/server.js` on `127.0.0.1` (preferred port **10000**, auto-advancing if busy), then launches JA21 with `JA21_START_URL` and `JA21_ALLOW_PRIVATE_HOSTS=1`.
+The primary operator entry is `START_HARBOR.cmd` → `bridge-terminal/tools/start-local.js`, which mints (or reuses) a loopback access token, binds fleet roots (incl. mobile-platform link), starts `gateway/server.js` on `127.0.0.1` (preferred port **10000**, auto-advancing if busy), then launches JA21 with `JA21_START_URL` and `JA21_ALLOW_PRIVATE_HOSTS=1`. Mobile SPIRAL login (`POST /api/ws-ticket` + `X-Harbor-Mobile-Platform`) allocates an `MC-*` cubby via `mobile-auth-hook.js` and returns `projection_url`.
 
-**Verification posture (honest):** On 2026-09-25 PT a full Qnode load audit recorded **50/50** inventory + load-carry passes (`fleet/QNODE_LOAD_AUDIT.*`). This note’s verification chapters **re-ran** presence, inventory, independence, fleet alignment, start-path dry checks, a **3-node load spot-check (9/9)**, a **bridge unit subset (30/30)**, and a **live SPIRAL/landing HTTP + WebSocket-admission probe** on a controlled `--no-browser` gateway (see §13). It does **not** invent trading PnL, Sharpe ratios, or synthetic throughput. Where a class of result does not exist (market backtester), we define **“backtesting”** as **historical / regression verification** of platform behaviors against the fixed fleet snapshot.
+**Verification posture (honest):** On 2026-09-25 PT a full Qnode load audit recorded **50/50** inventory + load-carry passes (`fleet/QNODE_LOAD_AUDIT.*`). This note’s verification chapters **re-ran** presence, inventory, independence, fleet alignment, start-path dry checks, a **3-node load spot-check (9/9)**, a **bridge unit subset (30/30)**, a **live SPIRAL/landing HTTP + WebSocket-admission probe** (§13), plus mobile cubby / access-gate evidence (**12/12 PASS**) and `brctl serve` proxy evidence (**8/8 PASS**) cited from `docs/verification/mobile-cubby/` and `docs/verification/brctl-serve-proxy/`. It does **not** invent trading PnL, Sharpe ratios, or synthetic throughput. Where a class of result does not exist (market backtester), we define **“backtesting”** as **historical / regression verification** of platform behaviors against the fixed fleet snapshot.
 
 ---
 
@@ -34,9 +35,11 @@ The primary operator entry is `START_HARBOR.cmd` → `bridge-terminal/tools/star
 ### 2.1 In scope
 
 - Architecture of the Harbor integration layer (layout, launchers, fleet binding, SPIRAL focus codes, optical desktop start URL).
-- Data model for `fleet/HARBOR_FLEET.json` and `qnodes/FLEET.json` under `qnode_mode=full-copies`.
+- Cubbies family: Qnode + containership + mobile Bottle Rocket (`fleet/CUBBIES.json`); desktop vs mobile entry; access gate `mobile_br_cubby_required`.
+- Mobile platform layout (`mobile-platform/`), cubby materializer (`brctl assemble`), `brctl serve` APDU proxy, demoted adb sideload.
+- Data model for `fleet/HARBOR_FLEET.json`, `fleet/MOBILE_PLATFORM.json`, and `qnodes/FLEET.json` under `qnode_mode=full-copies`.
 - Security of local access tokens and public-repo gitignore constraints.
-- Measured verification of Qnode load-carrying and configuration regressions that actually exist in-tree.
+- Measured verification of Qnode load-carrying, SPIRAL landing, and mobile cubby/serve-proxy regressions that actually exist in-tree.
 
 ### 2.2 Non-goals
 
@@ -58,18 +61,26 @@ flowchart LR
   subgraph Host["Operator workstation (Windows)"]
     OP[Operator]
     JA21[VB-JA21 9.8.7 omni-bin]
+    MOB[Mobile browser]
     GW["HERMIT gateway<br/>127.0.0.1:10000+"]
     SPIRAL[SPIRAL kernel / VT]
-    QN["qnodes/QN-01…50<br/>full QVM copies"]
-    DF["DF_ROOT fabric"]
+    QN["QN-* cubbies<br/>full QVM copies"]
+    DF["CS-* / DF cubbies"]
+    MC["MC-* BR cubbies<br/>projection + brctl serve"]
     UC[containership UC-2.8.0]
+    BR[Bottle Rocket substrate]
   end
   OP -->|START_HARBOR.cmd| GW
   GW -->|JA21_START_URL| JA21
   JA21 -->|HTTPS/WS loopback only| GW
+  MOB -->|ws-ticket + mobile header| GW
   GW --> SPIRAL
   SPIRAL -->|focus qnNN| QN
   SPIRAL -->|focus ns…nf| DF
+  GW -->|auth hook allocate| MC
+  MC --> BR
+  MOB -->|/cubby/MC-*/projection| MC
+  MOB -.->|403 without live MC-*| QN
   OP -.->|separate EDGE/uc tools| UC
 ```
 
@@ -95,6 +106,8 @@ Harbor is a **layered composition**, not a monolith rewrite:
 | Qnode fleet | `qnodes/`, `…/spiral/qnodes/` | Locator + runner over 50 full copies |
 | DF fabric | `…/spiral/dfabric/`, `…/commands/dfabric.js` | Locator + CLI child processes |
 | Optical desktop | `optical-desktop/` | Junction to JA21 portable; start URL contract |
+| Mobile platform | `mobile-platform/` | Bottle Rocket substrate; iOS/Android LCTL nodes; RODEO sidecar; cubby materializer |
+| Cubbies / projection | `fleet/CUBBIES.json`, gateway cubby routes | Local-127 projection; mobile BR gate; `brctl serve` APDU proxy |
 | Harbor glue | `START_HARBOR*.cmd`, `scripts/*`, `fleet/*` | Bind, materialize, audit, document |
 
 ```mermaid
@@ -179,16 +192,82 @@ Bound when `DF_ROOT` points at the folder containing `DF_Fabric/adapter/dfabric/
 
 ### 5.6 Mobile platform + cubbies (projection on local 127)
 
-- **Primary story:** mobile browser login → allocate **mobile cubby** `MC-NNN` → Bottle Rocket VM runs **in the cubby** → **project** to device browser on `127.0.0.1`. **No VM download** to phone storage.
-- **Cubby family:** QVM Qnodes and Containership/DF slots are cubbies too (`fleet/CUBBIES.json`). Desktop projects QN/CS on local 127 **directly**. Mobile must have a **live BR mobile cubby** before QVM/containership attach (gate `mobile_br_cubby_required` / 403).
-- **Rule:** each mobile application node is a **Bottle Rocket VM**; **RODEO** is a **sidecar to Linear Android** (Gradle substitute), not a peer app node.
-- **Substrate:** `mobile-platform/bottle-rocket/` junctions to Desktop `BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K`.
-- **Cubby materializer:** `brctl assemble` prepares the cubby image (`scripts/build-brctl.cmd` → `compiler/bin/brctl.exe`). Not a phone-storage download path.
-- **Sideload (demoted):** `deliver-mobile-vm-node.js` / `adb` optional advanced only — not enter-Harbor.
-- **SPIRAL auto-wire:** `mobile-auth-hook.js` on successful `POST /api/ws-ticket` allocates cubby + projection; ticket may include `cubby_id` / `projection_url`. Queue watcher may run materializer. Disable `HARBOR_MOBILE_AUTH_HOOK=0`.
-- **Projection routes:** `/cubby/:id/projection`, `/api/cubbies`, `/api/cubbies/:id/attach`, `/api/cubbies/access-check`.
-- **Docs:** `docs/MOBILE_CUBBY_PROJECTION.md`. Fleet: `fleet/CUBBIES.json`, `fleet/MOBILE_PLATFORM.json`.
-- **Verification:** `docs/verification/mobile-cubby/`.
+Cross-links: [`docs/MOBILE_CUBBY_PROJECTION.md`](MOBILE_CUBBY_PROJECTION.md) · [`docs/verification/MOBILE_PLATFORM_CLOSURE.md`](verification/MOBILE_PLATFORM_CLOSURE.md) · [`fleet/CUBBIES.json`](../fleet/CUBBIES.json) · [`fleet/MOBILE_PLATFORM.json`](../fleet/MOBILE_PLATFORM.json) · [`mobile-platform/README.md`](../mobile-platform/README.md).
+
+#### 5.6.1 Primary story (honest)
+
+**Enter Harbor on mobile** = allocate a **Bottle Rocket mobile cubby** (`MC-NNN`) on the Harbor gateway + **project** it to the device browser on `127.0.0.1`. The VM runs **in the cubby**; the device does **not** download the VM (`device_download: false`). Optional `adb`/`idevice` push is **demoted** (advanced sideload only).
+
+#### 5.6.2 Cubbies family + desktop vs mobile gate
+
+| Family | IDs | Desktop entry | Mobile entry |
+|--------|-----|---------------|--------------|
+| Qnode cubbies | `QN-01`…`QN-50` | Direct local-127 projection | Requires **live** `MC-*` first |
+| Containership / DF cubbies | `CS-NS`…`CS-NF` | Direct local-127 projection | Requires **live** `MC-*` first |
+| Mobile BR cubbies | `MC-001`, … (grows) | N/A (desktop does not need BR) | Created on SPIRAL `ws-ticket` |
+
+Access gate: `bridge-terminal/gateway/cubby-access-gate.js`. Mobile attach/project to QN/CS **without** a live BR cubby — **HTTP 403** `mobile_br_cubby_required` (verified). Desktop bypasses the BR prerequisite.
+
+Routes: `/cubby/:id/projection`, `/api/cubbies`, `/api/cubbies/:id/attach`, `/api/cubbies/access-check`.
+
+#### 5.6.3 Layout under `mobile-platform/`
+
+| Piece | Path | Role |
+|-------|------|------|
+| Bottle Rocket 3.0.0 MODEL OPERATIONAL 110K | `mobile-platform/bottle-rocket/` | Shared **VM substrate** (junction + `PRODUCT_LINK.txt`; bulky product **not** tracked) |
+| LinearAndroid_LCTL v0.1.0 | `mobile-platform/nodes/android-lctl/` | Android app node = Bottle Rocket VM |
+| RODEO 0.1.0 | `mobile-platform/nodes/android-lctl/sidecar-rodeo/` | **Sidecar** to Linear Android (Gradle substitute) — **not** a peer app node |
+| iOS735_LCTL v0.1.0 | `mobile-platform/nodes/ios-lctl/` | iOS app node = Bottle Rocket VM |
+| Cubby materializer | `mobile-platform/compiler/` | Reproducible compile + auth hooks + `brctl` |
+| Registry | `fleet/CUBBIES.json` | QN + CS + growing `mobile_cubbies[]` |
+
+Rules (from `fleet/MOBILE_PLATFORM.json` v4): (1) each mobile **application node** is a Bottle Rocket VM; (2) RODEO is a Linear Android sidecar; (3) primary enter-Harbor is cubby projection on local 127.
+
+Link: `scripts\\link-mobile-platform.cmd` (also from `START_HARBOR.cmd`; missing Desktop sources warn).
+
+#### 5.6.4 Cubby materializer / `brctl`
+
+- Tooling: `scripts\\build-brctl.cmd` —> `mobile-platform/compiler/bin/brctl.exe` (MSYS2 UCRT64 + `wincompat.h`).
+- **`brctl assemble`** = cubby **image prep** (not phone-storage download).
+- Compiler contract: pin inputs —> content hash —> `compiler/out/nodes/{platform}-{hash12}/` + `COMPILE_MANIFEST.json`. Out trees / sessions / auth-queue jobs are **local runtime** (not committed as bulky evidence).
+- Role name in fleet: `harbor-cubby-materializer` **0.3.0**.
+
+#### 5.6.5 SPIRAL auth hook (`POST /api/ws-ticket`)
+
+Module: `bridge-terminal/gateway/mobile-auth-hook.js` (default **ON**).
+
+1. Ticket mint succeeds for authenticated principal.
+2. Hook allocates `MC-NNN` in `fleet/CUBBIES.json`, writes session under `mobile-platform/compiler/cubbies/sessions/`.
+3. Ticket JSON may include `cubby_id`, `projection_url`, `device_download: false`, `primary: "cubby-projection"`.
+4. Auth-queue job may run the materializer (`watch-auth-queue.js` started from start-local when hook enabled).
+5. Disable: `HARBOR_MOBILE_AUTH_HOOK=0`. Modes: `HARBOR_MOBILE_AUTH_HOOK_MODE=queue|compile|materialize`. Sideload-only: `HARBOR_MOBILE_AUTH_DELIVER=1`.
+
+Evidence: `docs/verification/mobile-auth-hook/HOOK_FIRE.log`.
+
+#### 5.6.6 `brctl serve` proxied into projection (APDU REPL — not framebuffer)
+
+`brctl serve --state <prefix>` is a **stdio hex-APDU REPL** (banner: `READY hex-APDU per line; EOF stops`). It is **not** an HTTP server and does **not** expose a framebuffer.
+
+Harbor therefore:
+
+1. Launches **one `brctl serve` per mobile cubby** via `bridge-terminal/gateway/brctl-serve-manager.js` (stdio-bound; no native listen port from brctl).
+2. Tracks `pid` + state under `mobile-platform/compiler/cubbies/serve-states/<MC-id>/`; reaps on session end / `stopAll`.
+3. Proxies into the browser: `GET /cubby/:id/serve/status`, `POST /cubby/:id/serve/apdu`, `WS /cubby/:id/serve/ws`.
+4. `MC-*` projection HTML embeds an interactive APDU console. QN/CS projection remains Harbor fabric HTML.
+
+**Honest gap:** full Bottle Rocket host UI embedded as a browser framebuffer is **not** claimed complete; the APDU REPL proxy is what landed and was verified.
+
+#### 5.6.7 Demoted adb sideload
+
+`deliver-mobile-vm-node.js` / `scripts\\deliver-mobile-vm-node.cmd` may stage a `*.harbundle` and `adb push` when tools + device exist. Without `adb`, status stays **staged** (does not fake success). Evidence: `docs/verification/mobile-delivery/LATEST_android.json`. **Not** the enter-Harbor path.
+
+#### 5.6.8 Verification cited (no fabricated metrics)
+
+| Suite | Result | Artifact |
+|-------|--------|----------|
+| Mobile cubby + gate | **12/12 PASS**, 0 fail (~14:22 PT) | `docs/verification/mobile-cubby/EVIDENCE.json` |
+| `brctl serve` proxy | **8/8 PASS**, 0 fail (~14:37 PT) | `docs/verification/brctl-serve-proxy/EVIDENCE.json` |
+| Closure summary | Primary architecture + gaps | `docs/verification/MOBILE_PLATFORM_CLOSURE.md` |
 
 
 ---
@@ -196,11 +275,12 @@ Bound when `DF_ROOT` points at the folder containing `DF_Fabric/adapter/dfabric/
 
 ### 6.1 `fleet/HARBOR_FLEET.json`
 
-- `version`: 2  
-- `generated`: `2026-09-25T20:02:06.724Z`  
+- `version`: **3**  
+- `generated`: `2026-09-25T21:21:00.705Z`  
 - `qnode_mode`: **`full-copies`**  
 - `df_containers`: 5 entries (`ns`…`nf`)  
-- `qnodes`: 50 entries `qn01`…`qn50` with `copy: true`, product `QVM 8.1.0-alpha`
+- `qnodes`: 50 entries `qn01`…`qn50` with `copy: true`, product `QVM 8.1.0-alpha`  
+- `cubbies`: pointer to `fleet/CUBBIES.json` + desktop/mobile entry rules + access gate module
 
 ### 6.2 `qnodes/FLEET.json`
 
@@ -214,8 +294,9 @@ Commit `b256b3c0` converted thin shared instances to **50 independent trees** so
 
 ### 6.4 `fleet/CUBBIES.json` + `fleet/MOBILE_PLATFORM.json`
 
-- **CUBBIES:** Qnode cubbies (50) + containership cubbies (5) + growing `mobile_cubbies` (`MC-*`). Documents desktop vs mobile entry and access gate.
-- **MOBILE_PLATFORM:** VM substrate, app nodes, RODEO sidecar, cubby materializer, projection primary path, demoted sideload.
+- **CUBBIES** (`version` 1): vocabulary for cubby / mobile_cubby / materializer / projection / sideload / access_gate; naming `QN-*`, `CS-*`, `MC-{seq:03d}`; growth floor 55 (50+5) with `next_mobile_seq` advancing as devices log in; projection URL pattern `http://127.0.0.1:{gateway_port}/cubby/{cubby_id}/projection`.
+- **MOBILE_PLATFORM** (`version` 4, generated 2026-09-25T14:30:00-07:00): architecture rules, `vm_substrate` Bottle Rocket 3.0.0-MODEL_OPERATIONAL_110K, application nodes iOS735_LCTL + LinearAndroid_LCTL, RODEO sidecar, compiler `harbor-cubby-materializer` 0.3.0, spiral_auth_hook ticket fields, delivery demoted.
+- Sessions live under `mobile-platform/compiler/cubbies/sessions/` (runtime; not a download tree).
 
 
 ## 7. Operator surface
@@ -318,6 +399,27 @@ All PNGs generated from `fleet/QNODE_LOAD_AUDIT.json` (date **09/25/2026, 13:23:
 
 Source: `docs/verification/audit-timing-stats.json`. Each selftest run reported **35** unit tests OK (from QN-01 audit stdout).
 
+### 9.4 Mermaid — mobile cubby gate + serve proxy
+
+```mermaid
+sequenceDiagram
+  participant M as Mobile browser
+  participant GW as Gateway
+  participant Hook as mobile-auth-hook
+  participant Reg as CUBBIES.json
+  participant Srv as brctl-serve-manager
+  M->>GW: POST /api/ws-ticket (X-Harbor-Mobile-Platform)
+  GW->>Hook: on ticket success
+  Hook->>Reg: allocate MC-NNN live
+  Hook-->>GW: cubby_id + projection_url
+  GW-->>M: ticket body (device_download=false)
+  M->>GW: GET /cubby/MC-NNN/projection
+  GW->>Srv: ensure brctl serve (stdio APDU REPL)
+  M->>GW: POST /cubby/MC-NNN/serve/apdu
+  Note over M,GW: QN/CS without live MC-* => 403 mobile_br_cubby_required
+```
+
+
 ---
 
 ## 10. Test and verification program
@@ -351,6 +453,9 @@ Source: `docs/verification/audit-timing-stats.json`. Each selftest run reported 
 | Optical desktop link | start cmd + ps1 **present** | `docs/verification/optical-desktop-link.json` |
 | Containership EDGE status | cited recorded evidence (59 green / 27 red atoms) | `docs/verification/containership-edge-summary.json` |
 | SPIRAL/landing HTTP+WS (later same day) | **PASS** controlled gateway `:10003` — see §13 | `docs/verification/spiral-landing/` |
+| Mobile cubby + access gate | **12/12 PASS** | `docs/verification/mobile-cubby/EVIDENCE.json` |
+| brctl serve proxy | **8/8 PASS** | `docs/verification/brctl-serve-proxy/EVIDENCE.json` |
+| Mobile delivery (sideload) | staged (adb absent) | `docs/verification/mobile-delivery/` |
 
 Consolidated: `docs/verification/SESSION_VERIFICATION_SUMMARY.json`.
 
@@ -434,6 +539,33 @@ All exit codes **0**.
 | tests_failed_sum | 41 |
 
 **Note:** These totals come from stored EDGE evidence, not a fresh full pytest in this documentation session.
+
+### 12.5 Mobile cubby + access gate (cited)
+
+From `docs/verification/mobile-cubby/EVIDENCE.json` (generated **9/25/2026, 2:22:48 PM PT**):
+
+| Metric | Value |
+|--------|------:|
+| steps passed | **12** |
+| steps failed | **0** |
+| allocate MC | MC-002 / later ticket MC-003 |
+| desktop QN projection | 200 (desktop-direct) |
+| mobile QN without BR | **403** `mobile_br_cubby_required` |
+| mobile QN via live BR | 200 (`mobile-via-br-cubby`) |
+| `device_download` | false |
+
+### 12.6 `brctl serve` proxy (cited)
+
+From `docs/verification/brctl-serve-proxy/EVIDENCE.json` (generated **9/25/2026, 2:37:10 PM PT**):
+
+| Metric | Value |
+|--------|------:|
+| steps passed | **8** |
+| steps failed | **0** |
+| surface | hex-APDU REPL via brctl serve stdio, proxied by Harbor HTTP/WS |
+| serve status | ready/alive for MC-004 |
+| APDU proxy | request/response exchanged (STATUS hex) |
+| mobile QN gate still | **403** without BR |
 
 ---
 
@@ -532,6 +664,8 @@ Focus registration (source): loop builds `qn01`…`qn50` shorts; `DF_FOCUS` keys
 | Multi-audit trend | Only one full audit JSON snapshot exists |
 | JA21 bulk not in git | Requires Downloads portable + `link-optical-desktop.cmd` |
 | Preview license | Not production; no warranty |
+| Full BR framebuffer UI in browser | Projection proxies APDU REPL; host UI embed not complete |
+| Real-device adb push | Sideload staged when adb/device absent; demoted path |
 
 ### 14.2 Deferred verification / skipped work (prior documentation session + residual)
 
@@ -559,7 +693,9 @@ These items were **explicitly skipped** (or only partially covered) so readers a
 | GitHub | https://github.com/LKVexa/Harbor-Bridge-Terminal |
 | License | `LICENSE` |
 | README | `README.md` |
-| Fleet model | `fleet/HARBOR_FLEET.json`, `qnodes/FLEET.json` |
+| Fleet model | `fleet/HARBOR_FLEET.json`, `fleet/CUBBIES.json`, `fleet/MOBILE_PLATFORM.json`, `qnodes/FLEET.json` |
+| Mobile cubby projection | `docs/MOBILE_CUBBY_PROJECTION.md` |
+| Mobile verification | `docs/verification/mobile-cubby/`, `brctl-serve-proxy/`, `MOBILE_PLATFORM_CLOSURE.md` |
 | Load audit | `fleet/QNODE_LOAD_AUDIT.md`, `.json` |
 | Start path | `START_HARBOR.cmd`, `bridge-terminal/tools/start-local.js` |
 | SPIRAL Qnode cmds | `bridge-terminal/src/main/spiral/commands/qnode.js` |
@@ -586,6 +722,9 @@ scripts\link-optical-desktop.cmd
 scripts\link-qvm.cmd
 scripts\materialize-qnode-copies.cmd
 scripts\audit-qnode-load.cmd
+scripts\link-mobile-platform.cmd
+scripts\build-brctl.cmd
+scripts\on-mobile-auth.cmd --platform android --session <id> --cubby MC-001
 cd containership && EDGE.cmd status
 cd containership && uc.py verify --quick --no-hull
 cd bridge-terminal && npm test
@@ -622,6 +761,10 @@ Inside SPIRAL (after sign-in): `qn status`, `qn07`, `bell`, `ns`, `fabric status
 | `VWS_SNAPSHOTS` / `VWS_SNAPSHOT_DIR` | **Must be unset** for LOCAL_VOLATILE |
 | `QNODE_AUDIT_PARALLEL` | Audit concurrency (default 5) |
 | `PYTHONPATH` | Set to Qnode copy root when invoking qvm.cli |
+| `HARBOR_MOBILE_AUTH_HOOK` | `0` disables mobile cubby auth hook + queue watcher |
+| `HARBOR_MOBILE_AUTH_HOOK_MODE` | `queue` (default) / `compile` / `materialize` |
+| `HARBOR_MOBILE_AUTH_DEFAULT_PLATFORM` | `android` or `ios` |
+| `HARBOR_MOBILE_AUTH_DELIVER` | `1` enables demoted sideload only |
 
 ## Appendix D — Document control
 
@@ -629,9 +772,10 @@ Inside SPIRAL (after sign-in): `qn status`, `qn07`, `bell`, `ns`, `fabric status
 |------|-------|
 | Generated | 2026-09-25 PT |
 | SPIRAL landing probes | 2026-09-25 ~13:35–13:40 PT; artifacts `docs/verification/spiral-landing/` |
-| HEAD at authoring start | `2824d2ad` (technical note v1.0); SPIRAL chapter added in v1.1 |
+| Mobile cubby / serve proxy probes | 2026-09-25 ~14:22–14:37 PT; artifacts `docs/verification/mobile-cubby/`, `brctl-serve-proxy/` |
+| HEAD lineage | v1.0 `2824d2ad`; v1.1 SPIRAL; v2.0 mobile cubby architecture (post `0ac0f4b7`) |
 | Metrics policy | No invented statistics; N/A stated where absent |
 
 ---
 
-*End of Harbor Bridge Terminal Technical Note v1.1 (Product Preview).*
+*End of Harbor Bridge Terminal Technical Note v2.0 (Product Preview).*
