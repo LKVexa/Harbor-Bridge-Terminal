@@ -1,4 +1,4 @@
-# Mobile VM node compiler (reproducible)
+﻿# Mobile VM node compiler (reproducible)
 
 Compiles a **Bottle Rocket VM application node** package for a mobile platform
 that is **authenticating / entering Harbor**, then stages (and optionally
@@ -22,77 +22,71 @@ delivers) the artifact toward that device.
 2. Hash pinned inputs → `content_hash`.
 3. Emit content-addressed package under `compiler/out/nodes/{platform}-{hash12}/`.
 4. Android: run `rodeo doctor` when RODEO is linked (non-fatal if it fails).
-5. Attempt `brctl` assemble only if `.build/brctl` exists; otherwise skip honestly.
+5. Run `brctl assemble` when `compiler/bin/brctl.exe` or `product/.build/brctl` exists (build via `scripts\build-brctl.cmd`); otherwise skip honestly.
 6. Write `COMPILE_MANIFEST.json` (see `schema/compile-manifest.schema.json`).
-7. Optional `--deliver`: `adb push` on Android if `adb` exists; else stage + print next command. iOS always stages.
+7. Optional `--deliver`: `adb push` on Android if `adb` + device present; `--wait-device` polls; else stage + print next command. iOS always stages.
 
-**Output:** `NODE_IDENTITY.json`, substrate/app pins, `node-bundle.harbundle` (deterministic `HARBOR_BUNDLE_V1`), manifest.
+**Output:** `NODE_IDENTITY.json`, substrate/app pins, optional `payload/boot.brimg`, `node-bundle.harbundle` (deterministic `HARBOR_BUNDLE_V1`), manifest.
 
 ## Commands
 
 ```bat
 REM from Harbor root (after scripts\link-mobile-platform.cmd)
+scripts\build-brctl.cmd
 scripts\compile-mobile-vm-node.cmd --platform android --dry-run
 scripts\compile-mobile-vm-node.cmd --platform ios --dry-run
 
-REM auth / enter-Harbor hook
+REM auth / enter-Harbor hook (manual)
 scripts\on-mobile-auth.cmd --platform android --session sess-1 --device emulator-5554
 scripts\on-mobile-auth.cmd --platform ios --session sess-2
 
-REM deliver (adb if present)
+REM deliver (adb if present; optional wait)
 scripts\deliver-mobile-vm-node.cmd --manifest mobile-platform\compiler\out\nodes\android-XXXXXXXXXXXX\COMPILE_MANIFEST.json --platform android
+scripts\deliver-mobile-vm-node.cmd --manifest ... --platform android --wait-device --wait-timeout 120
 ```
 
-## Auth / enter-Harbor integration point
+## SPIRAL login → mobile-auth (auto-wire)
 
-Ordinary operator `ACCESS_TOKEN` sign-in does **not** auto-compile mobile nodes
-(that would confuse bridge login with device entry).
+Successful gateway ticket mint (`POST /api/ws-ticket` after Bearer/principal auth) invokes
+`bridge-terminal/gateway/mobile-auth-hook.js`, which writes a job into
+`compiler/auth-queue/` (no secrets). `tools/start-local.js` / `START_HARBOR.cmd`
+enable the hook by default and start `hooks/watch-auth-queue.js`.
 
-When a **mobile platform authenticates into Harbor**, call:
+| Env | Effect |
+|---|---|
+| `HARBOR_MOBILE_AUTH_HOOK=0` | Disable hook + queue watcher |
+| `HARBOR_MOBILE_AUTH_HOOK_MODE=queue` | Default: enqueue only |
+| `HARBOR_MOBILE_AUTH_HOOK_MODE=compile` | Also spawn `on-mobile-auth.js` |
+| `HARBOR_MOBILE_AUTH_DEFAULT_PLATFORM` | `android` (default) or `ios` when UA/header absent |
+| `HARBOR_MOBILE_AUTH_DELIVER=1` | Pass `--deliver` when compile mode runs |
 
-```bat
-scripts\on-mobile-auth.cmd --platform android|ios --session <id> --device <id>
-```
+Platform hints: header `X-Harbor-Mobile-Platform`, query `mobile_platform`/`platform`, else User-Agent, else default.
 
-Optional queue watcher (drop JSON into `compiler/auth-queue/`):
+Evidence: `docs/verification/mobile-auth-hook/LATEST.json` and `HOOK_FIRE.log`.
+
+Manual queue (same as before):
 
 ```bat
 node mobile-platform\compiler\hooks\watch-auth-queue.js
 ```
 
-Example queue file:
-
 ```json
 { "platform": "android", "session_id": "enter-1", "device_id": "emulator-5554", "deliver": false }
 ```
 
-Set `HARBOR_MOBILE_AUTH_DELIVER=1` to push after compile when adb is available.
-
 ## Reproducibility
 
-Same linked product pins → same `content_hash` → same output directory name and
-`bundle_sha256`. Prove with two dry-runs:
-
-```bat
-scripts\compile-mobile-vm-node.cmd --platform android --dry-run
-scripts\compile-mobile-vm-node.cmd --platform android --dry-run
-```
-
-Compare `bundle_sha256` in the two `LATEST_android.json` / manifest files.
+Same linked product pins → same `content_hash` → same output directory name.
+`bundle_sha256` changes when `brctl assemble` adds `payload/boot.brimg` (expected).
 
 ## Honest limits
 
 - Does **not** flash phones or claim App Store / Play installs.
 - Without a built `brctl`, native BRIM assemble is skipped (package still valid as Harbor node artifact).
-- Without `adb` / iOS tooling, delivery stays **staged** with `next_command`.
+- Without `adb` / online device / iOS tooling, delivery stays **staged** with `next_command` (never fake success).
+- MinGW `brctl selftest` may FAIL some host cases; `assemble` is the compile contract and was verified PASS on this machine.
 
 ## Proven locally (2026-09-25 PT)
 
-Two android `--dry-run` compiles produced identical:
-
-- `content_hash` = `ac68a899fc80f88b177b7a7e2964829b97e4c4754cb4e51edda2585ac91c4cee`
-- `bundle_sha256` = `cc49c8d2be9d66212dedf8c57f6e38cde4490f79d3f2299e108a246542672e19`
-
-`deliver` without `adb` exited staged with an explicit `adb push` next_command (no fake install).
-
-Session/device fields live in `AUTH_CONTEXT.json` / `COMPILE_MANIFEST.json` only (not inside the harbundle), so auth-triggered compiles with the same product pins keep the same `bundle_sha256`.
+See `docs/verification/mobile-delivery/` and `docs/verification/mobile-auth-hook/` for measured
+probes from this closure (device presence, brctl assemble, SPIRAL ticket hook).

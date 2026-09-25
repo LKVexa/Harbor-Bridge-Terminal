@@ -4,11 +4,11 @@
  * Local quick start (loopback only). Creates an operator principal on first run, prints its access token ONCE,
  * finds the DF containers (DF_ROOT, or a folder beside/above this one holding DF_Fabric), binds Qnode fleet
  * roots, and starts the gateway. After the gateway listens on 127.0.0.1, launches VB-JA21 Portable Optical
- * Desktop with JA21_START_URL pointing at the Harbor URL (omni-bin / start navigation) — never the Windows
+ * Desktop with JA21_START_URL pointing at the Harbor URL (omni-bin / start navigation) - never the Windows
  * default browser.
  *   node tools/start-local.js [--port 10000] [--no-fabric] [--no-browser]
  *
- * Note: gateway profile is LOCAL_VOLATILE — do not set VWS_SNAPSHOTS / VWS_SNAPSHOT_DIR (ConfigError).
+ * Note: gateway profile is LOCAL_VOLATILE - do not set VWS_SNAPSHOTS / VWS_SNAPSHOT_DIR (ConfigError).
  */
 const fs = require('node:fs');
 const path = require('node:path');
@@ -82,6 +82,34 @@ function waitForListen(port, timeoutMs) {
   });
 }
 
+
+function mobileAuthHookEnabled() {
+  const v = String(process.env.HARBOR_MOBILE_AUTH_HOOK ?? '1').toLowerCase();
+  return !(v === '0' || v === 'false' || v === 'off' || v === 'no');
+}
+
+function startMobileAuthQueueWatcher() {
+  if (!mobileAuthHookEnabled()) {
+    console.log('  mobile-auth-hook: OFF (HARBOR_MOBILE_AUTH_HOOK=0)');
+    return null;
+  }
+  const watcher = path.join(harborRoot, 'mobile-platform', 'compiler', 'hooks', 'watch-auth-queue.js');
+  if (!fs.existsSync(watcher)) {
+    console.log('  mobile-auth-hook: ON (gateway ticket hook); queue watcher missing');
+    return null;
+  }
+  const child = spawn(process.execPath, [watcher], {
+    cwd: harborRoot,
+    detached: true,
+    stdio: 'ignore',
+    windowsHide: true,
+    env: { ...process.env, HARBOR_ROOT: harborRoot }
+  });
+  child.unref();
+  console.log('  mobile-auth-hook: ON (ws-ticket -> auth-queue; watcher pid ' + child.pid + ')');
+  console.log('                   disable: set HARBOR_MOBILE_AUTH_HOOK=0');
+  return child;
+}
 function resolveJa21Portable() {
   const portable = path.join(harborRoot, 'optical-desktop', 'portable');
   const startCmd = path.join(portable, 'Start JA21 Portable Desktop.cmd');
@@ -108,7 +136,7 @@ function resolveJa21Portable() {
 function launchJa21OpticalDesktop(harborUrl) {
   const ja21 = resolveJa21Portable();
   if (!ja21) {
-    console.log('  optical: JA21 Portable Desktop not linked — run scripts\\link-optical-desktop.cmd');
+    console.log('  optical: JA21 Portable Desktop not linked - run scripts\\link-optical-desktop.cmd');
     console.log('           (Harbor will NOT open the system default browser.)');
     return null;
   }
@@ -158,7 +186,7 @@ function launchJa21OpticalDesktop(harborUrl) {
   } else {
     port = await pickPort(preferred);
     if (port !== String(preferred)) {
-      console.log(`  note: port ${preferred} is in use — using ${port} instead\n`);
+      console.log(`  note: port ${preferred} is in use - using ${port} instead\n`);
     }
     startedGateway = true;
   }
@@ -192,6 +220,7 @@ function launchJa21OpticalDesktop(harborUrl) {
   console.log(`  focus  : qn01..qn50   containers: ns nm nl nx nf`);
   console.log(`  browser: ${noBrowser ? 'skipped (--no-browser)' : 'VB-JA21 optical desktop (omni-bin)'}`);
   console.log(`  Ctrl+C drains sessions and stops.\n`);
+  startMobileAuthQueueWatcher();
 
   if (!startedGateway) {
     if (!noBrowser) launchJa21OpticalDesktop(harborUrl);
@@ -207,7 +236,8 @@ function launchJa21OpticalDesktop(harborUrl) {
     VWS_PRINCIPALS_FILE: pf,
     VWS_SECURE_COOKIES: '0',
     VWS_FABRIC: df ? '1' : '0',
-    HARBOR_ROOT: harborRoot
+    HARBOR_ROOT: harborRoot,
+    HARBOR_MOBILE_AUTH_HOOK: process.env.HARBOR_MOBILE_AUTH_HOOK ?? '1'
   };
   delete env.VWS_SNAPSHOTS;
   delete env.VWS_SNAPSHOT_DIR;

@@ -153,16 +153,22 @@ npm test
 
 **Link:** `scripts\link-mobile-platform.cmd` (also from `START_HARBOR.cmd`; missing sources warn).
 
-**Compiler (auth / enter Harbor):** when another mobile platform authenticates into Harbor, compile a Bottle Rocket-based VM node package and stage/deliver it:
+**Compiler (auth / enter Harbor):** SPIRAL login (`POST /api/ws-ticket` success) auto-wires the mobile-auth path (auth-queue + optional compile). Manual:
 
 ```bat
+scripts\build-brctl.cmd
 scripts\on-mobile-auth.cmd --platform android --session <id> --device <id>
 scripts\compile-mobile-vm-node.cmd --platform ios --dry-run
+scripts\deliver-mobile-vm-node.cmd --manifest <COMPILE_MANIFEST.json> --platform android [--wait-device]
 ```
 
 - Contract + reproducibility: [`mobile-platform/compiler/README.md`](mobile-platform/compiler/README.md)
 - Fleet record: [`fleet/MOBILE_PLATFORM.json`](fleet/MOBILE_PLATFORM.json)
-- Honest scope: linked operator surface + compile/package pipeline. Does **not** claim phones are flashed; `deliver` uses `adb` when present or stages with next-command.
+- **brctl:** `scripts\build-brctl.cmd` → `mobile-platform/compiler/bin/brctl.exe` (MSYS2 UCRT64). Compile runs `assemble` when present.
+- **Delivery:** `adb` push when a device is online; `--wait-device` polls. Evidence under `docs/verification/mobile-delivery/`. iOS stays staged.
+- **SPIRAL hook:** `bridge-terminal/gateway/mobile-auth-hook.js` (enabled by default from `START_HARBOR` / `start-local`). Disable: `set HARBOR_MOBILE_AUTH_HOOK=0`.
+- Honest scope: does **not** claim phones are flashed without a real `adb`/`idevice` exit code.
+
 ## Qnode fleet (50× full QVM 8.1.0-alpha copies)
 
 - **Full copies:** each `qnodes\QN-XX\` is a complete independent QVM product tree (`qvm/`, `examples/`, `PHOTON/`, `RUN_QVM.cmd`, `VERSION`, …) plus Harbor `IDENTITY.json` and `QNODE.cmd`.

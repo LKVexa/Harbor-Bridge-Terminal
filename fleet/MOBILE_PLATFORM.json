@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "generated": "2026-09-25T14:05:00-07:00",
+  "version": 3,
+  "generated": "2026-09-25T14:30:00-07:00",
   "architecture": {
     "rules": [
       "Each mobile platform application node is a Bottle Rocket VM.",
@@ -73,16 +73,19 @@
     "operator_surface_linked": true,
     "rodeo_is_peer_app_node": false,
     "rodeo_is_linear_android_sidecar": true,
-    "future_device_bridge": "documented as possible direction only; not implemented in this integration"
+    "future_device_bridge": "adb deliver + --wait-device implemented; iOS remains staged",
+    "brctl_assemble": "attempted when mobile-platform/compiler/bin/brctl.exe or product/.build/brctl exists",
+    "spiral_login_auto_wires_mobile_auth": true
   },
   "compiler": {
     "name": "harbor-mobile-vm-node-compiler",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "entrypoint": "mobile-platform/compiler/compile-mobile-vm-node.js",
     "scripts": [
       "scripts/compile-mobile-vm-node.cmd",
       "scripts/on-mobile-auth.cmd",
-      "scripts/deliver-mobile-vm-node.cmd"
+      "scripts/deliver-mobile-vm-node.cmd",
+      "scripts/build-brctl.cmd"
     ],
     "schema": "mobile-platform/compiler/schema/compile-manifest.schema.json",
     "out_dir": "mobile-platform/compiler/out",
@@ -93,6 +96,30 @@
       "android_path": "LinearAndroid_LCTL app node + RODEO gradle-substitute sidecar",
       "ios_path": "iOS735_LCTL app node",
       "substrate": "BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K"
+    },
+    "brctl": {
+      "build_script": "scripts/build-brctl.cmd",
+      "install_path": "mobile-platform/compiler/bin/brctl.exe",
+      "product_makefile": "mobile-platform/bottle-rocket/product/Makefile",
+      "windows_toolchain": "MSYS2 UCRT64 gcc+make+openssl (wincompat.h shim)"
+    },
+    "delivery": {
+      "entrypoint": "mobile-platform/compiler/deliver-mobile-vm-node.js",
+      "wait_device_flag": "--wait-device",
+      "evidence_dirs": [
+        "docs/verification/mobile-delivery/",
+        "mobile-platform/compiler/logs/"
+      ]
+    },
+    "spiral_auth_hook": {
+      "module": "bridge-terminal/gateway/mobile-auth-hook.js",
+      "fires_on": "POST /api/ws-ticket success (principal authenticated, ticket minted)",
+      "enabled_by_default": true,
+      "disable_env": "HARBOR_MOBILE_AUTH_HOOK=0",
+      "mode_env": "HARBOR_MOBILE_AUTH_HOOK_MODE=queue|compile",
+      "default_platform_env": "HARBOR_MOBILE_AUTH_DEFAULT_PLATFORM=android|ios",
+      "start_local": "starts watch-auth-queue.js when hook enabled",
+      "queue": "mobile-platform/compiler/auth-queue/"
     }
   }
 }

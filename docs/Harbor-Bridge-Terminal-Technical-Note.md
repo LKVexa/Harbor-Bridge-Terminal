@@ -182,8 +182,12 @@ Bound when `DF_ROOT` points at the folder containing `DF_Fabric/adapter/dfabric/
 - **Rule:** each mobile application node is a **Bottle Rocket VM**; **RODEO** is a **sidecar to Linear Android** (Gradle substitute), not a peer app node.
 - **Substrate:** `mobile-platform/bottle-rocket/` junctions to Desktop `BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K`.
 - **App nodes:** `nodes/ios-lctl/` (iOS735_LCTL), `nodes/android-lctl/` (LinearAndroid_LCTL); RODEO under `android-lctl/sidecar-rodeo/`.
-- **Compiler:** `mobile-platform/compiler/` - reproducible content-addressed node packages; trigger `scripts/on-mobile-auth.cmd` when a mobile platform authenticates / enters Harbor; `deliver` stages or uses `adb` when present (does not fake device install).
+- **brctl:** `scripts/build-brctl.cmd` builds via MSYS2 UCRT64 into `mobile-platform/compiler/bin/brctl.exe`. Compiler runs `brctl assemble` when the binary exists (no longer skipped after a successful build).
+- **Delivery:** `deliver-mobile-vm-node.js` probes `adb` (PATH + SDK locations); real push when a device is online; `--wait-device` polls. Evidence: `docs/verification/mobile-delivery/`. iOS remains staged.
+- **SPIRAL auto-wire:** `bridge-terminal/gateway/mobile-auth-hook.js` fires on successful `POST /api/ws-ticket` (principal auth + ticket mint), enqueues `mobile-platform/compiler/auth-queue/`. `start-local` / `START_HARBOR` enable the hook and start `watch-auth-queue.js`. Disable with `HARBOR_MOBILE_AUTH_HOOK=0`.
 - **Fleet:** `fleet/MOBILE_PLATFORM.json`. Operator detail: `mobile-platform/README.md`, `mobile-platform/compiler/README.md`.
+- **Verification pointer:** `docs/verification/mobile-auth-hook/`, `docs/verification/mobile-delivery/`.
+
 
 ---
 ## 6. Data / fleet model

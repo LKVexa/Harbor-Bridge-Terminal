@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * HERMIT virtual WebSocket gateway — Node profile (architecture decision D-001)
+ * HERMIT virtual WebSocket gateway â€” Node profile (architecture decision D-001)
  * ---------------------------------------------------------------------------
  * One ingress port: health, public config, ticket API, static web client and the
  * WebSocket upgrade. Owns admission, identity, Origin policy, session mapping,
@@ -26,6 +26,7 @@ const { planIdentity, SCHEMA_SHA256 } = require('../ram/descriptor');
 const { detectBoundary, plan } = require('../ram/allowance');
 const { createObserver, readStatus } = require('../ram/residency');
 const { createTraffic } = require('../ram/traffic');
+const mobileAuthHook = require('./mobile-auth-hook');
 
 const PROTOCOL = 'hermit.vws.v2';
 const TICKET_COOKIE = 'vws_ticket';
@@ -168,6 +169,7 @@ function createGateway(cfg, { logSink } = {}) {
         const t = tickets.issue(principal, cors.origin);
         if (!t) return json(res, 503, { error: 'busy' }, cors.headers);
         counters.tickets++;
+        try { mobileAuthHook.onTicketIssued({ cfg, log, req, principal, ticketMeta: { expiresInMs: cfg.ticketTtlMs } }); } catch (hookErr) { try { log.error('mobile.auth_hook_throw', { reason: hookErr && hookErr.message }); } catch { /* noop */ } }
         const cookie = `${TICKET_COOKIE}=${t}; Max-Age=${Math.ceil(cfg.ticketTtlMs / 1000)}; Path=/ws/terminal; HttpOnly; SameSite=Strict${cfg.secureCookies ? '; Secure' : ''}`;
         const body = { expiresInMs: cfg.ticketTtlMs };
         if (cfg.allowQueryTicket) body.ticket = t; // only when the operator has confirmed query redaction on the whole path

@@ -1,14 +1,14 @@
-"use strict";
+﻿"use strict";
 /**
  * Harbor reproducible mobile VM node compiler.
  *
  * Architecture:
  *   Bottle Rocket 3.0 = VM substrate
  *   iOS735_LCTL / LinearAndroid_LCTL = application nodes (Bottle Rocket VMs)
- *   RODEO = sidecar to Linear Android (Gradle substitute) — not a peer app node
+ *   RODEO = sidecar to Linear Android (Gradle substitute) â€” not a peer app node
  *
- * Trigger concept: mobile platform authenticating / entering Harbor → compile a
- * Bottle Rocket-based mobile VM node package → stage/deliver toward that device.
+ * Trigger concept: mobile platform authenticating / entering Harbor â†’ compile a
+ * Bottle Rocket-based mobile VM node package â†’ stage/deliver toward that device.
  *
  * Honest limits: does not flash phones. Uses real trees (junctions). If brctl/adb
  * are absent, packages + manifests and prints next-command handoff.
@@ -19,7 +19,7 @@ const crypto = require("crypto");
 const { spawnSync } = require("child_process");
 
 const COMPILER_NAME = "harbor-mobile-vm-node-compiler";
-const COMPILER_VERSION = "0.1.0";
+const COMPILER_VERSION = "0.2.0";
 const SCHEMA_VERSION = 1;
 
 function harborRootFrom(here) {
@@ -152,7 +152,7 @@ function zipDir(srcDir, zipPath, epochSec) {
   // For reproducibility, write a tar-like deterministic file list bundle instead if zip varies.
   // We produce BOTH:
   //   files under outDir (deterministic)
-  //   node-bundle.zip via PowerShell (may vary) — primary checksum is of MANIFEST + file list hash
+  //   node-bundle.zip via PowerShell (may vary) â€” primary checksum is of MANIFEST + file list hash
   // Actually: build a deterministic .tar via pure JS (ustar-lite) for reproducibility proof.
   const entries = [];
   function walk(rel) {
@@ -204,23 +204,56 @@ function runRodeoDoctor(rodeoRoot, steps) {
   });
 }
 
-function checkBrctl(brRoot, steps) {
+function findBrctl(brRoot, harborRoot) {
   const candidates = [
+    path.join(harborRoot, "mobile-platform", "compiler", "bin", "brctl.exe"),
+    path.join(harborRoot, "mobile-platform", "compiler", "bin", "brctl"),
     path.join(brRoot, ".build", "brctl.exe"),
     path.join(brRoot, ".build", "brctl"),
     path.join(brRoot, "build", "brctl.exe"),
     path.join(brRoot, "build", "brctl"),
   ];
-  const hit = candidates.find((p) => fs.existsSync(p));
+  return candidates.find((p) => fs.existsSync(p)) || null;
+}
+
+function runBrctlAssemble(brRoot, harborRoot, steps, payloadOut) {
+  const hit = findBrctl(brRoot || "", harborRoot);
   if (!hit) {
     steps.push({
       id: "brctl-assemble",
       status: "skipped",
-      detail: "brctl not built (make operational). Node package still includes substrate pin + app LCTL pins.",
+      detail: "brctl not built. Run scripts\\build-brctl.cmd (MSYS2 UCRT64 gcc+openssl). Node package still includes substrate pin + app LCTL pins.",
     });
     return null;
   }
-  steps.push({ id: "brctl-assemble", status: "ok", detail: `found ${hit}` });
+  const boot = path.join(brRoot, "examples", "boot.mssl");
+  if (!fs.existsSync(boot)) {
+    steps.push({ id: "brctl-assemble", status: "skipped", detail: `brctl found at ${hit} but examples/boot.mssl missing` });
+    return hit;
+  }
+  ensureDir(payloadOut);
+  const imageOut = path.join(payloadOut, "boot.brimg");
+  const r = spawnSync(hit, ["assemble", boot, imageOut], {
+    cwd: brRoot,
+    encoding: "utf8",
+    timeout: 60000,
+    windowsHide: true,
+  });
+  const detailTail = ((r.stdout || "") + (r.stderr || "")).trim().slice(0, 400);
+  if (r.status === 0 && fs.existsSync(imageOut)) {
+    const st = fs.statSync(imageOut);
+    steps.push({
+      id: "brctl-assemble",
+      status: "ok",
+      detail: `assembled ${imageOut} (${st.size} bytes) via ${hit}; ${detailTail || "PASS"}`,
+    });
+    return hit;
+  }
+  steps.push({
+    id: "brctl-assemble",
+    status: "failed",
+    detail: `brctl assemble exit=${r.status}: ${detailTail || String(r.error || "unknown")}`,
+  });
   return hit;
 }
 
@@ -327,7 +360,7 @@ function main() {
     if (fs.existsSync(map)) pin("ios.map.TRANSLATION_MAP.json", map, pins);
   }
 
-  if (brProduct) checkBrctl(brProduct, steps);
+  // brctl assemble runs after payloadOut is created (see below)
 
   // Content hash from pins that have sha256
   const pinMaterial = pins
@@ -348,6 +381,7 @@ function main() {
   ensureDir(substrateOut);
   ensureDir(appOut);
   ensureDir(payloadOut);
+  if (brProduct) runBrctlAssemble(brProduct, harborRoot, steps, payloadOut);
 
   // Copy small metadata into package (not bulk LCTL trees)
   for (const f of ["PRODUCT_LINK.txt", "VERSION", "README.md"]) {
@@ -404,7 +438,7 @@ function main() {
     "  No ideviceinstaller automation is assumed by Harbor.",
     "",
     "## RODEO (Android sidecar)",
-    "  RODEO is the Gradle substitute sidecar for Linear Android — run builds via rodeo.cmd against the linked product.",
+    "  RODEO is the Gradle substitute sidecar for Linear Android â€” run builds via rodeo.cmd against the linked product.",
     "",
   ].join("\n");
   fs.writeFileSync(path.join(payloadOut, "DELIVER.md"), handoff, "utf8");

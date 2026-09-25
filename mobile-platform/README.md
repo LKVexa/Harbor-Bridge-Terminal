@@ -80,3 +80,10 @@ scripts\compile-mobile-vm-node.cmd --platform ios --dry-run
 
 Full contract, reproducibility notes, and delivery limits:
 [compiler/README.md](compiler/README.md).
+
+## Closures (2026-09-25 PT)
+
+- Build host control: `scripts\build-brctl.cmd` → `compiler/bin/brctl.exe`
+- Device delivery: `scripts\deliver-mobile-vm-node.cmd` (`--wait-device`); evidence in `docs/verification/mobile-delivery/`
+- SPIRAL auto-wire: gateway `mobile-auth-hook.js` on ticket mint; disable with `HARBOR_MOBILE_AUTH_HOOK=0`
+- Measured notes: `docs/verification/MOBILE_PLATFORM_CLOSURE.md`
