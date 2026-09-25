@@ -22,11 +22,13 @@ Harbor-Bridge-Terminal/
 │   ├── FLEET.json        roster of QN-01 … QN-50 (mode: full-copies)
 │   └── QN-01/ … QN-50/   FULL independent QVM trees + IDENTITY.json + QNODE.cmd
 ├── fleet/
-│   └── HARBOR_FLEET.json DF containers + Qnodes + focus codes
+│   ├── HARBOR_FLEET.json DF containers + Qnodes + focus codes
+│   └── QNODE_LOAD_AUDIT.md  latest load-carry audit (all 50)
 ├── scripts/
 │   ├── link-qvm.cmd
 │   ├── link-optical-desktop.cmd
 │   ├── materialize-qnode-copies.cmd
+│   ├── audit-qnode-load.cmd / .js
 │   └── generate-qnodes.js
 ├── START_HARBOR.cmd
 ├── START_HARBOR_BROWSER.cmd   launch JA21 alone against a running gateway
@@ -142,6 +144,28 @@ npm test
 | `nf` | DF_Fabric |
 
 Type a code alone to enter a focused interactive terminal for that target. Use `exit` to leave focus. Also: `qn status`, `qn where`, `qn attach qn07`.
+
+### Load audit (all 50 can carry a load)
+
+**Audited 2026-09-25 (America/Los_Angeles / PDT):** every Qnode `QN-01` … `QN-50` passed inventory, independence, fleet alignment, and a concrete load probe.
+
+| Layer | What was checked | Result |
+|-------|------------------|--------|
+| Inventory | Key entrypoints (`qvm\cli.py`, `VERSION`, `IDENTITY.json`, `QNODE.cmd`, `examples\bell.json`); ~520 files / ~16.8 MB per copy; not junctions | **50 / 50** |
+| Independence | Marker under `QN-01\runtime` does not appear under `QN-02\runtime` | **PASS** |
+| Load probe | Per node: `qvm.cli info`, `qvm.cli selftest`, `qvm.cli run examples\bell.json` (statevector Bell, 1024 shots) | **50 / 50** |
+| Fleet | `fleet\HARBOR_FLEET.json` focus codes `qn01`…`qn50`, `qnode_mode=full-copies` | **PASS** |
+
+Full per-node table (exit timings, sizes, notes): [`fleet/QNODE_LOAD_AUDIT.md`](fleet/QNODE_LOAD_AUDIT.md). Machine-readable twin: `fleet/QNODE_LOAD_AUDIT.json`.
+
+Re-run after rematerializing or changing copies:
+
+```bat
+scripts\audit-qnode-load.cmd
+```
+
+Optional: `set QNODE_AUDIT_PARALLEL=5` (default) before running. If inventory fails, rematerialize with `scripts\materialize-qnode-copies.cmd` then audit again.
+
 
 ## What was combined
 
