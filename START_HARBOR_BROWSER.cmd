@@ -32,6 +32,7 @@ if not defined URL (
 if not defined URL set "URL=http://127.0.0.1:10000/"
 
 set "JA21_START_URL=%URL%"
+set "JA21_ALLOW_PRIVATE_HOSTS=1"
 echo [START_HARBOR_BROWSER] JA21_START_URL=%JA21_START_URL%
 echo [START_HARBOR_BROWSER] launching optical desktop (omni-bin), NOT the system default browser.
 cd /d "%JA21_ROOT%"

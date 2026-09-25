@@ -118,6 +118,7 @@ npm test
 - **Source (read-only):** Downloads `VB-JA21-VEC1-Portable-Optical-Desktop-9.8.7-WindowsSafe\JA21-Portable-Desktop-9.8.7`
 - **Harbor path:** `optical-desktop\portable\` (junction). See `optical-desktop\PRODUCT_LINK.txt` and `scripts\link-optical-desktop.cmd`.
 - **Start URL:** env `JA21_START_URL` and/or `host\Start-JA21Browser.ps1 -StartUrl …` — presenter navigates the active tab on load.
+- **Private / loopback hosts:** Harbor sets `JA21_ALLOW_PRIVATE_HOSTS=1` so `127.0.0.1` is allowed (JA21 denies private addresses by default).
 - **Bulk tree (~800 MB)** is gitignored; clone + `link-optical-desktop.cmd` restores operability when the portable exists under Downloads (or update `PRODUCT_LINK.txt`).
 - **Electron `vendor/browser`:** optional secondary slot for an in-process BrowserView adapter. Primary UX is the standalone WPF omni-bin window above.
 

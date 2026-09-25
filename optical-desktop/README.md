@@ -27,7 +27,7 @@ JA21 9.8.7 reads **`JA21_START_URL`** (environment) and/or PowerShell
 `-StartUrl` on `host\Start-JA21Browser.ps1`. On window load the presenter
 navigates the active tab to that URL (omni address / start navigation).
 
-Harbor sets both after the gateway listens on `127.0.0.1:<port>/`:
+Harbor sets both after the gateway listens on `127.0.0.1:<port>/`, and sets `JA21_ALLOW_PRIVATE_HOSTS=1` so loopback is inside the JA21 network boundary (otherwise JA21 shows *Addresses on this machine or this private network are outside the JA21 network boundary*):
 
 - `bridge-terminal\tools\start-local.js` — primary path from `START_HARBOR.cmd`
 - `START_HARBOR_BROWSER.cmd` — launch JA21 alone (probes ports 10000–10019 if

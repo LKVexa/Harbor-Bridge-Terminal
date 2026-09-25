@@ -115,6 +115,8 @@ function launchJa21OpticalDesktop(harborUrl) {
   const env = {
     ...process.env,
     JA21_START_URL: harborUrl,
+    // Harbor is loopback-only; JA21 denies private/loopback hosts unless this is set.
+    JA21_ALLOW_PRIVATE_HOSTS: '1',
     HARBOR_ROOT: harborRoot
   };
   // Launch via PowerShell with -StartUrl so the omni/start navigation is explicit.
