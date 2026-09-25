@@ -1,5 +1,7 @@
 # Harbor Bridge Terminal
 
+>Harbor Bridge Terminal: UC containership + HERMIT/SPIRAL bridge on local 127. 50+ cubbies (QVM Qnodes, DF/containership slots, mobile Bottle Rocket MC-*). Browser projects cubbies on 127.0.0.1 — no VM download. Mobile requires a live BR cubby before QVM/CS access. Product Preview Tester License (evaluation).
+
 A combined workspace that puts **Unikernel Containership UC-2.8.0** (edge atoms) beside a **live virtual console** â€” the HERMIT / SPIRAL terminal with its RAM-resident virtual WebSocket bridge â€” plus a **50Ã— QVM Qnode fleet** (full independent copies), the **DF fabric** containers, **VB-JA21 Portable Optical Desktop 9.8.7** as the Harbor browser (omni-bin window), and a **mobile platform** whose application nodes are **Bottle Rocket VMs** (iOS735_LCTL + LinearAndroid_LCTL), with **RODEO** as the Linear Android Gradle-substitute **sidecar**, plus **mobile cubbies** (Bottle Rocket sessions projected on local 127; per-cubby `brctl serve` APDU REPL proxied into the projection page; cubby materializer; per-cubby brctl serve APDU proxy into projection; no VM download).
 
 Think of the containership as the harbor yard and the virtual console as the bridge: one place to inspect the ship, run edge checks, talk to sessions over a bounded, ledgered websocket, and focus into individual Qnodes or DF containers. The local gateway URL opens inside JA21, **not** the system default browser.
@@ -31,7 +33,7 @@ cd Harbor-Bridge-Terminal
 git config core.longpaths true
 ```
 
-Enabling long paths is a **secondary** mitigation. This repo also **shortens** the worst tracked paths (flattened duplicate atom/variant folders, shortened checklist names, dropped `build/` / `*.egg-info` artifacts from tracking). Aim: relative paths comfortably under ~160–170 characters so a ~80-character Windows prefix still fits under 260. See `docs/verification/path-length-after.txt` after the path-hygiene commit.
+Enabling long paths is a **secondary** mitigation. This repo also **shortens** the worst tracked paths (flattened duplicate atom/variant folders, shortened checklist names, dropped `build/` / `*.egg-info` artifacts from tracking). Measured after path hygiene: max relative path **144** characters (0 paths >=160). See docs/verification/path-length-after.txt.
 
 Do **not** commit bulky junctions (`mobile-platform/**/product/`, `optical-desktop/portable/`, compiler `out/` / sessions).
 
