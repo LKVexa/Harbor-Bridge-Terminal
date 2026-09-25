@@ -1,0 +1,27 @@
+name: inv65-capability-providers
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv65_capability_providers}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install -c inv65_capability_providers/lock/constraints.txt "cryptography"
+      - run: sh inv65_capability_providers/ci/scripts/ci.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            inv65_capability_providers/evidence/
+            inv65_capability_providers/conformance/PK_GATE_RESULTS.json
+            inv65_capability_providers/sbom/
+            inv65_capability_providers/provenance/
+            inv65_capability_providers/release/manifest.json

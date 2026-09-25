@@ -1,0 +1,1644 @@
+{
+"component": "C53",
+"items": [
+{
+"id": "C53-001",
+"task_class": "IMPLEMENT",
+"area": "01. Storage policy scope",
+"req": "Inventory every file the application may create.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Retention table lists major data classes but not an exhaustive per-file inventory.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention",
+"gateway/snapshot-store.js"
+]
+},
+{
+"id": "C53-002",
+"task_class": "IMPLEMENT",
+"area": "01. Storage policy scope",
+"req": "Inventory every directory the application may modify.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": ".vws-local/, VWS_SNAPSHOT_DIR mentioned; no consolidated directory inventory.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Run-it-locally",
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-003",
+"task_class": "IMPLEMENT",
+"area": "01. Storage policy scope",
+"req": "Distinguish image contents from runtime-generated files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "States no runtime deps / nothing to npm install, but no explicit code-level classification of image vs runtime files.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#6-Repository-split",
+"docs/RELEASE.md#Supply-chain"
+]
+},
+{
+"id": "C53-004",
+"task_class": "IMPLEMENT",
+"area": "01. Storage policy scope",
+"req": "Distinguish connection-local memory from local disk storage.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Retention table: session workspace is worker memory; snapshots are disk in VWS_SNAPSHOT_DIR \u2014 memory vs disk explicitly distinguished.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention",
+"docs/RESOURCE_MODEL.md#Per-session-memory-bound-gateway-side"
+]
+},
+{
+"id": "C53-005",
+"task_class": "SPECIFY",
+"area": "01. Storage policy scope",
+"req": "Identify session data that must survive process replacement.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Retention row states workspace is lost on instance replacement unless snapshots are enabled, identifying what must survive.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention",
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C53-006",
+"task_class": "SPECIFY",
+"area": "01. Storage policy scope",
+"req": "Identify data that may be discarded safely.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Retention table marks terminal output (browser only) and unsnapshotted workspace as safely discardable on replacement.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-007",
+"task_class": "DOCUMENT",
+"area": "01. Storage policy scope",
+"req": "Record the article's warning about ephemeral local storage.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Both cite that the platform filesystem may be ephemeral and snapshots/workspace are lost with the instance.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention",
+"gateway/snapshot-store.js:6-7"
+]
+},
+{
+"id": "C53-008",
+"task_class": "VERIFY",
+"area": "01. Storage policy scope",
+"req": "VERIFY current filesystem behavior for the selected hosting configuration.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "No Docker/Render/staging environment was available to verify actual hosting filesystem behavior.",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/OPERATIONS.md#Deployment"
+]
+},
+{
+"id": "C53-009",
+"task_class": "SPECIFY",
+"area": "01. Storage policy scope",
+"req": "Define the storage-policy owner.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No document names a storage-policy owner distinct from general decision ownership.",
+"prior_evidence": []
+},
+{
+"id": "C53-010",
+"task_class": "IMPLEMENT",
+"area": "01. Storage policy scope",
+"req": "Approve a data-durability classification.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No approved data-durability classification table exists in the candidate.",
+"prior_evidence": []
+},
+{
+"id": "C53-011",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify temporary receive or processing files if any are selected.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification of this specific data class is recorded in the docs.",
+"prior_evidence": []
+},
+{
+"id": "C53-012",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify application logs if written locally.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Logs documented as stderr JSON lines (not local files) but not formally 'classified' in a durability table.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Health-and-logs"
+]
+},
+{
+"id": "C53-013",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify generated caches.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification of this specific data class is recorded in the docs.",
+"prior_evidence": []
+},
+{
+"id": "C53-014",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify downloaded runtime artifacts if any are selected.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification of this specific data class is recorded in the docs.",
+"prior_evidence": []
+},
+{
+"id": "C53-015",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify session metadata.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Snapshot record format (v, tenant, sub, savedAt, state) documents session metadata classification.",
+"prior_evidence": [
+"gateway/snapshot-store.js:20",
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-016",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify uploaded user content if the application supports it.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification of this specific data class is recorded in the docs.",
+"prior_evidence": []
+},
+{
+"id": "C53-017",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify authentication-related cache files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification of this specific data class is recorded in the docs.",
+"prior_evidence": []
+},
+{
+"id": "C53-018",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Classify diagnostic crash artifacts.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification of this specific data class is recorded in the docs.",
+"prior_evidence": []
+},
+{
+"id": "C53-019",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Assign a retention and deletion rule to each class.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Retention table assigns lifetimes to several classes (output, workspace, snapshots, DF runs, logs) but not to caches/crash artifacts.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-020",
+"task_class": "IMPLEMENT",
+"area": "02. Data classification",
+"req": "Mark unsupported file-producing features out of scope.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Notes Photon/browser pane not installed and DF run records are operator-managed, but no formal out-of-scope marking.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#5-Source-map",
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-021",
+"task_class": "SPECIFY",
+"area": "03. Write-location inventory",
+"req": "Identify the application's working directory.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "start-local.js creates and binds under .vws-local/ as the working/data directory, documented in OPERATIONS.md.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Run-it-locally",
+"tools/start-local.js"
+]
+},
+{
+"id": "C53-022",
+"task_class": "SPECIFY",
+"area": "03. Write-location inventory",
+"req": "Identify the runtime temporary directory.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No runtime temporary directory (e.g. os.tmpdir()) is identified in the docs or grepped code.",
+"prior_evidence": []
+},
+{
+"id": "C53-023",
+"task_class": "SPECIFY",
+"area": "03. Write-location inventory",
+"req": "Identify any explicitly writable application directory.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SNAPSHOT_DIR is the explicitly writable application directory when snapshots are enabled.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Configuration-reference",
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-024",
+"task_class": "SPECIFY",
+"area": "03. Write-location inventory",
+"req": "Identify tool-created cache directories.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No tool-created cache directory is identified.",
+"prior_evidence": []
+},
+{
+"id": "C53-025",
+"task_class": "SPECIFY",
+"area": "03. Write-location inventory",
+"req": "Identify module installation or update paths.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Hosted build has zero third-party runtime deps and nothing to npm install in the image; module install paths explicitly out of scope.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#6-Repository-split"
+]
+},
+{
+"id": "C53-026",
+"task_class": "IMPLEMENT",
+"area": "03. Write-location inventory",
+"req": "Avoid unreviewed writes into runtime installation directories.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No code-level guard or review process against writes into runtime install dirs is evidenced.",
+"prior_evidence": []
+},
+{
+"id": "C53-027",
+"task_class": "IMPLEMENT",
+"area": "03. Write-location inventory",
+"req": "Avoid assuming the developer machine's paths exist in the container.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "DF_ROOT/DF_Fabric location is discovered dynamically (./df, parent, DF_ROOT) rather than hardcoded, but this is not stated as a general container-path policy.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Run-it-locally",
+"docs/ARCHITECTURE.md D-002"
+]
+},
+{
+"id": "C53-028",
+"task_class": "DOCUMENT",
+"area": "03. Write-location inventory",
+"req": "Record required permissions for each write location.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Snapshot dir/file modes (0700/0600) and principals file mode 0600 are documented; not all write locations covered.",
+"prior_evidence": [
+"gateway/snapshot-store.js:14,20",
+"docs/OPERATIONS.md#Principals"
+]
+},
+{
+"id": "C53-029",
+"task_class": "TEST",
+"area": "03. Write-location inventory",
+"req": "Test the image under the intended process identity.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "No Docker image/process-identity test was run (no Docker daemon available).",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run"
+]
+},
+{
+"id": "C53-030",
+"task_class": "DOCUMENT",
+"area": "03. Write-location inventory",
+"req": "Document all intentional runtime write locations.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Write locations are mentioned across two docs but not consolidated into one authoritative inventory.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention",
+"docs/OPERATIONS.md#Configuration-reference"
+]
+},
+{
+"id": "C53-031",
+"task_class": "IMPLEMENT",
+"area": "04. Durability decisions",
+"req": "Move required durable session state to the selected shared-state architecture.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-004: single-instance profile, no shared-state architecture selected; C05 shared datastore is explicitly NOT_APPLICABLE.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-032",
+"task_class": "SPECIFY",
+"area": "04. Durability decisions",
+"req": "Define durable storage for any selected persistent user files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No persistent user files feature is defined or designed for durable storage.",
+"prior_evidence": []
+},
+{
+"id": "C53-033",
+"task_class": "IMPLEMENT",
+"area": "04. Durability decisions",
+"req": "Avoid treating local cache content as authoritative session state.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Snapshot restore explicitly starts a brand-new session (never resumes a run), so local cache/snapshot is not treated as authoritative live state.",
+"prior_evidence": [
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-034",
+"task_class": "SPECIFY",
+"area": "04. Durability decisions",
+"req": "Define reconstruction for disposable caches.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No caches are defined, so no reconstruction procedure exists.",
+"prior_evidence": []
+},
+{
+"id": "C53-035",
+"task_class": "SPECIFY",
+"area": "04. Durability decisions",
+"req": "Define recovery for missing temporary files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Restore validates integrity/shape/depth/quotas; any failure 'starts clean and says so' -- defines recovery for a missing/bad snapshot file.",
+"prior_evidence": [
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-036",
+"task_class": "SPECIFY",
+"area": "04. Durability decisions",
+"req": "Define behavior when durable storage is unavailable.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented behavior for VWS_SNAPSHOT_DIR being unwritable/unavailable at startup.",
+"prior_evidence": []
+},
+{
+"id": "C53-037",
+"task_class": "SPECIFY",
+"area": "04. Durability decisions",
+"req": "Identify data that should not be written to disk at all.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Explicit list of what snapshots never save: sockets, promises, running command, input line, service environment, tokens.",
+"prior_evidence": [
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-038",
+"task_class": "DOCUMENT",
+"area": "04. Durability decisions",
+"req": "Record any deliberate local-persistence feature as a separate architectural decision.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Snapshots (off by default) are mentioned inside D-004 but not recorded as their own standalone architecture decision entry.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C53-039",
+"task_class": "VERIFY",
+"area": "04. Durability decisions",
+"req": "VERIFY platform support before relying on an attached persistence feature.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Target host/container filesystem for VWS_SNAPSHOT_DIR was never measured; only this authoring host was used.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#Measured",
+"docs/VALIDATION.md#Not-run"
+]
+},
+{
+"id": "C53-040",
+"task_class": "IMPLEMENT",
+"area": "04. Durability decisions",
+"req": "Keep unselected persistence features out of mandatory scope.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SNAPSHOTS defaults to 0 (off); snapshot persistence stays outside mandatory scope unless explicitly enabled.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Configuration-reference"
+]
+},
+{
+"id": "C53-041",
+"task_class": "IMPLEMENT",
+"area": "05. Container replacement tests",
+"req": "Create synthetic temporary state in a test container.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "No Docker/Render container replacement was ever performed (no daemon/registry/authorization).",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/OPERATIONS.md#Deployment"
+]
+},
+{
+"id": "C53-042",
+"task_class": "IMPLEMENT",
+"area": "05. Container replacement tests",
+"req": "Replace the container through the approved deployment path.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "No Docker/Render container replacement was ever performed (no daemon/registry/authorization).",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/OPERATIONS.md#Deployment"
+]
+},
+{
+"id": "C53-043",
+"task_class": "MEASURE",
+"area": "05. Container replacement tests",
+"req": "Observe which local files remain accessible.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "No Docker/Render container replacement was ever performed (no daemon/registry/authorization).",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/OPERATIONS.md#Deployment"
+]
+},
+{
+"id": "C53-044",
+"task_class": "IMPLEMENT",
+"area": "05. Container replacement tests",
+"req": "Compare observed behavior with the documented hosting model.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "No Docker/Render container replacement was ever performed (no daemon/registry/authorization).",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/OPERATIONS.md#Deployment"
+]
+},
+{
+"id": "C53-045",
+"task_class": "VERIFY",
+"area": "05. Container replacement tests",
+"req": "Verify the application can start without disposable local state.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No cited test verifies startup without pre-existing disposable local state.",
+"prior_evidence": []
+},
+{
+"id": "C53-046",
+"task_class": "VERIFY",
+"area": "05. Container replacement tests",
+"req": "Verify sessions restore through the intended nonlocal source when applicable.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Single-instance profile has no nonlocal session-restore source; multi-instance continuity (C05/I039) is NOT_APPLICABLE.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-047",
+"task_class": "VERIFY",
+"area": "05. Container replacement tests",
+"req": "Verify missing caches are recreated safely.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No caches exist/are tested for safe recreation.",
+"prior_evidence": []
+},
+{
+"id": "C53-048",
+"task_class": "VERIFY",
+"area": "05. Container replacement tests",
+"req": "Verify missing temporary files do not crash unrelated sessions.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'snapshot tamper' failure experiment (I054) exercises a bad/missing snapshot without crashing other sessions.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"docs/RECOVERY.md#Failure-experiments-run"
+]
+},
+{
+"id": "C53-049",
+"task_class": "DOCUMENT",
+"area": "05. Container replacement tests",
+"req": "Record the exact storage configuration used.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No document records the exact storage configuration (host/filesystem type) used for any replacement test, since none was run.",
+"prior_evidence": []
+},
+{
+"id": "C53-050",
+"task_class": "IMPLEMENT",
+"area": "05. Container replacement tests",
+"req": "Avoid generalizing one replacement test to untested storage configurations.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "General 'not measured/blocked' disclaimers exist but no replacement test was ever run to generalize from in the first place.",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/RESOURCE_MODEL.md#Measured"
+]
+},
+{
+"id": "C53-051",
+"task_class": "SPECIFY",
+"area": "06. Capacity controls",
+"req": "Define a maximum application-owned temporary disk budget.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Per-file snapshot cap (<=60000-65536 bytes) is defined; no overall temp-disk budget across all sessions/snapshots.",
+"prior_evidence": [
+"gateway/snapshot-store.js:13",
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-052",
+"task_class": "IMPLEMENT",
+"area": "06. Capacity controls",
+"req": "Bound growth of local logs if local logging is selected.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Logs are JSON lines to stderr only (platform-managed), not written to local disk, so no local log growth to bound.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Health-and-logs"
+]
+},
+{
+"id": "C53-053",
+"task_class": "IMPLEMENT",
+"area": "06. Capacity controls",
+"req": "Bound cache size if caches are selected.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No cache exists/selected, so no bound is defined.",
+"prior_evidence": []
+},
+{
+"id": "C53-054",
+"task_class": "IMPLEMENT",
+"area": "06. Capacity controls",
+"req": "Bound uploaded temporary content if uploads are selected.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No upload feature exists, so no bound is defined.",
+"prior_evidence": []
+},
+{
+"id": "C53-055",
+"task_class": "SPECIFY",
+"area": "06. Capacity controls",
+"req": "Define cleanup triggers for obsolete temporary files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "TTL-based cleanup: expired snapshot file is unlinked on load (default 7-day TTL).",
+"prior_evidence": [
+"gateway/snapshot-store.js:30",
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-056",
+"task_class": "SPECIFY",
+"area": "06. Capacity controls",
+"req": "Define behavior when local storage becomes unavailable.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented behavior for local storage becoming unavailable mid-run.",
+"prior_evidence": []
+},
+{
+"id": "C53-057",
+"task_class": "SPECIFY",
+"area": "06. Capacity controls",
+"req": "Define behavior when writes fail due to capacity.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "save() only rejects state exceeding maxBytes; ENOSPC/write-failure behavior on the OS write itself is not documented or handled.",
+"prior_evidence": []
+},
+{
+"id": "C53-058",
+"task_class": "TEST",
+"area": "06. Capacity controls",
+"req": "Test a controlled write failure.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No test simulates a controlled disk write failure (e.g. ENOSPC).",
+"prior_evidence": []
+},
+{
+"id": "C53-059",
+"task_class": "TEST",
+"area": "06. Capacity controls",
+"req": "Test application startup with an unwritable optional cache directory.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No test starts the app with an unwritable VWS_SNAPSHOT_DIR.",
+"prior_evidence": []
+},
+{
+"id": "C53-060",
+"task_class": "DOCUMENT",
+"area": "06. Capacity controls",
+"req": "Record resource limits used in storage tests.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No storage-capacity test exists to record limits for.",
+"prior_evidence": []
+},
+{
+"id": "C53-061",
+"task_class": "SPECIFY",
+"area": "07. Sensitive data",
+"req": "Identify file classes that may contain credentials or private payloads.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Assets table names bearer tokens/principals file; snapshot doc lists tokens among data never persisted.",
+"prior_evidence": [
+"docs/SECURITY.md#Assets-and-trust-boundaries",
+"docs/RECOVERY.md#Quiescent-snapshots"
+]
+},
+{
+"id": "C53-062",
+"task_class": "IMPLEMENT",
+"area": "07. Sensitive data",
+"req": "Avoid writing raw credentials to ordinary local files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Principals file stores only tokenSha256; the raw token is printed once and never written to disk.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Principals",
+"tools/mkprincipal.js"
+]
+},
+{
+"id": "C53-063",
+"task_class": "IMPLEMENT",
+"area": "07. Sensitive data",
+"req": "Redact sensitive content in persisted diagnostics.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Logger drops any field whose key matches /token|cookie|secret|authorization|ticket$|payload|data/i before emitting.",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C53-064",
+"task_class": "IMPLEMENT",
+"area": "07. Sensitive data",
+"req": "Restrict permissions for approved sensitive temporary files.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Snapshot dir mode 0700, snapshot file mode 0600; principals file documented as mode 0600.",
+"prior_evidence": [
+"gateway/snapshot-store.js:14,20",
+"docs/OPERATIONS.md#Principals"
+]
+},
+{
+"id": "C53-065",
+"task_class": "IMPLEMENT",
+"area": "07. Sensitive data",
+"req": "Delete sensitive temporary artifacts according to the selected policy.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "TTL expiry deletes the snapshot file on next load; remove() deletes it directly.",
+"prior_evidence": [
+"gateway/snapshot-store.js:24-34"
+]
+},
+{
+"id": "C53-066",
+"task_class": "IMPLEMENT",
+"area": "07. Sensitive data",
+"req": "Avoid including runtime-generated secret files in image builds.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'No build-time secret is needed... nothing is baked into the image' \u2014 runtime-generated secret files are not part of the image build.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Configuration-reference"
+]
+},
+{
+"id": "C53-067",
+"task_class": "IMPLEMENT",
+"area": "07. Sensitive data",
+"req": "Avoid attaching private local files to routine diagnostic reports.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Log redaction excludes payload/data-like fields generically, but no dedicated 'diagnostic report' feature exists to verify against.",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C53-068",
+"task_class": "TEST",
+"area": "07. Sensitive data",
+"req": "Test cleanup using synthetic sensitive markers.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No test plants a synthetic sensitive marker file and verifies cleanup removes it.",
+"prior_evidence": []
+},
+{
+"id": "C53-069",
+"task_class": "DOCUMENT",
+"area": "07. Sensitive data",
+"req": "Document limitations of secure deletion in the chosen environment.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No document discusses limitations of secure deletion (e.g. unlinkSync is not a secure erase) in this environment.",
+"prior_evidence": []
+},
+{
+"id": "C53-070",
+"task_class": "DOCUMENT",
+"area": "07. Sensitive data",
+"req": "Record accepted residual storage risks.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Retention table records the accepted risk that snapshots disappear with an ephemeral instance unless persistent storage is mounted.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-071",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Remove completed temporary processing artifacts.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "save() writes to a .tmp file then renameSync's over the target; no lingering completed-write temp artifact.",
+"prior_evidence": [
+"gateway/snapshot-store.js:19-21"
+]
+},
+{
+"id": "C53-072",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Remove abandoned files after failed operations.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "If writeFileSync to the .tmp path throws, no code path removes a partially-written tmp file; not tested.",
+"prior_evidence": []
+},
+{
+"id": "C53-073",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Remove files belonging to terminated sessions when applicable.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "remove(principal) exists to delete a principal's snapshot, but no cited call site ties it to session/tenant termination.",
+"prior_evidence": [
+"gateway/snapshot-store.js:34"
+]
+},
+{
+"id": "C53-074",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Prevent cleanup from deleting application source or runtime binaries.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "file() computes paths only as sha256(...)+'.json' under the configured dir; cleanup can never reach source or binaries outside it.",
+"prior_evidence": [
+"gateway/snapshot-store.js:15"
+]
+},
+{
+"id": "C53-075",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Prevent cleanup from deleting unrelated mounted storage.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Store is confined to its own mkdir'd dir; no path traversal or reference to other mounts.",
+"prior_evidence": [
+"gateway/snapshot-store.js:13-15"
+]
+},
+{
+"id": "C53-076",
+"task_class": "SPECIFY",
+"area": "08. Cleanup",
+"req": "Define ownership for each cleanup path.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No document assigns an owner to any specific cleanup path.",
+"prior_evidence": []
+},
+{
+"id": "C53-077",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Make repeated cleanup safe.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "unlink calls are wrapped in try/catch and are naturally idempotent (missing file is a no-op failure).",
+"prior_evidence": [
+"gateway/snapshot-store.js:30,34"
+]
+},
+{
+"id": "C53-078",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Bound cleanup work during service shutdown.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Shutdown sequence snapshots only if enabled and quiescent, then proceeds under the VWS_SHUTDOWN_MS hard budget (20s default).",
+"prior_evidence": [
+"docs/RECOVERY.md#Shutdown"
+]
+},
+{
+"id": "C53-079",
+"task_class": "TEST",
+"area": "08. Cleanup",
+"req": "Test startup with leftover disposable files in a controlled environment.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No test starts the gateway with pre-existing leftover snapshot/temp files to check startup behavior.",
+"prior_evidence": []
+},
+{
+"id": "C53-080",
+"task_class": "VERIFY",
+"area": "08. Cleanup",
+"req": "Verify cleanup errors are visible without terminating unrelated work unnecessarily.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "snapshot-store.js swallows unlink errors silently (catch{/*noop*/}) rather than surfacing them; no visibility mechanism or test found.",
+"prior_evidence": []
+},
+{
+"id": "C53-081",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Document how operators inspect application-owned storage use.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented operator procedure to inspect application-owned disk storage use (only /live exposes session counts, not disk usage).",
+"prior_evidence": []
+},
+{
+"id": "C53-082",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Document what must not be assumed recoverable after replacement.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "States session workspace is lost on instance replacement unless snapshots are on -- explicit non-recoverable-by-default statement.",
+"prior_evidence": [
+"docs/RECOVERY.md#Retention"
+]
+},
+{
+"id": "C53-083",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track write failures by safe category.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No counters/metrics for write failures by category exist in gateway code (checked gateway/server.js /live output).",
+"prior_evidence": []
+},
+{
+"id": "C53-084",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track temporary storage growth.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No tracking of temporary/snapshot storage growth exists.",
+"prior_evidence": []
+},
+{
+"id": "C53-085",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track cleanup failures.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "Cleanup (unlink) failures are caught and discarded, not tracked/counted.",
+"prior_evidence": []
+},
+{
+"id": "C53-086",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Provide a missing-local-state troubleshooting procedure.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No missing-local-state troubleshooting procedure is documented (only general Rollback/Migration notes in OPERATIONS.md).",
+"prior_evidence": []
+},
+{
+"id": "C53-087",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Provide a disk-capacity troubleshooting procedure.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No disk-capacity troubleshooting procedure is documented.",
+"prior_evidence": []
+},
+{
+"id": "C53-088",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Include storage configuration in deployment evidence.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Storage-related env vars (VWS_SNAPSHOTS, VWS_SNAPSHOT_DIR, VWS_SNAPSHOT_TTL_MS) are documented, but no deployment ever occurred to produce deployment evidence.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Configuration-reference"
+]
+},
+{
+"id": "C53-089",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Assign ownership for durability-policy changes.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No named owner for durability-policy changes.",
+"prior_evidence": []
+},
+{
+"id": "C53-090",
+"task_class": "REVIEW",
+"area": "09. Operations",
+"req": "Review new file-producing features against the classification table.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No classification table exists (see C53-010), so no review-against-table process can be verified.",
+"prior_evidence": []
+},
+{
+"id": "C53-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the data-durability classification.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No standalone published classification/inventory/budget document exists; content is scattered across RECOVERY.md/OPERATIONS.md without a formal publish step.",
+"prior_evidence": []
+},
+{
+"id": "C53-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the runtime write-location inventory.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No standalone published classification/inventory/budget document exists; content is scattered across RECOVERY.md/OPERATIONS.md without a formal publish step.",
+"prior_evidence": []
+},
+{
+"id": "C53-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish approved disk budgets and cleanup rules.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No standalone published classification/inventory/budget document exists; content is scattered across RECOVERY.md/OPERATIONS.md without a formal publish step.",
+"prior_evidence": []
+},
+{
+"id": "C53-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link replacement and reconstruction tests.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No replacement/reconstruction tests exist to link (see C53-041..044, BLOCKED).",
+"prior_evidence": []
+},
+{
+"id": "C53-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link write-failure and capacity tests.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No write-failure or capacity tests exist to link (see C53-058/059).",
+"prior_evidence": []
+},
+{
+"id": "C53-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link sensitive-marker cleanup tests.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No sensitive-marker cleanup test exists to link (see C53-068).",
+"prior_evidence": []
+},
+{
+"id": "C53-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document selected external durable storage dependencies.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Single-instance profile selects no external durable storage dependency (no shared datastore selected).",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C53-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record verified hosting filesystem behavior.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Hosting filesystem behavior was never verified on a real target host/container (no Docker/Render access).",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run"
+]
+},
+{
+"id": "C53-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List untested persistence assumptions.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'Not run'/'Not measured' lists name several untested assumptions (target container, WAN, sustained load) but are not framed specifically as persistence assumpti",
+"prior_evidence": [
+"docs/VALIDATION.md#Not-run",
+"docs/RESOURCE_MODEL.md#Measured"
+]
+},
+{
+"id": "C53-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve storage policy only when required data does not depend on unproven local durability.",
+"ram_overlay": "Default to no application-owned payload/history/VFS persistence or disk-spool fallback. Distinguish this from an absolute no-disk guarantee: runtime files, browser storage, logs, swap, and dumps require separate disclosures.",
+"challenge": "Restart with synthetic state and confirm declared loss; trace application writes without disabling OS safeguards.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "No formal approval statement ties storage-policy sign-off to unproven local durability being out of the required-data path.",
+"prior_evidence": []
+}
+]
+}

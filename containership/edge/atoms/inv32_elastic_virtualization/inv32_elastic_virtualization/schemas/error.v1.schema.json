@@ -1,0 +1,70 @@
+{
+ "$id": "urn:inv32:schema:PK_ERROR:1.0",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "category": {
+   "enum": [
+    "validation",
+    "policy",
+    "authentication",
+    "authorization",
+    "dependency",
+    "timeout",
+    "conflict",
+    "stale_state",
+    "integrity",
+    "overload",
+    "unavailable",
+    "internal"
+   ]
+  },
+  "code": {
+   "pattern": "^[a-z_]{1,64}$",
+   "type": "string"
+  },
+  "details": {
+   "type": "object"
+  },
+  "message": {
+   "maxLength": 1024,
+   "type": "string"
+  },
+  "outcome": {
+   "enum": [
+    "success",
+    "partial_success",
+    "degraded_success",
+    "rejected",
+    "retryable_failure",
+    "terminal_failure",
+    "unknown_outcome",
+    "rolled_back"
+   ]
+  },
+  "retry": {
+   "enum": [
+    "retryable",
+    "conditional",
+    "terminal"
+   ]
+  },
+  "schema": {
+   "const": "PK_ERROR/1"
+  },
+  "trace_id": {
+   "pattern": "^[0-9a-f]{32}$",
+   "type": "string"
+  }
+ },
+ "required": [
+  "schema",
+  "code",
+  "category",
+  "outcome",
+  "retry",
+  "message",
+  "details"
+ ],
+ "type": "object"
+}

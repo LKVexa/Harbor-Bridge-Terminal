@@ -1,0 +1,27 @@
+[Unit]
+Description=GAP-15 runtime compatibility certification
+After=network-online.target time-sync.target
+Wants=network-online.target time-sync.target
+
+[Service]
+User=gap15
+Group=gap15
+WorkingDirectory=/opt/gap15
+ExecStartPre=/usr/bin/python3 -m gap15_runtime_compatibility_certification.production.cli verify --db /var/lib/gap15/gap15.db
+ExecStart=/usr/bin/python3 -m gap15_runtime_compatibility_certification.production.serve --config /etc/gap15/config.json
+TimeoutStopSec=15
+KillSignal=SIGTERM
+Restart=on-failure
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/gap15
+LoadCredential=signing-key-ref:/etc/gap15/credentials/signing-key-ref
+MemoryMax=1G
+CPUQuota=200%
+LimitNOFILE=4096
+TasksMax=256
+
+[Install]
+WantedBy=multi-user.target

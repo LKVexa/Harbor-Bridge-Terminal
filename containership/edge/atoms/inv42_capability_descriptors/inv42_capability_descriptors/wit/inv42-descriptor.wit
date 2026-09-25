@@ -1,0 +1,25 @@
+// INV-42 descriptor boundary for INV-11 (Interface contract language). Draft.
+package pk:inv42@4.3.0;
+
+interface descriptor {
+  record wire-descriptor {
+    schema: string,   // must equal "PK_DESCRIPTOR/2"
+    number: u64,      // >= 3
+    %type: string,    // <= 128 UTF-8 bytes, no control chars
+    table: string,    // 32 lowercase hex
+    auth: string,     // 64 lowercase hex; bearer secret - never log
+  }
+  enum error-code {
+    invalid-descriptor, foreign-descriptor, descriptor-closed, type-mismatch,
+    table-full, session-exhausted, forked-table, table-destroyed,
+    component-disabled, key-unavailable,
+  }
+  resource table {
+    constructor(owner: string);
+    open: func(resource-type: string) -> result<wire-descriptor, error-code>;
+    import: func(d: wire-descriptor) -> result<wire-descriptor, error-code>;
+    close: func(d: wire-descriptor) -> result<_, error-code>;
+  }
+}
+
+world inv42 { export descriptor; }

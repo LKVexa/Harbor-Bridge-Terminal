@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gap05-state-replication-consistency-model"
+version = "4.3.0"
+description = "GAP-05 state replication/consistency model: causal core plus production layer (identity, provenance, WAL, snapshots, membership fencing, audit, anti-entropy)."
+requires-python = ">=3.10"
+license = { text = "UNSPECIFIED - owner must declare (see THIRD-PARTY-NOTICES.md)" }
+dependencies = ["cryptography==46.0.7"]
+
+[project.optional-dependencies]
+integration = []  # pk_core is supplied by the surrounding platform; not on PyPI
+
+[project.scripts]
+gap05-admin = "gap05_state_replication_consistency_model.production.cli:main"
+
+[tool.setuptools]
+packages = ["gap05_state_replication_consistency_model", "gap05_state_replication_consistency_model.production"]
+package-dir = { "gap05_state_replication_consistency_model" = "." }
+
+[tool.setuptools.package-data]
+gap05_state_replication_consistency_model = ["schemas/*.json", "schemas/corpus/*.json", "spec/*.tla", "*.md", "VERSION", "*.json"]

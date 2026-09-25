@@ -1,0 +1,19 @@
+{
+ "schema": "INV41_EXCEPTIONS/1",
+ "policy": "Every waiver needs requirement_id, risk, rationale, compensating_control, owner, approval, created, expires. High/critical waivers must expire within 90 days. An expired unresolved waiver fails the production gate. Non-expiring high-risk waivers are prohibited.",
+ "entries": [
+  {"id": "WVR-001", "requirement_id": "REQ-ISO-003", "kind": "exception", "risk": "high",
+   "description": "Pure-Python capability checks are not a hostile-code boundary; adversarial workloads would need namespaces/seccomp/Wasm/microVM.",
+   "rationale": "No such runtime is in scope for this repository.",
+   "compensating_control": "Production profile forbids adversarial in-process workloads (docs/OPERATIONS.md §Isolation); isolation.run_isolated for semi-trusted code; profile_status() reports adversarial_production_ready=false.",
+   "owner": "accountable_owner", "approval": null, "created": "2026-09-22", "expires": "2026-12-21", "remediation_target": "B-ISO-01"},
+  {"id": "DEBT-001", "requirement_id": "REQ-SUP-002", "kind": "debt", "risk": "medium",
+   "description": "Release manifest and configuration are signed with development HMAC keys, not an approved release identity.",
+   "rationale": "No signing identity exists yet.", "compensating_control": "Manifest marks signature UNAPPROVED_DEV; release gate refuses GO.",
+   "owner": "release_approver", "approval": null, "created": "2026-09-22", "expires": "2026-12-21", "remediation_target": "B-SIGN-01"},
+  {"id": "DEP-001", "requirement_id": "REQ-CMP-001", "kind": "deprecation", "risk": "low",
+   "description": "INV41_CONFIG/0 ('grants' key) is deprecated; migrated automatically to /1.",
+   "rationale": "Backward compatibility for early configs.", "compensating_control": "config.migrate + test_CF006",
+   "owner": "technical_owner", "approval": null, "created": "2026-09-22", "expires": "2027-09-22", "remediation_target": "remove in 5.0.0"}
+ ]
+}

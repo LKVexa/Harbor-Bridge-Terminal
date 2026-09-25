@@ -1,0 +1,84 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:pln05:schema:PLN05_STATUS:1",
+ "title": "PLN05_STATUS/1 health/readiness/status document",
+ "type": "object",
+ "required": [
+  "schema",
+  "version",
+  "build",
+  "instance",
+  "live",
+  "ready",
+  "state",
+  "blockers",
+  "config",
+  "schemas",
+  "capability_policy",
+  "dependencies",
+  "last_error"
+ ],
+ "properties": {
+  "schema": {
+   "const": "PLN05_STATUS/1"
+  },
+  "version": {
+   "type": "string"
+  },
+  "build": {
+   "type": "object"
+  },
+  "instance": {
+   "type": "string"
+  },
+  "live": {
+   "type": "boolean"
+  },
+  "ready": {
+   "type": "boolean"
+  },
+  "state": {
+   "enum": [
+    "healthy",
+    "degraded",
+    "unready",
+    "stalled",
+    "failed"
+   ]
+  },
+  "blockers": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "pattern": "^R_[A-Z_]+$"
+   }
+  },
+  "config": {
+   "type": "object"
+  },
+  "schemas": {
+   "type": "object"
+  },
+  "capability_policy": {
+   "type": "string"
+  },
+  "dependencies": {
+   "type": "object"
+  },
+  "last_error": {
+   "type": [
+    "object",
+    "null"
+   ]
+  },
+  "scopes": {
+   "type": "array",
+   "description": "ADMIN ONLY (status.read_admin, caller tenant only)"
+  },
+  "keys": {
+   "type": "array",
+   "description": "ADMIN ONLY: kid/active/revoked/not_after; never key material"
+  }
+ },
+ "x-redaction": "Public status carries no tenant, workload, site or principal identifiers and no key material. 'scopes' and 'keys' appear only for status.read_admin and only for the caller's tenant."
+}

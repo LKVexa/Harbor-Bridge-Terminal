@@ -1,0 +1,1691 @@
+{
+"component": "C14",
+"items": [
+{
+"id": "C14-001",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Identify Request.IsWebSocketRequest as the initial protocol discriminator.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Request.IsWebSocketRequest is a .NET API not used; Node discriminates via the 'upgrade' event.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C14-002",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define the supported ordinary HTTP routes.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/health /live /config.json /api/ws-ticket and static routes are enumerated in topology and implemented.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology",
+"gateway/server.js:95-139"
+]
+},
+{
+"id": "C14-003",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define the supported WebSocket routes.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Exact path /ws/terminal is the sole defined WebSocket route.",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C14-004",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define permitted methods for each route.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "GET/HEAD, GET, POST/OPTIONS, and GET (for upgrade) are enforced per route with 405 otherwise.",
+"prior_evidence": [
+"gateway/server.js:98,103,107,117",
+"gateway/ws.js:24"
+]
+},
+{
+"id": "C14-005",
+"task_class": "IMPLEMENT",
+"area": "01. Classification contract",
+"req": "Distinguish route selection from connection authorization.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Path match (line 158) is checked before draining/Origin/identity authorization steps.",
+"prior_evidence": [
+"gateway/server.js:158-177"
+]
+},
+{
+"id": "C14-006",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define a deliberate response for unknown paths.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Unknown HTTP path -> 404 'not found'; unknown WS path -> reject(404).",
+"prior_evidence": [
+"gateway/server.js:139",
+"gateway/server.js:158"
+]
+},
+{
+"id": "C14-007",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define a deliberate response for unsupported methods.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "405 with an Allow header for unsupported methods on health/live/config/ticket routes.",
+"prior_evidence": [
+"gateway/server.js:98,103,107,117"
+]
+},
+{
+"id": "C14-008",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define behavior for malformed upgrade attempts.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade() returns explicit status/reason for each malformed-header case.",
+"prior_evidence": [
+"gateway/ws.js:22-34",
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C14-009",
+"task_class": "SPECIFY",
+"area": "01. Classification contract",
+"req": "Define how classification outcomes are represented.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Outcomes are HTTP status + JSON {error} or WS reject(status,reason); no single documented representation scheme.",
+"prior_evidence": [
+"gateway/server.js:74-78,155"
+]
+},
+{
+"id": "C14-010",
+"task_class": "IMPLEMENT",
+"area": "01. Classification contract",
+"req": "Approve the classification decision table.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No enumerated classification decision table document was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-011",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Read the request path from the managed request object.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "`safePath(req.url)` (HTTP) and `String(req.url)` (WS) read the path from the request object.",
+"prior_evidence": [
+"gateway/server.js:92,156"
+]
+},
+{
+"id": "C14-012",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Read the request method from the managed request object.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "req.method is checked directly at each route.",
+"prior_evidence": [
+"gateway/server.js:98,103,107,117",
+"gateway/ws.js:24"
+]
+},
+{
+"id": "C14-013",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Read IsWebSocketRequest without duplicating a raw protocol parser.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no IsWebSocketRequest API; Node's native 'upgrade' event is used instead of a raw parser or that API.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C14-014",
+"task_class": "SPECIFY",
+"area": "02. Input handling",
+"req": "Define path normalization rules.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "Path comparisons are exact-string and case-sensitive by code behavior, but no explicit normalization-rules design decision is documented.",
+"prior_evidence": [
+"gateway/server.js:92-158"
+]
+},
+{
+"id": "C14-015",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Keep query parameters separate from path matching.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "WS path match strips the query string (`url.slice(0,q)`) before comparing to '/ws/terminal'.",
+"prior_evidence": [
+"gateway/server.js:157-158"
+]
+},
+{
+"id": "C14-016",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Preserve original metadata only where needed for diagnostics.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Log calls carry only path/reason/status metadata, not full request content.",
+"prior_evidence": [
+"gateway/server.js:141,155,184"
+]
+},
+{
+"id": "C14-017",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Avoid using raw user text as an executable dispatch command.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Routing uses fixed string equality checks only; no user text is evaluated as a command.",
+"prior_evidence": [
+"gateway/server.js:91-185"
+]
+},
+{
+"id": "C14-018",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Bound any application-level route metadata processed before dispatch.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "server.headersTimeout, requestTimeout and maxHeadersCount=64 bound request metadata before dispatch.",
+"prior_evidence": [
+"gateway/server.js:145-148"
+]
+},
+{
+"id": "C14-019",
+"task_class": "IMPLEMENT",
+"area": "02. Input handling",
+"req": "Handle missing expected metadata explicitly.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Missing Sec-WebSocket-Key -> 400 'key'; missing bearer -> 401 'unauthorized'.",
+"prior_evidence": [
+"gateway/ws.js:29-30",
+"gateway/server.js:123"
+]
+},
+{
+"id": "C14-020",
+"task_class": "TEST",
+"area": "02. Input handling",
+"req": "Test unusual request values without crashing the classifier.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Malformed WS handshake/frame cases are extensively tested; unusual ordinary-HTTP request values are less directly covered.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C14-021",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Route the configured health path to its handler.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "`if (p === '/health') {...}` routes the configured health path.",
+"prior_evidence": [
+"gateway/server.js:95"
+]
+},
+{
+"id": "C14-022",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Return an intentional result for an unknown HTTP path.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "404 {error:'not found'} for unknown HTTP paths.",
+"prior_evidence": [
+"gateway/server.js:139"
+]
+},
+{
+"id": "C14-023",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Return an intentional result for an unsupported health method.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "405 with Allow: GET, HEAD for unsupported health methods.",
+"prior_evidence": [
+"gateway/server.js:98"
+]
+},
+{
+"id": "C14-024",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Avoid invoking AcceptWebSocketAsync for ordinary HTTP traffic.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Upgrade acceptance lives only in server.on('upgrade'), never invoked from the HTTP request callback.",
+"prior_evidence": [
+"gateway/server.js:91,152"
+]
+},
+{
+"id": "C14-025",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Close the response after the HTTP handler completes.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Every HTTP branch ends in res.end() via json() or direct write.",
+"prior_evidence": [
+"gateway/server.js:74-78,133-139"
+]
+},
+{
+"id": "C14-026",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Handle handler exceptions through a defined response path.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "The whole HTTP handler body is wrapped in try/catch, returning 500 or destroying the response on error.",
+"prior_evidence": [
+"gateway/server.js:94,140-143"
+]
+},
+{
+"id": "C14-027",
+"task_class": "IMPLEMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Avoid sending a WebSocket application payload as an HTTP health response.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/health returns only {status} JSON, never terminal/session payload bytes.",
+"prior_evidence": [
+"gateway/server.js:95-101"
+]
+},
+{
+"id": "C14-028",
+"task_class": "TEST",
+"area": "03. Ordinary HTTP branch",
+"req": "Test repeated HTTP requests on one service.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "e2e.test.js exercises health/config repeatedly within a suite, but no dedicated repeated-request stress test is named.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C14-029",
+"task_class": "TEST",
+"area": "03. Ordinary HTTP branch",
+"req": "Test ordinary requests containing irrelevant upgrade-like headers.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for ordinary HTTP requests carrying irrelevant Upgrade/Connection headers.",
+"prior_evidence": []
+},
+{
+"id": "C14-030",
+"task_class": "DOCUMENT",
+"area": "03. Ordinary HTTP branch",
+"req": "Record the selected HTTP route outcome.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Failures are logged (http.handler_error, ws.rejected); successful ordinary HTTP route selections are not logged.",
+"prior_evidence": [
+"gateway/server.js:141,155"
+]
+},
+{
+"id": "C14-031",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Require the request to target an approved WebSocket route.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Path must equal '/ws/terminal' before any further WS processing occurs.",
+"prior_evidence": [
+"gateway/server.js:158"
+]
+},
+{
+"id": "C14-032",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Pass eligible requests through origin evaluation.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkWsOrigin(req,cfg) runs before identity/capacity checks.",
+"prior_evidence": [
+"gateway/server.js:161-162"
+]
+},
+{
+"id": "C14-033",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Pass eligible requests through credential evaluation.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Identity/bearer/ticket evaluation runs for every request that reaches this point.",
+"prior_evidence": [
+"gateway/server.js:167-177"
+]
+},
+{
+"id": "C14-034",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Pass eligible requests through subprotocol selection.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade validates Sec-WebSocket-Protocol includes 'hermit.vws.v1'.",
+"prior_evidence": [
+"gateway/ws.js:31-32",
+"gateway/server.js:163"
+]
+},
+{
+"id": "C14-035",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Upgrade only after all required connection checks succeed.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade() is reached only after path/draining/origin/handshake/identity/capacity checks all pass.",
+"prior_evidence": [
+"gateway/server.js:158-180"
+]
+},
+{
+"id": "C14-036",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Prevent health-route requests from becoming application sessions unintentionally.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/health is handled entirely in the HTTP callback, a separate code path from the upgrade/session logic.",
+"prior_evidence": [
+"gateway/server.js:95-101,152-185"
+]
+},
+{
+"id": "C14-037",
+"task_class": "SPECIFY",
+"area": "04. WebSocket branch",
+"req": "Define behavior for upgrades sent to unsupported paths.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "reject(404,'not found') for any upgrade attempt to a path other than /ws/terminal.",
+"prior_evidence": [
+"gateway/server.js:158"
+]
+},
+{
+"id": "C14-038",
+"task_class": "SPECIFY",
+"area": "04. WebSocket branch",
+"req": "Define behavior for missing required application connection metadata.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "\"session.open must arrive within 10 s | else error NOT_READY, close 1008\" defines missing-metadata behavior.",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C14-039",
+"task_class": "IMPLEMENT",
+"area": "04. WebSocket branch",
+"req": "Transfer successful upgrades to connection servicing.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "WsConnection + Connection are constructed immediately after a successful acceptUpgrade().",
+"prior_evidence": [
+"gateway/server.js:181-184"
+]
+},
+{
+"id": "C14-040",
+"task_class": "DOCUMENT",
+"area": "04. WebSocket branch",
+"req": "Record the selected WebSocket route outcome.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('ws.accepted',...) and log.info('ws.rejected',...) record the selected WS outcome. [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:155,184"
+]
+},
+{
+"id": "C14-041",
+"task_class": "SPECIFY",
+"area": "05. Routing precedence",
+"req": "Define precedence between exact and broader route matches.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "All routes are exact-match (Map/if-chain); no overlapping broader routes exist, but no explicit precedence rule is documented.",
+"prior_evidence": [
+"gateway/server.js:53-65"
+]
+},
+{
+"id": "C14-042",
+"task_class": "SPECIFY",
+"area": "05. Routing precedence",
+"req": "Define precedence between the health path and application routes.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/health and /ws/terminal are distinct exact-match checks with no shared code path.",
+"prior_evidence": [
+"gateway/server.js:95,132"
+]
+},
+{
+"id": "C14-043",
+"task_class": "SPECIFY",
+"area": "05. Routing precedence",
+"req": "Decide whether path casing is significant.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "Path comparisons are case-sensitive by default `===`, but no document records this as a deliberate decision.",
+"prior_evidence": [
+"gateway/server.js:92-158"
+]
+},
+{
+"id": "C14-044",
+"task_class": "SPECIFY",
+"area": "05. Routing precedence",
+"req": "Decide whether a trailing slash changes route identity.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "A trailing-slash path would 404, but no design decision on trailing slashes is documented.",
+"prior_evidence": [
+"gateway/server.js:92-158"
+]
+},
+{
+"id": "C14-045",
+"task_class": "SPECIFY",
+"area": "05. Routing precedence",
+"req": "Decide whether query strings affect route authorization.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "`if (q >= 0 && !cfg.allowQueryTicket) return reject(400,'query not accepted')` \u2014 query presence affects authorization.",
+"prior_evidence": [
+"gateway/server.js:159"
+]
+},
+{
+"id": "C14-046",
+"task_class": "SPECIFY",
+"area": "05. Routing precedence",
+"req": "Decide how duplicate or ambiguous route definitions are rejected.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No document decides how duplicate/ambiguous route definitions would be rejected (route table is a small fixed literal set).",
+"prior_evidence": []
+},
+{
+"id": "C14-047",
+"task_class": "TEST",
+"area": "05. Routing precedence",
+"req": "Test the most specific route against a broader registered prefix.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found comparing a specific route against a broader registered prefix (no prefix routes are defined).",
+"prior_evidence": []
+},
+{
+"id": "C14-048",
+"task_class": "TEST",
+"area": "05. Routing precedence",
+"req": "Test a path that resembles the health path but is different.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "\"404 for traversal and for /gateway/server.js\" is close but not a path that specifically resembles /health.",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C14-049",
+"task_class": "TEST",
+"area": "05. Routing precedence",
+"req": "Test a path containing encoded characters.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for a path containing percent-encoded characters.",
+"prior_evidence": []
+},
+{
+"id": "C14-050",
+"task_class": "DOCUMENT",
+"area": "05. Routing precedence",
+"req": "Publish examples for every supported routing outcome.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No document publishing example request/response pairs for every routing outcome was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-051",
+"task_class": "SPECIFY",
+"area": "06. Rejection behavior",
+"req": "Select response codes for unsupported HTTP paths.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "404 selected for unsupported HTTP paths.",
+"prior_evidence": [
+"gateway/server.js:139"
+]
+},
+{
+"id": "C14-052",
+"task_class": "SPECIFY",
+"area": "06. Rejection behavior",
+"req": "Select response codes for unsupported HTTP methods.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "405 selected for unsupported HTTP methods, with Allow header.",
+"prior_evidence": [
+"gateway/server.js:98,103,107,117"
+]
+},
+{
+"id": "C14-053",
+"task_class": "SPECIFY",
+"area": "06. Rejection behavior",
+"req": "Select rejection behavior for invalid WebSocket routes.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "404 selected for invalid WebSocket routes.",
+"prior_evidence": [
+"gateway/server.js:158"
+]
+},
+{
+"id": "C14-054",
+"task_class": "SPECIFY",
+"area": "06. Rejection behavior",
+"req": "Select rejection behavior for failed origin checks.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "403 selected for failed Origin checks.",
+"prior_evidence": [
+"gateway/server.js:162"
+]
+},
+{
+"id": "C14-055",
+"task_class": "SPECIFY",
+"area": "06. Rejection behavior",
+"req": "Select rejection behavior for failed credential checks.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "401 selected for failed credential checks.",
+"prior_evidence": [
+"gateway/server.js:177"
+]
+},
+{
+"id": "C14-056",
+"task_class": "SPECIFY",
+"area": "06. Rejection behavior",
+"req": "Select rejection behavior for failed subprotocol negotiation.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "400 'subprotocol' selected for failed subprotocol negotiation.",
+"prior_evidence": [
+"gateway/ws.js:32",
+"gateway/server.js:163-164"
+]
+},
+{
+"id": "C14-057",
+"task_class": "REVIEW",
+"area": "06. Rejection behavior",
+"req": "Ensure rejected requests do not allocate long-lived workers.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "All rejections occur before any Connection/worker is constructed; the worker spawns only later on session.open.",
+"prior_evidence": [
+"gateway/server.js:155-180",
+"gateway/connection.js:166-181"
+]
+},
+{
+"id": "C14-058",
+"task_class": "REVIEW",
+"area": "06. Rejection behavior",
+"req": "Ensure rejected responses are completed.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "rejectUpgrade() always calls socket.end(); json() always calls res.end().",
+"prior_evidence": [
+"gateway/ws.js:235-241",
+"gateway/server.js:74-78"
+]
+},
+{
+"id": "C14-059",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection behavior",
+"req": "Keep internal exception details out of public rejection bodies.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Catch path returns {error:'internal'} not e.message/stack; protocol errors are fixed safe strings.",
+"prior_evidence": [
+"gateway/server.js:142",
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C14-060",
+"task_class": "TEST",
+"area": "06. Rejection behavior",
+"req": "Test that rejection cannot fall through into upgrade acceptance.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "\"no credential / wrong credential / malformed header -> 401 before upgrade\"; \"Origin: unlisted -> 403 even with a valid credential\".",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C14-061",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency and performance",
+"req": "Keep classification free of unbounded computation.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "All route matching is O(1) string comparison / Map lookup, no unbounded loops.",
+"prior_evidence": [
+"gateway/server.js:91-185"
+]
+},
+{
+"id": "C14-062",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency and performance",
+"req": "Keep classification independent of active message-receive loops.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Classification occurs in request/upgrade callbacks, entirely separate from WsConnection's data-receive path.",
+"prior_evidence": [
+"gateway/server.js:91-185",
+"gateway/ws.js:61"
+]
+},
+{
+"id": "C14-063",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency and performance",
+"req": "Avoid remote lookups unless the approved connection policy requires them.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "D-005: identity is a local seam (static-file / none-loopback-dev); no remote lookups in classification.",
+"prior_evidence": [
+"gateway/auth.js",
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C14-064",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency and performance",
+"req": "Bound any required connection-policy lookup time.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Identity check is local file-based, but no explicit time bound on the lookup is documented or enforced.",
+"prior_evidence": [
+"gateway/auth.js"
+]
+},
+{
+"id": "C14-065",
+"task_class": "TEST",
+"area": "07. Concurrency and performance",
+"req": "Test a mix of health and upgrade requests.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Health-during-active-session is tested; a mix of concurrent health and fresh upgrade attempts is not explicitly tested.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C14-066",
+"task_class": "TEST",
+"area": "07. Concurrency and performance",
+"req": "Test bursts of unknown-path requests.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for bursts of unknown-path requests.",
+"prior_evidence": []
+},
+{
+"id": "C14-067",
+"task_class": "TEST",
+"area": "07. Concurrency and performance",
+"req": "Test repeated invalid upgrade attempts.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "15 distinct invalid-upgrade/frame cases are tested individually, not explicitly as repeated attempts.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C14-068",
+"task_class": "MEASURE",
+"area": "07. Concurrency and performance",
+"req": "Measure classification latency under the intended request rate.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "RESOURCE_MODEL.md measures echo/session-open/bulk latency, not pure pre-upgrade classification latency under load.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C14-069",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency and performance",
+"req": "Prevent one request from mutating the route table unexpectedly.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Route table (assets Map, if-chain) is built once at startup and never mutated per-request.",
+"prior_evidence": [
+"gateway/server.js:54-65,91-185"
+]
+},
+{
+"id": "C14-070",
+"task_class": "SPECIFY",
+"area": "07. Concurrency and performance",
+"req": "Define safe initialization of any shared routing configuration.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "assets Map and route logic are initialized once in createGateway() before listen().",
+"prior_evidence": [
+"gateway/server.js:26-65"
+]
+},
+{
+"id": "C14-071",
+"task_class": "IMPLEMENT",
+"area": "08. Security review",
+"req": "Treat path and query values as untrusted input.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "safePath sanitizes for logging; static lookup is exact-key, \"no path arithmetic on request input\".",
+"prior_evidence": [
+"gateway/server.js:53,92",
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C14-072",
+"task_class": "IMPLEMENT",
+"area": "08. Security review",
+"req": "Avoid authorizing requests solely because they resemble a health route.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/health grants no authentication/session capability; it is a fully separate, unauthenticated code path.",
+"prior_evidence": [
+"gateway/server.js:95-101"
+]
+},
+{
+"id": "C14-073",
+"task_class": "IMPLEMENT",
+"area": "08. Security review",
+"req": "Prevent diagnostic routes from inheriting public health access accidentally.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/live is likewise deliberately public; no other diagnostic route inherits health's exposure implicitly.",
+"prior_evidence": [
+"gateway/server.js:102-105"
+]
+},
+{
+"id": "C14-074",
+"task_class": "IMPLEMENT",
+"area": "08. Security review",
+"req": "Keep Origin decisions distinct from route existence.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Path-existence check (line 158) is a separate sequential step from the Origin check (line 161).",
+"prior_evidence": [
+"gateway/server.js:158,161"
+]
+},
+{
+"id": "C14-075",
+"task_class": "IMPLEMENT",
+"area": "08. Security review",
+"req": "Keep authentication decisions distinct from IsWebSocketRequest.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "WS-route match and identity/authentication checks are separate sequential steps in the upgrade handler.",
+"prior_evidence": [
+"gateway/server.js:158,167-177"
+]
+},
+{
+"id": "C14-076",
+"task_class": "IMPLEMENT",
+"area": "08. Security review",
+"req": "Avoid reflecting raw request text into error responses.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Rejection reasons are fixed strings set by server code; \"no echoed input\" documented for protocol errors.",
+"prior_evidence": [
+"gateway/server.js:155",
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C14-077",
+"task_class": "REVIEW",
+"area": "08. Security review",
+"req": "Review configured route aliases for unintended access.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "Static asset allowlist exists in code but no recorded review or VERIFY test of route aliases was found.",
+"prior_evidence": [
+"gateway/server.js:57-64"
+]
+},
+{
+"id": "C14-078",
+"task_class": "TEST",
+"area": "08. Security review",
+"req": "Test method variations against restricted paths.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test specifically varying HTTP methods against restricted paths beyond the basic 405 cases was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-079",
+"task_class": "TEST",
+"area": "08. Security review",
+"req": "Test unauthorized upgrades to every registered application route.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Only one WS route exists (/ws/terminal); \"no credential/wrong credential -> 401\" covers unauthorized upgrade to it.",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C14-080",
+"task_class": "DOCUMENT",
+"area": "08. Security review",
+"req": "Document the exact boundary where authorization occurs.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "\"exact path -> no query -> not draining -> Origin -> RFC 6455 -> identity -> connection cap -> 101\" is the documented boundary.",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C14-081",
+"task_class": "IMPLEMENT",
+"area": "09. Validation suite",
+"req": "Build a test for each successful HTTP route.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "health/live/config exposure and ticket issuance are covered by named tests.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C14-082",
+"task_class": "IMPLEMENT",
+"area": "09. Validation suite",
+"req": "Build a test for each successful WebSocket route.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "\"vertical slice: hello -> open -> opened precedes output -> input -> output -> close -> single exit\" covers the one WS route.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C14-083",
+"task_class": "IMPLEMENT",
+"area": "09. Validation suite",
+"req": "Build a test for every rejection branch.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Many rejection branches are tested, but coverage of every branch (e.g. malformed ticket, query rejection) is not fully confirmed.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C14-084",
+"task_class": "TEST",
+"area": "09. Validation suite",
+"req": "Test malformed and ambiguous path inputs.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for malformed or ambiguous path inputs (e.g. percent-encoding, unusual characters).",
+"prior_evidence": []
+},
+{
+"id": "C14-085",
+"task_class": "TEST",
+"area": "09. Validation suite",
+"req": "Test a health request while a client sends large messages.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "\"health stays responsive (< 250 ms) while a session streams bulk output and large inbound messages arrive\".",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C14-086",
+"task_class": "TEST",
+"area": "09. Validation suite",
+"req": "Test a failed upgrade followed by a valid health request.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found sequencing a failed upgrade followed by a valid health request.",
+"prior_evidence": []
+},
+{
+"id": "C14-087",
+"task_class": "TEST",
+"area": "09. Validation suite",
+"req": "Test a failed HTTP request followed by a valid upgrade.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found sequencing a failed HTTP request followed by a valid upgrade.",
+"prior_evidence": []
+},
+{
+"id": "C14-088",
+"task_class": "TEST",
+"area": "09. Validation suite",
+"req": "Test route configuration changes before deployment.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "deploy/ci/ci.yml is AUTHORED, NEVER EXECUTED; no route-configuration pre-deploy test ran.",
+"prior_evidence": [
+"ledger/review_inputs/EVIDENCE_INDEX.md"
+]
+},
+{
+"id": "C14-089",
+"task_class": "VERIFY",
+"area": "09. Validation suite",
+"req": "Verify response completion after every rejected case.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "rejectUpgrade always completes the response by code inspection, but no named test verifies this across every rejected case.",
+"prior_evidence": [
+"gateway/ws.js:235-241"
+]
+},
+{
+"id": "C14-090",
+"task_class": "IMPLEMENT",
+"area": "09. Validation suite",
+"req": "Preserve the decision table and corresponding test results.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No formal decision table artifact linking rows to test results was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the route and method inventory.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "\"/health /live /config.json /api/ws-ticket /ws/terminal static web client\" is the published route inventory.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C14-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish route normalization decisions.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No document publishing route normalization decisions (case, trailing slash) was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the classification decision table.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No published classification decision table was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link each decision-table row to a test.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No decision table exists, so no rows are linked to tests.",
+"prior_evidence": []
+},
+{
+"id": "C14-095",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document required origin and credential handoffs.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Origin and credential order/handoff are documented explicitly.",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C14-096",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document rejection response categories.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Stable error codes and HTTP status codes (400/401/403/404/426/503) are documented as rejection categories.",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors",
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C14-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document allocation boundaries for connection workers.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Capacity-before-spawn rule and per-session memory bounds document connection-worker allocation boundaries.",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C14-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record measured classification latency.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No measurement isolating pure classification/routing latency was recorded (only session-open and echo latency).",
+"prior_evidence": []
+},
+{
+"id": "C14-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved route ambiguities.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No consolidated list of unresolved route ambiguities (case, trailing slash, aliasing) was found.",
+"prior_evidence": []
+},
+{
+"id": "C14-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve classification only when every request has one deliberate outcome.",
+"ram_overlay": "Use an immutable route table and bounded header/path parsing before selecting health, WebSocket, or rejection. Charge descriptor and temporary parsing memory before allocating a session.",
+"challenge": "Exercise oversized headers, unknown routes, and malformed upgrades without producing session allocations or leaked tasks.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Every branch by inspection returns one deliberate outcome, but no formal approval/gate record confirming this review was found.",
+"prior_evidence": [
+"gateway/server.js:91-185"
+]
+}
+]
+}

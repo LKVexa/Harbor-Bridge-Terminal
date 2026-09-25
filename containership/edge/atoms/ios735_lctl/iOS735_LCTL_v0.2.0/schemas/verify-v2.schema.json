@@ -1,0 +1,234 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ios735-lctl.invalid/schemas/verify-v2.schema.json",
+ "title": "IOS735_LCTL/VERIFY/2 owner-toolchain verification evidence",
+ "description": "Syntactic contract. PASS⇒all gates==units, all per-unit gates PASS, outputs committed, unit set == source/*.lctlc, hashes == toolchains/LOCK.json pins: enforced by tools/evidence_check.py.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema",
+  "verdict",
+  "units",
+  "lctl161_root",
+  "lctl160_root",
+  "toolchain_identity",
+  "gates",
+  "translation_check",
+  "toolchain_unchanged_during_run",
+  "generated_outputs_committed",
+  "units_detail"
+ ],
+ "properties": {
+  "schema": {
+   "const": "IOS735_LCTL/VERIFY/2"
+  },
+  "verdict": {
+   "enum": [
+    "PASS",
+    "FAIL"
+   ]
+  },
+  "units": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "lctl161_root": {
+   "type": "string",
+   "minLength": 1
+  },
+  "lctl160_root": {
+   "type": "string",
+   "minLength": 1
+  },
+  "toolchain_identity": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "java",
+    "lctl161_jar_sha256",
+    "lctl160_jar_sha256",
+    "lock_schema",
+    "lock_version",
+    "lock_sha256",
+    "java_path",
+    "java_vendor",
+    "java_runtime_version",
+    "os",
+    "arch"
+   ],
+   "properties": {
+    "java": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lctl161_jar_sha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "lctl160_jar_sha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "lock_schema": {
+     "const": "IOS735_LCTL/TOOLCHAIN_LOCK/1"
+    },
+    "lock_version": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lock_sha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "java_path": {
+     "type": "string"
+    },
+    "java_vendor": {
+     "type": "string"
+    },
+    "java_runtime_version": {
+     "type": "string"
+    },
+    "os": {
+     "type": "string"
+    },
+    "arch": {
+     "type": "string"
+    }
+   }
+  },
+  "gates": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "lctl161_column_verify",
+    "lctl161_column_compile",
+    "lctl160_canonical_verify",
+    "lctl160_causal_dag",
+    "lctl160_parallel_plan",
+    "lctl160_provenance",
+    "lctl161_column_stats"
+   ],
+   "properties": {
+    "lctl161_column_verify": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "lctl161_column_compile": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "lctl160_canonical_verify": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "lctl160_causal_dag": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "lctl160_parallel_plan": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "lctl160_provenance": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "lctl161_column_stats": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "translation_check": {
+   "type": "string",
+   "minLength": 1
+  },
+  "toolchain_unchanged_during_run": {
+   "type": "boolean"
+  },
+  "generated_outputs_committed": {
+   "type": "boolean"
+  },
+  "units_detail": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "unit",
+     "lctl161_column_verify",
+     "lctl161_column_compile",
+     "lctl160_canonical_verify",
+     "lctl160_causal_dag",
+     "lctl160_parallel_plan",
+     "lctl160_provenance",
+     "lctl161_column_stats",
+     "column_verify_detail",
+     "column_compile_detail",
+     "lctl160_verify_line",
+     "column_stats"
+    ],
+    "properties": {
+     "unit": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]+\\.lctlc$"
+     },
+     "lctl161_column_verify": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "lctl161_column_compile": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "lctl160_canonical_verify": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "lctl160_causal_dag": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "lctl160_parallel_plan": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "lctl160_provenance": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "lctl161_column_stats": {
+      "type": "string",
+      "pattern": "^(PASS|SKIPPED|FAIL_-?[0-9]+)$"
+     },
+     "column_verify_detail": {
+      "anyOf": [
+       {
+        "type": "object"
+       },
+       {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      ]
+     },
+     "column_compile_detail": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "lctl160_verify_line": {
+      "type": "string"
+     },
+     "column_stats": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ }
+}

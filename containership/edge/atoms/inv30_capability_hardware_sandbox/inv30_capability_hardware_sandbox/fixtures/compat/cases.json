@@ -1,0 +1,103 @@
+{
+ "schema": "INV30_COMPAT_FIXTURES/1",
+ "rules": [
+  "Major schema version must match exactly (PK_*/1).",
+  "Additive optional fields require a new minor schema id and both peers advertising it; until then unknown fields are refused (fail closed).",
+  "Removal or semantic change of a field requires a new major version and a dual-stack window of one supported release."
+ ],
+ "cases": [
+  {
+   "name": "v1 access minimal",
+   "schema": "access",
+   "expect": "accept",
+   "payload": {
+    "schema": "PK_CAPABILITY_ACCESS/1",
+    "handle": "cap_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "address": 4096,
+    "size": 8,
+    "operation": "read"
+   }
+  },
+  {
+   "name": "v1 access with trace",
+   "schema": "access",
+   "expect": "accept",
+   "payload": {
+    "schema": "PK_CAPABILITY_ACCESS/1",
+    "handle": "cap_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "address": 4096,
+    "size": 8,
+    "operation": "read",
+    "traceparent": "00-11111111111111111111111111111111-2222222222222222-01"
+   }
+  },
+  {
+   "name": "v2 access refused",
+   "schema": "access",
+   "expect": "reject",
+   "payload": {
+    "schema": "PK_CAPABILITY_ACCESS/2",
+    "handle": "cap_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "address": 4096,
+    "size": 8,
+    "operation": "read"
+   }
+  },
+  {
+   "name": "unknown future field refused",
+   "schema": "access",
+   "expect": "reject",
+   "payload": {
+    "schema": "PK_CAPABILITY_ACCESS/1",
+    "handle": "cap_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "address": 4096,
+    "size": 8,
+    "operation": "read",
+    "tag_bit": 1
+   }
+  },
+  {
+   "name": "v1 derive",
+   "schema": "capability",
+   "expect": "accept",
+   "payload": {
+    "schema": "PK_CAPABILITY/1",
+    "op": "derive",
+    "handle": "cap_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "base": 4096,
+    "length": 16,
+    "permissions": [
+     "read"
+    ],
+    "tenant": "tenant-a"
+   }
+  },
+  {
+   "name": "derive duplicate perms",
+   "schema": "capability",
+   "expect": "reject",
+   "payload": {
+    "schema": "PK_CAPABILITY/1",
+    "op": "derive",
+    "handle": "cap_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "base": 4096,
+    "length": 16,
+    "permissions": [
+     "read",
+     "read"
+    ]
+   }
+  },
+  {
+   "name": "bool as int refused",
+   "schema": "capability",
+   "expect": "reject",
+   "payload": {
+    "schema": "PK_CAPABILITY/1",
+    "op": "derive",
+    "base": true,
+    "length": 1
+   }
+  }
+ ]
+}

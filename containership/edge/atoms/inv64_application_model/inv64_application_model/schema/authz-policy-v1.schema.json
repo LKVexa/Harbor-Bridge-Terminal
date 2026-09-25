@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv64:authz-policy:v1",
+  "title": "PK_APP_AUTHZ_POLICY/1",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "grants"
+  ],
+  "properties": {
+    "format": {
+      "const": "PK_APP_AUTHZ_POLICY/1"
+    },
+    "version": {
+      "type": "string"
+    },
+    "grants": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "capabilities",
+          "tenants",
+          "environments",
+          "sites",
+          "resources"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array"
+          },
+          "principals": {
+            "type": "array"
+          },
+          "kinds": {
+            "type": "array"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "admin.policy",
+                "admin.trust",
+                "app.canonicalize",
+                "app.submit",
+                "app.validate",
+                "audit.read",
+                "breakglass",
+                "config.activate",
+                "config.overlay.write",
+                "config.rollback",
+                "diagnostics.read",
+                "explain.read",
+                "provider.bind",
+                "release.approve",
+                "rollout.promote",
+                "status.inspect"
+              ]
+            }
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\*"
+              }
+            }
+          },
+          "environments": {
+            "type": "array"
+          },
+          "sites": {
+            "type": "array"
+          },
+          "resources": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "separation_of_duties": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_RECONCILIATION_PLAN/1",
+  "title": "PK_RECONCILIATION_PLAN/1",
+  "type": "object",
+  "required": ["schema", "graph_version", "dry_run", "rollback_target", "steps", "drift", "plan_id"],
+  "properties": {
+    "schema": {"const": "PK_RECONCILIATION_PLAN/1"},
+    "graph_version": {"type": "integer", "minimum": 0},
+    "dry_run": {"const": true},
+    "rollback_target": {"type": "integer", "minimum": 0},
+    "steps": {"type": "array", "items": {
+      "type": "object", "required": ["step", "node", "action"],
+      "properties": {
+        "step": {"type": "integer", "minimum": 1},
+        "node": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string"}},
+        "action": {"enum": ["create", "update", "noop"]}
+      }}},
+    "drift": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string"}}},
+    "plan_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

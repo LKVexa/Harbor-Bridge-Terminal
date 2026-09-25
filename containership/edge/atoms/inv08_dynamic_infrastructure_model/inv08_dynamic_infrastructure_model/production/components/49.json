@@ -1,0 +1,69 @@
+{
+ "component": 49,
+ "title": "Fleet-scale capacity model",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "fleet size and churn workload model",
+   "state": "IMPLEMENTED",
+   "spec": "production/capacity.py::ChurnModel",
+   "modules": [
+    "production/capacity.py::ChurnModel.simulate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.CapacityTests.test_churn_model_deterministic"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "measured provisioning/deprovisioning latency",
+   "state": "PARTIAL",
+   "spec": "production/capacity.py::LatencyDistribution",
+   "modules": [
+    "production/capacity.py::LatencyDistribution",
+    "production/capacity.py::ASSUMED_PROVISION"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.CapacityTests.test_latency_inputs_marked"
+   ],
+   "blocker": "measured provisioning/deprovisioning latency samples from a real provider (shipped defaults are 'assumed')"
+  },
+  {
+   "name": "provider quota/limit model",
+   "state": "IMPLEMENTED",
+   "spec": "production/capacity.py::QuotaModel",
+   "modules": [
+    "production/capacity.py::QuotaModel.admit"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.CapacityTests.test_quota_model"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "failure/saturation probability inputs",
+   "state": "IMPLEMENTED",
+   "spec": "production/capacity.py::saturation_probability",
+   "modules": [
+    "production/capacity.py::saturation_probability"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.CapacityTests.test_saturation_probability"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "predictive capacity and headroom policy",
+   "state": "PARTIAL",
+   "spec": "production/capacity.py::HEADROOM_TARGETS",
+   "modules": [
+    "production/capacity.py::headroom_policy"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.CapacityTests.test_headroom_policy"
+   ],
+   "blocker": "approval of PROPOSED headroom targets by capacity owner (UNASSIGNED)"
+  }
+ ],
+ "notes": "Churn simulation drives the real model.Pool."
+}

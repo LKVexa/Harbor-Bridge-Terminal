@@ -1,0 +1,19 @@
+$ python -m inv68_resource_packing.tools.faults --out /home/claude/work/inv68_resource_packing/evidence
+exit=0
+--- stdout
+F01 PASS capacity source unreachable -> breaker opens, recovers  {"codes": ["DEPENDENCY_UNAVAILABLE", "DEPENDENCY_UNAVAILABLE", "CIRCUIT_OPEN", "CIRCUIT_OPEN", "CIRCUIT_OPEN"], "degraded_while_open": true,
+F02 PASS stale capacity during partition  {"fresh": "OK", "after_1h": "STALE_CAPACITY"}
+F03 PASS partition heals  {"during": "STALE_CAPACITY", "after": "OK"}
+F04 PASS node loss halves capacity  {"hosts_before": 2, "hosts_after": 3, "limits_respected": true}
+F05 PASS audit sink down: pack buffers, config refused, loss chained on recovery  {"pack_codes": ["OK", "OK", "OK", "OK", "OK", "OK"], "config_change": "AUDIT_UNAVAILABLE", "dropped": 3, "chain_records": 7, "loss_marker": 
+F06 PASS audit buffer exhaustion is counted, never silent  {"dropped": 8, "buffered": 2}
+F07 PASS corrupt active snapshot recovered on restart  {"recovered_to": "55e36c3d5e4f", "state": "degraded"}
+F08 PASS torn journal line  {}
+F09 PASS crash between snapshot write and pointer swap  {"active_after_crash": "55e36c3d5e4f", "expected": "55e36c3d5e4f"}
+F10 PASS stale controller fenced  {"old_controller_epoch": 1, "owner_epoch": 7, "code": "STALE_EPOCH"}
+F11 PASS freeze during load  {"codes": {"FROZEN": 63, "OK": 17}, "after_freeze": "FROZEN"}
+F12 PASS token clock skew  {"skew_20s": "OK", "skew_120s": "UNAUTHENTICATED"}
+F13 PASS overload burst sheds  {"codes": {"OVERLOADED": 9, "OK": 3}, "peak_in_flight": 2}
+F14 PASS backup/restore disaster drill  {"digest": "55e36c3d5e4f", "identical_decisions": true}
+
+--- stderr

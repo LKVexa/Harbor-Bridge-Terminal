@@ -1,0 +1,216 @@
+{
+ "frozen_in": "4.3.0",
+ "instance": {
+  "body": {
+   "author": "bootstrap",
+   "change_ticket": "",
+   "doc": {
+    "bindings": [
+     {
+      "effect": "allow",
+      "role": "deployer",
+      "scope": "acme/payments/prod",
+      "subject": "ops"
+     },
+     {
+      "effect": "allow",
+      "role": "deployer",
+      "scope": "acme/payments/staging",
+      "subject": "dev"
+     },
+     {
+      "effect": "allow",
+      "group": "platform-admins",
+      "role": "org-admin",
+      "scope": "acme"
+     },
+     {
+      "effect": "allow",
+      "role": "security-admin",
+      "scope": "acme",
+      "subject": "sec1"
+     },
+     {
+      "effect": "allow",
+      "role": "security-admin",
+      "scope": "acme",
+      "subject": "sec2"
+     },
+     {
+      "effect": "allow",
+      "role": "auditor",
+      "scope": "acme",
+      "subject": "auditor"
+     },
+     {
+      "effect": "allow",
+      "role": "tenant-admin",
+      "scope": "acme/payments",
+      "subject": "tadmin"
+     },
+     {
+      "effect": "allow",
+      "role": "deployer",
+      "scope": "acme/payments",
+      "subject": "contractor"
+     },
+     {
+      "effect": "deny",
+      "role": "deployer",
+      "scope": "acme/payments/prod",
+      "subject": "contractor"
+     },
+     {
+      "effect": "allow",
+      "role": "deployer",
+      "scope": "acme/payments",
+      "subject": "payments/deployer"
+     }
+    ],
+    "dependencies": {
+     "deployment": {
+      "endpoint": "http://inv63.local",
+      "required": false,
+      "timeout_ms": 2000
+     }
+    },
+    "dual_authorization": {
+     "config_activate": 2,
+     "quarantine_release": 2
+    },
+    "environment": "prod",
+    "limits": {
+     "audit_segment_records": 10000,
+     "default_deadline_ms": 5000,
+     "max_components": 256,
+     "max_inflight": 256,
+     "max_manifest_bytes": 1000000,
+     "retention_days": 400
+    },
+    "org": "acme",
+    "policy": {
+     "cache_ttl_s": 30,
+     "engine": "local",
+     "on_unavailable": "deny",
+     "rules": [
+      {
+       "class": "security",
+       "effect": "deny",
+       "id": "SEC-NO-DEBUG",
+       "message": "debug shells never deploy",
+       "priority": 100,
+       "when": {
+        "component_name": "debug-shell"
+       }
+      },
+      {
+       "class": "residency",
+       "effect": "require",
+       "id": "RES-EU-PROD",
+       "message": "payments prod images must come from the EU registry",
+       "priority": 50,
+       "require_image_prefix": "eu.registry.estate.local/",
+       "when": {
+        "lattice": "prod",
+        "tenant": "payments"
+       }
+      },
+      {
+       "class": "cost",
+       "effect": "exempt",
+       "id": "COST-EXEMPT-RES",
+       "message": "cost exemption (must be refused)",
+       "priority": 10,
+       "targets": [
+        "RES-EU-PROD"
+       ],
+       "when": {
+        "tenant": "payments"
+       }
+      }
+     ]
+    },
+    "provenance": {
+     "require_attestation": false,
+     "require_digest": true,
+     "require_signature": true,
+     "trusted_builders": [
+      "https://ci.acme.example/builder@v3"
+     ]
+    },
+    "quotas": {
+     "default": {
+      "burst": 1000,
+      "max_inflight": 64,
+      "rate_per_s": 1000.0
+     },
+     "tenants": {
+      "payments": {
+       "burst": 1000,
+       "max_inflight": 64,
+       "rate_per_s": 1000.0
+      }
+     }
+    },
+    "registries": [
+     {
+      "host": "registry.estate.local",
+      "scope": "acme"
+     },
+     {
+      "host": "eu.registry.estate.local",
+      "scope": "acme"
+     }
+    ],
+    "roles": {
+     "release-manager": [
+      "admit",
+      "admit.dry_run",
+      "inventory.read",
+      "explain.read"
+     ]
+    },
+    "schema": "PK_ECP_CONFIG/1",
+    "secrets": {
+     "anchor_key": "env:INV66_ANCHOR_KEY"
+    },
+    "signers": [
+     {
+      "id": "release-signer",
+      "public_key": "tqpF5N7Nh/RVDy1SlFi7+70eDMfmBqQXfLc6zo8mt4Y=",
+      "scope": "acme"
+     },
+     {
+      "id": "team-b-signer",
+      "public_key": "gd58FZT63YrEjDFKyVh6YWZBD+qeXmy6l/yh01056Pw=",
+      "scope": "acme/analytics"
+     },
+     {
+      "id": "ci-builder",
+      "public_key": "9cX+C3UzGE2rM9SnZxMJ1SrTRdhNC1zJjIwkz+TpUwc=",
+      "scope": "acme"
+     }
+    ],
+    "site": "eu-west-1",
+    "telemetry": {
+     "log_level": "info",
+     "log_retention_days": 30,
+     "metrics_retention_days": 90,
+     "redact_subjects": false,
+     "trace_sample_ratio": 1.0
+    }
+   },
+   "generation": "835318a1284ed870fff1adaa45ba1a765e74032f7fa4400d08578e0aafd6ac0c",
+   "source_repo": "file://bootstrap",
+   "source_rev": "0000000000000000000000000000000000000000"
+  },
+  "hash": "c343e03b63452ec2d852c811fc6c78a89440b5054a1f903598d060b8a40ead4e",
+  "kind": "config.stage",
+  "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+  "schema": "PK_ECP_AUDIT/2",
+  "seq": 1,
+  "ts": 1790146482.912589
+ },
+ "schema": "PK_ECP_AUDIT_RECORD_2",
+ "valid": true
+}

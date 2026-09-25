@@ -1,0 +1,74 @@
+{
+  "$id": "inv60/PK_LATTICE_START/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "app": {
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,62}$",
+      "type": "string"
+    },
+    "artifact": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "component": {
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,62}$",
+      "type": "string"
+    },
+    "meta": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_ms": {
+          "maximum": 300000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "maxLength": 128,
+          "minLength": 8,
+          "type": "string"
+        },
+        "operation_id": {
+          "pattern": "^op-[0-9a-f]{32}$",
+          "type": "string"
+        },
+        "protocol": {
+          "enum": [
+            "1.0",
+            "1.1"
+          ],
+          "type": "string"
+        },
+        "traceparent": {
+          "pattern": "^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol",
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "regions": {
+      "items": {
+        "pattern": "^[a-z0-9][a-z0-9._-]{0,62}$",
+        "type": "string"
+      },
+      "maxItems": 16,
+      "type": "array"
+    },
+    "tenant": {
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "meta",
+    "component",
+    "artifact",
+    "tenant"
+  ],
+  "title": "PK_LATTICE_START",
+  "type": "object"
+}

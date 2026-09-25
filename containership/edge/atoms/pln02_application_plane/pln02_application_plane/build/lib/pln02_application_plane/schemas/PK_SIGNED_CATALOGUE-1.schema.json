@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:post-kubernetes:PLN-02:PK_SIGNED_CATALOGUE:1",
+  "title": "PK_SIGNED_CATALOGUE/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "environment",
+    "site",
+    "generation",
+    "issued_at",
+    "expires_at",
+    "providers",
+    "key_id",
+    "signature"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_SIGNED_CATALOGUE/1"
+    },
+    "environment": {
+      "type": "string"
+    },
+    "site": {
+      "type": "string"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "issued_at": {
+      "type": "number"
+    },
+    "expires_at": {
+      "type": "number"
+    },
+    "key_id": {
+      "type": "string"
+    },
+    "signature": {
+      "type": "string"
+    },
+    "providers": {
+      "type": "object",
+      "maxProperties": 4096,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 64,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "region",
+            "residency",
+            "tier",
+            "consistency",
+            "slo_ms",
+            "latency_ms",
+            "cost",
+            "healthy"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "region": {
+              "type": "string"
+            },
+            "residency": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tier": {
+              "enum": [
+                "standard",
+                "hardened",
+                "confidential"
+              ]
+            },
+            "consistency": {
+              "enum": [
+                "eventual",
+                "bounded",
+                "strong"
+              ]
+            },
+            "slo_ms": {
+              "type": "number"
+            },
+            "latency_ms": {
+              "type": "number"
+            },
+            "cost": {
+              "type": "number"
+            },
+            "healthy": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+}

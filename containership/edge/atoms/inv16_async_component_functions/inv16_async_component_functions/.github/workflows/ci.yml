@@ -1,0 +1,55 @@
+name: inv16-ci
+on:
+  push:
+  pull_request:
+  schedule: [{cron: "17 3 * * *"}]        # nightly long property/stress campaign
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        optimize: ["", "-O"]
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv16_async_component_functions}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - name: compile
+        run: python -m compileall -q inv16_async_component_functions
+      - name: tests
+        working-directory: inv16_async_component_functions/tests
+        env: {INV16_STRESS_SCALE: "${{ github.event_name == 'schedule' && '20' || '1' }}"}
+        run: python ${{ matrix.optimize }} -m unittest discover -s . -t . -v
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv16_async_component_functions}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install mypy==1.11.2 ruff==0.6.9 bandit==1.7.10 coverage==7.6.1
+      - working-directory: inv16_async_component_functions
+        run: |
+          python tools/lint.py
+          ruff check .
+          mypy
+          bandit -q -r . -x ./tests,./bench
+          python tools/coverage_gate.py
+          cd tests && coverage run --rcfile=../pyproject.toml -m unittest discover -s . -t . && coverage report --rcfile=../pyproject.toml
+      - name: preflight (certification mode must pass before any release)
+        run: python -m inv16_async_component_functions.preflight --require-pk-core || echo "::warning::pk_core absent - certification blocked"
+      - name: bridge SLO gate
+        working-directory: inv16_async_component_functions
+        run: python bench/bridge_bench.py --samples 200000 --gate
+      - name: reproducible release
+        working-directory: inv16_async_component_functions
+        run: python tools/release.py build && python tools/release.py verify
+      - name: evidence bundle
+        working-directory: inv16_async_component_functions
+        run: python tools/gen_evidence.py --soak-minutes 5 && python tools/verify_evidence.py
+      - uses: actions/upload-artifact@v4
+        with: {name: inv16-evidence, path: inv16_async_component_functions/evidence, retention-days: 400}

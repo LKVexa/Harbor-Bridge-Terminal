@@ -1,0 +1,170 @@
+[
+ {
+  "id": "FX-001",
+  "op": "resolve",
+  "desc": "authorised app resolves latest version",
+  "request": {
+   "name": "db-password"
+  },
+  "as": "orders",
+  "expect": {
+   "ok": true,
+   "version": 1
+  }
+ },
+ {
+  "id": "FX-002",
+  "op": "resolve",
+  "desc": "out-of-scope app denied",
+  "request": {
+   "name": "db-password"
+  },
+  "as": "marketing",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E001-DENIED"
+  }
+ },
+ {
+  "id": "FX-003",
+  "op": "resolve",
+  "desc": "missing secret indistinguishable from denied",
+  "request": {
+   "name": "nope"
+  },
+  "as": "orders",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E001-DENIED"
+  }
+ },
+ {
+  "id": "FX-004",
+  "op": "resolve",
+  "desc": "unsupported protocol version",
+  "request": {
+   "name": "db-password",
+   "protocol": "PK_SECRET_RESOLVE/9"
+  },
+  "as": "orders",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E015-UNSUPPORTED-VERSION"
+  }
+ },
+ {
+  "id": "FX-005",
+  "op": "resolve",
+  "desc": "malformed name",
+  "request": {
+   "name": "../etc/passwd\n"
+  },
+  "as": "orders",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E007-INVALID-REFERENCE"
+  }
+ },
+ {
+  "id": "FX-006",
+  "op": "use",
+  "desc": "valid lease reveals value",
+  "request": {
+   "name": "db-password",
+   "lease_id": "$LEASE"
+  },
+  "as": "orders",
+  "expect": {
+   "ok": true,
+   "value": "$SECRET"
+  }
+ },
+ {
+  "id": "FX-007",
+  "op": "use",
+  "desc": "expired lease",
+  "request": {
+   "name": "db-password",
+   "lease_id": "$LEASE"
+  },
+  "as": "orders",
+  "advance_s": 301,
+  "expect": {
+   "ok": false,
+   "code": "INV55-E003-LEASE-EXPIRED"
+  }
+ },
+ {
+  "id": "FX-008",
+  "op": "use",
+  "desc": "lease replay by other app",
+  "request": {
+   "name": "db-password",
+   "lease_id": "$LEASE"
+  },
+  "as": "billing",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E005-CONTEXT-MISMATCH"
+  }
+ },
+ {
+  "id": "FX-009",
+  "op": "rotate",
+  "desc": "rotation adds version 2",
+  "request": {
+   "name": "db-password",
+   "value": "<redacted-v2>",
+   "idempotency_key": "idem-fx-0009"
+  },
+  "as": "admin",
+  "expect": {
+   "ok": true,
+   "version": 2
+  }
+ },
+ {
+  "id": "FX-010",
+  "op": "rotate",
+  "desc": "CAS conflict",
+  "request": {
+   "name": "db-password",
+   "value": "<redacted-v2>",
+   "idempotency_key": "idem-fx-0010",
+   "expected_version": 7
+  },
+  "as": "admin",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E019-CONFLICT"
+  }
+ },
+ {
+  "id": "FX-011",
+  "op": "set_scope",
+  "desc": "empty scope rejected",
+  "request": {
+   "name": "db-password",
+   "apps": []
+  },
+  "as": "admin",
+  "expect": {
+   "ok": false,
+   "code": "INV55-E007-INVALID-REFERENCE"
+  }
+ },
+ {
+  "id": "FX-012",
+  "op": "retire",
+  "desc": "retire version 1",
+  "request": {
+   "name": "db-password",
+   "version": 1
+  },
+  "as": "admin",
+  "expect": {
+   "ok": true,
+   "retired": true
+  }
+ }
+]

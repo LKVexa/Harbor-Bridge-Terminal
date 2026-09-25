@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:mesh:config:1",
+  "title": "PK_MESH_CONFIG/1 (structural; semantic rules live in config.validate)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "trust_domain",
+    "default_budget",
+    "max_budget",
+    "tenants",
+    "meshed_destinations",
+    "limits",
+    "retry",
+    "breaker",
+    "admission",
+    "deadline_ms",
+    "trust_outage_policy",
+    "health",
+    "audit_key_ref",
+    "token_key_ref",
+    "artifact_key_ref",
+    "spiffe_bindings",
+    "policy",
+    "telemetry"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_MESH_CONFIG/1"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "trust_domain": {
+      "type": "string"
+    },
+    "default_budget": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "max_budget": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "tenants": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
+      },
+      "uniqueItems": true,
+      "maxItems": 1000
+    },
+    "meshed_destinations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_routes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_flags": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_destinations": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_payload_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_inflight": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_queue": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_routes_per_tenant": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_label_cardinality": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "max_routes",
+        "max_flags",
+        "max_destinations",
+        "max_payload_bytes",
+        "max_inflight",
+        "max_queue",
+        "max_routes_per_tenant",
+        "max_label_cardinality"
+      ]
+    },
+    "trust_outage_policy": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "fail_closed",
+          "fail_safe_degraded",
+          "fail_open"
+        ]
+      },
+      "properties": {
+        "identity": {
+          "const": "fail_closed"
+        },
+        "policy": {
+          "const": "fail_closed"
+        },
+        "key": {
+          "const": "fail_closed"
+        },
+        "time": {
+          "const": "fail_closed"
+        },
+        "attestation": {
+          "const": "fail_closed"
+        },
+        "audit_sink": {
+          "const": "fail_closed"
+        }
+      }
+    },
+    "audit_key_ref": {
+      "type": "string",
+      "pattern": "^secretref://"
+    },
+    "token_key_ref": {
+      "type": "string",
+      "pattern": "^secretref://"
+    },
+    "artifact_key_ref": {
+      "type": "string",
+      "pattern": "^secretref://"
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_rate",
+        "redact_high_cardinality",
+        "retention_days"
+      ],
+      "properties": {
+        "sample_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "redact_high_cardinality": {
+          "const": true
+        },
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base_delay_ms",
+        "max_delay_ms",
+        "max_elapsed_ms"
+      ],
+      "properties": {
+        "base_delay_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_delay_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_elapsed_ms": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "breaker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "failure_threshold",
+        "reset_timeout_s",
+        "half_open_max"
+      ],
+      "properties": {
+        "failure_threshold": {
+          "type": "number",
+          "minimum": 0
+        },
+        "reset_timeout_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "half_open_max": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rate_per_s",
+        "burst",
+        "tenant_share"
+      ],
+      "properties": {
+        "rate_per_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "burst": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tenant_share": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "deadline_ms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default",
+        "max"
+      ],
+      "properties": {
+        "default": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stall_after_s",
+        "max_error_ratio",
+        "min_samples"
+      ],
+      "properties": {
+        "stall_after_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_error_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_samples": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "spiffe_bindings": {
+      "type": "object",
+      "maxProperties": 10000,
+      "propertyNames": {
+        "pattern": "^runtime:"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "actor_type"
+        ],
+        "properties": {
+          "actor_type": {
+            "enum": [
+              "workload",
+              "controller",
+              "node"
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "version",
+        "max_age_s",
+        "roles"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_age_s": {
+          "type": "number",
+          "minimum": 60
+        },
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

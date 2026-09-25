@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv67:PK_K8S_PLACE:1",
+  "title": "INV-67 placement envelope sent to SCH-01/INV-68",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "idempotencyKey", "fencingToken", "deadlineSeconds", "identity", "request"],
+  "properties": {
+    "schema": {"const": "PK_K8S_PLACE/1"},
+    "idempotencyKey": {"type": "string", "pattern": "^[0-9a-fA-F-]{8,64}/g[0-9]+/a[0-9]+$"},
+    "fencingToken": {"type": "integer", "minimum": 0},
+    "deadlineSeconds": {"type": "number", "minimum": 0},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cluster", "tenant", "namespace", "name", "uid", "appId"],
+      "properties": {
+        "cluster": {"type": "string", "minLength": 1}, "tenant": {"type": "string", "minLength": 1},
+        "namespace": {"type": "string", "minLength": 1}, "name": {"type": "string", "minLength": 1},
+        "uid": {"type": "string", "minLength": 8}, "appId": {"type": "string", "pattern": "^app-[0-9a-f]{24}$"}
+      }
+    },
+    "request": {"type": "object"}
+  }
+}

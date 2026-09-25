@@ -1,0 +1,29 @@
+# INV-71 CI (written in v4.3.0; NOT executed by the remediation pass - no runner was available)
+name: inv71
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix: {python: ["3.10", "3.11", "3.12", "3.13"]}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv71_heavy_agent_sandbox}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install jsonschema==4.23.0
+      - name: compile
+        run: python -m compileall -q inv71_heavy_agent_sandbox
+      - name: unit, contract, property, concurrency, fault
+        run: python -B -m unittest discover -s inv71_heavy_agent_sandbox/tests -p "test_*.py" -v
+      - name: same under -O (no assert-dependent behaviour)
+        run: python -B -O -m unittest discover -s inv71_heavy_agent_sandbox/tests -p "test_*.py"
+      - name: fuzz (release seeds)
+        run: python -B inv71_heavy_agent_sandbox/tools/fuzz.py --iterations 20000 --seed 71
+      - name: reference benchmark gate
+        run: python -B inv71_heavy_agent_sandbox/tools/bench.py
+      - name: evidence + production gate (expected NO_GO until production path exists)
+        run: |
+          python -B inv71_heavy_agent_sandbox/tools/build_evidence.py
+          python -B inv71_heavy_agent_sandbox/tools/production_gate.py || echo "gate: NO_GO (expected)"

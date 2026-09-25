@@ -1,0 +1,26 @@
+# Prometheus alerting rules (component 53). Thresholds PROPOSED; never loaded into a real Prometheus.
+groups:
+- name: inv15-async-abi
+  rules:
+  - alert: Inv15Saturation
+    expr: sum by (instance) (pk_async_subtasks_open) / 64 > 0.9
+    for: 10m
+  - alert: Inv15StuckReady
+    expr: min_over_time(pk_async_subtasks_ready[15m]) > 0 and rate(pk_async_ready_to_resume_ns_count[15m]) == 0
+    for: 15m
+  - alert: Inv15CancelLatencyP99
+    expr: histogram_quantile(0.99, rate(pk_async_cancel_ack_ns_bucket[5m])) > 1e6
+    for: 10m
+  - alert: Inv15RefusalRate
+    expr: sum(rate(pk_async_refusals_total[5m])) / sum(rate(pk_async_calls_total[5m])) > 0.05
+    for: 10m
+  - alert: Inv15ForeignHandle
+    expr: increase(pk_async_foreign_handle_total[5m]) > 0
+    labels: {severity: security}
+  - alert: Inv15WakeupLoss
+    expr: increase(pk_async_late_completions_total[10m]) > 100
+    for: 10m
+  - alert: Inv15MemorySoftLimit
+    expr: increase(pk_async_memory_soft_limit_total[5m]) > 0
+  - alert: Inv15TelemetrySeriesDropped
+    expr: increase(pk_async_metric_series_dropped_total[1h]) > 0

@@ -1,0 +1,55 @@
+{
+ "schema": "PK_UNIKERNEL_CONFIG/1",
+ "environment": "dev",
+ "site_architecture": "x86_64",
+ "permitted_syscalls": [
+  "read",
+  "write",
+  "clock_gettime",
+  "solo5.console_write",
+  "solo5.clock_monotonic"
+ ],
+ "trust_root_ref": {
+  "secret_ref": "vault://pk/inv27/trust-root",
+  "max_age_hours": 24
+ },
+ "provenance_policy": {
+  "approved_builders": [
+   "pk-reference-builder"
+  ],
+  "approved_toolchains": {
+   "unikraft": [
+    "0.17.0"
+   ],
+   "solo5": [
+    "0.9.0"
+   ]
+  },
+  "require_source_digest": true
+ },
+ "isolation": {
+  "allow_network": [
+   "none"
+  ],
+  "allowed_devices": [
+   "serial"
+  ],
+  "allowed_storage": []
+ },
+ "limits": {
+  "max_image_bytes": 67108864,
+  "parser_work_budget": 20000000,
+  "admission_deadline_ms": 5000,
+  "boot_deadline_ms": 10000
+ },
+ "vmm": {
+  "backend": "qemu",
+  "accel": "kvm"
+ },
+ "quotas": {
+  "max_instances_per_tenant": 16
+ },
+ "features": {
+  "allow_attested_facts_for_stripped": false
+ }
+}

@@ -1,0 +1,66 @@
+# INV-30 CI (INV30-GAP-070). Copy to <repo>/.github/workflows/inv30.yml. Layout: <repo>/pk/{pk_core,pk_components/...}
+name: inv30
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    defaults: {run: {working-directory: pk}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - name: compile
+        run: python -m compileall -q pk_components/inv30_capability_hardware_sandbox
+      - name: static checks (stdlib only; pyflakes-free)
+        run: python -m pk_components.inv30_capability_hardware_sandbox.ops config-check --context far-edge
+      - name: tests (normal)
+        run: python -m unittest discover -s pk_components/inv30_capability_hardware_sandbox/tests -t . -v
+      - name: tests (optimized, -O)
+        run: python -O -m unittest discover -s pk_components/inv30_capability_hardware_sandbox/tests -t .
+      - name: secret scan
+        run: python -c "from pk_components.inv30_capability_hardware_sandbox import integrity as i; h=i.secret_scan(); print(h); raise SystemExit(bool(h))"
+      - name: traceability
+        run: python -m pk_components.inv30_capability_hardware_sandbox.traceability
+      - name: license headers
+        run: python -c "from pk_components.inv30_capability_hardware_sandbox import integrity as i; b=i.license_check(); print(b); raise SystemExit(bool(b))"
+      - name: packaging
+        run: python -m pip wheel --no-deps -w dist pk_components/inv30_capability_hardware_sandbox
+        continue-on-error: false
+  release-gate:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: pk}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: release evidence + exit gate (fails on NO_GO)
+        run: python -m pk_components.inv30_capability_hardware_sandbox.release --out gate-evidence
+      - name: offline verify
+        run: python -m pk_components.inv30_capability_hardware_sandbox.release --verify --out gate-evidence
+      - uses: actions/upload-artifact@v4
+        with: {name: inv30-release-evidence, path: pk/gate-evidence}
+  hardware-conformance:
+    # Runs only on a self-hosted CheriBSD/Morello runner labelled 'cheri'. Absent runner => job never runs,
+    # and the release gate reports hardware_tier_verdict=NO_GO.
+    if: ${{ vars.INV30_HAS_CHERI_RUNNER == 'true' }}
+    runs-on: [self-hosted, cheri]
+    defaults: {run: {working-directory: pk}}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest pk_components.inv30_capability_hardware_sandbox.tests.test_hardware_backend -v
+  provenance:
+    if: ${{ github.ref_type == 'tag' }}
+    needs: release-gate
+    runs-on: ubuntu-latest
+    permissions: {id-token: write, contents: read, attestations: write}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip wheel --no-deps -w dist pk/pk_components/inv30_capability_hardware_sandbox
+      - uses: actions/attest-build-provenance@v1
+        with: {subject-path: dist/*.whl}

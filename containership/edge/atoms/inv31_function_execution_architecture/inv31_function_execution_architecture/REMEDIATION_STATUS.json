@@ -1,0 +1,1100 @@
+{
+ "schema": "PK_INV31_REMEDIATION/1",
+ "element": "INV-31",
+ "version": "4.3.0",
+ "subject_sha256": "3751369f4910523e894f907bcd176b41f61b22b70c0e3da6e484b9b3e255263b",
+ "counts": {
+  "PARTIAL": 37,
+  "BLOCKED": 12,
+  "IMPLEMENTED_UNREVIEWED": 36
+ },
+ "total": 85,
+ "local_checks_pass": true,
+ "pk_core": {
+  "available": false,
+  "compatible": false,
+  "version": null,
+  "pinned_version": null,
+  "pinned_digest": null,
+  "pin_satisfied": false,
+  "missing": [],
+  "error": "pk_core not installed (pk_core)"
+ },
+ "production_gate": "NO_GO",
+ "gate_reasons": [
+  "pk_core 100-item gate not run (A01)",
+  "no accountable owner or independent approver recorded (C009, C100)",
+  "12 items BLOCKED: A02, A03, A08, A09, INV-31-C009, INV-31-C010, INV-31-C031, INV-31-C045, INV-31-C047, INV-31-C068, INV-31-C078, INV-31-C098"
+ ],
+ "independent_review": "UNASSIGNED",
+ "items": [
+  {
+   "id": "A01",
+   "title": "pk_core framework",
+   "status": "PARTIAL",
+   "evidence": [
+    "pkcompat.py",
+    "__init__.py",
+    "tests/test_remediation.py::PkCoreCompatTest"
+   ],
+   "blockers": [
+    "pk_core not available/pinned (A01)"
+   ],
+   "note": "import no longer fails without pk_core; absence/incompatibility is a coded error; pin left unset"
+  },
+  {
+   "id": "A02",
+   "title": "MASTER.md source artifact",
+   "status": "BLOCKED",
+   "evidence": [
+    "SOURCE_PROVENANCE.md",
+    "evidence/source_hashes.json",
+    "tests/test_remediation.py::RepositoryIntegrityTest"
+   ],
+   "blockers": [
+    "authoritative MASTER.md not supplied"
+   ],
+   "note": "absence recorded; not reconstructed"
+  },
+  {
+   "id": "A03",
+   "title": "Dandelion pin",
+   "status": "BLOCKED",
+   "evidence": [
+    "docs/ADR-001-function-execution.md"
+   ],
+   "blockers": [
+    "Dandelion not resolved/pinned (A03)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "A04",
+   "title": "reproducible package manifest",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "pyproject.toml",
+    "evidence/ci_run.json"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "clean-venv install + test verified in CI script; pk_core extra empty pending A01"
+  },
+  {
+   "id": "A05",
+   "title": "production conformance/evidence outputs",
+   "status": "PARTIAL",
+   "evidence": [
+    "tools/make_evidence.py",
+    "evidence/"
+   ],
+   "blockers": [
+    "pk_core not available/pinned (A01)",
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "local hash-chained evidence produced; pk_core gate cannot run; no release approver"
+  },
+  {
+   "id": "A06",
+   "title": "adjacent-layer adapters/tests",
+   "status": "PARTIAL",
+   "evidence": [
+    "adapters.py",
+    "tests/test_remediation.py::AdjacentContractTest"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "Protocols + reference doubles; no real interop"
+  },
+  {
+   "id": "A07",
+   "title": "CI/release automation",
+   "status": "PARTIAL",
+   "evidence": [
+    "ci.sh",
+    ".github/workflows/ci.yml"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "CI runs tests (normal+-O), compile, schemas, bench report, evidence; release gate is NO_GO by design"
+  },
+  {
+   "id": "A08",
+   "title": "license/notice metadata",
+   "status": "BLOCKED",
+   "evidence": [
+    "OWNERSHIP.md"
+   ],
+   "blockers": [
+    "licence choice is the owner's decision"
+   ],
+   "note": ""
+  },
+  {
+   "id": "A09",
+   "title": "ownership/support metadata",
+   "status": "BLOCKED",
+   "evidence": [
+    "OWNERSHIP.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "template only, UNASSIGNED"
+  },
+  {
+   "id": "A10",
+   "title": "performance/fault/security harnesses",
+   "status": "PARTIAL",
+   "evidence": [
+    "tools/bench.py",
+    "tests/test_remediation.py::FuzzAndPropertyTest",
+    "tests/test_remediation.py::ConcurrencyStressTest",
+    "tests/test_remediation.py::DependencyTest"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "in-process bench/fuzz/stress/fault; no soak/fleet"
+  },
+  {
+   "id": "INV-31-C005",
+   "title": "assumptions",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/REQUIREMENTS.md#assumptions-c005"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C009",
+   "title": "owner and escalation",
+   "status": "BLOCKED",
+   "evidence": [
+    "OWNERSHIP.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C010",
+   "title": "approved ADR",
+   "status": "BLOCKED",
+   "evidence": [
+    "docs/ADR-001-function-execution.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)",
+    "Dandelion not resolved/pinned (A03)"
+   ],
+   "note": "ADR PROPOSED"
+  },
+  {
+   "id": "INV-31-C011",
+   "title": "SHALL-level requirements",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "Dandelion not resolved/pinned (A03)"
+   ],
+   "note": "reuse/boundary SHALLs mapped to tests; DAG semantics not written (would be invented)"
+  },
+  {
+   "id": "INV-31-C012",
+   "title": "functional reqs per context",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/REQUIREMENTS.md",
+    "config/*.example.json"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "four context configs, unapproved sizing"
+  },
+  {
+   "id": "INV-31-C013",
+   "title": "NFRs",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/REQUIREMENTS.md",
+    "docs/SLOS.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "thresholds PROPOSED"
+  },
+  {
+   "id": "INV-31-C016",
+   "title": "versioning/back-compat",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/COMPATIBILITY_MATRIX.md",
+    "schemas/PK_INVOKE_REQUEST_1.schema.json",
+    "tests/test_remediation.py::VersioningTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C017",
+   "title": "quotas/fairness",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::Gateway._admit_quota",
+    "tests/test_remediation.py::QuotaFairnessTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "per-tenant instance quota + max share of pool"
+  },
+  {
+   "id": "INV-31-C018",
+   "title": "network absent/intermittent",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/REQUIREMENTS.md",
+    "tests/test_remediation.py::DependencyTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C019",
+   "title": "precedence rules",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "documented; residency not modelled by INV-31"
+  },
+  {
+   "id": "INV-31-C023",
+   "title": "authentication",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::HmacAuthenticator",
+    "tests/test_remediation.py::AuthenticationTest"
+   ],
+   "blockers": [
+    "no KMS/IdP supplied",
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "keys injected; no IdP integration"
+  },
+  {
+   "id": "INV-31-C024",
+   "title": "authorization/capabilities",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py",
+    "tests/test_remediation.py::AuthorizationTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C025",
+   "title": "timeout/cancel/retry/idempotency/backpressure",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py",
+    "tests/test_remediation.py::ControlSemanticsTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "deadline+cancel at admission; work already admitted is not pre-empted (synchronous model)"
+  },
+  {
+   "id": "INV-31-C026",
+   "title": "structured failure codes",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "errors.py",
+    "schemas/PK_INV31_ERROR_1.schema.json",
+    "tests/test_remediation.py::ErrorsTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C027",
+   "title": "peer version compatibility",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "tests/test_remediation.py::VersioningTest",
+    "docs/COMPATIBILITY_MATRIX.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "single supported version; refusal behaviour tested"
+  },
+  {
+   "id": "INV-31-C029",
+   "title": "examples + conformance fixtures",
+   "status": "PARTIAL",
+   "evidence": [
+    "fixtures/",
+    "config/"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "fixture corpus added for request/error/config; not independently reviewed"
+  },
+  {
+   "id": "INV-31-C030",
+   "title": "integration tests with adjacent layers",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::AdjacentContractTest"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "doubles only"
+  },
+  {
+   "id": "INV-31-C031",
+   "title": "pin Dandelion",
+   "status": "BLOCKED",
+   "evidence": [],
+   "blockers": [
+    "Dandelion not resolved/pinned (A03)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C033",
+   "title": "declarative config + secure defaults",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "config.py",
+    "schemas/PK_INV31_CONFIG_1.schema.json",
+    "tests/test_remediation.py::ConfigTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "unsigned documents; signing needs KMS"
+  },
+  {
+   "id": "INV-31-C036",
+   "title": "config provenance",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "config.py::ConfigManager.apply",
+    "tests/test_remediation.py::ConfigTest::test_apply_records_provenance"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C037",
+   "title": "atomic config updates",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "config.py",
+    "tests/test_remediation.py::ConfigTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "whole-generation swap under the gateway lock"
+  },
+  {
+   "id": "INV-31-C038",
+   "title": "automatic + operator rollback",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "config.py",
+    "tests/test_remediation.py::ConfigTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C040",
+   "title": "deterministic bootstrap",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/RUNBOOKS.md",
+    "ci.sh"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "package bootstrap verified in clean venv; node/environment bootstrap belongs to parent platform"
+  },
+  {
+   "id": "INV-31-C041",
+   "title": "threat model",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "needs independent security review"
+  },
+  {
+   "id": "INV-31-C042",
+   "title": "least privilege",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py",
+    "tests/test_remediation.py::AuthorizationTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C043",
+   "title": "no ambient authority",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "tests/test_remediation.py::AuthorizationTest::test_no_ambient_authority_in_sources"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "source-level check; process-level sandboxing is PLN-04's"
+  },
+  {
+   "id": "INV-31-C044",
+   "title": "authenticate peers/actors",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::AuthenticationTest"
+   ],
+   "blockers": [
+    "no KMS/IdP supplied",
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "callers authenticated; nodes/providers/artifacts not"
+  },
+  {
+   "id": "INV-31-C045",
+   "title": "verify artifact signatures/provenance",
+   "status": "BLOCKED",
+   "evidence": [],
+   "blockers": [
+    "no code-loader or artifact supply chain in scope/supplied"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C047",
+   "title": "encryption in transit/at rest",
+   "status": "BLOCKED",
+   "evidence": [],
+   "blockers": [
+    "no KMS/IdP supplied"
+   ],
+   "note": "INV-31 persists nothing and opens no sockets"
+  },
+  {
+   "id": "INV-31-C048",
+   "title": "safe behaviour when trust services down",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "tests/test_remediation.py::AuthenticationTest::test_empty_keystore_refuses_everyone",
+    "tests/test_remediation.py::DependencyTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C049",
+   "title": "tamper-evident audit",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::AuditLog",
+    "tests/test_remediation.py::ObservabilityTest::test_audit_chain_detects_tampering"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "chain is in-memory; export/anchoring is parent's"
+  },
+  {
+   "id": "INV-31-C050",
+   "title": "adversarial tests",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::AuthenticationTest",
+    "tests/test_remediation.py::AuthorizationTest",
+    "tests/test_remediation.py::FuzzAndPropertyTest"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "escape/side channels belong to the isolation tier"
+  },
+  {
+   "id": "INV-31-C051",
+   "title": "failure enumeration",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/REQUIREMENTS.md",
+    "docs/RUNBOOKS.md"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C052",
+   "title": "health/stall detection thresholds",
+   "status": "PARTIAL",
+   "evidence": [
+    "boundary.py::Gateway.health"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "health/readiness exposed; stall thresholds PROPOSED only"
+  },
+  {
+   "id": "INV-31-C053",
+   "title": "bounded retry/backoff/jitter",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::bounded_retry",
+    "tests/test_remediation.py::ControlSemanticsTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C055",
+   "title": "failover without violating isolation",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "pools never migrate; failover = cold start elsewhere"
+  },
+  {
+   "id": "INV-31-C056",
+   "title": "degraded operation",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "tests/test_remediation.py::DependencyTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C058",
+   "title": "split-brain/duplicate execution",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::ControlSemanticsTest",
+    "tests/test_remediation.py::ConcurrencyStressTest"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "idempotency within one gateway; cross-node needs a shared store"
+  },
+  {
+   "id": "INV-31-C060",
+   "title": "fault-injection tests",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::DependencyTest",
+    "tests/test_remediation.py::ConfigTest"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "in-process only"
+  },
+  {
+   "id": "INV-31-C061",
+   "title": "reproducible baselines",
+   "status": "PARTIAL",
+   "evidence": [
+    "tools/bench.py",
+    "evidence/bench.json"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "seeded workloads; one host only"
+  },
+  {
+   "id": "INV-31-C062",
+   "title": "p50/p95/p99 thresholds",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/SLOS.md",
+    "evidence/bench_thresholds.json"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "PROPOSED"
+  },
+  {
+   "id": "INV-31-C063",
+   "title": "steady/burst/overload measurement",
+   "status": "PARTIAL",
+   "evidence": [
+    "evidence/bench.json"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "no scale-out/in or recovery measurement"
+  },
+  {
+   "id": "INV-31-C064",
+   "title": "per-tenant overhead",
+   "status": "PARTIAL",
+   "evidence": [
+    "evidence/bench.json#gateway_overhead_p50_ns"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C065",
+   "title": "identify avoidable work",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "runtime.py",
+    "evidence/bench.json"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "found O(n) identifier revalidation + snapshot dicts per invoke; fixed (burst p50 ~5.7x lower); remaining linear scan and single admission lock recorded as W-03"
+  },
+  {
+   "id": "INV-31-C066",
+   "title": "apply optimisations",
+   "status": "PARTIAL",
+   "evidence": [
+    "runtime.py"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "two semantics-preserving optimisations"
+  },
+  {
+   "id": "INV-31-C067",
+   "title": "bound memory/queues/fan-out",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py (MAX_* bounds)",
+    "tests/test_remediation.py::DependencyTest::test_telemetry_overflow_is_counted_not_silent"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C068",
+   "title": "edge power/thermal",
+   "status": "BLOCKED",
+   "evidence": [],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C069",
+   "title": "capacity model + saturation",
+   "status": "PARTIAL",
+   "evidence": [
+    "boundary.py::Gateway.health#saturation"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "saturation signal exposed; no predictive model"
+  },
+  {
+   "id": "INV-31-C070",
+   "title": "block regressing releases",
+   "status": "PARTIAL",
+   "evidence": [
+    "tools/bench.py --check",
+    "ci.sh"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "check exists; not a release block while thresholds are unapproved"
+  },
+  {
+   "id": "INV-31-C071",
+   "title": "health/readiness/version/config/deps",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::Gateway.health",
+    "tests/test_remediation.py::ObservabilityTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C072",
+   "title": "structured metrics",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::Gateway.metrics"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C073",
+   "title": "structured logs",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::Telemetry.log"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C074",
+   "title": "trace context",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::child_trace",
+    "tests/test_remediation.py::ObservabilityTest::test_trace_context_propagates"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "W3C traceparent in; propagation onward is PLN-04's"
+  },
+  {
+   "id": "INV-31-C075",
+   "title": "safe high-cardinality detail",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::redact_tenant",
+    "tests/test_remediation.py::ObservabilityTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C077",
+   "title": "explain view",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "boundary.py::Gateway.explain",
+    "tests/test_remediation.py::ObservabilityTest::test_explain_view_is_tenant_scoped"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C078",
+   "title": "release lineage/infra graph correlation",
+   "status": "BLOCKED",
+   "evidence": [],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C079",
+   "title": "telemetry retention/privacy policy",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/TELEMETRY_POLICY.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "PROPOSED"
+  },
+  {
+   "id": "INV-31-C080",
+   "title": "dashboards + alerts",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/TELEMETRY_POLICY.md"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "signal mapping only"
+  },
+  {
+   "id": "INV-31-C082",
+   "title": "contract tests for public interfaces",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "tests/test_remediation.py::ErrorsTest",
+    "tests/test_remediation.py::VersioningTest",
+    "fixtures/"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C083",
+   "title": "integration tests all adjacent layers",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::AdjacentContractTest"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C084",
+   "title": "compatibility tests across arch/runtimes",
+   "status": "PARTIAL",
+   "evidence": [
+    "evidence/ci_run.json"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "one interpreter/arch per CI host"
+  },
+  {
+   "id": "INV-31-C085",
+   "title": "fuzz untrusted inputs",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "tests/test_remediation.py::FuzzAndPropertyTest"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "seeded property fuzzing; no coverage-guided fuzzer"
+  },
+  {
+   "id": "INV-31-C087",
+   "title": "threat-derived security tests",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C088",
+   "title": "benchmark/soak/burst/fleet",
+   "status": "PARTIAL",
+   "evidence": [
+    "tools/bench.py"
+   ],
+   "blockers": [
+    "no fleet/edge hardware or real deployment to measure"
+   ],
+   "note": "no soak/fleet"
+  },
+  {
+   "id": "INV-31-C089",
+   "title": "disaster/partition/reconnect",
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_remediation.py::DependencyTest"
+   ],
+   "blockers": [
+    "real PLN-04/INV-26/PLN-05/GAP-09 layers not supplied (A06)"
+   ],
+   "note": "sink partition/reconnect only"
+  },
+  {
+   "id": "INV-31-C090",
+   "title": "machine-readable acceptance evidence",
+   "status": "PARTIAL",
+   "evidence": [
+    "evidence/"
+   ],
+   "blockers": [
+    "pk_core not available/pinned (A01)",
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C091",
+   "title": "SLOs/error budgets/support",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/SLOS.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "PROPOSED"
+  },
+  {
+   "id": "INV-31-C092",
+   "title": "canary/rollback/emergency disable",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/RUNBOOKS.md",
+    "tests/test_remediation.py::ObservabilityTest::test_emergency_disable_and_enable"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "canary itself is parent platform's"
+  },
+  {
+   "id": "INV-31-C093",
+   "title": "compatibility matrix",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/COMPATIBILITY_MATRIX.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C094",
+   "title": "patch/vuln/EOL SLAs",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/GOVERNANCE.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "PROPOSED"
+  },
+  {
+   "id": "INV-31-C096",
+   "title": "day-0/1/2 runbooks",
+   "status": "IMPLEMENTED_UNREVIEWED",
+   "evidence": [
+    "docs/RUNBOOKS.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "INV-31-C097",
+   "title": "incident procedures",
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/RUNBOOKS.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "contacts UNASSIGNED"
+  },
+  {
+   "id": "INV-31-C098",
+   "title": "recurring reviews",
+   "status": "BLOCKED",
+   "evidence": [
+    "docs/GOVERNANCE.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "cannot be performed by a build"
+  },
+  {
+   "id": "INV-31-C099",
+   "title": "exceptions/waivers register",
+   "status": "PARTIAL",
+   "evidence": [
+    "WAIVERS.json",
+    "docs/GOVERNANCE.md"
+   ],
+   "blockers": [
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "owners/expiries unset"
+  },
+  {
+   "id": "INV-31-C100",
+   "title": "formal production exit gate",
+   "status": "PARTIAL",
+   "evidence": [
+    "REMEDIATION_STATUS.json"
+   ],
+   "blockers": [
+    "pk_core not available/pinned (A01)",
+    "no accountable owner/approver assigned (C009)"
+   ],
+   "note": "gate evaluated mechanically -> NO_GO"
+  }
+ ]
+}

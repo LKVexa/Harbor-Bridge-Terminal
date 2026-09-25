@@ -1,0 +1,42 @@
+{
+  "schema": "PK_PLN04_ALERTS/1",
+  "status": "DEFINED-NOT-DEPLOYED",
+  "alerts": [
+    {
+      "name": "PLN04AdmissionLatencyP99",
+      "expr": "histogram_quantile(0.99, sum by (le) (rate(pln04_admission_latency_ms_bucket[5m]))) > 50",
+      "for": "10m",
+      "severity": "page"
+    },
+    {
+      "name": "PLN04ProviderErrors",
+      "expr": "sum(rate(pln04_admission_errors_total{error_code=~\"PLN04-(PROV|DEP|TIME)-.*\"}[5m])) / sum(rate(pln04_admissions_total[5m])) > 0.05",
+      "for": "5m",
+      "severity": "page"
+    },
+    {
+      "name": "PLN04AttestationFailure",
+      "expr": "increase(pln04_attestation_failures_total[5m]) > 0",
+      "for": "0m",
+      "severity": "page"
+    },
+    {
+      "name": "PLN04SplitBrain",
+      "expr": "increase(pln04_split_brain_detected_total[5m]) > 0",
+      "for": "0m",
+      "severity": "page"
+    },
+    {
+      "name": "PLN04ReaperStuck",
+      "expr": "pln04_reaper_stuck > 0",
+      "for": "30m",
+      "severity": "ticket"
+    },
+    {
+      "name": "PLN04ExportBackpressure",
+      "expr": "increase(pln04_export_backpressure_total[10m]) > 0",
+      "for": "10m",
+      "severity": "ticket"
+    }
+  ]
+}

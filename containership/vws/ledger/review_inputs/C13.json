@@ -1,0 +1,1696 @@
+{
+"component": "C13",
+"items": [
+{
+"id": "C13-001",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Define responsibility for retrieving incoming HTTP contexts.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Node http server has no manual context-retrieval step; event-driven, not GetContextAsync polling.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-002",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Identify the single owner of the master acceptance loop.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no manual master acceptance loop exists in Node's event-driven http.createServer.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-003",
+"task_class": "DOCUMENT",
+"area": "01. Acceptance-loop contract",
+"req": "Record GetContextAsync as the article's selected acceptance method.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: GetContextAsync is not used; Node's http module accepts internally.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-004",
+"task_class": "IMPLEMENT",
+"area": "01. Acceptance-loop contract",
+"req": "Distinguish task creation from task completion handling.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no Task creation/completion split; Node uses callbacks, not the .NET Task pattern.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-005",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Define the point at which a context leaves the acceptance loop.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no explicit acceptance-loop construct to leave.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-006",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Define the intended number of outstanding acceptance operations.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Node issues no concurrent GetContextAsync-style accept calls.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-007",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Define the shutdown condition for the loop.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "registry.draining + server.close approximate loop shutdown but no formal loop construct is defined.",
+"prior_evidence": [
+"gateway/server.js:197-221"
+]
+},
+{
+"id": "C13-008",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Define the policy for transient acceptance failures.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no manual accept-call retry policy exists in Node's http module.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-009",
+"task_class": "SPECIFY",
+"area": "01. Acceptance-loop contract",
+"req": "Define the policy for persistent listener failures.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented policy for repeated/persistent listener failures at runtime; only startup error exits (gateway/server.js:229).",
+"prior_evidence": []
+},
+{
+"id": "C13-010",
+"task_class": "IMPLEMENT",
+"area": "01. Acceptance-loop contract",
+"req": "Approve the acceptance-loop state model.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no acceptance-loop state model exists to approve.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-011",
+"task_class": "IMPLEMENT",
+"area": "02. Task integration",
+"req": "Call GetContextAsync only when the listener is eligible to accept.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: GetContextAsync unused.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-012",
+"task_class": "IMPLEMENT",
+"area": "02. Task integration",
+"req": "Retain the returned task until completion is observed.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no task object is returned by Node's accept model.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-013",
+"task_class": "SPECIFY",
+"area": "02. Task integration",
+"req": "Define the PowerShell mechanism used to observe task completion.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no PowerShell mechanism exists in the Node gateway.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-014",
+"task_class": "VERIFY",
+"area": "02. Task integration",
+"req": "Verify any synchronous wait does not perform connection servicing.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: .NET synchronous-wait concept has no analog in Node's event loop.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-015",
+"task_class": "IMPLEMENT",
+"area": "02. Task integration",
+"req": "Capture the completed HttpListenerContext.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: HttpListenerContext does not exist in Node.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-016",
+"task_class": "MEASURE",
+"area": "02. Task integration",
+"req": "Observe exceptions raised by the acceptance task.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "HTTP callback wrapped in try/catch; the 'upgrade' handler (line 152) has no equivalent try/catch.",
+"prior_evidence": [
+"gateway/server.js:94,140-143"
+]
+},
+{
+"id": "C13-017",
+"task_class": "IMPLEMENT",
+"area": "02. Task integration",
+"req": "Distinguish expected cancellation or stopping from unexpected faults.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: .NET task-cancellation-vs-fault taxonomy has no Node analog.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-018",
+"task_class": "IMPLEMENT",
+"area": "02. Task integration",
+"req": "Avoid losing references to faulted tasks.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no .NET faulted-task references exist in Node's model.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-019",
+"task_class": "IMPLEMENT",
+"area": "02. Task integration",
+"req": "Avoid busy polling a task without an approved waiting strategy.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Node's event-driven I/O (socket.on/server.on) is used throughout; no busy-poll code exists.",
+"prior_evidence": [
+"gateway/ws.js:60-65",
+"gateway/server.js:91-185"
+]
+},
+{
+"id": "C13-020",
+"task_class": "DOCUMENT",
+"area": "02. Task integration",
+"req": "Document the task-waiting behavior on the master runspace.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no runspace/task-waiting model exists in the Node gateway.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-021",
+"task_class": "IMPLEMENT",
+"area": "03. Context ownership",
+"req": "Assign each accepted context exactly one handler owner.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "HTTP requests and upgrades are dispatched to exactly one handler path each (request callback vs 'upgrade' listener).",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"gateway/server.js:91-185"
+]
+},
+{
+"id": "C13-022",
+"task_class": "DOCUMENT",
+"area": "03. Context ownership",
+"req": "Record the ownership boundary before request classification.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Admission order is documented but no doc explicitly names an 'ownership boundary before classification'.",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C13-023",
+"task_class": "IMPLEMENT",
+"area": "03. Context ownership",
+"req": "Prevent the same context from being queued twice.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Each request/upgrade event fires exactly once per socket; no manual re-queuing code exists.",
+"prior_evidence": [
+"gateway/server.js:91,152"
+]
+},
+{
+"id": "C13-024",
+"task_class": "IMPLEMENT",
+"area": "03. Context ownership",
+"req": "Close ordinary HTTP responses through their owning handler.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "json()/res.end() close ordinary HTTP responses within the same handler that owns them.",
+"prior_evidence": [
+"gateway/server.js:74-78,133-139"
+]
+},
+{
+"id": "C13-025",
+"task_class": "IMPLEMENT",
+"area": "03. Context ownership",
+"req": "Transfer successful upgraded contexts to connection ownership.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade() then new Connection(...) transfers a successful upgrade to connection ownership.",
+"prior_evidence": [
+"gateway/server.js:180-184"
+]
+},
+{
+"id": "C13-026",
+"task_class": "SPECIFY",
+"area": "03. Context ownership",
+"req": "Define cleanup when classification fails.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reject() closes the socket on classification failure but no doc explicitly defines this cleanup policy.",
+"prior_evidence": [
+"gateway/server.js:155,158"
+]
+},
+{
+"id": "C13-027",
+"task_class": "SPECIFY",
+"area": "03. Context ownership",
+"req": "Define cleanup when handoff fails.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit handling documented/coded if Connection construction throws after acceptUpgrade succeeds.",
+"prior_evidence": [
+"gateway/server.js:180-184"
+]
+},
+{
+"id": "C13-028",
+"task_class": "REVIEW",
+"area": "03. Context ownership",
+"req": "Ensure no accepted context is silently discarded.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Most paths end a response, but the 'upgrade' handler lacks a top-level try/catch so a thrown error could leave a socket unhandled.",
+"prior_evidence": [
+"gateway/server.js:91-185"
+]
+},
+{
+"id": "C13-029",
+"task_class": "IMPLEMENT",
+"area": "03. Context ownership",
+"req": "Track in-flight contexts needed during shutdown.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns Set tracks all live connections and is iterated during shutdown().",
+"prior_evidence": [
+"gateway/server.js:38-51,197-221"
+]
+},
+{
+"id": "C13-030",
+"task_class": "TEST",
+"area": "03. Context ownership",
+"req": "Test ownership accounting during a burst of requests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No test in EVIDENCE_INDEX specifically verifies ownership accounting during a request burst.",
+"prior_evidence": []
+},
+{
+"id": "C13-031",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Classify the request promptly after acceptance.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Admission order is applied synchronously within the same handler as acceptance, i.e. promptly.",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"gateway/server.js:91-185"
+]
+},
+{
+"id": "C13-032",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Keep health handling short and bounded.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "/health does constant, unauthenticated, minimal work (registry.ready && !draining check only).",
+"prior_evidence": [
+"gateway/server.js:95-101"
+]
+},
+{
+"id": "C13-033",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Run connection checks before creating a persistent worker.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "\"capacity: refused before a worker is spawned\" test listed in EVIDENCE_INDEX, passing in full-suite.tap.",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C13-034",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Complete or reject the upgrade through one path.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "reject() early-returns; acceptUpgrade() is the only success path; no code path does both.",
+"prior_evidence": [
+"gateway/server.js:155-185"
+]
+},
+{
+"id": "C13-035",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Return to acceptance after a successful worker handoff.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "The 'upgrade' listener returns after each handoff without blocking; Node dispatches the next event independently.",
+"prior_evidence": [
+"gateway/server.js:152-185"
+]
+},
+{
+"id": "C13-036",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Avoid placing ReceiveAsync loops inside the master acceptance path.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Receive handling uses socket.on('data',...) inside WsConnection, not inside the master upgrade handler.",
+"prior_evidence": [
+"gateway/ws.js:61"
+]
+},
+{
+"id": "C13-037",
+"task_class": "IMPLEMENT",
+"area": "04. Dispatch behavior",
+"req": "Avoid waiting for a connection's full lifetime before accepting again.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Upgrade handler returns immediately after constructing Connection; it never awaits the connection's lifetime.",
+"prior_evidence": [
+"gateway/server.js:180-185"
+]
+},
+{
+"id": "C13-038",
+"task_class": "SPECIFY",
+"area": "04. Dispatch behavior",
+"req": "Define admission behavior when worker capacity is unavailable.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "\"Capacity reserved before a worker is spawned... refusal LIMIT_EXCEEDED, close 1013\" documented explicitly.",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C13-039",
+"task_class": "TEST",
+"area": "04. Dispatch behavior",
+"req": "Test the order of acceptance and handoff diagnostic events.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "e2e test checks session.opened precedes output, but no test specifically orders acceptance vs handoff diagnostic log events.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C13-040",
+"task_class": "DOCUMENT",
+"area": "04. Dispatch behavior",
+"req": "Document the expected per-context dispatcher workload.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No document quantifying expected per-context dispatcher workload was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-041",
+"task_class": "MEASURE",
+"area": "05. Loop responsiveness",
+"req": "Measure time from request arrival to classification.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "RESOURCE_MODEL.md measures echo/bulk/open latency but not time from request arrival to classification specifically.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C13-042",
+"task_class": "MEASURE",
+"area": "05. Loop responsiveness",
+"req": "Measure time from accepted upgrade to worker handoff.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "W3: \"8 concurrent sessions | open p50 52 ms, max 71 ms\" measures accepted-upgrade-to-handoff latency.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C13-043",
+"task_class": "MEASURE",
+"area": "05. Loop responsiveness",
+"req": "Measure time until the master awaits the next context.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no manual 'await next context' step exists in Node's event model to measure.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-044",
+"task_class": "TEST",
+"area": "05. Loop responsiveness",
+"req": "Test health requests during an idle WebSocket session.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "e2e.test.js tests health under bulk output, not explicitly during an idle WebSocket session.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C13-045",
+"task_class": "TEST",
+"area": "05. Loop responsiveness",
+"req": "Test health requests during heavy message processing.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "\"health stays responsive (< 250 ms) while a session streams bulk output and large inbound messages arrive\".",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C13-046",
+"task_class": "TEST",
+"area": "05. Loop responsiveness",
+"req": "Test connection attempts while another upgrade is slow.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for a connection attempt while another upgrade is slow.",
+"prior_evidence": []
+},
+{
+"id": "C13-047",
+"task_class": "TEST",
+"area": "05. Loop responsiveness",
+"req": "Test several simultaneous upgrade attempts.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "W3 measures 8 concurrent simultaneous session opens.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only",
+"e/I053/bench.json"
+]
+},
+{
+"id": "C13-048",
+"task_class": "SPECIFY",
+"area": "05. Loop responsiveness",
+"req": "Set an approved acceptance-latency target.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No approved acceptance-latency target document was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-049",
+"task_class": "SPECIFY",
+"area": "05. Loop responsiveness",
+"req": "Identify work that violates the responsiveness target.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No document identifying work that violates a responsiveness target was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-050",
+"task_class": "IMPLEMENT",
+"area": "05. Loop responsiveness",
+"req": "Keep expensive application processing outside the acceptance loop.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Session/shell logic runs in a spawned worker process, not in the upgrade admission handler.",
+"prior_evidence": [
+"gateway/server.js:152-185",
+"gateway/connection.js:166-195"
+]
+},
+{
+"id": "C13-051",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test GetContextAsync failure after listener shutdown.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: GetContextAsync failure-after-shutdown has no Node analog (server.close is tested differently).",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-052",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test a malformed request observed by the listener.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Malformed handshake/version/key/path cases refused without upgrade, per EVIDENCE_INDEX.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C13-053",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test an exception in the classifier.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No test injecting an exception into the classification/routing code was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-054",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test an exception in ordinary HTTP handling.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "HTTP handler has a try/catch fallback, but no listed test exercises this specific catch path.",
+"prior_evidence": [
+"gateway/server.js:94,140-143"
+]
+},
+{
+"id": "C13-055",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test an exception during WebSocket upgrade.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No try/catch wraps the 'upgrade' handler and no test targets an exception during upgrade.",
+"prior_evidence": [
+"gateway/server.js:152-185"
+]
+},
+{
+"id": "C13-056",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test an exception while registering a worker.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker 'error'/'exit' handlers exist and are exercised by worker-failure tests, not specifically a registration-time exception.",
+"prior_evidence": [
+"gateway/connection.js:191",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C13-057",
+"task_class": "REVIEW",
+"area": "06. Failure handling",
+"req": "Ensure one context failure does not cause an uncontrolled retry storm.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "No retry loop exists; per-request/connection failures are terminal, not retried automatically.",
+"prior_evidence": [
+"gateway/server.js:91-185",
+"gateway/connection.js:254-266"
+]
+},
+{
+"id": "C13-058",
+"task_class": "SPECIFY",
+"area": "06. Failure handling",
+"req": "Define a bounded delay or stop decision for repeated failures.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented bounded-delay/stop policy for repeated failures was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-059",
+"task_class": "IMPLEMENT",
+"area": "06. Failure handling",
+"req": "Preserve useful error categories without dumping private headers.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "\"Messages are fixed safe strings (no echoed input, no paths, no stack)\"; log.js redacts secrets.",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors",
+"gateway/log.js"
+]
+},
+{
+"id": "C13-060",
+"task_class": "TEST",
+"area": "06. Failure handling",
+"req": "Test recovery when the listener remains operational after one request failure.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "\"the other tenant is unaffected\" shows recovery after one worker's failure; not a listener-level request-failure recovery test.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C13-061",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency controls",
+"req": "Prevent accidental creation of competing master loops.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "One http.createServer instance created per createGateway() call; require.main guard starts it once at process entry.",
+"prior_evidence": [
+"gateway/server.js:26-236"
+]
+},
+{
+"id": "C13-062",
+"task_class": "SPECIFY",
+"area": "07. Concurrency controls",
+"req": "Define synchronization for shared acceptance state.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "registry is shared state accessed synchronously in Node's single-threaded loop; no doc explicitly frames this as a synchronization decision.",
+"prior_evidence": [
+"gateway/server.js:38-51"
+]
+},
+{
+"id": "C13-063",
+"task_class": "REVIEW",
+"area": "07. Concurrency controls",
+"req": "Ensure worker completion does not mutate loop state unsafely.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Generation counter (this.gen) fences late worker callbacks from mutating a closed connection's state.",
+"prior_evidence": [
+"gateway/connection.js:23-24,54-56,183"
+]
+},
+{
+"id": "C13-064",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency controls",
+"req": "Coordinate capacity checks with worker registration.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "registry.reserve(this) is checked and must succeed before the worker is spawned via spawn().",
+"prior_evidence": [
+"gateway/connection.js:170,181"
+]
+},
+{
+"id": "C13-065",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency controls",
+"req": "Recheck shutdown state before handing off a newly accepted context.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining is rechecked at upgrade time and again in Connection._open before session admission.",
+"prior_evidence": [
+"gateway/server.js:160",
+"gateway/connection.js:169"
+]
+},
+{
+"id": "C13-066",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency controls",
+"req": "Handle shutdown racing with successful acceptance.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_open() rechecks draining, but no dedicated test exercises shutdown racing with an in-flight acceptance.",
+"prior_evidence": [
+"gateway/connection.js:169"
+]
+},
+{
+"id": "C13-067",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency controls",
+"req": "Handle capacity exhaustion racing with worker completion.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "registry.release(this) runs synchronously on worker exit, avoiding a race with capacity checks in Node's single thread.",
+"prior_evidence": [
+"gateway/connection.js:275-283"
+]
+},
+{
+"id": "C13-068",
+"task_class": "TEST",
+"area": "07. Concurrency controls",
+"req": "Test concurrent ordinary HTTP and upgrade requests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Health-during-WS-load is tested, but no test explicitly combines concurrent ordinary HTTP and upgrade requests.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C13-069",
+"task_class": "DOCUMENT",
+"area": "07. Concurrency controls",
+"req": "Record the limit of outstanding accepted-but-undispatched contexts.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No queue of accepted-but-undispatched contexts exists; Node dispatches each upgrade immediately, so no such limit applies.",
+"prior_evidence": [
+"gateway/server.js:152-185"
+]
+},
+{
+"id": "C13-070",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency controls",
+"req": "Prevent that in-flight context count from growing without bound.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "`registry.conns.size >= cfg.maxSessions * 2` caps in-flight connections before acceptUpgrade.",
+"prior_evidence": [
+"gateway/server.js:178"
+]
+},
+{
+"id": "C13-071",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown integration",
+"req": "Stop scheduling new acceptance after shutdown begins.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining=true causes /health 503 and new upgrades to be rejected.",
+"prior_evidence": [
+"gateway/server.js:160,200"
+]
+},
+{
+"id": "C13-072",
+"task_class": "SPECIFY",
+"area": "08. Shutdown integration",
+"req": "Define how the current acceptance wait is released.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no blocking 'acceptance wait' exists in Node's event model to release.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-073",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown integration",
+"req": "Handle a context completed immediately before shutdown.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "draining flag is set synchronously; behavior for an in-flight upgrade completing just before it is plausible but untested explicitly.",
+"prior_evidence": [
+"gateway/server.js:197-221"
+]
+},
+{
+"id": "C13-074",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown integration",
+"req": "Reject or close undispatched contexts according to shutdown policy.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() sends service.draining and end() to each tracked connection; new admissions get 503.",
+"prior_evidence": [
+"gateway/server.js:214-218"
+]
+},
+{
+"id": "C13-075",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown integration",
+"req": "Do not restart acceptance after an expected stop exception.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "shutdownPromise is memoized (idempotent); the server is listened on exactly once at startup, never restarted.",
+"prior_evidence": [
+"gateway/server.js:198,226-236"
+]
+},
+{
+"id": "C13-076",
+"task_class": "DOCUMENT",
+"area": "08. Shutdown integration",
+"req": "Record when acceptance has fully stopped.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('gateway.stopped', {forced, drainMs}) records full stop. [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:208"
+]
+},
+{
+"id": "C13-077",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown integration",
+"req": "Signal the shutdown coordinator after the loop exits.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() resolves {forced, drainMs}; the top-level onSignal handler then calls process.exit().",
+"prior_evidence": [
+"gateway/server.js:202-221,233"
+]
+},
+{
+"id": "C13-078",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown integration",
+"req": "Dispose acceptance-related synchronization resources.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Per-connection timers are cleared and server.closeAllConnections() is called, but gateway-level buckets Map etc. are not explicitly disposed.",
+"prior_evidence": [
+"gateway/connection.js:56",
+"gateway/server.js:206"
+]
+},
+{
+"id": "C13-079",
+"task_class": "TEST",
+"area": "08. Shutdown integration",
+"req": "Test shutdown with no incoming requests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Drain-measure covers an idle session alongside running ones, exiting 0 within budget.",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C13-080",
+"task_class": "TEST",
+"area": "08. Shutdown integration",
+"req": "Test shutdown during a connection burst.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "Drain measurement covers 3 pre-existing sessions, not a burst of new connection attempts during shutdown.",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C13-081",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record loop initialization and termination.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('gateway.listening',...) and log.info('gateway.stopped',...) record init and termination. [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:191,208"
+]
+},
+{
+"id": "C13-082",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record acceptance failures by category.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('ws.rejected', {status, reason, path}) records failure category per rejection. [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:155"
+]
+},
+{
+"id": "C13-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track accepted HTTP and WebSocket request counts separately.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "counters track upgrades and healthProbes separately, but not all ordinary HTTP routes are separately counted.",
+"prior_evidence": [
+"gateway/server.js:35,96,154"
+]
+},
+{
+"id": "C13-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track dispatch latency using an approved measurement method.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No per-request dispatch-latency tracking exists in gateway code; only external bench harness measures latency.",
+"prior_evidence": []
+},
+{
+"id": "C13-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track contexts currently awaiting handoff.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Handoff is immediate/synchronous in Node's model; no queue of contexts awaiting handoff exists to track.",
+"prior_evidence": [
+"gateway/server.js:152-185"
+]
+},
+{
+"id": "C13-086",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record capacity-based admission rejection separately from protocol rejection.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reject() logs a distinct 'reason' string per branch, distinguishing capacity from origin/credential/protocol rejections. [downgraded: RECORD item without a writ",
+"prior_evidence": [
+"gateway/server.js:155-178"
+]
+},
+{
+"id": "C13-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging every idle-loop iteration.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "No idle-loop exists, so there is no per-iteration logging to avoid; code contains no such loop.",
+"prior_evidence": [
+"gateway/server.js:91-236"
+]
+},
+{
+"id": "C13-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid copying full request bodies into acceptance logs.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Log calls include only path/status/reason metadata, never request/response bodies.",
+"prior_evidence": [
+"gateway/server.js:141,155,184",
+"gateway/log.js"
+]
+},
+{
+"id": "C13-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate accepted contexts with later worker identifiers.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "conn.id links acceptance and session.opened logs, but no distinct worker process identifier is logged.",
+"prior_evidence": [
+"gateway/server.js:184",
+"gateway/connection.js:224"
+]
+},
+{
+"id": "C13-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for diagnosing a frozen acceptance loop.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented procedure for diagnosing a frozen acceptance loop was found in docs/OPERATIONS.md within scope read.",
+"prior_evidence": []
+},
+{
+"id": "C13-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the loop state and ownership model.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Ownership of routing/admission vs worker is published, but no formal 'loop state model' exists to publish (none applies).",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C13-092",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link the task-observation compatibility test.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no .NET task-observation compatibility test concept applies.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C13-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link simultaneous-request tests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "W3 concurrent-session bench and fabric four-node concurrent test are linked as simultaneous-request evidence.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only",
+"tests/fabric/fabric-ws.test.js"
+]
+},
+{
+"id": "C13-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link health-under-WebSocket-load tests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "VALIDATION.md links e2e.test.js: \"health latency under bulk output (< 250 ms)\".",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C13-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link shutdown-with-pending-acceptance tests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Shutdown (I049) is linked, but no test specifically addresses pending (not-yet-admitted) acceptance during shutdown.",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C13-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link handoff-failure cleanup tests.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No test or doc link addressing handoff-failure cleanup (Connection construction throwing) was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document configured admission bounds.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_MAX_SESSIONS / VWS_MAX_SESSIONS_PER_PRINCIPAL are documented and set in config/limits.json.",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"config/limits.json"
+]
+},
+{
+"id": "C13-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document retry and stop behavior for persistent failures.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented retry/stop behavior for persistent listener failures was found.",
+"prior_evidence": []
+},
+{
+"id": "C13-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved responsiveness limitations.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "General open items (soak, >8 sessions) are recorded, but no record specific to accept-path responsiveness limitations.",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C13-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the loop only after subsequent requests remain serviceable.",
+"ram_overlay": "Use awaited acceptance with capped concurrent handshakes, independent cancellation, and reserved health capacity. Do not create an unbounded task or runspace for every incoming request.",
+"challenge": "Flood pending handshakes in an authorized test and prove the admission cap, timeout, and health reserve remain effective.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no acceptance-loop approval gate exists since the manual-loop construct itself does not apply.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+}
+]
+}

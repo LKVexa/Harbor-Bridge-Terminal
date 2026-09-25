@@ -1,0 +1,93 @@
+{
+  "$defs": {
+    "context": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_ms": {
+          "anyOf": [
+            {
+              "maximum": 3600000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operation": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+          "type": "string"
+        },
+        "path": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "type": "array"
+        },
+        "schema": {
+          "const": "PK_CALL_CONTEXT/1"
+        },
+        "subject": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+          "type": "string"
+        },
+        "tenant": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+          "type": "string"
+        },
+        "trace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._\\-]{0,63}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "trace_id",
+        "operation",
+        "tenant",
+        "subject",
+        "path"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:pk:inv21:local_chain_request",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "callee": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+      "type": "string"
+    },
+    "context": {
+      "$ref": "#/$defs/context"
+    },
+    "payload": {},
+    "schema": {
+      "const": "PK_LOCAL_CHAIN/1"
+    }
+  },
+  "required": [
+    "schema",
+    "callee",
+    "context",
+    "payload"
+  ],
+  "title": "PK_LOCAL_CHAIN/1#request",
+  "type": "object",
+  "x-version": "PK_LOCAL_CHAIN/1#request"
+}

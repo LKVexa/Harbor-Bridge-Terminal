@@ -1,0 +1,50 @@
+{
+ "schema": "PK_ALERTS/1",
+ "component": "INV-28",
+ "owner": "inv28-sre-owner",
+ "alerts": [
+  {
+   "name": "INV28EmergencyDisableSelections",
+   "severity": "page",
+   "expr": "increase(inv28_candidate_eliminations_total{code=\"TC_DISABLED\"}[5m]) > 0",
+   "note": "a disabled toolchain is still being requested - confirm the emergency disable is intended and communicated",
+   "runbook": "ops/RUNBOOK.md#emergency-disable"
+  },
+  {
+   "name": "INV28RefusalSpike",
+   "severity": "page",
+   "expr": "sum(rate(inv28_selection_refusals_total{environment=\"production\"}[10m])) / clamp_min(sum(rate(inv28_selections_total{environment=\"production\"}[10m])),1) > 0.05",
+   "runbook": "ops/RUNBOOK.md#refusal-spike"
+  },
+  {
+   "name": "INV28DependencyUnavailable",
+   "severity": "page",
+   "expr": "increase(inv28_dependency_errors_total[5m]) > 0",
+   "runbook": "ops/RUNBOOK.md#dependency-unavailable"
+  },
+  {
+   "name": "INV28StaleReviews",
+   "severity": "ticket",
+   "expr": "inv28_stale_reviews > 0",
+   "runbook": "ops/RUNBOOK.md#stale-reviews"
+  },
+  {
+   "name": "INV28SelectionLatencyP99",
+   "severity": "ticket",
+   "expr": "histogram_quantile(0.99, sum(rate(inv28_selection_latency_ms_bucket[10m])) by (le)) > 25",
+   "runbook": "ops/RUNBOOK.md#latency"
+  },
+  {
+   "name": "INV28MetricSeriesDropped",
+   "severity": "ticket",
+   "expr": "increase(inv28_metric_series_dropped_total[1h]) > 0",
+   "runbook": "ops/RUNBOOK.md#cardinality"
+  },
+  {
+   "name": "INV28RegistryMutationBurst",
+   "severity": "ticket",
+   "expr": "increase(inv28_registry_revision[10m]) > 50",
+   "runbook": "ops/RUNBOOK.md#registry-burst"
+  }
+ ]
+}

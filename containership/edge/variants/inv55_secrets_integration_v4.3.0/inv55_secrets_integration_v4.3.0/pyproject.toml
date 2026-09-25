@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv55-secrets-integration"
+version = "4.3.0"
+description = "INV-55 secrets integration: scoped, versioned, leased secret resolution with a HashiCorp Vault adapter"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = []          # runtime is CPython standard library only (docs/architecture/compatibility-matrix.md)
+# license: NOT YET CHOSEN by the owner -- see docs/governance/waiver-register.md
+classifiers = [
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+]
+
+[project.optional-dependencies]
+test = ["jsonschema==4.26.0"]
+estate = ["pk_core"]       # pin to be supplied with the estate (waiver: pk_core not bundled)
+
+[project.scripts]
+inv55-bootstrap = "inv55_secrets_integration.bootstrap:main"
+
+[tool.setuptools]
+packages = ["inv55_secrets_integration", "inv55_secrets_integration.providers"]
+
+[tool.setuptools.package-data]
+inv55_secrets_integration = ["schemas/*.json", "VERSION"]

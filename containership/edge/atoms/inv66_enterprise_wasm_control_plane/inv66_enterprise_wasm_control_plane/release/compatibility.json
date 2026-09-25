@@ -1,0 +1,145 @@
+{
+ "schema": "PK_ECP_COMPATIBILITY/1",
+ "component_version": "4.3.0",
+ "protocols": {
+  "served": [
+   "PK_ECP_ADMIT/1",
+   "PK_ECP_RBAC/1",
+   "PK_ECP_AUDIT/1",
+   "PK_ECP_AUDIT/2",
+   "PK_ECP_ERROR/1",
+   "PK_ECP_CONFIG/1",
+   "PK_ECP_HEALTH/1",
+   "PK_ECP_INVENTORY/1",
+   "PK_ECP_DELIVER/1"
+  ],
+  "deprecated": [],
+  "removed": [],
+  "negotiation": "Accept-Protocol header; unsupported -> ECP_UNSUPPORTED_VERSION (409) listing served protocols; request body 'protocol' is an enum so an unknown major is ECP_SCHEMA_INVALID"
+ },
+ "rules": {
+  "minor": "additive optional fields only; consumers MUST ignore unknown response fields",
+  "major": "new protocol id served side-by-side for >= 2 minor releases before the old one is removed",
+  "audit": "PK_ECP_AUDIT/2 records are immutable history: any change is a new major and verifiers keep reading all prior majors"
+ },
+ "schemas": [
+  {
+   "name": "PK_ECP_ADMIT_DECISION_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_ADMIT_REQUEST_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_ARTIFACT_STATEMENT_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_AUDIT_QUERY_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_AUDIT_RECORD_2",
+   "version": "2.0.0",
+   "compat": "major-bump-on-any-change"
+  },
+  {
+   "name": "PK_ECP_CONFIG_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_ERROR_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_HEALTH_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_INVENTORY_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  },
+  {
+   "name": "PK_ECP_RBAC_REQUEST_1",
+   "version": "1.0.0",
+   "compat": "additive-minor"
+  }
+ ],
+ "runtime_matrix": [
+  {
+   "python": "3.11",
+   "os": "linux",
+   "arch": "x86_64",
+   "status": "TESTED",
+   "evidence": "release/ci_report.json"
+  },
+  {
+   "python": "3.10",
+   "os": "linux",
+   "arch": "x86_64",
+   "status": "DECLARED_UNTESTED"
+  },
+  {
+   "python": "3.12",
+   "os": "linux",
+   "arch": "x86_64",
+   "status": "DECLARED_UNTESTED"
+  },
+  {
+   "python": "3.13",
+   "os": "linux",
+   "arch": "x86_64",
+   "status": "DECLARED_UNTESTED"
+  },
+  {
+   "python": "3.11",
+   "os": "linux",
+   "arch": "aarch64",
+   "status": "DECLARED_UNTESTED"
+  },
+  {
+   "python": "3.11",
+   "os": "windows",
+   "arch": "x86_64",
+   "status": "UNSUPPORTED",
+   "reason": "replication.py uses fcntl.flock"
+  }
+ ],
+ "peer_matrix": [
+  {
+   "peer": "INV-63 deployment manager",
+   "contract": "PK_ECP_DELIVER/1 over HTTP",
+   "status": "TESTED_AGAINST_STUB"
+  },
+  {
+   "peer": "GAP-13 policy engine",
+   "contract": "OPA data API POST /v1/data/<path>",
+   "status": "TESTED_AGAINST_STUB"
+  },
+  {
+   "peer": "wasmCloud wadm",
+   "contract": "NATS wadm API",
+   "status": "OPEN_EXTERNAL",
+   "reason": "no lattice available; bridge not built"
+  },
+  {
+   "peer": "Cosmonic Control",
+   "status": "OPEN_EXTERNAL"
+  },
+  {
+   "peer": "Enterprise IdP (OIDC)",
+   "contract": "JWT EdDSA + static JWKS",
+   "status": "TESTED_WITH_LOCAL_ISSUER",
+   "gap": "live discovery/JWKS rotation fetch not built; RS256/ES256 not accepted"
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+# Render Blueprint — HERMIT virtual WebSocket gateway (Node profile, decision D-001).
+# STATUS: AUTHORED, NOT APPLIED. No Render account, service or deploy was created or authorized
+# (series I047 / I050: BLOCKED). Validate against the current Blueprint spec before first use.
+services:
+  - type: web
+    name: hermit-vws
+    runtime: docker
+    dockerfilePath: ./deploy/Dockerfile
+    dockerContext: .
+    plan: starter                    # placeholder: choose from MEASURED per-session RSS (docs/resource-model.md)
+    numInstances: 1                  # single-instance profile: sessions are instance-local (no shared store, I039 N/A)
+    healthCheckPath: /health         # HTTP 200 only when ready and not draining
+    maxShutdownDelaySeconds: 30      # must stay ABOVE VWS_SHUTDOWN_MS/1000 with margin
+    autoDeploy: false
+    envVars:
+      # PORT is injected by the platform; the gateway binds 0.0.0.0:$PORT and refuses a malformed value.
+      - key: VWS_SHUTDOWN_MS
+        value: "20000"
+      - key: VWS_MAX_SESSIONS
+        value: "4"
+      - key: VWS_ALLOWED_ORIGINS     # exact origins of any OTHER site allowed to embed the client; same-origin needs none
+        sync: false
+      - key: VWS_PRINCIPALS_FILE     # path of a Render Secret File holding the hashed principals JSON
+        value: /etc/secrets/principals.json
+      - key: VWS_FABRIC
+        value: "0"                   # enable only with DF containers baked into the image and DF_ROOT set

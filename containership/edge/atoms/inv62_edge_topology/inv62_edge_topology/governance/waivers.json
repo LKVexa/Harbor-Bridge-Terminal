@@ -1,0 +1,127 @@
+{
+  "schema": "INV62_WAIVERS/1",
+  "waivers": [
+    {
+      "id": "W-01",
+      "requirements": [
+        "MC-021",
+        "MC-037"
+      ],
+      "scope": "Transport confidentiality (lattice mTLS) not verified; no wasmCloud runtime available",
+      "risk": "High: a network observer could read topology if the lattice is misconfigured",
+      "compensating_controls": "PKT1 message MACs prevent forgery; audit; per-site deployment",
+      "remediation": "Pin and verify wasmCloud host + NATS TLS; integration run in lattice",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-02",
+      "requirements": [
+        "MC-094"
+      ],
+      "scope": "Release manifest signed with an ephemeral NONPRODUCTION key",
+      "risk": "High: signature proves integrity only against this key, not organisational identity",
+      "compensating_controls": "SHA-256 manifest + SBOM + provenance published; verify tool fails closed on mismatch",
+      "remediation": "Sign with the organisation's controlled release key; publish key + rotation procedure",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-03",
+      "requirements": [
+        "MC-058"
+      ],
+      "scope": "Power/thermal not measured",
+      "risk": "Medium: unknown energy cost on constrained devices (devices do not run the authority)",
+      "compensating_controls": "Authority runs on site gateways only; CPU cost measured",
+      "remediation": "Measure on reference gateway hardware with RAPL/thermal sensors",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-04",
+      "requirements": [
+        "MC-073"
+      ],
+      "scope": "Only CPython 3.11 / Linux x86_64 tested",
+      "risk": "Medium: interpreter/OS differences untested",
+      "compensating_controls": "stdlib-only runtime; no native code",
+      "remediation": "CI matrix 3.10\u20133.13 \u00d7 Linux/Windows/macOS \u00d7 x86_64/arm64",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-05",
+      "requirements": [
+        "MC-077"
+      ],
+      "scope": "No multi-hour soak or fleet-scale run",
+      "risk": "Medium: slow leaks or fleet effects unobserved",
+      "compensating_controls": "Every cache bounded; overload + 5-cycle partition tests",
+      "remediation": "24 h soak and 1 000-site fleet simulation in staging",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-06",
+      "requirements": [
+        "MC-079",
+        "MC-089"
+      ],
+      "scope": "pk_core 100-item conformance gate absent",
+      "risk": "High: the series' own gate not executed",
+      "compensating_controls": "Repository-local RTM + 16 CI lanes; adapter exits 2 without pk_core",
+      "remediation": "Vendor/pin pk_core and run the gate; archive evidence",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-07",
+      "requirements": [
+        "MC-015"
+      ],
+      "scope": "Idempotency store is memory-only and evicts oldest entries when full (50 000); a retry after restart or eviction within TTL could re-apply",
+      "risk": "Low: a retry after eviction within TTL could re-apply",
+      "compensating_controls": "Mutations are CAS-able via expected_revision; capacity well above expected rate",
+      "remediation": "Persist idempotency keys in the WAL",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-08",
+      "requirements": [
+        "MC-003"
+      ],
+      "scope": "Authoritative master source absent",
+      "risk": "Medium: requirements derived from checklists, not the original master",
+      "compensating_controls": "Requirements traced to CHECKLIST.json and the MC checklist",
+      "remediation": "Obtain master source from series owner",
+      "owner": "UNBOUND",
+      "approver": null,
+      "status": "pending_approval",
+      "created": "2026-09-23",
+      "expires": "2026-12-31"
+    }
+  ]
+}

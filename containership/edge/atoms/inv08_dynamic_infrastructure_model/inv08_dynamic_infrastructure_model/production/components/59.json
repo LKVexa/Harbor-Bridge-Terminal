@@ -1,0 +1,70 @@
+{
+ "component": 59,
+ "title": "Soak/burst/fleet-scale test system",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "multi-hour/day soak profiles",
+   "state": "PARTIAL",
+   "spec": "production/soak.py::PROFILES",
+   "modules": [
+    "production/soak.py::run"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.SoakTest.test_soak_profiles_compressed"
+   ],
+   "blocker": "real multi-hour/day runs on live infrastructure NOT_RUN (compressed simulated time only)"
+  },
+  {
+   "name": "burst scaling/churn scenarios",
+   "state": "IMPLEMENTED",
+   "spec": "production/soak.py::demand_at",
+   "modules": [
+    "production/soak.py::demand_at",
+    "production/soak.py::run"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.SoakTest.test_burst_and_churn"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "large-fleet synthetic environments",
+   "state": "PARTIAL",
+   "spec": "production/soak.py::run (pools)",
+   "modules": [
+    "production/soak.py::run"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.SoakTest.test_large_fleet_synthetic"
+   ],
+   "blocker": "in-process synthetic fleet only (150 pools); no fleet-scale environment"
+  },
+  {
+   "name": "memory/handle/queue leak detection",
+   "state": "IMPLEMENTED",
+   "spec": "production/soak.py (leak detection)",
+   "modules": [
+    "production/soak.py::run",
+    "production/soak.py::_fd_count"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.SoakTest.test_leak_detection"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "saturation, recovery, and long-tail convergence assertions",
+   "state": "IMPLEMENTED",
+   "spec": "production/soak.py (convergence)",
+   "modules": [
+    "production/soak.py::run"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.SoakTest.test_saturation_recovery_convergence"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": ""
+}

@@ -1,0 +1,20 @@
+# GitHub Actions workflow (copy to .github/workflows/ in the owning repository) — G13-MC-040
+name: gap13-release-gate
+on: [push, pull_request]
+jobs:
+  gate:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install "cryptography>=41" jsonschema
+      - run: python -m gap13_policy_engine.certify --out evidence
+      - run: python -m gap13_policy_engine.release_gate --profile rc --evidence evidence
+      - run: python -O -m unittest discover -s gap13_policy_engine/tests -p "test_engine.py"
+      - uses: actions/upload-artifact@v4
+        with: {name: "gap13-evidence-${{ matrix.os }}-${{ matrix.python }}", path: evidence}

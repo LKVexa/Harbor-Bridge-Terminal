@@ -1,0 +1,76 @@
+{
+ "component": 38,
+ "title": "Encryption/key-rotation implementation",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "mTLS or equivalent transport encryption",
+   "state": "BLOCKED",
+   "spec": "production/keys.py::TRANSPORT_POLICY",
+   "modules": [
+    "production/keys.py::TRANSPORT_POLICY"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_transport_and_at_rest_are_blocked_not_faked"
+   ],
+   "blocker": "workload CA / SPIFFE issuer and TLS termination configuration"
+  },
+  {
+   "name": "at-rest encryption boundaries",
+   "state": "PARTIAL",
+   "spec": "production/keys.py::AT_REST_BOUNDARIES",
+   "modules": [
+    "production/keys.py::AT_REST_BOUNDARIES"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_transport_and_at_rest_are_blocked_not_faked"
+   ],
+   "blocker": "vetted AEAD implementation or KMS envelope encryption (no cipher in stdlib; none rolled here)"
+  },
+  {
+   "name": "KMS/HSM key hierarchy",
+   "state": "PARTIAL",
+   "spec": "production/keys.py::KeyHierarchy",
+   "modules": [
+    "production/keys.py::hkdf_sha256",
+    "production/keys.py::KeyHierarchy.create_kek",
+    "production/keys.py::KeyHierarchy.create_dek"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_hkdf_rfc5869_vector",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_hierarchy_derivation"
+   ],
+   "blocker": "KMS/HSM custody of the root key (core.TrustRoot refuses production keys)"
+  },
+  {
+   "name": "automatic key rotation and overlap",
+   "state": "IMPLEMENTED",
+   "spec": "production/keys.py::KeyHierarchy.tick",
+   "modules": [
+    "production/keys.py::KeyHierarchy.rotate_dek",
+    "production/keys.py::KeyHierarchy.tick",
+    "production/keys.py::KeyHierarchy.usable_for_decrypt"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_rotation_overlap"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "key compromise, revocation, and recovery procedure",
+   "state": "PARTIAL",
+   "spec": "production/keys.py::KeyHierarchy.compromise",
+   "modules": [
+    "production/keys.py::KeyHierarchy.revoke",
+    "production/keys.py::KeyHierarchy.compromise"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_revocation_cascades",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.KeyTests.test_compromise_procedure",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialAuthz.test_revoked_key_unusable"
+   ],
+   "blocker": "KMS root rotation, cipher for re-wrap, and an incident owner (UNASSIGNED)"
+  }
+ ],
+ "notes": "Bookkeeping + HKDF only; no cipher implemented by design."
+}

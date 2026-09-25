@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:pln04:PK_PLANE_CONFIG:1",
+  "title": "PK_PLANE_CONFIG/1",
+  "description": "Declarative PLN-04 site/environment configuration.",
+  "type": "object",
+  "required": [
+    "schema",
+    "profile",
+    "node_id",
+    "site",
+    "limits",
+    "tenant_weights",
+    "attestation",
+    "residency",
+    "coresidency",
+    "rollout",
+    "telemetry",
+    "slo"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_PLANE_CONFIG/1"
+    },
+    "profile": {
+      "enum": [
+        "development",
+        "staging",
+        "production"
+      ]
+    },
+    "node_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "limits": {
+      "type": "object",
+      "required": [
+        "max_instances",
+        "per_tenant_limit",
+        "max_inflight",
+        "max_queue",
+        "per_tenant_queue",
+        "cpu_milli",
+        "memory_mib",
+        "headroom"
+      ],
+      "properties": {
+        "max_instances": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "per_tenant_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "max_inflight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        },
+        "max_queue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "per_tenant_queue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "cpu_milli": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "headroom": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.9
+        }
+      },
+      "additionalProperties": false
+    },
+    "tenant_weights": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 1000
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "required": [
+        "max_age_s",
+        "clock_skew_s"
+      ],
+      "properties": {
+        "max_age_s": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        "clock_skew_s": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300
+        }
+      },
+      "additionalProperties": false
+    },
+    "residency": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "uniqueItems": true,
+        "maxItems": 64
+      }
+    },
+    "coresidency": {
+      "type": "object",
+      "required": [
+        "trusted",
+        "first-party",
+        "third-party",
+        "untrusted",
+        "hostile"
+      ],
+      "properties": {
+        "trusted": {
+          "enum": [
+            "shared",
+            "tenant-exclusive",
+            "dedicated"
+          ]
+        },
+        "first-party": {
+          "enum": [
+            "shared",
+            "tenant-exclusive",
+            "dedicated"
+          ]
+        },
+        "third-party": {
+          "enum": [
+            "shared",
+            "tenant-exclusive",
+            "dedicated"
+          ]
+        },
+        "untrusted": {
+          "enum": [
+            "shared",
+            "tenant-exclusive",
+            "dedicated"
+          ]
+        },
+        "hostile": {
+          "enum": [
+            "shared",
+            "tenant-exclusive",
+            "dedicated"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "rollout": {
+      "type": "object",
+      "required": [
+        "stage",
+        "canary_tenants"
+      ],
+      "properties": {
+        "stage": {
+          "enum": [
+            "disabled",
+            "canary",
+            "full"
+          ]
+        },
+        "canary_tenants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "trace_sample_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tenant_identifier_mode": {
+          "enum": [
+            "hashed",
+            "clear",
+            "omit"
+          ]
+        },
+        "retention_days_logs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "retention_days_audit": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "slo": {
+      "type": "object",
+      "required": [
+        "p50_ms",
+        "p99_ms"
+      ],
+      "properties": {
+        "p50_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p99_ms": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

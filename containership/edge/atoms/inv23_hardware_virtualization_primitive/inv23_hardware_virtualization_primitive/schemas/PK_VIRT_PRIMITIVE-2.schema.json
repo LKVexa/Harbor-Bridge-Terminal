@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://linearfinance.org/schemas/inv23/PK_VIRT_PRIMITIVE-2.schema.json",
+  "title": "PK_VIRT_PRIMITIVE/2",
+  "description": "Host probe report produced by probe.Prober from real host evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "host",
+    "state",
+    "reason",
+    "nesting_depth",
+    "bare_metal",
+    "virtualized",
+    "backend",
+    "backend_version",
+    "platform",
+    "architecture",
+    "probed_at",
+    "capability",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_VIRT_PRIMITIVE/2"
+    },
+    "host": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 253,
+      "pattern": "^\\S(.*\\S)?$",
+      "description": "Host name as reported by the prober."
+    },
+    "state": {
+      "enum": [
+        "usable",
+        "present-disabled",
+        "absent",
+        "indeterminate"
+      ],
+      "description": "Authoritative classification; usable requires positive facility evidence."
+    },
+    "reason": {
+      "enum": [
+        "ok",
+        "unsupported_platform",
+        "unsupported_architecture",
+        "permission_denied",
+        "kernel_api_unavailable",
+        "device_absent",
+        "device_busy",
+        "firmware_disabled",
+        "capability_absent",
+        "conflicting_hypervisor",
+        "transient_io_failure",
+        "malformed_probe_response",
+        "probe_timeout",
+        "backend_error"
+      ]
+    },
+    "nesting_depth": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 64,
+      "description": "0 = bare metal; null = unknown (never fabricated)."
+    },
+    "bare_metal": {
+      "type": "boolean"
+    },
+    "virtualized": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "backend": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "backend_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "architecture": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "probed_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpu_vendor",
+        "cpu_capable",
+        "slat",
+        "firmware_enabled",
+        "nested_enabled"
+      ],
+      "properties": {
+        "cpu_vendor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        },
+        "cpu_capable": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "slat": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "firmware_enabled": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "nested_enabled": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Raw backend evidence explaining the classification."
+    }
+  }
+}

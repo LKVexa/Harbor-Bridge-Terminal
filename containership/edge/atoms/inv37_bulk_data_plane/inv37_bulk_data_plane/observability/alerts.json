@@ -1,0 +1,19 @@
+{
+  "schema": "INV37_ALERTS/1",
+  "status": "defined, not deployed (gate criterion dashboards_alerts_deployed)",
+  "classes": ["ordinary_load", "degradation", "policy_rejection", "dependency_failure", "attack", "software_defect"],
+  "rules": [
+    {"name": "IntegrityFailureObject", "class": "attack|software_defect", "severity": "SEV1", "expr": "increase(inv37_digest_failures_total{level=\"object\"}[5m]) > 0", "page": "security_owner+sre_owner", "runbook": "RUNBOOK.md#incident"},
+    {"name": "ChunkDigestFailuresHigh", "class": "attack|dependency_failure", "severity": "SEV3", "expr": "rate(inv37_digest_failures_total{level=\"chunk\"}[10m]) / rate(inv37_chunks_verified_total[10m]) > 0.01", "page": "sre_owner"},
+    {"name": "AuthnFailureBurst", "class": "attack", "severity": "SEV2", "expr": "increase(inv37_security_rejections_total[5m]) > 50", "page": "security_owner"},
+    {"name": "QuarantineEvent", "class": "attack|software_defect", "severity": "SEV2", "expr": "increase(inv37_quarantines_total[5m]) > 0", "page": "sre_owner"},
+    {"name": "AdmissionSaturated", "class": "ordinary_load", "severity": "ticket", "expr": "inv37_admission_saturation > 0.8 for 15m"},
+    {"name": "QuotaRejectionsHigh", "class": "policy_rejection", "severity": "ticket", "expr": "rate(inv37_admission_rejected_total{reason=~\"tenant_.*\"}[15m]) > 1"},
+    {"name": "TransfersStalled", "class": "degradation|dependency_failure", "severity": "SEV3", "expr": "inv37_transfers_stalled > 5 for 10m", "page": "sre_owner"},
+    {"name": "ChunkLatencyP99", "class": "degradation", "severity": "SEV3", "expr": "inv37_chunk_accept_seconds_p99 > 0.010 for 15m"},
+    {"name": "HealthDegraded", "class": "dependency_failure", "severity": "SEV3", "expr": "inv37_health_ok == 0 for 10m"},
+    {"name": "RecoveryFailures", "class": "software_defect|attack", "severity": "SEV2", "expr": "increase(inv37_recovery_failures_total[1h]) > 0", "page": "sre_owner"},
+    {"name": "IllegalTransitions", "class": "software_defect", "severity": "SEV3", "expr": "increase(inv37_errors_total{code=\"illegal_transition\"}[1h]) > 10"},
+    {"name": "AdmissionFrozen", "class": "ordinary_load", "severity": "info", "expr": "inv37_admission_frozen == 1"}
+  ]
+}

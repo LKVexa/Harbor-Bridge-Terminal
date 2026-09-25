@@ -1,0 +1,26 @@
+{
+  "schema": "GAP02_CONFORMANCE/1",
+  "revision": 1,
+  "cases": [
+    {"id": "CF-001", "probe": "cpu", "system": "Linux", "machine": "x86_64",
+     "files": {"/proc/cpuinfo": "flags : avx2 aes"},
+     "expect": {"cpu.features": "present", "cpu.x86.avx2": "present", "cpu.x86.avx512f": "absent"}},
+    {"id": "CF-002", "probe": "cpu", "system": "Linux", "machine": "sparc", "files": {},
+     "expect": {"cpu.features": "unprobed"}},
+    {"id": "CF-003", "probe": "tpm", "system": "Linux", "machine": "x86_64",
+     "files": {"/dev/tpm0": ""}, "expect": {"tpm2": "unprobed"}},
+    {"id": "CF-004", "probe": "tpm", "system": "Darwin", "machine": "arm64", "files": {},
+     "expect": {"tpm2": "unprobed"}},
+    {"id": "CF-005", "probe": "virt", "system": "Linux", "machine": "x86_64",
+     "files": {"/proc/cpuinfo": "flags : svm npt", "/dev/kvm": "", "/sys/kernel/iommu_groups/3/x": ""},
+     "expect": {"virtualization.host": "present", "virtualization.iommu": "present"}},
+    {"id": "CF-006", "probe": "confidential", "system": "Linux", "machine": "x86_64",
+     "files": {"/dev/tdx_guest": ""}, "expect": {"cc.tdx.enabled": "present", "cc.tdx.attested": "unprobed"}},
+    {"id": "CF-007", "probe": "accelerators", "system": "Linux", "machine": "x86_64",
+     "files": {"/sys/class/drm/card0/device/vendor": "0x10de", "/sys/class/accel/accel0/device/driver_name": "intel_vpu"},
+     "expect": {"gpu.compute.nvidia": "unprobed", "gpu.compute.amd": "unprobed", "npu.compute": "unprobed"}},
+    {"id": "CF-008", "probe": "numa", "system": "Linux", "machine": "x86_64",
+     "files": {"/sys/devices/system/node/node0/meminfo": "Node 0 MemTotal: 4 kB"},
+     "expect": {"memory.numa": "absent", "memory.ecc": "unprobed", "memory.hugepages": "unprobed"}}
+  ]
+}

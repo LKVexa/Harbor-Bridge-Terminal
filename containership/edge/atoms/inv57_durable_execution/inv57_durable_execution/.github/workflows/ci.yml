@@ -1,0 +1,26 @@
+# RG-03. Never executed on a hosted runner by this pass: it is checked in, not proven.
+# Action refs must be pinned to full commit SHAs by the owner before use (placeholders are refused).
+name: inv57-ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@PIN_TO_FULL_SHA
+      - uses: actions/setup-python@PIN_TO_FULL_SHA
+        with:
+          python-version: ${{ matrix.python }}
+      - run: PYTHON=python sh ci.sh
+      - uses: actions/upload-artifact@PIN_TO_FULL_SHA
+        with:
+          name: evidence-${{ matrix.python }}
+          path: |
+            test-report.json
+            acceptance-manifest.json
+            evidence/
+          retention-days: 90

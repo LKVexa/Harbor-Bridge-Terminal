@@ -1,0 +1,76 @@
+{
+ "component": 66,
+ "title": "Formal production exit gate",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "machine-readable production gate definition",
+   "state": "IMPLEMENTED",
+   "spec": "production/exitgate.py::DEFINITION",
+   "modules": [
+    "production/exitgate.py::DEFINITION"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_definition_is_machine_readable"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "required evidence inputs by control domain",
+   "state": "IMPLEMENTED",
+   "spec": "production/exitgate.py::DEFINITION",
+   "modules": [
+    "production/exitgate.py::evaluate",
+    "production/status.py::build"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_evidence_inputs_required"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "cryptographic evidence verification",
+   "state": "PARTIAL",
+   "spec": "production/exitgate.py (D5)",
+   "modules": [
+    "production/exitgate.py::evaluate",
+    "production/core.py::TrustRoot"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_nonproduction_evidence_fails_D5",
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_falsifier_gate_is_a_gate_not_a_wall"
+   ],
+   "blocker": "production (KMS/asymmetric) trust root; only HMAC nonproduction keys exist, so D5 always fails for real inputs"
+  },
+  {
+   "name": "blocking/nonblocking policy with waiver integration",
+   "state": "IMPLEMENTED",
+   "spec": "production/exitgate.py docstring policy D1-D5",
+   "modules": [
+    "production/exitgate.py::evaluate",
+    "production/waivers.py::gate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_p2_open_is_nonblocking",
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_waiver_integration",
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_p0_implementation_checks_unwaivable",
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_waiver_cannot_suppress_ownership_or_evidence"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "signed final decision artifact and reproducible gate replay",
+   "state": "PARTIAL",
+   "spec": "production/exitgate.py::replay",
+   "modules": [
+    "production/exitgate.py::sign_decision",
+    "production/exitgate.py::replay"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_gate.GateTest.test_signed_decision_replays"
+   ],
+   "blocker": "decision is HMAC-signed under a NONPRODUCTION key; production signer absent"
+  }
+ ],
+ "notes": "Falsifier: synthetic all-verified inputs + synthetic production verifier reach GO; every single omission is NO_GO. Real run: NO_GO."
+}

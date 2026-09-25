@@ -1,0 +1,405 @@
+{
+  "schema": "PK_HEAVYBOX_REQUIREMENTS/1",
+  "status": "PROPOSED - authored by the remediation pass, not approved by an accountable owner",
+  "requirements": [
+    {
+      "id": "HB-REQ-001",
+      "level": "SHALL",
+      "text": "Each session SHALL run in its own isolation boundary with no shared writable filesystem, process, network namespace, memory or device state.",
+      "pre": "authenticated create",
+      "post": "owned resources recorded",
+      "acceptance": "Two sessions' owned host resource sets are disjoint; reference guest state of one session is never visible to another.",
+      "controls": [
+        "C046",
+        "C011"
+      ],
+      "tests": [
+        "test_control_lifecycle.RuntimePlanTest.test_distinct_sessions_share_nothing",
+        "test_sandbox.SandboxModelTest.test_clean_snapshot_isolation"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-002",
+      "level": "SHALL",
+      "text": "Every session SHALL start from the approved clean base snapshot and nothing else.",
+      "pre": "-",
+      "post": "base_digest in session record",
+      "acceptance": "READY is refused unless the guest digest equals the base digest.",
+      "controls": [
+        "C011",
+        "C032"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_full_lifecycle"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-003",
+      "level": "SHALL NOT",
+      "text": "Egress SHALL NOT reach any destination not bound by a capability issued from the current allowlist, including via CNAME, rebinding, literal-IP, private, link-local, metadata or zone-ID forms.",
+      "pre": "session READY/RUNNING",
+      "post": "decision logged with resolved and selected address",
+      "acceptance": "All egress binding tests deny; enforcement rejects any tuple other than the bound one.",
+      "controls": [
+        "C011",
+        "C043",
+        "INV71-X007"
+      ],
+      "tests": [
+        "test_control_security.EgressBindingTest.test_rebinding_after_ttl",
+        "test_control_security.EgressBindingTest.test_metadata_and_private_targets",
+        "test_control_security.EgressBindingTest.test_enforcement_rejects_other_tuple_or_forged",
+        "test_control_faults.FuzzAndLimitsTest.test_zone_id_regression"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-004",
+      "level": "SHALL",
+      "text": "Session resource limits SHALL be enforced outside the guest (cgroup v2 + Firecracker limits) and admission SHALL reject work that would exceed tenant or node ceilings.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Rendered plan carries cpu.max, memory.max, memory.swap.max=0, pids.max, fd/fsize rlimits, IO and network rate limiters; admission rejects over-quota/over-capacity.",
+      "controls": [
+        "C017",
+        "C028",
+        "C054"
+      ],
+      "tests": [
+        "test_control_lifecycle.RuntimePlanTest.test_plan_contents",
+        "test_control_lifecycle.ResilienceTest.test_admission_reserve_quota_fairness"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-005",
+      "level": "SHALL",
+      "text": "A session SHALL be reported CLOSED only after teardown is verified: guest state cleared and no owned host resource observed.",
+      "pre": "STOPPING",
+      "post": "teardown/2 record verified=true, leaked=[]",
+      "acceptance": "Any leaked owned resource moves the session to QUARANTINED and emits a teardown-failure metric.",
+      "controls": [
+        "C011",
+        "C014",
+        "C015"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_leaked_resource_blocks_closed",
+        "test_control_lifecycle.LifecyclePropertyTest.test_random_walks"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-006",
+      "level": "SHALL",
+      "text": "Every control-plane request SHALL be authenticated (audience, expiry with bounded skew, single-use nonce, revocation) and authorized default-deny with tenant and site binding.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Anonymous, expired, wrong-audience, forged, replayed, revoked, cross-tenant and cross-site requests are rejected with stable codes.",
+      "controls": [
+        "C023",
+        "C024",
+        "C044"
+      ],
+      "tests": [
+        "test_control_security.AuthnTest.test_replay",
+        "test_control_security.AuthzTest.test_tenant_substitution",
+        "test_control_lifecycle.EndToEndTest.test_cross_tenant_and_forbidden_egress"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-007",
+      "level": "SHALL",
+      "text": "Security-sensitive changes (artifact promotion, rollback, egress policy, config activation, emergency re-enable) SHALL require two distinct principals.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Self-approval and single-principal requests are denied.",
+      "controls": [
+        "C009",
+        "C024",
+        "C042"
+      ],
+      "tests": [
+        "test_control_security.AuthzTest.test_two_person_rule",
+        "test_control_lifecycle.EndToEndTest.test_emergency_controls"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-008",
+      "level": "SHALL",
+      "text": "Executable and policy artifacts SHALL be loaded only when their digest and version match a signed, non-stale, non-revoked approved manifest with no floating tags.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Tampered, wrong-signer, replayed, floating, revoked and unpinned manifests are refused.",
+      "controls": [
+        "C031",
+        "C045"
+      ],
+      "tests": [
+        "test_control_security.ArtifactTest.test_tampered_file",
+        "test_control_security.ArtifactTest.test_replayed_old_manifest",
+        "test_control_security.ArtifactTest.test_shipped_manifest_is_unpinned_and_refused"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-009",
+      "level": "SHALL",
+      "text": "Security audit events SHALL be durably written, hash-chained, MAC'd and checkpoint-anchored off-node before the guarded action is acknowledged; the stream SHALL refuse rather than drop events.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Mutation, deletion, reorder, duplication and tail truncation are detected; a full spool fails the guarded action and commits nothing.",
+      "controls": [
+        "C049",
+        "C057"
+      ],
+      "tests": [
+        "test_control_security.AuditStreamTest.test_tail_truncation_detected_by_anchor",
+        "test_control_lifecycle.EndToEndTest.test_audit_outage_fails_create_without_committing"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-010",
+      "level": "SHALL",
+      "text": "Loss of a security-critical dependency (identity, attestation, policy, keys, trusted time, artifact verification, audit sink, DNS) SHALL fail new trust decisions closed after its bounded grace.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "New creates are refused with DEPENDENCY.TRUST_UNAVAILABLE; noncritical loss yields DEGRADED only.",
+      "controls": [
+        "C048",
+        "C056",
+        "C018"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_trust_dependency_outage_fails_closed",
+        "test_control_lifecycle.EndToEndTest.test_noncritical_outage_is_degraded_not_bypass"
+      ],
+      "security_invariant": true
+    },
+    {
+      "id": "HB-REQ-011",
+      "level": "SHALL",
+      "text": "Only legal lifecycle transitions SHALL be accepted, each from its declared initiator.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Random walks over all (state, target, initiator) triples accept only tabled edges.",
+      "controls": [
+        "C015"
+      ],
+      "tests": [
+        "test_control_lifecycle.LifecyclePropertyTest.test_random_walks",
+        "test_control_lifecycle.LifecyclePropertyTest.test_every_transition_declares_event_and_recovery"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-012",
+      "level": "SHALL",
+      "text": "Commands from a controller that does not hold the current fencing epoch SHALL be rejected; epochs SHALL never be reissued.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Stale-epoch teardown fails; sid reuse gets a new, never-seen epoch.",
+      "controls": [
+        "C055",
+        "C058"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_stale_epoch_rejected",
+        "test_control_faults.BoundedStateTest.test_stale_epoch_after_release_and_reuse"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-013",
+      "level": "SHALL",
+      "text": "Mutating calls SHALL be idempotent per key within a window; reuse of a key with a different request SHALL be rejected.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Replay returns the identical response and no second reservation; changed body is refused.",
+      "controls": [
+        "C025",
+        "C053",
+        "C058"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_idempotent_create_replay",
+        "test_control_lifecycle.ConcurrencyTest.test_parallel_duplicate_create_and_teardown"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-014",
+      "level": "SHALL",
+      "text": "Denials and integrity failures SHALL NOT be retried; retryable failures SHALL use bounded full-jitter backoff under the caller deadline.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Retry library performs exactly one attempt for never-class codes; attempts and elapsed time are capped.",
+      "controls": [
+        "C053",
+        "C025"
+      ],
+      "tests": [
+        "test_control_lifecycle.ResilienceTest.test_retry_only_retryable_with_bounded_jitter",
+        "test_control_lifecycle.ResilienceTest.test_retry_caps_attempts_and_deadline"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-015",
+      "level": "SHALL",
+      "text": "Configuration SHALL be validated, signed and activated as a whole generation after all participants prepare; no layer SHALL override a locked security invariant; stale writers SHALL be rejected.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Forbidden overrides, unsigned configs, participant rejection and stale generations leave the previous generation active.",
+      "controls": [
+        "C033",
+        "C034",
+        "C035",
+        "C037",
+        "C058"
+      ],
+      "tests": [
+        "test_control_security.ConfigTest.test_forbidden_override_every_layer",
+        "test_control_security.ConfigTest.test_signed_staging_generation_switch_and_rollback"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-016",
+      "level": "SHALL",
+      "text": "Emergency controls (global/tenant/node disable, freeze, quarantine) SHALL take effect immediately, require a reason and incident id, and remain usable under overload via reserved capacity.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Disable blocks creates; re-enable requires a second principal; management priority admits into the reserve.",
+      "controls": [
+        "C059",
+        "C054"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_emergency_controls",
+        "test_control_lifecycle.EndToEndTest.test_freeze_then_terminate"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-017",
+      "level": "SHALL",
+      "text": "Every automated allow/deny decision SHALL carry a registry reason code and digest-referenced inputs; explain views SHALL be tenant-scoped.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Explain records exist for denials; free-text reasons are refused; other-tenant callers see nothing.",
+      "controls": [
+        "C076",
+        "C077"
+      ],
+      "tests": [
+        "test_control_lifecycle.EndToEndTest.test_cross_tenant_and_forbidden_egress",
+        "test_control_lifecycle.TelemetryTest.test_explain_reason_codes_not_free_text"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-018",
+      "level": "SHALL NOT",
+      "text": "Metrics SHALL NOT carry unbounded or tenant-identifying label values.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Label values outside declared vocabularies raise CardinalityError.",
+      "controls": [
+        "C072",
+        "C075"
+      ],
+      "tests": [
+        "test_control_lifecycle.TelemetryTest.test_bounded_labels"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-019",
+      "level": "SHALL",
+      "text": "Control-plane state SHALL remain bounded under churn.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "After compaction, sessions and leases return to zero; bounded logs respect limits.",
+      "controls": [
+        "C067"
+      ],
+      "tests": [
+        "test_control_faults.BoundedStateTest.test_churn_converges"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-020",
+      "level": "SHALL",
+      "text": "Peers outside the supported version window, or requiring an unsupported feature, SHALL be refused; unlisted runtime combinations SHALL NOT be deployable.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Negotiation raises COMPAT.UNSUPPORTED_VERSION; deployable() is false for untested rows.",
+      "controls": [
+        "C016",
+        "C027",
+        "C084",
+        "C093"
+      ],
+      "tests": [
+        "test_control_lifecycle.CompatQualifyTest.test_negotiation",
+        "test_control_lifecycle.CompatQualifyTest.test_skew_and_matrix"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-021",
+      "level": "SHALL",
+      "text": "A node SHALL be admitted only after a qualification report shows KVM, cgroup v2, kernel, memory, CPU virtualization flags, no nested virtualization and time sync for its profile.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Qualification of any missing prerequisite returns REJECT.",
+      "controls": [
+        "C012",
+        "C040"
+      ],
+      "tests": [
+        "test_control_lifecycle.CompatQualifyTest.test_qualification"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-022",
+      "level": "SHALL",
+      "text": "Untrusted-input parsers SHALL either return a canonical value or raise their declared rejection for any input.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Fuzz harness reports zero findings for the release seed set.",
+      "controls": [
+        "C085",
+        "C050"
+      ],
+      "tests": [
+        "test_control_faults.FuzzAndLimitsTest.test_fuzz_smoke_no_findings"
+      ],
+      "security_invariant": false
+    },
+    {
+      "id": "HB-REQ-023",
+      "level": "SHALL",
+      "text": "External conformance through pk_core SHALL count only when pk_core is pinned by digest and verified; absence SHALL report NOT_RUN.",
+      "pre": "-",
+      "post": "-",
+      "acceptance": "Probe returns NOT_RUN/FAILED/VERIFIED correctly.",
+      "controls": [
+        "INV71-X001"
+      ],
+      "tests": [
+        "test_control_faults.PkCoreProbeTest.test_absent_is_not_run",
+        "test_control_faults.PkCoreProbeTest.test_pinned_mismatch_fails_and_match_verifies"
+      ],
+      "security_invariant": false
+    }
+  ]
+}

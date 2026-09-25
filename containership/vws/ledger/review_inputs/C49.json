@@ -1,0 +1,1677 @@
+{
+"component": "C49",
+"items": [
+{
+"id": "C49-001",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define which active connections participate in server shutdown draining.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns is the drain population; documented sequence names it",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"gateway/server.js:221-240"
+]
+},
+{
+"id": "C49-002",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define the approved close status and description.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "close status 1001 'service draining' chosen and coded",
+"prior_evidence": [
+"gateway/server.js:237-238"
+]
+},
+{
+"id": "C49-003",
+"task_class": "IMPLEMENT",
+"area": "01. Drain contract",
+"req": "Preserve the article's NormalClosure proposal as a policy to review and test.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "1001 (not raw NormalClosure 1000) reviewed, coded and tested",
+"prior_evidence": [
+"gateway/server.js:238",
+"tests/chaos/lifecycle.test.js:150"
+]
+},
+{
+"id": "C49-004",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define whether queued application messages are drained before closure.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "comment+code: queued output flushed within bounded grace period before close",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C49-005",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define treatment of incomplete inbound messages.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit decision found on incomplete inbound messages at drain time",
+"prior_evidence": []
+},
+{
+"id": "C49-006",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define a per-connection close budget.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SHUTDOWN_MS derives per-connection deadlineMs",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference",
+"gateway/server.js:232,235"
+]
+},
+{
+"id": "C49-007",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define an aggregate service drain budget.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "same VWS_SHUTDOWN_MS also bounds the aggregate hard timer",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference",
+"gateway/server.js:232"
+]
+},
+{
+"id": "C49-008",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define behavior for peers that do not acknowledge closure.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'hard timer...kills remaining workers, terminates sockets and exits 1'",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C49-009",
+"task_class": "SPECIFY",
+"area": "01. Drain contract",
+"req": "Define the owner of the drain coordinator.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway process is implicitly the sole owner (single instance); not explicitly named as such",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C49-010",
+"task_class": "IMPLEMENT",
+"area": "01. Drain contract",
+"req": "Approve the connection-drain sequence.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "drain sequence written out step by step in the doc",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C49-011",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Obtain active connections through the approved registry interface.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns Set is the single approved interface iterated for drain",
+"prior_evidence": [
+"gateway/server.js:39-52,236"
+]
+},
+{
+"id": "C49-012",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Include workers still initializing where the lifecycle contract requires it.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "conn added to registry.conns immediately on accept, before session.open completes (OPENING included)",
+"prior_evidence": [
+"gateway/server.js:192-199"
+]
+},
+{
+"id": "C49-013",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Include upgraded sockets awaiting final ownership resolution.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "socket registered right after acceptUpgrade, once Connection object takes ownership",
+"prior_evidence": [
+"gateway/server.js:192-199"
+]
+},
+{
+"id": "C49-014",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Exclude already finalized connections without losing accounting.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.forget removes from conns; counters.sessions is never decremented, preserving accounting",
+"prior_evidence": [
+"gateway/server.js:51"
+]
+},
+{
+"id": "C49-015",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Snapshot or enumerate safely during concurrent worker completion.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "for..of over a Set during concurrent worker completion; no dedicated concurrency test found",
+"prior_evidence": [
+"gateway/server.js:236"
+]
+},
+{
+"id": "C49-016",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Prevent new admission after the approved ingress boundary.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining checked first for both WS upgrade and ticket issuance",
+"prior_evidence": [
+"gateway/server.js:172,120"
+]
+},
+{
+"id": "C49-017",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Preserve a safe identifier for each drain target.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "opaque random hex conn.id used as the safe drain-target identifier",
+"prior_evidence": [
+"gateway/connection.js:22"
+]
+},
+{
+"id": "C49-018",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Track which targets have already received a close request.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "this.closing marks 'close requested' per connection but there is no separate inventory-level tracking",
+"prior_evidence": [
+"gateway/connection.js:33,287"
+]
+},
+{
+"id": "C49-019",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Track which targets completed cleanup.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "registry.forget + onEmpty tracks aggregate completion; no per-target completed list",
+"prior_evidence": [
+"gateway/server.js:51,233"
+]
+},
+{
+"id": "C49-020",
+"task_class": "IMPLEMENT",
+"area": "02. Active-connection inventory",
+"req": "Reconcile the initial inventory with final outcomes.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "measured runs reconcile counts for that run only, not a general mechanism",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C49-021",
+"task_class": "SPECIFY",
+"area": "03. Close coordination",
+"req": "Select one close owner for each socket.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Connection instance is sole owner of its ws for the socket's lifetime",
+"prior_evidence": [
+"gateway/connection.js:19-51"
+]
+},
+{
+"id": "C49-022",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Stop new application send admission.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no explicit guard stops new _send calls once closing; DRAINING state still allows worker output sends",
+"prior_evidence": [
+"gateway/connection.js:59-70,227"
+]
+},
+{
+"id": "C49-023",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Coordinate any queued application send policy.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "queued sends flushed with a 2s bounded grace window, not a full policy statement",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C49-024",
+"task_class": "VERIFY",
+"area": "03. Close coordination",
+"req": "VERIFY CloseAsync interaction with the existing receive owner.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named test exercising close-vs-receive-owner interaction found",
+"prior_evidence": []
+},
+{
+"id": "C49-025",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Avoid two concurrent close operations on one socket.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'if (this.closing || this.state===\"CLOSED\") return;' guards against double close",
+"prior_evidence": [
+"gateway/connection.js:287"
+]
+},
+{
+"id": "C49-026",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Avoid a second receive operation hidden inside competing close coordination.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Node's ws is event-driven (no manual ReceiveAsync loop) so a hidden second receive has no .NET-style meaning here",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C49-027",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Pass a cancellation input with the approved timeout behavior.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "hard setTimeout(cfg.shutdownMs) is the cancellation/timeout input for the coordinator",
+"prior_evidence": [
+"gateway/server.js:232"
+]
+},
+{
+"id": "C49-028",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Handle a socket already in a closing state.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "already-closing state returns immediately, no duplicate close attempted",
+"prior_evidence": [
+"gateway/connection.js:287"
+]
+},
+{
+"id": "C49-029",
+"task_class": "IMPLEMENT",
+"area": "03. Close coordination",
+"req": "Handle a socket already in a terminal state.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "_onSocketClose returns immediately if state is already CLOSED",
+"prior_evidence": [
+"gateway/connection.js:313"
+]
+},
+{
+"id": "C49-030",
+"task_class": "DOCUMENT",
+"area": "03. Close coordination",
+"req": "Record the close attempt result safely.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "conn.closed log records code/clean/initiator, but not a distinct structured 'close attempt result'",
+"prior_evidence": [
+"gateway/connection.js:315"
+]
+},
+{
+"id": "C49-031",
+"task_class": "IMPLEMENT",
+"area": "04. Closing handshake",
+"req": "Invoke the approved managed closing-handshake method.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "this.ws.close(code, reason) is the single approved managed close call",
+"prior_evidence": [
+"gateway/connection.js:305,308"
+]
+},
+{
+"id": "C49-032",
+"task_class": "IMPLEMENT",
+"area": "04. Closing handshake",
+"req": "Supply the selected close status.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "selected wsCode is threaded through to ws.close",
+"prior_evidence": [
+"gateway/connection.js:238,288,305"
+]
+},
+{
+"id": "C49-033",
+"task_class": "IMPLEMENT",
+"area": "04. Closing handshake",
+"req": "Supply a bounded approved close description.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reason string supplied but no explicit length bound seen at the close call site",
+"prior_evidence": [
+"gateway/connection.js:288,305"
+]
+},
+{
+"id": "C49-034",
+"task_class": "MEASURE",
+"area": "04. Closing handshake",
+"req": "Observe completion rather than assuming the call succeeded.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.onEmpty only fires once every conn's actual close event lands (registry.forget), i.e. completion is observed, not assumed",
+"prior_evidence": [
+"gateway/server.js:233",
+"gateway/connection.js:332-333"
+]
+},
+{
+"id": "C49-035",
+"task_class": "IMPLEMENT",
+"area": "04. Closing handshake",
+"req": "Let the established receive-ownership design observe peer closure.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "ws.on('close', ...) is the existing receive-ownership path that observes peer closure",
+"prior_evidence": [
+"gateway/connection.js:40,312-334"
+]
+},
+{
+"id": "C49-036",
+"task_class": "DOCUMENT",
+"area": "04. Closing handshake",
+"req": "Record acknowledgment when it is actually observed.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "info.clean/info.initiator logged only once the socket's close event actually fires [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:315"
+]
+},
+{
+"id": "C49-037",
+"task_class": "IMPLEMENT",
+"area": "04. Closing handshake",
+"req": "Avoid claiming acknowledgment from local send completion alone.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "conn is only marked CLOSED on the socket 'close' event, never on local send completion alone",
+"prior_evidence": [
+"gateway/connection.js:312-334"
+]
+},
+{
+"id": "C49-038",
+"task_class": "TEST",
+"area": "04. Closing handshake",
+"req": "Test an idle cooperative peer.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "real process SIGTERM test drains an idle cooperative session",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C49-039",
+"task_class": "TEST",
+"area": "04. Closing handshake",
+"req": "Test a busy cooperative peer.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "same suite also drains a session with a running command (busy peer)",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-150",
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C49-040",
+"task_class": "IMPLEMENT",
+"area": "04. Closing handshake",
+"req": "Preserve the exact close sequence used in successful tests.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tests pass against current code; no explicit doc pinning the sequence as frozen",
+"prior_evidence": [
+"gateway/server.js:216-242",
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C49-041",
+"task_class": "SPECIFY",
+"area": "05. Queued work",
+"req": "Decide whether accepted outbound messages must be drained.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "code comment states accepted output is attempted to be drained within a grace window",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C49-042",
+"task_class": "IMPLEMENT",
+"area": "05. Queued work",
+"req": "Bound any attempt to finish queued application messages.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "2000ms bound on the flush-then-close loop",
+"prior_evidence": [
+"gateway/connection.js:307"
+]
+},
+{
+"id": "C49-043",
+"task_class": "IMPLEMENT",
+"area": "05. Queued work",
+"req": "Notify producers that new work is no longer accepted.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "worker told 'close' (stop producing) as part of end()",
+"prior_evidence": [
+"gateway/connection.js:293"
+]
+},
+{
+"id": "C49-044",
+"task_class": "SPECIFY",
+"area": "05. Queued work",
+"req": "Define the disposition of messages still queued at the deadline.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "socket closed unconditionally once grace period elapses, discarding remaining queue",
+"prior_evidence": [
+"gateway/connection.js:308"
+]
+},
+{
+"id": "C49-045",
+"task_class": "SPECIFY",
+"area": "05. Queued work",
+"req": "Define how callers learn that queued work was not sent.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no signal is sent to the client indicating queued output was dropped",
+"prior_evidence": []
+},
+{
+"id": "C49-046",
+"task_class": "IMPLEMENT",
+"area": "05. Queued work",
+"req": "Release payload ownership for abandoned work.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut.length=0 and outBytesBySeq.clear() release abandoned payload refs",
+"prior_evidence": [
+"gateway/connection.js:331"
+]
+},
+{
+"id": "C49-047",
+"task_class": "IMPLEMENT",
+"area": "05. Queued work",
+"req": "Prevent application sends after the close boundary.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "_onText no-ops once closing; _output gated to ACTIVE/DRAINING states only",
+"prior_evidence": [
+"gateway/connection.js:104,227"
+]
+},
+{
+"id": "C49-048",
+"task_class": "SPECIFY",
+"area": "05. Queued work",
+"req": "Define whether in-progress application handlers may finish.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "state machine comment + code allow in-flight worker output to still be sent during DRAINING",
+"prior_evidence": [
+"gateway/connection.js:227,285"
+]
+},
+{
+"id": "C49-049",
+"task_class": "IMPLEMENT",
+"area": "05. Queued work",
+"req": "Stop or isolate handlers that exceed the approved budget.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker stall detection exists generally but is not specifically a shutdown-time handler budget",
+"prior_evidence": [
+"gateway/connection.js:243-252"
+]
+},
+{
+"id": "C49-050",
+"task_class": "DOCUMENT",
+"area": "05. Queued work",
+"req": "Document delivery limitations during shutdown.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no doc section found describing possible delivery loss during shutdown",
+"prior_evidence": []
+},
+{
+"id": "C49-051",
+"task_class": "IMPLEMENT",
+"area": "06. Timeouts",
+"req": "Derive budgets from the verified hosting shutdown allowance.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SHUTDOWN_MS(20s) kept below the Blueprint's maxShutdownDelaySeconds(30s)",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C49-052",
+"task_class": "IMPLEMENT",
+"area": "06. Timeouts",
+"req": "Reserve time for final worker and process cleanup.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "1.5s worker SIGKILL fallback reserved inside the 20s drain budget",
+"prior_evidence": [
+"gateway/connection.js:267-272"
+]
+},
+{
+"id": "C49-053",
+"task_class": "IMPLEMENT",
+"area": "06. Timeouts",
+"req": "Avoid allowing each connection a full service budget sequentially.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "draining messages/close sent to every connection in one loop, not sequential per-connection budgets",
+"prior_evidence": [
+"gateway/server.js:236-239"
+]
+},
+{
+"id": "C49-054",
+"task_class": "SPECIFY",
+"area": "06. Timeouts",
+"req": "Choose a bounded strategy for handling many simultaneous closes.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "single shared hard timer bounds all simultaneous closes together",
+"prior_evidence": [
+"gateway/server.js:232"
+]
+},
+{
+"id": "C49-055",
+"task_class": "TEST",
+"area": "06. Timeouts",
+"req": "Test a peer that never acknowledges.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'application heartbeat: a peer that never answers is closed 1008 within interval + window'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C49-056",
+"task_class": "TEST",
+"area": "06. Timeouts",
+"req": "Test many unresponsive peers.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found exercising many simultaneous unresponsive peers",
+"prior_evidence": []
+},
+{
+"id": "C49-057",
+"task_class": "IMPLEMENT",
+"area": "06. Timeouts",
+"req": "Cancel or terminate stalled close attempts through the approved lifecycle path.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "finish(true) force-kills workers and terminates sockets on hard timeout",
+"prior_evidence": [
+"gateway/server.js:224-232"
+]
+},
+{
+"id": "C49-058",
+"task_class": "DOCUMENT",
+"area": "06. Timeouts",
+"req": "Record which connections exceeded their budget.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only an aggregate 'forced' boolean logged, not a per-connection exceeded-budget list",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C49-059",
+"task_class": "REVIEW",
+"area": "06. Timeouts",
+"req": "Ensure aggregate drain remains within the approved target.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "observed drains of 12-17ms, well within the 20000ms budget",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C49-060",
+"task_class": "DOCUMENT",
+"area": "06. Timeouts",
+"req": "Record observed timing under representative concurrency.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "records timing for 3 concurrent sessions, idle and busy",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C49-061",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test peer close arriving before local drain initiation.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for peer close before local drain initiation",
+"prior_evidence": []
+},
+{
+"id": "C49-062",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test peer close arriving during CloseAsync.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for peer close during CloseAsync-equivalent",
+"prior_evidence": []
+},
+{
+"id": "C49-063",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test receive failure while a close is pending.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for receive failure while close is pending",
+"prior_evidence": []
+},
+{
+"id": "C49-064",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test send failure while a close is pending.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for send failure while close is pending",
+"prior_evidence": []
+},
+{
+"id": "C49-065",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test worker completion while the coordinator enumerates targets.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for worker completion during target enumeration",
+"prior_evidence": []
+},
+{
+"id": "C49-066",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test repeated global shutdown requests.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "shutdownPromise cache guards repeated shutdown() calls in code, but no dedicated test found",
+"prior_evidence": [
+"gateway/server.js:219"
+]
+},
+{
+"id": "C49-067",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test an upgraded connection finishing handoff at the drain boundary.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for handoff finishing at the drain boundary",
+"prior_evidence": []
+},
+{
+"id": "C49-068",
+"task_class": "TEST",
+"area": "07. Race tests",
+"req": "Test registry removal racing with close-result recording.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no named race test for registry removal racing close-result recording",
+"prior_evidence": []
+},
+{
+"id": "C49-069",
+"task_class": "VERIFY",
+"area": "07. Race tests",
+"req": "Verify every target has one final drain outcome.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test verifying exactly one final drain outcome per target under race conditions",
+"prior_evidence": []
+},
+{
+"id": "C49-070",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Repeat race scenarios with several active connections.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no race scenarios exist to repeat with several active connections",
+"prior_evidence": []
+},
+{
+"id": "C49-071",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Release incomplete inbound message storage according to policy.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "gen++ fences the FrameDecoder/timers so stale inbound-assembly callbacks are inert",
+"prior_evidence": [
+"gateway/connection.js:329"
+]
+},
+{
+"id": "C49-072",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Release unsent queued payloads according to policy.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut.length=0 releases unsent queued payload references",
+"prior_evidence": [
+"gateway/connection.js:331"
+]
+},
+{
+"id": "C49-073",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Stop outstanding operations before releasing their buffers.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "gen++ plus _clearTimers stop outstanding fenced callbacks before buffers are dropped",
+"prior_evidence": [
+"gateway/connection.js:329-330"
+]
+},
+{
+"id": "C49-074",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Dispose each finalized socket through its owner.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "ws.terminate/ws.close invoked by the owning Connection to dispose each finalized socket",
+"prior_evidence": [
+"gateway/connection.js:225,305,308"
+]
+},
+{
+"id": "C49-075",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Release cancellation and timer resources.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "_clearTimers clears every setTimeout/setInterval on close",
+"prior_evidence": [
+"gateway/connection.js:56,304,330"
+]
+},
+{
+"id": "C49-076",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Remove finalized connections from the registry.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.forget deletes the finalized connection from registry.conns",
+"prior_evidence": [
+"gateway/connection.js:333",
+"gateway/server.js:51"
+]
+},
+{
+"id": "C49-077",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Release worker capacity after required cleanup.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.release frees reserved capacity in both _finalExit and _onSocketClose",
+"prior_evidence": [
+"gateway/connection.js:282,332"
+]
+},
+{
+"id": "C49-078",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup",
+"req": "Dispose completed backend invocation handles.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "worker process (stdin/stdout/stderr, child process) disposed via _killWorker/exit handling",
+"prior_evidence": [
+"gateway/connection.js:267-272,260-266"
+]
+},
+{
+"id": "C49-079",
+"task_class": "DOCUMENT",
+"area": "08. Cleanup",
+"req": "Record cleanup-incomplete outcomes separately from handshake failures.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker.failed vs conn.closed are distinct log events but there's no explicit cleanup-incomplete category",
+"prior_evidence": [
+"gateway/connection.js:263,315"
+]
+},
+{
+"id": "C49-080",
+"task_class": "VERIFY",
+"area": "08. Cleanup",
+"req": "Verify resource counts after the final target completes.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found asserting resource/registry counts after the final drain target completes",
+"prior_evidence": []
+},
+{
+"id": "C49-081",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record drain start time.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "t0 captured and gateway.draining logged at drain start [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:220,222"
+]
+},
+{
+"id": "C49-082",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record the number of targeted connections.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'connections: registry.conns.size' logged in gateway.draining [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:222"
+]
+},
+{
+"id": "C49-083",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record cooperative close completions.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only aggregate forced/drainMs recorded at gateway.stopped, no per-connection cooperative-close count",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C49-084",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record close-operation failures.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker.failed is logged but not aggregated as a distinct 'close-operation failure' metric at drain end",
+"prior_evidence": [
+"gateway/connection.js:263"
+]
+},
+{
+"id": "C49-085",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record timed-out peers.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only the aggregate 'forced' boolean is recorded, not which peers individually timed out",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C49-086",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record discarded or unfinished queued work as permitted by application policy.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no logging of discarded/unfinished queued work found",
+"prior_evidence": []
+},
+{
+"id": "C49-087",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record aggregate drain duration.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.stopped logs drainMs, the aggregate duration [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:228-229"
+]
+},
+{
+"id": "C49-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging private message bodies during shutdown.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'never contain tokens, cookies, query strings or terminal bytes' applies to all logs including shutdown",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C49-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Include the release and instance identity in drain evidence.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no release/version or instance identity field found in drain log lines",
+"prior_evidence": []
+},
+{
+"id": "C49-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for reproducing a slow-drain incident.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented reproduction procedure for a slow-drain incident",
+"prior_evidence": []
+},
+{
+"id": "C49-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the tested drain sequence.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "tested drain sequence is published with OBSERVED measurements",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C49-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish per-connection and aggregate budgets.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SHUTDOWN_MS and its use as per-conn deadline/aggregate budget are published",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference",
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C49-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish queued-work and partial-message disposition rules.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "disposition rules live only as code comments, not a published doc section",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C49-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link cooperative close tests.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "doc cross-references the real-process SIGTERM (cooperative) test",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C49-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link unresponsive-peer timeout tests.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeat-timeout (unresponsive peer) test is listed alongside the drain evidence",
+"prior_evidence": [
+"ledger/review_inputs/EVIDENCE_INDEX.md#testschaoslifecycletestjs"
+]
+},
+{
+"id": "C49-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link CloseAsync ownership compatibility tests.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "CloseAsync ownership compatibility is a .NET ClientWebSocket concept; Node ws has no equivalent test type",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C49-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link concurrent-drain race tests.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no concurrent-drain race tests exist to link (see Race tests section)",
+"prior_evidence": []
+},
+{
+"id": "C49-098",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link final registry and resource-accounting evidence.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry/resource evidence is cross-linked from the shutdown doc",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"docs/RESOURCE_MODEL.md",
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C49-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document unresolved shutdown delivery guarantees.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit doc section on unresolved shutdown delivery guarantees found",
+"prior_evidence": []
+},
+{
+"id": "C49-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve draining only after acknowledgments timeouts and cleanup are separately accounted.",
+"ram_overlay": "Drain only within the approved deadline and keep buffers until the associated work settles. Graceful close is not proof that a remote command or durable store committed.",
+"challenge": "Exercise slow peers and bridge failures; report abandoned/ambiguous work and release allocations exactly once.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit approval gate tying draining sign-off to separately accounted acks/timeouts/cleanup",
+"prior_evidence": []
+}
+]
+}

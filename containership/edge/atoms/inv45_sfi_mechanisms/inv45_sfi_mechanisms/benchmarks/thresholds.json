@@ -1,0 +1,19 @@
+{
+  "schema": "PK_SFI_PERF_THRESHOLDS/1",
+  "status": "PROPOSED",
+  "approved_by": null,
+  "approval_note": "Thresholds are proposals derived from the contract SLOs and one CI-container baseline. They are machine-enforced by tools/perf_gate.py but carry no production approval until the performance owner (OWNERSHIP.md, currently UNASSIGNED) signs them.",
+  "absolute": [
+    {"id": "PERF-01", "metric": "runtime_overhead_v8.load_bound_sum.overhead_pct_p50", "op": "<=", "value": 15.0, "source": "contract SLO 'overhead: masking overhead at or below 15%'", "kind": "contract"},
+    {"id": "PERF-02", "metric": "runtime_overhead_v8.compute_mixed.overhead_pct_p50", "op": "<=", "value": 15.0, "source": "contract SLO 'overhead'", "kind": "contract"},
+    {"id": "PERF-03", "metric": "runtime_overhead_v8.load_bound_sum.same_results", "op": "==", "value": true, "source": "semantic equivalence inside the partition", "kind": "correctness"},
+    {"id": "PERF-04", "metric": "runtime_overhead_v8.compute_mixed.same_results", "op": "==", "value": true, "source": "semantic equivalence inside the partition", "kind": "correctness"},
+    {"id": "PERF-05", "metric": "verification.small.verify_ms.p99", "op": "<=", "value": 10.0, "source": "proposed: load-path verification latency", "kind": "proposed"},
+    {"id": "PERF-06", "metric": "verification.large.verify_ms.p50", "op": "<=", "value": 3000.0, "source": "proposed: 10k-function module verified within 3 s", "kind": "proposed"},
+    {"id": "PERF-07", "metric": "verification.large.verify_peak_heap_mb", "op": "<=", "value": 256.0, "source": "proposed memory ceiling (C067)", "kind": "proposed"},
+    {"id": "PERF-08", "metric": "soak.heap_growth_second_half_mb", "op": "<=", "value": 8.0, "source": "proposed leak bound for a 20 s soak", "kind": "proposed"},
+    {"id": "PERF-09", "metric": "soak.audit_chain", "op": "==", "value": "INTACT", "source": "audit integrity under soak", "kind": "correctness"},
+    {"id": "PERF-10", "metric": "soak.instances_left", "op": "==", "value": 0, "source": "no leaked instances", "kind": "correctness"}
+  ],
+  "regression": {"tolerance_ratio": 1.5, "metrics": ["verification.small.verify_ms.p50", "verification.medium.verify_ms.p50", "verification.large.verify_ms.p50", "verification.large.verify_peak_heap_mb"], "baseline": "benchmarks/results/baseline-linux-x86_64-cpython3.11.json"}
+}

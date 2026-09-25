@@ -1,0 +1,29 @@
+{
+  "schema": "GAP02_COMPAT_MATRIX/1",
+  "revision": 1,
+  "legend": {
+    "fixture-verified": "implemented and verified against synthetic fixtures in CI; NOT verified on physical hardware",
+    "host-verified": "also executed on a real host of this OS/arch (see evidence)",
+    "unsupported": "explicitly returns GAP02-E003 → unprobed; can never satisfy a scheduler predicate",
+    "not-implemented": "no probe for this OS; returns unprobed"
+  },
+  "python": [">=3.10"],
+  "schemas": {"PK_NODE_CAPABILITIES": [1], "PK_SIGNED_CAPABILITIES": [1], "PK_HARDWARE_INVENTORY": [1],
+              "PK_PROBE_SCHEDULE": [1], "PK_ACCELERATOR_DEVICE": [1], "GAP02_PROBE_CONFIG": [1]},
+  "probes": {
+    "cpu":          {"linux/x86_64": "host-verified", "linux/aarch64": "fixture-verified", "linux/riscv64": "fixture-verified",
+                     "darwin/arm64": "fixture-verified", "windows/amd64": "not-verified-api-bit"},
+    "numa":         {"linux/*": "fixture-verified", "darwin/*": "unsupported", "windows/*": "unsupported"},
+    "storage":      {"linux/*": "host-verified", "darwin/*": "unsupported", "windows/*": "unsupported"},
+    "nic":          {"linux/*": "host-verified", "darwin/*": "unsupported", "windows/*": "unsupported"},
+    "virt":         {"linux/*": "host-verified", "darwin/*": "fixture-verified", "windows/*": "fixture-verified"},
+    "confidential": {"linux/*": "fixture-verified", "darwin/*": "unsupported", "windows/*": "unsupported"},
+    "tpm":          {"linux/*": "host-verified", "windows/*": "fixture-verified", "darwin/*": "unsupported"},
+    "gpu.nvidia":   {"linux/*": "fixture-verified", "windows/*": "fixture-verified", "darwin/*": "unsupported"},
+    "gpu.amd":      {"linux/*": "fixture-verified", "darwin/*": "unsupported", "windows/*": "unsupported"},
+    "gpu.intel":    {"linux/*": "fixture-verified", "windows/*": "fixture-verified", "darwin/*": "unsupported"},
+    "gpu.apple":    {"darwin/*": "fixture-verified (never schedulable: no stable id / health API)"},
+    "npu":          {"linux/*": "fixture-verified (requires configured vendor runtime check)", "windows/*": "fixture-verified (requires configured check)", "darwin/*": "unsupported"}
+  },
+  "host_verification_platform": "linux/x86_64 cloud container (guest; no GPU/NPU/TPM/KVM)"
+}

@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:pln04:PK_TIER_LIFECYCLE:1",
+  "title": "PK_TIER_LIFECYCLE/1",
+  "description": "Versioned execution-plane lifecycle/security event envelope for PLN-04.",
+  "type": "object",
+  "required": [
+    "schema",
+    "sequence",
+    "event",
+    "previous_hash",
+    "event_hash"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_TIER_LIFECYCLE/1"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "event": {
+      "enum": [
+        "workload_admitted",
+        "admission_reused",
+        "workload_reclassified",
+        "admission_refused",
+        "attestation_failed",
+        "attestation_restored",
+        "workload_torn_down",
+        "workload_reserved",
+        "provider_start_failed",
+        "workload_activating",
+        "workload_stopping",
+        "workload_zeroized",
+        "workload_quarantined",
+        "orphan_reaped",
+        "node_drain_started",
+        "ownership_acquired",
+        "ownership_fenced",
+        "split_brain_detected",
+        "admission_disabled",
+        "admission_enabled",
+        "config_applied",
+        "state_recovered"
+      ]
+    },
+    "workload": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "trust_class": {
+      "enum": [
+        "trusted",
+        "first-party",
+        "third-party",
+        "untrusted",
+        "hostile"
+      ]
+    },
+    "tier": {
+      "enum": [
+        "process",
+        "wasm",
+        "unikernel",
+        "microvm",
+        "vm"
+      ]
+    },
+    "state": {
+      "enum": [
+        "requested",
+        "reserved",
+        "provisioning",
+        "starting",
+        "active",
+        "stopping",
+        "zeroizing",
+        "terminated",
+        "failed",
+        "quarantined",
+        "refused",
+        "orphaned"
+      ]
+    },
+    "affected_workloads": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "uniqueItems": true
+    },
+    "previous_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "event_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "timestamp_ns": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event": {
+            "enum": [
+              "workload_admitted",
+              "admission_reused",
+              "workload_reclassified",
+              "workload_torn_down",
+              "admission_refused"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "workload",
+          "tenant"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event": {
+            "enum": [
+              "workload_admitted",
+              "admission_reused",
+              "workload_reclassified",
+              "workload_torn_down",
+              "attestation_failed",
+              "attestation_restored"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "tier"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

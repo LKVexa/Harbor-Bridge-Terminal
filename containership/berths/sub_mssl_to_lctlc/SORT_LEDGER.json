@@ -1,0 +1,151 @@
+{
+  "berth": "sub_mssl_to_lctlc",
+  "kind": "subsystem",
+  "per_node": {
+    "N_LARGE": {
+      "bytes": 0,
+      "count": 0,
+      "kinds": {},
+      "rules": {},
+      "tree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "N_MEDIUM": {
+      "bytes": 0,
+      "count": 0,
+      "kinds": {},
+      "rules": {},
+      "tree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "N_SMALL": {
+      "bytes": 0,
+      "count": 0,
+      "kinds": {},
+      "rules": {},
+      "tree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "N_XLARGE": {
+      "bytes": 18488,
+      "count": 1,
+      "kinds": {
+        "python": 1
+      },
+      "rules": {
+        "S3": 1
+      },
+      "tree_sha256": "06a5d98034bc6816a24a2365da33f84e861b3a39e810b7883abb90e45ddda889"
+    }
+  },
+  "policy": {
+    "complexity": {
+      "bands": {
+        "HIGH": "< 200",
+        "LOW": "< 8",
+        "MID": "< 40",
+        "VERY_HIGH": ">= 200"
+      },
+      "score": "lines/10 + 2*branches + 3*imports + 1*definitions"
+    },
+    "first_match_wins": true,
+    "history": [
+      {
+        "change": "initial policy (UC-1.0.0)",
+        "version": "1.0.0"
+      },
+      {
+        "change": "measurement fix: the binary sniff tolerates a UTF-8 multibyte character cut at the 4096-byte sniff boundary; 1.0.0 misread a columned-LCTL unit longer than the sniff (its U+2502 separators) as binary and sent it to N_XLARGE as bulk instead of its own node",
+        "version": "1.0.1"
+      }
+    ],
+    "nodes": [
+      "N_SMALL",
+      "N_MEDIUM",
+      "N_LARGE",
+      "N_XLARGE"
+    ],
+    "rules": [
+      {
+        "id": "S0",
+        "rule": "a script written in a node's own guest dialect goes to that node: MSSL assembly -> N_SMALL, LCTLC/1.1 -> N_MEDIUM, LCTLC/1.2 -> N_LARGE, LCTLC/1.0 (QVM profile) -> N_XLARGE"
+      },
+      {
+        "id": "S1",
+        "rule": "a PA-LCTL bundle (.pal) goes to N_MEDIUM, the reference node the corpora's own adapter binds"
+      },
+      {
+        "id": "S2",
+        "rule": "bulk cargo -- archives, images, binaries, media, PDFs, or anything >= 1 MiB -- goes to N_XLARGE, the roomiest, hosted node"
+      },
+      {
+        "id": "S3",
+        "rule": "hosted-runtime source (Python, Java, JavaScript/TypeScript, HTML/CSS/SVG, notebooks) and Columned LCTL plans (.lctl, verified by the JVM column verifier) go to N_XLARGE, the Python-hosted node with the JVM verifier"
+      },
+      {
+        "id": "S4",
+        "rule": "native/system source (C, C++, headers, assembly, Makefiles, linker scripts) goes to N_LARGE, the freestanding C core with the device I/O and service architecture"
+      },
+      {
+        "id": "S5",
+        "rule": "integrity and contract artifacts (sums, signatures, keys, manifests, schemas, provenance, ledgers, trust stores) go to N_MEDIUM, the node with signing, the trust chain and the independent verifier"
+      },
+      {
+        "id": "S6",
+        "rule": "structured data and configuration go by size: <= 4 KiB -> N_SMALL, <= 256 KiB -> N_MEDIUM, larger -> N_LARGE"
+      },
+      {
+        "id": "S7",
+        "rule": "launchers and shell/batch scripts go by complexity band: LOW -> N_SMALL, MID -> N_MEDIUM, HIGH -> N_LARGE, VERY_HIGH -> N_XLARGE"
+      },
+      {
+        "id": "S8",
+        "rule": "documents and notes go by size: <= 8 KiB -> N_SMALL (teaching), <= 128 KiB -> N_MEDIUM, larger -> N_LARGE"
+      },
+      {
+        "id": "S9",
+        "rule": "everything else goes by complexity band: LOW -> N_SMALL, MID -> N_MEDIUM, HIGH -> N_LARGE, VERY_HIGH -> N_XLARGE"
+      }
+    ],
+    "schema": "UC/SORT_POLICY/1",
+    "version": "1.0.1"
+  },
+  "policy_sha256": "0104c64444646adaa446da1484e3d36f479292b51d72df73cfbcb150c5d0d61a",
+  "portable_storage": {
+    "alias_dir": "_alias",
+    "aliased": [],
+    "delivered_path_budget": 140,
+    "package_dir": "Unikernel_Containership",
+    "rule": "a script's identity is its original path; its bytes are stored under an alias only when that path cannot exist on every host (case collision, or a stored path over the budget); the ledger, CARGO.pal (stored=) and the cargo manifest record the alias",
+    "stored_path_budget": 116
+  },
+  "records": [
+    {
+      "binary": false,
+      "branches": 129,
+      "bulk": false,
+      "bytes": 18488,
+      "complexity_band": "VERY_HIGH",
+      "complexity_score": 329.4,
+      "definitions": 7,
+      "explanation": "python needs a hosted runtime; the QUORUM node is Python-hosted with a JVM verifier",
+      "hosted": true,
+      "imports": 7,
+      "io_refs": 11,
+      "kind": "python",
+      "lines": 434,
+      "native": false,
+      "node": "N_XLARGE",
+      "path": "mssl_to_lctlc.py",
+      "rule": "S3",
+      "sha256": "091571735ce57d1c54da29cb9ea56726413cf157dba52776a72ddf87e5d5c739",
+      "trust_name": false
+    }
+  ],
+  "schema": "UC/SORT_LEDGER/1",
+  "scripts": 1,
+  "source": {
+    "files": 1,
+    "kind": "directory",
+    "path": "/tmp/uc-mssl-tool-llrw8v7k",
+    "tree_sha256": "06a5d98034bc6816a24a2365da33f84e861b3a39e810b7883abb90e45ddda889"
+  },
+  "uc_release": "UC-2.1.3"
+}

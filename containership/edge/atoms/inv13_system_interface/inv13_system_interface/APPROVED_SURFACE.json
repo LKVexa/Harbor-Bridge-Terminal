@@ -1,0 +1,164 @@
+{
+  "interfaces": {
+    "clocks": {
+      "monotonic-now": "func() -> u64",
+      "resolution": "func() -> u64",
+      "wall-now": "func() -> datetime"
+    },
+    "environment": {
+      "get-args": "func() -> list<string>",
+      "get-env": "func() -> list<tuple<string, string>>"
+    },
+    "filesystem": {
+      "get-preopens": "func() -> list<tuple<descriptor, string>>",
+      "open-at": "func(path: string, flags: open-flags) -> result<descriptor, error>",
+      "read": "func(len: u32) -> result<list<u8>, error>",
+      "read-dir": "func() -> result<list<string>, error>",
+      "write": "func(data: list<u8>) -> result<u32, error>"
+    },
+    "http-outgoing": {
+      "handle": "func(req: request) -> result<response, error>"
+    },
+    "random": {
+      "get-random-bytes": "func(len: u32) -> result<list<u8>, error>"
+    },
+    "sockets": {
+      "connect": "func(family: address-family, address: string, port: u16) -> result<tcp-socket, error>",
+      "receive": "func(len: u32) -> result<list<u8>, error>",
+      "send": "func(data: list<u8>) -> result<u32, error>"
+    },
+    "stdio": {
+      "stderr-write": "func(data: list<u8>) -> result<u32, error>",
+      "stdin-read": "func(len: u32) -> result<list<u8>, error>",
+      "stdout-write": "func(data: list<u8>) -> result<u32, error>"
+    },
+    "types": {}
+  },
+  "package": "inv13:system-interface",
+  "sha256": "38eff2eb9044c8ba707583747d841b2070eeff859b2ebc05db60a6d4b0988979",
+  "version": "4.3.0",
+  "worlds": {
+    "batch-file-worker": {
+      "capabilities": [
+        "filesystem",
+        "monotonic-clock",
+        "stdio",
+        "wall-clock"
+      ],
+      "exports": [],
+      "functions": [
+        "clocks.monotonic-now",
+        "clocks.resolution",
+        "clocks.wall-now",
+        "filesystem.get-preopens",
+        "filesystem.open-at",
+        "filesystem.read",
+        "filesystem.read-dir",
+        "filesystem.write",
+        "stdio.stderr-write",
+        "stdio.stdin-read",
+        "stdio.stdout-write"
+      ],
+      "imports": [
+        "clocks",
+        "filesystem",
+        "stdio"
+      ]
+    },
+    "entropy-consumer": {
+      "capabilities": [
+        "monotonic-clock",
+        "random",
+        "stdio",
+        "wall-clock"
+      ],
+      "exports": [],
+      "functions": [
+        "clocks.monotonic-now",
+        "clocks.resolution",
+        "clocks.wall-now",
+        "random.get-random-bytes",
+        "stdio.stderr-write",
+        "stdio.stdin-read",
+        "stdio.stdout-write"
+      ],
+      "imports": [
+        "clocks",
+        "random",
+        "stdio"
+      ]
+    },
+    "http-client": {
+      "capabilities": [
+        "environment",
+        "http-outgoing",
+        "monotonic-clock",
+        "random",
+        "stdio",
+        "wall-clock"
+      ],
+      "exports": [],
+      "functions": [
+        "clocks.monotonic-now",
+        "clocks.resolution",
+        "clocks.wall-now",
+        "environment.get-args",
+        "environment.get-env",
+        "http-outgoing.handle",
+        "random.get-random-bytes",
+        "stdio.stderr-write",
+        "stdio.stdin-read",
+        "stdio.stdout-write"
+      ],
+      "imports": [
+        "clocks",
+        "environment",
+        "http-outgoing",
+        "random",
+        "stdio"
+      ]
+    },
+    "minimal": {
+      "capabilities": [
+        "stdio"
+      ],
+      "exports": [],
+      "functions": [
+        "stdio.stderr-write",
+        "stdio.stdin-read",
+        "stdio.stdout-write"
+      ],
+      "imports": [
+        "stdio"
+      ]
+    },
+    "net-client": {
+      "capabilities": [
+        "monotonic-clock",
+        "random",
+        "sockets",
+        "stdio",
+        "wall-clock"
+      ],
+      "exports": [],
+      "functions": [
+        "clocks.monotonic-now",
+        "clocks.resolution",
+        "clocks.wall-now",
+        "random.get-random-bytes",
+        "sockets.connect",
+        "sockets.receive",
+        "sockets.send",
+        "stdio.stderr-write",
+        "stdio.stdin-read",
+        "stdio.stdout-write"
+      ],
+      "imports": [
+        "clocks",
+        "random",
+        "sockets",
+        "stdio"
+      ]
+    }
+  }
+}

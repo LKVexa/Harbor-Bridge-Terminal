@@ -1,0 +1,18 @@
+{
+  "schema": "PK_MESH_ALERTS/1",
+  "classes": ["ordinary_load", "degradation", "policy_rejection", "dependency_failure", "attack", "software_defect"],
+  "alerts": [
+    {"id": "INV58-LoadHigh", "class": "ordinary_load", "expr": "inv58_saturation_ratio > 0.7 for 10m", "severity": "SEV3", "runbook": "docs/PERFORMANCE.md#capacity-model"},
+    {"id": "INV58-Shedding", "class": "ordinary_load", "expr": "rate(inv58_admission_shed_total[5m]) > 0 for 10m", "severity": "SEV3", "runbook": "docs/PERFORMANCE.md#capacity-model"},
+    {"id": "INV58-Degraded", "class": "degradation", "expr": "status.health.state == 'degraded' for 30m", "severity": "SEV3", "runbook": "docs/FAILURE_TAXONOMY.md"},
+    {"id": "INV58-ConfigRejected", "class": "policy_rejection", "expr": "increase(inv58_config_activations_total{result='rejected'}[1h]) > 0", "severity": "SEV3", "runbook": "docs/RUNBOOKS.md#rollback"},
+    {"id": "INV58-AuthzDenialsSpike", "class": "attack", "expr": "rate(inv58_authz_decisions_total{code=~'DENY_(TENANT_SCOPE|REPLAY|BAD_SIGNATURE|ACTOR_TYPE)'}[5m]) > 1", "severity": "SEV2", "runbook": "docs/INCIDENT_RESPONSE.md"},
+    {"id": "INV58-IdentityTenantMismatch", "class": "attack", "expr": "increase(inv58_identity_unmapped_total{reason='tenant_mismatch'}[5m]) > 0", "severity": "SEV1", "runbook": "docs/INCIDENT_RESPONSE.md"},
+    {"id": "INV58-BypassRising", "class": "attack", "expr": "rate(inv58_bypass_flows_total[15m]) > 0", "severity": "SEV2", "runbook": "docs/INCIDENT_RESPONSE.md"},
+    {"id": "INV58-TrustDependencyDown", "class": "dependency_failure", "expr": "status.readiness.critical_dependencies_down != [] for 5m", "severity": "SEV2", "runbook": "docs/FAILURE_TAXONOMY.md"},
+    {"id": "INV58-BreakerOpen", "class": "dependency_failure", "expr": "inv58_breaker_state == 2 for 5m", "severity": "SEV2", "runbook": "docs/FAILURE_TAXONOMY.md"},
+    {"id": "INV58-Internal", "class": "software_defect", "expr": "increase(inv58_errors_total{code='E_INTERNAL'}[5m]) > 0", "severity": "SEV1", "runbook": "docs/INCIDENT_RESPONSE.md"},
+    {"id": "INV58-AuditChainBroken", "class": "software_defect", "expr": "audit_export.verified == false", "severity": "SEV1", "runbook": "docs/INCIDENT_RESPONSE.md"},
+    {"id": "INV58-Stalled", "class": "software_defect", "expr": "status.health.stalled == true", "severity": "SEV1", "runbook": "docs/FAILURE_TAXONOMY.md#thresholds"}
+  ]
+}

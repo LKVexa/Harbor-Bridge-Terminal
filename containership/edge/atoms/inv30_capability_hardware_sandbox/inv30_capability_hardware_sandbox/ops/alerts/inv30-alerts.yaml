@@ -1,0 +1,31 @@
+groups:
+- name: inv30
+  rules:
+  - alert: INV30InvariantViolationServed   # SEV1 — should be impossible; any hit means a bug
+    expr: increase(inv30_invariant_violation_served_total[5m]) > 0
+    labels: {severity: page, sev: "1"}
+    annotations: {summary: "INV-30 served an access/derivation violating a zero-budget invariant", runbook: "docs/INCIDENT_RESPONSE.md"}
+  - alert: INV30PolicyRejectionSpike      # policy rejection (attack or misconfigured client), not an outage
+    expr: sum(rate(inv30_requests_total{outcome=~"BOUNDS_VIOLATION|PERMISSION_VIOLATION|AMPLIFICATION|INVALIDATED|TENANT_MISMATCH|UNAUTHENTICATED|UNAUTHORIZED|REPLAY"}[5m])) > 10
+    for: 10m
+    labels: {severity: ticket, sev: "3"}
+    annotations: {runbook: "docs/INCIDENT_RESPONSE.md#sev3", owner: "on-call primary (docs/OWNERSHIP.md)", group_by: "alertname,node"}
+  - alert: INV30DependencyFailure
+    expr: sum(rate(inv30_requests_total{outcome=~"CIRCUIT_OPEN|BACKEND_UNAVAILABLE"}[5m])) > 0
+    for: 5m
+    labels: {severity: page, sev: "2"}
+    annotations: {runbook: "docs/INCIDENT_RESPONSE.md#sev2", owner: "on-call primary (docs/OWNERSHIP.md)", group_by: "alertname,node"}
+  - alert: INV30Overload
+    expr: sum(rate(inv30_requests_total{outcome="OVERLOADED"}[5m])) / sum(rate(inv30_requests_total[5m])) > 0.05
+    for: 10m
+    labels: {severity: ticket, sev: "3"}
+    annotations: {runbook: "docs/INCIDENT_RESPONSE.md#sev3", owner: "on-call primary (docs/OWNERSHIP.md)", group_by: "alertname,node"}
+  - alert: INV30LatencyP99High
+    expr: histogram_quantile(0.99, sum by (le) (rate(inv30_latency_ms_bucket{op="access"}[5m]))) > 5
+    for: 15m
+    labels: {severity: ticket, sev: "3"}
+    annotations: {runbook: "docs/INCIDENT_RESPONSE.md#sev3", owner: "on-call primary (docs/OWNERSHIP.md)", group_by: "alertname,node"}
+  - alert: INV30AvailabilityFastBurn
+    expr: (sum(rate(inv30_requests_total{outcome=~"INTERNAL|DEADLINE_EXCEEDED|CIRCUIT_OPEN|BACKEND_UNAVAILABLE"}[1h])) / sum(rate(inv30_requests_total[1h]))) > (14.4 * 0.001)
+    labels: {severity: page, sev: "2"}
+    annotations: {runbook: "docs/INCIDENT_RESPONSE.md#sev2", owner: "on-call primary (docs/OWNERSHIP.md)", group_by: "alertname,node"}

@@ -1,0 +1,69 @@
+# WP #61 CI pipeline.  Unexpected skips fail the build (tools/run_tests.py); only the pk_core
+# conformance skip is allowed while waiver W-008 is approved and unexpired.
+name: pln06-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln06_data_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install ruff mypy jsonschema
+      - name: lint + types
+        working-directory: pln06_data_plane
+        run: ruff check . && (cd .. && mypy pln06_data_plane --config-file pln06_data_plane/pyproject.toml)
+      - name: tests (normal + optimized, no unexpected skips)
+        run: |
+          python pln06_data_plane/tools/run_tests.py --out results-${{ matrix.os }}-${{ matrix.python }}.json
+          python -O pln06_data_plane/tools/run_tests.py --out results-O-${{ matrix.os }}-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@v4
+        with: {name: "results-${{ matrix.os }}-${{ matrix.python }}", path: "results-*.json"}
+  security:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln06_data_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install bandit pip-audit
+      - run: bandit -c pln06_data_plane/pyproject.toml -r pln06_data_plane -x pln06_data_plane/tests,pln06_data_plane/bench
+      - run: python pln06_data_plane/tools/sbom.py --out sbom.cdx.json && pip-audit --strict || true   # zero runtime deps; W-019
+  soak-fuzz-nightly:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln06_data_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: PK06_FUZZ_ITERATIONS=200000 PK06_SOAK_SECONDS=28800 python pln06_data_plane/tools/run_tests.py --out nightly.json
+  perf-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln06_data_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pln06_data_plane.bench.perf run --quick --out current.json
+      - run: python -m pln06_data_plane.bench.perf gate --baseline pln06_data_plane/bench/baseline.json --current current.json
+  release-gate:
+    needs: [test, security, perf-gate]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln06_data_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install build && python -m build pln06_data_plane --outdir dist
+      - run: python pln06_data_plane/tools/evidence.py --artifact dist/*.whl --out evidence/dossier.json
+      - run: python pln06_data_plane/tools/release_gate.py --dossier evidence/dossier.json
+      - uses: actions/upload-artifact@v4
+        with: {name: evidence, path: "evidence/"}

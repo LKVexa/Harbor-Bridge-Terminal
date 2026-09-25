@@ -1,0 +1,38 @@
+{
+  "schema": "PK_AGENT_PROFILE/1",
+  "context": "cloud",
+  "applicability": "required",
+  "rationale": "Primary target: managed regions with reliable control plane, durable remote audit and both sandbox tiers.",
+  "mandatory_capabilities": [
+    "allowlist",
+    "step_budget",
+    "cost_budget",
+    "transcript",
+    "approval_gate",
+    "heavy_sandbox",
+    "remote_audit_anchor_required"
+  ],
+  "prohibited_capabilities": [
+    "offline_cached_approval",
+    "offline_queue"
+  ],
+  "defaults": {
+    "offline": {
+      "queue_enabled": false,
+      "max_queue": 0
+    }
+  },
+  "environment": {
+    "network": "reliable, low-latency to INV-59/INV-57",
+    "control_plane": "always available (SLO-backed)",
+    "storage": "durable remote",
+    "clock": "NTP/PTP, skew <= 5s",
+    "hardware": "unconstrained",
+    "operator_access": "24x7 remote"
+  },
+  "resource_envelope": {
+    "max_active_runs": 64,
+    "memory_mb_per_1k_runs": "see evidence/PERF_RESULTS.json"
+  },
+  "security_posture": "fail-closed on every trust dependency; no offline approvals"
+}

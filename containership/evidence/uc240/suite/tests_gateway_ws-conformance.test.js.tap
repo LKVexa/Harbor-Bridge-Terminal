@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: handshake: 101 with subprotocol; wrong subprotocol/version/key/path are refused without upgrade
+ok 1 - handshake: 101 with subprotocol; wrong subprotocol/version/key/path are refused without upgrade
+  ---
+  duration_ms: 43.240664
+  type: 'test'
+  ...
+# Subtest: unmasked client frame -> 1002
+ok 2 - unmasked client frame -> 1002
+  ---
+  duration_ms: 3003.469254
+  type: 'test'
+  ...
+# Subtest: reserved bit -> 1002
+ok 3 - reserved bit -> 1002
+  ---
+  duration_ms: 3004.059967
+  type: 'test'
+  ...
+# Subtest: unknown opcode -> 1002
+ok 4 - unknown opcode -> 1002
+  ---
+  duration_ms: 3006.892961
+  type: 'test'
+  ...
+# Subtest: binary message with an unknown data kind -> application error, connection stays (binary is the v2 data plane)
+ok 5 - binary message with an unknown data kind -> application error, connection stays (binary is the v2 data plane)
+  ---
+  duration_ms: 3.173662
+  type: 'test'
+  ...
+# Subtest: invalid UTF-8 text -> 1007
+ok 6 - invalid UTF-8 text -> 1007
+  ---
+  duration_ms: 3002.237613
+  type: 'test'
+  ...
+# Subtest: declared 64-bit length over the cap -> 1009 from the header alone (no payload sent)
+ok 7 - declared 64-bit length over the cap -> 1009 from the header alone (no payload sent)
+  ---
+  duration_ms: 3003.24616
+  type: 'test'
+  ...
+# Subtest: fragmented message over the cap -> 1009 before buffering the offending fragment
+ok 8 - fragmented message over the cap -> 1009 before buffering the offending fragment
+  ---
+  duration_ms: 3015.99878
+  type: 'test'
+  ...
+# Subtest: continuation without start -> 1002; new text inside a fragmented message -> 1002
+ok 9 - continuation without start -> 1002; new text inside a fragmented message -> 1002
+  ---
+  duration_ms: 6050.672012
+  type: 'test'
+  ...
+# Subtest: fragmented control frame / oversize control -> 1002
+ok 10 - fragmented control frame / oversize control -> 1002
+  ---
+  duration_ms: 6006.350827
+  type: 'test'
+  ...
+# Subtest: ping is answered with an identical pong, interleaved inside a fragmented text message that still assembles
+ok 11 - ping is answered with an identical pong, interleaved inside a fragmented text message that still assembles
+  ---
+  duration_ms: 44.453724
+  type: 'test'
+  ...
+# Subtest: split UTF-8 character across fragments is reassembled before strict decoding
+ok 12 - split UTF-8 character across fragments is reassembled before strict decoding
+  ---
+  duration_ms: 43.377061
+  type: 'test'
+  ...
+# Subtest: stalled fragment assembly hits the deadline -> 1008
+ok 13 - stalled fragment assembly hits the deadline -> 1008
+  ---
+  duration_ms: 3196.82048
+  type: 'test'
+  ...
+# Subtest: close handshake: peer close is echoed with the same code; invalid close code -> 1002; 1-byte close payload -> 1002
+ok 14 - close handshake: peer close is echoed with the same code; invalid close code -> 1002; 1-byte close payload -> 1002
+  ---
+  duration_ms: 6005.292969
+  type: 'test'
+  ...
+# Subtest: data after our close is ignored; abrupt TCP loss releases the connection
+ok 15 - data after our close is ignored; abrupt TCP loss releases the connection
+  ---
+  duration_ms: 3203.946595
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 42700.585161

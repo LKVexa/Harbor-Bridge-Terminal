@@ -1,0 +1,67 @@
+# INV-11 CI (authored in the 4.3.0 pass; NOT yet executed on a CI service —
+# the builder ran the equivalent jobs locally via tools/evidence.py).
+name: inv11
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+env:
+  WASM_TOOLS_VERSION: "1.219.1"
+  WASM_TOOLS_SHA256: "4b7a764bf421fb33de78a45a94d5d832b29befe3d4977f935db4bdab09b17fd1"
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  fast:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with: { path: inv11_interface_contract_language }
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with: { python-version: "${{ matrix.python }}" }
+      - name: compile
+        run: python -m compileall -q inv11_interface_contract_language
+      - name: dependency-free unit tests (normal and -O)
+        run: |
+          python -B -m unittest inv11_interface_contract_language.tests.test_model
+          cd inv11_interface_contract_language
+          python -B -m unittest discover -s tests -p "test_wit_frontend.py"
+          python -B -m unittest discover -s tests -p "test_wit_semantics.py"
+          python -B -O -m unittest discover -s tests -p "test_wit_semantics.py"
+  full:
+    needs: fast
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: { path: inv11_interface_contract_language }
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with: { python-version: "3.11" }
+      - name: pinned reference toolchain
+        run: |
+          curl -sSL -o wt.tgz "https://github.com/bytecodealliance/wasm-tools/releases/download/v${WASM_TOOLS_VERSION}/wasm-tools-${WASM_TOOLS_VERSION}-x86_64-linux.tar.gz"
+          echo "${WASM_TOOLS_SHA256}  wt.tgz" | sha256sum -c -
+          tar xzf wt.tgz
+          echo "INV11_WASM_TOOLS=$PWD/wasm-tools-${WASM_TOOLS_VERSION}-x86_64-linux/wasm-tools" >> "$GITHUB_ENV"
+      - name: lint + security rules + strict types (pinned)
+        run: |
+          pip install ruff==0.15.11 mypy==1.20.2
+          ruff check --config inv11_interface_contract_language/pyproject.toml inv11_interface_contract_language
+          (cd inv11_interface_contract_language && mypy --config-file pyproject.toml)
+      - name: pk_core conformance (must not be skipped)
+        run: |
+          set +e
+          python -B inv11_interface_contract_language/tests/test_component.py; rc=$?
+          if [ $rc -eq 2 ]; then echo "::error::pk_core absent: conformance BLOCKED"; exit 1; fi
+          exit $rc
+        continue-on-error: true  # owner decision: flip to required once pk_core is resolvable
+      - name: qualification + evidence bundle
+        run: python -B inv11_interface_contract_language/tools/evidence.py --out evidence --quick
+      - name: verify evidence
+        run: python -B inv11_interface_contract_language/tools/verify_evidence.py evidence/EVIDENCE_BUNDLE.json
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8c75cf882  # v4.4.3
+        with: { name: evidence, path: evidence, retention-days: 90 }
+  # release signing runs only on protected tags in a separate environment that
+  # holds the owner's key; untrusted PR jobs never see signing credentials.

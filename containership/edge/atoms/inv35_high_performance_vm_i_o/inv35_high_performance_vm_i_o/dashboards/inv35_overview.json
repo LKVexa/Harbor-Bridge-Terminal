@@ -1,0 +1,83 @@
+{
+  "title": "INV-35 High-performance VM I/O",
+  "schemaVersion": 39,
+  "tags": [
+    "inv35"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "queue",
+        "query": "label_values(inv35_queue_depth, queue)"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "title": "Readiness & saturation",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "inv35_saturation"
+        }
+      ]
+    },
+    {
+      "title": "Queue depth",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "inv35_queue_depth{queue=~\"$queue\"}"
+        }
+      ]
+    },
+    {
+      "title": "Refusals by code",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (code) (rate(inv35_descriptors_validated_total{outcome=\"refused\"}[5m]))"
+        }
+      ]
+    },
+    {
+      "title": "Security refusals",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (code) (rate(inv35_security_refusals_total[5m]))"
+        }
+      ]
+    },
+    {
+      "title": "Submit latency p50/p99",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5, sum by (le) (rate(inv35_submit_latency_us_bucket[5m])))"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(inv35_submit_latency_us_bucket[5m])))"
+        }
+      ]
+    },
+    {
+      "title": "Stalled queues",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "inv35_stalled == 1"
+        }
+      ]
+    },
+    {
+      "title": "Suppressed notifications",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv35_suppressed_notifications_total[5m])"
+        }
+      ]
+    }
+  ]
+}

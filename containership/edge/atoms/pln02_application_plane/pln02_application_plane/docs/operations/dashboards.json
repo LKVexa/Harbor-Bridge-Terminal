@@ -1,0 +1,12 @@
+{"schema": "PLN02-DASHBOARDS/1", "dashboards": [
+ {"title": "PLN-02 overview", "panels": [
+   {"title": "Revisions/s by tenant", "query": "sum by (tenant) (rate(application_revisions_total[5m]))"},
+   {"title": "Rejections by class", "query": "sum by (code) (rate(resolution_rejections_total[5m]))"},
+   {"title": "Resolution p50/p95/p99", "query": "histogram_quantile(0.99, sum by (le) (rate(resolution_seconds_bucket[5m])))"},
+   {"title": "Active bindings per provider", "query": "sum by (provider) (provider_bindings)"},
+   {"title": "Health status", "query": "health.report().status"}]},
+ {"title": "PLN-02 security", "panels": [
+   {"title": "Auth failures", "query": "rate(resolution_rejections_total{code=\"UNAUTHENTICATED\"}[5m])"},
+   {"title": "Authz denials", "query": "rate(resolution_rejections_total{code=\"PERMISSION_DENIED\"}[5m])"},
+   {"title": "Untrusted catalogue events", "query": "increase(resolution_rejections_total{code=\"CATALOGUE_UNTRUSTED\"}[1h])"}]}
+]}

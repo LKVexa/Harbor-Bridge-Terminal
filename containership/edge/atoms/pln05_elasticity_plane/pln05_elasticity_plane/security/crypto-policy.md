@@ -1,0 +1,11 @@
+# PLN-05 cryptographic policy (1.0.0)
+
+- **Integrity / authenticity (implemented here):** HMAC-SHA256 with ≥ 256-bit keys from `KeyRing` for credentials, configuration journal, controller state and the audit anchor; constant-time comparison; keys carry `kid`, validity window, revocation.
+- **Transport (enforced at adapters through `keys.TransportPolicy`):** TLS ≥ 1.2 (1.3 preferred; `TransportPolicy(minimum="TLSv1.3")` for new deployments); AEAD suites only (AES-GCM, ChaCha20-Poly1305); mutual TLS required; peer workload identity must equal the expected SPIFFE ID; expired or revoked certificates refused; downgrade below the minimum refused (`test_T11_transport_downgrade`).
+- **At rest:** PLN-05 persists no secrets (tokens and keys are never written by the package). State/config/audit confidentiality is delegated to volume encryption (LUKS/dm-crypt, cloud KMS-backed disk encryption) — **an external dependency, recorded as OPEN_EXTERNAL**; integrity is protected here regardless.
+- **Key ownership & hierarchy:** keys are supplied by the platform KMS/HSM (external); the ring holds data-plane MAC keys per site; tenant separation is by scope, not by key (documented limitation; per-tenant keys are possible by running one ring per tenant instance).
+- **Rotation:** add the new key with `not_before` ≤ now and an overlap ≥ the longest token lifetime (1 h); new signatures use the newest active key; old keys verify until `not_after`; revoke immediately on compromise (`KeysTest.test_rotation_overlap_and_revocation`). Recommended cadence 30 days.
+- **Failure behaviour:** no active key → unready (`R_NO_ACTIVE_KEY`), nothing verifies, nothing is published (`test_FS15`); revoked key → `E_AUTHN_REVOKED`.
+- **Secrets hygiene:** keys have `repr=False`; logs/traces/errors pass through `telemetry.redact`; configuration refuses literal secrets (`secretref://` only); status exposes only key ids and windows.
+- **Zeroization:** CPython cannot guarantee zeroization of `bytes`; limitation documented; mitigate with short-lived processes and memory limits.
+- **Agility:** algorithm is bound to the token/envelope version (`v1`); a new algorithm ships as `v2` verified alongside `v1` for one release window, then `v1` is refused.

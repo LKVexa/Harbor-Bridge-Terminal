@@ -1,0 +1,25 @@
+{
+  "schema": "PK_PACK_OWNERS/1",
+  "component": "INV-68 Resource packing",
+  "note": "Roles are defined; people are not. Only the repository owner can name them. Every null assignee is a release blocker (tools/governance_check.py).",
+  "repository_owner": "David Paul Russell (LinearFinance.org Research Division) -- owner of the codebase, not yet confirmed as accountable owner for these roles",
+  "roles": [
+    {"role": "accountable_owner", "assignee": null, "duties": "final accountability; approves ADRs, waivers and releases"},
+    {"role": "service_owner", "assignee": null, "duties": "runs INV-68 in production; owns SLOs and runbooks"},
+    {"role": "security_owner", "assignee": null, "duties": "threat model, trust roots, vulnerability response"},
+    {"role": "reviewer", "assignee": null, "duties": "independent review of MC closures (not the implementer)"},
+    {"role": "release_manager", "assignee": null, "duties": "rollout approval, canary sign-off, rollback decision"},
+    {"role": "policy_administrator", "assignee": null, "duties": "configuration changes; may not approve own releases"}
+  ],
+  "support_boundary": {
+    "in_scope": ["placement decisions", "capacity/fragmentation reports", "configuration lifecycle", "freeze control", "audit ledger"],
+    "out_of_scope": ["workload classification (upstream)", "host provisioning", "thermal policy (GAP-10)", "accelerator matching (INV-72)", "preemption"],
+    "hand_off": {"INV-67": "kubernetes integration owner", "SCH-01": "scheduler owner", "GAP-10": "power/thermal owner", "INV-72": "accelerator owner"}
+  },
+  "on_call": {"route": null, "rotation": null, "paging_tool": null},
+  "escalation_chain": [
+    {"level": 1, "who": "service_owner on-call", "within_minutes": 15},
+    {"level": 2, "who": "security_owner (security events) or accountable_owner", "within_minutes": 30},
+    {"level": 3, "who": "repository owner", "within_minutes": 60}
+  ]
+}

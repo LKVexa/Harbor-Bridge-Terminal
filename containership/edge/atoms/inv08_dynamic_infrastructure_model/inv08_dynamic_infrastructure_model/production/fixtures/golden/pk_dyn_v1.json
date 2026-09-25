@@ -1,0 +1,189 @@
+{
+ "invalid": {
+  "cost_bool_as_number": {
+   "expect": "expected number",
+   "message": {
+    "interval_end": 3600,
+    "interval_start": 0,
+    "node_hours": true,
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_COST/1",
+    "schema_minor": 0,
+    "tenant": "t1",
+    "unit": "node_hour"
+   }
+  },
+  "cost_missing_pool": {
+   "expect": "missing required",
+   "message": {
+    "interval_end": 3600,
+    "interval_start": 0,
+    "node_hours": 3.0,
+    "schema": "PK_DYN_COST/1",
+    "schema_minor": 0,
+    "tenant": "t1",
+    "unit": "node_hour"
+   }
+  },
+  "lease_expiry_before_issue": {
+   "expect": "expires_at must be > issued_at",
+   "message": {
+    "busy": false,
+    "epoch": 3,
+    "expires_at": 0,
+    "issued_at": 0,
+    "lease_id": "lease-0001",
+    "node_id": "node-1",
+    "op": "GRANT",
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_LEASE/1",
+    "schema_minor": 0,
+    "tenant": "t1"
+   }
+  },
+  "lease_unknown_field": {
+   "expect": "unexpected property",
+   "message": {
+    "busy": false,
+    "color": "red",
+    "epoch": 3,
+    "expires_at": 10,
+    "issued_at": 0,
+    "lease_id": "lease-0001",
+    "node_id": "node-1",
+    "op": "GRANT",
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_LEASE/1",
+    "schema_minor": 0,
+    "tenant": "t1"
+   }
+  },
+  "scale_dup_reclaimed": {
+   "expect": "duplicate",
+   "message": {
+    "added": 3,
+    "decision_id": "d-1",
+    "demand": 9,
+    "now": 0,
+    "pool_id": "pool-a",
+    "reclaimed": [
+     "node-1",
+     "node-1"
+    ],
+    "renewed": [],
+    "schema": "PK_DYN_SCALE/1",
+    "schema_minor": 0,
+    "size": 3,
+    "target": 3
+   }
+  },
+  "scale_negative_added": {
+   "expect": "below minimum",
+   "message": {
+    "added": -1,
+    "decision_id": "d-1",
+    "demand": 9,
+    "now": 0,
+    "pool_id": "pool-a",
+    "reclaimed": [],
+    "renewed": [],
+    "schema": "PK_DYN_SCALE/1",
+    "schema_minor": 0,
+    "size": 3,
+    "target": 3
+   }
+  },
+  "wrong_major": {
+   "expect": "UNSUPPORTED",
+   "message": {
+    "busy": false,
+    "epoch": 3,
+    "expires_at": 10,
+    "issued_at": 0,
+    "lease_id": "lease-0001",
+    "node_id": "node-1",
+    "op": "GRANT",
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_LEASE/2",
+    "schema_minor": 0,
+    "tenant": "t1"
+   }
+  }
+ },
+ "pool_scenario": {
+  "demand": 9,
+  "max_nodes": 4,
+  "min_nodes": 1,
+  "now": 0
+ },
+ "valid": {
+  "cost": {
+   "canonical": "{\"interval_end\":3600,\"interval_start\":0,\"node_hours\":3.0,\"pool_id\":\"pool-a\",\"schema\":\"PK_DYN_COST/1\",\"schema_minor\":0,\"tenant\":\"t1\",\"unit\":\"node_hour\"}",
+   "digest": "sha256:46cd926dca3419e0d69be9077c306c24f4feb3295e0b070fa21165a16b50ebe8",
+   "message": {
+    "interval_end": 3600,
+    "interval_start": 0,
+    "node_hours": 3.0,
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_COST/1",
+    "schema_minor": 0,
+    "tenant": "t1",
+    "unit": "node_hour"
+   }
+  },
+  "lease": {
+   "canonical": "{\"busy\":false,\"epoch\":3,\"expires_at\":10,\"issued_at\":0,\"lease_id\":\"lease-0001\",\"node_id\":\"node-1\",\"op\":\"GRANT\",\"pool_id\":\"pool-a\",\"schema\":\"PK_DYN_LEASE/1\",\"schema_minor\":0,\"tenant\":\"t1\"}",
+   "digest": "sha256:9fe780813dcdec53ce12ec1108fd9184a28796b75ecda782cd1f24a8eea5ca06",
+   "message": {
+    "busy": false,
+    "epoch": 3,
+    "expires_at": 10,
+    "issued_at": 0,
+    "lease_id": "lease-0001",
+    "node_id": "node-1",
+    "op": "GRANT",
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_LEASE/1",
+    "schema_minor": 0,
+    "tenant": "t1"
+   }
+  },
+  "lease_minor1_with_ext": {
+   "canonical": "{\"busy\":false,\"epoch\":3,\"expires_at\":10,\"ext\":{\"lease_class\":\"spot\"},\"issued_at\":0,\"lease_id\":\"lease-0001\",\"node_id\":\"node-1\",\"op\":\"GRANT\",\"pool_id\":\"pool-a\",\"schema\":\"PK_DYN_LEASE/1\",\"schema_minor\":1,\"tenant\":\"t1\"}",
+   "digest": "sha256:af93059a1089857d72e131669f1d50e1839726695db2d651b3a3acd434721dad",
+   "message": {
+    "busy": false,
+    "epoch": 3,
+    "expires_at": 10,
+    "ext": {
+     "lease_class": "spot"
+    },
+    "issued_at": 0,
+    "lease_id": "lease-0001",
+    "node_id": "node-1",
+    "op": "GRANT",
+    "pool_id": "pool-a",
+    "schema": "PK_DYN_LEASE/1",
+    "schema_minor": 1,
+    "tenant": "t1"
+   }
+  },
+  "scale": {
+   "canonical": "{\"added\":3,\"decision_id\":\"d-1\",\"demand\":9,\"now\":0,\"pool_id\":\"pool-a\",\"reclaimed\":[],\"renewed\":[],\"schema\":\"PK_DYN_SCALE/1\",\"schema_minor\":0,\"size\":3,\"target\":3}",
+   "digest": "sha256:05833a7dfe7bc964c55a8411da7e6fb1a9431cc3b49e83694aa718991f7c60cf",
+   "message": {
+    "added": 3,
+    "decision_id": "d-1",
+    "demand": 9,
+    "now": 0,
+    "pool_id": "pool-a",
+    "reclaimed": [],
+    "renewed": [],
+    "schema": "PK_DYN_SCALE/1",
+    "schema_minor": 0,
+    "size": 3,
+    "target": 3
+   }
+  }
+ }
+}

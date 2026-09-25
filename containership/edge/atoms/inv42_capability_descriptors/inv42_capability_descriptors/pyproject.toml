@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv42-capability-descriptors"
+version = "4.3.0"
+description = "INV-42 capability descriptors: authenticated, table-bound, non-reusing serialized capabilities"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = {file = "LICENSE"}
+authors = [{name = "David Paul Russell", email = "davidpaulrussell@linearfinance.org"}]
+dependencies = []  # runtime is stdlib-only
+
+[project.optional-dependencies]
+# pk_core is not on a public index; install from the pinned suite artifact
+# (SPEC_MANIFEST.json). Certification fails until W-001 is closed.
+certification = []
+release = ["cryptography>=42"]
+dev = ["coverage[toml]>=7"]
+
+[tool.setuptools]
+package-dir = {"inv42_capability_descriptors" = "."}
+packages = ["inv42_capability_descriptors"]
+
+[tool.setuptools.package-data]
+inv42_capability_descriptors = ["schemas/*.json", "*.json", "VERSION", "wit/*.wit"]
+
+[tool.coverage.run]
+branch = true
+source = ["."]
+omit = ["tests/*", "tools/*"]

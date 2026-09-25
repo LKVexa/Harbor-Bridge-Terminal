@@ -1,0 +1,13 @@
+{
+  "format": "PK_APP_STATE_INVENTORY/1",
+  "classes": [
+    {"state": "submitted manifests (external copy)", "owner": "caller / INV-66 control plane", "persistence": "external", "backup": "not INV-64's (source of truth is the caller's canonical manifest)", "rebuild": "resubmit"},
+    {"state": "TenantRegistry (accepted digests)", "owner": "INV-64", "persistence": "in-memory", "backup": "not required", "rebuild": "re-derived from the audit ledger 'app.submit accepted' records or resubmission; restore refuses cross-tenant records"},
+    {"state": "ConfigStore state.json + journal.jsonl", "owner": "INV-64", "persistence": "disk, per target", "backup": "REQUIRED: snapshot directory after every commit (atomic copy of both files); RPO = last commit, RTO 15 min", "rebuild": "not reconstructible without effective configs; restore from backup, then tools/restore_check"},
+    {"state": "audit ledger + anchor", "owner": "INV-64 (security)", "persistence": "disk append-only + external anchor", "backup": "REQUIRED: ship to WORM/object-lock store; RPO 5 min", "rebuild": "never rebuilt; verify chain + anchor after restore"},
+    {"state": "decision log / structured log ring / metrics", "owner": "INV-64", "persistence": "in-memory, exported", "backup": "no (telemetry pipeline retention applies)", "rebuild": "n/a"},
+    {"state": "idempotency store / replay cache / auth failure table", "owner": "INV-64", "persistence": "in-memory, bounded", "backup": "no", "rebuild": "empty on restart; submit is an idempotent upsert and activation uses CAS, so loss cannot double-apply (tools/faults.py f12)"},
+    {"state": "authz policy / trust policy", "owner": "security", "persistence": "signed artifacts from config source", "backup": "source-controlled", "rebuild": "re-fetch and re-verify (trust.py)"},
+    {"state": "release evidence", "owner": "release-manager", "persistence": "release bundle", "backup": "retain with artifacts >= 3 years", "rebuild": "never; regenerate only as a new evidence version"}
+  ]
+}

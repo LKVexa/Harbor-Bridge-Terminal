@@ -1,0 +1,14 @@
+// Reference interface used by the INV-61 test, fixture and benchmark suites.
+package inv61:kv@2.1.0;
+
+interface store {
+    record entry { key: string, value: u64, tags: list<string> }
+    enum consistency { eventual, strong }
+
+    get: func(key: string) -> option<u64>;
+    put: func(e: entry, mode: consistency) -> result<_, string>;
+    scan: func(prefix: string, limit: u32) -> list<entry>;
+    echo: func(b: list<u8>) -> list<u8>;
+    slow: func(ms: u32) -> bool;
+    boom: func() -> bool;
+}

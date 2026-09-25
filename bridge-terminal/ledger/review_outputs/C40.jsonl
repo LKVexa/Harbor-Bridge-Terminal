@@ -1,0 +1,100 @@
+{"id": "C40-001", "status": "PASS", "evidence": ["gateway/connection.js#L2-13"], "note": "CONNECTING->AUTHENTICATED->OPENING->ACTIVE->DRAINING->CLOSED documented in file header comment and enforced via this.state"}
+{"id": "C40-002", "status": "PASS", "evidence": ["gateway/connection.js#L20-53,L96-330"], "note": "ws 'text'/'binary'/'close'/'drain' events mapped to state transitions and admission decisions"}
+{"id": "C40-003", "status": "PASS", "evidence": ["gateway/connection.js#_onSocketClose", "tests/gateway/ws-conformance.test.js"], "note": "Peer close echoed with same code (close handshake tests)"}
+{"id": "C40-004", "status": "PASS", "evidence": ["gateway/connection.js#end()"], "note": "end(reason, wsCode) is the single local-closure entry point"}
+{"id": "C40-005", "status": "PASS", "evidence": ["gateway/connection.js#_workerExited,_workerFailed"], "note": "Unexpected disconnect (worker_failure/abrupt TCP loss) distinct exit reason and 1011 close"}
+{"id": "C40-006", "status": "PASS", "evidence": ["gateway/connection.js#terminal.signal"], "note": "terminal.signal (SIGINT) is local cancellation of the running command, distinct from connection close"}
+{"id": "C40-007", "status": "PASS", "evidence": ["gateway/connection.js#_fatal,_error"], "note": "_fatal()/_error() with LIMIT_EXCEEDED/BAD_MESSAGE model terminal protocol/I-O failure"}
+{"id": "C40-008", "status": "PASS", "evidence": ["gateway/connection.js#_onSocketClose"], "note": "_onSocketClose sets state CLOSED, clears timers, releases session/account \u2014 disposal completion"}
+{"id": "C40-009", "status": "PASS", "evidence": ["gateway/connection.js#class Connection"], "note": "One Connection instance is the sole lifecycle coordinator per socket"}
+{"id": "C40-010", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L2-13"], "note": "State table exists as a code comment; no separate approved/reviewed document records it explicitly"}
+{"id": "C40-011", "status": "PASS", "evidence": ["gateway/connection.js#this.state", "gateway/ws.js#this.state"], "note": "State read from the owned Connection/WSConnection instance, not a shared/global snapshot"}
+{"id": "C40-012", "status": "PASS", "evidence": ["gateway/connection.js#_onBinary,_onText"], "note": "Every handler re-checks this.state/this.closing rather than caching a stale value"}
+{"id": "C40-013", "status": "PASS", "evidence": ["gateway/connection.js#_flush,_credit"], "note": "Admission op.state ('RESERVED') combined with actual send/receive outcome before acting"}
+{"id": "C40-014", "status": "PASS", "evidence": ["gateway/ws.js#OP.CLOSE handling", "tests/gateway/ws-conformance.test.js"], "note": "Close frame parsed for code/payload by the frame parser, exposed via 'close' event"}
+{"id": "C40-015", "status": "PASS", "evidence": ["gateway/connection.js#_control try/catch", "gateway/worker-link.js"], "note": "Encode/send failures and worker-link exceptions are caught and routed to _error/_fatal"}
+{"id": "C40-016", "status": "PASS", "evidence": ["gateway/connection.js#_onSocketClose#info.clean"], "note": "info.clean/info.code distinguish a completed handshake from an abrupt close"}
+{"id": "C40-017", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit,end()"], "note": "workerExit.reason / endReason recorded and logged as session.exit reason"}
+{"id": "C40-018", "status": "PASS", "evidence": ["gateway/connection.js#_workerExited"], "note": "worker_failure vs quota (oom) vs closed/logout are distinct reasons, not one generic bucket"}
+{"id": "C40-019", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/chaos/lifecycle.test.js"], "note": "State observation tested against the actual Node ws.js runtime, not mocked"}
+{"id": "C40-020", "status": "OPEN", "evidence": [], "note": "No document records Node-runtime-specific state-observation differences (e.g. vs a hypothetical .NET runtime)"}
+{"id": "C40-021", "status": "PASS", "evidence": ["gateway/ws.js#OP.CLOSE", "gateway/connection.js#_onSocketClose"], "note": "Peer Close (opcode 8) detected and surfaced as 'close' event"}
+{"id": "C40-022", "status": "PASS", "evidence": ["gateway/ws.js#close-code-validation", "tests/gateway/ws-conformance.test.js#invalid-close-code"], "note": "Close code validated (1-byte/invalid code -> 1002); description bounded"}
+{"id": "C40-023", "status": "PASS", "evidence": ["gateway/connection.js#_onSocketClose"], "note": "state set CLOSED; _onBinary/_onText check state===CLOSED to stop admitting new sends"}
+{"id": "C40-024", "status": "PASS", "evidence": ["gateway/ws.js#close-handshake", "tests/gateway/ws-conformance.test.js#close-handshake"], "note": "Close handshake echoed by the same ws layer that owns the socket"}
+{"id": "C40-025", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js"], "note": "No explicit code comment confirms a second read loop is never started during close ack; inferred from single-listener event model"}
+{"id": "C40-026", "status": "PASS", "evidence": ["tests/chaos/review-fixes.test.js#C1"], "note": "C1 unit/e2e tests: pause during partial record assembly vs a genuinely stalled peer, distinguished at the assembly deadline"}
+{"id": "C40-027", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit"], "note": "Pending output (pendingOut) explicitly drained/counted (undeliveredOutputBytes) when the session ends"}
+{"id": "C40-028", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js", "tests/chaos/lifecycle.test.js"], "note": "session.opened before output ordering guarantees, plus open-deadline test, cover close-right-after-accept edge"}
+{"id": "C40-029", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit,_releaseSession"], "note": "Worker/session cleanup runs after closure finishes (finalExit) or the 1500ms stop timeout in end()"}
+{"id": "C40-030", "status": "PASS", "evidence": ["gateway/connection.js#exitSent guard", "tests/chaos/lifecycle.test.js#worker-killed"], "note": "exitSent flag ensures exactly one session.exit even with repeated close-related events"}
+{"id": "C40-031", "status": "PASS", "evidence": ["gateway/connection.js#session.close case"], "note": "session.close message and Ctrl-C/signal accepted, routed to end()"}
+{"id": "C40-032", "status": "PASS", "evidence": ["gateway/connection.js#end(reason,...)"], "note": "endReason recorded ('logout','closed','shutdown','expired','quota')"}
+{"id": "C40-033", "status": "PASS", "evidence": ["gateway/connection.js#end()"], "note": "closing=true set immediately, gating further _onBinary/_onText/_flow work"}
+{"id": "C40-034", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit"], "note": "pendingOut leases released and undelivered bytes counted rather than silently sent/lost"}
+{"id": "C40-035", "status": "PASS", "evidence": ["gateway/connection.js#end() guard: if(this.closing...) return"], "note": "end() is idempotent/guarded so only one owner drives closure"}
+{"id": "C40-036", "status": "PASS", "evidence": ["gateway/connection.js#link.stop(1500,...)"], "note": "1500ms bound on waiting for the worker/peer to settle before killedByUs kill"}
+{"id": "C40-037", "status": "PASS", "evidence": ["gateway/connection.js#_workerExited"], "note": "Peer/worker disappearing during closure still resolves to a workerExit and a single session.exit"}
+{"id": "C40-038", "status": "PASS", "evidence": ["gateway/connection.js#_control try/catch"], "note": "Exceptions from ws.sendText/close are caught (encode_failed) rather than propagating"}
+{"id": "C40-039", "status": "PASS", "evidence": ["gateway/connection.js#link.send({t:'close',...})"], "note": "Worker is signaled to close and its exit triggers _workerExited/_finalExit"}
+{"id": "C40-040", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#no-session-open-idle-expires"], "note": "Idle-session local close (expired) tested (openTimeoutMs/idleMs)"}
+{"id": "C40-041", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#abrupt-tcp-loss"], "note": "Abrupt TCP loss (socket.destroy()) detected; worker stopped, session released"}
+{"id": "C40-042", "status": "PASS", "evidence": ["gateway/connection.js#_flush#sendBinary-false-path"], "note": "Failed ws.sendBinary/_control returns false and is handled (retry on drain / terminate)"}
+{"id": "C40-043", "status": "PASS", "evidence": ["gateway/ws.js#socket 'error'/'close' handling"], "note": "Socket-level errors/close surfaced as 'close' event with initiator/clean info"}
+{"id": "C40-044", "status": "PASS", "evidence": ["tests/protocol/bridge.test.js#truncated-record"], "note": "Truncated/incomplete records distinguished from clean EOF and discarded per policy"}
+{"id": "C40-045", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit#cut"], "note": "Unsent pendingOut released and counted as undeliveredOutputBytes"}
+{"id": "C40-046", "status": "PASS", "evidence": ["gateway/connection.js#_onBinary/_onText state checks"], "note": "state CLOSED/closing blocks new producer admission"}
+{"id": "C40-047", "status": "PASS", "evidence": ["gateway/server.js#registry.forget(c)"], "note": "registry.forget() removes the connection from active lookup on close"}
+{"id": "C40-048", "status": "PASS", "evidence": ["gateway/connection.js#session.reset payload"], "note": "session.reset carries reason (process_restart/session_not_found) + OUTCOME_UNKNOWN for reconnection analysis"}
+{"id": "C40-049", "status": "PASS", "evidence": ["gateway/connection.js#state checks throughout"], "note": "No retry loop on a terminal/CLOSED connection; handlers early-return"}
+{"id": "C40-050", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#abrupt-tcp-loss"], "note": "Dropped network path tested in the local loopback test environment"}
+{"id": "C40-051", "status": "PASS", "evidence": ["gateway/connection.js#end()/_onSocketClose guards"], "note": "closing/state===CLOSED guards make local-close vs peer-close races converge on one outcome"}
+{"id": "C40-052", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#_flush"], "note": "Failed send (sendBinary false) reverts op.state and retries on drain; no dedicated race test with simultaneous receive completion"}
+{"id": "C40-053", "status": "PASS", "evidence": ["gateway/connection.js#gen fencing"], "note": "Generation counter (this.gen) fences timers/callbacks so cancellation racing with close completion is a no-op"}
+{"id": "C40-054", "status": "PASS", "evidence": ["gateway/server.js#registry.forget/conns Set"], "note": "conns is a Set mutated synchronously; no async enumeration gap observed in code review"}
+{"id": "C40-055", "status": "PASS", "evidence": ["gateway/connection.js#state/closing checks in _onText/_onBinary"], "note": "New outbound requests after closing begins are rejected (state checks)"}
+{"id": "C40-056", "status": "IN_PROGRESS", "evidence": [], "note": "No explicit 'connection replacement' concept exists (one connection = one session); stale client state after reconnect handled via session.reset, not a documented race test"}
+{"id": "C40-057", "status": "PASS", "evidence": ["gateway/connection.js#exitSent flag"], "note": "exitSent ensures exactly one session.exit is ever recorded (tests/chaos/lifecycle.test.js)"}
+{"id": "C40-058", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit/_releaseSession idempotent guards"], "note": "_finalExit/_releaseSession guarded so cleanup path is idempotent"}
+{"id": "C40-059", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "Some concurrency covered (mixed termination signals test) but not a systematic repeated-race stress test for connection races"}
+{"id": "C40-060", "status": "OPEN", "evidence": [], "note": "No document lists unresolved races requiring a design change"}
+{"id": "C40-061", "status": "PASS", "evidence": ["gateway/connection.js#_onText state===ACTIVE checks"], "note": "session.open/terminal.* only admitted in appropriate states (AUTHENTICATED/ACTIVE)"}
+{"id": "C40-062", "status": "PASS", "evidence": ["gateway/connection.js#_onBinary state!==ACTIVE"], "note": "Binary input only accepted while state===ACTIVE"}
+{"id": "C40-063", "status": "PASS", "evidence": ["gateway/connection.js#_onBinary/_onText#state==='CLOSED'"], "note": "state==='CLOSED' short-circuits all handlers"}
+{"id": "C40-064", "status": "PASS", "evidence": ["gateway/connection.js#this.closing checks"], "note": "this.closing guards reject work for a connection already scheduled for cleanup"}
+{"id": "C40-065", "status": "PASS", "evidence": ["gateway/connection.js#_open#registry.draining"], "note": "Draining registry refuses new session.open (NOT_READY, 1001), not treated as available capacity"}
+{"id": "C40-066", "status": "PASS", "evidence": ["gateway/connection.js#session.exit / gateway/connection.js#error FORBIDDEN"], "note": "session.exit or FORBIDDEN/unknown-sid errors tell callers a session has ended"}
+{"id": "C40-067", "status": "PASS", "evidence": ["docs/RAMWS.md#RD-01", "docs/PROTOCOL_V2.md#session-open-epochs"], "note": "RD-01: process/session loss means session state does not outlive the connection (LOCAL_VOLATILE)"}
+{"id": "C40-068", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit vs _closeSocket"], "note": "workerExit/session.exit (session termination) is distinct from ws.close (transport termination)"}
+{"id": "C40-069", "status": "PASS", "evidence": ["tests/security/authz.test.js#unknown-foreign-sid"], "note": "Stale/unknown/foreign sids tested as indistinguishable and rejected"}
+{"id": "C40-070", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "error codes (FORBIDDEN, NOT_READY, STALE_EPOCH) documented in protocol but not collected in one caller-facing outcomes table"}
+{"id": "C40-071", "status": "PASS", "evidence": ["gateway/connection.js#_clearTimers,link.kill/stop"], "note": "Timers cleared and worker-link operations cancelled/finished per lifecycle policy"}
+{"id": "C40-072", "status": "PASS", "evidence": ["gateway/connection.js#_onSocketClose#pendingOut release"], "note": "pendingOut (message accumulator) released after terminal disconnect"}
+{"id": "C40-073", "status": "PASS", "evidence": ["gateway/connection.js#_finalExit/_onSocketClose pendingOut"], "note": "Payload queues (pendingOut, outstanding) cleared on terminal disconnect"}
+{"id": "C40-074", "status": "PASS", "evidence": ["gateway/connection.js#_clearTimers"], "note": "setTimeout/setInterval handles cleared (functional analog of cancellation-token disposal)"}
+{"id": "C40-075", "status": "PASS", "evidence": ["gateway/connection.js#_closeSocket"], "note": "ws.close() invoked through the owning Connection, not externally"}
+{"id": "C40-076", "status": "PASS", "evidence": ["gateway/connection.js#this.link = null in _workerExited"], "note": "Worker/link reference released (link=null) after exit"}
+{"id": "C40-077", "status": "PASS", "evidence": ["gateway/server.js#registry.release/forget"], "note": "registry.release()/forget() update session/connection counts exactly once via guarded calls"}
+{"id": "C40-078", "status": "OPEN", "evidence": [], "note": "No distinct 'incomplete cleanup' result category is recorded/logged"}
+{"id": "C40-079", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "Several terminal-transition cleanup paths tested (worker killed, TCP loss, heartbeat timeout); not exhaustively every state-table transition"}
+{"id": "C40-080", "status": "PASS", "evidence": ["tests/ram/ledger.test.js#randomized-reconciliation", "tests/ram/v2-e2e.test.js#ledger-returns-to-zero"], "note": "Resource counts (ledger) verified to return to baseline/zero after session end"}
+{"id": "C40-081", "status": "PASS", "evidence": ["gateway/connection.js#endReason values"], "note": "'expired'/'quota'/'worker_failure' (abnormal) vs 'logout'/'closed' (normal) tracked as distinct reasons"}
+{"id": "C40-082", "status": "PASS", "evidence": ["gateway/connection.js#end('shutdown',...)", "gateway/server.js#shutdown()"], "note": "'shutdown' is a distinct endReason from network-loss-driven reasons"}
+{"id": "C40-083", "status": "PASS", "evidence": ["gateway/connection.js#this.id", "gateway/log.js"], "note": "conn.id (random hex) used as a safe identifier in all log calls; no raw IP/token logged"}
+{"id": "C40-084", "status": "PASS", "evidence": ["gateway/connection.js#_error#.slice(0,256)"], "note": "Error/close description bounded to 256 chars before logging"}
+{"id": "C40-085", "status": "PASS", "evidence": ["gateway/connection.js#this.lastActivity"], "note": "lastActivity timestamp tracked and used for idle-expiry decisions"}
+{"id": "C40-086", "status": "PASS", "evidence": ["gateway/connection.js#_workerExited#worker_failure log"], "note": "Abnormal exit only logged as worker_failure when actually observed (e.oom / link exit), not inferred from missing messages"}
+{"id": "C40-087", "status": "PASS", "evidence": ["gateway/connection.js#session.reset payload"], "note": "session.reset gives the client an explicit reason/outcome classification for reconnection"}
+{"id": "C40-088", "status": "OPEN", "evidence": [], "note": "No documented abnormal-disconnect-rate alerting policy"}
+{"id": "C40-089", "status": "OPEN", "evidence": [], "note": "No stale-connection troubleshooting procedure documented"}
+{"id": "C40-090", "status": "OPEN", "evidence": [], "note": "No documentation of Node ws state-visibility limits (vs a managed .NET API)"}
+{"id": "C40-091", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L2-13"], "note": "State table exists as a code header comment; not published as a standalone reviewed document"}
+{"id": "C40-092", "status": "PASS", "evidence": ["gateway/connection.js#_onBinary/_onText state checks"], "note": "State-dependent admission rules are directly in code and covered by tests"}
+{"id": "C40-093", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js#close-handshake", "tests/chaos/lifecycle.test.js"], "note": "Peer-close and local-close (end()) tests linked"}
+{"id": "C40-094", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#abrupt-tcp-loss"], "note": "Abrupt-disconnect test linked"}
+{"id": "C40-095", "status": "IN_PROGRESS", "evidence": [], "note": "No dedicated close/send/receive race test is separately linked beyond generation-fencing code review"}
+{"id": "C40-096", "status": "PASS", "evidence": ["tests/ram/ledger.test.js", "tests/ram/v2-e2e.test.js#ledger-returns-to-zero"], "note": "Terminal-state cleanup verified by ledger returning to zero after close, both backends"}
+{"id": "C40-097", "status": "PASS", "evidence": ["docs/RAMWS.md#RD-01"], "note": "RD-01 documents session lifetime as volatile/process-scoped, distinct from transport lifetime"}
+{"id": "C40-098", "status": "OPEN", "evidence": [], "note": "No Node-runtime-specific state-observation notes are recorded in a document"}
+{"id": "C40-099", "status": "OPEN", "evidence": [], "note": "No document lists unresolved disconnect classifications"}
+{"id": "C40-100", "status": "PASS", "evidence": ["gateway/connection.js#exitSent guard", "tests/ram/v2-e2e.test.js#ledger-returns-to-zero"], "note": "Every connection reaches exactly one session.exit and the ledger returns to zero \u2014 one final accounted outcome, tested"}

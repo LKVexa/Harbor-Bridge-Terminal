@@ -1,0 +1,31 @@
+name: inv03-ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: inv03_container_hardening
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dev tools
+        run: pip install -r inv03_container_hardening/requirements-dev.txt
+      - name: Compile
+        run: python -m compileall -q inv03_container_hardening
+      - name: Release gate (unit, -O, conformance lane, mutation probe, lint, types)
+        working-directory: inv03_container_hardening
+        # Exit 3 = NO_GO with evidence recorded. That is the expected state until the
+        # blocked items are closed, so the job fails loudly rather than reading green.
+        run: python -B tools/release_gate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-gate-${{ matrix.python }}
+          path: inv03_container_hardening/RELEASE_GATE.json

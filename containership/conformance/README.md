@@ -1,0 +1,5 @@
+# conformance/
+
+`UC_GATE_RESULTS.json` is the assembly host's run of `ship/unikernel/gates.py::run_ship_battery` -- the same battery `./VERIFY` runs. `logs/` holds the hull's own verifier output and, per berth, the fabric run records (BERTH.pal and CARGO.pal on the four engines), the runnable-cargo attempts, and the .tif evidence: `tif_tick_scratch.json` (gate B10's four ticks on a scratch copy of the berth's pictures, including the painted-cell ticks) with the scratch pictures themselves under `tif_tick_scratch/` (`DF_*/_fabric/*.fabric.tif` after those ticks). `U0.1`/`U0.2` predate the seal here and PASS in the post-seal record.
+
+`UC_GATE_RESULTS_LIMITED_HOST.json`, `UC_BUILD_LIMITED_HOST.json` and `LIMITED_HOST_REHEARSAL.md` are the same BUILD and VERIFY run on a copy of this tree as a Windows-like host without a C toolchain (no cc/make, no `sh`, no `fork`, a non-UTF-8 console): what such a host sees -- the QUORUM engine alone, the hull compile-only, every gate that needs the rest SKIPPED with the reason, no FAIL (`README_START_HERE.md` -> On Windows).

@@ -1,0 +1,506 @@
+{
+  "element": "INV-21",
+  "version": "4.2.0",
+  "audit_date": "2026-09-23",
+  "count": 42,
+  "components": [
+    {
+      "id": "GAP-001",
+      "name": "Framework dependency packaging",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C030",
+        "INV-21-C090",
+        "INV-21-C100"
+      ],
+      "gap": "`pk_core` is required by normal imports and conformance/gate execution but is not bundled or declared in a package/dependency manifest; the framework test suite therefore skips in this isolated archive.",
+      "required_completion": "Add pyproject.toml/lock or workspace manifest with a pinned pk_core source/version; make CI fail if pk_core conformance cannot execute."
+    },
+    {
+      "id": "GAP-002",
+      "name": "Python package/release metadata",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C016",
+        "INV-21-C031",
+        "INV-21-C040",
+        "INV-21-C093"
+      ],
+      "gap": "No pyproject.toml/setup metadata, Python compatibility declaration, dependency constraints, build backend, wheel/sdist path, or reproducible environment lock.",
+      "required_completion": "Add PEP 517 metadata, supported Python range, pinned dependencies/hashes, reproducible build and install smoke tests."
+    },
+    {
+      "id": "GAP-003",
+      "name": "Versioned typed interface schemas",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C021",
+        "INV-21-C022",
+        "INV-21-C026",
+        "INV-21-C082"
+      ],
+      "gap": "PK_LOCAL_CHAIN/1, PK_RESIDENCY/1, and PK_CHAIN_DEPTH/1 are named in prose but have no machine-readable schema/WIT/IDL definitions or schema conformance tests.",
+      "required_completion": "Add versioned schema files for requests, responses, errors, residency records and depth context; test backward/forward compatibility."
+    },
+    {
+      "id": "GAP-004",
+      "name": "Authoritative capability-provider integration",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C024",
+        "INV-21-C042",
+        "INV-21-C048"
+      ],
+      "gap": "4.2 adds a per-hop capability hook, but no authoritative policy/capability provider is wired, versioned, or failover-tested. The compatibility fallback is not equivalent to external capability policy.",
+      "required_completion": "Define the capability decision contract, inject the system authority in production, specify fail-closed outage behavior, and add integration/security tests."
+    },
+    {
+      "id": "GAP-005",
+      "name": "Authentication and caller identity model",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C023",
+        "INV-21-C044",
+        "INV-21-C048"
+      ],
+      "gap": "Tenant and trace identifiers are caller-supplied strings; there is no authenticated principal, attestation, credential binding, or identity provenance on a local hop.",
+      "required_completion": "Introduce authenticated call context derived from trusted runtime identity, not request-controlled strings; define attestation/outage semantics."
+    },
+    {
+      "id": "GAP-006",
+      "name": "Production remote-transport adapter",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C018",
+        "INV-21-C021",
+        "INV-21-C030",
+        "INV-21-C055",
+        "INV-21-C056"
+      ],
+      "gap": "4.2 can inject `remote_dispatch`, but no concrete adapter to the repository's network transport exists and default behavior still returns a compatibility sentinel tuple.",
+      "required_completion": "Implement/test the adjacent transport adapter, network-unavailable behavior, deadlines, error mapping, and semantic parity with local calls."
+    },
+    {
+      "id": "GAP-007",
+      "name": "Async/await chaining path",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C011",
+        "INV-21-C021",
+        "INV-21-C025",
+        "INV-21-C030"
+      ],
+      "gap": "The contract depends on INV-16 Async component functions, but `Chainer.call()` and handlers are synchronous and do not await async handlers or remote dispatchers.",
+      "required_completion": "Add `call_async`/async handler support with cancellation and context propagation; define sync/async interop and tests."
+    },
+    {
+      "id": "GAP-008",
+      "name": "Deadlines, cancellation, retry, idempotency and backpressure",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C025",
+        "INV-21-C053",
+        "INV-21-C054",
+        "INV-21-C067"
+      ],
+      "gap": "No deadline/cancellation token, bounded retry policy, idempotency key semantics, queue/backpressure mechanism, or retry safety classification exists.",
+      "required_completion": "Define hop deadline/cancellation propagation, idempotency metadata, retry policy with backoff/jitter, and bounded queues/admission."
+    },
+    {
+      "id": "GAP-009",
+      "name": "Admission control and circuit breaking",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C017",
+        "INV-21-C054",
+        "INV-21-C067",
+        "INV-21-C069"
+      ],
+      "gap": "Depth and telemetry are bounded, but concurrent calls, per-tenant quotas, fan-out, handler saturation and remote failures have no admission/load-shedding/circuit-breaker controls.",
+      "required_completion": "Add configurable concurrency/tenant limits, saturation signals, load shedding and circuit breaker state with deterministic tests."
+    },
+    {
+      "id": "GAP-010",
+      "name": "Residency freshness/lease/watch protocol",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C004",
+        "INV-21-C037",
+        "INV-21-C051",
+        "INV-21-C058"
+      ],
+      "gap": "Residency is authoritative but has no TTL/lease, epoch/source provenance, watcher synchronization, stale-entry detection, duplicate-owner arbitration, or reconciliation protocol.",
+      "required_completion": "Add generation/lease metadata, atomic snapshots, stale detection, ownership rules and reconciliation tests against the placement/control plane."
+    },
+    {
+      "id": "GAP-011",
+      "name": "Lifecycle and state-transition model",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C014",
+        "INV-21-C015",
+        "INV-21-C057"
+      ],
+      "gap": "No explicit initializing/ready/degraded/quarantined/stopped lifecycle or legal transition table exists for the chainer/residency state.",
+      "required_completion": "Define states, transition guards, restart/recovery semantics and machine-verifiable transition tests."
+    },
+    {
+      "id": "GAP-012",
+      "name": "Declarative configuration schema",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C033",
+        "INV-21-C034",
+        "INV-21-C035"
+      ],
+      "gap": "Runtime knobs exist only as constructor arguments; there is no declarative config schema for depth, telemetry, policy provider, transport, quotas, or site/environment overrides.",
+      "required_completion": "Add versioned config schema with secure defaults, validation, environment overlays and activation tests."
+    },
+    {
+      "id": "GAP-013",
+      "name": "Configuration provenance and atomic activation",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C036",
+        "INV-21-C037",
+        "INV-21-C038"
+      ],
+      "gap": "No author/source/version/activation timestamp is recorded for configuration, and there is no transactional config activation or rollback snapshot.",
+      "required_completion": "Add immutable config revisions, provenance, validate-before-swap activation and previous-revision rollback."
+    },
+    {
+      "id": "GAP-014",
+      "name": "Ownership, escalation and ADR artifacts",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C009",
+        "INV-21-C010",
+        "INV-21-C097"
+      ],
+      "gap": "No CODEOWNERS/owner record, escalation path, architecture decision record, or incident contact metadata is present.",
+      "required_completion": "Add OWNER/CODEOWNERS, ADR for direct composition/local fallback policy, and escalation/runbook ownership."
+    },
+    {
+      "id": "GAP-015",
+      "name": "Requirements traceability matrix",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C020",
+        "INV-21-C090",
+        "INV-21-C100"
+      ],
+      "gap": "The 100-item checklist and master prompts exist, but there is no persisted matrix mapping each item to code/config/test/evidence and release acceptance status.",
+      "required_completion": "Add machine-readable traceability matrix with evidence paths/hashes and gate status per C001-C100."
+    },
+    {
+      "id": "GAP-016",
+      "name": "Supported-version compatibility matrix",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C016",
+        "INV-21-C027",
+        "INV-21-C093"
+      ],
+      "gap": "No matrix states supported local-chain schema versions, pk_core version, Python versions, adjacent component versions or downgrade behavior.",
+      "required_completion": "Add compatibility matrix and automated N/N-1 (and documented N+1 where relevant) tests."
+    },
+    {
+      "id": "GAP-017",
+      "name": "Artifact provenance, SBOM and signature verification",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C045",
+        "INV-21-C094"
+      ],
+      "gap": "No SBOM, dependency hashes, provenance attestation, signed release manifest, artifact digest verification, or vulnerability scan policy exists.",
+      "required_completion": "Generate SBOM/provenance, pin hashes, sign release artifacts, verify on bootstrap, and define vulnerability response SLAs."
+    },
+    {
+      "id": "GAP-018",
+      "name": "Tamper-evident security audit stream",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C049",
+        "INV-21-C073",
+        "INV-21-C078"
+      ],
+      "gap": "`DecisionEvent` is bounded in-process telemetry only; it is mutable runtime state, not a tamper-evident durable audit trail correlated with release/infrastructure lineage.",
+      "required_completion": "Export security-sensitive decisions to an append-only signed/chained audit sink with stable IDs and release/topology correlation."
+    },
+    {
+      "id": "GAP-019",
+      "name": "Telemetry export, health/readiness and dependency status",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C071",
+        "INV-21-C072",
+        "INV-21-C073"
+      ],
+      "gap": "Counters and decision records are in-memory only; there is no health/readiness surface, metrics exporter, structured log sink, dependency status, active capability report, or resource telemetry.",
+      "required_completion": "Add health/readiness snapshot and OpenTelemetry/metrics/log adapters with stable labels and bounded cardinality."
+    },
+    {
+      "id": "GAP-020",
+      "name": "Telemetry privacy, retention, sampling and explain view",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C075",
+        "INV-21-C076",
+        "INV-21-C077",
+        "INV-21-C079"
+      ],
+      "gap": "Decision reasons are recorded, but no privacy/redaction policy, retention/sampling/export rules, or operator-facing explain view exists.",
+      "required_completion": "Define redaction/cardinality policy, retention/sampling configuration, and an explain API/view linking decisions to policy/topology inputs."
+    },
+    {
+      "id": "GAP-021",
+      "name": "Dashboards and alerting",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C080"
+      ],
+      "gap": "No dashboards, SLO alerts, policy-rejection alerts, saturation alerts, dependency-failure alerts, or attack/defect discrimination rules are included.",
+      "required_completion": "Add dashboard/alert definitions with tested thresholds and runbook links."
+    },
+    {
+      "id": "GAP-022",
+      "name": "Reproducible benchmark suite and performance evidence",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C061",
+        "INV-21-C062",
+        "INV-21-C063",
+        "INV-21-C064",
+        "INV-21-C068",
+        "INV-21-C070"
+      ],
+      "gap": "The README states a p99 <20us SLO, but there are no benchmark harnesses, baseline artifacts, percentile distributions, overload/recovery runs, tenant overhead, power/thermal measurements, or regression gate.",
+      "required_completion": "Add reproducible micro/macro benchmarks, p50/p95/p99/worst thresholds, edge power runs, and CI regression gates."
+    },
+    {
+      "id": "GAP-023",
+      "name": "Capacity model and saturation signals",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C017",
+        "INV-21-C067",
+        "INV-21-C069"
+      ],
+      "gap": "No capacity formula/model covers concurrent chains, handler fan-out, per-tenant fairness, remote handoff pressure, CPU/memory limits, or saturation thresholds.",
+      "required_completion": "Document and implement capacity ceilings, fairness rules, saturation metrics and sizing tests."
+    },
+    {
+      "id": "GAP-024",
+      "name": "Serialization/zero-copy measurement evidence",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C065",
+        "INV-21-C066"
+      ],
+      "gap": "Direct handler composition avoids a network hop, but the repository does not measure serialization/copy/context-switch savings or prove zero-copy safety/semantics.",
+      "required_completion": "Add comparative local-vs-remote profiling and correctness tests for any zero-copy/argument-handoff optimization."
+    },
+    {
+      "id": "GAP-025",
+      "name": "Fuzz/property tests for untrusted inputs",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C085"
+      ],
+      "gap": "No fuzzing/property tests cover callee/tenant/trace/path values, handler failures, policy decisions, schema boundaries, or hostile oversized inputs.",
+      "required_completion": "Add Hypothesis/Atheris or equivalent fuzz/property suite with corpus and CI budget."
+    },
+    {
+      "id": "GAP-026",
+      "name": "Concurrency/race test suite",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C086"
+      ],
+      "gap": "Residency was made thread-safe, but there are no race tests for concurrent place/unplace/resolve/call, revision monotonicity, or policy/transport callback concurrency.",
+      "required_completion": "Add multi-thread stress/race tests and, where supported, sanitizer/instrumented runs."
+    },
+    {
+      "id": "GAP-027",
+      "name": "Threat-model-derived adversarial tests",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C041",
+        "INV-21-C050",
+        "INV-21-C087"
+      ],
+      "gap": "Current tests cover cross-tenant and capability refusal only; no replay/spoofing/injection/resource-exhaustion/side-channel/provider-compromise scenarios are exercised.",
+      "required_completion": "Create threat model artifact and automated negative tests for each abuse case, including spoofed identity/trace, handler exceptions and exhaustion."
+    },
+    {
+      "id": "GAP-028",
+      "name": "Adjacent-layer integration tests",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C030",
+        "INV-21-C083"
+      ],
+      "gap": "No executable integration suite proves interoperability with INV-20, INV-10, INV-16, INV-13 or SCH-01; the pk_core conformance test skips when the framework is absent.",
+      "required_completion": "Create workspace integration fixtures for each declared dependency and make skipped mandatory integration tests a CI failure."
+    },
+    {
+      "id": "GAP-029",
+      "name": "Platform/runtime compatibility tests",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C084"
+      ],
+      "gap": "No test matrix covers supported Python versions, CPU architectures, operating systems/runtimes, protocol versions or execution tiers.",
+      "required_completion": "Declare supported matrix and run CI on representative Windows/Linux and target architectures/runtimes."
+    },
+    {
+      "id": "GAP-030",
+      "name": "Fault-injection, partition and reconnect testing",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C051",
+        "INV-21-C060",
+        "INV-21-C089"
+      ],
+      "gap": "No tests inject handler crash/stall, policy-provider outage, stale residency, remote transport failure, node/site partition, reconnect, or degraded control plane.",
+      "required_completion": "Add deterministic failure injection and recovery objective assertions."
+    },
+    {
+      "id": "GAP-031",
+      "name": "Health/stall detection and quarantine control",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C052",
+        "INV-21-C059"
+      ],
+      "gap": "No handler stall thresholds, watchdogs, unhealthy placement suppression, quarantine/freeze control, or runtime emergency-disable switch exists.",
+      "required_completion": "Add deadline/stall detection, quarantine state, disable switch and operator recovery path."
+    },
+    {
+      "id": "GAP-032",
+      "name": "Crash consistency / restart / reconstruction procedure",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C057",
+        "INV-21-C095"
+      ],
+      "gap": "Residency state is memory-only with no explicit reconstruction source, startup reconciliation, snapshot/restore boundary, or restart invariant tests.",
+      "required_completion": "Document authoritative reconstruction from placement source and test clean restart/reconciliation; explicitly mark backup N/A if derived state."
+    },
+    {
+      "id": "GAP-033",
+      "name": "Canary/staged rollout and automated rollback",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C038",
+        "INV-21-C092"
+      ],
+      "gap": "README mentions rerunning gates and removing a registry component, but no canary/staged rollout mechanism, rollback automation, rollback criteria, or versioned migration procedure is supplied.",
+      "required_completion": "Add rollout/rollback runbook and automation hooks with health/SLO abort criteria."
+    },
+    {
+      "id": "GAP-034",
+      "name": "Patching, vulnerability and EOL policy",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C094"
+      ],
+      "gap": "No supported-version lifecycle, security patch SLA, CVE intake process, EOL timeline, or dependency update policy exists.",
+      "required_completion": "Add SECURITY.md/support policy with response targets and release lifecycle."
+    },
+    {
+      "id": "GAP-035",
+      "name": "Incident severity and response runbook",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C097"
+      ],
+      "gap": "No severity taxonomy, paging triggers, containment steps, evidence collection, recovery validation, or escalation workflow exists.",
+      "required_completion": "Add incident runbook tied to local-chain failure/security signals."
+    },
+    {
+      "id": "GAP-036",
+      "name": "Recurring review and exception/waiver registry",
+      "severity": "medium",
+      "checklist": [
+        "INV-21-C098",
+        "INV-21-C099"
+      ],
+      "gap": "No scheduled architecture/access/policy/dependency review record or owned exception/waiver/technical-debt registry with expiry exists.",
+      "required_completion": "Add review cadence/checklist and machine-readable waiver/debt ledger with owner and expiry."
+    },
+    {
+      "id": "GAP-037",
+      "name": "Formal production exit evidence bundle",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C090",
+        "INV-21-C100"
+      ],
+      "gap": "No generated evidence ledger/gate result is present in the archive, and normal gate execution cannot run without pk_core. Therefore production exit cannot be independently verified from this repository alone.",
+      "required_completion": "Bundle signed machine-readable gate results, evidence ledger, hashes and release manifest produced in CI with all mandatory checks non-skipped."
+    },
+    {
+      "id": "GAP-038",
+      "name": "Continuous integration workflow",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C070",
+        "INV-21-C081",
+        "INV-21-C082",
+        "INV-21-C090"
+      ],
+      "gap": "No CI configuration runs compile, runtime tests, full pk_core conformance, security checks, compatibility tests, benchmarks or packaging validation on change.",
+      "required_completion": "Add CI pipeline with fail-on-skip mandatory gates, test artifacts and release evidence."
+    },
+    {
+      "id": "GAP-039",
+      "name": "License and notice files",
+      "severity": "low",
+      "checklist": [
+        "INV-21-C031",
+        "INV-21-C094"
+      ],
+      "gap": "The archive contains no LICENSE/NOTICE file or explicit redistribution terms for the implementation package.",
+      "required_completion": "Add the project-approved license and notice/provenance metadata."
+    },
+    {
+      "id": "GAP-040",
+      "name": "Structured request/call context",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C023",
+        "INV-21-C024",
+        "INV-21-C026",
+        "INV-21-C073"
+      ],
+      "gap": "Caller identity, tenant, trace, deadline, capabilities and operation metadata are separate primitive arguments rather than a validated/versioned context object, increasing spoofing and compatibility risk.",
+      "required_completion": "Define immutable typed CallContext with authenticated principal, tenant, trace/span, deadline, idempotency and capability claims/proofs."
+    },
+    {
+      "id": "GAP-041",
+      "name": "Handler exception and failure-code normalization",
+      "severity": "high",
+      "checklist": [
+        "INV-21-C014",
+        "INV-21-C026",
+        "INV-21-C051"
+      ],
+      "gap": "Chain-internal refusal errors are structured, but arbitrary local handler exceptions and remote adapter failures pass through without a stable error taxonomy or local/remote semantic normalization.",
+      "required_completion": "Define error envelope/mapping rules and parity tests across local and remote paths."
+    },
+    {
+      "id": "GAP-042",
+      "name": "Semantic-equivalence test suite",
+      "severity": "critical",
+      "checklist": [
+        "INV-21-C011",
+        "INV-21-C013",
+        "INV-21-C029",
+        "INV-21-C082"
+      ],
+      "gap": "The core promise that local and remote calls are semantically identical is asserted in prose but not tested against the same request corpus, errors, cancellation, authz, serialization and edge cases.",
+      "required_completion": "Build a shared conformance corpus executed through both local and remote paths and byte/semantic-compare outcomes."
+    }
+  ]
+}

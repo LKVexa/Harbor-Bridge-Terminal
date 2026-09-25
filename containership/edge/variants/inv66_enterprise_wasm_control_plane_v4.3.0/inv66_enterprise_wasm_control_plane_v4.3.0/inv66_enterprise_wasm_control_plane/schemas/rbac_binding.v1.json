@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv66:schema:PK_ECP_RBAC:1:binding",
+  "title": "PK_ECP_RBAC/1 binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject",
+    "role",
+    "scope",
+    "effect"
+  ],
+  "properties": {
+    "subject": {
+      "type": "string",
+      "pattern": "^(user|group|service):[A-Za-z0-9._@-]{1,256}$"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "viewer",
+        "deployer",
+        "approver",
+        "policy-admin",
+        "org-admin",
+        "auditor"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "pattern": "^org:[A-Za-z0-9._-]+(/tenant:[A-Za-z0-9._-]+(/lattice:[A-Za-z0-9._-]+)?)?$"
+    },
+    "effect": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 1024
+    }
+  }
+}

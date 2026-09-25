@@ -1,0 +1,15 @@
+{
+  "schema": "inv54.provider_matrix/1",
+  "legend": {"native": "maps directly onto a provider primitive", "emulated": "adapter-side emulation with documented limits", "unsupported": "refused with INV54-E0904"},
+  "providers": {
+    "reference": {"per_key_order": "native", "replay": "native", "independent_offsets": "native", "fanout": "native", "ack_redelivery": "emulated", "dedup_window": "emulated"},
+    "kafka": {"per_key_order": "native", "replay": "native", "independent_offsets": "native", "fanout": "emulated", "ack_redelivery": "emulated", "dedup_window": "unsupported"},
+    "rabbitmq": {"per_key_order": "unsupported", "replay": "unsupported", "independent_offsets": "unsupported", "fanout": "native", "ack_redelivery": "native", "dedup_window": "unsupported"},
+    "sqs": {"per_key_order": "emulated", "replay": "unsupported", "independent_offsets": "unsupported", "fanout": "emulated", "ack_redelivery": "native", "dedup_window": "native"}
+  },
+  "notes": {
+    "kafka.fanout": "every consumer group receives every record; not declared as the adapter feature because PK_BROKER_FANOUT/1 subscriber registration is group creation",
+    "sqs.per_key_order": "FIFO queues only, per MessageGroupId; standard queues give no ordering",
+    "sqs.fanout": "client-side send to each group queue, non-atomic; SNS->SQS subscription recommended in production"
+  }
+}

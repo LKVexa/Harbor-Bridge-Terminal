@@ -1,0 +1,41 @@
+# Prometheus alerting rules for INV-66. Every rule has severity + runbook. Thresholds are PROPOSED.
+groups:
+- name: inv66
+  rules:
+  - alert: Inv66AuditIntegrityFailure
+    expr: increase(ecp_audit_verify_failures_total[10m]) > 0 or ecp_audit_last_verify_ok == 0
+    labels: {severity: SEV1, class: audit-integrity}
+    annotations: {runbook: docs/runbooks/RB-INCIDENT.md, summary: "Journal chain/anchor verification failed"}
+  - alert: Inv66AuditAppendFailing
+    expr: increase(ecp_audit_append_failures_total[5m]) > 0
+    labels: {severity: SEV2, class: dependency}
+    annotations: {runbook: docs/runbooks/RB-DAY2.md#troubleshooting-by-error-code, summary: "Admissions failing closed: journal unavailable"}
+  - alert: Inv66AdmissionLatencySLOBurn
+    expr: histogram_quantile(0.99, sum by (le) (rate(ecp_admission_latency_ms_bucket[5m]))) > 50
+    for: 10m
+    labels: {severity: SEV3, class: capacity}
+    annotations: {runbook: docs/CAPACITY.md, summary: "p99 admission latency above 50ms SLO"}
+  - alert: Inv66AuthnAttackSignal
+    expr: rate(ecp_authn_failures_total[5m]) > 5
+    for: 5m
+    labels: {severity: SEV2, class: security}
+    annotations: {runbook: docs/runbooks/RB-INCIDENT.md, summary: "Elevated rejected credentials"}
+  - alert: Inv66PolicyRejectionSpike
+    expr: sum(rate(ecp_admissions_total{outcome="rejected"}[15m])) > 3 * sum(rate(ecp_admissions_total{outcome="rejected"}[6h] offset 1d))
+    for: 15m
+    labels: {severity: SEV3, class: policy}
+    annotations: {runbook: docs/runbooks/RB-DAY2.md#policy-change-rbac-registries-signers-rules-quotas, summary: "Policy rejections 3x baseline"}
+  - alert: Inv66DeliveryBacklog
+    expr: ecp_delivery_pending > 0 and ecp_breaker_open == 1
+    for: 30m
+    labels: {severity: SEV2, class: dependency}
+    annotations: {runbook: docs/runbooks/RB-DAY2.md#troubleshooting-by-error-code, summary: "INV-63 unreachable; deliveries pending"}
+  - alert: Inv66Overloaded
+    expr: rate(ecp_shed_total[5m]) > 0
+    for: 10m
+    labels: {severity: SEV3, class: capacity}
+    annotations: {runbook: docs/CAPACITY.md, summary: "Load shedding active"}
+  - alert: Inv66EmergencyFreezeActive
+    expr: ecp_frozen_scopes > 0
+    labels: {severity: SEV3, class: emergency-state}
+    annotations: {runbook: docs/runbooks/RB-DAY2.md#emergency-freeze--resume-criteria, summary: "A freeze/quarantine is in force"}

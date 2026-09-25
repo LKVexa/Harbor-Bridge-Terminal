@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: {name: inv05, labels: {app: inv05}}
+spec:
+  serviceName: inv05
+  replicas: 1            # single member until ADR-002 backend is approved
+  updateStrategy: {type: RollingUpdate}
+  selector: {matchLabels: {app: inv05}}
+  template:
+    metadata: {labels: {app: inv05}}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10005, fsGroup: 10005, seccompProfile: {type: RuntimeDefault}}
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: inv05
+        image: registry.example/inv05@sha256:REPLACE_WITH_SIGNED_DIGEST
+        args: ["-m", "inv05_current_control_state_system.serve", "--config", "/etc/inv05/base.json", "--env", "/etc/inv05/prod.json", "--site", "/etc/inv05/site.json", "--secret-dir", "/run/inv05/secrets"]
+        ports: [{containerPort: 2479, name: api}]
+        resources: {requests: {cpu: "1", memory: 1Gi}, limits: {cpu: "2", memory: 4Gi}}
+        securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+        livenessProbe: {httpGet: {path: /livez, port: api, scheme: HTTPS}, periodSeconds: 10, failureThreshold: 3}
+        readinessProbe: {httpGet: {path: /readyz, port: api, scheme: HTTPS}, periodSeconds: 5}
+        startupProbe: {httpGet: {path: /livez, port: api, scheme: HTTPS}, failureThreshold: 60, periodSeconds: 2}
+        volumeMounts:
+        - {name: data, mountPath: /var/lib/inv05}
+        - {name: config, mountPath: /etc/inv05, readOnly: true}
+        - {name: secrets, mountPath: /run/inv05/secrets, readOnly: true}
+      volumes:
+      - {name: config, configMap: {name: inv05-config}}
+      - {name: secrets, secret: {secretName: inv05-secrets, defaultMode: 0400}}
+  volumeClaimTemplates:
+  - metadata: {name: data}
+    spec: {accessModes: [ReadWriteOnce], resources: {requests: {storage: 20Gi}}}

@@ -1,0 +1,57 @@
+{
+  "description": "GAP-13 -> GAP-07 policy bundle body contract (unsigned body; wrap with store.sign_config('policy-bundle', ...))",
+  "body": {
+    "schema": "PK_POLICY_BUNDLE/1",
+    "adapter_version": 1,
+    "bundle_id": "acme-prod",
+    "version": 1,
+    "issued_at": 1800000000,
+    "expires": 1801000000,
+    "tenant": "acme",
+    "rules": [
+      {
+        "rule_id": "prod-code",
+        "priority": 100,
+        "match": {
+          "tenant": "acme",
+          "environment": "prod",
+          "kind": "code"
+        },
+        "effect": "allow",
+        "require": {
+          "roles": [
+            "release"
+          ],
+          "threshold": 1,
+          "transparency": true,
+          "attestations": [
+            {
+              "predicate_type": "https://slsa.dev/provenance/v1",
+              "builder_ids": [
+                "https://ci.acme/builder@v1"
+              ]
+            }
+          ],
+          "sbom": {
+            "required": true,
+            "deny_packages": [
+              "pkg:pypi/evil"
+            ],
+            "max_severity": "medium"
+          }
+        }
+      },
+      {
+        "rule_id": "freeze-grants",
+        "priority": 1000,
+        "match": {
+          "tenant": "*",
+          "environment": "*",
+          "kind": "grant"
+        },
+        "effect": "deny",
+        "require": {}
+      }
+    ]
+  }
+}

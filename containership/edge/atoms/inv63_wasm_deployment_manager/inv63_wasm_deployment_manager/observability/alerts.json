@@ -1,0 +1,53 @@
+{
+  "schema": "INV63_ALERTS/1",
+  "rules": [
+    {
+      "name": "INV63HighRequestRate",
+      "class": "ordinary_load",
+      "metric": "inv63_requests_total",
+      "expr": "sum(rate(inv63_requests_total[5m])) > 0.8 * capacity_rps",
+      "severity": "info",
+      "page": false
+    },
+    {
+      "name": "INV63Degraded",
+      "class": "degradation",
+      "metric": "inv63_errors_total",
+      "expr": "sum(rate(inv63_errors_total{code=\"INV63-E-OVERLOADED\"}[5m])) > 0",
+      "severity": "SEV3",
+      "page": false
+    },
+    {
+      "name": "INV63PolicyRejections",
+      "class": "policy_rejection",
+      "metric": "inv63_errors_total",
+      "expr": "sum(rate(inv63_errors_total{code=\"INV63-E-POLICY\"}[15m])) > 1",
+      "severity": "ticket",
+      "page": false
+    },
+    {
+      "name": "INV63ControlPlaneDown",
+      "class": "dependency_failure",
+      "metric": "inv63_control_plane_up",
+      "expr": "inv63_control_plane_up == 0 for 5m",
+      "severity": "SEV2",
+      "page": true
+    },
+    {
+      "name": "INV63SecurityEvents",
+      "class": "security_event",
+      "metric": "inv63_alerts_total",
+      "expr": "increase(inv63_alerts_total{cls=\"security_event\"}[5m]) > 5",
+      "severity": "SEV2",
+      "page": true
+    },
+    {
+      "name": "INV63Stalled",
+      "class": "stall",
+      "metric": "inv63_stalled_workloads",
+      "expr": "inv63_stalled_workloads > 0 for 10m",
+      "severity": "SEV2",
+      "page": true
+    }
+  ]
+}

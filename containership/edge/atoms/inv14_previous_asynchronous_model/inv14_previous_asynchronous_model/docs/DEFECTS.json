@@ -1,0 +1,13 @@
+{
+  "schema": "PK_POLL_DEFECTS/1",
+  "note": "Defects found by this pass's own tests, fuzzing and gates while implementing v4.3.0. Each has a deterministic regression test.",
+  "defects": [
+    {"id": "D-01", "component": "12/23", "found_by": "tests/test_p1_components.py C12 (first run)", "summary": "service.py caught _StructuredPollError, which is a mixin and not a BaseException, so every lifecycle/identity refusal crashed with TypeError instead of a PK_POLL_ERROR/1.", "fix": "catch Exception and re-raise anything not structured", "regression": "T:C23Concurrency.test_c23_regression_D01_service_catches_mixin_errors"},
+    {"id": "D-02", "component": "30", "found_by": "tools/fuzz.py (165 findings / 4000 iterations)", "summary": "validate_config serialised the document before validating it, so non-JSON values raised a bare TypeError.", "fix": "wrap canonicalisation and raise PK_CONFIG_INVALID", "regression": "T:C22Fuzz.test_c22_regression_D02_non_json_config_is_structured"},
+    {"id": "D-03", "component": "30/03", "found_by": "tools/fuzz.py schema/validator differential (28 findings)", "summary": "Code accepted unknown provenance keys that the JSON schema rejects -- two definitions of one contract disagreed.", "fix": "exact provenance key set + 256-char bound in code", "regression": "T:C22Fuzz.test_c22_regression_D03_unknown_provenance_key_refused"},
+    {"id": "D-04", "component": "26/27", "found_by": "test_p2 run hung (timeout)", "summary": "Fault F5 ran verify_release, which ran the test suite, which ran F5: unbounded recursion.", "fix": "verify_release --external-only used by F5", "regression": "T:C27ReleasePipeline.test_c27_missing_pk_core_blocks_release_exit_2"},
+    {"id": "D-05", "component": "03", "found_by": "verify_release contracts_generated gate", "summary": "gen_contracts regenerated the code registry and WIT enum but not the enum inside pk_poll_error.schema.json, so a new code left the schema stale.", "fix": "generator owns all three artifacts", "regression": "T:C03Contracts.test_c03_error_schema_enum_equals_code_registry"}
+,
+    {"id": "D-06", "component": "29", "found_by": "clean-room run from the archive (fresh venv, no site-packages)", "summary": "Signing and one signing test silently required the third-party `cryptography` package; in a clean environment test_p2 failed although it passed in the development tree.", "fix": "openssl CLI is a full keygen/sign/verify fallback; the cross-backend comparison skips only when one backend is absent", "regression": "T:C29Signing.test_c29_openssl_only_backend_signs_and_verifies"}
+  ]
+}

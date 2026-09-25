@@ -1,0 +1,508 @@
+{
+ "schema": "inv60.requirements/1",
+ "version": "1.0.0",
+ "terminology": "RFC 2119 / RFC 8174",
+ "deployment_classes": [
+  "central",
+  "edge",
+  "partially-connected",
+  "disconnected"
+ ],
+ "planes": {
+  "control": "membership, placement, lifecycle, links, config \u2014 may depend on identity/policy/quorum",
+  "data": "call routing \u2014 may continue in isolated_serving without the control plane"
+ },
+ "requirements": [
+  {
+   "id": "REQ-MEM-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Membership SHALL admit only authenticated, attested hosts that enrol themselves.",
+   "verification": [
+    "test_security.Adversarial.test_T10_host_cannot_enrol_other_host"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-MEM-02",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "A host silent for lost_after_s SHALL be declared lost and its components rescheduled only by the quorum lease holder.",
+   "verification": [
+    "test_resilience.Membership.test_failover_without_quorum_refused"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-ART-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "The fabric SHALL instantiate only bytes whose sha256 equals the reference.",
+   "verification": [
+    "test_security.ArtifactSigning.test_registry_swap_after_verification_detected"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-ART-02",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Artifacts SHALL carry a valid signature from a trusted, unrevoked signer with provenance level >= policy minimum.",
+   "verification": [
+    "test_security.ArtifactSigning.test_low_provenance_level"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-LIFE-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Lifecycle changes SHALL follow the published transition tables; illegal transitions SHALL return ILLEGAL_TRANSITION without mutation.",
+   "verification": [
+    "test_semantics.Lifecycle.test_model_based_random_sequences"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-LIFE-02",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Stopping a component SHALL revoke its links.",
+   "verification": [
+    "test_runtime.LatticeRuntimeTest.test_lifecycle_revokes_links"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-LINK-01",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "A call SHALL be refused unless an unexpired, unrevoked grant names the caller, tenant and operation.",
+   "verification": [
+    "test_security.Authorization.test_operation_not_in_grant"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-ROUTE-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Calls SHALL route only to instances on live hosts.",
+   "verification": [
+    "test_runtime.LatticeRuntimeTest.test_membership_failover_and_last_host_refusal_are_atomic"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-FAIL-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Failover SHALL never place a component outside its allowed regions; with no eligible host it SHALL mark the component failed.",
+   "verification": [
+    "test_resilience.Placement.test_failover_with_no_residency_target_fails_component"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-AUTH-01",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Every operation SHALL authenticate the caller and SHALL deny by default.",
+   "verification": [
+    "test_security.Authorization.test_unknown_action_denied"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-AUTH-02",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Identity or policy dependency failure SHALL fail closed.",
+   "verification": [
+    "test_security.Authentication.test_dependency_unavailable_fails_closed"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-RES-01",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Every public operation SHALL return a versioned Result envelope with a stable code.",
+   "verification": [
+    "test_semantics.ResultModel.test_public_boundary_never_raises"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-RES-02",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Non-idempotent operations SHALL NOT be retried automatically without an idempotency key.",
+   "verification": [
+    "test_resilience.Retries.test_non_idempotent_not_retried"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-LIM-01",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Payload, rate, in-flight, component and link limits SHALL be enforced per tenant before allocation.",
+   "verification": [
+    "test_semantics.ResourceLimits.test_inflight_per_tenant_and_global"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-PART-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "An isolated host SHALL serve existing links for at most isolated_serving_s and SHALL NOT accept new authority.",
+   "verification": [
+    "test_resilience.Membership.test_fabric_partition_blocks_mutation_serves_existing"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-DUR-01",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Control state SHALL survive restart via snapshot+WAL; links SHALL be restored revoked.",
+   "verification": [
+    "test_resilience.Durability.test_fabric_restart_reconstructs_and_revokes_links"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-AUD-01",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Every operation SHALL be recorded in a tamper-evident ledger.",
+   "verification": [
+    "test_resilience.Ledger.test_detects_modification_deletion_reorder_truncation"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-CFG-01",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Configuration SHALL be schema-validated with secure defaults; overlays SHALL NOT weaken protected fields.",
+   "verification": [
+    "test_config_observability.Overlays.test_lower_trust_cannot_weaken"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-CFG-02",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Configuration activation SHALL be two-phase with monotonic generations and automatic rollback.",
+   "verification": [
+    "test_config_observability.Activation.test_commit_failure_rolls_back_compensating"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-SEC-01",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Secrets SHALL be referenced, never embedded, and never serialized to logs/errors.",
+   "verification": [
+    "test_config_observability.Secrets.test_acl_cache_rotate"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-OBS-01",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Metrics SHALL NOT use identity labels and SHALL be cardinality bounded.",
+   "verification": [
+    "test_config_observability.Telemetry.test_metrics_cardinality_guard"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-OBS-02",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Trace context SHALL propagate from caller through placement decisions.",
+   "verification": [
+    "test_config_observability.Telemetry.test_trace_propagates_through_fabric"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-IF-01",
+   "level": "SHALL",
+   "kind": "interface",
+   "text": "Wire requests SHALL validate against versioned schemas; unknown fields SHALL be rejected.",
+   "verification": [
+    "test_semantics.Interfaces.test_fixtures_python"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-IF-02",
+   "level": "SHALL",
+   "kind": "interface",
+   "text": "Version negotiation SHALL fail explicitly rather than downgrade below the minimum.",
+   "verification": [
+    "test_semantics.Negotiation.test_minimum_enforced_downgrade"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-EXE-01",
+   "level": "SHALL",
+   "kind": "security",
+   "text": "Guest execution SHALL have no ambient imports, a memory ceiling and a time limit.",
+   "verification": [
+    "test_config_observability.WasmExecution.test_sandbox_refusals"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-CTL-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Operators SHALL be able to quarantine a component or host and freeze mutations immediately.",
+   "verification": [
+    "test_resilience.EmergencyControls.test_quarantine_component"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-PERF-01",
+   "level": "SHOULD",
+   "kind": "non-functional",
+   "text": "Reference control-plane overhead per capability-checked call SHOULD be p99 < 3 ms on reference hardware.",
+   "verification": [
+    "test_governance.Bench.test_bench_baseline_present"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "advisory",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-FO-01",
+   "level": "SHALL",
+   "kind": "non-functional",
+   "text": "Components on a lost host SHALL be running elsewhere within 10 s of loss declaration (non-edge classes).",
+   "verification": [
+    "test_resilience.Placement.test_residency_aware_failover"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  },
+  {
+   "id": "REQ-EDGE-01",
+   "level": "MAY",
+   "kind": "functional",
+   "text": "Edge/disconnected overlays MAY extend detector thresholds; they are then excluded from the failover SLO.",
+   "verification": [
+    "test_config_observability.Overlays.test_every_shipped_overlay_renders"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "advisory",
+   "applies_to": [
+    "edge",
+    "disconnected"
+   ]
+  },
+  {
+   "id": "REQ-PROD-01",
+   "level": "SHALL",
+   "kind": "functional",
+   "text": "Production execution SHALL use the pinned wasmCloud lattice; until present the adapter SHALL fail closed.",
+   "verification": [
+    "test_config_observability.WasmExecution.test_abi_validation_and_wasmcloud_fails_closed"
+   ],
+   "method": "automated test",
+   "owner": "UNASSIGNED",
+   "criticality": "release-blocking",
+   "applies_to": [
+    "central",
+    "edge"
+   ]
+  }
+ ],
+ "prohibited_states": [
+  "component running from unverified bytes",
+  "two lease holders with unexpired leases",
+  "link usable after revocation",
+  "secret value in config, log, error or ledger"
+ ],
+ "non_goals": [
+  "declaring deployments",
+  "implementing providers",
+  "signing artifacts"
+ ]
+}

@@ -1,0 +1,11 @@
+{"schema": "PLN02-ALERTS/1", "alerts": [
+ {"name": "ResolutionLatencySLO", "expr": "histogram_quantile(0.99, sum by (le) (rate(resolution_seconds_bucket[5m]))) > 0.5", "for": "10m", "class": "degradation", "severity": "SEV2"},
+ {"name": "PolicyRejectionSpike", "expr": "sum(rate(resolution_rejections_total{code=~\"NO_ELIGIBLE_PROVIDER|POLICY_CONFLICT|PERMISSION_DENIED\"}[5m])) > 1", "for": "15m", "class": "policy_rejection", "severity": "SEV3"},
+ {"name": "CatalogueUnavailable", "expr": "sum(rate(resolution_rejections_total{code=~\"CATALOGUE_STALE|CATALOGUE_UNAVAILABLE|CIRCUIT_OPEN\"}[5m])) > 0", "for": "5m", "class": "dependency_failure", "severity": "SEV2"},
+ {"name": "CatalogueUntrusted", "expr": "increase(resolution_rejections_total{code=\"CATALOGUE_UNTRUSTED\"}[5m]) > 0", "for": "0m", "class": "attack", "severity": "SEV1"},
+ {"name": "AuthFailureBurst", "expr": "sum(rate(resolution_rejections_total{code=\"UNAUTHENTICATED\"}[5m])) > 5", "for": "5m", "class": "attack", "severity": "SEV2"},
+ {"name": "Fenced", "expr": "increase(resolution_rejections_total{code=\"FENCED\"}[5m]) > 0", "for": "0m", "class": "software_defect_or_failover", "severity": "SEV2"},
+ {"name": "InternalErrors", "expr": "increase(resolution_rejections_total{code=\"INTERNAL\"}[10m]) > 0", "for": "0m", "class": "software_defect", "severity": "SEV2"},
+ {"name": "IntegrityFailure", "expr": "increase(resolution_rejections_total{code=~\"REVISION_INTEGRITY_ERROR|AUDIT_CHAIN_BROKEN\"}[5m]) > 0 or audit_write_failures_total > 0", "for": "0m", "class": "integrity", "severity": "SEV1"},
+ {"name": "Overload", "expr": "sum(rate(resolution_rejections_total{code=~\"OVERLOADED|QUOTA_EXCEEDED\"}[5m])) / sum(rate(application_revisions_total[5m])) > 0.2", "for": "10m", "class": "load", "severity": "SEV3"}
+]}

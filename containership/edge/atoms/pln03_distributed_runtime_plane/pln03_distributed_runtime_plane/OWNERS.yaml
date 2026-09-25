@@ -1,0 +1,29 @@
+# MC-001 machine-readable ownership registry.
+# Role slots are defined; NAMED PEOPLE / GROUPS ARE NOT. They must be filled from the
+# organisation's authoritative directory and on-call system by the owner (David Paul Russell)
+# before release. tools/check_owners.py fails the release while any `resolved: false` remains.
+schema: pk.owners/1
+component: PLN-03
+review_cadence_days: 90
+recertify_by: "2026-12-22"
+roles:
+  accountable_owner:   {role: "PLN-03 Production Owner",       principal: "UNASSIGNED", resolved: false}
+  deputy_owner:        {role: "PLN-03 Deputy Owner",           principal: "UNASSIGNED", resolved: false,
+                        authority_transfer: "owner unreachable > 30 min for SEV1/SEV2, or on documented leave"}
+  oncall_primary:      {role: "PLN-03 Primary On-call",        principal: "UNASSIGNED", resolved: false}
+  oncall_secondary:    {role: "PLN-03 Secondary On-call",      principal: "UNASSIGNED", resolved: false}
+  security_contact:    {role: "PLN-07 Security Liaison",       principal: "UNASSIGNED", resolved: false}
+  architecture_board:  {role: "Post-Kubernetes Architecture Board", principal: "UNASSIGNED", resolved: false}
+  release_approver:    {role: "PLN-03 Release Approver",       principal: "UNASSIGNED", resolved: false}
+boundaries:
+  PLN-02: {counterpart_role: "PLN-02 Application Plane Owner", resolved: false}
+  INV-49: {counterpart_role: "INV-49 Adapter Owner",          resolved: false}
+  PLN-04: {counterpart_role: "PLN-04 Execution Plane Owner",  resolved: false}
+  PLN-06: {counterpart_role: "PLN-06 Data Plane Owner",       resolved: false}
+  PLN-07: {counterpart_role: "PLN-07 Security Plane Owner",   resolved: false}
+emergency_authority:   # MC-001.07
+  emergency_disable: [accountable_owner, deputy_owner, oncall_primary, security_contact]
+  quarantine_adapter: [accountable_owner, deputy_owner, oncall_primary, security_contact]
+  degraded_mode:      [accountable_owner, deputy_owner, oncall_primary]
+  rollback:           [accountable_owner, deputy_owner, oncall_primary, release_approver]
+  compatibility_exception: [accountable_owner, architecture_board]

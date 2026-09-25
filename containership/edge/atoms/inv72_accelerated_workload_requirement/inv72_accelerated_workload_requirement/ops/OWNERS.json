@@ -1,0 +1,107 @@
+{
+ "schema": "PK_OWNERS/1",
+ "component": "INV-72",
+ "roles": [
+  {
+   "alias": "inv72-service-owner",
+   "holder": "UNASSIGNED",
+   "backup": "UNASSIGNED",
+   "required": true,
+   "authority": [
+    "scope",
+    "release acceptance",
+    "non-security waivers",
+    "capacity approval"
+   ]
+  },
+  {
+   "alias": "inv72-security-owner",
+   "holder": "UNASSIGNED",
+   "backup": "UNASSIGNED",
+   "required": true,
+   "authority": [
+    "trust policy",
+    "key/identity integration",
+    "security waivers",
+    "threat model sign-off"
+   ]
+  },
+  {
+   "alias": "inv72-release-approver",
+   "holder": "UNASSIGNED",
+   "backup": "UNASSIGNED",
+   "required": true,
+   "authority": [
+    "tools/release_gate.py --approval"
+   ]
+  },
+  {
+   "alias": "inv72-oncall",
+   "holder": "UNASSIGNED",
+   "backup": null,
+   "required": true,
+   "authority": [
+    "emergency disable",
+    "quarantine/drain",
+    "config rollback"
+   ]
+  },
+  {
+   "alias": "pk-architecture-board",
+   "holder": "UNASSIGNED",
+   "backup": null,
+   "required": true,
+   "authority": [
+    "ADR approval",
+    "dependency upgrades"
+   ]
+  }
+ ],
+ "raci": {
+  "architecture decisions": {
+   "R": "inv72-service-owner",
+   "A": "pk-architecture-board",
+   "C": "inv72-security-owner",
+   "I": "GAP-11 owner"
+  },
+  "security approvals": {
+   "R": "inv72-security-owner",
+   "A": "inv72-security-owner",
+   "C": "pk-architecture-board",
+   "I": "inv72-service-owner"
+  },
+  "production changes": {
+   "R": "inv72-oncall",
+   "A": "inv72-service-owner",
+   "C": "inv72-security-owner",
+   "I": "GAP-11 owner"
+  },
+  "incident command": {
+   "R": "inv72-oncall",
+   "A": "inv72-service-owner",
+   "C": "inv72-security-owner",
+   "I": "pk-architecture-board"
+  },
+  "capacity approval": {
+   "R": "inv72-service-owner",
+   "A": "inv72-service-owner",
+   "C": "GAP-11 owner",
+   "I": "inv72-oncall"
+  },
+  "dependency upgrades": {
+   "R": "inv72-service-owner",
+   "A": "pk-architecture-board",
+   "C": "inv72-security-owner",
+   "I": "inv72-oncall"
+  },
+  "release certification": {
+   "R": "inv72-service-owner",
+   "A": "inv72-release-approver",
+   "C": "inv72-security-owner",
+   "I": "pk-architecture-board"
+  }
+ },
+ "ownership_change": "any holder change is a PR to this file reviewed by the outgoing and incoming holder plus pk-architecture-board; governance_check refuses placeholders and service identities; a role left UNASSIGNED blocks release",
+ "revalidation": "quarterly (R-ACCESS in ops/REVIEWS.json)",
+ "last_revalidated": null
+}

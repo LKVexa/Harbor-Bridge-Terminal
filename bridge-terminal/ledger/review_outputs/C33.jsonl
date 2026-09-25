@@ -1,0 +1,100 @@
+{"id": "C33-001", "status": "PASS", "evidence": ["gateway/ws.js:9-11"], "note": "'one receive path ... and one send path ... per connection' recorded in ws.js header comment"}
+{"id": "C33-002", "status": "PASS", "evidence": ["gateway/ws.js:79"], "note": "socket.on('data', ...) is the sole receive owner per WsConnection"}
+{"id": "C33-003", "status": "PASS", "evidence": ["gateway/ws.js:98-116"], "note": "_write is the sole send owner per WsConnection"}
+{"id": "C33-004", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:120-145,43-46"], "note": "binary/text handlers and _flush are structurally distinct, but no explicit code/test distinguishes 'overlap' from 'duplicate-of-one-direction' as named states"}
+{"id": "C33-005", "status": "PASS", "evidence": ["gateway/ws.js:79"], "note": "only socket.on('data') feeds _onData/_parse; no other call site reads from the socket"}
+{"id": "C33-006", "status": "PASS", "evidence": ["gateway/ws.js:102-134"], "note": "only sendText/sendBinary/ping/close/_frame(pong) call _write; all funnel through one method"}
+{"id": "C33-007", "status": "PASS", "evidence": ["gateway/ws.js:137-153"], "note": "close()/terminate() are the only entry points that begin closure"}
+{"id": "C33-008", "status": "PASS", "evidence": ["gateway/ws.js:168-176"], "note": "_destroy() is the sole disposal path, guarded by this.destroyed"}
+{"id": "C33-009", "status": "PASS", "evidence": ["gateway/connection.js:305-331"], "note": "end()/_onSocketClose transition state to DRAINING/CLOSED and release ledger/session ownership"}
+{"id": "C33-010", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:1-14,21-57"], "note": "state model implemented (CONNECTING->AUTHENTICATED->...->CLOSED) and documented; no separate approval record found"}
+{"id": "C33-011", "status": "PASS", "evidence": ["gateway/connection.js:32"], "note": "pendingOut.length (via _flush loop) represents whether a send is currently being drained"}
+{"id": "C33-012", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:66"], "note": "body/frag fields represent in-progress receive assembly, but there is no single boolean 'receive pending' flag distinct from these"}
+{"id": "C33-013", "status": "PASS", "evidence": ["gateway/ws.js:70,148"], "note": "closeSent flag and state==='CLOSING' represent closure requested"}
+{"id": "C33-014", "status": "PASS", "evidence": ["gateway/ws.js:299-312"], "note": "_onClose distinguishes weInitiated vs peer-initiated close, i.e. observes peer closure"}
+{"id": "C33-015", "status": "PASS", "evidence": ["gateway/ws.js:72,169"], "note": "this.destroyed boolean represents completed disposal, guarding _destroy() idempotency"}
+{"id": "C33-016", "status": "PASS", "evidence": ["gateway/ws.js:1-333"], "note": "single-threaded Node event loop is the synchronization model; all state mutation is synchronous, no locks needed"}
+{"id": "C33-017", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:38-84"], "note": "legal state combinations (OPEN/CLOSING/CLOSED) are enforced in code paths but not written out as an explicit state table"}
+{"id": "C33-018", "status": "PASS", "evidence": ["gateway/ws.js:251,255"], "note": "'new message inside fragmented message' and 'continuation without start' are explicit illegal-state rejections (1002)"}
+{"id": "C33-019", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No PowerShell runspaces exist in this Node candidate"}
+{"id": "C33-020", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:1-333"], "note": "invariants are enforced by code structure/tests; no separate diagnostic-build assertion set documented"}
+{"id": "C33-021", "status": "PASS", "evidence": ["gateway/ws.js:102-134"], "note": "sendText/sendBinary are the only application entry points, both routed through _write"}
+{"id": "C33-022", "status": "PASS", "evidence": ["gateway/ws.js:102-134", "gateway/connection.js:249-267"], "note": "only the worker 'output' record path calls _output->sendBinary; no other producer can bypass it"}
+{"id": "C33-023", "status": "PASS", "evidence": ["gateway/ws.js:106,109"], "note": "stats.txMessages++ / inflight increment at admission; settle() marks completion symmetrically"}
+{"id": "C33-024", "status": "PASS", "evidence": ["gateway/ws.js:108-109"], "note": "lease.retain() at send start, lease.release() only in the write callback"}
+{"id": "C33-025", "status": "PASS", "evidence": ["gateway/ws.js:109"], "note": "settle(null) clears inflight/lease on success"}
+{"id": "C33-026", "status": "PASS", "evidence": ["gateway/ws.js:103,109"], "note": "onDone(err) fires and lease is still released via settle on failure/destroyed path"}
+{"id": "C33-027", "status": "PASS", "evidence": ["gateway/connection.js:296-299,312-313"], "note": "end()/_finalExit drain and release pendingOut before/while coordinating the close request to the worker"}
+{"id": "C33-028", "status": "IN_PROGRESS", "evidence": [], "note": "No test specifically named for a send completing while another producer enqueues (single-producer design; see C32-051/052)"}
+{"id": "C33-029", "status": "PASS", "evidence": "tests/chaos/review-fixes.test.js", "note": "'C1 unit: a record cut in half by OUR pause does not trip the assembly deadline; a genuinely stalled peer still does' covers a send/shutdown interaction"}
+{"id": "C33-030", "status": "PASS", "evidence": ["gateway/connection.js:90,336"], "note": "sentBytes/outstanding[] updated exactly once per successful send; exposed via telemetry()"}
+{"id": "C33-031", "status": "PASS", "evidence": ["gateway/ws.js:79"], "note": "socket.on('data') is the only call site that begins receiving"}
+{"id": "C33-032", "status": "PASS", "evidence": ["gateway/ws.js:1-333"], "note": "no other module registers a 'data' listener on the same socket; ws.js is the sole owner"}
+{"id": "C33-033", "status": "PASS", "evidence": ["gateway/ws.js:191-243"], "note": "_onData/_parse header consumption marks start; _frame()/_message() mark completion consistently"}
+{"id": "C33-034", "status": "PASS", "evidence": ["gateway/ws.js:196-243"], "note": "the while(off<chunk.length) loop interprets each frame/result before advancing to the next header"}
+{"id": "C33-035", "status": "PASS", "evidence": ["gateway/ws.js:180-189,197-206"], "note": "_rent() reserves and retains buffer ownership (lease) for the duration of a pending multi-chunk receive"}
+{"id": "C33-036", "status": "PASS", "evidence": ["gateway/ws.js:202-206"], "note": "this.body = null once a frame completes; lease/pool release happens through _releasePart at the appropriate point"}
+{"id": "C33-037", "status": "PASS", "evidence": ["gateway/ws.js:155-158"], "note": "_fail()/_dropReceiveState() clear body/frag state on failure without scheduling another read beyond socket-level events"}
+{"id": "C33-038", "status": "PASS", "evidence": ["gateway/ws.js:299-312", "gateway/ws.js:307-310"], "note": "_onClose distinguishes weInitiated (local close) vs peer close and coordinates the resulting _destroy"}
+{"id": "C33-039", "status": "IN_PROGRESS", "evidence": "tests/chaos/review-fixes.test.js", "note": "C1 unit/e2e tests a receive-in-progress vs the pause/assembly deadline, close to but not an exact 'shutdown begins mid-receive' test"}
+{"id": "C33-040", "status": "PASS", "evidence": ["gateway/ws.js:76,193,203"], "note": "stats.rxBytes/rxMessages/assembledFrames counters increment exactly once per event"}
+{"id": "C33-041", "status": "PASS", "evidence": ["gateway/connection.js:76-110,120-145"], "note": "_flush (send) and _onBinary (receive) are independent methods invoked from independent event sources"}
+{"id": "C33-042", "status": "PASS", "evidence": ["gateway/connection.js:76-110,120-145"], "note": "same independence allows a receive to proceed while _flush has an admitted-but-unsent item pending"}
+{"id": "C33-043", "status": "PASS", "evidence": "tests/gateway/e2e.test.js", "note": "'health stays responsive ... while a session streams bulk output and large inbound messages arrive'"}
+{"id": "C33-044", "status": "IN_PROGRESS", "evidence": [], "note": "No test specifically named for a slow sender combined with a fast outbound response stream"}
+{"id": "C33-045", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'slow consumer (no credit): worker paused ... a fast tenant unaffected, catch-up is lossless'"}
+{"id": "C33-046", "status": "PASS", "evidence": ["gateway/connection.js:76-110,120-145"], "note": "inbound path (_onBinary) does not wait on pendingOut/_flush state, and vice versa"}
+{"id": "C33-047", "status": "PASS", "evidence": ["gateway/ws.js:191-243"], "note": "_onData dispatch loop is independent of the send/_write path; it is not blocked by pending outbound leases"}
+{"id": "C33-048", "status": "PASS", "evidence": "tests/ram/v2-e2e.test.js", "note": "'binary input/output vertical slice' and fidelity check (all 60 experiment runs exact) cover integrity under simultaneous traffic"}
+{"id": "C33-049", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md#gates-kit-validation-table"], "note": "H1 capacity model is explicitly 'NOT RUN as specified'; no dedicated both-directions-active memory measurement exists"}
+{"id": "C33-050", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#ordering-and-single-exit"], "note": "output seq contiguity and single-exit ordering are the documented application-level guarantees"}
+{"id": "C33-051", "status": "PASS", "evidence": ["gateway/ws.js:137-153", "gateway/connection.js:305-317"], "note": "either peer (via _onClose) or the local Connection (via end()->ws.close()) can start closure; both paths documented"}
+{"id": "C33-052", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:191-243,248"], "note": "CLOSING state drops further app frames in _frame(), effectively coexisting with a receive already in flight (this.body), but no dedicated test named 'CloseAsync vs pending receive'"}
+{"id": "C33-053", "status": "PASS", "evidence": ["gateway/ws.js:79"], "note": "only the one socket.on('data') listener exists; nothing else can start a second receive"}
+{"id": "C33-054", "status": "PASS", "evidence": ["gateway/connection.js:296-299"], "note": "queued application sends are discarded and counted (undeliveredOutputBytes) once closure begins"}
+{"id": "C33-055", "status": "PASS", "evidence": ["gateway/ws.js:120,129,147-148"], "note": "state !== 'OPEN' check in sendText/sendBinary stops new admission at CLOSING/CLOSED"}
+{"id": "C33-056", "status": "PASS", "evidence": ["gateway/ws.js:299-312"], "note": "_onClose handles the CLOSE opcode from the peer as the observation mechanism"}
+{"id": "C33-057", "status": "PASS", "evidence": ["gateway/ws.js:149-151", "gateway/worker-link.js:42,67"], "note": "closeWaitMs (3000ms) bounds the close handshake; link.stop(1500,...) bounds worker drain before disposal"}
+{"id": "C33-058", "status": "PASS", "evidence": ["gateway/ws.js:307-310"], "note": "weInitiated = this.closeSent branch in _onClose explicitly handles peer-close racing local close"}
+{"id": "C33-059", "status": "PASS", "evidence": ["gateway/ws.js:139,168-169"], "note": "close() checks closeSent/state==='CLOSED'; _destroy() checks this.destroyed \u2014 both idempotent under repeated calls"}
+{"id": "C33-060", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:38-52"], "note": "header comments describe the intended close sequence; no dedicated 'tested close sequence' record distinct from the conformance test list"}
+{"id": "C33-061", "status": "IN_PROGRESS", "evidence": [], "note": "No test specifically named 'race send completion against socket disposal'; general disconnect/destroy tests exist (tests/chaos/lifecycle.test.js) but not this exact pairing"}
+{"id": "C33-062", "status": "IN_PROGRESS", "evidence": [], "note": "No test specifically named 'race receive completion against socket disposal'"}
+{"id": "C33-063", "status": "IN_PROGRESS", "evidence": "tests/chaos/review-fixes.test.js", "note": "C1 e2e (pause vs assembly deadline) is adjacent but not an exact 'enqueue vs shutdown' race test"}
+{"id": "C33-064", "status": "IN_PROGRESS", "evidence": [], "note": "No test specifically named for peer close racing outbound admission"}
+{"id": "C33-065", "status": "PASS", "evidence": "tests/worker/kernel.test.js", "note": "'Ctrl-C at prompt, during command, and SIGINT signal are distinct and non-fatal' exercises local cancellation vs in-flight receive"}
+{"id": "C33-066", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'worker killed (-9) -> exactly one session.exit{worker_failure} -> close 1011; capacity released'"}
+{"id": "C33-067", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'repeated and mixed termination signals run shutdown exactly once and exit 0'"}
+{"id": "C33-068", "status": "IN_PROGRESS", "evidence": [], "note": "No test specifically named for timeout handling racing successful I/O completion"}
+{"id": "C33-069", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "every listed chaos scenario asserts a single resulting session.exit/close outcome, not multiple"}
+{"id": "C33-070", "status": "IN_PROGRESS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "chaos/lifecycle.test.js and review-fixes.test.js are the repeatable stress scenarios; explicit 'observed failures' log is not a separate artifact"}
+{"id": "C33-071", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'a fast tenant unaffected' / 'other tenant is unaffected' across multiple chaos scenarios"}
+{"id": "C33-072", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:180-189"], "note": "leases/buffers are per-connection objects (not indexed by id), so cross-connection buffer reuse is prevented by construction rather than detected at runtime"}
+{"id": "C33-073", "status": "PASS", "evidence": ["gateway/ws.js:103,169"], "note": "_write and _destroy both check this.destroyed and no-op/return an error rather than acting on a disposed socket"}
+{"id": "C33-074", "status": "PASS", "evidence": ["gateway/ws.js:251,255"], "note": "duplicate/illegal operations (new message inside fragment, continuation without start) are classified and rejected with 1002"}
+{"id": "C33-075", "status": "PASS", "evidence": ["gateway/ws.js:168-176"], "note": "_destroy() is idempotent (guarded by this.destroyed); no retries are attempted on a terminally failed socket"}
+{"id": "C33-076", "status": "PASS", "evidence": ["gateway/connection.js:280-288"], "note": "_workerFailed/_workerExited notify both the send side (_finalExit control message) and close the socket (_closeSocket)"}
+{"id": "C33-077", "status": "PASS", "evidence": ["gateway/connection.js:296-299"], "note": "pendingOut leases released and counted as undeliveredOutputBytes on terminal failure"}
+{"id": "C33-078", "status": "PASS", "evidence": ["gateway/ws.js:161-166"], "note": "_dropReceiveState releases body/frag partial-message storage on failure"}
+{"id": "C33-079", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'slow consumer ... a fast tenant unaffected'; 'the other tenant is unaffected' (CPU loop scenario)"}
+{"id": "C33-080", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done--not-claimed", "docs/SECURITY.md#retained-residual-risks"], "note": "SECURITY.md records that a native-level Node bug would affect the whole gateway; no fault is documented as requiring service-wide termination otherwise"}
+{"id": "C33-081", "status": "PASS", "evidence": ["gateway/ws.js:76,193,203,106,124,132"], "note": "rxMessages/rxBytes and txMessages/txBytes are tracked as separate counters"}
+{"id": "C33-082", "status": "PASS", "evidence": ["gateway/ws.js:203,109"], "note": "assembledFrames/inPlaceFrames count receive completions; settle() marks send completion, both counted via stats/inflight"}
+{"id": "C33-083", "status": "PASS", "evidence": ["gateway/connection.js:334-338"], "note": "telemetry() exposes pendingOutMessages/outstandingMessages/inflightBytes as current pending-operation counts"}
+{"id": "C33-084", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:155-158"], "note": "_fail() logs a code+reason and closes, but there is no separate 'illegal state transition' diagnostic record distinct from the ordinary error path"}
+{"id": "C33-085", "status": "PASS", "evidence": ["gateway/connection.js:24"], "note": "this.id (per-connection hex id) is attached to every log line (conn: this.id) for correlation"}
+{"id": "C33-086", "status": "PASS", "evidence": ["gateway/connection.js:321"], "note": "'conn.closed' log line records close initiation/result; session.exit records completion"}
+{"id": "C33-087", "status": "PASS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "'/live' and logs documented as carrying no payloads"}
+{"id": "C33-088", "status": "OPEN", "evidence": [], "note": "No evidence that concurrency failure log records include a Node/runtime version field"}
+{"id": "C33-089", "status": "PASS", "evidence": "tests/load/experiment.js", "note": "harness drives 300-keystroke and bulk-output concurrent scenarios repeatably; used for W1-W3 measurements"}
+{"id": "C33-090", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:155-158"], "note": "_fail() centralizes fatal handling but does not assign a distinct 'owner' identity to each invariant failure beyond the log line"}
+{"id": "C33-091", "status": "PASS", "evidence": ["gateway/connection.js:1-14", "gateway/ws.js:1-52"], "note": "operation state model published in both files' header comments"}
+{"id": "C33-092", "status": "PASS", "evidence": ["gateway/ws.js:9-11"], "note": "send/receive ownership boundaries documented explicitly"}
+{"id": "C33-093", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:137-153,299-312"], "note": "close code paths are documented in comments; no separate published 'tested close sequence' artifact beyond the conformance test list"}
+{"id": "C33-094", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "tests/gateway/e2e.test.js simultaneous bulk-output/inbound test is indexed and listed passing"}
+{"id": "C33-095", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "ws-conformance.test.js 'new text inside a fragmented message -> 1002' / 'continuation without start -> 1002' are indexed"}
+{"id": "C33-096", "status": "IN_PROGRESS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "chaos tests cover several races (worker kill, TCP loss, mixed signals) but no dedicated 'race-condition stress' suite is separately indexed"}
+{"id": "C33-097", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "chaos/lifecycle.test.js 'other tenant is unaffected' cases are indexed"}
+{"id": "C33-098", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "'Not done / not claimed' documents scope limits generally; concurrency-model limits are not itemized separately"}
+{"id": "C33-099", "status": "IN_PROGRESS", "evidence": [], "note": "No document was found recording unresolved CloseAsync-equivalent interaction questions specifically"}
+{"id": "C33-100", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:1-333", "gateway/connection.js:1-341"], "note": "ownership model is implemented consistently through completion and shutdown in code; no explicit sign-off record found"}

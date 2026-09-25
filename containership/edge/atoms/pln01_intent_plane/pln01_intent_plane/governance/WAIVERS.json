@@ -1,0 +1,21 @@
+{
+  "schema": "PLN01_WAIVERS/1",
+  "note": "Proposed waivers. None is effective until approved_by is set by the accountable owner (governance/APPROVALS.json).",
+  "items": [
+    {"id": "W-001", "components": ["MC-001", "MC-043"], "gap": "On-call rotations and engineering/SRE teams are not staffed or provisioned", "risk": "No 24x7 response", "compensating": "Owner is escalation point; alerts defined", "owner": "David Paul Russell", "expires": "2026-12-31", "approved_by": null},
+    {"id": "W-002", "components": ["MC-051", "MC-014"], "gap": "pk_core monorepo is not bundled; monorepo conformance gate cannot run here", "risk": "PK gate evidence absent", "compensating": "Local contract types + standalone exit gate; pk_core declared as pinned optional extra", "owner": "David Paul Russell", "expires": "2026-12-31", "approved_by": null},
+    {"id": "W-003", "components": ["MC-021"], "gap": "No at-rest encryption / real KMS adapter (stdlib has no AEAD cipher)", "risk": "Plaintext intent on disk", "compensating": "Secrets refused from intent; HMAC-sealed integrity; encrypted volume required by runbook", "owner": "David Paul Russell", "expires": "2026-12-31", "approved_by": null},
+    {"id": "W-004", "components": ["MC-026", "MC-028"], "gap": "Multi-host replication/consensus not implemented", "risk": "Site loss RPO = last backup", "compensating": "Fenced single writer, hourly off-host backup, restore drill", "owner": "David Paul Russell", "expires": "2027-03-31", "approved_by": null},
+    {"id": "W-005", "components": ["MC-031", "MC-033", "MC-041"], "gap": "Baselines measured in build sandbox, not production reference hardware; no power or fleet-scale runs", "risk": "Thresholds may not reflect production", "compensating": "Perf gate with provisional thresholds; SLO headroom ~25x", "owner": "David Paul Russell", "expires": "2026-12-31", "approved_by": null},
+    {"id": "W-006", "components": ["MC-022"], "gap": "Audit head not externally anchored (WORM/transparency log); no telemetry exporter process", "risk": "Whole-file replacement by a key holder undetectable", "compensating": "HMAC seal with KMS-held key; off-host backups", "owner": "David Paul Russell", "expires": "2026-12-31", "approved_by": null},
+    {"id": "W-007", "components": ["MC-050"], "gap": "License terms not chosen by owner; LICENSE reserves all rights pending decision", "risk": "Redistribution unclear", "compensating": "No third-party code included", "owner": "David Paul Russell", "expires": "2026-10-31", "approved_by": null},
+    {"id": "W-008", "components": ["MC-002", "MC-003", "MC-042"], "gap": "ADRs, requirements baseline and waivers await human approval", "risk": "Exit gate cannot be GO", "compensating": "All artifacts drafted and machine-checked", "owner": "David Paul Russell", "expires": "2026-10-31", "approved_by": null}
+  ],
+  "technical_debt": [
+    {"id": "D-001", "item": "retract() rebuilds reverse index per call (O(V+E))", "plan": "maintain reverse index incrementally"},
+    {"id": "D-002", "item": "Graph lock is process-wide; transactions hold it for their duration", "plan": "per-tenant sharding in 5.x"}
+  ],
+  "deprecations": [
+    {"id": "X-001", "item": "Direct IntentGraph use as a network-facing API", "replacement": "IntentPlaneService", "sunset": "5.0.0"}
+  ]
+}

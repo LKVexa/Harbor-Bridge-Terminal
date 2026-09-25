@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://linearfinance.org/schemas/inv30/capability/1",
+  "title": "PK_CAPABILITY/1 derive request/response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "op"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_CAPABILITY/1"
+    },
+    "op": {
+      "enum": [
+        "mint",
+        "derive",
+        "invalidate",
+        "describe"
+      ]
+    },
+    "handle": {
+      "type": "string",
+      "pattern": "^cap_[0-9a-f]{32}$"
+    },
+    "base": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "length": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "read",
+          "write",
+          "execute"
+        ]
+      },
+      "uniqueItems": true,
+      "maxItems": 3
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "deadline_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60000
+    },
+    "traceparent": {
+      "type": "string",
+      "maxLength": 55
+    },
+    "require_hardware": {
+      "type": "boolean"
+    }
+  }
+}

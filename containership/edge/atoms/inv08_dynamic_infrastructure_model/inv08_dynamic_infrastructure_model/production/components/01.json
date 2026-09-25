@@ -1,0 +1,82 @@
+{
+ "component": 1,
+ "title": "Reproducible `pk_core` dependency package and pin",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "a reproducible source/wheel location for pk_core",
+   "state": "BLOCKED",
+   "spec": "production/pkcore_pin.py::resolve_wheelhouse",
+   "modules": [
+    "production/pkcore_pin.py::load_lock",
+    "production/packaging/pk_core.lock.json"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_shipped_lock_is_valid_and_unresolved",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_cli_status_fails_closed"
+   ],
+   "blocker": "pk_core source repository / released wheel location does not exist in this environment"
+  },
+  {
+   "name": "a PEP 440 compatible exact version/range pin",
+   "state": "PARTIAL",
+   "spec": "production/pkcore_pin.py (module docstring: PEP 440 subset)",
+   "modules": [
+    "production/pkcore_pin.py::parse_version",
+    "production/pkcore_pin.py::parse_requirement",
+    "production/pkcore_pin.py::satisfies"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_version_parse_positive_and_ordering",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_version_parse_negative",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_requirement_specifiers",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_requirement_negative"
+   ],
+   "blocker": "actual pk_core version to pin is unknown (no released pk_core available)"
+  },
+  {
+   "name": "a hash-locked dependency resolution record",
+   "state": "PARTIAL",
+   "spec": "production/pkcore_pin.py::validate_lock (PK_DYN_LOCK/1)",
+   "modules": [
+    "production/pkcore_pin.py::validate_lock",
+    "production/packaging/pk_core.lock.json"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_shipped_lock_is_valid_and_unresolved",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_lock_validation_negative"
+   ],
+   "blocker": "lock is UNRESOLVED: sha256 of the pk_core wheel cannot be computed without the wheel"
+  },
+  {
+   "name": "an offline/cacheable wheelhouse or artifact mirror path",
+   "state": "PARTIAL",
+   "spec": "production/pkcore_pin.py::resolve_wheelhouse",
+   "modules": [
+    "production/pkcore_pin.py::resolve_wheelhouse"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_wheelhouse_resolves_verified_wheel",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_wheelhouse_fails_closed"
+   ],
+   "blocker": "no wheelhouse/mirror populated with a real pk_core wheel"
+  },
+  {
+   "name": "an API/ABI compatibility test against INV-08's pk_core usage",
+   "state": "PARTIAL",
+   "spec": "production/pkcore_pin.py::api_surface / check_compat",
+   "modules": [
+    "production/pkcore_pin.py::api_surface",
+    "production/pkcore_pin.py::check_compat",
+    "production/pkcore_pin.py::DYNAMIC_SURFACE"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_api_surface_static",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_compat_blocked_without_pk_core",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.PkCorePinTest.test_compat_against_fake_pk_core_double"
+   ],
+   "blocker": "verified only against an in-memory pk_core double; real pk_core not importable"
+  }
+ ],
+ "notes": "Everything machine-reachable is implemented; the lock stays UNRESOLVED and fails closed until a real pk_core wheel and digest exist."
+}

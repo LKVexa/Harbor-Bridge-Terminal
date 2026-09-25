@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_SFI_ERROR:1",
+  "title": "Structured error envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "code",
+    "wire",
+    "category",
+    "severity",
+    "retryable",
+    "message",
+    "details"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_SFI_ERROR/1"
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^SFI_[A-Z_]+$"
+    },
+    "wire": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 9999
+    },
+    "category": {
+      "enum": [
+        "input",
+        "policy",
+        "security",
+        "auth",
+        "resource",
+        "dependency",
+        "internal",
+        "compatibility"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "details": {
+      "type": "object",
+      "maxProperties": 32
+    }
+  }
+}

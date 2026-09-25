@@ -1,0 +1,15 @@
+# INV-38-C009 escalation routing. No personal phone numbers or secrets: references
+# point at paging *destinations* resolved by the org paging system at runtime.
+component: INV-38
+owner_service: platform-transport-team
+paging:
+  destination_ref: pagerduty://services/INV-38-kernel-bypass   # resolved by secrets-less integration
+severity_timers:
+  SEV-1: {page: immediate, ack_minutes: 5, mgmt_escalation_minutes: 15, vendor_escalation_minutes: 30, final_authority: incident-commander}
+  SEV-2: {page: immediate, ack_minutes: 15, mgmt_escalation_minutes: 60, final_authority: service-owner}
+  SEV-3: {page: business-hours, ack_minutes: 240, final_authority: service-owner}
+cross_component_handoff:
+  INV-35: platform-vmio-team
+  INV-36: platform-control-team
+  INV-37: platform-dataplane-team
+  GAP-12: platform-wan-team

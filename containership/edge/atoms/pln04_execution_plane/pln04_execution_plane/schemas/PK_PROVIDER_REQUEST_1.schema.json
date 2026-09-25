@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:pln04:PK_PROVIDER_REQUEST:1",
+  "title": "PK_PROVIDER_REQUEST/1",
+  "description": "Immutable request PLN-04 sends to an execution-tier provider.",
+  "type": "object",
+  "required": [
+    "schema",
+    "workload",
+    "tenant",
+    "tier",
+    "policy_digest",
+    "artifact_digest",
+    "idempotency_key",
+    "deadline_ns",
+    "epoch",
+    "resources"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_PROVIDER_REQUEST/1"
+    },
+    "workload": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "tier": {
+      "enum": [
+        "process",
+        "wasm",
+        "unikernel",
+        "microvm",
+        "vm"
+      ]
+    },
+    "policy_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "artifact_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 256
+    },
+    "deadline_ns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "resources": {
+      "type": "object",
+      "required": [
+        "cpu_milli",
+        "memory_mib"
+      ],
+      "properties": {
+        "cpu_milli": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

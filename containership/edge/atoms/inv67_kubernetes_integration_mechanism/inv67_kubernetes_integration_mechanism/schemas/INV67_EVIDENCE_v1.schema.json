@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv67:EVIDENCE:1",
+  "title": "INV-67 per-component acceptance evidence entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "item",
+    "title",
+    "priority",
+    "audit_mapping",
+    "requirements",
+    "artifacts",
+    "tests",
+    "result",
+    "blockers",
+    "owner",
+    "environment",
+    "acceptance_gate"
+  ],
+  "properties": {
+    "schema": {
+      "const": "INV67_EVIDENCE/1"
+    },
+    "item": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 68
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "priority": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2"
+      ]
+    },
+    "audit_mapping": {
+      "type": "string"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^INV67-REQ-[0-9]{3}$"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "pass",
+              "fail",
+              "skip",
+              "missing"
+            ]
+          }
+        }
+      }
+    },
+    "result": {
+      "enum": [
+        "IMPLEMENTED_LOCALLY_VERIFIED",
+        "BLOCKED",
+        "FAIL"
+      ]
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "owner": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "acceptance_gate": {
+      "enum": [
+        "MET",
+        "NOT_MET"
+      ]
+    }
+  }
+}

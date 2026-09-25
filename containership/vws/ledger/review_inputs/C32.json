@@ -1,0 +1,1651 @@
+{
+"component": "C32",
+"items": [
+{
+"id": "C32-001",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Identify all producers that can send to one socket.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Producers (_send call sites) exist in code but not enumerated in a design doc.",
+"prior_evidence": [
+"gateway/connection.js",
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C32-002",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Choose a per-socket queue or a reviewed locking approach.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Per-connection pendingOut array + ordered socket write is the chosen mechanism.",
+"prior_evidence": [
+"gateway/ws.js:9-11",
+"gateway/connection.js:28,67-70"
+]
+},
+{
+"id": "C32-003",
+"task_class": "DOCUMENT",
+"area": "01. Queue or lock selection",
+"req": "Document why the selected mechanism fits the worker model.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Mechanism described but rationale tied to worker model not stated explicitly.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C32-004",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Define the serialization guarantee.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Comment: single ordered send path (_write -> socket.write).",
+"prior_evidence": [
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C32-005",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Define message ordering requirements.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "opened ack documented to precede output, same ordered queue.",
+"prior_evidence": [
+"gateway/connection.js:218"
+]
+},
+{
+"id": "C32-006",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Define the maximum queued message count.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No maximum queued message count is defined, only a byte budget.",
+"prior_evidence": []
+},
+{
+"id": "C32-007",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Define the maximum queued payload bytes.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendQueueBytes 524288 default, env-configurable.",
+"prior_evidence": [
+"config/limits.json",
+"gateway/config.js:55"
+]
+},
+{
+"id": "C32-008",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Define behavior when capacity is exceeded.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Data sends refused beyond VWS_SEND_QUEUE_BYTES.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C32-009",
+"task_class": "SPECIFY",
+"area": "01. Queue or lock selection",
+"req": "Define whether prioritization is in scope.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Control messages get a further 16384-byte reserved budget over data.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"gateway/ws.js:97"
+]
+},
+{
+"id": "C32-010",
+"task_class": "IMPLEMENT",
+"area": "01. Queue or lock selection",
+"req": "Approve the outbound-admission contract.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit approval/sign-off record for the admission contract.",
+"prior_evidence": []
+},
+{
+"id": "C32-011",
+"task_class": "IMPLEMENT",
+"area": "02. Ownership",
+"req": "Assign one send-drain owner per socket.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "One send path per connection, documented.",
+"prior_evidence": [
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C32-012",
+"task_class": "IMPLEMENT",
+"area": "02. Ownership",
+"req": "Assign ownership of queued payload bytes.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut is instance-owned but ownership not documented explicitly.",
+"prior_evidence": [
+"gateway/connection.js:28"
+]
+},
+{
+"id": "C32-013",
+"task_class": "SPECIFY",
+"area": "02. Ownership",
+"req": "Define when ownership transfers from producer to queue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit doc of producer-to-queue ownership transfer.",
+"prior_evidence": []
+},
+{
+"id": "C32-014",
+"task_class": "SPECIFY",
+"area": "02. Ownership",
+"req": "Define ownership when enqueue fails.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No doc of ownership when enqueue fails.",
+"prior_evidence": []
+},
+{
+"id": "C32-015",
+"task_class": "IMPLEMENT",
+"area": "02. Ownership",
+"req": "Prevent producers from mutating admitted payloads.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Encoded text is an immutable JS string re-created per _send; producers cannot mutate admitted payloads.",
+"prior_evidence": [
+"gateway/connection.js:59-70"
+]
+},
+{
+"id": "C32-016",
+"task_class": "SPECIFY",
+"area": "02. Ownership",
+"req": "Define how connection cleanup obtains the queue reference.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Cleanup accesses this.pendingOut directly; not documented as a rule.",
+"prior_evidence": [
+"gateway/connection.js:303-309,331"
+]
+},
+{
+"id": "C32-017",
+"task_class": "SPECIFY",
+"area": "02. Ownership",
+"req": "Define the relationship between queue disposal and socket disposal.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut cleared alongside socket teardown in _onSocketClose, no explicit doc of the relationship.",
+"prior_evidence": [
+"gateway/connection.js:331"
+]
+},
+{
+"id": "C32-018",
+"task_class": "IMPLEMENT",
+"area": "02. Ownership",
+"req": "Avoid sharing one mutable queue between unrelated sockets.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut is a per-instance array (`this.pendingOut = []`), never shared across connections.",
+"prior_evidence": [
+"gateway/connection.js:28"
+]
+},
+{
+"id": "C32-019",
+"task_class": "SPECIFY",
+"area": "02. Ownership",
+"req": "Define safe access from worker and broadcast producers.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No design doc for safe access from worker vs broadcast producers (no broadcast producer exists).",
+"prior_evidence": []
+},
+{
+"id": "C32-020",
+"task_class": "DOCUMENT",
+"area": "02. Ownership",
+"req": "Document the producer-consumer handoff.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No producer-consumer handoff document found.",
+"prior_evidence": []
+},
+{
+"id": "C32-021",
+"task_class": "REVIEW",
+"area": "03. Admission implementation",
+"req": "Validate the target connection before enqueue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "sendText checks connection state before enqueue, but no dedicated VERIFY test named for this.",
+"prior_evidence": [
+"gateway/ws.js:95"
+]
+},
+{
+"id": "C32-022",
+"task_class": "REVIEW",
+"area": "03. Admission implementation",
+"req": "Validate message type and size before enqueue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'encode refuses invalid outbound envelopes' verifies type/shape validation before send.",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C32-023",
+"task_class": "REVIEW",
+"area": "03. Admission implementation",
+"req": "Check shutdown and close state before enqueue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Implemented (state check) but no dedicated named test for enqueue-after-close.",
+"prior_evidence": [
+"gateway/ws.js:95"
+]
+},
+{
+"id": "C32-024",
+"task_class": "IMPLEMENT",
+"area": "03. Admission implementation",
+"req": "Apply the configured count limit.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No configured count limit is implemented, only bytes.",
+"prior_evidence": []
+},
+{
+"id": "C32-025",
+"task_class": "IMPLEMENT",
+"area": "03. Admission implementation",
+"req": "Apply the configured byte limit.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Byte budget check in sendText before admitting a message.",
+"prior_evidence": [
+"gateway/ws.js:97-98"
+]
+},
+{
+"id": "C32-026",
+"task_class": "IMPLEMENT",
+"area": "03. Admission implementation",
+"req": "Update admission accounting atomically under the chosen mechanism.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Single-threaded event loop; queuedBytes read from socket.writableLength, no racy counter.",
+"prior_evidence": [
+"gateway/ws.js:68,86,98"
+]
+},
+{
+"id": "C32-027",
+"task_class": "IMPLEMENT",
+"area": "03. Admission implementation",
+"req": "Return a deliberate accepted or rejected result.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendText returns boolean accepted/rejected.",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C32-028",
+"task_class": "IMPLEMENT",
+"area": "03. Admission implementation",
+"req": "Avoid silently dropping messages unless an approved policy permits it.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Control rejection terminates the connection (not silent); data path retains queued item rather than dropping, but this is not documented as a deliberate no-drop",
+"prior_evidence": [
+"gateway/connection.js:64,67-70"
+]
+},
+{
+"id": "C32-029",
+"task_class": "IMPLEMENT",
+"area": "03. Admission implementation",
+"req": "Bound time spent waiting for queue capacity.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No bounded wait for producers; backpressure pauses the worker indefinitely rather than a bounded wait.",
+"prior_evidence": []
+},
+{
+"id": "C32-030",
+"task_class": "TEST",
+"area": "03. Admission implementation",
+"req": "Test admission before the drain loop starts.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_flush called synchronously in _send before any 'drain' event; no dedicated named test for this race.",
+"prior_evidence": [
+"gateway/connection.js:67-70"
+]
+},
+{
+"id": "C32-031",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Start at most one drain loop per socket.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_flush is only invoked from _send and the ws 'drain' event; no separate drain loop is spawned.",
+"prior_evidence": [
+"gateway/connection.js:39,68,71-77"
+]
+},
+{
+"id": "C32-032",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Remove messages according to the approved ordering policy.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut is a FIFO array (push/shift) preserving insertion order.",
+"prior_evidence": [
+"gateway/connection.js:67,73-74"
+]
+},
+{
+"id": "C32-033",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Invoke SendAsync for one message at a time.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_flush sends pendingOut[0] one message at a time.",
+"prior_evidence": [
+"gateway/connection.js:73"
+]
+},
+{
+"id": "C32-034",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Wait for the current send outcome before advancing.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Loop checks sendText's return before shifting/continuing.",
+"prior_evidence": [
+"gateway/connection.js:73-74"
+]
+},
+{
+"id": "C32-035",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Keep receive processing independent of queue draining.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Receive path (_onText) is a separate handler from _flush/_flow; worker pause only throttles output, not inbound processing.",
+"prior_evidence": [
+"gateway/connection.js:38,71-77,103"
+]
+},
+{
+"id": "C32-036",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Release completed payload ownership.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut.shift() removes an item once accepted by the socket.",
+"prior_evidence": [
+"gateway/connection.js:74"
+]
+},
+{
+"id": "C32-037",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Update byte and count accounting after removal or completion.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Byte accounting (unackedBytes) updates on client ack, not on socket send completion; partial coverage.",
+"prior_evidence": [
+"gateway/connection.js:143"
+]
+},
+{
+"id": "C32-038",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Handle an empty queue without busy spinning.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_flush loop exits when pendingOut is empty; driven by 'drain' event and _send calls, not polling.",
+"prior_evidence": [
+"gateway/connection.js:71-77"
+]
+},
+{
+"id": "C32-039",
+"task_class": "IMPLEMENT",
+"area": "04. Drain implementation",
+"req": "Prevent lost wake-ups under the selected synchronization mechanism.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_flush re-invoked on every _send and on 'drain'; no explicit analysis/doc of lost-wakeup avoidance.",
+"prior_evidence": [
+"gateway/ws.js:62",
+"gateway/connection.js:39"
+]
+},
+{
+"id": "C32-040",
+"task_class": "TEST",
+"area": "04. Drain implementation",
+"req": "Test drain startup racing with the first enqueue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Implemented (single-threaded so no true race) but no dedicated named test.",
+"prior_evidence": [
+"gateway/connection.js:67-70"
+]
+},
+{
+"id": "C32-041",
+"task_class": "SPECIFY",
+"area": "05. Capacity and backpressure",
+"req": "Define the response to a full queue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Data sends refused beyond VWS_SEND_QUEUE_BYTES.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C32-042",
+"task_class": "SPECIFY",
+"area": "05. Capacity and backpressure",
+"req": "Define whether a producer may wait for capacity.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Design: no blocking wait; excess triggers refusal/backpressure to the worker instead.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C32-043",
+"task_class": "IMPLEMENT",
+"area": "05. Capacity and backpressure",
+"req": "Bound any producer wait.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Worker pause via backpressure is not a bounded producer wait; no explicit bound documented.",
+"prior_evidence": []
+},
+{
+"id": "C32-044",
+"task_class": "SPECIFY",
+"area": "05. Capacity and backpressure",
+"req": "Define whether a slow client should be disconnected.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Slow client is paused indefinitely (not force-disconnected); no explicit design decision document found.",
+"prior_evidence": [
+"gateway/connection.js:79-83"
+]
+},
+{
+"id": "C32-045",
+"task_class": "SPECIFY",
+"area": "05. Capacity and backpressure",
+"req": "Define any explicitly permitted discard policy.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No discard policy is defined or permitted; messages queue rather than drop.",
+"prior_evidence": []
+},
+{
+"id": "C32-046",
+"task_class": "IMPLEMENT",
+"area": "05. Capacity and backpressure",
+"req": "Distinguish critical and optional messages only when required.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Control messages get a distinct reserved budget over data messages, i.e. a limited prioritization.",
+"prior_evidence": [
+"gateway/ws.js:97"
+]
+},
+{
+"id": "C32-047",
+"task_class": "IMPLEMENT",
+"area": "05. Capacity and backpressure",
+"req": "Prevent an unbounded backlog for an unresponsive client.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Worker paused via _flow() when congested, bounding backlog growth for an unresponsive client.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"gateway/connection.js:79-83"
+]
+},
+{
+"id": "C32-048",
+"task_class": "TEST",
+"area": "05. Capacity and backpressure",
+"req": "Test saturation with a deliberately slow reader.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'slow consumer: socket budget + ack window pause the worker; memory stays bounded'.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:64"
+]
+},
+{
+"id": "C32-049",
+"task_class": "REVIEW",
+"area": "05. Capacity and backpressure",
+"req": "Confirm other clients remain serviceable during saturation.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Same test: 'a fast tenant is unaffected'.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:64"
+]
+},
+{
+"id": "C32-050",
+"task_class": "DOCUMENT",
+"area": "05. Capacity and backpressure",
+"req": "Document the approved backpressure outcome.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Budgets documented but no explicit sign-off record of the backpressure outcome.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md",
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C32-051",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency tests",
+"req": "Enqueue from two producers simultaneously.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Multiple call sites (_output, _heartbeat, _error) enqueue via _send; implemented implicitly, not a dedicated construct/test.",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C32-052",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency tests",
+"req": "Enqueue from many producers simultaneously.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Same reasoning for many producers; Node event loop serializes calls.",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C32-053",
+"task_class": "VERIFY",
+"area": "06. Concurrency tests",
+"req": "Verify only one SendAsync is active on the socket.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "True by construction (single array + single _flush), but no dedicated test asserting only one send active.",
+"prior_evidence": []
+},
+{
+"id": "C32-054",
+"task_class": "VERIFY",
+"area": "06. Concurrency tests",
+"req": "Verify output ordering matches the approved policy.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'opened precedes output' verifies queue ordering.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js:6"
+]
+},
+{
+"id": "C32-055",
+"task_class": "TEST",
+"area": "06. Concurrency tests",
+"req": "Test enqueue racing with a successful send completion.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test for enqueue racing with a successful send completion.",
+"prior_evidence": []
+},
+{
+"id": "C32-056",
+"task_class": "TEST",
+"area": "06. Concurrency tests",
+"req": "Test enqueue racing with send failure.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test for enqueue racing with send failure.",
+"prior_evidence": []
+},
+{
+"id": "C32-057",
+"task_class": "TEST",
+"area": "06. Concurrency tests",
+"req": "Test enqueue racing with connection closure.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'abrupt TCP loss' covers a related race generally, not enqueue-specific.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:36"
+]
+},
+{
+"id": "C32-058",
+"task_class": "TEST",
+"area": "06. Concurrency tests",
+"req": "Test multiple independent per-socket queues.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'a fast tenant is unaffected' implies per-connection queue independence, not a dedicated multi-queue test.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:64"
+]
+},
+{
+"id": "C32-059",
+"task_class": "TEST",
+"area": "06. Concurrency tests",
+"req": "Test broadcast production alongside a direct reply.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No broadcast producer exists in this candidate; no such test found.",
+"prior_evidence": []
+},
+{
+"id": "C32-060",
+"task_class": "DOCUMENT",
+"area": "06. Concurrency tests",
+"req": "Record any nondeterministic ordering explicitly permitted by the contract.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "Queue is FIFO; no nondeterministic ordering is documented as permitted.",
+"prior_evidence": []
+},
+{
+"id": "C32-061",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Stop or recover the drain loop according to a send-failure policy.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "On sendText false the loop stops and waits for 'drain'; congestion vs terminal failure are not distinguished in a documented policy.",
+"prior_evidence": [
+"gateway/connection.js:71-77"
+]
+},
+{
+"id": "C32-062",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Notify owners of messages not sent after terminal failure.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "On socket close, pendingOut is cleared; no client remains to notify by design.",
+"prior_evidence": [
+"gateway/connection.js:331"
+]
+},
+{
+"id": "C32-063",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Release all abandoned payloads.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut.length = 0 releases queued payload references on close.",
+"prior_evidence": [
+"gateway/connection.js:331"
+]
+},
+{
+"id": "C32-064",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Reset accounting without producing negative counts.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Connection object (with its counters) is discarded/gen-fenced on close; no negative counts arise.",
+"prior_evidence": [
+"gateway/connection.js:329-333"
+]
+},
+{
+"id": "C32-065",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Avoid retrying uncertain application delivery without an explicit policy.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No retry-on-uncertain-delivery logic exists, but this is not documented as a deliberate policy.",
+"prior_evidence": []
+},
+{
+"id": "C32-066",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Handle a producer exception before ownership transfer.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "try/catch around codec.encode handles a producer/encode exception before the payload is pushed.",
+"prior_evidence": [
+"gateway/connection.js:60-62"
+]
+},
+{
+"id": "C32-067",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Handle a producer exception after ownership transfer.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No handling/test found for a producer exception occurring after ownership transfer (post-push).",
+"prior_evidence": []
+},
+{
+"id": "C32-068",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Handle a synchronization primitive failure through a deliberate fatal path.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No OS-level synchronization primitive (mutex/semaphore) is used; Node's single-threaded event loop is the mechanism, so a primitive-failure path has no meaning ",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C32-069",
+"task_class": "IMPLEMENT",
+"area": "07. Fault handling",
+"req": "Prevent a faulted drainer from leaving the queue silently stuck.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_flush is not wrapped in a fault-recovery path beyond socket 'error' handling; no explicit stuck-queue protection documented.",
+"prior_evidence": []
+},
+{
+"id": "C32-070",
+"task_class": "DOCUMENT",
+"area": "07. Fault handling",
+"req": "Record terminal queue status for connection cleanup.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "workerExit/exitSent are recorded for cleanup, but queue status specifically is not.",
+"prior_evidence": [
+"gateway/connection.js:255,262,276-283"
+]
+},
+{
+"id": "C32-071",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Stop new admissions when the chosen shutdown boundary begins.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendText refuses admission once state !== 'OPEN'.",
+"prior_evidence": [
+"gateway/ws.js:95"
+]
+},
+{
+"id": "C32-072",
+"task_class": "SPECIFY",
+"area": "08. Shutdown",
+"req": "Decide whether already queued messages are drained or discarded.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_closeSocket comment: 'a slow reader still gets its queued output + exit, but only within a bounded grace period' -- decided to drain, not discard.",
+"prior_evidence": [
+"gateway/connection.js:306-309"
+]
+},
+{
+"id": "C32-073",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Bound the time allowed for queued-message draining.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "2000ms grace-period bound in _closeSocket.",
+"prior_evidence": [
+"gateway/connection.js:307-308"
+]
+},
+{
+"id": "C32-074",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Coordinate closing-handshake operations with the send owner.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_closeSocket flushes pendingOut before calling ws.close().",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C32-075",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Notify waiting producers that shutdown has begun.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Design has no blocking producers to notify (fire-and-forget with worker-pause backpressure instead); not documented explicitly.",
+"prior_evidence": []
+},
+{
+"id": "C32-076",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Release waiting producers when the queue is disposed.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Same: no waiting producers exist by design; nothing explicit to release.",
+"prior_evidence": []
+},
+{
+"id": "C32-077",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Dispose synchronization resources after their users stop.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit synchronization resource is allocated/disposed (none used).",
+"prior_evidence": []
+},
+{
+"id": "C32-078",
+"task_class": "TEST",
+"area": "08. Shutdown",
+"req": "Test shutdown with an empty queue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Empty-queue shutdown path (`if (!this.pendingOut.length) return this.ws.close(...)`) is implemented but no dedicated named test found.",
+"prior_evidence": [
+"gateway/connection.js:305"
+]
+},
+{
+"id": "C32-079",
+"task_class": "TEST",
+"area": "08. Shutdown",
+"req": "Test shutdown with a full queue and slow reader.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'peer that stops reading...gateway send queue stays within budget' and 'SIGTERM drains within budget'.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:98,136"
+]
+},
+{
+"id": "C32-080",
+"task_class": "VERIFY",
+"area": "08. Shutdown",
+"req": "Verify no payload references remain after cleanup.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No test/measurement verifying no payload references remain after cleanup.",
+"prior_evidence": []
+},
+{
+"id": "C32-081",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Track queued message count per connection or approved aggregate.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut.length is available in-memory but not exposed as an operator-facing metric.",
+"prior_evidence": [
+"gateway/connection.js:28"
+]
+},
+{
+"id": "C32-082",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Track queued payload bytes.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "Queued payload bytes are not tracked/exposed as an explicit metric.",
+"prior_evidence": []
+},
+{
+"id": "C32-083",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Track admission rejections.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "Admission rejections (sendText returning false) are not counted or logged as a metric.",
+"prior_evidence": []
+},
+{
+"id": "C32-084",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Track time spent waiting in the queue.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No time-spent-in-queue tracking exists.",
+"prior_evidence": []
+},
+{
+"id": "C32-085",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Track drainer activity and terminal failure.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker.failed logging exists but is connection/worker level, not a distinct 'drainer' abstraction.",
+"prior_evidence": [
+"gateway/connection.js:263"
+]
+},
+{
+"id": "C32-086",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Detect a nonempty queue whose drainer is no longer running.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No detection exists for a nonempty queue with a dead drainer (design has no separate drain loop/thread).",
+"prior_evidence": []
+},
+{
+"id": "C32-087",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Avoid including payload contents in queue diagnostics.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'logger: single-line JSON, secret-like fields dropped' -- payload contents are not logged.",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C32-088",
+"task_class": "MEASURE",
+"area": "09. Monitoring",
+"req": "Measure peak queue memory under the target workload.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No measurement file specifically for peak queue memory under the target workload was found.",
+"prior_evidence": []
+},
+{
+"id": "C32-089",
+"task_class": "DOCUMENT",
+"area": "09. Monitoring",
+"req": "Document safe thresholds requiring operator attention.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented operator-attention thresholds for the outbound queue.",
+"prior_evidence": []
+},
+{
+"id": "C32-090",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Provide a slow-client queue investigation procedure.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "docs/OPERATIONS.md has no slow-client queue investigation procedure.",
+"prior_evidence": []
+},
+{
+"id": "C32-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the chosen queue or lock design.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Publishes the chosen queue/backpressure design.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C32-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish ordering and capacity guarantees.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Publishes ordering behavior and byte-capacity guarantees.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"config/limits.json"
+]
+},
+{
+"id": "C32-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish producer ownership rules.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No published document of producer ownership rules.",
+"prior_evidence": []
+},
+{
+"id": "C32-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link concurrent-producer ordering tests.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Ordering test exists but is not linked from a handover doc as 'concurrent-producer ordering'.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js:6"
+]
+},
+{
+"id": "C32-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link saturation and slow-reader tests.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md explicitly cites tests/chaos/lifecycle.test.js for the saturation/slow-reader behavior.",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"tests/chaos/lifecycle.test.js:64,98"
+]
+},
+{
+"id": "C32-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link drainer-failure cleanup tests.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No drainer-failure-specific cleanup test/link exists (no separate drainer abstraction).",
+"prior_evidence": []
+},
+{
+"id": "C32-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link full-queue shutdown tests.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "SIGTERM/drain test exists but is not explicitly linked as a 'full-queue shutdown' test.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136"
+]
+},
+{
+"id": "C32-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document whether discard or prioritization is implemented.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "limits.json notes prioritization/discard status only implicitly (no discard implemented); not a clear published statement.",
+"prior_evidence": [
+"config/limits.json"
+]
+},
+{
+"id": "C32-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record the approved count and byte limits.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Records the count/byte limits, but the file itself states 'Owner approval ... still required before raising any of them' -- not yet approved.",
+"prior_evidence": [
+"config/limits.json"
+]
+},
+{
+"id": "C32-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve serialization only after overlapping sends are prevented under load.",
+"ram_overlay": "Bound both outbound item count and allocated bytes, including waiting producers and in-flight leases. Use reliable ordered delivery or explicit session failure for terminal bytes; never silently drop the oldest terminal output.",
+"challenge": "Hold the receiver idle while producers generate output; verify the byte cap and eventual controlled close.",
+"ref_work": [
+"R09",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of an explicit approval gated on overlapping-sends prevention under load.",
+"prior_evidence": []
+}
+]
+}

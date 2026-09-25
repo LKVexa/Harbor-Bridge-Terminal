@@ -1,0 +1,1 @@
+Placeholder directory: the hull's PA21 package detector (`pa21studio.ledger.find_packages`) requires a directory holding both `pamath/` and `reference/`. The PA-MATH layer itself is not carried here; bind the full delivery with `./BUILD --pa21 <Desktop/PA21.2>` to have it.

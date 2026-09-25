@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_SANDBOX_STATUS/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema","version","node","healthy","ready","not_ready_reasons","config_digest","release_digest",
+               "backend","features","active_controls","active_sandboxes","audit_head","uptime_s"],
+  "properties": {
+    "schema": {"const": "PK_SANDBOX_STATUS/1"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "node": {"type": "string", "minLength": 1},
+    "healthy": {"type": "boolean"},
+    "ready": {"type": "boolean"},
+    "not_ready_reasons": {"type": "array", "items": {"type": "string"}},
+    "config_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "release_digest": {"type": "string"},
+    "backend": {"enum": ["native","bwrap","seatbelt"]},
+    "features": {"type": "object"},
+    "active_controls": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "active_sandboxes": {"type": "integer", "minimum": 0},
+    "audit_head": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "uptime_s": {"type": "number", "minimum": 0}
+  }
+}

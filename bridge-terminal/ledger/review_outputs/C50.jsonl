@@ -1,0 +1,100 @@
+{"id": "C50-001", "status": "PASS", "evidence": ["gateway/server.js:253-254"], "note": "clean drain completion (r.forced=false) defines successful termination"}
+{"id": "C50-002", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:254"], "note": "process.exit(r.forced?1:0) exits 0 on successful shutdown [downgraded: RECORD item without a written record]"}
+{"id": "C50-003", "status": "PASS", "evidence": ["gateway/server.js:250"], "note": "process.exit(e instanceof ConfigError?78:1) covers incomplete startup"}
+{"id": "C50-004", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:257"], "note": "listen failure maps to exit(1); no process-wide uncaughtException handler defines other fatal runtime failures"}
+{"id": "C50-005", "status": "PASS", "evidence": ["gateway/server.js:224-232,254"], "note": "'forced' flag from finish() is reflected into exit(1) when shutdown didn't complete cleanly"}
+{"id": "C50-006", "status": "PASS", "evidence": ["gateway/server.js:252-256"], "note": "onSignal distinguishes SIGTERM/SIGINT deliberate exit; a signalled guard prevents re-entry"}
+{"id": "C50-007", "status": "PASS", "evidence": ["gateway/server.js:247-258"], "note": "only the require.main===module entrypoint block calls process.exit"}
+{"id": "C50-008", "status": "PASS", "evidence": ["gateway/server.js:242-248", "gateway/connection.js:305-315"], "note": "cleanup preceding exit: per-connection ws.terminate/link.kill, server.close(), closeAllConnections(), then process.exit in server.js main block"}
+{"id": "C50-009", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "VWS_SHUTDOWN_MS (20000 default) is the maximum finalization budget"}
+{"id": "C50-010", "status": "OPEN", "evidence": [], "note": "no single approved process-outcome table found; codes (0/1/78) are scattered across code, not consolidated"}
+{"id": "C50-011", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js"], "note": "'health flips to 503 while draining' covers /health but no dedicated test confirms WS/ticket ingress refusal specifically at shutdown time"}
+{"id": "C50-012", "status": "OPEN", "evidence": [], "note": "no test confirms every outstanding accepted context gets a deliberate disposition before exit"}
+{"id": "C50-013", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:136-150"], "note": "real-process SIGTERM test only exits after drain coordination completes or the hard timer fires"}
+{"id": "C50-014", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:136-150"], "note": "each session receives session.exit before process exit, i.e. worker outcomes are collected"}
+{"id": "C50-015", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:303-309"], "note": "queue draining is implemented but not asserted by a dedicated exit-prerequisite test"}
+{"id": "C50-016", "status": "OPEN", "evidence": [], "note": "no test confirms incomplete inbound message storage is released/reported before exit"}
+{"id": "C50-017", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:136-150"], "note": "worker kill attempted within budget, shown by the test, but not framed as an explicit prerequisite check"}
+{"id": "C50-018", "status": "OPEN", "evidence": [], "note": "no test or code confirms signal handlers are deregistered before exit"}
+{"id": "C50-019", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229"], "note": "gateway.stopped log line is emitted and the test suite shows no throw around it, but nothing asserts it explicitly 'can be emitted safely'"}
+{"id": "C50-020", "status": "PASS", "evidence": ["gateway/server.js:224-234"], "note": "forced is only false when registry.onEmpty genuinely fires (all real closes observed); never defaulted to success"}
+{"id": "C50-021", "status": "PASS", "evidence": ["gateway/server.js:250"], "note": "clean init failure not caused by config -> exit 1"}
+{"id": "C50-022", "status": "PASS", "evidence": ["gateway/server.js:250"], "note": "ConfigError -> exit 78, explicit code category"}
+{"id": "C50-023", "status": "PASS", "evidence": ["gateway/server.js:257"], "note": "server.listen failure -> exit 1"}
+{"id": "C50-024", "status": "PASS", "evidence": ["gateway/server.js:254"], "note": "deliberate successful shutdown -> exit 0"}
+{"id": "C50-025", "status": "PASS", "evidence": ["gateway/server.js:224-232,254"], "note": "forced local cleanup after a drain timeout maps to exit 1"}
+{"id": "C50-026", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:216-258"], "note": "no scenario in the running process carries a prior fatal outcome into a later successful-looking shutdown to overwrite; applicability unclear"}
+{"id": "C50-027", "status": "PASS", "evidence": ["gateway/server.js:254"], "note": "exit code is strictly r.forced?1:0, never unconditionally 0 regardless of failure"}
+{"id": "C50-028", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "no PowerShell wrapper process exists in the Node gateway profile"}
+{"id": "C50-029", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "container entry point never built/run: 'AUTHORED, NOT EXECUTED', no Docker daemon available"}
+{"id": "C50-030", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "only exit 78 (malformed config) is explicitly documented for operators; 0/1 not spelled out as a table"}
+{"id": "C50-031", "status": "PASS", "evidence": ["gateway/server.js:229"], "note": "log.info('gateway.stopped', {forced, drainMs}) is the one final shutdown-result record"}
+{"id": "C50-032", "status": "PASS", "evidence": ["gateway/server.js:229"], "note": "'forced' field indicates whether cooperative cleanup completed fully"}
+{"id": "C50-033", "status": "PASS", "evidence": ["gateway/server.js:229"], "note": "same 'forced' field doubles as the drain-budget-exceeded indicator"}
+{"id": "C50-034", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229,254"], "note": "log has forced/drainMs but the actual chosen exit code is computed after the log line, not itself logged"}
+{"id": "C50-035", "status": "OPEN", "evidence": [], "note": "no release/version identifier field found in any shutdown log line"}
+{"id": "C50-036", "status": "PASS", "evidence": ["gateway/server.js:228-229"], "note": "drainMs (Date.now()-t0) is the measured shutdown duration included in the record"}
+{"id": "C50-037", "status": "PASS", "evidence": ["gateway/connection.js:315", "gateway/server.js:229"], "note": "per-connection logs use short conn.id, not raw session sid tokens; gateway.stopped has no ids at all"}
+{"id": "C50-038", "status": "PASS", "evidence": ["docs/OPERATIONS.md#health-and-logs"], "note": "logs 'never contain tokens, cookies, query strings or terminal bytes'"}
+{"id": "C50-039", "status": "PASS", "evidence": ["gateway/server.js:229"], "note": "final log payload is a small fixed set of fields (forced, drainMs), inherently bounded"}
+{"id": "C50-040", "status": "OPEN", "evidence": [], "note": "no documented caveat about log delivery being unreliable under a forced (e.g. SIGKILL) stop"}
+{"id": "C50-041", "status": "PASS", "evidence": ["gateway/server.js:233-234"], "note": "registry.onEmpty observes remaining worker/connection completion within the hard-timer budget"}
+{"id": "C50-042", "status": "PASS", "evidence": ["gateway/connection.js:191", "gateway/ws.js"], "note": "worker 'error' and socket error listeners handle faulted operations while still owned"}
+{"id": "C50-043", "status": "PASS", "evidence": ["gateway/server.js:120,172"], "note": "registry.draining blocks new tickets and WS upgrades during finalization"}
+{"id": "C50-044", "status": "PASS", "evidence": ["gateway/server.js:232"], "note": "hard setTimeout(cfg.shutdownMs) prevents indefinite waiting on a stuck worker"}
+{"id": "C50-045", "status": "PASS", "evidence": ["gateway/connection.js:282,332"], "note": "registry.release frees completed job/session handles"}
+{"id": "C50-046", "status": "PASS", "evidence": ["gateway/connection.js:260-272"], "note": "backend (worker process) resources released once dependent 'exit'/kill handling completes"}
+{"id": "C50-047", "status": "OPEN", "evidence": [], "note": "no defined escalation beyond the single hard timer if server.close()/closeAllConnections() itself hangs"}
+{"id": "C50-048", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:113-115", "tests/gateway/e2e.test.js:22-24"], "note": "'vertical slice' and SIGTERM tests both cover close with zero remaining sessions (registry sizes 0) leading to exit 0"}
+{"id": "C50-049", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:22-33"], "note": "multi-tenant test shows the OTHER tenant surviving one worker's failure, not an explicit 'exit after several completed workers' shutdown scenario"}
+{"id": "C50-050", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "worker SIGKILL test exists but isn't paired with a subsequent graceful-shutdown exit-code assertion"}
+{"id": "C50-051", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "no built container to confirm a 'primary process' exits; Docker never built or run"}
+{"id": "C50-052", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "no deployed/containerized run to check for a detached surviving process"}
+{"id": "C50-053", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no PowerShell wrapper process in the Node candidate; 'node' is PID 1 (exec form ENTRYPOINT in deploy/Dockerfile)"}
+{"id": "C50-054", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "local container tooling was never exercised (no Docker daemon)"}
+{"id": "C50-055", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "hosted (Render) observability never exercised, deployment authorization absent"}
+{"id": "C50-056", "status": "PASS", "evidence": ["gateway/connection.js:296-301"], "note": "session.exit is control-plane only and its delivery is not itself proof of durable commit; ackedExecuted/credit accounting is separate from the exit message"}
+{"id": "C50-057", "status": "PASS", "evidence": ["docs/RESOURCE_MODEL.md#per-session-memory-bound"], "note": "records DF CLI child processes spawned by fabric jobs as additional processes"}
+{"id": "C50-058", "status": "PASS", "evidence": ["gateway/connection.js:181-193,267-272"], "note": "each worker child process is owned and killed exclusively by its Connection instance"}
+{"id": "C50-059", "status": "BLOCKED", "evidence": ["deploy/Dockerfile:1-4"], "note": "deploy/Dockerfile is AUTHORED, NOT BUILT (I046: BLOCKED) -- no Docker daemon available to test container process topology"}
+{"id": "C50-060", "status": "OPEN", "evidence": [], "note": "no doc explicitly states process-topology verification limits (e.g. Docker/container aspects unverified)"}
+{"id": "C50-061", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "elapsed ms from SIGTERM to exit is asserted in-test (<8000ms) but drain-completion-to-exit is not isolated/measured separately, and no written record exists"}
+{"id": "C50-062", "status": "OPEN", "evidence": [], "note": "no isolated measurement of time spent specifically in worker/backend disposal"}
+{"id": "C50-063", "status": "OPEN", "evidence": [], "note": "no isolated measurement of time waiting for final task/worker observation"}
+{"id": "C50-064", "status": "PASS", "evidence": ["gateway/server.js:245"], "note": "deadlineMs = Math.max(0, Math.min(300000, cfg.shutdownMs - 1000)) reserves 1s headroom below VWS_SHUTDOWN_MS before the hard kill timer at cfg.shutdownMs"}
+{"id": "C50-065", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:22-33"], "note": "tests exercise a small number of workers/backends; no test with 'many' completed worker handles was found"}
+{"id": "C50-066", "status": "PASS", "evidence": ["tests/gateway/config.test.js", "tests/chaos/lifecycle.test.js"], "note": "malformed PORT -> exit 78 exercises finalization immediately after a startup failure"}
+{"id": "C50-067", "status": "OPEN", "evidence": [], "note": "no test for finalization after an ingress-stop (server.close) failure"}
+{"id": "C50-068", "status": "OPEN", "evidence": [], "note": "no test drives the hard-timer forced path (exit 1) with a genuinely unresponsive peer through full process shutdown"}
+{"id": "C50-069", "status": "OPEN", "evidence": [], "note": "no recorded cases of the process being externally SIGKILLed"}
+{"id": "C50-070", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "worker SIGKILL and real-process SIGTERM are kept as separate, distinctly-named tests, not conflated"}
+{"id": "C50-071", "status": "OPEN", "evidence": [], "note": "no try/catch found specifically around the final log.info('gateway.stopped', ...) call"}
+{"id": "C50-072", "status": "PASS", "evidence": ["gateway/connection.js:269"], "note": "worker.kill wrapped in try/catch, handling backend disposal failure"}
+{"id": "C50-073", "status": "NOT_APPLICABLE", "evidence": ["gateway/server.js:255-256"], "note": "Node process signal handlers need no explicit disposal before the process itself exits"}
+{"id": "C50-074", "status": "PASS", "evidence": ["gateway/server.js:253", "gateway/server.js:219"], "note": "signalled guard and cached shutdownPromise both prevent repeated termination requests from re-running cleanup"}
+{"id": "C50-075", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:263,283"], "note": "worker failure cause (stderr tail, code/sig) is preserved in workerExit/logs alongside subsequent cleanup"}
+{"id": "C50-076", "status": "PASS", "evidence": ["gateway/server.js:253"], "note": "signalled flag prevents onSignal from re-entering itself recursively"}
+{"id": "C50-077", "status": "PASS", "evidence": ["gateway/server.js:216-242"], "note": "shutdown path makes one bounded attempt (hard timer), no retry loop present"}
+{"id": "C50-078", "status": "PASS", "evidence": ["gateway/server.js:224-232"], "note": "finish(forced) always resolves with the best available result once the hard timer fires"}
+{"id": "C50-079", "status": "OPEN", "evidence": [], "note": "no test for shutdown occurring while resources are only partially initialized (e.g. before registry/session setup)"}
+{"id": "C50-080", "status": "IN_PROGRESS", "evidence": [], "note": "no document enumerates what remains unverified after an abrupt (SIGKILL of the gateway itself) process kill; docs/RECOVERY.md#failure-experiments-run no longer exists"}
+{"id": "C50-081", "status": "OPEN", "evidence": [], "note": "no dedicated zero-client shutdown test found; drain-measure.json always has 3 sessions"}
+{"id": "C50-082", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "'real process: SIGTERM drains within budget' targets exactly one connection and reports connection count implicitly via c.type('service.draining').length===1"}
+{"id": "C50-083", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "unresponsive-heartbeat closing exists but not combined with a full shutdown/exit-code scenario"}
+{"id": "C50-084", "status": "OPEN", "evidence": [], "note": "no test for shutdown signal arriving during application startup"}
+{"id": "C50-085", "status": "PASS", "evidence": ["tests/gateway/config.test.js"], "note": "'malformed or out-of-range PRESENT value is an error, never defaulted' covers startup with invalid config"}
+{"id": "C50-086", "status": "OPEN", "evidence": [], "note": "no test exercising an actual listener bind failure (e.g. port already in use)"}
+{"id": "C50-087", "status": "OPEN", "evidence": [], "note": "worker-fault and deliberate-shutdown are each tested separately; no combined scenario found"}
+{"id": "C50-088", "status": "OPEN", "evidence": [], "note": "no test for an unhandled fatal service-wide error/crash path"}
+{"id": "C50-089", "status": "OPEN", "evidence": [], "note": "no consolidated matrix test verifying exit results across all listed rows"}
+{"id": "C50-090", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "results are from the bare Node process, not the built container image, which was never built"}
+{"id": "C50-091", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:250,254,257", "docs/OPERATIONS.md#configuration-reference"], "note": "exit codes exist in code/docs but no single published outcome table"}
+{"id": "C50-092", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "VWS_SHUTDOWN_MS finalization budget is published"}
+{"id": "C50-093", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:224-234"], "note": "'forced' reporting exists in code but isn't published as a named policy document"}
+{"id": "C50-094", "status": "PASS", "evidence": ["tests/gateway/config.test.js", "tests/chaos/lifecycle.test.js"], "note": "clean-config-startup and malformed-PORT(exit 78) tests are both listed in the evidence index"}
+{"id": "C50-095", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:136-150"], "note": "cooperative shutdown test exists; no timed-out/forced shutdown exit test is linked"}
+{"id": "C50-096", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment"], "note": "no wrapper exists and no container/primary-process verification was performed (Docker never run)"}
+{"id": "C50-097", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "timing is asserted in an in-test assertion (ms<8000), not published as a measured/recorded figure anywhere in docs/"}
+{"id": "C50-098", "status": "OPEN", "evidence": [], "note": "no documentation of observability limits under forced termination"}
+{"id": "C50-099", "status": "IN_PROGRESS", "evidence": [], "note": "no dedicated list of unresolved process-exit behavior found; docs/RECOVERY.md#failure-experiments-run no longer exists"}
+{"id": "C50-100", "status": "OPEN", "evidence": [], "note": "no explicit statement gating final-termination approval on separately accounted acks/timeouts/cleanup"}

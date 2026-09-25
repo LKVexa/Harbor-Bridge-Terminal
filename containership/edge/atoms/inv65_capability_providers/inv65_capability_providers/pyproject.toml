@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv65-capability-providers"
+version = "4.3.0"
+description = "INV-65 Capability providers: isolated named links, durable revocation, production provider host"
+requires-python = ">=3.10"
+license = {text = "LicenseRef-UNDECIDED"}  # M37: owner has not chosen a licence
+dependencies = []  # runtime is stdlib-only
+
+[project.optional-dependencies]
+crypto = ["cryptography>=42"]
+# M02: pk_core has no known version/source; deliberately unpinned and flagged by ci/scripts/check_pk_core.py
+conformance = ["pk_core"]
+
+[project.scripts]
+inv65-provider-host = "inv65_capability_providers.host.server:main"
+inv65-state = "inv65_capability_providers.tools.backup_state:main"
+
+[tool.setuptools]
+package-dir = {"inv65_capability_providers" = "."}
+packages = [
+  "inv65_capability_providers",
+  "inv65_capability_providers.audit",
+  "inv65_capability_providers.authn",
+  "inv65_capability_providers.authz",
+  "inv65_capability_providers.benchmarks",
+  "inv65_capability_providers.config",
+  "inv65_capability_providers.crypto",
+  "inv65_capability_providers.errors",
+  "inv65_capability_providers.fixtures",
+  "inv65_capability_providers.fixtures.providers",
+  "inv65_capability_providers.fuzz",
+  "inv65_capability_providers.health",
+  "inv65_capability_providers.host",
+  "inv65_capability_providers.identity",
+  "inv65_capability_providers.lifecycle",
+  "inv65_capability_providers.observability",
+  "inv65_capability_providers.registry",
+  "inv65_capability_providers.residency",
+  "inv65_capability_providers.resilience",
+  "inv65_capability_providers.rollout",
+  "inv65_capability_providers.runtime",
+  "inv65_capability_providers.schemas",
+  "inv65_capability_providers.secret_refs",
+  "inv65_capability_providers.slo",
+  "inv65_capability_providers.state",
+  "inv65_capability_providers.supply_chain",
+  "inv65_capability_providers.tests",
+  "inv65_capability_providers.tests.conformance",
+  "inv65_capability_providers.tests.contract",
+  "inv65_capability_providers.tests.fault",
+  "inv65_capability_providers.tests.integration",
+  "inv65_capability_providers.tests.monitoring",
+  "inv65_capability_providers.tests.performance",
+  "inv65_capability_providers.tests.security",
+  "inv65_capability_providers.tools",
+  "inv65_capability_providers.transport",
+]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.md", "VERSION", "schemas/*/v1.json"]

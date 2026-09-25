@@ -1,0 +1,104 @@
+// INV-13 System Interface -- versioned WIT contract.
+// Target: WebAssembly Component Model (WIT syntax per component-model spec, 2024+ text form),
+// aligned with WASI 0.2.x naming. The core-ABI namespace the V8 adapter binds is
+// "inv13:<interface>@4.3.0" (see host/wasm_loader.py IMPORT_CAPABILITY).
+// Ownership: INV-13 system-interface team (see OWNERSHIP.md). Any world expansion that
+// adds an import requires architecture + security approval (APPROVED_SURFACE.json).
+package inv13:system-interface@4.3.0;
+
+interface types {
+  /// Stable machine-readable error codes (host/errors.py ErrorCode). No host detail crosses.
+  enum error-code {
+    cap-not-granted, preopen-not-found, path-escape, symlink-refused, policy-denied,
+    invalid-argument, invalid-encoding, too-long, invalid-handle, stale-handle,
+    provider-unavailable, quota-exceeded, backpressure, timed-out, cancelled,
+    not-found, already-exists, not-a-directory, is-a-directory, internal
+  }
+  record error { code: error-code, retryable: bool }
+}
+
+interface filesystem {
+  use types.{error};
+  /// Paths are UTF-8, relative, <= 4096 bytes, <= 255 bytes per component, no "..".
+  flags open-flags { read, write, create, exclusive, truncate, directory }
+  resource descriptor {
+    open-at: func(path: string, flags: open-flags) -> result<descriptor, error>;
+    read: func(len: u32) -> result<list<u8>, error>;
+    write: func(data: list<u8>) -> result<u32, error>;
+    read-dir: func() -> result<list<string>, error>;
+  }
+  /// Preopens are granted by the host; the guest can never construct one.
+  get-preopens: func() -> list<tuple<descriptor, string>>;
+}
+
+interface clocks {
+  /// Nanoseconds, quantised to the policy resolution (>= 1 us).
+  monotonic-now: func() -> u64;
+  record datetime { seconds: u64, nanoseconds: u32 }
+  wall-now: func() -> datetime;
+  resolution: func() -> u64;
+}
+
+interface random {
+  use types.{error};
+  /// Max 65536 bytes per call; rate limited; never falls back to a weak source.
+  get-random-bytes: func(len: u32) -> result<list<u8>, error>;
+}
+
+interface stdio {
+  use types.{error};
+  stdout-write: func(data: list<u8>) -> result<u32, error>;
+  stderr-write: func(data: list<u8>) -> result<u32, error>;
+  stdin-read: func(len: u32) -> result<list<u8>, error>;
+}
+
+interface environment {
+  /// Only allowlisted literal values; secrets are never exposed here.
+  get-env: func() -> list<tuple<string, string>>;
+  get-args: func() -> list<string>;
+}
+
+interface sockets {
+  use types.{error};
+  enum address-family { ipv4, ipv6 }
+  resource tcp-socket {
+    send: func(data: list<u8>) -> result<u32, error>;
+    receive: func(len: u32) -> result<list<u8>, error>;
+  }
+  connect: func(family: address-family, address: string, port: u16) -> result<tcp-socket, error>;
+}
+
+interface http-outgoing {
+  use types.{error};
+  record request { method: string, url: string, headers: list<tuple<string, string>>, body: list<u8> }
+  record response { status: u16, headers: list<tuple<string, string>>, body: list<u8> }
+  handle: func(req: request) -> result<response, error>;
+}
+
+/// Least-privilege worlds, one per workload class.
+world minimal {
+  import stdio;
+}
+world batch-file-worker {
+  import filesystem;
+  import clocks;
+  import stdio;
+}
+world entropy-consumer {
+  import random;
+  import clocks;
+  import stdio;
+}
+world net-client {
+  import sockets;
+  import random;
+  import clocks;
+  import stdio;
+}
+world http-client {
+  import http-outgoing;
+  import random;
+  import clocks;
+  import stdio;
+  import environment;
+}

@@ -1,0 +1,125 @@
+{
+  "$id": "INV35_STATUS/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "config": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "generation": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "digest",
+        "generation"
+      ],
+      "type": "object"
+    },
+    "dependencies": {
+      "type": "object"
+    },
+    "interfaces": {
+      "type": "object"
+    },
+    "live": {
+      "type": "boolean"
+    },
+    "queues": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "depth_limit": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "in_flight_descriptors": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "mode": {
+            "enum": [
+              "none",
+              "no_notification_suppression",
+              "reduced_depth",
+              "control_plane_unreachable"
+            ]
+          },
+          "pending": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "created",
+              "starting",
+              "serving",
+              "degraded",
+              "draining",
+              "frozen",
+              "quarantined",
+              "disabled",
+              "stopped"
+            ]
+          },
+          "tenant": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant",
+          "state",
+          "mode",
+          "in_flight_descriptors",
+          "pending",
+          "depth_limit"
+        ],
+        "type": "object"
+      },
+      "type": "object"
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "saturation": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "schema": {
+      "const": "INV35_STATUS/1"
+    },
+    "stalls": {
+      "type": "array"
+    },
+    "version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "version",
+    "live",
+    "ready",
+    "config",
+    "interfaces",
+    "dependencies",
+    "capabilities",
+    "saturation",
+    "queues",
+    "stalls"
+  ],
+  "type": "object"
+}

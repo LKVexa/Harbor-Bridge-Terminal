@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_SANDBOX_APPLIED/1",
+  "title": "Verified process sandbox state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "process", "profile", "profile_digest", "verified", "verification_scope",
+    "evidence_source", "os_enforcement_proven", "default_deny",
+    "residual_syscalls", "within_budget", "capabilities_retained", "namespaces",
+    "shares_kernel", "isolation_note"
+  ],
+  "properties": {
+    "schema": {"const": "PK_SANDBOX_APPLIED/1"},
+    "process": {"type": "string", "minLength": 1},
+    "profile": {"type": "string", "minLength": 1},
+    "profile_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "verified": {"const": true},
+    "verification_scope": {"const": "readback_matches_profile"},
+    "evidence_source": {"const": "caller_supplied"},
+    "os_enforcement_proven": {"const": false},
+    "default_deny": {"const": true},
+    "residual_syscalls": {"type": "integer", "minimum": 0},
+    "within_budget": {"type": "boolean"},
+    "capabilities_retained": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "namespaces": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "shares_kernel": {"const": true},
+    "isolation_note": {"type": "string", "minLength": 1}
+  }
+}

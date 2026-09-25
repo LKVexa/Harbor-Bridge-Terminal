@@ -1,0 +1,224 @@
+{
+  "schema": "INV44_COMPONENT_STATUS/1",
+  "version": "4.3.0",
+  "status_vocabulary": {
+    "COMPLETE": "implemented, verified, externally evidenced and approved - none reached",
+    "IMPLEMENTED_LOCAL": "implemented and tested in this repository; external evidence/approval still missing",
+    "PARTIAL": "core mechanism implemented and tested; named production gaps remain",
+    "BLOCKED": "cannot proceed without an input only the owner or an environment can provide"
+  },
+  "components": [
+    {
+      "id": 1,
+      "name": "Original master-source artifact",
+      "status": "BLOCKED",
+      "evidence": [],
+      "done": "MASTER.md bytes are not in the supplied archive and no system of record was provided. No reconstruction was written: the checklist forbids passing one off as the original, and nothing here is authoritative enough to reconstruct from. MASTER_SOURCE_STATUS.json records the gap; tools/audit_repository.py fails the exit gate while it stands.",
+      "remaining": "Owner supplies the original MASTER.md (or a signed release archive holding it) with its source-side digest."
+    },
+    {
+      "id": 2,
+      "name": "Pinned pk_core dependency",
+      "status": "BLOCKED",
+      "evidence": [
+        "DEPENDENCIES.md",
+        "pyproject.toml"
+      ],
+      "done": "pk_core is not in the archive and not in the yard; its version and digest are unknown, so nothing can be pinned. The standalone runtime and all v4.3 subsystems import without it; contract.py/component.py still need it. The conformance lane is declared NOT RUN.",
+      "remaining": "Owner supplies pk_core (version + sha256 or a registry coordinate)."
+    },
+    {
+      "id": 3,
+      "name": "Python packaging/build metadata",
+      "status": "IMPLEMENTED_LOCAL",
+      "evidence": [
+        "pyproject.toml",
+        "tests/test_packaging.py"
+      ],
+      "done": "PEP 621 metadata, setuptools backend, requires-python >=3.10, zero runtime dependencies, package-data for schemas. A wheel builds and installs offline in CI job 'package'.",
+      "remaining": "Reproducible-build digest comparison across two hosts; publication target."
+    },
+    {
+      "id": 4,
+      "name": "License/notice artifacts",
+      "status": "BLOCKED",
+      "evidence": [
+        "LICENSING.md",
+        "NOTICE"
+      ],
+      "done": "The license is the owner's decision and was not invented. NOTICE records authorship and that no third-party code is vendored; LICENSING.md lists what the owner must choose. pyproject declares 'LicenseRef-Proprietary-Pending'.",
+      "remaining": "Owner chooses a license."
+    },
+    {
+      "id": 5,
+      "name": "CI/release automation",
+      "status": "IMPLEMENTED_LOCAL",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "tests/run_all.py",
+        "release_gate.py"
+      ],
+      "done": "CI runs tests on 3.10-3.13 and under python -O, the repository audit, the NODE_WASM validator lane, wheel build, provenance generation and the release gate (which exits 3 NO_GO by design).",
+      "remaining": "The workflow has never run on a real GitHub runner; branch protection and a protected release environment are repository settings."
+    },
+    {
+      "id": 6,
+      "name": "Concrete PK_WASM_HARDENING/1 schema",
+      "status": "IMPLEMENTED_LOCAL",
+      "evidence": [
+        "schemas/pk_wasm_hardening.v1.schema.json",
+        "schema.py",
+        "config.py",
+        "errors.py"
+      ],
+      "done": "Versioned JSON Schema (additionalProperties false), enforced by a strict validator that rejects unknown keywords; every config is validated at propose and again at activation. Structured error codes with outcome and retry class.",
+      "remaining": "Peer (INV-45/INV-29/PLN-04) consumption tests need those components."
+    },
+    {
+      "id": 7,
+      "name": "Concrete PK_WASM_INSTANCE/1 schema",
+      "status": "IMPLEMENTED_LOCAL",
+      "evidence": [
+        "schemas/pk_wasm_instance.v1.schema.json",
+        "lifecycle.py"
+      ],
+      "done": "Request/state/refusal document, lifecycle states with a legal-transition table, deadline and idempotency fields, bounded retry for retryable codes only.",
+      "remaining": "Cancellation and deadlines are declared in the schema but not enforced by the Python model, which has no long-running execution to cancel."
+    },
+    {
+      "id": 8,
+      "name": "Production Swivel/compiler/runtime integration",
+      "status": "BLOCKED",
+      "evidence": [
+        "wasm_verify.py (Toolchain identity slot)"
+      ],
+      "done": "No Swivel toolchain, pinned Wasm runtime, or Spectre test hardware is available. The verifier binds a toolchain identity and refuses unapproved ones, but no receipt in this repository was produced by Swivel, and nothing here proves a Spectre mitigation was applied.",
+      "remaining": "Swivel (or chosen successor) pinned by digest, a real compile of fixtures, and Spectre PoC evidence on target CPUs."
+    },
+    {
+      "id": 9,
+      "name": "Cryptographic compiled-output verifier",
+      "status": "PARTIAL",
+      "evidence": [
+        "wasm_verify.py",
+        "gateway.py",
+        "tests/test_v43.py::VerifierTest"
+      ],
+      "done": "Structural Wasm validator (cross-checked against V8 WebAssembly.validate in the NODE_WASM lane) plus digest-bound, toolchain-bound, hardening-profile-bound receipts with freshness. TenantGateway requires a receipt; the Boolean path remains for pk_core compatibility and is marked legacy.",
+      "remaining": "HMAC is symmetric (asymmetric keys/KMS pending); structural validation is not semantic validation; no Swivel output to verify."
+    },
+    {
+      "id": 10,
+      "name": "Signed provenance/attestation",
+      "status": "PARTIAL",
+      "evidence": [
+        "provenance.py",
+        "tests/test_v43.py::ProvenanceTest"
+      ],
+      "done": "in-toto Statement v1 with SLSA v1 predicate over every file, DSSE PAE envelope, verify re-hashes subjects. Signature is HMAC-SHA256.",
+      "remaining": "Asymmetric/Sigstore signing and key custody; a hosted builder identity."
+    },
+    {
+      "id": 11,
+      "name": "Declarative configuration/provenance subsystem",
+      "status": "IMPLEMENTED_LOCAL",
+      "evidence": [
+        "config.py",
+        "tests/test_v43.py::ConfigTest"
+      ],
+      "done": "Immutable versions, parent-digest chain, author/version/reason/activation-by/at, CAS activation with atomic os.replace, rollback without rewriting history, tamper detection, partial hardening refused before activation.",
+      "remaining": "Approval workflow for config changes (who may activate) is not bound to people."
+    },
+    {
+      "id": 12,
+      "name": "Identity/capability enforcement layer",
+      "status": "PARTIAL",
+      "evidence": [
+        "capability.py",
+        "gateway.py"
+      ],
+      "done": "Authenticated Principal (bare strings refused), HMAC-sealed capability tokens with expiry and revocation, explicit operations, import allowlist eliminating ambient host functions, fail-closed on clock/revocation loss.",
+      "remaining": "No real IdP, mTLS, node/peer attestation, or KMS; keys are constructor arguments."
+    },
+    {
+      "id": 13,
+      "name": "Tenant isolation integration",
+      "status": "PARTIAL",
+      "evidence": [
+        "gateway.py"
+      ],
+      "done": "One gateway per tenant, cross-tenant principals refused, per-tenant quotas, duplicate live instance names refused, per-tenant metrics and audit.",
+      "remaining": "Host isolation (process/VM, caches, kernel, FS, network, devices) is not provable in-process and needs the component 8 runtime."
+    },
+    {
+      "id": 14,
+      "name": "Tamper-evident security audit log",
+      "status": "IMPLEMENTED_LOCAL",
+      "evidence": [
+        "audit_log.py",
+        "tests/test_v43.py::AuditLogTest"
+      ],
+      "done": "Hash-chained, optionally HMAC'd JSONL with fsync, secret redaction before hashing, and external head anchoring that detects tail truncation (tested both ways).",
+      "remaining": "Where the head anchor and log are shipped (WORM storage, retention) is an operations decision."
+    },
+    {
+      "id": 15,
+      "name": "Production observability stack",
+      "status": "PARTIAL",
+      "evidence": [
+        "observability.py",
+        "ops/alerts.yaml"
+      ],
+      "done": "All five contract signals plus admission/authz/tenant/load-shed counters and an instantiation histogram, Prometheus text exposition, cardinality guard, redacted structured JSON logs with trace/span ids, per-decision explanations in the audit log, alert rules as data.",
+      "remaining": "No Prometheus/Alertmanager/tracing backend provisioned; fuel_exhaustions is declared but only counted when callers route traps through metrics."
+    },
+    {
+      "id": 16,
+      "name": "Performance certification suite",
+      "status": "PARTIAL",
+      "evidence": [
+        "bench/perf_suite.py",
+        "evidence/PERF_RESULTS.json"
+      ],
+      "done": "Measured micro-benchmarks for step, grow, parse, receipt verify, full gateway admit, audit append; results carry host facts and are labelled MEASURED, thresholds UNAPPROVED.",
+      "remaining": "Real Swivel overhead vs. baseline, soak/fleet/power runs, approved SLO thresholds."
+    },
+    {
+      "id": 17,
+      "name": "Fault/disaster testing suite",
+      "status": "PARTIAL",
+      "evidence": [
+        "tests/test_v43.py::FaultInjectionTest",
+        "tests/test_v43.py::ConfigTest"
+      ],
+      "done": "Process-local faults: audit sink failure refuses admission, clock and revocation loss fail closed, crash mid-activation keeps the old pointer, concurrent burst sheds with an intact chain.",
+      "remaining": "Node/VM/site/network partition and failover testing needs an environment."
+    },
+    {
+      "id": 18,
+      "name": "Operations/governance artifacts",
+      "status": "PARTIAL",
+      "evidence": [
+        "ops/OWNERS.md",
+        "ops/ADR-0001-wasm-hardening.md",
+        "ops/RUNBOOK.md",
+        "ops/COMPATIBILITY.md",
+        "ops/WAIVERS.json",
+        "ops/REQUIREMENTS.md"
+      ],
+      "done": "Templates filled with everything the repository knows: SHALL-level requirements with stable ids, precedence rules, runbook per failure code, compatibility policy, waiver register. Owner, approver and escalation fields are UNASSIGNED and the ADR is PROPOSED.",
+      "remaining": "Owner names people, approves the ADR, signs waivers."
+    },
+    {
+      "id": 19,
+      "name": "External machine-readable release evidence",
+      "status": "PARTIAL",
+      "evidence": [
+        "release_gate.py",
+        "evidence/RELEASE_EVIDENCE.json"
+      ],
+      "done": "Evidence bundle with manifest digest, test result, matrix summary, per-component status and named blockers; gate evaluates to NO_GO. A falsifier test proves GO is reachable with synthetic inputs and each single omission is NO_GO.",
+      "remaining": "pk_core PK_GATE_RESULTS and a human release approval."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+ "schema": "PK_ECP_OWNERS/1",
+ "component": "INV-66",
+ "note": "Roles are defined; people/teams are NOT bound. Binding them is an owner action (MC-003). Every UNASSIGNED value keeps exit-gate item ownership.bound BLOCKED.",
+ "roles": {
+  "service_owner":      {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "product_owner":      {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "architecture_owner": {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "security_owner":     {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "iam_owner":          {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "sre_oncall_owner":   {"team": "UNASSIGNED", "rotation": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "data_audit_owner":   {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"},
+  "release_manager":    {"team": "UNASSIGNED", "primary": "UNASSIGNED", "secondary": "UNASSIGNED"}
+ },
+ "boundaries": {
+  "admission service": "service_owner", "rbac/policy data": "security_owner", "registry/signer policy": "security_owner",
+  "audit journal + anchors": "data_audit_owner", "identity federation": "iam_owner", "deployment adapter (INV-63)": "service_owner",
+  "ci/cd + release": "release_manager", "infrastructure": "sre_oncall_owner"
+ },
+ "authorities": {
+  "emergency policy change": ["security_owner"], "disable admission (freeze)": ["security_owner", "sre_oncall_owner"],
+  "release freeze (2 approvers)": ["security_owner", "service_owner"], "rotate keys": ["security_owner"],
+  "restore state": ["sre_oncall_owner", "data_audit_owner"], "waive controls": ["security_owner", "service_owner"],
+  "declare production readiness": ["service_owner", "architecture_owner", "security_owner", "sre_oncall_owner", "release_manager"]
+ },
+ "support": {"model": "UNDECIDED (24x7 vs business-hours)", "ack_targets": {"SEV1": "15m", "SEV2": "30m", "SEV3": "next business day"}, "status": "PROPOSED"},
+ "escalation": {
+  "INV-63 deployment manager": "UNASSIGNED", "INV-64 application model": "UNASSIGNED", "GAP-13 policy engine": "UNASSIGNED",
+  "GAP-07 provenance/signing": "UNASSIGNED", "identity provider": "UNASSIGNED", "registry": "UNASSIGNED", "KMS": "UNASSIGNED", "storage": "UNASSIGNED"
+ },
+ "review_cadence_days": 90
+}

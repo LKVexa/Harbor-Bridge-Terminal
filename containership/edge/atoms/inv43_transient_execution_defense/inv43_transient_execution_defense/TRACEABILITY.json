@@ -1,0 +1,1382 @@
+{
+  "schema": "INV43_TRACEABILITY/1",
+  "controls": {
+    "INV-43-C001": {
+      "requirement": "Define the exact production responsibility of Transient-execution defense.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [],
+      "evidence": [
+        "README.md#Responsibility",
+        "docs/adr/ADR-0001-transient-execution-defense.md"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C002": {
+      "requirement": "Document what Transient-execution defense owns and explicitly does not own.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [],
+      "evidence": [
+        "README.md#Owns",
+        "contract.py"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C003": {
+      "requirement": "Identify upstream, downstream, and peer dependencies of Transient-execution defense.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [
+        "15",
+        "16",
+        "17",
+        "18"
+      ],
+      "evidence": [
+        "placement.py",
+        "policy.py::gap02_contradictions",
+        "policy/default_policy.json#isolation_tiers",
+        "policy/default_policy.json#legacy_cpu",
+        "tests/test_decision_plane.py::IntegrationTest",
+        "tests/test_decision_plane.py::PlacementTest",
+        "tests/test_decision_plane.py::RegistryTest.test_gap02_contradiction_downgrades",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C004": {
+      "requirement": "Define the authoritative source of truth used by Transient-execution defense.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [
+        "09",
+        "10"
+      ],
+      "evidence": [
+        "collector.py",
+        "collector.py::Observation",
+        "evidence/host_readback.json",
+        "registry.py::_fresh_entry",
+        "tests/test_decision_plane.py::RegistryTest",
+        "tests/test_signal_path.py::CollectorTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C005": {
+      "requirement": "Document assumptions Transient-execution defense makes about nodes, runtimes, networks, storage, and control planes.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [],
+      "evidence": [
+        "docs/THREAT_MODEL.md#Assumptions",
+        "docs/adr/ADR-0001-transient-execution-defense.md#Decision"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C006": {
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Transient-execution defense.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [
+        "13"
+      ],
+      "evidence": [
+        "policy.py",
+        "policy/default_policy.json",
+        "schemas/INV43_POLICY_1.schema.json",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C007": {
+      "requirement": "Separate mandatory Transient-execution defense capabilities from optional optimizations.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [],
+      "evidence": [
+        "docs/adr/ADR-0001-transient-execution-defense.md (item 7)"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C008": {
+      "requirement": "Document unsupported deployment patterns and non-goals for Transient-execution defense.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [],
+      "evidence": [
+        "docs/adr/ADR-0001-transient-execution-defense.md#Unsupported"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C009": {
+      "requirement": "Assign an accountable owner and escalation path for Transient-execution defense.",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [
+        "07"
+      ],
+      "evidence": [
+        "governance/OWNERS.json",
+        "tools/verify_governance.py"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C010": {
+      "requirement": "Approve an architecture decision record for Transient-execution defense, its technologies (Software Fault Isolation / SFI), and its function (Defense against cross-instance hardware side channels).",
+      "dimension": "Architecture & Scope",
+      "remediation_items": [
+        "05",
+        "06"
+      ],
+      "evidence": [
+        "docs/adr/ADR-0001-transient-execution-defense.md",
+        "docs/adr/ADR-0002-sfi-resolution.md",
+        "governance/EXCEPTIONS.json#EXC-002"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C011": {
+      "requirement": "Translate the source function of Transient-execution defense \u2014 Defense against cross-instance hardware side channels \u2014 into testable SHALL-level requirements.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "13"
+      ],
+      "evidence": [
+        "policy.py",
+        "policy/default_policy.json",
+        "schemas/INV43_POLICY_1.schema.json",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C012": {
+      "requirement": "Define functional requirements for Transient-execution defense across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [],
+      "evidence": [
+        "docs/adr/ADR-0001-transient-execution-defense.md#Functional scope"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C013": {
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [],
+      "evidence": [
+        "docs/adr/ADR-0001-transient-execution-defense.md#Non-functional",
+        "perf/thresholds.json"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C014": {
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Transient-execution defense.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "10",
+        "31"
+      ],
+      "evidence": [
+        "collector.py::Observation",
+        "docs/RECOVERY.md",
+        "registry.py",
+        "registry.py::_fresh_entry",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C015": {
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Transient-execution defense.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "10"
+      ],
+      "evidence": [
+        "collector.py::Observation",
+        "registry.py::_fresh_entry",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C016": {
+      "requirement": "Define versioning and backward-compatibility requirements for Transient-execution defense.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "02",
+        "04",
+        "20"
+      ],
+      "evidence": [
+        "deps/pk_core.lock.json",
+        "docs/COMPATIBILITY.md",
+        "negotiation.py",
+        "pyproject.toml",
+        "requirements-dev.lock",
+        "sbom.cdx.json",
+        "tests/test_decision_plane.py::NegotiationTest",
+        "verify.py (PK_REQUIRE_CORE=1 fails closed)"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C017": {
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Transient-execution defense.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "30"
+      ],
+      "evidence": [
+        "resilience.py::TokenBucket/ConcurrencyLimiter/CircuitBreaker",
+        "service.py"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C018": {
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "10",
+        "31"
+      ],
+      "evidence": [
+        "collector.py::Observation",
+        "docs/RECOVERY.md",
+        "registry.py",
+        "registry.py::_fresh_entry",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C019": {
+      "requirement": "Define precedence rules when Transient-execution defense requirements conflict with security, residency, SLO, or cost constraints.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "13"
+      ],
+      "evidence": [
+        "policy.py",
+        "policy/default_policy.json",
+        "schemas/INV43_POLICY_1.schema.json",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C020": {
+      "requirement": "Maintain a requirements traceability matrix from each Transient-execution defense requirement to implementation and verification evidence.",
+      "dimension": "Requirements & Semantics",
+      "remediation_items": [
+        "01",
+        "03",
+        "08"
+      ],
+      "evidence": [
+        "TRACEABILITY.json",
+        "conformance/INV43_LOCAL_GATE.json",
+        "evidence/ledger.jsonl",
+        "governance/EXCEPTIONS.json#EXC-001",
+        "provenance/PROVENANCE.json",
+        "tests/test_governance.py::ProvenanceTest",
+        "tests/test_governance.py::TraceabilityTest",
+        "tools/build_release.py",
+        "tools/status_table.py",
+        "tools/verify_governance.py"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C021": {
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Transient-execution defense.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "09",
+        "15",
+        "16",
+        "17",
+        "19"
+      ],
+      "evidence": [
+        "collector.py",
+        "evidence/host_readback.json",
+        "placement.py",
+        "policy.py::gap02_contradictions",
+        "policy/default_policy.json#isolation_tiers",
+        "service.py",
+        "tests/test_decision_plane.py::PlacementTest",
+        "tests/test_decision_plane.py::RegistryTest.test_gap02_contradiction_downgrades",
+        "tests/test_decision_plane.py::ServiceTest",
+        "tests/test_signal_path.py::CollectorTest",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C022": {
+      "requirement": "Use versioned typed schemas for all externally visible Transient-execution defense contracts.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "19",
+        "21"
+      ],
+      "evidence": [
+        "requirements-dev.lock",
+        "schemas/*.json",
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest",
+        "tests/test_hardening.py::SchemaConformanceTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C023": {
+      "requirement": "Define authentication requirements at each Transient-execution defense boundary.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "11",
+        "19"
+      ],
+      "evidence": [
+        "attestation.py",
+        "governance/EXCEPTIONS.json#EXC-003",
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest",
+        "tests/test_signal_path.py::AttestationTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C024": {
+      "requirement": "Define authorization and explicit capability requirements at each Transient-execution defense boundary.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "12",
+        "19"
+      ],
+      "evidence": [
+        "authz.py",
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest",
+        "tests/test_signal_path.py::AuthzTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C025": {
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Transient-execution defense.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "19",
+        "29"
+      ],
+      "evidence": [
+        "resilience.py::RetryPolicy",
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C026": {
+      "requirement": "Define structured failure codes and machine-readable error details for Transient-execution defense.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "19"
+      ],
+      "evidence": [
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C027": {
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "02",
+        "19",
+        "20"
+      ],
+      "evidence": [
+        "deps/pk_core.lock.json",
+        "docs/COMPATIBILITY.md",
+        "negotiation.py",
+        "service.py",
+        "tests/test_decision_plane.py::NegotiationTest",
+        "tests/test_decision_plane.py::ServiceTest",
+        "verify.py (PK_REQUIRE_CORE=1 fails closed)"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C028": {
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Transient-execution defense interfaces.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "19"
+      ],
+      "evidence": [
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C029": {
+      "requirement": "Provide reference examples and conformance fixtures for Transient-execution defense.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "09",
+        "21"
+      ],
+      "evidence": [
+        "collector.py",
+        "evidence/host_readback.json",
+        "requirements-dev.lock",
+        "schemas/*.json",
+        "tests/test_hardening.py::SchemaConformanceTest",
+        "tests/test_signal_path.py::CollectorTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C030": {
+      "requirement": "Create automated integration tests proving Transient-execution defense interoperates with adjacent architectural layers.",
+      "dimension": "Interfaces & Integration",
+      "remediation_items": [
+        "09",
+        "15",
+        "16",
+        "17",
+        "18",
+        "42"
+      ],
+      "evidence": [
+        "collector.py",
+        "evidence/host_readback.json",
+        "placement.py",
+        "policy.py::gap02_contradictions",
+        "policy/default_policy.json#isolation_tiers",
+        "policy/default_policy.json#legacy_cpu",
+        "tests/test_decision_plane.py::IntegrationTest",
+        "tests/test_decision_plane.py::PlacementTest",
+        "tests/test_decision_plane.py::RegistryTest.test_gap02_contradiction_downgrades",
+        "tests/test_signal_path.py::CollectorTest",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C031": {
+      "requirement": "Select and pin approved implementations, versions, or specifications for Transient-execution defense: Software Fault Isolation / SFI.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "02",
+        "04",
+        "06"
+      ],
+      "evidence": [
+        "deps/pk_core.lock.json",
+        "docs/adr/ADR-0002-sfi-resolution.md",
+        "governance/EXCEPTIONS.json#EXC-002",
+        "pyproject.toml",
+        "requirements-dev.lock",
+        "sbom.cdx.json",
+        "verify.py (PK_REQUIRE_CORE=1 fails closed)"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C032": {
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Transient-execution defense.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "04"
+      ],
+      "evidence": [
+        "pyproject.toml",
+        "requirements-dev.lock",
+        "sbom.cdx.json"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C033": {
+      "requirement": "Define declarative configuration and secure defaults for Transient-execution defense.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "14"
+      ],
+      "evidence": [
+        "config.py",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C034": {
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "14"
+      ],
+      "evidence": [
+        "config.py",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C035": {
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "14"
+      ],
+      "evidence": [
+        "config.py",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C036": {
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "10",
+        "14"
+      ],
+      "evidence": [
+        "collector.py::Observation",
+        "config.py",
+        "registry.py::_fresh_entry",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_decision_plane.py::RegistryTest",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C037": {
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "14"
+      ],
+      "evidence": [
+        "config.py",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C038": {
+      "requirement": "Define automatic and operator-driven rollback for failed Transient-execution defense changes.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "14",
+        "45"
+      ],
+      "evidence": [
+        "config.py",
+        "rollout.py",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_hardening.py::RolloutTest",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C039": {
+      "requirement": "Keep credentials and secret material out of ordinary Transient-execution defense configuration and diagnostics.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [],
+      "evidence": [
+        "service.py::TokenStore (hashed tokens)",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C040": {
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Transient-execution defense operation.",
+      "dimension": "Implementation & Configuration",
+      "remediation_items": [
+        "04",
+        "09"
+      ],
+      "evidence": [
+        "collector.py",
+        "evidence/host_readback.json",
+        "pyproject.toml",
+        "requirements-dev.lock",
+        "sbom.cdx.json",
+        "tests/test_signal_path.py::CollectorTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C041": {
+      "requirement": "Threat-model Transient-execution defense against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "24"
+      ],
+      "evidence": [
+        "docs/THREAT_MODEL.md"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C042": {
+      "requirement": "Apply least privilege to every identity and capability used by Transient-execution defense.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "12"
+      ],
+      "evidence": [
+        "authz.py",
+        "tests/test_signal_path.py::AuthzTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C043": {
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Transient-execution defense permits.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "12"
+      ],
+      "evidence": [
+        "authz.py",
+        "tests/test_signal_path.py::AuthzTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C044": {
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "11"
+      ],
+      "evidence": [
+        "attestation.py",
+        "governance/EXCEPTIONS.json#EXC-003",
+        "tests/test_signal_path.py::AttestationTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C045": {
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Transient-execution defense.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "01",
+        "04",
+        "23"
+      ],
+      "evidence": [
+        "SHA256SUMS.txt",
+        "governance/EXCEPTIONS.json#EXC-001",
+        "provenance/PROVENANCE.json",
+        "pyproject.toml",
+        "release/provenance.intoto.json",
+        "release/signature.json",
+        "requirements-dev.lock",
+        "sbom.cdx.json",
+        "tests/test_governance.py::ProvenanceTest",
+        "tools/verify_governance.py",
+        "tools/verify_release.py"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C046": {
+      "requirement": "Enforce tenant/workload isolation across Transient-execution defense execution, memory, state, network, and device boundaries as applicable.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "13"
+      ],
+      "evidence": [
+        "policy.py",
+        "policy/default_policy.json",
+        "schemas/INV43_POLICY_1.schema.json",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C047": {
+      "requirement": "Encrypt sensitive Transient-execution defense data in transit and at rest with managed key rotation.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [],
+      "evidence": [
+        "BLOCKED: managed key rotation for audit-at-rest and TLS certs is a deployment dependency",
+        "docs/RECOVERY.md (no posture at rest)",
+        "service.py (TLS mandatory off-loopback)"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C048": {
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "11"
+      ],
+      "evidence": [
+        "attestation.py",
+        "governance/EXCEPTIONS.json#EXC-003",
+        "tests/test_signal_path.py::AttestationTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C049": {
+      "requirement": "Emit tamper-evident audit events for security-sensitive Transient-execution defense operations.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "22"
+      ],
+      "evidence": [
+        "auditlog.py",
+        "tests/test_decision_plane.py::AuditChainTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C050": {
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "dimension": "Security, Trust & Isolation",
+      "remediation_items": [
+        "25"
+      ],
+      "evidence": [
+        "tests/test_hardening.py::AdversarialTest",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C051": {
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Transient-execution defense.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "28"
+      ],
+      "evidence": [
+        "resilience.py::FailureClass/HealthMonitor",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C052": {
+      "requirement": "Define automated health and stall detection thresholds for Transient-execution defense.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "28"
+      ],
+      "evidence": [
+        "resilience.py::FailureClass/HealthMonitor",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C053": {
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "29"
+      ],
+      "evidence": [
+        "resilience.py::RetryPolicy",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C054": {
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Transient-execution defense failure cascades.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "30"
+      ],
+      "evidence": [
+        "resilience.py::TokenBucket/ConcurrencyLimiter/CircuitBreaker",
+        "service.py"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C055": {
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "31"
+      ],
+      "evidence": [
+        "docs/RECOVERY.md",
+        "registry.py",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C056": {
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "31"
+      ],
+      "evidence": [
+        "docs/RECOVERY.md",
+        "registry.py",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C057": {
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Transient-execution defense state.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "10",
+        "31"
+      ],
+      "evidence": [
+        "collector.py::Observation",
+        "docs/RECOVERY.md",
+        "registry.py",
+        "registry.py::_fresh_entry",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C058": {
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "31"
+      ],
+      "evidence": [
+        "docs/RECOVERY.md",
+        "registry.py",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C059": {
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Transient-execution defense behavior.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "32"
+      ],
+      "evidence": [
+        "registry.py::quarantine/release/freeze",
+        "tests/test_decision_plane.py::RegistryTest.test_freeze_and_kill_switch"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C060": {
+      "requirement": "Run fault-injection tests proving Transient-execution defense recovery against documented objectives.",
+      "dimension": "Resilience & Failure Handling",
+      "remediation_items": [
+        "33"
+      ],
+      "evidence": [
+        "tests/test_hardening.py::FaultInjectionTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C061": {
+      "requirement": "Establish reproducible baselines for Transient-execution defense latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "34",
+        "36"
+      ],
+      "evidence": [
+        "bench/run_bench.py",
+        "docs/CAPACITY.md",
+        "evidence/perf/baseline.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C062": {
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Transient-execution defense.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "35"
+      ],
+      "evidence": [
+        "evidence/perf/gate.json",
+        "perf/thresholds.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C063": {
+      "requirement": "Measure Transient-execution defense under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "34",
+        "44"
+      ],
+      "evidence": [
+        "bench/run_bench.py",
+        "evidence/perf/baseline.json",
+        "tests/test_hardening.py::SoakBurstTest (INV43_SOAK_*)"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C064": {
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Transient-execution defense.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "34"
+      ],
+      "evidence": [
+        "bench/run_bench.py",
+        "evidence/perf/baseline.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C065": {
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Transient-execution defense.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [],
+      "evidence": [
+        "docs/CAPACITY.md#Avoidable work"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C066": {
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [],
+      "evidence": [
+        "docs/CAPACITY.md#Avoidable work (no optimisation applied; documented why)"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C067": {
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "30",
+        "36"
+      ],
+      "evidence": [
+        "docs/CAPACITY.md",
+        "evidence/perf/baseline.json",
+        "resilience.py::TokenBucket/ConcurrencyLimiter/CircuitBreaker",
+        "service.py"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C068": {
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "36"
+      ],
+      "evidence": [
+        "docs/CAPACITY.md",
+        "evidence/perf/baseline.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C069": {
+      "requirement": "Define capacity models and saturation signals that predict when Transient-execution defense needs more resources.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "30",
+        "36"
+      ],
+      "evidence": [
+        "docs/CAPACITY.md",
+        "evidence/perf/baseline.json",
+        "resilience.py::TokenBucket/ConcurrencyLimiter/CircuitBreaker",
+        "service.py"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C070": {
+      "requirement": "Block releases that regress approved Transient-execution defense startup, density, throughput, or tail-latency thresholds.",
+      "dimension": "Performance & Resource Efficiency",
+      "remediation_items": [
+        "35"
+      ],
+      "evidence": [
+        "evidence/perf/gate.json",
+        "perf/thresholds.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C071": {
+      "requirement": "Expose Transient-execution defense health, readiness, version, configuration, dependency status, and active capability set.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "10",
+        "28",
+        "37"
+      ],
+      "evidence": [
+        "collector.py::Observation",
+        "registry.py::_fresh_entry",
+        "resilience.py::FailureClass/HealthMonitor",
+        "service.py /metrics",
+        "telemetry.py::Metrics",
+        "tests/test_decision_plane.py::RegistryTest",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C072": {
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "37"
+      ],
+      "evidence": [
+        "service.py /metrics",
+        "telemetry.py::Metrics"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C073": {
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "38"
+      ],
+      "evidence": [
+        "telemetry.py::StructuredLogger",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C074": {
+      "requirement": "Propagate trace context across all relevant Transient-execution defense boundaries.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "39"
+      ],
+      "evidence": [
+        "telemetry.py::parse_traceparent",
+        "tests/test_decision_plane.py::ServiceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C075": {
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "38"
+      ],
+      "evidence": [
+        "telemetry.py::StructuredLogger",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C076": {
+      "requirement": "Record the reason for every automated decision made by Transient-execution defense.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "40"
+      ],
+      "evidence": [
+        "registry.py::explain",
+        "service.py /v1/explain"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C077": {
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "40"
+      ],
+      "evidence": [
+        "registry.py::explain",
+        "service.py /v1/explain"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C078": {
+      "requirement": "Correlate Transient-execution defense events with application release lineage and the live infrastructure graph.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "39",
+        "40"
+      ],
+      "evidence": [
+        "registry.py::explain",
+        "service.py /v1/explain",
+        "telemetry.py::parse_traceparent",
+        "tests/test_decision_plane.py::ServiceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C079": {
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "38"
+      ],
+      "evidence": [
+        "telemetry.py::StructuredLogger",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C080": {
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "dimension": "Observability & Explainability",
+      "remediation_items": [
+        "41"
+      ],
+      "evidence": [
+        "ops/alerts.yaml",
+        "ops/dashboard.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C081": {
+      "requirement": "Create unit tests for deterministic Transient-execution defense logic and state transitions.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [],
+      "evidence": [
+        "tests/test_defense.py",
+        "tests/test_hardening.py::PropertyFuzzTest",
+        "tests/test_signal_path.py"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C082": {
+      "requirement": "Create contract tests for every public Transient-execution defense interface.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "21"
+      ],
+      "evidence": [
+        "requirements-dev.lock",
+        "schemas/*.json",
+        "tests/test_hardening.py::SchemaConformanceTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C083": {
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "15",
+        "16",
+        "17",
+        "18",
+        "42"
+      ],
+      "evidence": [
+        "placement.py",
+        "policy.py::gap02_contradictions",
+        "policy/default_policy.json#isolation_tiers",
+        "policy/default_policy.json#legacy_cpu",
+        "tests/test_decision_plane.py::IntegrationTest",
+        "tests/test_decision_plane.py::PlacementTest",
+        "tests/test_decision_plane.py::RegistryTest.test_gap02_contradiction_downgrades",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C084": {
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Transient-execution defense.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "43"
+      ],
+      "evidence": [
+        "docs/COMPATIBILITY.md",
+        "tests/fixtures/kernel_strings.json"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C085": {
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Transient-execution defense.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "26"
+      ],
+      "evidence": [
+        "tests/test_hardening.py::PropertyFuzzTest (INV43_FUZZ_SEED/INV43_FUZZ_N)"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C086": {
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Transient-execution defense state.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "27"
+      ],
+      "evidence": [
+        "docs/CONCURRENCY.md",
+        "tests/test_hardening.py::ConcurrencyTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C087": {
+      "requirement": "Create security tests derived directly from the Transient-execution defense threat model.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "25"
+      ],
+      "evidence": [
+        "tests/test_hardening.py::AdversarialTest",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C088": {
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Transient-execution defense.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "34",
+        "44"
+      ],
+      "evidence": [
+        "bench/run_bench.py",
+        "evidence/perf/baseline.json",
+        "tests/test_hardening.py::SoakBurstTest (INV43_SOAK_*)"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C089": {
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "33"
+      ],
+      "evidence": [
+        "tests/test_hardening.py::FaultInjectionTest"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C090": {
+      "requirement": "Require machine-readable acceptance evidence before certifying a Transient-execution defense release for production.",
+      "dimension": "Testing & Certification",
+      "remediation_items": [
+        "01",
+        "03"
+      ],
+      "evidence": [
+        "conformance/INV43_LOCAL_GATE.json",
+        "evidence/ledger.jsonl",
+        "governance/EXCEPTIONS.json#EXC-001",
+        "provenance/PROVENANCE.json",
+        "tests/test_governance.py::ProvenanceTest",
+        "tools/build_release.py",
+        "tools/verify_governance.py"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C091": {
+      "requirement": "Define production SLOs, error budgets, and support commitments for Transient-execution defense.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "07"
+      ],
+      "evidence": [
+        "governance/OWNERS.json",
+        "tools/verify_governance.py"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C092": {
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Transient-execution defense.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "32",
+        "45"
+      ],
+      "evidence": [
+        "registry.py::quarantine/release/freeze",
+        "rollout.py",
+        "tests/test_decision_plane.py::RegistryTest.test_freeze_and_kill_switch",
+        "tests/test_hardening.py::RolloutTest"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C093": {
+      "requirement": "Maintain a supported-version compatibility matrix for Transient-execution defense and adjacent dependencies.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "02",
+        "20",
+        "43"
+      ],
+      "evidence": [
+        "deps/pk_core.lock.json",
+        "docs/COMPATIBILITY.md",
+        "negotiation.py",
+        "tests/fixtures/kernel_strings.json",
+        "tests/test_decision_plane.py::NegotiationTest",
+        "verify.py (PK_REQUIRE_CORE=1 fails closed)"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C094": {
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Transient-execution defense.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "51"
+      ],
+      "evidence": [
+        "SECURITY.md"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C095": {
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Transient-execution defense state where applicable.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "46"
+      ],
+      "evidence": [
+        "docs/RECOVERY.md",
+        "tests/test_decision_plane.py::RegistryTest.test_controls_survive_restart_via_audit_chain"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C096": {
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "47"
+      ],
+      "evidence": [
+        "docs/RUNBOOK.md"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C097": {
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "07",
+        "48"
+      ],
+      "evidence": [
+        "docs/INCIDENT_RESPONSE.md",
+        "governance/OWNERS.json",
+        "tools/verify_governance.py"
+      ],
+      "state": "BLOCKED"
+    },
+    "INV-43-C098": {
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "49"
+      ],
+      "evidence": [
+        "governance/REVIEW_SCHEDULE.json",
+        "tools/verify_governance.py"
+      ],
+      "state": "PARTIAL"
+    },
+    "INV-43-C099": {
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "50"
+      ],
+      "evidence": [
+        "governance/EXCEPTIONS.json",
+        "tests/test_governance.py::ExceptionLedgerTest",
+        "tools/verify_governance.py"
+      ],
+      "state": "LOCAL_IMPLEMENTED"
+    },
+    "INV-43-C100": {
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "dimension": "Operations, Release & Governance",
+      "remediation_items": [
+        "01",
+        "02",
+        "03"
+      ],
+      "evidence": [
+        "conformance/INV43_LOCAL_GATE.json",
+        "deps/pk_core.lock.json",
+        "evidence/ledger.jsonl",
+        "governance/EXCEPTIONS.json#EXC-001",
+        "provenance/PROVENANCE.json",
+        "tests/test_governance.py::ProvenanceTest",
+        "tools/build_release.py",
+        "tools/verify_governance.py",
+        "verify.py (PK_REQUIRE_CORE=1 fails closed)"
+      ],
+      "state": "BLOCKED"
+    }
+  }
+}

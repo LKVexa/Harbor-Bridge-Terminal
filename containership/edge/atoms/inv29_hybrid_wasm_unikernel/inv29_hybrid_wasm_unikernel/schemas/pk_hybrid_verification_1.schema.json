@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:inv29:PK_HYBRID_VERIFICATION/1",
+  "title": "PK_HYBRID_VERIFICATION/1",
+  "description": "Per-layer verification record emitted by inv29 verify(). Additive-only evolution within major 1 (see SCHEMA_EVOLUTION.md).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "module", "host", "layers", "import_closure", "verified"],
+  "properties": {
+    "schema": {"const": "PK_HYBRID_VERIFICATION/1"},
+    "module": {"$ref": "#/$defs/name"},
+    "host": {"$ref": "#/$defs/name"},
+    "layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unikernel", "wasm"],
+      "properties": {
+        "unikernel": {
+          "type": "object", "additionalProperties": false,
+          "required": ["verified", "sealed", "architecture", "guarantee"],
+          "properties": {
+            "verified": {"type": "boolean"},
+            "sealed": {"type": "boolean"},
+            "architecture": {"type": "string", "maxLength": 64},
+            "guarantee": {"const": "hardware-backed address-space isolation"}
+          }
+        },
+        "wasm": {
+          "type": "object", "additionalProperties": false,
+          "required": ["verified", "hardened", "architecture", "guarantee"],
+          "properties": {
+            "verified": {"type": "boolean"},
+            "hardened": {"type": "boolean"},
+            "architecture": {"type": "string", "maxLength": 64},
+            "guarantee": {"const": "software fault isolation and typed imports"}
+          }
+        }
+      }
+    },
+    "import_closure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["verified", "unsatisfied"],
+      "properties": {
+        "verified": {"type": "boolean"},
+        "unsatisfied": {"type": "array", "maxItems": 4096, "uniqueItems": true, "items": {"$ref": "#/$defs/capability"}}
+      }
+    },
+    "verified": {"type": "boolean"}
+  },
+  "$defs": {
+    "name": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "\\S"},
+    "capability": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "\\S"}
+  }
+}

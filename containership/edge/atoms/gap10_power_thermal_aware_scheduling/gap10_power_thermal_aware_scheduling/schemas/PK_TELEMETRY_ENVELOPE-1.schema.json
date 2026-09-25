@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schemas:PK_TELEMETRY_ENVELOPE:1",
+  "title": "PK_TELEMETRY_ENVELOPE/1",
+  "description": "Signed GAP-09 -> GAP-10 telemetry envelope. The signature covers the canonical JSON of payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "key_id",
+    "signature",
+    "attestation",
+    "payload"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "pattern": "^PK_TELEMETRY_ENVELOPE/1(\\.[0-9]+)?$"
+    },
+    "key_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "attestation": {
+      "enum": [
+        "hardware",
+        "software",
+        "none"
+      ]
+    },
+    "correlation_id": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node",
+        "seq",
+        "observed_at",
+        "sensors"
+      ],
+      "properties": {
+        "node": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "site": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observed_at": {
+          "type": "number"
+        },
+        "sensors": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sensor_id",
+              "kind",
+              "temperature_c"
+            ],
+            "properties": {
+              "sensor_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "kind": {
+                "enum": [
+                  "cpu",
+                  "gpu",
+                  "vrm",
+                  "ssd",
+                  "inlet",
+                  "exhaust",
+                  "chassis",
+                  "accelerator",
+                  "battery",
+                  "other"
+                ]
+              },
+              "temperature_c": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "healthy": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "power_draw_watts": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "power_budget_watts": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "battery_fraction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

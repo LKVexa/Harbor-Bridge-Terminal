@@ -1,0 +1,214 @@
+{
+  "$id": "urn:gap15:schema:evidence:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "media_type": {
+          "maxLength": 128,
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest",
+        "media_type"
+      ],
+      "type": "object"
+    },
+    "attestation": {
+      "additionalProperties": false,
+      "properties": {
+        "nonce": {
+          "pattern": "^[0-9a-f]{32,64}$",
+          "type": "string"
+        },
+        "quote": {
+          "type": "object"
+        },
+        "signature": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "quote",
+        "signature",
+        "nonce"
+      ],
+      "type": "object"
+    },
+    "failure_class": {
+      "enum": [
+        "deterministic",
+        "security-policy",
+        "performance",
+        "transient",
+        "flaky",
+        "harness-defect"
+      ]
+    },
+    "features": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "feature": {
+            "pattern": "^[a-z0-9:/._-]{1,128}$",
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "passed",
+              "failed"
+            ]
+          }
+        },
+        "required": [
+          "feature",
+          "result"
+        ],
+        "type": "object"
+      },
+      "maxItems": 256,
+      "type": "array"
+    },
+    "observed_at": {
+      "maximum": 4611686018427387904,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "partition": {
+      "pattern": "^[a-z0-9-]{1,63}/[a-z0-9-]{1,63}/[a-z0-9-]{1,63}$",
+      "type": "string"
+    },
+    "producer": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}$",
+      "type": "string"
+    },
+    "producer_event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}$",
+      "type": "string"
+    },
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "sbom": {
+          "type": "object"
+        },
+        "signature": {
+          "type": "object"
+        },
+        "statement": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "statement",
+        "signature"
+      ],
+      "type": "object"
+    },
+    "result": {
+      "enum": [
+        "compatible",
+        "incompatible"
+      ]
+    },
+    "runtime": {
+      "pattern": "^[a-z0-9-]{1,32}@[0-9A-Za-z.+-]{1,64}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "GAP15_EVIDENCE/1"
+    },
+    "signature": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "maxLength": 32,
+          "type": "string"
+        },
+        "key_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}$",
+          "type": "string"
+        },
+        "payload_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "signed_at": {
+          "maximum": 4611686018427387904,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "value": {
+          "maxLength": 128,
+          "type": "string"
+        }
+      },
+      "required": [
+        "algorithm",
+        "key_id",
+        "signed_at",
+        "payload_digest",
+        "value"
+      ],
+      "type": "object"
+    },
+    "supersedes": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}$",
+      "type": "string"
+    },
+    "test_suite": {
+      "additionalProperties": false,
+      "properties": {
+        "harness_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}$",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "harness_digest"
+      ],
+      "type": "object"
+    },
+    "time_confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "producer",
+    "producer_event_id",
+    "partition",
+    "artifact",
+    "runtime",
+    "attestation",
+    "result",
+    "observed_at",
+    "test_suite",
+    "signature",
+    "provenance"
+  ],
+  "title": "GAP15_EVIDENCE/1",
+  "type": "object",
+  "x-gap15-schema-set": "1.0.0"
+}

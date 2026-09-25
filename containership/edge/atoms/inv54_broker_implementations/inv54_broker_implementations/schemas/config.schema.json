@@ -1,0 +1,110 @@
+{
+  "$id": "urn:inv54:inv54.config/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "auth": {
+      "type": "object"
+    },
+    "features": {
+      "type": "object"
+    },
+    "limits": {
+      "properties": {
+        "max_backlog_per_subscriber": {
+          "maximum": 10000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_inflight": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_log_records_per_partition": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_message_bytes": {
+          "maximum": 16777216,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_subscribers_per_tenant": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "overflow_policy": {
+          "enum": [
+            "reject",
+            "drop_oldest"
+          ]
+        },
+        "partitions": {
+          "maximum": 4096,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "profile": {
+      "enum": [
+        "dev",
+        "production"
+      ]
+    },
+    "provider": {
+      "properties": {
+        "endpoints": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "reference",
+            "durable",
+            "kafka",
+            "rabbitmq",
+            "sqs"
+          ]
+        },
+        "options": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "quotas": {
+      "type": "object"
+    },
+    "retention": {
+      "type": "object"
+    },
+    "retry": {
+      "type": "object"
+    },
+    "schema": {
+      "const": "inv54.config/1"
+    },
+    "storage": {
+      "type": "object"
+    },
+    "telemetry": {
+      "type": "object"
+    },
+    "tls": {
+      "type": "object"
+    }
+  },
+  "title": "INV-54 configuration",
+  "type": "object",
+  "x-secret-reference-pattern": "^secret://(?P<provider>[a-z][a-z0-9_-]{0,31})/(?P<name>[A-Za-z0-9_./-]{1,200})$"
+}

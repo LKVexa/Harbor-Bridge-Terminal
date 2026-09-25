@@ -1,0 +1,22 @@
+# DRAFT Prometheus alerting rules - not deployed.
+groups:
+- name: inv55
+  rules:
+  - alert: INV55NotReady
+    expr: inv55_ready == 0   # gauge set by the host from health.status()["ready"]
+    for: 1m
+    labels: {severity: page}
+  - alert: INV55InternalErrors
+    expr: increase(inv55_internal_errors_total[5m]) > 0
+    labels: {severity: page}
+  - alert: INV55LatencyBudgetBurn
+    expr: histogram_quantile(0.99, sum by (le) (rate(inv55_request_latency_ms_bucket[5m]))) > 5
+    for: 10m
+    labels: {severity: ticket}
+  - alert: INV55DenialSpike
+    expr: sum(rate(inv55_denials_total[5m])) > 3 * sum(rate(inv55_denials_total[1h] offset 1d))
+    for: 10m
+    labels: {severity: ticket}
+  - alert: INV55TelemetryCardinality
+    expr: inv55_telemetry_series_dropped_total > 0
+    labels: {severity: ticket}

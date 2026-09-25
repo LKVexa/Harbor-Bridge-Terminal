@@ -1,0 +1,164 @@
+{
+  "$id": "urn:pk:PK_BRANCH_CERT:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Signature: Ed25519 over b'PK_BRANCH_CERT/1\\n' + canonical(payload). Status (valid/expired/revoked/superseded/suspended/unknown) is NOT in the signed payload; it comes from a freshness-bounded revocation view, and anything but 'valid' is uncertified. Subordinate issuers are prohibited in /1.",
+  "properties": {
+    "payload": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_digests": {
+          "items": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "baselines": {
+          "additionalProperties": false,
+          "properties": {
+            "fork": {
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "standards": {
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "standards",
+            "fork"
+          ],
+          "type": "object"
+        },
+        "branch": {
+          "enum": [
+            "standards",
+            "fork"
+          ]
+        },
+        "cert_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "component": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "version": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "version"
+          ],
+          "type": "object"
+        },
+        "contract": {
+          "const": "PK_BRANCH_CERT/1"
+        },
+        "evidence_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "issued_at": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "issuer": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "key_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "matrix_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "not_after": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_before": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "scope": {
+          "additionalProperties": false,
+          "properties": {
+            "architectures": {
+              "type": "array"
+            },
+            "environments": {
+              "type": "array"
+            },
+            "runtimes": {
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "waivers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "contract",
+        "cert_id",
+        "component",
+        "artifact_digests",
+        "branch",
+        "baselines",
+        "matrix_digest",
+        "evidence_digest",
+        "issuer",
+        "key_id",
+        "issued_at",
+        "not_before",
+        "not_after",
+        "scope",
+        "waivers"
+      ],
+      "type": "object"
+    },
+    "signature": {
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "value": {
+          "contentEncoding": "base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alg",
+        "key_id",
+        "value"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "payload",
+    "signature"
+  ],
+  "title": "PK_BRANCH_CERT/1",
+  "type": "object"
+}

@@ -1,0 +1,64 @@
+{
+ "schema": "PK_ACCEL_OPTIMIZATION_REPORT/1",
+ "method": "cProfile of 400 governed requests at 256 devices, then before/after perf_suite runs on the same host",
+ "findings": [
+  {
+   "id": "P-1",
+   "kind": "duplicate state/validation",
+   "where": "state.ReservationStore.overlay",
+   "observation": "cProfile: _validate_device called 3x per device per governed request (intake, overlay copy via Device(), decide); ~73% of request CPU in validation",
+   "change": "overlay copies devices without re-running __post_init__ validation; decide() still validates (threat T8)",
+   "before": {
+    "service_steady_p50_us": 1115.5,
+    "ops_per_s": 872.6,
+    "mode": "quick"
+   },
+   "after": {
+    "service_steady_p50_us": 807.5,
+    "mode": "quick"
+   },
+   "status": "applied"
+  },
+  {
+   "id": "P-2",
+   "kind": "unbounded per-call work",
+   "where": "trust.Authenticator.authenticate",
+   "observation": "60 s soak: p50 rose to 2670.8 us vs 984.7 us steady (nonce cache scanned linearly on every call)",
+   "change": "expiry min-heap; amortised O(log n) pruning",
+   "before": {
+    "soak_p50_us": 2670.8,
+    "soak_p99_us": 9332.1,
+    "soak_ops_per_s": 341.4
+   },
+   "after": {
+    "soak_p50_us": 820.6,
+    "soak_p99_us": 1682.8,
+    "soak_ops_per_s": 1125.3
+   },
+   "status": "applied"
+  },
+  {
+   "id": "P-3",
+   "kind": "serialization/copies/hops",
+   "where": "decision path",
+   "observation": "no network hop, no serialization, one Device copy per device per request; schema validation of the request is O(fields)",
+   "status": "no action"
+  },
+  {
+   "id": "P-4",
+   "kind": "locality/caching",
+   "where": "matcher.decide at MAX_INVENTORY",
+   "observation": "pure_match_4096 p99 12852.0 us vs contract 10 ms; cost is per-device validation + sort, linear in inventory",
+   "candidate": "cache validated inventory per generation and index by class; not applied (changes the T8 re-validation guarantee; needs an owner decision)",
+   "status": "open (TD-1, W-005)"
+  },
+  {
+   "id": "P-5",
+   "kind": "concurrency",
+   "where": "service under 8 threads",
+   "observation": "burst throughput (874.5 ops/s) below single-thread steady (1170.4 ops/s): GIL-bound CPU work plus the store lock",
+   "status": "open; scale out by process/site, not threads"
+  }
+ ],
+ "zero_copy_kernel_bypass": "not applicable: INV-72 moves no bulk data"
+}

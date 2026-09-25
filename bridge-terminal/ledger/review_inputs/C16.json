@@ -1,0 +1,1695 @@
+{
+"component": "C16",
+"items": [
+{
+"id": "C16-001",
+"task_class": "SPECIFY",
+"area": "01. Upgrade boundary",
+"req": "Define the approved WebSocket route or routes.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "exact path /ws/terminal is the only approved route",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"gateway/server.js:158"
+]
+},
+{
+"id": "C16-002",
+"task_class": "SPECIFY",
+"area": "01. Upgrade boundary",
+"req": "Identify all checks required before accepting an upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "path->draining->Origin->handshake->identity->capacity sequence documented",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C16-003",
+"task_class": "IMPLEMENT",
+"area": "01. Upgrade boundary",
+"req": "Assign ownership of the original HttpListenerContext.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no HttpListenerContext exists; Node http.IncomingMessage/socket used instead (D-001)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C16-004",
+"task_class": "IMPLEMENT",
+"area": "01. Upgrade boundary",
+"req": "Assign ownership of the resulting WebSocket context.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "comment documents ownership: one receive path, one send path, single idempotent _destroy()",
+"prior_evidence": [
+"gateway/ws.js:9-12"
+]
+},
+{
+"id": "C16-005",
+"task_class": "DOCUMENT",
+"area": "01. Upgrade boundary",
+"req": "Record AcceptWebSocketAsync as the managed upgrade mechanism.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "AcceptWebSocketAsync is a .NET API not used under D-001",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C16-006",
+"task_class": "IMPLEMENT",
+"area": "01. Upgrade boundary",
+"req": "Distinguish handshake validity from application authentication.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade() (RFC6455 validity) is separate from identity.authenticate()",
+"prior_evidence": [
+"gateway/server.js:163-177"
+]
+},
+{
+"id": "C16-007",
+"task_class": "SPECIFY",
+"area": "01. Upgrade boundary",
+"req": "Define the intended subprotocol-selection input.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "subprotocol hermit.vws.v1 required, defined as PROTOCOL const",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport",
+"gateway/ws.js:22"
+]
+},
+{
+"id": "C16-008",
+"task_class": "SPECIFY",
+"area": "01. Upgrade boundary",
+"req": "Define the intended keep-alive configuration input.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeat/ping intervals are the keep-alive config input",
+"prior_evidence": [
+"docs/RECOVERY.md#liveness",
+"gateway/config.js:61-65"
+]
+},
+{
+"id": "C16-009",
+"task_class": "SPECIFY",
+"area": "01. Upgrade boundary",
+"req": "Define the response policy for rejected requests.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "rejections are ordinary HTTP responses with Connection: close",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"gateway/ws.js:235-241"
+]
+},
+{
+"id": "C16-010",
+"task_class": "IMPLEMENT",
+"area": "01. Upgrade boundary",
+"req": "Approve the upgrade adapter contract.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no formal approval record of the upgrade adapter contract found",
+"prior_evidence": []
+},
+{
+"id": "C16-011",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime feasibility",
+"req": "Resolve AcceptWebSocketAsync on the selected runtime.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no AcceptWebSocketAsync; hand-written RFC 6455 endpoint used (D-001)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C16-012",
+"task_class": "DOCUMENT",
+"area": "02. Runtime feasibility",
+"req": "Record the exact overload and parameter types.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET overload/parameter types do not apply to the Node implementation",
+"prior_evidence": []
+},
+{
+"id": "C16-013",
+"task_class": "TEST",
+"area": "02. Runtime feasibility",
+"req": "Test the overload from PowerShell inside the Linux container.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "PowerShell/.NET matrix explicitly NOT_APPLICABLE for NODE-WEB (D-001)",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C16-014",
+"task_class": "TEST",
+"area": "02. Runtime feasibility",
+"req": "Test null subprotocol handling.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "null subprotocol tested (->400) but the .NET null-overload concept has no analogue",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:13"
+]
+},
+{
+"id": "C16-015",
+"task_class": "TEST",
+"area": "02. Runtime feasibility",
+"req": "Test a supported explicit subprotocol when applicable.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "101 with Sec-WebSocket-Protocol: hermit.vws.v1 tested",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C16-016",
+"task_class": "TEST",
+"area": "02. Runtime feasibility",
+"req": "Test buffer-size arguments for the chosen overload.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "buffer-size overload arguments are .NET-specific (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C16-017",
+"task_class": "TEST",
+"area": "02. Runtime feasibility",
+"req": "Test TimeSpan conversion for the chosen overload.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "TimeSpan conversion is .NET-specific (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C16-018",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime feasibility",
+"req": "Capture the original exception from a failed upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ws.rejected logs status/reason, not an original exception object (no exceptions thrown in normal reject path)",
+"prior_evidence": [
+"gateway/server.js:155"
+]
+},
+{
+"id": "C16-019",
+"task_class": "DOCUMENT",
+"area": "02. Runtime feasibility",
+"req": "Record runtime-specific restrictions discovered by the probe.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no probe record of Node-runtime-specific restrictions found",
+"prior_evidence": []
+},
+{
+"id": "C16-020",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime feasibility",
+"req": "Gate further implementation on successful required upgrade behavior.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "vertical slice proves the full upgrade->session path works end to end",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C16-021",
+"task_class": "REVIEW",
+"area": "03. Pre-upgrade checks",
+"req": "Confirm the request is classified as a WebSocket request.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade validates Upgrade/Connection headers, version, key, subprotocol",
+"prior_evidence": [
+"gateway/ws.js:22-34",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C16-022",
+"task_class": "REVIEW",
+"area": "03. Pre-upgrade checks",
+"req": "Confirm the request targets an approved application route.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "path /ws/other -> 404 tested",
+"prior_evidence": [
+"gateway/server.js:158",
+"tests/gateway/ws-conformance.test.js:14"
+]
+},
+{
+"id": "C16-023",
+"task_class": "IMPLEMENT",
+"area": "03. Pre-upgrade checks",
+"req": "Evaluate the server-side origin policy.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Origin: unlisted -> 403 tested",
+"prior_evidence": [
+"gateway/origin.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-024",
+"task_class": "IMPLEMENT",
+"area": "03. Pre-upgrade checks",
+"req": "Evaluate required connection credentials.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "no credential / wrong credential / malformed header -> 401 tested",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-025",
+"task_class": "IMPLEMENT",
+"area": "03. Pre-upgrade checks",
+"req": "Evaluate required session metadata.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "session metadata (sid/epoch) is validated post-upgrade in connection.js, not as a pre-upgrade check",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C16-026",
+"task_class": "SPECIFY",
+"area": "03. Pre-upgrade checks",
+"req": "Select an allowed subprotocol or an intentional no-subprotocol result.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "offered subprotocols filtered; must include hermit.vws.v1 or 400",
+"prior_evidence": [
+"gateway/ws.js:31-32"
+]
+},
+{
+"id": "C16-027",
+"task_class": "REVIEW",
+"area": "03. Pre-upgrade checks",
+"req": "Check whether shutdown has begun.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "draining checked before upgrade; tested via 503 while draining",
+"prior_evidence": [
+"gateway/server.js:160",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C16-028",
+"task_class": "REVIEW",
+"area": "03. Pre-upgrade checks",
+"req": "Check whether connection capacity is available.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "capacity: per-principal and global caps tested",
+"prior_evidence": [
+"gateway/server.js:178",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-029",
+"task_class": "IMPLEMENT",
+"area": "03. Pre-upgrade checks",
+"req": "Avoid allocating a permanent worker before required checks succeed.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "capacity reserved before a worker is spawned",
+"prior_evidence": [
+"gateway/server.js:167-183",
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C16-030",
+"task_class": "TEST",
+"area": "03. Pre-upgrade checks",
+"req": "Test that a failed check cannot fall through into acceptance.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "each rejection path individually tested; no single adversarial fallthrough test",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-031",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Invoke AcceptWebSocketAsync once for an eligible context.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade() invoked exactly once for an eligible context",
+"prior_evidence": [
+"gateway/server.js:180"
+]
+},
+{
+"id": "C16-032",
+"task_class": "MEASURE",
+"area": "04. Managed handshake",
+"req": "Observe completion of the returned task.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "handshake write completes synchronously before Connection is constructed",
+"prior_evidence": [
+"gateway/ws.js:229-233"
+]
+},
+{
+"id": "C16-033",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Let the managed API construct the protocol handshake in this baseline.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade computes accept key and writes the 101 response itself",
+"prior_evidence": [
+"gateway/ws.js:19,229-233"
+]
+},
+{
+"id": "C16-034",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Avoid manually writing a second HTTP 101 response.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "single acceptUpgrade call; no second 101 written",
+"prior_evidence": [
+"gateway/server.js:180"
+]
+},
+{
+"id": "C16-035",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Avoid manually computing a second accept hash in this baseline.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptKey() computed once via crypto sha1",
+"prior_evidence": [
+"gateway/ws.js:19"
+]
+},
+{
+"id": "C16-036",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Avoid appending ordinary HTTP response bodies after upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade writes only headers, no HTTP body after upgrade",
+"prior_evidence": [
+"gateway/ws.js:229-233"
+]
+},
+{
+"id": "C16-037",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Capture the returned HttpListenerWebSocketContext.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "HttpListenerWebSocketContext is a .NET type not used (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C16-038",
+"task_class": "IMPLEMENT",
+"area": "04. Managed handshake",
+"req": "Extract its WebSocket instance.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "new WsConnection(socket,...) extracts/wraps the usable connection",
+"prior_evidence": [
+"gateway/server.js:181"
+]
+},
+{
+"id": "C16-039",
+"task_class": "VERIFY",
+"area": "04. Managed handshake",
+"req": "Verify the connection is usable before normal message processing.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "hello->open->opened->output vertical slice proves usability before processing",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C16-040",
+"task_class": "DOCUMENT",
+"area": "04. Managed handshake",
+"req": "Record a successful-upgrade event without secret headers.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('ws.accepted', {conn,tenant,sub,origin}) has no secret headers [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:184"
+]
+},
+{
+"id": "C16-041",
+"task_class": "IMPLEMENT",
+"area": "05. Context extraction",
+"req": "Preserve the selected subprotocol result.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL constant is the only negotiated subprotocol, carried through Connection",
+"prior_evidence": [
+"gateway/server.js:181-182"
+]
+},
+{
+"id": "C16-042",
+"task_class": "IMPLEMENT",
+"area": "05. Context extraction",
+"req": "Preserve the authenticated application identity separately from raw credentials.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "principal object (identity) passed to Connection, distinct from raw bearer/ticket",
+"prior_evidence": [
+"gateway/server.js:182",
+"gateway/auth.js"
+]
+},
+{
+"id": "C16-043",
+"task_class": "IMPLEMENT",
+"area": "05. Context extraction",
+"req": "Preserve a safe connection correlation identifier.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "conn.id used as the safe correlation id in logs",
+"prior_evidence": [
+"gateway/server.js:184"
+]
+},
+{
+"id": "C16-044",
+"task_class": "IMPLEMENT",
+"area": "05. Context extraction",
+"req": "Preserve required non-sensitive request metadata.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "origin and remote address preserved as non-sensitive metadata",
+"prior_evidence": [
+"gateway/server.js:182"
+]
+},
+{
+"id": "C16-045",
+"task_class": "IMPLEMENT",
+"area": "05. Context extraction",
+"req": "Avoid retaining the entire request header collection unnecessarily.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "only specific fields (bearer, ticket, origin) extracted; full header object not retained",
+"prior_evidence": [
+"gateway/server.js:167-182"
+]
+},
+{
+"id": "C16-046",
+"task_class": "SPECIFY",
+"area": "05. Context extraction",
+"req": "Define whether original origin information is needed by the worker.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "origin is passed to Connection but no explicit documented decision on whether the worker needs it",
+"prior_evidence": [
+"gateway/server.js:182"
+]
+},
+{
+"id": "C16-047",
+"task_class": "SPECIFY",
+"area": "05. Context extraction",
+"req": "Define whether original session lookup information is needed by the worker.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit decision on whether original session-lookup info is needed by the worker",
+"prior_evidence": []
+},
+{
+"id": "C16-048",
+"task_class": "REVIEW",
+"area": "05. Context extraction",
+"req": "Validate required fields before worker handoff.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "identity/capacity/origin checks all precede Connection/worker creation [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/server.js:167-182"
+]
+},
+{
+"id": "C16-049",
+"task_class": "IMPLEMENT",
+"area": "05. Context extraction",
+"req": "Prevent a worker from receiving a null or failed socket result.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Connection only constructed after a successful synchronous accept; no null socket path",
+"prior_evidence": [
+"gateway/server.js:180-183"
+]
+},
+{
+"id": "C16-050",
+"task_class": "DOCUMENT",
+"area": "05. Context extraction",
+"req": "Document the handoff object shape.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no document defines the exact handoff object shape/schema",
+"prior_evidence": []
+},
+{
+"id": "C16-051",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Complete an HTTP rejection before upgrade when authorization fails.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "401 rejectUpgrade completes before any upgrade on auth failure",
+"prior_evidence": [
+"gateway/server.js:177",
+"gateway/ws.js:235-241"
+]
+},
+{
+"id": "C16-052",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Complete an HTTP rejection when the route is unsupported.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "404 reject for unsupported route, no upgrade attempted",
+"prior_evidence": [
+"gateway/server.js:158"
+]
+},
+{
+"id": "C16-053",
+"task_class": "SPECIFY",
+"area": "06. Rejection and failure",
+"req": "Define behavior when no requested subprotocol is acceptable.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "400 'subprotocol' when no acceptable subprotocol is offered",
+"prior_evidence": [
+"gateway/ws.js:32"
+]
+},
+{
+"id": "C16-054",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Handle a client disconnect during the handshake.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "socket.on('error', ()=>{}) registered at start of upgrade handling",
+"prior_evidence": [
+"gateway/server.js:153"
+]
+},
+{
+"id": "C16-055",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Handle a task fault during managed upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reject paths return early on sync failures; no top-level try/catch wraps the whole upgrade handler",
+"prior_evidence": [
+"gateway/server.js:152-185"
+]
+},
+{
+"id": "C16-056",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Release resources created before upgrade failure.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "no resources are allocated before a successful accept, so there is nothing to leak on failure",
+"prior_evidence": [
+"gateway/server.js:167-183"
+]
+},
+{
+"id": "C16-057",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Prevent duplicate cleanup after an upgrade exception.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "rejectUpgrade sets a single cleanup timeout, one path only",
+"prior_evidence": [
+"gateway/ws.js:235-241"
+]
+},
+{
+"id": "C16-058",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Avoid exposing internal stack traces to the client.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "rejection body is a fixed {error:reason} string, no stack trace",
+"prior_evidence": [
+"gateway/ws.js:235-241"
+]
+},
+{
+"id": "C16-059",
+"task_class": "IMPLEMENT",
+"area": "06. Rejection and failure",
+"req": "Classify protocol failure separately from credential rejection.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "protocol failures (400/404/426) are distinct status codes from credential failures (401/403)",
+"prior_evidence": [
+"gateway/server.js:158-178"
+]
+},
+{
+"id": "C16-060",
+"task_class": "TEST",
+"area": "06. Rejection and failure",
+"req": "Test a failed upgrade followed by a successful new connection.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "several failed-handshake variants and a successful one are tested, but not explicitly sequenced as fail-then-succeed",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:10-16"
+]
+},
+{
+"id": "C16-061",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Perform only bounded work on the master path.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "upgrade handler performs only bounded synchronous checks before accept",
+"prior_evidence": [
+"gateway/server.js:152-185"
+]
+},
+{
+"id": "C16-062",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Transfer successful connections promptly to workers.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "worker is spawned promptly on session.open after upgrade",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C16-063",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Coordinate admission checking with worker registration.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.reserve()/activate() coordinate admission with worker registration",
+"prior_evidence": [
+"gateway/server.js:41-51"
+]
+},
+{
+"id": "C16-064",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Handle shutdown racing with task completion.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() races task completion via registry.onEmpty and a hard timer",
+"prior_evidence": [
+"gateway/server.js:195-221"
+]
+},
+{
+"id": "C16-065",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Handle capacity becoming unavailable while an upgrade is pending.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "capacity re-checked synchronously immediately before accept",
+"prior_evidence": [
+"gateway/server.js:178"
+]
+},
+{
+"id": "C16-066",
+"task_class": "SPECIFY",
+"area": "07. Concurrency",
+"req": "Define cleanup when the upgraded socket cannot be handed off.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit design for cleanup if an upgraded socket cannot be handed to a worker",
+"prior_evidence": []
+},
+{
+"id": "C16-067",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Prevent two workers from taking ownership of one upgraded socket.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "exactly one Connection created and added to registry per accepted socket",
+"prior_evidence": [
+"gateway/server.js:182-183"
+]
+},
+{
+"id": "C16-068",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test simultaneous successful upgrade attempts.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3 measures 8 concurrent session opens but is a benchmark, not a correctness test",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C16-069",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test mixed successful and rejected upgrades.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated test mixes successful and rejected upgrades concurrently",
+"prior_evidence": []
+},
+{
+"id": "C16-070",
+"task_class": "MEASURE",
+"area": "07. Concurrency",
+"req": "Measure upgrade and handoff latency under representative load.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "W3: open p50 52ms, max 71ms for 8 concurrent sessions",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only",
+"e/I053/bench.json"
+]
+},
+{
+"id": "C16-071",
+"task_class": "VERIFY",
+"area": "08. Protocol validation",
+"req": "Verify HTTP 101 on a successful handshake using an appropriate client.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "101 verified with a raw-socket peer",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C16-072",
+"task_class": "VERIFY",
+"area": "08. Protocol validation",
+"req": "Verify the negotiated subprotocol when one is selected.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Sec-WebSocket-Protocol header asserted",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C16-073",
+"task_class": "VERIFY",
+"area": "08. Protocol validation",
+"req": "Verify missing required handshake metadata is rejected by the chosen stack.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "wrong subprotocol/version/key/path all rejected without upgrade",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12-15"
+]
+},
+{
+"id": "C16-074",
+"task_class": "TEST",
+"area": "08. Protocol validation",
+"req": "Test a malformed handshake in an isolated test.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "malformed handshake cases tested in isolation",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C16-075",
+"task_class": "TEST",
+"area": "08. Protocol validation",
+"req": "Test ordinary HTTP traffic does not accidentally upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "GET /ws/terminal returns 426 without upgrading",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C16-076",
+"task_class": "TEST",
+"area": "08. Protocol validation",
+"req": "Test an upgrade through the public WSS edge.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no TLS edge / public WSS available to test against",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C16-077",
+"task_class": "TEST",
+"area": "08. Protocol validation",
+"req": "Test a direct development upgrade for comparison.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "loopback raw-socket test is the direct development upgrade",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C16-078",
+"task_class": "VERIFY",
+"area": "08. Protocol validation",
+"req": "Verify immediate bidirectional messaging after upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "hello->open->input->output proves immediate bidirectional messaging",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C16-079",
+"task_class": "VERIFY",
+"area": "08. Protocol validation",
+"req": "Verify orderly closure immediately after upgrade.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "close-handshake tests cover orderly closure right after upgrade",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C16-080",
+"task_class": "IMPLEMENT",
+"area": "08. Protocol validation",
+"req": "Keep protocol validation separate from application authorization tests.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "protocol conformance and app-authz live in separate test files",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track upgrade attempts.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "counters.upgrades++ tracks every upgrade attempt",
+"prior_evidence": [
+"gateway/server.js:154"
+]
+},
+{
+"id": "C16-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track successful upgrades.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "counters.sessions counts opened sessions, but there is no counter distinct for successful upgrades vs sessions",
+"prior_evidence": [
+"gateway/server.js:35,48"
+]
+},
+{
+"id": "C16-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track application rejections by safe category.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "counters.rejected++ plus log.info('ws.rejected',{status,reason}) categorizes rejections",
+"prior_evidence": [
+"gateway/server.js:155"
+]
+},
+{
+"id": "C16-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track managed handshake failures by exception category.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "rejections logged by reason string; no distinct exception-category taxonomy since reject path rarely throws",
+"prior_evidence": [
+"gateway/server.js:155"
+]
+},
+{
+"id": "C16-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track time spent waiting for upgrade completion.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no metric captures time spent waiting for upgrade completion",
+"prior_evidence": []
+},
+{
+"id": "C16-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate handshake records with worker lifecycle records.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "conn.id links ws.accepted to later connection/worker lifecycle log lines",
+"prior_evidence": [
+"gateway/server.js:184"
+]
+},
+{
+"id": "C16-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Exclude raw tokens and cookies from diagnostic records.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "logger drops token/cookie/secret/authorization/ticket fields",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C16-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Redact credential-bearing query parameters.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "safePath strips the query string entirely from logged paths",
+"prior_evidence": [
+"gateway/log.js:16"
+]
+},
+{
+"id": "C16-089",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record the runtime version for compatibility failures.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "environment records Node v22.22.2 generally, not tied to specific compatibility failures",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C16-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for isolating handshake and post-handshake failures.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "separate test suites implicitly isolate handshake vs post-handshake failures; no written runbook",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the pre-upgrade decision sequence.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "pre-upgrade decision sequence published",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C16-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the selected overload signature.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'selected overload signature' is a .NET/C# concept; no overload exists in the Node implementation (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C16-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the context handoff contract.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "connection.js state machine documented but no explicit handoff-object-shape contract published",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C16-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link target-runtime handshake evidence.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "target-runtime (Node) handshake evidence linked",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C16-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link public-edge upgrade evidence.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no public-edge upgrade evidence exists; WAN/TLS edge unavailable",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C16-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link origin and credential rejection tests.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "origin and credential rejection tests linked",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C16-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link concurrent-upgrade and handoff-failure tests.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "concurrent-upgrade benchmark exists; no dedicated handoff-failure test linked",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C16-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document observed compatibility limitations.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "known/observed compatibility limitations documented",
+"prior_evidence": [
+"docs/RELEASE.md#release-notes",
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C16-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved protocol assumptions.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "unresolved protocol assumptions not compiled into a record",
+"prior_evidence": []
+},
+{
+"id": "C16-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the adapter only after upgrade and rejection paths are demonstrated.",
+"ram_overlay": "Validate credentials, origin policy, subprotocol, and capacity before allocating full resident session state. Handshake rejection must release only resources actually acquired.",
+"challenge": "Race cancellation with upgrade completion; verify no unowned socket or charged allocation survives.",
+"ref_work": [
+"R10",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no formal approval record demonstrating upgrade and rejection paths were both signed off",
+"prior_evidence": []
+}
+]
+}

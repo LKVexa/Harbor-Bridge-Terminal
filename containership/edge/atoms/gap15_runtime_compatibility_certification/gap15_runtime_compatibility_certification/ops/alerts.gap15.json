@@ -1,0 +1,269 @@
+{
+  "groups": [
+    {
+      "name": "gap15",
+      "rules": [
+        {
+          "alert": "GAP15SLOBurnFast",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15SLOBurnFast",
+            "first_action": "check /readyz and recent deploys",
+            "runbook": "docs/RUNBOOKS.md#rb-elevated-errors"
+          },
+          "expr": "error_ratio_1h > 14.4*budget and error_ratio_5m > 14.4*budget",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15SLOBurnSlow",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15SLOBurnSlow",
+            "first_action": "compare error categories",
+            "runbook": "docs/RUNBOOKS.md#rb-elevated-errors"
+          },
+          "expr": "error_ratio_6h > 6*budget and error_ratio_30m > 6*budget",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "ticket"
+          }
+        },
+        {
+          "alert": "GAP15ExpiryStorm",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15ExpiryStorm",
+            "first_action": "raise recert lab quota; do not extend TTL",
+            "runbook": "docs/RUNBOOKS.md#rb-expiry-storm"
+          },
+          "expr": "gap15_expiry_backlog > 0.2 * tested_keys",
+          "labels": {
+            "owner": "service-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15RecertBacklog",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15RecertBacklog",
+            "first_action": "inspect dead jobs",
+            "runbook": "docs/RUNBOOKS.md#rb-expiry-storm"
+          },
+          "expr": "gap15_queue_depth{queue=\"recert\"} > 1000 for 30m",
+          "labels": {
+            "owner": "service-owner",
+            "severity": "ticket"
+          }
+        },
+        {
+          "alert": "GAP15EOLAdmitted",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15EOLAdmitted",
+            "first_action": "emergency-disable the runtime",
+            "runbook": "docs/RUNBOOKS.md#rb-eol-exposure"
+          },
+          "expr": "gap15_eol_in_service > 0",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15CoverageLow",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15CoverageLow",
+            "first_action": "schedule coverage-gap jobs",
+            "runbook": "docs/RUNBOOKS.md#rb-coverage"
+          },
+          "expr": "gap15_matrix_coverage_ratio < 0.8 for 1d",
+          "labels": {
+            "owner": "service-owner",
+            "severity": "ticket"
+          }
+        },
+        {
+          "alert": "GAP15SignatureFailures",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15SignatureFailures",
+            "first_action": "identify signer; consider quarantine",
+            "runbook": "docs/RUNBOOKS.md#rb-signature-failures"
+          },
+          "expr": "rate(gap15_evidence_rejections_total{category=\"signature\"}[5m]) > 1",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15AttestationFailures",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15AttestationFailures",
+            "first_action": "check baselines and firmware revocations",
+            "runbook": "docs/RUNBOOKS.md#rb-attestation-failures"
+          },
+          "expr": "rate(gap15_evidence_rejections_total{category=\"attestation\"}[5m]) > 1",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15ProvenanceFailures",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15ProvenanceFailures",
+            "first_action": "check builder trust and SBOM subjects",
+            "runbook": "docs/RUNBOOKS.md#rb-provenance-failures"
+          },
+          "expr": "rate(gap15_evidence_rejections_total{category=\"provenance\"}[5m]) > 1",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15AuditChainBroken",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15AuditChainBroken",
+            "first_action": "preserve evidence; stop admissions",
+            "runbook": "docs/RUNBOOKS.md#rb-audit-chain"
+          },
+          "expr": "gap15_audit_chain_ok == 0",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15ReplayDetected",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15ReplayDetected",
+            "first_action": "revoke affected tokens",
+            "runbook": "docs/RUNBOOKS.md#rb-replay"
+          },
+          "expr": "increase(gap15_evidence_rejections_total{category=\"auth\"}[5m]) > 20",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15RevocationLag",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15RevocationLag",
+            "first_action": "stop admissions at lagging sites",
+            "runbook": "docs/RUNBOOKS.md#rb-revocation-lag"
+          },
+          "expr": "gap15_revocation_propagation_seconds > 60",
+          "labels": {
+            "owner": "security-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15ConflictsOpen",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15ConflictsOpen",
+            "first_action": "assign case owners",
+            "runbook": "docs/RUNBOOKS.md#rb-conflicts"
+          },
+          "expr": "gap15_conflicts_open > 0 for 4h",
+          "labels": {
+            "owner": "service-owner",
+            "severity": "ticket"
+          }
+        },
+        {
+          "alert": "GAP15TimeUntrusted",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15TimeUntrusted",
+            "first_action": "check NTS/PTP sources",
+            "runbook": "docs/RUNBOOKS.md#rb-time"
+          },
+          "expr": "gap15_time_offset_seconds > 5",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15StorageSaturation",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15StorageSaturation",
+            "first_action": "expand volume; never prune ledger",
+            "runbook": "docs/RUNBOOKS.md#rb-storage"
+          },
+          "expr": "disk_free_ratio < 0.1",
+          "labels": {
+            "owner": "data-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15BackupFailed",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15BackupFailed",
+            "first_action": "run backup and restore-verify",
+            "runbook": "docs/RUNBOOKS.md#rb-backup"
+          },
+          "expr": "time() - last_verified_backup_ts > 26h",
+          "labels": {
+            "owner": "data-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15ScrapeStale",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15ScrapeStale",
+            "first_action": "check exporter and alert pipeline",
+            "runbook": "docs/RUNBOOKS.md#rb-observability"
+          },
+          "expr": "gap15_exporter_scrape_age_seconds > 120",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "ticket"
+          }
+        },
+        {
+          "alert": "GAP15AlertPipelineDead",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15AlertPipelineDead",
+            "first_action": "notification path is down",
+            "runbook": "docs/RUNBOOKS.md#rb-observability"
+          },
+          "expr": "absent(ALERTS{alertname=\"GAP15Watchdog\"})",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "page"
+          }
+        },
+        {
+          "alert": "GAP15Watchdog",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15Watchdog",
+            "first_action": "always firing: proves the alert pipeline",
+            "runbook": "docs/RUNBOOKS.md#rb-observability"
+          },
+          "expr": "vector(1)",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "none"
+          }
+        },
+        {
+          "alert": "GAP15DependencyOutage",
+          "annotations": {
+            "diagnostics": "python -m gap15_runtime_compatibility_certification.production.cli diagnose --alert GAP15DependencyOutage",
+            "first_action": "follow fail-closed matrix",
+            "runbook": "docs/RUNBOOKS.md#rb-dependency-outage"
+          },
+          "expr": "readiness_check_failed{check=~\"time|chains|key_provider\"} == 1",
+          "labels": {
+            "owner": "technical-owner",
+            "severity": "page"
+          }
+        }
+      ]
+    }
+  ]
+}

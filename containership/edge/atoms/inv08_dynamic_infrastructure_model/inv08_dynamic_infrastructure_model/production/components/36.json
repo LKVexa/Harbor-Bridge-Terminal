@@ -1,0 +1,72 @@
+{
+ "component": 36,
+ "title": "Artifact/policy verification",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "artifact digest verification",
+   "state": "IMPLEMENTED",
+   "spec": "production/artifact_verify.py::verify_digest",
+   "modules": [
+    "production/artifact_verify.py::verify_digest"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_digest_ok_and_mismatch"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "signature chain verification",
+   "state": "PARTIAL",
+   "spec": "production/artifact_verify.py::verify_chain",
+   "modules": [
+    "production/artifact_verify.py::verify_chain",
+    "production/artifact_verify.py::make_delegation"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_chain_valid",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_chain_revoked_expired_scope_and_untrusted",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_chain_signer_mismatch_and_tampered_delegation"
+   ],
+   "blocker": "asymmetric signing (Ed25519/Sigstore) via a vetted crypto library and a KMS-held production release key; current chain is HMAC over core.TrustRoot (non-production)"
+  },
+  {
+   "name": "provenance/attestation verification",
+   "state": "IMPLEMENTED",
+   "spec": "production/artifact_verify.py::verify_provenance",
+   "modules": [
+    "production/artifact_verify.py::verify_provenance"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_provenance_checks"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "policy bundle validation",
+   "state": "IMPLEMENTED",
+   "spec": "production/artifact_verify.py::validate_policy_bundle",
+   "modules": [
+    "production/artifact_verify.py::validate_policy_bundle"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_policy_bundle_validation",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_policy_bundle_through_gate_anti_rollback"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "fail-closed handling and audit evidence on verification failure",
+   "state": "IMPLEMENTED",
+   "spec": "production/artifact_verify.py::ArtifactGate",
+   "modules": [
+    "production/artifact_verify.py::ArtifactGate.verify_release"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ArtifactVerifyTests.test_fail_closed_and_audited"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Provenance statements are checked for subject/builder/materials but are not independently signed (same HMAC trust root)."
+}

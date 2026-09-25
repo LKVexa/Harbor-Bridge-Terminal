@@ -1,0 +1,48 @@
+# GAP-01 alert rules (37). Each alert links to a runbook section in RUNBOOKS.md.
+groups:
+- name: gap01-edge-node-supervisor
+  rules:
+  - alert: Gap01DrainDeadlineBreached
+    expr: increase(gap01_drain_deadline_breaches_total[5m]) > 0
+    labels: {severity: page}
+    annotations: {summary: "Drain deadline exceeded on {{ $labels.instance }}", runbook: "RUNBOOKS.md#rb-03-stuck-drain"}
+  - alert: Gap01EmergencyMode
+    expr: increase(gap01_emergency_entries_total[5m]) > 0
+    labels: {severity: page}
+    annotations: {summary: "Supervisor entered fail-safe emergency mode", runbook: "RUNBOOKS.md#rb-05-emergency-mode"}
+  - alert: Gap01WatchdogHang
+    expr: increase(gap01_watchdog_hangs_total[5m]) > 0
+    labels: {severity: page}
+    annotations: {summary: "Supervisor control loop stalled", runbook: "RUNBOOKS.md#rb-06-watchdog"}
+  - alert: Gap01CordonAckOverdue
+    expr: increase(gap01_cordon_ack_overdue_total[10m]) > 0
+    labels: {severity: ticket}
+    annotations: {summary: "Placement authority has not acknowledged cordon", runbook: "RUNBOOKS.md#rb-04-cordon-ack"}
+  - alert: Gap01ResourcePressure
+    expr: gap01_under_pressure == 1
+    for: 10m
+    labels: {severity: ticket}
+    annotations: {summary: "Node under memory/disk pressure; admission blocked", runbook: "RUNBOOKS.md#rb-07-pressure"}
+  - alert: Gap01AuthFailures
+    expr: sum(rate(gap01_requests_total{code=~"E_UNAUTHENTICATED|E_REPLAY|E_FORBIDDEN"}[5m])) > 0.2
+    labels: {severity: page}
+    annotations: {summary: "Elevated authn/authz/replay rejections (possible attack or key drift)", runbook: "RUNBOOKS.md#rb-08-auth"}
+  - alert: Gap01PersistenceErrors
+    expr: sum(rate(gap01_requests_total{code=~"E_PERSISTENCE|E_STATE_CORRUPT"}[5m])) > 0
+    labels: {severity: page}
+    annotations: {summary: "State persistence failing", runbook: "RUNBOOKS.md#rb-09-persistence"}
+  - alert: Gap01RateLimited
+    expr: sum(rate(gap01_requests_total{code="E_RATE_LIMITED"}[5m])) > 1
+    for: 10m
+    labels: {severity: ticket}
+    annotations: {summary: "Callers being throttled (ordinary load vs misbehaving caller)", runbook: "RUNBOOKS.md#rb-10-throttling"}
+  - alert: Gap01RequestLatencyHigh
+    expr: histogram_quantile(0.99, sum by (le) (rate(gap01_request_seconds_bucket[5m]))) > 0.05
+    for: 10m
+    labels: {severity: ticket}
+    annotations: {summary: "p99 request latency above 50 ms", runbook: "RUNBOOKS.md#rb-11-latency"}
+  - alert: Gap01ProbeDown
+    expr: up{job="gap01"} == 0
+    for: 2m
+    labels: {severity: page}
+    annotations: {summary: "Supervisor probe endpoint unreachable", runbook: "RUNBOOKS.md#rb-06-watchdog"}

@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv67-kubernetes-integration-mechanism"
+dynamic = ["version"]
+description = "INV-67 Kubernetes integration mechanism: strict Pod-subset translator plus WasmWorkload controller plane"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []                      # runtime is stdlib-only
+# license: intentionally undeclared — no LICENSE in the candidate (EXC-010)
+
+[project.optional-dependencies]
+dev = ["pyyaml==6.0.2", "ruff==0.15.11", "mypy==1.20.2", "bandit==1.7.10", "pip-audit==2.7.3"]
+pkcore = []                             # pk_core is a sibling estate package, not on PyPI
+
+[project.scripts]
+inv67-controller = "inv67_kubernetes_integration_mechanism.plane.bootstrap:main"
+inv67-gate = "inv67_kubernetes_integration_mechanism.governance.gate:main"
+inv67-release = "inv67_kubernetes_integration_mechanism.governance.release:main"
+
+[tool.setuptools]
+package-dir = {"inv67_kubernetes_integration_mechanism" = "."}
+packages = ["inv67_kubernetes_integration_mechanism", "inv67_kubernetes_integration_mechanism.plane",
+            "inv67_kubernetes_integration_mechanism.governance"]
+
+[tool.setuptools.package-data]
+inv67_kubernetes_integration_mechanism = ["VERSION", "schemas/*.json"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+extend-exclude = ["evidence"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "UP", "BLE"]
+ignore = ["E731", "S101"]   # lambdas in tests; asserts only in tests (runtime checks use explicit raises)
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B", "E501", "BLE", "E702", "E401", "E741", "UP031"]
+"plane/manifests.py" = ["E501"]   # declarative manifest literals
+"contract.py" = ["E501"]          # prose contract strings
+
+[tool.mypy]
+python_version = "3.10"
+files = ["translator.py", "plane"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+check_untyped_defs = true
+
+[tool.bandit]
+exclude_dirs = ["tests"]

@@ -1,0 +1,72 @@
+{
+ "component": 23,
+ "title": "Structured error model",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "stable error-code namespace",
+   "state": "IMPLEMENTED",
+   "spec": "production/errors_catalog.py::CATALOG",
+   "modules": [
+    "production/core.py::Inv08Error",
+    "production/errors_catalog.py::error"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestErrorModel.test_namespace"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "machine-readable retryability/severity",
+   "state": "IMPLEMENTED",
+   "spec": "production/errors_catalog.py::catalog_document",
+   "modules": [
+    "production/errors_catalog.py::catalog_document",
+    "production/core.py::Inv08Error.to_dict"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestErrorModel.test_retryability_severity"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "causal chains and nested provider errors",
+   "state": "IMPLEMENTED",
+   "spec": "production/core.py::wrap_provider_error",
+   "modules": [
+    "production/core.py::Inv08Error.chain",
+    "production/core.py::wrap_provider_error"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestErrorModel.test_causal_chain"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "operator-facing remediation hints",
+   "state": "IMPLEMENTED",
+   "spec": "production/errors_catalog.py::CATALOG",
+   "modules": [
+    "production/errors_catalog.py::error"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestErrorModel.test_remediation_hints"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "redaction rules preventing secret/PII leakage in errors",
+   "state": "IMPLEMENTED",
+   "spec": "production/core.py::redact",
+   "modules": [
+    "production/core.py::redact",
+    "production/core.py::redact_text"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestErrorModel.test_redaction"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Other overlay groups raise Inv08Error directly with their own codes; only codes in errors_catalog.CATALOG are catalogued - integrating them is follow-up work."
+}

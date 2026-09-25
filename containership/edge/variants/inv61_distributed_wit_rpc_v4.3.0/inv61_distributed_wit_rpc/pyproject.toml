@@ -1,0 +1,31 @@
+# Canonical release build: tools/make_release.py (stdlib PEP 427 builder, byte-reproducible).
+# The setuptools backend below is kept for developer editable installs.
+[build-system]
+requires = ["setuptools>=68", "wheel>=0.41"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv61-distributed-wit-rpc"
+version = "4.3.0"
+description = "INV-61 Distributed WIT RPC: authenticated, typed, cross-host WIT interface invocation (stdlib only)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "UNSPECIFIED - no licence file supplied in the source archive" }
+dependencies = []   # runtime is stdlib-only by design (ADR-0001)
+
+[project.optional-dependencies]
+# M01: the pk_core inventory/gating integration. The exact index/namespace must be
+# pinned by the package steward (W-002); install with --require-hashes from the lock.
+gate = ["pk_core==4.0.*"]
+
+[project.scripts]
+inv61-node = "inv61_distributed_wit_rpc.demo_node:main"
+inv61-selfcheck = "inv61_distributed_wit_rpc.selfcheck:main"
+
+[tool.setuptools]
+package-dir = { "inv61_distributed_wit_rpc" = "." }
+packages = ["inv61_distributed_wit_rpc"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+inv61_distributed_wit_rpc = ["VERSION", "CHECKLIST.json", "COMPAT_MATRIX.json", "TRACEABILITY.json", "wit/*.wit"]

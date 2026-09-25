@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://linearfinance.org/schemas/inv23/PK_VIRT_CLAIM-2.schema.json",
+  "title": "PK_VIRT_CLAIM/2",
+  "description": "Cross-process fenced claim response (claim.ClaimManager). Contains no secret: the ownership token is returned only inside the in-process Claim object and is never serialised.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "host",
+    "resource",
+    "claim_id",
+    "holder",
+    "generation",
+    "acquired_at",
+    "lease_expires_at",
+    "nesting_depth",
+    "bare_metal",
+    "provider",
+    "backend"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_VIRT_CLAIM/2"
+    },
+    "host": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 253,
+      "pattern": "^\\S(.*\\S)?$"
+    },
+    "resource": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-][A-Za-z0-9_.-]{0,63}$"
+    },
+    "claim_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "holder": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^\\S(.*\\S)?$",
+      "description": "Display name only; not an authority."
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Fencing generation; strictly increasing per resource."
+    },
+    "acquired_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "lease_expires_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "nesting_depth": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 64
+    },
+    "bare_metal": {
+      "type": "boolean"
+    },
+    "provider": {
+      "enum": [
+        "memory",
+        "posix-flock",
+        "windows-lockfile"
+      ]
+    },
+    "backend": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    }
+  }
+}

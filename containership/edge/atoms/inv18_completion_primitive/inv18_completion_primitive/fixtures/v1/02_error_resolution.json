@@ -1,0 +1,79 @@
+{
+ "schema": "INV18_FIXTURE/1",
+ "contract_major": 1,
+ "id": "FX-02-error_resolution",
+ "description": "an error resolution is an ordinary tagged outcome",
+ "steps": [
+  {
+   "op": "create",
+   "caps": [
+    "create",
+    "resolve",
+    "abandon",
+    "receive",
+    "inspect"
+   ],
+   "doc": {
+    "schema": "PK_FUTURE/1",
+    "future_id": "new",
+    "value_type": "str",
+    "epoch": 1
+   },
+   "expect": {
+    "ok": true
+   },
+   "save": "fid"
+  },
+  {
+   "op": "resolve",
+   "caps": [
+    "create",
+    "resolve",
+    "abandon",
+    "receive",
+    "inspect"
+   ],
+   "doc": {
+    "schema": "PK_FUTURE_RESOLVE/1",
+    "future_id": "$fid",
+    "outcome": "error",
+    "error": {
+     "schema": "PK_FUTURE_ERROR/1",
+     "code": "DEPENDENCY_UNAVAILABLE",
+     "category": "RETRYABLE_FAILURE",
+     "retryable": true,
+     "message": "upstream refused",
+     "details": {}
+    },
+    "epoch": 1,
+    "idempotency_key": "e1"
+   },
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "op": "take",
+   "caps": [
+    "create",
+    "resolve",
+    "abandon",
+    "receive",
+    "inspect"
+   ],
+   "doc": {
+    "schema": "PK_FUTURE/1",
+    "future_id": "$fid",
+    "value_type": "str",
+    "epoch": 0
+   },
+   "expect": {
+    "ok": true,
+    "result": {
+     "outcome": "error",
+     "error_message": "DEPENDENCY_UNAVAILABLE: upstream refused"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,1736 @@
+{
+ "schema": "INV41_REQUIREMENTS/1",
+ "version": "1.0.0",
+ "normative_language": "RFC 2119 / RFC 8174",
+ "requirements": [
+  {
+   "id": "REQ-FUN-001",
+   "level": "SHALL",
+   "text": "Authority.grant SHALL mint a sealed reference only for a resource declared in the bootstrap policy and only for operations within it; otherwise it SHALL raise InvalidGrant (INV41-E004) or Widening (INV41-E002).",
+   "audit_ids": [
+    "C011",
+    "C012"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Authority.grant"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_unknown_resource_is_refused",
+    "tests/test_primitives.py::test_bootstrap_policy_cannot_be_widened"
+   ],
+   "negative_tests": [
+    "tests/test_properties.py::test_PR002_monotonic_attenuation"
+   ],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-002",
+   "level": "SHALL",
+   "text": "Direct construction of Reference or Holder SHALL be refused with Forged (INV41-E001).",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Reference.__init__",
+    "capabilities.py::Holder.__init__"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_direct_reference_construction_is_refused",
+    "tests/test_contracts.py::test_CT011_direct_construction_refused"
+   ],
+   "negative_tests": [
+    "tests/test_properties.py::test_PR001_non_forgeability"
+   ],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-003",
+   "level": "SHALL",
+   "text": "Every reference SHALL carry an HMAC-SHA256 seal over (authority id, token, resource, sorted operations) keyed by a 256-bit per-authority secret, verified on every use, attenuation, wrap and bind.",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::_signature",
+    "capabilities.py::Reference._assert_authentic"
+   ],
+   "tests": [
+    "tests/test_properties.py::test_PR001_non_forgeability"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-004",
+   "level": "SHALL",
+   "text": "Attenuation SHALL be monotonic: the derived operation set SHALL be a subset of the parent's; widening SHALL raise Widening.",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Reference.attenuate"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_attenuation_cannot_widen",
+    "tests/test_properties.py::test_PR002_monotonic_attenuation"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-005",
+   "level": "SHALL",
+   "text": "Holders and references SHALL be bound to exactly one authority domain; a reference from another domain (including one with the same textual id) SHALL raise CrossAuthority (INV41-E005).",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Reference._assert_authority",
+    "capabilities.py::Authority.bind_holder"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_same_id_impostor_authority_is_refused",
+    "tests/test_contracts.py::test_CT006_foreign_authority_rejected_everywhere",
+    "tests/test_properties.py::test_PR003_cross_authority_isolation"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-006",
+   "level": "SHALL",
+   "text": "Revoking a membrane SHALL make every live descendant (wrapped, attenuated, nested) unusable for use, attenuation, wrap and bind.",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Membrane.revoke",
+    "capabilities.py::Reference._assert_live"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_nested_membrane_revocation_cannot_be_escaped",
+    "tests/test_contracts.py::test_CT007_revoked_everywhere",
+    "tests/test_properties.py::test_PR006_state_machine_against_model"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-007",
+   "level": "SHALL",
+   "text": "No API SHALL return a reference by resource name alone; Holder.use SHALL resolve only explicitly bound aliases.",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Holder._get"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_unheld_alias_is_refused"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-008",
+   "level": "SHALL",
+   "text": "Authority, Holder, Reference and Membrane SHALL refuse pickle, copy and deepcopy with TypeError.",
+   "audit_ids": [
+    "C011",
+    "C032"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::_no_serialize"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT009_nonserializable_all_capability_objects"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-009",
+   "level": "SHALL",
+   "text": "repr() of every capability object SHALL NOT contain tokens, signatures or seals.",
+   "audit_ids": [
+    "C039",
+    "C047"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Reference.__repr__",
+    "capabilities.py::Authority.__repr__"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT010_repr_redacts_all_secret_material",
+    "tests/test_properties.py::test_PR005_redaction_property"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-010",
+   "level": "SHALL",
+   "text": "Identifiers (resource, operation, alias, holder, membrane, authority id) SHALL be non-empty str, at most 256 characters, with no C0/DEL control characters; operation elements SHALL be type-checked before hashing.",
+   "audit_ids": [
+    "C011",
+    "C028"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::_validate_identifier",
+    "capabilities.py::_normalize_operations"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT001_identifier_constraints",
+    "tests/test_contracts.py::test_CT002_operation_set_limits_and_types",
+    "tests/test_contracts.py::test_CT003_duplicates_collapse",
+    "tests/test_properties.py::test_PR004_identifier_fuzz_deterministic_denial",
+    "tests/test_properties.py::test_PR007_pinned_regressions"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-011",
+   "level": "SHALL",
+   "text": "Security checks SHALL NOT depend on assert statements and SHALL behave identically under python -O.",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Reference.invoke"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_optimized_mode_runs_security_checks",
+    "tests/test_contracts.py::test_CT015_contract_suite_under_optimized_mode"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-012",
+   "level": "SHALL",
+   "text": "Idempotency: revoke() SHALL be idempotent; grant/attenuate SHALL mint a new token each call; invoke SHALL have no side effects.",
+   "audit_ids": [
+    "C025"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Membrane.revoke"
+   ],
+   "tests": [
+    "tests/test_races.py::test_RC005_concurrent_double_revoke",
+    "tests/test_primitives.py::test_attenuation_is_narrow_and_gets_new_token"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-FUN-013",
+   "level": "SHALL",
+   "text": "Authority policy/identity, Holder contents and Reference fields SHALL be immutable after construction.",
+   "audit_ids": [
+    "C011"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Authority.__setattr__",
+    "capabilities.py::Holder.__setattr__",
+    "capabilities.py::Reference.__setattr__"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_holder_is_immutable",
+    "tests/test_contracts.py::test_CT005_immutability"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-IFC-001",
+   "level": "SHALL",
+   "text": "Every public/cross-layer boundary SHALL be catalogued in contracts/INTERFACES.json (classification, producer, consumer, trust, authn, authz, version, limits, errors) and every serialized output SHALL have a versioned closed schema with golden valid/invalid vectors.",
+   "audit_ids": [
+    "C021",
+    "C022",
+    "C082",
+    "C023"
+   ],
+   "section": 5,
+   "kind": "code",
+   "implementation": [
+    "contracts/INTERFACES.json",
+    "schemas/PK_REFERENCE.schema.json",
+    "tests/vectors/golden_vectors.json"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT016_interface_catalog_covers_public_api",
+    "tests/test_contracts.py::test_CT012_golden_vectors_invocation_schema",
+    "tests/test_contracts.py::test_CT013_golden_vectors_membrane_schema",
+    "tests/test_contracts.py::test_CT014_golden_vectors_config"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-NFR-001",
+   "level": "SHALL",
+   "text": "Non-functional requirements SHALL be defined: per-operation p99 latency, memory ceilings, self-check time, throughput floor (perf/slo.json); security SLOs are zero-tolerance (no widening, no cross-authority acceptance, no post-revocation use, no secret leakage); availability applies only to service mode.",
+   "audit_ids": [
+    "C013"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "perf/slo.json",
+    "tools/bench.py::gate"
+   ],
+   "tests": [
+    "tools/bench.py::main",
+    "tests/test_properties.py::test_PR002_monotonic_attenuation"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-RES-007",
+   "level": "SHALL",
+   "text": "A failure taxonomy SHALL classify failures by layer and class with detection signals and allowed recovery actions.",
+   "audit_ids": [
+    "C051"
+   ],
+   "section": 14,
+   "kind": "doc",
+   "implementation": [
+    "docs/OPERATIONS.md#failure-taxonomy"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV004_docs_present_and_cross_referenced"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-LIM-001",
+   "level": "SHALL",
+   "text": "Hard limits SHALL be enforced before HMAC work: 256 chars/identifier, 256 operations/set, 4096 resources/policy, 1024 holder entries, membrane depth 32; violations raise LimitExceeded (INV41-E006).",
+   "audit_ids": [
+    "C017",
+    "C028",
+    "C067"
+   ],
+   "section": 5,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::MAX_OPERATIONS",
+    "capabilities.py::LimitExceeded"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT002_operation_set_limits_and_types",
+    "tests/test_contracts.py::test_CT004_membrane_depth_limit"
+   ],
+   "negative_tests": [
+    "tools/scale_soak.py::scenario_scale"
+   ],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-LIM-002",
+   "level": "SHALL",
+   "text": "Broker admission SHALL bound concurrency and queue depth and reject excess early with Overloaded (INV41-E020); revocation SHALL use a priority lane.",
+   "audit_ids": [
+    "C017",
+    "C054",
+    "C067"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "resilience.py::Admission",
+    "broker.py::Broker.revoke"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_RS004_admission_rejects_early_and_priority_lane"
+   ],
+   "negative_tests": [
+    "tools/scale_soak.py::scenario_burst"
+   ],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OUT-001",
+   "level": "SHALL",
+   "text": "Every refusal SHALL map to exactly one stable error code in namespace INV41-ERR/1 with outcome, severity, retryability and operator action; unknown exceptions SHALL map to INV41-E099 internal-fault and be treated as denial.",
+   "audit_ids": [
+    "C014",
+    "C026"
+   ],
+   "section": 5,
+   "kind": "code",
+   "implementation": [
+    "errors.py::describe",
+    "errors.py::ERROR_CODES"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT008_error_code_mapping_is_total_and_stable"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OUT-002",
+   "level": "SHALL",
+   "text": "Each public operation SHALL have a documented allowed outcome set (errors.OPERATION_OUTCOMES).",
+   "audit_ids": [
+    "C014"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "errors.py::OPERATION_OUTCOMES"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT008_error_code_mapping_is_total_and_stable"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-LCY-001",
+   "level": "SHALL",
+   "text": "Broker lifecycle SHALL follow initializing->ready->{degraded,quiesced,failed,terminated}; illegal transitions SHALL raise.",
+   "audit_ids": [
+    "C015"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "broker.py::LIFECYCLE",
+    "broker.py::Broker.transition"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT005_lifecycle_illegal_transitions"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-LCY-002",
+   "level": "SHALL",
+   "text": "Reference states: active, attenuated, revoked, invalid. Process restart SHALL invalidate all references; a reconstructed authority SHALL be a distinct domain.",
+   "audit_ids": [
+    "C015",
+    "C057"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Authority.__init__"
+   ],
+   "tests": [
+    "tools/scale_soak.py::scenario_restart",
+    "tests/test_subsystems.py::test_CF005_rollback_requires_operator_and_never_resurrects"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CMP-001",
+   "level": "SHALL",
+   "text": "API, schema, error-namespace and evidence versions SHALL follow SemVer as in contracts/INTERFACES.json; unsupported config schemas SHALL be refused.",
+   "audit_ids": [
+    "C016",
+    "C027"
+   ],
+   "section": 5,
+   "kind": "code",
+   "implementation": [
+    "config.py::SUPPORTED_CONFIG_SCHEMAS"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT014_golden_vectors_config"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CMP-002",
+   "level": "SHALL",
+   "text": "Preflight SHALL refuse unsupported interpreter versions/implementations.",
+   "audit_ids": [
+    "C016",
+    "C084"
+   ],
+   "section": 19,
+   "kind": "code",
+   "implementation": [
+    "preflight.py::run"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV006_preflight_refuses_unsupported_runtime"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-DIS-001",
+   "level": "SHALL",
+   "text": "When identity/policy/key/time services are unavailable, privileged binding SHALL fail closed (Unavailable); expired credentials SHALL never be used after reconnect (StaleState). In-process capability checks need no external service and remain available.",
+   "audit_ids": [
+    "C018",
+    "C048"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "identity.py::HmacTokenAdapter.authenticate"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_ID003_outage_fails_closed_and_recovers"
+   ],
+   "negative_tests": [
+    "tools/scale_soak.py::scenario_partition"
+   ],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-PRC-001",
+   "level": "SHALL",
+   "text": "Precedence: authorization/security > data residency > safety > availability > SLO > performance > compatibility > cost. Security constraints are non-overridable; conflicts SHALL surface as a denial with a reason record.",
+   "audit_ids": [
+    "C019"
+   ],
+   "section": 3,
+   "kind": "doc",
+   "implementation": [
+    "docs/REQUIREMENTS.md#precedence"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV004_docs_present_and_cross_referenced"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-ASM-001",
+   "level": "SHALL",
+   "text": "Detectable runtime assumptions (interpreter, entropy, HMAC known-answer, compare_digest, monotonic clock, profile) SHALL be checked at startup and a failed mandatory check SHALL refuse start.",
+   "audit_ids": [
+    "C005"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "preflight.py::run"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV006_preflight_refuses_unsupported_runtime"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-PRF-001",
+   "level": "SHALL",
+   "text": "Deployment profiles cloud, near-edge, far-edge, workstation, test SHALL have secure default configurations and documented mandatory/optional integrations.",
+   "audit_ids": [
+    "C012",
+    "C033"
+   ],
+   "section": 3,
+   "kind": "code",
+   "implementation": [
+    "config.py::default_profile"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF007_default_profiles_are_valid"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-001",
+   "level": "SHALL",
+   "text": "Configuration SHALL be validated (schema, unknown critical fields, enum/range, limits, provenance) before activation; invalid configuration SHALL be rejected (INV41-E030).",
+   "audit_ids": [
+    "C033",
+    "C034"
+   ],
+   "section": 8,
+   "kind": "code",
+   "implementation": [
+    "config.py::validate"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT014_golden_vectors_config",
+    "tests/test_subsystems.py::test_CF001_rejects_bad_configs"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-002",
+   "level": "SHALL",
+   "text": "Configuration SHALL be canonicalized and digested (SHA-256) and SHALL carry a signature from a trusted, unrevoked key; unsigned, untrusted, revoked or tampered configuration SHALL be rejected.",
+   "audit_ids": [
+    "C045",
+    "C036"
+   ],
+   "section": 7,
+   "kind": "code",
+   "implementation": [
+    "config.py::ConfigStore.preflight",
+    "config.py::digest"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF001_rejects_bad_configs",
+    "tests/test_subsystems.py::test_CF002_revoked_key_rejected",
+    "tests/test_subsystems.py::test_CF008_canonical_digest_is_order_independent"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-003",
+   "level": "SHALL",
+   "text": "Activation SHALL be atomic: readers observe the old or new complete snapshot; a failure in any phase SHALL leave the active configuration unchanged.",
+   "audit_ids": [
+    "C037"
+   ],
+   "section": 8,
+   "kind": "code",
+   "implementation": [
+    "config.py::ConfigStore.activate"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF003_crash_at_every_phase_leaves_no_partial_state",
+    "tests/test_subsystems.py::test_CF004_concurrent_reads_see_complete_snapshots"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-004",
+   "level": "SHALL",
+   "text": "Config versions SHALL be strictly increasing (rollback attacks refused); operator rollback SHALL require authorization, SHALL mint a fresh domain and SHALL NOT resurrect revoked references.",
+   "audit_ids": [
+    "C038"
+   ],
+   "section": 8,
+   "kind": "code",
+   "implementation": [
+    "config.py::ConfigStore.rollback"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF005_rollback_requires_operator_and_never_resurrects"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-005",
+   "level": "SHALL",
+   "text": "Configuration SHALL record provenance (author, source, change request, created) and the store SHALL record activation time, digest and signer key id.",
+   "audit_ids": [
+    "C036"
+   ],
+   "section": 8,
+   "kind": "code",
+   "implementation": [
+    "config.py::ActiveConfig"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF001_rejects_bad_configs"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-006",
+   "level": "SHALL",
+   "text": "Runtime capability objects SHALL NOT be expressible in configuration or evidence (non-JSON-serializable).",
+   "audit_ids": [
+    "C032"
+   ],
+   "section": 8,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::_no_serialize"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT009_nonserializable_all_capability_objects"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-CFG-007",
+   "level": "SHALL",
+   "text": "Schema migration INV41_CONFIG/0 -> /1 SHALL be supported.",
+   "audit_ids": [
+    "C016"
+   ],
+   "section": 8,
+   "kind": "code",
+   "implementation": [
+    "config.py::migrate"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF006_migration_v0_to_v1"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-IDN-001",
+   "level": "SHALL",
+   "text": "Identity adapters SHALL validate issuer, audience, signature, nbf/exp with bounded skew, principal type, single subject, subject revocation and nonce replay.",
+   "audit_ids": [
+    "C044",
+    "C023"
+   ],
+   "section": 11,
+   "kind": "code",
+   "implementation": [
+    "identity.py::HmacTokenAdapter"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_ID001_valid_then_rejections",
+    "tests/test_subsystems.py::test_ID002_replay_and_revocation"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-IDN-002",
+   "level": "SHALL",
+   "text": "Principal-to-authority binding SHALL be by canonical (issuer,tenant,env,type,id) key to a binder-minted random-id Authority; textual ids SHALL NOT select a domain; authentication SHALL NOT imply authorization.",
+   "audit_ids": [
+    "C044"
+   ],
+   "section": 11,
+   "kind": "code",
+   "implementation": [
+    "identity.py::PrincipalBinder"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_ID004_authentication_is_not_authorization_and_ids_cannot_impersonate",
+    "tests/test_subsystems.py::test_ID005_rotation_terminates_old_domain"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-IDN-003",
+   "level": "SHALL",
+   "text": "Production identity mechanisms (OIDC/JWT, mTLS/SPIFFE, attestation) and trust anchors SHALL be named by the owner.",
+   "audit_ids": [
+    "C044",
+    "C023"
+   ],
+   "section": 11,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-IDN-01"
+  },
+  {
+   "id": "REQ-AUD-001",
+   "level": "SHALL",
+   "text": "Security-significant actions SHALL emit INV41_AUDIT_EVENT/1 events that are hash-chained, sequence-numbered, monotonic-clock-stamped and HMAC-sealed with a dedicated audit key.",
+   "audit_ids": [
+    "C049"
+   ],
+   "section": 13,
+   "kind": "code",
+   "implementation": [
+    "audit.py::AuditChain"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_AU001_valid_chain_verifies",
+    "tests/test_subsystems.py::test_BT001_allow_deny_are_counted_audited_and_explained"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-AUD-002",
+   "level": "SHALL",
+   "text": "An offline verifier SHALL detect modified, deleted, duplicated, reordered and truncated events and wrong keys.",
+   "audit_ids": [
+    "C049"
+   ],
+   "section": 13,
+   "kind": "code",
+   "implementation": [
+    "audit.py::verify_chain"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_AU002_tamper_modify_delete_dup_reorder_truncate",
+    "tests/test_subsystems.py::test_AU006_verifier_checks_prev_link_independently"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-AUD-003",
+   "level": "SHALL",
+   "text": "Audit events SHALL refuse forbidden keys and token-like values at emit time.",
+   "audit_ids": [
+    "C049",
+    "C039"
+   ],
+   "section": 13,
+   "kind": "code",
+   "implementation": [
+    "audit.py::_check_safe"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_AU003_forbidden_and_tokenlike_fields_refused"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-AUD-004",
+   "level": "SHALL",
+   "text": "Audit buffering SHALL be bounded; with mandatory audit, an allow that cannot be audited SHALL become a denial.",
+   "audit_ids": [
+    "C049"
+   ],
+   "section": 13,
+   "kind": "code",
+   "implementation": [
+    "audit.py::AuditChain._append",
+    "broker.py::Broker._decide"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_AU004_buffer_outage_is_bounded_and_mandatory_fails_closed",
+    "tests/test_subsystems.py::test_BT009_audit_outage_turns_allow_into_denial"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-AUD-005",
+   "level": "SHALL",
+   "text": "A restarted chain SHALL open a new segment anchored to the previous head.",
+   "audit_ids": [
+    "C049",
+    "C057"
+   ],
+   "section": 13,
+   "kind": "code",
+   "implementation": [
+    "audit.py::AuditChain.__init__"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_AU005_restart_links_new_segment"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-AUD-006",
+   "level": "SHALL",
+   "text": "Audit checkpoints SHALL be anchored to an external append-only log / approved signing key and transported over authenticated encryption.",
+   "audit_ids": [
+    "C049",
+    "C047"
+   ],
+   "section": 13,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-KEY-01"
+  },
+  {
+   "id": "REQ-RES-001",
+   "level": "SHALL",
+   "text": "Only dependency failures SHALL be retried, with full-jitter exponential backoff, bounded attempts and a global retry budget; denials, invalid input and revocation SHALL never be retried.",
+   "audit_ids": [
+    "C053"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "resilience.py::retry",
+    "resilience.py::RetryBudget"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_RS001_retry_bounded_and_terminal_never_retried",
+    "tests/test_subsystems.py::test_RS002_retry_budget_prevents_storm"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-RES-002",
+   "level": "SHALL",
+   "text": "Unhealthy dependencies SHALL be isolated by a circuit breaker with hysteresis; denials SHALL NOT count as dependency failures.",
+   "audit_ids": [
+    "C054",
+    "C052"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "resilience.py::CircuitBreaker"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_RS003_circuit_breaker_hysteresis"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-RES-003",
+   "level": "SHALL",
+   "text": "Under injected dependency faults (timeout, unavailable, crash, exhaustion, partition) authorization SHALL never fail open and recovery SHALL never resurrect revoked references.",
+   "audit_ids": [
+    "C060",
+    "C055"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "resilience.py::FaultInjector",
+    "broker.py::Broker._decide"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_RS005_fault_injection_never_fails_open"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-RES-004",
+   "level": "SHALL",
+   "text": "Loss of a required dependency SHALL move the broker to degraded (readiness 503) and refuse privileged work; recovery SHALL return it to ready.",
+   "audit_ids": [
+    "C052",
+    "C056"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "broker.py::Broker.set_dependency"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT003_health_readiness_and_degraded_mode"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-RES-005",
+   "level": "SHALL",
+   "text": "Operators SHALL be able to quarantine an entire authority domain; revocation SHALL remain available while quarantined.",
+   "audit_ids": [
+    "C059"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "broker.py::Broker.quarantine"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT004_quarantine_denies_but_revocation_still_works"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-RES-006",
+   "level": "SHALL",
+   "text": "Split-brain/stale controller: not applicable in library mode (no replicated state); config version monotonicity is the fencing token for any distributed config distribution.",
+   "audit_ids": [
+    "C058"
+   ],
+   "section": 14,
+   "kind": "code",
+   "implementation": [
+    "config.py::ConfigStore.preflight"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF001_rejects_bad_configs"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-001",
+   "level": "SHALL",
+   "text": "Health SHALL expose liveness, readiness, version, config digest, lineage, dependency status, self-check and degraded reason, and SHALL NOT expose secrets.",
+   "audit_ids": [
+    "C071"
+   ],
+   "section": 16,
+   "kind": "code",
+   "implementation": [
+    "broker.py::Broker.health"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT003_health_readiness_and_degraded_mode",
+    "tests/test_subsystems.py::test_BT002_nothing_secret_in_logs_audit_reasons_health_metrics"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-002",
+   "level": "SHALL",
+   "text": "Metrics SHALL be registered (counters, histograms, gauges) with bounded label domains and a series cap; raw identifiers SHALL NOT be labels.",
+   "audit_ids": [
+    "C072"
+   ],
+   "section": 16,
+   "kind": "code",
+   "implementation": [
+    "telemetry.py::Metrics"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT006_metric_cardinality_is_bounded",
+    "tests/test_subsystems.py::test_BT001_allow_deny_are_counted_audited_and_explained"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-003",
+   "level": "SHALL",
+   "text": "Logs SHALL be INV41_LOG/1 JSON lines with deterministic redaction; security failures SHALL never be sampled.",
+   "audit_ids": [
+    "C073"
+   ],
+   "section": 16,
+   "kind": "code",
+   "implementation": [
+    "telemetry.py::StructuredLogger",
+    "telemetry.py::redact"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT007_log_schema_redaction_and_sampling"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-004",
+   "level": "SHALL",
+   "text": "W3C trace context SHALL be propagated/started; trace context SHALL never influence authorization.",
+   "audit_ids": [
+    "C074"
+   ],
+   "section": 16,
+   "kind": "code",
+   "implementation": [
+    "telemetry.py::parse_traceparent",
+    "telemetry.py::Tracer"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT008_trace_context"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-005",
+   "level": "SHALL",
+   "text": "Every broker decision SHALL produce an INV41_REASON/1 record (outcome, code, opaque authority/resource ids, config digest, release, dependency status, correlation id) and an operator explain view SHALL return historical records by correlation id.",
+   "audit_ids": [
+    "C076",
+    "C077",
+    "C078"
+   ],
+   "section": 17,
+   "kind": "code",
+   "implementation": [
+    "broker.py::Broker._decide",
+    "broker.py::Broker.explain"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT001_allow_deny_are_counted_audited_and_explained"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-006",
+   "level": "SHALL",
+   "text": "Telemetry retention/sampling/privacy/export policy, dashboards and alert rules SHALL be documented with owners and runbook links.",
+   "audit_ids": [
+    "C079",
+    "C080",
+    "C075"
+   ],
+   "section": 17,
+   "kind": "doc",
+   "implementation": [
+    "docs/OPERATIONS.md#telemetry-policy",
+    "ops/alerts.json"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV005_alerts_link_runbooks"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-OBS-007",
+   "level": "SHALL",
+   "text": "Telemetry export to a real backend and alert delivery SHALL be wired in a deployment.",
+   "audit_ids": [
+    "C080"
+   ],
+   "section": 17,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-DEPLOY-01"
+  },
+  {
+   "id": "REQ-ISO-001",
+   "level": "SHALL",
+   "text": "Untrusted code SHALL run in a separate interpreter process with -I -S -B, empty environment, private cwd, CPU/AS/NOFILE/FSIZE/NPROC rlimits and a wall-clock kill.",
+   "audit_ids": [
+    "C043",
+    "C046"
+   ],
+   "section": 10,
+   "kind": "code",
+   "implementation": [
+    "isolation.py::run_isolated"
+   ],
+   "tests": [
+    "tests/test_isolation.py::test_IS001_child_cannot_import_trusted_implementation",
+    "tests/test_isolation.py::test_IS002_child_gets_empty_environment",
+    "tests/test_isolation.py::test_IS003_cpu_quota_terminates_runaway",
+    "tests/test_isolation.py::test_IS004_memory_quota",
+    "tests/test_isolation.py::test_IS005_wall_clock_quota",
+    "tests/test_isolation.py::test_IS006_file_size_quota"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-ISO-002",
+   "level": "SHALL",
+   "text": "The bridge SHALL expose only random session-bound handles; unknown handles, wrong principal/session, malformed or oversized messages SHALL be refused; closing the session SHALL revoke across the boundary; no Reference or token SHALL cross.",
+   "audit_ids": [
+    "C043",
+    "C046"
+   ],
+   "section": 10,
+   "kind": "code",
+   "implementation": [
+    "isolation.py::CapabilityBridge"
+   ],
+   "tests": [
+    "tests/test_isolation.py::test_BR001_handle_use_and_no_reference_crosses",
+    "tests/test_isolation.py::test_BR002_unknown_handle_wrong_principal_wrong_session",
+    "tests/test_isolation.py::test_BR003_malformed_and_oversized",
+    "tests/test_isolation.py::test_BR004_close_revokes_across_boundary"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-ISO-003",
+   "level": "SHALL",
+   "text": "Adversarial production workloads SHALL run behind network/filesystem namespaces and a syscall filter or Wasm/microVM boundary.",
+   "audit_ids": [
+    "C043",
+    "C046"
+   ],
+   "section": 10,
+   "kind": "external",
+   "implementation": [
+    "isolation.py::profile_status"
+   ],
+   "tests": [
+    "tests/test_isolation.py::test_IS007_profile_status_is_honest"
+   ],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-ISO-01"
+  },
+  {
+   "id": "REQ-DAT-001",
+   "level": "SHALL",
+   "text": "Seals, tokens, signatures and keys SHALL NOT appear in logs, audit, reasons, health, metrics, traces or errors.",
+   "audit_ids": [
+    "C047",
+    "C039",
+    "C075"
+   ],
+   "section": 12,
+   "kind": "code",
+   "implementation": [
+    "telemetry.py::redact",
+    "errors.py::describe"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_BT002_nothing_secret_in_logs_audit_reasons_health_metrics",
+    "tests/test_properties.py::test_PR005_redaction_property"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-DAT-002",
+   "level": "SHALL",
+   "text": "Encryption in transit/at rest and managed key rotation SHALL be provided by the deployment per docs/DATA_PROTECTION.md.",
+   "audit_ids": [
+    "C047"
+   ],
+   "section": 12,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-KEY-01"
+  },
+  {
+   "id": "REQ-PER-001",
+   "level": "SHALL",
+   "text": "A reproducible benchmark SHALL record environment fingerprint, p50/p95/p99/max, throughput, memory per object and self-check time, and gate against perf/slo.json and a versioned baseline.",
+   "audit_ids": [
+    "C061",
+    "C062",
+    "C063",
+    "C064",
+    "C067",
+    "C069",
+    "C070"
+   ],
+   "section": 15,
+   "kind": "code",
+   "implementation": [
+    "tools/bench.py::run",
+    "tools/bench.py::gate"
+   ],
+   "tests": [
+    "tools/bench.py::main",
+    "tests/test_governance.py::test_GV010_perf_gate_trips_on_regression_and_slo_breach"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-PER-002",
+   "level": "SHALL",
+   "text": "SLO thresholds and the baseline SHALL be approved by the owner on the reference environment.",
+   "audit_ids": [
+    "C062",
+    "C070"
+   ],
+   "section": 15,
+   "kind": "governance",
+   "implementation": [
+    "perf/slo.json"
+   ],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-OWN-01"
+  },
+  {
+   "id": "REQ-PER-003",
+   "level": "SHOULD",
+   "text": "Power/thermal on constrained edge nodes SHOULD be measured.",
+   "audit_ids": [
+    "C068"
+   ],
+   "section": 15,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-EDGE-01"
+  },
+  {
+   "id": "REQ-PER-004",
+   "level": "SHALL",
+   "text": "Avoidable copies/serialization SHALL be identified: references are never serialized; costs are O(|ops|)+one HMAC per mint (perf/slo.json complexity).",
+   "audit_ids": [
+    "C065",
+    "C066"
+   ],
+   "section": 15,
+   "kind": "doc",
+   "implementation": [
+    "perf/slo.json"
+   ],
+   "tests": [
+    "tools/bench.py::main"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-TST-001",
+   "level": "SHALL",
+   "text": "Race tests SHALL force adverse interleavings and prove no success after revoke() returns, correct accounting under churn and multi-level graph revocation.",
+   "audit_ids": [
+    "C086"
+   ],
+   "section": 21,
+   "kind": "code",
+   "implementation": [
+    "capabilities.py::Membrane"
+   ],
+   "tests": [
+    "tests/test_races.py::test_RC001_use_vs_revoke",
+    "tests/test_races.py::test_RC002_attenuate_vs_revoke",
+    "tests/test_races.py::test_RC003_bind_vs_revoke",
+    "tests/test_races.py::test_RC004_nested_wrap_vs_inner_and_outer_revoke",
+    "tests/test_races.py::test_RC006_live_reference_accounting_under_churn",
+    "tests/test_races.py::test_RC007_multi_membrane_graph_revoke_levels"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-TST-002",
+   "level": "SHALL",
+   "text": "Property/model-based fuzzing SHALL run with recorded seeds in PR CI and longer campaigns nightly; minimized failures SHALL be pinned.",
+   "audit_ids": [
+    "C085"
+   ],
+   "section": 20,
+   "kind": "code",
+   "implementation": [
+    "tests/test_properties.py"
+   ],
+   "tests": [
+    "tests/test_properties.py::test_PR006_state_machine_against_model",
+    "tests/test_properties.py::test_PR007_pinned_regressions"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-TST-003",
+   "level": "SHALL",
+   "text": "Every security control in the threat model SHALL be covered by a mutant that the suite kills.",
+   "audit_ids": [
+    "C087",
+    "C050",
+    "C041"
+   ],
+   "section": 9,
+   "kind": "code",
+   "implementation": [
+    "tools/mutation.py::MUTANTS"
+   ],
+   "tests": [
+    "tools/mutation.py::main",
+    "tests/test_governance.py::test_GV009_threat_model_mapping_complete"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-TST-004",
+   "level": "SHALL",
+   "text": "Scale, soak, burst, partition/reconnect and restart scenarios SHALL emit machine-readable pass/fail evidence.",
+   "audit_ids": [
+    "C088",
+    "C089"
+   ],
+   "section": 22,
+   "kind": "code",
+   "implementation": [
+    "tools/scale_soak.py::main"
+   ],
+   "tests": [
+    "tools/scale_soak.py::main"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-TST-005",
+   "level": "SHALL",
+   "text": "Release-tier soak (hours) and multi-node fleet tests SHALL run before production.",
+   "audit_ids": [
+    "C088",
+    "C089"
+   ],
+   "section": 22,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-SOAK-01"
+  },
+  {
+   "id": "REQ-TST-006",
+   "level": "SHALL",
+   "text": "Compatibility SHALL be certified on every supported Python/OS/arch combination in CI.",
+   "audit_ids": [
+    "C084",
+    "C093"
+   ],
+   "section": 19,
+   "kind": "code",
+   "implementation": [
+    "tools/compat.py::main"
+   ],
+   "tests": [
+    "tools/compat.py::main"
+   ],
+   "negative_tests": [],
+   "status": "PARTIAL",
+   "blocker": "B-COMPAT-01"
+  },
+  {
+   "id": "REQ-EST-001",
+   "level": "SHALL",
+   "text": "Estate integration (C030/C083/C090/C100) SHALL report explicit PASS/FAIL/BLOCKED; production profile SHALL fail when pk_core or sibling layers are absent.",
+   "audit_ids": [
+    "C030",
+    "C083",
+    "C090",
+    "C100"
+   ],
+   "section": 6,
+   "kind": "code",
+   "implementation": [
+    "tools/estate_gate.py::main"
+   ],
+   "tests": [
+    "tests/test_component.py::EstateGateTest"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-EST-002",
+   "level": "SHALL",
+   "text": "Estate tests SHALL pass against the authoritative pinned pk_core baseline.",
+   "audit_ids": [
+    "C030",
+    "C083",
+    "C090",
+    "C100"
+   ],
+   "section": 6,
+   "kind": "external",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-EST-01"
+  },
+  {
+   "id": "REQ-SUP-001",
+   "level": "SHALL",
+   "text": "Release SHALL produce a deterministic archive (built twice, digests compared), CycloneDX SBOM, SHA-256 manifest of every file, spec/schema/config hashes and SLSA-style provenance.",
+   "audit_ids": [
+    "C031",
+    "C045"
+   ],
+   "section": 24,
+   "kind": "code",
+   "implementation": [
+    "tools/build_release.py::main",
+    "tools/build_release.py::sbom"
+   ],
+   "tests": [
+    "tools/build_release.py::main"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-SUP-002",
+   "level": "SHALL",
+   "text": "Release manifests SHALL be signed by an approved release-signing identity and verified before install.",
+   "audit_ids": [
+    "C045"
+   ],
+   "section": 7,
+   "kind": "external",
+   "implementation": [
+    "tools/build_release.py::sign_manifest"
+   ],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-SIGN-01"
+  },
+  {
+   "id": "REQ-SUP-003",
+   "level": "SHALL",
+   "text": "A repository LICENSE SHALL be chosen by the owner.",
+   "audit_ids": [],
+   "section": 24,
+   "kind": "governance",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-LIC-01"
+  },
+  {
+   "id": "REQ-SUP-004",
+   "level": "SHALL",
+   "text": "Runtime dependencies SHALL be limited to the Python standard library; any third-party import SHALL fail CI.",
+   "audit_ids": [
+    "C031"
+   ],
+   "section": 7,
+   "kind": "code",
+   "implementation": [
+    "tools/governance_check.py::check_imports"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV003_stdlib_only"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-GOV-001",
+   "level": "SHALL",
+   "text": "OWNERS.json SHALL name accountable owner, backup owner, role holders, escalation tiers and review cadence; CI SHALL validate fields, two reviewers on security-critical paths and staleness.",
+   "audit_ids": [
+    "C009"
+   ],
+   "section": 1,
+   "kind": "governance",
+   "implementation": [
+    "OWNERS.json",
+    "CODEOWNERS",
+    "tools/governance_check.py::check_owners"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV001_owners_schema"
+   ],
+   "negative_tests": [],
+   "status": "PARTIAL",
+   "blocker": "B-OWN-01"
+  },
+  {
+   "id": "REQ-GOV-002",
+   "level": "SHALL",
+   "text": "ADR-0001 SHALL be approved by named approvers.",
+   "audit_ids": [
+    "C010"
+   ],
+   "section": 2,
+   "kind": "governance",
+   "implementation": [
+    "docs/ADR-0001-explicit-capabilities.md"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV004_docs_present_and_cross_referenced"
+   ],
+   "negative_tests": [],
+   "status": "PARTIAL",
+   "blocker": "B-OWN-01"
+  },
+  {
+   "id": "REQ-GOV-003",
+   "level": "SHALL",
+   "text": "Exceptions/waivers SHALL carry owner, approval and expiry; expired waivers SHALL fail the production gate.",
+   "audit_ids": [
+    "C099"
+   ],
+   "section": 23,
+   "kind": "code",
+   "implementation": [
+    "EXCEPTIONS.json",
+    "tools/governance_check.py::check_waivers"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV002_waiver_expiry_fails"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-GOV-004",
+   "level": "SHALL",
+   "text": "Support, SLO/error budget, rollout, lifecycle/EOL, vulnerability SLA, reconstruction, runbooks, incident process and recurring reviews SHALL be documented.",
+   "audit_ids": [
+    "C091",
+    "C092",
+    "C094",
+    "C095",
+    "C096",
+    "C097",
+    "C098"
+   ],
+   "section": 23,
+   "kind": "doc",
+   "implementation": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV004_docs_present_and_cross_referenced"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-GOV-005",
+   "level": "SHALL",
+   "text": "Operational commitments (on-call, canary windows, EOL dates, review calendar) SHALL be accepted by the owning team.",
+   "audit_ids": [
+    "C091",
+    "C092",
+    "C094",
+    "C097",
+    "C098"
+   ],
+   "section": 23,
+   "kind": "governance",
+   "implementation": [],
+   "tests": [],
+   "negative_tests": [],
+   "status": "BLOCKED",
+   "blocker": "B-OWN-01"
+  },
+  {
+   "id": "REQ-GOV-006",
+   "level": "SHALL",
+   "text": "Traceability SHALL be generated deterministically and CI SHALL fail on unmapped requirements, missing tests/symbols, orphan tests and VERIFIED claims without evidence.",
+   "audit_ids": [
+    "C020"
+   ],
+   "section": 4,
+   "kind": "code",
+   "implementation": [
+    "tools/traceability.py::main"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV007_traceability_is_clean"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  },
+  {
+   "id": "REQ-GOV-007",
+   "level": "SHALL",
+   "text": "The production exit gate SHALL evaluate every final-exit item and refuse GO while any blocker is open.",
+   "audit_ids": [
+    "C100",
+    "C090"
+   ],
+   "section": 23,
+   "kind": "code",
+   "implementation": [
+    "tools/release_gate.py::main"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV008_release_gate_refuses_go_with_blockers"
+   ],
+   "negative_tests": [],
+   "status": "IMPLEMENTED",
+   "blocker": null
+  }
+ ]
+}

@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "error": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "validation",
+            "authentication",
+            "authorization",
+            "isolation",
+            "residency",
+            "bounds",
+            "overload",
+            "deadline",
+            "cancelled",
+            "handler",
+            "provider",
+            "transport",
+            "protocol",
+            "lifecycle",
+            "internal"
+          ]
+        },
+        "code": {
+          "maxLength": 64,
+          "pattern": "^PK_CHAIN_[A-Z_]+$",
+          "type": "string"
+        },
+        "correlation_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "details": {
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 256,
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "chain",
+            "handler",
+            "policy",
+            "transport"
+          ]
+        },
+        "retriable": {
+          "type": "boolean"
+        },
+        "schema": {
+          "const": "PK_CHAIN_ERROR/1"
+        }
+      },
+      "required": [
+        "schema",
+        "code",
+        "category",
+        "retriable",
+        "origin",
+        "message"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:pk:inv21:local_chain_response",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "error": {
+      "$ref": "#/$defs/error"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "result": {},
+    "route": {
+      "enum": [
+        "local",
+        "remote",
+        "refused"
+      ]
+    },
+    "schema": {
+      "const": "PK_LOCAL_CHAIN/1"
+    },
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._\\-]{0,63}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "ok",
+    "route"
+  ],
+  "title": "PK_LOCAL_CHAIN/1#response",
+  "type": "object",
+  "x-version": "PK_LOCAL_CHAIN/1#response"
+}

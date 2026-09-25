@@ -1,0 +1,37 @@
+{
+  "$comment": "C041/C087 machine-readable threat model. tools/gate.py verifies every high/critical threat maps to at least one executed, passing test, and that the model is approved by the security owner (approved_by null = not approved).",
+  "schema": "INV18_THREAT_MODEL/1",
+  "version": "1.0",
+  "approved_by": null,
+  "assets": ["resolution record (value/error)", "receiver ownership", "capability tokens", "tenant isolation", "audit chain", "release evidence", "availability of the host process"],
+  "trust_boundaries": ["in-process Runtime capability API", "wire adapter (remote)", "pk_core / dependency supply chain", "configuration input", "release pipeline"],
+  "actors": ["producer", "consumer", "observer", "operator/admin", "malicious tenant", "network attacker", "compromised dependency", "compromised control plane"],
+  "threats": [
+    {"id": "T01", "title": "second resolution overwrites the first", "actor": "compromised producer", "severity": "high", "mitigation": "per-future lock; terminal states never revert", "tests": ["tests/test_future.py::FutureTest::test_concurrent_resolution_has_exactly_one_winner", "tests/test_property.py::PropertyTest::test_random_operation_sequences"]},
+    {"id": "T02", "title": "two receivers race for one value", "actor": "compromised consumer", "severity": "high", "mitigation": "take consumes under lock", "tests": ["tests/test_future.py::FutureTest::test_concurrent_take_has_exactly_one_winner"]},
+    {"id": "T03", "title": "dropped writer leaves receiver waiting forever", "actor": "producer crash", "severity": "high", "mitigation": "abandonment on ResolverCap drop; caller deadlines", "tests": ["tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons", "tests/test_resilience.py::FaultTest::test_fault_suite"]},
+    {"id": "T04", "title": "error resolution mistaken for a value", "actor": "consumer bug", "severity": "medium", "mitigation": "tagged outcomes", "tests": ["tests/test_future.py::FutureTest::test_error_is_one_shot"]},
+    {"id": "T05", "title": "cross-tenant consumption or resolution", "actor": "malicious tenant", "severity": "critical", "mitigation": "tenant-bound capabilities; wire sub must own future", "tests": ["tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused", "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused"]},
+    {"id": "T06", "title": "capability forgery / guessing / upgrade", "actor": "malicious tenant", "severity": "critical", "mitigation": "128-bit random tokens, kind check, constant-time compare", "tests": ["tests/test_security.py::CapabilityAttackTest::test_forged_token_refused", "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused", "tests/test_security.py::CapabilityAttackTest::test_constant_time_compare_used"]},
+    {"id": "T07", "title": "confused deputy: observer or resolver consumes", "actor": "compromised workload", "severity": "high", "mitigation": "capability kinds", "tests": ["tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated"]},
+    {"id": "T08", "title": "hostile wire payload (oversize, malformed, NaN, injection, deep nesting)", "actor": "network attacker", "severity": "high", "mitigation": "size check before parse, strict schema, canonical JSON", "tests": ["tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely", "tests/test_property.py::FuzzTest::test_decoder_fuzz"]},
+    {"id": "T09", "title": "compromised pk_core", "actor": "compromised dependency", "severity": "high", "mitigation": "primitive/runtime/gate do not import pk_core; pk_core pin + digest (blocked W-C031)", "tests": ["tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core"]},
+    {"id": "T10", "title": "supply-chain / artifact tampering", "actor": "compromised pipeline", "severity": "critical", "mitigation": "SHA256SUMS, SBOM, evidence seal verification", "tests": ["tests/test_release.py::IntegrityTest::test_tampered_artifact_detected", "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected"]},
+    {"id": "T11", "title": "forged / expired / wrong-audience / replayed control-plane credentials", "actor": "compromised control plane", "severity": "critical", "mitigation": "HMAC tokens, iss/aud/exp/nonce checks", "tests": ["tests/test_security.py::AuthnTest::test_credential_negatives", "tests/test_security.py::AuthnTest::test_replay_rejected"]},
+    {"id": "T12", "title": "resource exhaustion / DoS", "actor": "malicious tenant", "severity": "high", "mitigation": "hard/tenant limits, bounded rings", "tests": ["tests/test_runtime.py::LimitsTest::test_process_limit_boundary", "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour", "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded"]},
+    {"id": "T13", "title": "replay / duplicate resolution over the wire", "actor": "network attacker", "severity": "high", "mitigation": "idempotency keys bound to body digest; nonce cache", "tests": ["tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent", "tests/test_security.py::AuthnTest::test_replay_rejected"]},
+    {"id": "T14", "title": "stale owner resolves after failover (split brain)", "actor": "partitioned controller", "severity": "high", "mitigation": "epoch fencing", "tests": ["tests/test_resilience.py::DistributedTest::test_stale_owner_fenced"]},
+    {"id": "T15", "title": "diagnostic / secret leakage", "actor": "observer", "severity": "high", "mitigation": "redaction, no payload logging, token-free repr", "tests": ["tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks", "tests/test_observability.py::LogTest::test_payloads_not_logged"]},
+    {"id": "T16", "title": "administrative control abuse", "actor": "malicious tenant", "severity": "high", "mitigation": "AdminCap required, audited", "tests": ["tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused"]},
+    {"id": "T17", "title": "unsafe configuration (payload logging in prod, exposure without auth)", "actor": "operator error", "severity": "high", "mitigation": "fail-closed validation", "tests": ["tests/test_config.py::ValidationTest::test_security_combinations_rejected"]},
+    {"id": "T18", "title": "key-service / identity / time outage causes fail-open", "actor": "infrastructure failure", "severity": "critical", "mitigation": "fail closed", "tests": ["tests/test_security.py::OutageTest::test_each_outage_fails_closed", "tests/test_security.py::OutageTest::test_simultaneous_outages_fail_closed"]},
+    {"id": "T19", "title": "ambient authority in the core (fs/network/subprocess/env)", "actor": "compromised dependency", "severity": "medium", "mitigation": "static and runtime authority checks", "tests": ["tests/test_security.py::AuthorityTest::test_static_authority_inventory", "tests/test_security.py::AuthorityTest::test_runtime_sandbox"]},
+    {"id": "T20", "title": "audit trail tampering", "actor": "insider", "severity": "high", "mitigation": "hash chain + optional HMAC", "tests": ["tests/test_security.py::AuditTest::test_mutation_and_deletion_detected"]}
+  ],
+  "residual_risks": [
+    "Lock fairness is not guaranteed; a specific producer can lose every race (no correctness impact).",
+    "Timing side channels in Python object allocation are not analysed beyond constant-time token comparison.",
+    "pk_core integrity is unverified until W-C031 is closed.",
+    "Real mTLS transport is out of scope; the adapter assumes the host provides it when network_exposure=mtls."
+  ]
+}

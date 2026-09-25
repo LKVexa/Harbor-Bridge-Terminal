@@ -1,0 +1,1706 @@
+{
+"component": "C34",
+"items": [
+{
+"id": "C34-001",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Define the master loop's request-acceptance responsibility.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Topology + http.createServer/upgrade handler define acceptance",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology",
+"gateway/server.js"
+]
+},
+{
+"id": "C34-002",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Define its ordinary HTTP response responsibility.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "/health /live /config.json /api/ws-ticket handled by ordinary json() responses",
+"prior_evidence": [
+"gateway/server.js:96-140"
+]
+},
+{
+"id": "C34-003",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Define its pre-upgrade policy responsibility.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Explicit admission order documented and implemented in admit()",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order-before-upgrade",
+"gateway/server.js:166-190"
+]
+},
+{
+"id": "C34-004",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Define its successful-upgrade handoff responsibility.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade then new Connection() is the handoff on success",
+"prior_evidence": [
+"gateway/server.js:192-206",
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C34-005",
+"task_class": "IMPLEMENT",
+"area": "01. Dispatcher responsibilities",
+"req": "Keep per-connection receive processing outside the master loop.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "ws.on('text'/'drain'/'close') processed per-Connection instance, not in server upgrade callback",
+"prior_evidence": [
+"gateway/connection.js:38-40"
+]
+},
+{
+"id": "C34-006",
+"task_class": "IMPLEMENT",
+"area": "01. Dispatcher responsibilities",
+"req": "Keep application message processing outside the master loop.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "_onText application message switch lives in Connection, outside server.js",
+"prior_evidence": [
+"gateway/connection.js:103-154"
+]
+},
+{
+"id": "C34-007",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Identify the selected worker backend.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Node backend, one child_process worker per session, explicitly recorded",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-001 D-003"
+]
+},
+{
+"id": "C34-008",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Define a capacity-admission policy.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.reserve() caps global/per-principal sessions before spawn",
+"prior_evidence": [
+"gateway/server.js:39-52",
+"docs/PROTOCOL.md#state-machine-gatewayconnectionjs"
+]
+},
+{
+"id": "C34-009",
+"task_class": "SPECIFY",
+"area": "01. Dispatcher responsibilities",
+"req": "Define the dispatcher's shutdown boundary.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() defines draining boundary, notify, wait, hard timeout",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C34-010",
+"task_class": "IMPLEMENT",
+"area": "01. Dispatcher responsibilities",
+"req": "Approve the dispatcher ownership diagram.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Ownership diagram exists (topology block) but no explicit approval/sign-off record found",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C34-011",
+"task_class": "SPECIFY",
+"area": "02. Handoff contract",
+"req": "Define the data passed to a connection worker.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Comment + code define env allowlist passed to worker at spawn",
+"prior_evidence": [
+"gateway/connection.js:175-180"
+]
+},
+{
+"id": "C34-012",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Include the live WebSocket object through a verified supported mechanism.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No socket object ever crosses the process boundary by design; worker gets stdio bridge only",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology D-001"
+]
+},
+{
+"id": "C34-013",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Include the safe connection identifier.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "Connection id (this.id) is not passed to the worker process; no evidence found",
+"prior_evidence": [
+"gateway/connection.js:181",
+"worker/host.js"
+]
+},
+{
+"id": "C34-014",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Include the authenticated application identity when required.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "principal.tenant/sub not passed to worker env; not found in host.js",
+"prior_evidence": [
+"gateway/connection.js:176-180"
+]
+},
+{
+"id": "C34-015",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Include the negotiated subprotocol when applicable.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Worker speaks its own internal bridge framing, not the negotiated WS subprotocol",
+"prior_evidence": [
+"docs/PROTOCOL.md#local-bridge-protocolbridgejs-protocolbridgeschemajson D-001"
+]
+},
+{
+"id": "C34-016",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Include immutable configuration needed by the worker.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_W_* env carries vfs/capture/fabric limits as immutable config",
+"prior_evidence": [
+"worker/host.js:25-37",
+"gateway/connection.js:176-180"
+]
+},
+{
+"id": "C34-017",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Exclude raw credentials unless explicitly required and protected.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Comments state service credentials/secrets never reach the worker env",
+"prior_evidence": [
+"gateway/connection.js:175",
+"worker/host.js:69"
+]
+},
+{
+"id": "C34-018",
+"task_class": "IMPLEMENT",
+"area": "02. Handoff contract",
+"req": "Exclude unnecessary request-context references.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Env is an explicit allowlist of keys, no broader request context passed",
+"prior_evidence": [
+"gateway/connection.js:176-177"
+]
+},
+{
+"id": "C34-019",
+"task_class": "SPECIFY",
+"area": "02. Handoff contract",
+"req": "Define who owns the socket before handoff.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Gateway retains socket ownership always; comment documents release-on-failure",
+"prior_evidence": [
+"gateway/server.js:200-204",
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C34-020",
+"task_class": "SPECIFY",
+"area": "02. Handoff contract",
+"req": "Define the exact event that transfers ownership to the worker.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No live-object transfer event exists; socket stays at gateway, bridged by stdio records instead",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology D-001 D-003"
+]
+},
+{
+"id": "C34-021",
+"task_class": "VERIFY",
+"area": "03. Backend compatibility",
+"req": "VERIFY live socket handoff in the selected runspace or ThreadJob design.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Runspace/ThreadJob concepts have no meaning in the Node child_process design",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-001"
+]
+},
+{
+"id": "C34-022",
+"task_class": "IMPLEMENT",
+"area": "03. Backend compatibility",
+"req": "Distinguish in-process thread execution from process-based job serialization.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "D-003 explicitly selects one process per session, excluding in-process threads",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-003"
+]
+},
+{
+"id": "C34-023",
+"task_class": "TEST",
+"area": "03. Backend compatibility",
+"req": "Test that the worker receives a usable live WebSocket.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Worker never receives a live WebSocket by design",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology D-001"
+]
+},
+{
+"id": "C34-024",
+"task_class": "TEST",
+"area": "03. Backend compatibility",
+"req": "Test that configuration objects arrive with expected types.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Gateway config types validated, but no test confirms types as received by the worker process itself",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C34-025",
+"task_class": "TEST",
+"area": "03. Backend compatibility",
+"req": "Test that the worker can invoke ReceiveAsync successfully.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "ReceiveAsync is a .NET/ClientWebSocket API with no Node equivalent tested",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-001"
+]
+},
+{
+"id": "C34-026",
+"task_class": "TEST",
+"area": "03. Backend compatibility",
+"req": "Test that the worker can access the approved send path.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Vertical-slice e2e test exercises worker sendRecord -> gateway output path",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"worker/host.js:41-49"
+]
+},
+{
+"id": "C34-027",
+"task_class": "TEST",
+"area": "03. Backend compatibility",
+"req": "Test that exceptions are visible to the dispatcher supervisor.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "'worker killed (-9) -> exactly one session.exit{worker_failure}' shows supervisor sees failures",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C34-028",
+"task_class": "DOCUMENT",
+"area": "03. Backend compatibility",
+"req": "Record whether job output serializes or transforms required objects.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Base64 terminal-byte transform recorded as decision D-007",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-007",
+"docs/PROTOCOL.md#flow-control-end-to-end"
+]
+},
+{
+"id": "C34-029",
+"task_class": "IMPLEMENT",
+"area": "03. Backend compatibility",
+"req": "Reject incompatible handoff mechanisms before broader implementation.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit gate/step rejecting incompatible handoff mechanisms before broader build found",
+"prior_evidence": []
+},
+{
+"id": "C34-030",
+"task_class": "IMPLEMENT",
+"area": "03. Backend compatibility",
+"req": "Preserve a minimal handoff compatibility test.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Vertical-slice hello->open->opened->output test is a minimal handoff compatibility check",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C34-031",
+"task_class": "SPECIFY",
+"area": "04. Admission and capacity",
+"req": "Define the maximum active worker count.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_MAX_SESSIONS documented at 4; config/limits.json carries the value",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only",
+"config/limits.json"
+]
+},
+{
+"id": "C34-032",
+"task_class": "IMPLEMENT",
+"area": "04. Admission and capacity",
+"req": "Count initializing workers as well as fully active workers.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.reserved counts sessions from _open() reserve, before worker/spawn completes",
+"prior_evidence": [
+"gateway/server.js:42-48",
+"gateway/connection.js:170"
+]
+},
+{
+"id": "C34-033",
+"task_class": "IMPLEMENT",
+"area": "04. Admission and capacity",
+"req": "Make admission and worker registration consistent under concurrency.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Set-based reserve/release run synchronously on Node's single event-loop thread, no torn state",
+"prior_evidence": [
+"gateway/server.js:42-52"
+]
+},
+{
+"id": "C34-034",
+"task_class": "IMPLEMENT",
+"area": "04. Admission and capacity",
+"req": "Reserve responsiveness for ordinary HTTP health requests.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Comment: readiness handling is minimal, unauthenticated, constant work",
+"prior_evidence": [
+"gateway/server.js:96-101"
+]
+},
+{
+"id": "C34-035",
+"task_class": "SPECIFY",
+"area": "04. Admission and capacity",
+"req": "Define the outcome when worker capacity is reached.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Table: capacity refusal -> LIMIT_EXCEEDED, close 1013",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gatewayconnectionjs"
+]
+},
+{
+"id": "C34-036",
+"task_class": "IMPLEMENT",
+"area": "04. Admission and capacity",
+"req": "Reject or defer requests according to the approved policy.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Reject-only policy implemented (_fatal LIMIT_EXCEEDED), matching documented design",
+"prior_evidence": [
+"gateway/connection.js:170"
+]
+},
+{
+"id": "C34-037",
+"task_class": "IMPLEMENT",
+"area": "04. Admission and capacity",
+"req": "Bound accepted-but-unassigned upgraded connections.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns.size >= maxSessions*2 bounds accepted-but-unassigned connections before upgrade",
+"prior_evidence": [
+"gateway/server.js:190"
+]
+},
+{
+"id": "C34-038",
+"task_class": "IMPLEMENT",
+"area": "04. Admission and capacity",
+"req": "Avoid accepting an upgrade with no safe ownership destination.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "try/catch releases capacity/connection if Connection construction throws post-upgrade",
+"prior_evidence": [
+"gateway/server.js:194-204"
+]
+},
+{
+"id": "C34-039",
+"task_class": "SPECIFY",
+"area": "04. Admission and capacity",
+"req": "Define how capacity is released after worker failure.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "_finalExit always calls registry.release(this) on every exit path including failure",
+"prior_evidence": [
+"gateway/connection.js:276-283"
+]
+},
+{
+"id": "C34-040",
+"task_class": "TEST",
+"area": "04. Admission and capacity",
+"req": "Test capacity exhaustion under simultaneous connection attempts.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "'capacity: per-principal and global caps; refused before a worker is spawned; released on close'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C34-041",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Create workers through a single reviewed factory path.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Single spawn(process.execPath, [worker/host.js]) call site",
+"prior_evidence": [
+"gateway/connection.js:181"
+]
+},
+{
+"id": "C34-042",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Pass validated configuration to the worker.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "cfg validated (config.test.js) then passed through the env allowlist",
+"prior_evidence": [
+"gateway/connection.js:176-180",
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C34-043",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Register the worker and connection identity.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "this.worker=w set at spawn; registry.activate(this) on session open",
+"prior_evidence": [
+"gateway/connection.js:181-183,217"
+]
+},
+{
+"id": "C34-044",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Detect worker initialization failure.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "w.on('error') and workerReadyMs timeout both call _workerFailed()",
+"prior_evidence": [
+"gateway/connection.js:191,193"
+]
+},
+{
+"id": "C34-045",
+"task_class": "REVIEW",
+"area": "05. Worker creation",
+"req": "Confirm worker startup through an explicit signal or tested mechanism.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "'ready' record plus F10 open-barrier deferStart/startSession test confirm startup signal",
+"prior_evidence": [
+"tests/worker/kernel.test.js",
+"worker/host.js:165"
+]
+},
+{
+"id": "C34-046",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Keep startup waiting bounded on the master path.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "workerReadyMs timeout bounds OPENING wait on the gateway side",
+"prior_evidence": [
+"gateway/connection.js:193"
+]
+},
+{
+"id": "C34-047",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Transfer ownership only after the handoff contract is satisfied.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.activate() only runs inside the 'opened' handler, after handoff contract is satisfied",
+"prior_evidence": [
+"gateway/connection.js:212-217"
+]
+},
+{
+"id": "C34-048",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Clean up an upgraded socket when worker creation fails.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "_workerFailed kills worker and closes socket with 1011",
+"prior_evidence": [
+"gateway/connection.js:254-259"
+]
+},
+{
+"id": "C34-049",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Avoid creating duplicate workers for one connection.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Gateway rejects a second session.open; worker also ignores a duplicate 'open' record",
+"prior_evidence": [
+"gateway/connection.js:167",
+"worker/host.js:115"
+]
+},
+{
+"id": "C34-050",
+"task_class": "IMPLEMENT",
+"area": "05. Worker creation",
+"req": "Return the master loop to acceptance promptly.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "admit() is synchronous and non-blocking; spawn() is async so the event loop is free immediately",
+"prior_evidence": [
+"gateway/server.js:166-206"
+]
+},
+{
+"id": "C34-051",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP coexistence",
+"req": "Answer health requests without waiting for existing sessions to finish.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Health path is independent of session/worker state machinery",
+"prior_evidence": [
+"gateway/server.js:96-101"
+]
+},
+{
+"id": "C34-052",
+"task_class": "TEST",
+"area": "06. HTTP coexistence",
+"req": "Test health during one idle WebSocket session.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Test covers health during a BUSY streaming session; no test named specifically for an idle session",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C34-053",
+"task_class": "TEST",
+"area": "06. HTTP coexistence",
+"req": "Test health during several busy WebSocket sessions.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "EVIDENCE_INDEX shows one busy session tested for health latency, not 'several' simultaneously",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C34-054",
+"task_class": "TEST",
+"area": "06. HTTP coexistence",
+"req": "Test ordinary HTTP requests during worker initialization.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found exercising ordinary HTTP requests specifically during worker initialization window",
+"prior_evidence": []
+},
+{
+"id": "C34-055",
+"task_class": "TEST",
+"area": "06. HTTP coexistence",
+"req": "Test repeated invalid upgrades alongside valid health requests.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found combining repeated invalid upgrades with concurrent valid health requests",
+"prior_evidence": []
+},
+{
+"id": "C34-056",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP coexistence",
+"req": "Keep long application tasks out of the HTTP dispatcher path.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Shell execution lives entirely in the worker process, never in the HTTP dispatcher",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology",
+"worker/host.js"
+]
+},
+{
+"id": "C34-057",
+"task_class": "MEASURE",
+"area": "06. HTTP coexistence",
+"req": "Measure HTTP response latency under the target connection count.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3 measures session-open latency at 8 sessions, not plain HTTP (/health) response latency specifically",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C34-058",
+"task_class": "SPECIFY",
+"area": "06. HTTP coexistence",
+"req": "Identify any shared lock that delays health handling.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Node's single-threaded model has no explicit lock, but no document explicitly states/identifies this",
+"prior_evidence": [
+"gateway/server.js"
+]
+},
+{
+"id": "C34-059",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP coexistence",
+"req": "Bound master-loop work per accepted request.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "admit() performs a fixed, bounded sequence of checks per request",
+"prior_evidence": [
+"gateway/server.js:166-190"
+]
+},
+{
+"id": "C34-060",
+"task_class": "DOCUMENT",
+"area": "06. HTTP coexistence",
+"req": "Record the responsiveness evidence.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "W1/W3 latency measurements recorded as responsiveness evidence",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C34-061",
+"task_class": "IMPLEMENT",
+"area": "07. Worker supervision",
+"req": "Track active workers by safe connection identity.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry Sets keyed by Connection objects carrying this.id (safe random hex)",
+"prior_evidence": [
+"gateway/server.js:39-52",
+"gateway/connection.js:22"
+]
+},
+{
+"id": "C34-062",
+"task_class": "IMPLEMENT",
+"area": "07. Worker supervision",
+"req": "Detect successful worker completion.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "w.on('exit') with code 0 and no signal during closing marks normal completion",
+"prior_evidence": [
+"gateway/connection.js:192,260-266"
+]
+},
+{
+"id": "C34-063",
+"task_class": "IMPLEMENT",
+"area": "07. Worker supervision",
+"req": "Detect faulted worker completion.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Non-zero/uncooperative exit maps to workerExit {code:70, reason:'worker_failure'}",
+"prior_evidence": [
+"gateway/connection.js:260-266"
+]
+},
+{
+"id": "C34-064",
+"task_class": "MEASURE",
+"area": "07. Worker supervision",
+"req": "Observe worker task or job errors.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "decoder onError and w.on('error') both route to _workerFailed()",
+"prior_evidence": [
+"gateway/connection.js:186,191"
+]
+},
+{
+"id": "C34-065",
+"task_class": "IMPLEMENT",
+"area": "07. Worker supervision",
+"req": "Remove completed workers from active accounting.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.release/forget called in _finalExit and _onSocketClose",
+"prior_evidence": [
+"gateway/connection.js:276-283,312-333"
+]
+},
+{
+"id": "C34-066",
+"task_class": "IMPLEMENT",
+"area": "07. Worker supervision",
+"req": "Trigger cleanup when a worker fails before taking ownership fully.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "workerReadyMs timeout during OPENING triggers the same cleanup path as later failures",
+"prior_evidence": [
+"gateway/connection.js:193,254-259"
+]
+},
+{
+"id": "C34-067",
+"task_class": "IMPLEMENT",
+"area": "07. Worker supervision",
+"req": "Avoid retaining completed job output indefinitely.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "OutputGate bounds queued bytes to maxPendingBytes and drops with a gap marker on overflow",
+"prior_evidence": [
+"worker/output-gate.js:15-19,34-42"
+]
+},
+{
+"id": "C34-068",
+"task_class": "DOCUMENT",
+"area": "07. Worker supervision",
+"req": "Record a worker's final lifecycle outcome.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('session.exit',...) and log.warn('worker.failed',...) record final outcome [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:263,281"
+]
+},
+{
+"id": "C34-069",
+"task_class": "REVIEW",
+"area": "07. Worker supervision",
+"req": "Ensure one worker failure does not terminate unrelated sessions accidentally.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "'the other tenant is unaffected' explicitly tested for worker kill",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C34-070",
+"task_class": "SPECIFY",
+"area": "07. Worker supervision",
+"req": "Define when repeated worker failures should mark the service unhealthy.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No design decision found for marking the service unhealthy after repeated worker failures",
+"prior_evidence": []
+},
+{
+"id": "C34-071",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test client disconnect immediately after upgrade.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Abrupt TCP loss test covers mid-session disconnect, not specifically 'immediately after upgrade' before open",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C34-072",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test worker initialization failure after successful upgrade.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test named for worker init failure specifically timed right after a successful upgrade",
+"prior_evidence": []
+},
+{
+"id": "C34-073",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test shutdown immediately before handoff.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test named for shutdown racing immediately before handoff completes",
+"prior_evidence": []
+},
+{
+"id": "C34-074",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test shutdown immediately after handoff.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test named for shutdown racing immediately after handoff completes",
+"prior_evidence": []
+},
+{
+"id": "C34-075",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test capacity becoming available while another request is rejected.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test named for capacity freeing up while a concurrent request is being rejected",
+"prior_evidence": []
+},
+{
+"id": "C34-076",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test worker completion racing with registry removal.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test named for worker completion racing registry removal specifically",
+"prior_evidence": []
+},
+{
+"id": "C34-077",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test a failed handoff followed by a successful connection.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test named for a failed handoff followed by a subsequent successful connection",
+"prior_evidence": []
+},
+{
+"id": "C34-078",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test a burst larger than the approved worker capacity.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Capacity caps refused before worker spawn cover a burst beyond approved capacity",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C34-079",
+"task_class": "VERIFY",
+"area": "08. Race and failure tests",
+"req": "Verify each upgraded socket has exactly one cleanup owner.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Code comment/design enforces one exit owner (_finalExit guard on exitSent), but no test is explicitly named for it",
+"prior_evidence": [
+"gateway/connection.js:274-283"
+]
+},
+{
+"id": "C34-080",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Preserve repeatable tests for ownership races.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Repeatable ownership-race style tests (kill, TCP loss, quiescent snapshot) exist in the suite",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C34-081",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Stop accepting new connection assignments at the shutdown boundary.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining=true and admit() reject 'draining' stop new admissions immediately",
+"prior_evidence": [
+"gateway/server.js:221",
+"gateway/server.js:172"
+]
+},
+{
+"id": "C34-082",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Snapshot or enumerate active workers safely.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "for (const c of registry.conns) safely iterates a Set snapshot during shutdown",
+"prior_evidence": [
+"gateway/server.js:225,236-239"
+]
+},
+{
+"id": "C34-083",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Notify workers through the approved shutdown mechanism.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "service.draining control message sent, then c.end('shutdown',...)",
+"prior_evidence": [
+"gateway/server.js:237-239"
+]
+},
+{
+"id": "C34-084",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Resolve contexts still awaiting handoff.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Shutdown loop touches every conn in registry.conns regardless of OPENING/ACTIVE state",
+"prior_evidence": [
+"gateway/server.js:236-239"
+]
+},
+{
+"id": "C34-085",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Close upgraded sockets that never reached a worker.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "finish() terminates ws for every remaining conn, including ones never handed to an active worker",
+"prior_evidence": [
+"gateway/server.js:225"
+]
+},
+{
+"id": "C34-086",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Wait for worker completion within an approved budget.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "hard timeout at cfg.shutdownMs forces finish(true) if workers don't complete",
+"prior_evidence": [
+"gateway/server.js:232-235"
+]
+},
+{
+"id": "C34-087",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Report workers that fail to finish.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('gateway.stopped',{forced,drainMs}) reports whether shutdown was forced [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C34-088",
+"task_class": "IMPLEMENT",
+"area": "09. Shutdown",
+"req": "Dispose backend resources after workers no longer use them.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "server.close()/closeAllConnections() run after workers are killed/notified",
+"prior_evidence": [
+"gateway/server.js:226-227"
+]
+},
+{
+"id": "C34-089",
+"task_class": "DOCUMENT",
+"area": "09. Shutdown",
+"req": "Record dispatcher termination separately from worker termination.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.stopped is logged separately from per-connection session.exit/worker.failed [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:229",
+"gateway/connection.js:263,281"
+]
+},
+{
+"id": "C34-090",
+"task_class": "TEST",
+"area": "09. Shutdown",
+"req": "Test shutdown during a mixed HTTP and WebSocket workload.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "SIGTERM drain test covers WebSocket sessions; no explicit mixed-HTTP-during-shutdown test found",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C34-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the master-worker responsibility split.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "'The gateway owns... the worker owns...' explicitly publishes the responsibility split",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C34-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the socket handoff contract.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Bridge record types and framing published as the worker handoff contract for this design",
+"prior_evidence": [
+"docs/PROTOCOL.md#local-bridge-protocolbridgejs-protocolbridgeschemajson"
+]
+},
+{
+"id": "C34-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link live-object backend compatibility evidence.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No live-object handoff exists in this design to link evidence for",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-001"
+]
+},
+{
+"id": "C34-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link capacity and admission tests.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "RELEASE.md references the 95/95 suite generally; no explicit link table naming capacity/admission tests found",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C34-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link health-under-load evidence.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit doc link to health-under-load evidence by name, only general suite reference",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C34-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link worker-failure and handoff-failure tests.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit doc link naming worker-failure/handoff-failure tests specifically",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C34-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link shutdown-race tests.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit doc link naming shutdown-race tests specifically",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C34-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document registry and cleanup ownership.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Registry/cleanup ownership is documented only in code comments, not a dedicated record/ledger entry",
+"prior_evidence": [
+"gateway/connection.js:274-283,312-333"
+]
+},
+{
+"id": "C34-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved backend limitations.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Known limitations section and REMOTE-DESKTOP 'OPEN' status record unresolved items",
+"prior_evidence": [
+"docs/RELEASE.md#release-notes",
+"docs/ARCHITECTURE.md#3-profiles"
+]
+},
+{
+"id": "C34-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve dispatch only when every accepted context reaches one deliberate owner.",
+"ram_overlay": "Dispatch immutable descriptors through a bounded ready queue. Use fair session/tenant scheduling and avoid repeated policy scans or unbounded handoff objects.",
+"challenge": "Combine a chatty tenant with an interactive tenant and measure tail latency, queue bytes, and scheduling fairness.",
+"ref_work": [
+"R17",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Single-exit-owner design exists in code, but no explicit approval/sign-off statement was found",
+"prior_evidence": [
+"gateway/connection.js:274-283"
+]
+}
+]
+}

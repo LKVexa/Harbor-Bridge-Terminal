@@ -1,0 +1,117 @@
+/// INV-20 HTTP component worlds — authoritative WIT for this repository.
+///
+/// Terminology resolution (ADR-0001):
+///   "wasi:http/service"    -> world `service`    (exports handler; imports nothing HTTP)
+///   "wasi:http/middleware" -> world `middleware` (imports handler; exports handler)
+/// These mirror the WASI 0.3 wasi:http world shapes. Production bindings target the
+/// pinned upstream package recorded in wit/wit.lock; until that lock is resolved the
+/// local `pk:inv20/types` interface below is the reviewed contract surface.
+package pk:inv20@4.3.0;
+
+interface types {
+  /// Stable error variants; names equal errors.py REGISTRY codes (lower-kebab).
+  variant error-code {
+    invalid-method,
+    invalid-scheme,
+    invalid-authority,
+    invalid-path,
+    invalid-field,
+    forbidden-field,
+    field-limit,
+    invalid-status,
+    body-too-large,
+    no-outgoing,
+    egress-denied,
+    dns-denied,
+    dns-failure,
+    redirect-limit,
+    unauthenticated,
+    capability-invalid,
+    policy-unavailable,
+    overloaded,
+    circuit-open,
+    deadline,
+    cancelled,
+    upstream-connect,
+    upstream-reset,
+    handler-trap,
+    illegal-state,
+    already-resolved,
+    quarantined,
+    not-ready,
+    internal(string),
+  }
+
+  enum scheme { http, https }
+
+  /// Validated, ordered, lower-cased field list. Owned resource: dropping it frees it.
+  resource fields {
+    constructor(entries: list<tuple<string, string>>);
+    get: func(name: string) -> list<string>;
+    entries: func() -> list<tuple<string, string>>;
+  }
+
+  /// Body stream. Exactly one reader; `finish` resolves trailers exactly once.
+  resource body {
+    read: func(max-bytes: u32) -> result<option<list<u8>>, error-code>;
+    write: func(chunk: list<u8>) -> result<_, error-code>;
+    finish: func(trailers: option<fields>) -> result<_, error-code>;
+  }
+
+  /// Single-resolution completion for trailers.
+  resource future-trailers {
+    get: func() -> option<result<option<fields>, error-code>>;
+  }
+
+  record request-head {
+    method: string,
+    scheme: scheme,
+    authority: string,
+    path-with-query: string,
+  }
+
+  resource request {
+    head: func() -> request-head;
+    headers: func() -> fields;
+    body: func() -> result<body, error-code>;
+    trailers: func() -> future-trailers;
+  }
+
+  resource response {
+    constructor(status: u16, headers: fields);
+    status: func() -> u16;
+    headers: func() -> fields;
+    body: func() -> result<body, error-code>;
+    trailers: func() -> future-trailers;
+  }
+}
+
+/// The single incoming handler (C-mandatory: exactly one export per world).
+interface handler {
+  use types.{request, response, error-code};
+  handle: func(request: request) -> result<response, error-code>;
+}
+
+/// Outgoing HTTP as an explicit, capability-scoped import (never ambient).
+interface outgoing {
+  use types.{request, response, error-code};
+  /// `capability` is the INV20_CAP/1 token; the host checks it before any DNS or connect.
+  send: func(capability: string, request: request) -> result<response, error-code>;
+}
+
+/// Service with no egress: outgoing HTTP is structurally unavailable.
+world service {
+  export handler;
+}
+
+/// Service allowed to call out through the granted capability only.
+world service-with-egress {
+  import outgoing;
+  export handler;
+}
+
+/// Middleware: wraps a downstream handler (INV-21 local chaining) and exports one handler.
+world middleware {
+  import handler;
+  export handler;
+}

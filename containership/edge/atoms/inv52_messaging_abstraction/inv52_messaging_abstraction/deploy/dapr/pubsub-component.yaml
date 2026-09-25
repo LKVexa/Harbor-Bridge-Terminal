@@ -1,0 +1,25 @@
+# Dapr Pub/Sub component for INV-52 (candidate; broker choice pending ADR-0001 approval).
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: order-events
+  namespace: inv52
+spec:
+  type: pubsub.redis
+  version: v1
+  metadata:
+    - name: redisHost
+      value: "redis-events.inv52:6379"
+    - name: redisPassword
+      secretKeyRef:
+        name: redis-events
+        key: password
+    - name: enableTLS
+      value: "true"
+    - name: maxLenApprox          # broker-side stream bound (C067)
+      value: "1000000"
+scopes:
+  - checkout
+  - billing
+auth:
+  secretStore: kubernetes

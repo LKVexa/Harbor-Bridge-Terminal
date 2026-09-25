@@ -1,0 +1,39 @@
+{
+  "format": "PK_APP_REGISTER/1",
+  "policy": {
+    "types": ["waiver", "exception", "technical-debt", "deprecation", "compat-bridge", "perf-waiver"],
+    "max_days_by_severity": {"Critical": 30, "High": 90, "Medium": 180},
+    "rules": [
+      "waiver/exception/perf-waiver entries count only with status=active, a named owner assignee, approvers, compensating controls and an unexpired expiry",
+      "Critical security waivers need an inv64-security-contact approver in addition to the owner",
+      "no auto-renewal: extending means a new entry that references the old id; extensions are counted",
+      "entries are closed with closure_evidence, never deleted"
+    ]
+  },
+  "entries": [
+    {"id": "REG-001", "type": "deprecation", "severity": "Medium", "title": "PK_APP_SUBMIT/1 protocol version",
+     "affected": ["MC-09", "C027"], "owner_role": "inv64-component-owner", "owner": null, "approvers": [],
+     "description": "v1 lacks channel binding and trace context. Accepted by negotiate() only because it still carries authn/authz.",
+     "first_deprecated": "4.3.0", "warning": "status reason + compatibility.json state=deprecated", "replacement": "PK_APP_SUBMIT/2",
+     "final_supported": "4.x", "removal": "5.0.0", "created": "2026-09-22", "expires": "2027-09-22", "status": "active", "extensions": 0},
+    {"id": "REG-002", "type": "deprecation", "severity": "Medium", "title": "validate() string-list API",
+     "affected": ["MC-06"], "owner_role": "inv64-component-owner", "owner": null, "approvers": [],
+     "description": "Free-text list kept for 4.x callers; stable codes are only in validate_issues().", "first_deprecated": "4.3.0",
+     "warning": "docstring", "replacement": "validate_issues()", "final_supported": "4.x", "removal": "5.0.0",
+     "created": "2026-09-22", "expires": "2027-09-22", "status": "active", "extensions": 0},
+    {"id": "REG-003", "type": "technical-debt", "severity": "High", "title": "HMAC (not public-key) signatures on in-repo release provenance when no managed signer is configured",
+     "affected": ["MC-15", "MC-39"], "owner_role": "release-manager", "owner": null, "approvers": [],
+     "description": "tools/release.py signs with an ephemeral Ed25519 key (public key published beside the artifacts) when no managed signer is supplied; that proves integrity of this bundle only, not signer identity.",
+     "closure_plan": "Provision a KMS/HSM or OIDC-keyless signer; pin its public key in the trust policy; re-sign.",
+     "created": "2026-09-22", "expires": "2026-12-21", "status": "open", "extensions": 0},
+    {"id": "REG-004", "type": "technical-debt", "severity": "High", "title": "Validation is ~7x slower than 4.2.0 because every string is secret-scanned",
+     "affected": ["MC-14", "MC-22", "C061"], "owner_role": "inv64-component-owner", "owner": null, "approvers": [],
+     "description": "Accepted under SPECIFICATION §10 precedence (security > cost). Absolute SLO still met (validate@10 p99 well under 5 ms).",
+     "closure_plan": "Schema-directed scanning (scan only extension/properties subtrees) once property schemas exist.",
+     "created": "2026-09-22", "expires": "2027-03-21", "status": "open", "extensions": 0},
+    {"id": "REG-005", "type": "technical-debt", "severity": "Medium", "title": "Isolation profile inv64-process-v1 is logical, not memory/kernel isolation",
+     "affected": ["MC-16"], "owner_role": "inv64-security-contact", "owner": null, "approvers": [],
+     "description": "Tenants share one interpreter. Hosts requiring hard isolation must run one process per tenant.",
+     "closure_plan": "Per-tenant worker processes or Wasm sandbox in the integration host.", "created": "2026-09-22", "expires": "2027-03-21", "status": "open", "extensions": 0}
+  ]
+}

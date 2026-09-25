@@ -1,0 +1,50 @@
+# Prometheus alerting rules for GAP-07 (#26). Metric names match telemetry.Metrics output
+# plus the exporter gauges the service wrapper publishes from Health/AuditExporter/PropagationTracker.
+groups:
+- name: gap07
+  rules:
+  - alert: GAP07InvalidSignatureSpike
+    expr: sum(rate(gap07_admission_total{code=~"SIGNATURE_INVALID|IDENTITY_MISMATCH|ALG_DOWNGRADE"}[5m])) > 0.1
+    for: 5m
+    labels: {severity: page, class: attack}
+    annotations: {summary: "Invalid/forged signatures presented to admission", runbook: "docs/RUNBOOKS.md#r4-key-compromise-sev-1"}
+  - alert: GAP07ReplayAttempts
+    expr: sum(rate(gap07_admission_total{code=~"REPLAY|TENANT_MISMATCH"}[10m])) > 0
+    labels: {severity: ticket, class: attack}
+  - alert: GAP07TrustStale
+    expr: max(gap07_ready{dependency="trust"}) == 0 or sum(rate(gap07_admission_total{code="TRUST_STALE"}[5m])) > 0
+    for: 2m
+    labels: {severity: page, class: dependency}
+    annotations: {runbook: "docs/RUNBOOKS.md#r7-disconnected-site-recovery"}
+  - alert: GAP07KeyUnavailable
+    expr: sum(rate(gap07_admission_total{code=~"KEY_UNAVAILABLE|CIRCUIT_OPEN"}[5m])) > 0
+    for: 5m
+    labels: {severity: page, class: dependency}
+  - alert: GAP07TransparencyFailure
+    expr: sum(rate(gap07_admission_total{code=~"TLOG_PROOF_INVALID|TLOG_ROLLBACK|TLOG_CHECKPOINT_INVALID"}[5m])) > 0
+    labels: {severity: page, class: attack}
+  - alert: GAP07TransparencyStale
+    expr: sum(rate(gap07_admission_total{code=~"TLOG_CHECKPOINT_STALE|TLOG_UNAVAILABLE"}[15m])) > 0
+    labels: {severity: ticket, class: dependency}
+  - alert: GAP07TimeUntrusted
+    expr: sum(rate(gap07_admission_total{code=~"TIME_UNTRUSTED|TIME_STALE|CLOCK_ROLLBACK|CLOCK_JUMP"}[5m])) > 0
+    labels: {severity: page, class: dependency}
+  - alert: GAP07SoftwareDefect
+    expr: sum(rate(gap07_admission_total{code="INTERNAL_ERROR"}[5m])) > 0
+    labels: {severity: page, class: defect}
+  - alert: GAP07Overload
+    expr: sum(rate(gap07_admission_total{code="OVERLOADED"}[5m])) / sum(rate(gap07_admission_total[5m])) > 0.01
+    for: 10m
+    labels: {severity: ticket, class: capacity}
+  - alert: GAP07LatencyP99
+    expr: histogram_quantile(0.99, sum by (le) (rate(gap07_admission_seconds_bucket{outcome="allow"}[5m]))) > 0.25
+    for: 10m
+    labels: {severity: ticket, class: performance}
+  - alert: GAP07AuditExportUnhealthy
+    expr: min(gap07_audit_export_healthy) == 0
+    for: 10m
+    labels: {severity: page, class: audit}
+  - alert: GAP07RevocationPropagationSLOBreach
+    expr: max(gap07_propagation_slo_breach) > 0
+    labels: {severity: page, class: slo}
+    annotations: {runbook: "docs/RUNBOOKS.md#r4-key-compromise-sev-1"}

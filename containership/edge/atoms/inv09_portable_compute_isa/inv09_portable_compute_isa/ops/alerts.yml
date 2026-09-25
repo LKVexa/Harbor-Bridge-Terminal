@@ -1,0 +1,19 @@
+groups:
+- name: inv09-validation
+  rules:
+  - alert: Inv09InternalError
+    expr: sum(rate(inv09_validations_total{outcome="error",code="INTERNAL_ERROR"}[5m])) > 0
+    labels: {severity: page}
+    annotations: {runbook: "docs/OPERATIONS.md#RB-02", summary: "validator fault (modules refused)"}
+  - alert: Inv09DeadlineRate
+    expr: sum(rate(inv09_validations_total{code="DEADLINE_EXCEEDED"}[10m])) / sum(rate(inv09_validations_total[10m])) > 0.01
+    labels: {severity: ticket}
+    annotations: {runbook: "docs/OPERATIONS.md#RB-03"}
+  - alert: Inv09LatencySLO
+    expr: histogram_quantile(0.99, sum by (le) (rate(inv09_validation_latency_ms_bucket[10m]))) > 20
+    labels: {severity: ticket}
+    annotations: {runbook: "docs/OPERATIONS.md#RB-03", summary: "p99 validation latency above 20 ms SLO"}
+  - alert: Inv09RefusalSpike
+    expr: sum(rate(inv09_validations_total{outcome="refuse"}[15m])) > 3 * sum(rate(inv09_validations_total{outcome="refuse"}[1d] offset 1d))
+    labels: {severity: ticket}
+    annotations: {runbook: "docs/OPERATIONS.md#RB-01"}

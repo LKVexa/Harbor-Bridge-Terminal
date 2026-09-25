@@ -1,0 +1,25 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: {python: ["3.10", "3.11", "3.12", "3.13"]}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv55_secrets_integration}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: sh inv55_secrets_integration/tools/ci.sh
+      - uses: actions/upload-artifact@v4
+        with: {name: evidence-${{ matrix.python }}, path: inv55_secrets_integration/evidence/}
+  release-gate:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv55_secrets_integration}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python3 -B inv55_secrets_integration/tools/gate.py   # exit 3 (NO_GO) fails the release job

@@ -1,0 +1,74 @@
+{
+ "component": 10,
+ "title": "Source-of-truth persistence architecture",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "authoritative lease/source-of-truth data model",
+   "state": "IMPLEMENTED",
+   "spec": "production/docs/10_persistence.md#lease-data-model-authoritative",
+   "modules": [
+    "production/concurrency.py::Lease",
+    "production/concurrency.py::LeaseTable"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_cas_and_fencing_race",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.DocsTest.test_persistence_doc"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "database or consensus technology selection",
+   "state": "BLOCKED",
+   "spec": "production/docs/10_persistence.md#technology-selection---blocked",
+   "modules": [
+    "production/docs/10_persistence.md"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.DocsTest.test_persistence_doc"
+   ],
+   "blocker": "technology selection decision by an accountable owner (etcd/PostgreSQL/FoundationDB candidates)"
+  },
+  {
+   "name": "replication, durability, and consistency guarantees",
+   "state": "PARTIAL",
+   "spec": "production/docs/10_persistence.md#required-guarantees",
+   "modules": [
+    "production/docs/10_persistence.md"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.DocsTest.test_persistence_doc"
+   ],
+   "blocker": "guarantees are specified but cannot be verified without a selected replicated store"
+  },
+  {
+   "name": "transaction/isolation semantics for conflicting writers",
+   "state": "IMPLEMENTED",
+   "spec": "production/docs/10_persistence.md#required-guarantees (CAS/fencing)",
+   "modules": [
+    "production/concurrency.py::LeaseTable.cas",
+    "production/concurrency.py::LeaseTable.elect"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_cas_and_fencing_race",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_dual_leader_stale_writer"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "backup, restore, compaction, and retention behavior",
+   "state": "PARTIAL",
+   "spec": "production/docs/10_persistence.md#backup-restore-compaction-retention",
+   "modules": [
+    "production/backup.py",
+    "production/concurrency.py::LeaseTable.reclaim_expired"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.BackupTest.test_restore_isolated_validation",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.DocsTest.test_persistence_doc"
+   ],
+   "blocker": "encryption at rest (KMS) and store-native compaction depend on the unselected technology"
+  }
+ ],
+ "notes": "LeaseTable is an in-memory double of the authoritative store."
+}

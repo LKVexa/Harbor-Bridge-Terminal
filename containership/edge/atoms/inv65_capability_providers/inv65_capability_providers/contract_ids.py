@@ -1,0 +1,7 @@
+"""pk_core-free element identity (shared by contract.py and the runtime)."""
+ELEMENT_ID = "INV-65"
+ELEMENT_NAME = "Capability providers"
+CONTRACT_SCHEMA = "PK_PROVIDER_CONTRACT/1"
+LINK_SCHEMA = "PK_PROVIDER_LINK/1"
+HEALTH_SCHEMA = "PK_PROVIDER_HEALTH/1"
+ERROR_SCHEMA = "PK_PROVIDER_ERROR/1"

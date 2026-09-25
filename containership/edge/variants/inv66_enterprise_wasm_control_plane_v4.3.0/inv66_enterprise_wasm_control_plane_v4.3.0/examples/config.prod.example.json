@@ -1,0 +1,103 @@
+{
+  "schema": "PK_ECP_CONFIG/1",
+  "revision": 1,
+  "author": "alice",
+  "approved_by": [
+    "bob"
+  ],
+  "source_revision": "0000000000000000000000000000000000000000",
+  "environment": "prod",
+  "limits": {
+    "max_components": 64,
+    "max_manifest_bytes": 1000000,
+    "max_inflight": 64,
+    "audit_retention_records": 1000,
+    "idempotency_ttl_s": 3600
+  },
+  "registries": [
+    "registry.estate.local"
+  ],
+  "signers": [
+    {
+      "id": "release-signer",
+      "public_key": "25220f5cb8edba78d68bc630ef32a69052b439b0e234e7c9aa8ec61f6bd029f4"
+    }
+  ],
+  "require_attestations": [
+    "slsa-provenance/v1"
+  ],
+  "bindings": [
+    {
+      "subject": "user:ops",
+      "role": "deployer",
+      "scope": "org:acme/tenant:payments",
+      "effect": "allow"
+    },
+    {
+      "subject": "user:dev",
+      "role": "deployer",
+      "scope": "org:acme/tenant:payments/lattice:staging",
+      "effect": "allow"
+    },
+    {
+      "subject": "group:sre",
+      "role": "org-admin",
+      "scope": "org:acme",
+      "effect": "allow"
+    },
+    {
+      "subject": "user:auditor",
+      "role": "auditor",
+      "scope": "org:acme",
+      "effect": "allow"
+    },
+    {
+      "subject": "user:ops",
+      "role": "deployer",
+      "scope": "org:acme/tenant:payments/lattice:restricted",
+      "effect": "deny"
+    },
+    {
+      "subject": "service:gitops",
+      "role": "deployer",
+      "scope": "org:acme/tenant:payments",
+      "effect": "allow"
+    }
+  ],
+  "groups": {
+    "sre": [
+      "user:root"
+    ]
+  },
+  "quotas": {
+    "*": {
+      "admissions_per_minute": 10000
+    }
+  },
+  "secrets": {
+    "anchor_key": "file:///etc/inv66/anchor.key"
+  },
+  "identity": {
+    "audience": "inv66-control-plane",
+    "issuers": {
+      "https://idp.acme": {
+        "algorithm": "EdDSA",
+        "keys": {
+          "k2026": "file:///etc/inv66/idp-k2026.pub.hex"
+        }
+      }
+    }
+  },
+  "policy": {
+    "version": "embedded-1",
+    "rules": [
+      {
+        "id": "no-debug-in-prod",
+        "deny_if": {
+          "image_contains": "debug"
+        },
+        "message": "debug images are not allowed"
+      }
+    ]
+  }
+}

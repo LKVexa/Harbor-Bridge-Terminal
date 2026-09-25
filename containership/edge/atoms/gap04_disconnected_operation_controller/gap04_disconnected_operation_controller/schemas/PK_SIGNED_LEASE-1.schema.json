@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_SIGNED_LEASE/1",
+  "title": "Signed autonomy lease envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "issuer",
+    "trust_domain",
+    "scope",
+    "lease_id",
+    "issued_at",
+    "not_before",
+    "expires_at",
+    "policy",
+    "capabilities",
+    "authority_epoch",
+    "nonce",
+    "key_id",
+    "alg",
+    "sig"
+  ],
+  "properties": {
+    "version": {
+      "const": "PK_SIGNED_LEASE/1"
+    },
+    "issuer": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "trust_domain": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "scope": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "scope",
+      "title": "scope",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "site",
+        "tenant",
+        "cluster",
+        "node_class",
+        "environment"
+      ],
+      "properties": {
+        "site": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "tenant": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "cluster": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "node_class": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "lease_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "issued_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "not_before": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "policy": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "policy",
+      "title": "policy binding",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "restart",
+          "rebalance",
+          "admit-known",
+          "admit-new",
+          "scale"
+        ]
+      }
+    },
+    "authority_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32,128}$"
+    },
+    "key_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "alg": {
+      "const": "Ed25519"
+    },
+    "sig": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    }
+  }
+}

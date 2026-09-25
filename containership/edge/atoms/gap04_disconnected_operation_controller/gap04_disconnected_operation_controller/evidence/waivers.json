@@ -1,0 +1,285 @@
+{
+  "schema": "PK_GAP04_WAIVERS/1",
+  "register_version": 1,
+  "generated": "2026-09-22",
+  "waivers": [
+    {
+      "id": "W-001",
+      "title": "Named owners, approvers and reviewers are not assigned",
+      "controls": [
+        "C47",
+        "C48-011",
+        "C49-016",
+        "C50-018",
+        "C54-008",
+        "C55-011",
+        "C56-019",
+        "all *-024/*-026 approvals",
+        "all Exit records"
+      ],
+      "risk": "No accountable person exists to approve ADRs, waivers, SLOs or GO.",
+      "rationale": "Cannot be resolved by engineering; organization must assign people.",
+      "compensating_controls": "Every approval field left blank; gate refuses GO.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-002",
+      "title": "Adjacent layers exercised only via in-package reference implementations",
+      "controls": [
+        "C09",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C37",
+        "C44-020"
+      ],
+      "risk": "Real GAP-01/05/12/13 and PLN-07 implementations were not supplied with the candidate.",
+      "rationale": "Contracts are versioned and schema-tested; reference adapters are executable specifications.",
+      "compensating_controls": "negotiate() rejects unknown contracts; schemas validate every emitted message.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-003",
+      "title": "pk_core not supplied; conformance adapter suite skipped",
+      "controls": [
+        "C37",
+        "C44-006"
+      ],
+      "risk": "pk_core is external to the candidate archive.",
+      "rationale": "Core runtime has no pk_core dependency.",
+      "compensating_controls": "test_component.py retained unchanged; must be run where pk_core exists.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-004",
+      "title": "Dependency lock lacks wheel hashes",
+      "controls": [
+        "C45-007",
+        "C45-020",
+        "C46-007"
+      ],
+      "risk": "Build sandbox had no package-index access.",
+      "rationale": "Exact versions pinned; regeneration command documented in requirements.lock.",
+      "compensating_controls": "Release gate lists this waiver as blocking.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-005",
+      "title": "No TPM/HSM/KMS key custody; not FIPS-validated",
+      "controls": [
+        "C04-008",
+        "C15-009",
+        "C15-010",
+        "C15-020",
+        "C01-019"
+      ],
+      "risk": "Reference FileKeyProvider keeps keys (0600) beside state.",
+      "rationale": "KeyProvider seam; AES-256-GCM + HMAC; key-file permission check; zeroization best effort.",
+      "compensating_controls": "Production must supply a hardware-backed KeyProvider.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-006",
+      "title": "Release signing uses a locally generated key without HSM custody or CI builder identity",
+      "controls": [
+        "C46-009",
+        "C46-012",
+        "C55-013"
+      ],
+      "risk": "No release infrastructure available to this work order.",
+      "rationale": "Signature, SBOM and provenance mechanics are implemented and tamper-tested.",
+      "compensating_controls": "Verification tool fails on any mismatch or wrong key.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-007",
+      "title": "No release CI; evidence is from local runs",
+      "controls": [
+        "*-023",
+        "C31-018",
+        "C34-018",
+        "C37-019",
+        "C38-016"
+      ],
+      "risk": "No CI system in scope.",
+      "rationale": "evidence/test_results.json records the exact run; suites are deterministic and seeded.",
+      "compensating_controls": "Gate requires ci_run_id for GO.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-008",
+      "title": "Single-platform qualification (Linux x86_64, CPython 3.11)",
+      "controls": [
+        "C02-005",
+        "C03-005",
+        "C31-015",
+        "C38-012",
+        "C45-013"
+      ],
+      "risk": "Only one build host available.",
+      "rationale": "POSIX durability assumptions documented; Windows lock path present but unqualified.",
+      "compensating_controls": "Compatibility matrix marks other platforms untested.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-009",
+      "title": "No independent security review, penetration test, or vulnerability scan",
+      "controls": [
+        "*-024",
+        "C35-016",
+        "C45-018",
+        "C46-013"
+      ],
+      "risk": "Requires independent team and network access to advisory databases.",
+      "rationale": "Adversarial test suite; threat model; fail-closed design.",
+      "compensating_controls": "Gate requires security_review record.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-010",
+      "title": "Performance measured on a container, not representative edge hardware; power not measured",
+      "controls": [
+        "C38-012",
+        "C38-019",
+        "C38-020",
+        "C39-016"
+      ],
+      "risk": "No edge hardware available.",
+      "rationale": "Benchmark harness and capacity calculator re-runnable on target hardware.",
+      "compensating_controls": "SLO targets remain 'proposed'.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-011",
+      "title": "Fencing is single-host (OS lock + persisted generation)",
+      "controls": [
+        "C16-007",
+        "C16-010",
+        "C16-012",
+        "C16-020"
+      ],
+      "risk": "Multi-host single authority needs a control-plane-issued generation/consensus lease.",
+      "rationale": "Downstream FencingValidator rejects stale generations; epochs bound leases.",
+      "compensating_controls": "Deploy one controller per site state directory only.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-012",
+      "title": "Trusted-time anti-rollback is software-only (no TPM NV counter)",
+      "controls": [
+        "C02-007",
+        "C02-009",
+        "C02-020",
+        "C17-010"
+      ],
+      "risk": "Whole-disk rollback while partitioned is undetectable locally (THREAT_MODEL R1).",
+      "rationale": "HWM + journal MAC; detection at reconnect via authority epoch and audit head.",
+      "compensating_controls": "Hardware monotonic counter integration pending.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": true,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    },
+    {
+      "id": "W-013",
+      "title": "Per-site decision quota configured but not enforced",
+      "controls": [
+        "C21-006",
+        "C30-007"
+      ],
+      "risk": "quotas.decisions_per_minute is validated but not enforced.",
+      "rationale": "Admission concurrency/queue bounds and max_decisions_per_partition enforce hard limits.",
+      "compensating_controls": "Documented in CONFIGURATION.md.",
+      "owner": null,
+      "approver": null,
+      "created": "2026-09-22",
+      "review_by": "2026-10-22",
+      "expires": "2026-12-31",
+      "blocks_production": false,
+      "status": "proposed",
+      "tracking": "CHECKLIST_STATUS.json"
+    }
+  ]
+}

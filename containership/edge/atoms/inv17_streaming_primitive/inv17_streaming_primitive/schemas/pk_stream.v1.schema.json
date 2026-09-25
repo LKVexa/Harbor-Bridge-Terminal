@@ -1,0 +1,15 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"urn:pk:inv17:PK_STREAM:1","title":"PK_STREAM/1 stream handle descriptor",
+ "type":"object","additionalProperties":false,
+ "required":["interface","version","stream_id","element_type","tenant","workload","limits","state"],
+ "properties":{
+  "interface":{"type":"string","enum":["PK_STREAM"]},
+  "version":{"type":"integer","enum":[1]},
+  "stream_id":{"type":"string","pattern":"[A-Za-z0-9._:-]{1,128}"},
+  "element_type":{"type":"string","enum":["bytes","str","int","float","dict","list","tuple"]},
+  "tenant":{"type":"string","pattern":"[A-Za-z0-9._:-]{1,128}"},
+  "workload":{"type":"string","pattern":"[A-Za-z0-9._:-]{1,128}"},
+  "limits":{"type":"object","additionalProperties":false,"required":["max_credit","max_buffer"],
+    "properties":{"max_credit":{"type":"integer","minimum":1,"maximum":1048576},"max_buffer":{"type":"integer","minimum":1,"maximum":1048576},
+                  "idempotency_window":{"type":"integer","minimum":1,"maximum":1048576}}},
+  "state":{"type":"string","enum":["open","credit_stalled","frozen","ended","writer_dropped","reader_dropped"]}
+ }}

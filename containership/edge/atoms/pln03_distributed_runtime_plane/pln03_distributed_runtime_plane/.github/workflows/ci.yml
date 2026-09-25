@@ -1,0 +1,21 @@
+# MC-056 CI policy: every push/PR runs the full suite, audit, bench gate, SBOM and evidence build.
+name: pln03-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy: {matrix: {python: ["3.10", "3.11", "3.12", "3.13"]}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m unittest discover -s tests -p 'test_*.py' -t tests -v
+      - run: python -O -m unittest discover -s tests -p 'test_*.py' -t tests
+      - run: PK_SOAK_OPS=40000 python -m unittest discover -s tests -p test_faults.py -t tests
+      - run: python tools/bench.py --n 20000
+      - run: python audit_repository.py
+      - run: python tools/sbom.py --check
+      - run: python tools/release_evidence.py --out evidence
+      - uses: actions/upload-artifact@v4
+        with: {name: "evidence-${{ matrix.python }}", path: evidence/}

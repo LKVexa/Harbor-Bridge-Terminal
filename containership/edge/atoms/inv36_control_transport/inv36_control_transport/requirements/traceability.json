@@ -1,0 +1,1642 @@
+{
+ "schema": "inv36.traceability/1",
+ "baseline": "5.1.0",
+ "rows": [
+  {
+   "id": "INV36-REQ-001",
+   "text": "The transport SHALL carry INV-36 control messages between host and guest over AF_VSOCK SOCK_STREAM connections on the configured port (default 5036).",
+   "type": "functional",
+   "category": "connectivity",
+   "safety_security_critical": false,
+   "source": "INV-36-C011,C021,C031",
+   "rationale": "Derived from INV-36-C011,C021,C031.",
+   "verification": "test+demo",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "vsock.vsock_connect",
+    "vsock.VsockListener"
+   ],
+   "config": [
+    "listen_port",
+    "peer_cid"
+   ],
+   "runbook": "docs/RUNBOOKS.md#hypervisor-vsock-failure",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::FullStackTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_platform_gate_governance.py::RealVsockKernelTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_protocol_layers.py::StreamTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-002",
+   "text": "The transport SHALL mutually authenticate both peers with PK_CTRL_HS/1 before any control message is decoded or dispatched.",
+   "type": "functional",
+   "category": "authentication",
+   "safety_security_critical": true,
+   "source": "INV-36-C023,C044",
+   "rationale": "Derived from INV-36-C023,C044.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "handshake.ClientHandshake",
+    "handshake.ServerHandshake",
+    "endpoint.ControlEndpoint.accept"
+   ],
+   "config": [
+    "handshake_timeout_ms"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::FullStackTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_handshake.py::HandshakePositiveTest",
+     "kind": "security"
+    },
+    {
+     "test": "tests/test_handshake.py::HandshakeNegativeTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-003",
+   "text": "Session traffic keys SHALL be derived from the full handshake transcript, binding both identities, both ephemeral keys, both nonces, the offered suite list and the selected suite.",
+   "type": "functional",
+   "category": "authentication",
+   "safety_security_critical": true,
+   "source": "INV-36-C023",
+   "rationale": "Derived from INV-36-C023.",
+   "verification": "test+analysis",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "handshake._h",
+    "handshake._expand"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_handshake.py::HandshakePositiveTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-004",
+   "text": "Each session SHALL use fresh ephemeral X25519 keys generated from the OS CSPRNG, providing forward secrecy.",
+   "type": "non_functional",
+   "category": "cryptography",
+   "safety_security_critical": true,
+   "source": "INV-36-C047",
+   "rationale": "Derived from INV-36-C047.",
+   "verification": "inspection+test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "handshake.ClientHandshake.__init__",
+    "handshake.ServerHandshake.on_client_hello"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_handshake.py::HandshakePositiveTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-005",
+   "text": "Every control message SHALL be sealed with AES-256-GCM-SIV under direction-specific keys and nonces before leaving the process.",
+   "type": "functional",
+   "category": "confidentiality",
+   "safety_security_critical": true,
+   "source": "INV-36-C047",
+   "rationale": "Derived from INV-36-C047.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "transport.Session.seal",
+    "transport.Session.open"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_transport.py::TransportTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-006",
+   "text": "Relays SHALL NOT be able to read plaintext or forge frames; relay-supplied routing metadata SHALL NOT influence authorization.",
+   "type": "functional",
+   "category": "confidentiality",
+   "safety_security_critical": true,
+   "source": "INV-36-C047,C024",
+   "rationale": "Derived from INV-36-C047,C024.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "transport.Relay",
+    "messages.ControlMessage"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_protocol_layers.py::MessageCodecTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_transport.py::TransportTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-007",
+   "text": "The receiver SHALL accept only the exact next sequence number and SHALL reject reordered frames without advancing state.",
+   "type": "functional",
+   "category": "ordering",
+   "safety_security_critical": true,
+   "source": "INV-36-C015",
+   "rationale": "Derived from INV-36-C015.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "transport.Session.open"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_platform_gate_governance.py::FuzzPropertyTest",
+     "kind": "fuzz"
+    },
+    {
+     "test": "tests/test_transport.py::TransportTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "fuzz",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-008",
+   "text": "The receiver SHALL reject replayed frames and replayed operation IDs without side effects.",
+   "type": "functional",
+   "category": "replay",
+   "safety_security_critical": true,
+   "source": "INV-36-C057",
+   "rationale": "Derived from INV-36-C057.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "transport.Session.open",
+    "recovery.DedupWindow"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::RecoveryTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_transport.py::TransportTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-009",
+   "text": "Plaintext SHALL NOT exceed 65,536 bytes and wire records SHALL NOT exceed 65,566 bytes; advertised lengths SHALL be validated before payload allocation.",
+   "type": "functional",
+   "category": "bounds",
+   "safety_security_critical": true,
+   "source": "INV-36-C028,C067",
+   "rationale": "Derived from INV-36-C028,C067.",
+   "verification": "test+fuzz",
+   "threshold": "64 KiB plaintext",
+   "design": "ADR-0001",
+   "implementation": [
+    "stream.parse_record_header",
+    "transport.Session.seal"
+   ],
+   "config": [
+    "max_frame_bytes"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_platform_gate_governance.py::FuzzPropertyTest",
+     "kind": "fuzz"
+    },
+    {
+     "test": "tests/test_protocol_layers.py::WireIdlTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_protocol_layers.py::StreamTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_transport.py::TransportTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "fuzz",
+    "security",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-010",
+   "text": "Sending SHALL fail closed before the 64-bit sequence space wraps.",
+   "type": "functional",
+   "category": "cryptography",
+   "safety_security_critical": true,
+   "source": "INV-36-C047",
+   "rationale": "Derived from INV-36-C047.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "transport.Session.seal"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_transport.py::TransportTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-011",
+   "text": "Streams SHALL begin with the PK_CTRL_STREAM/1 preamble; non-matching (legacy or foreign) peers SHALL be rejected before any payload processing.",
+   "type": "functional",
+   "category": "framing",
+   "safety_security_critical": true,
+   "source": "INV-36-C016,C027",
+   "rationale": "Derived from INV-36-C016,C027.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "stream.Connection.exchange_preamble"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_protocol_layers.py::StreamTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-012",
+   "text": "Every control operation SHALL pass a single mandatory authorization decision (default deny, explicit deny wins) before any handler side effect.",
+   "type": "functional",
+   "category": "authorization",
+   "safety_security_critical": true,
+   "source": "INV-36-C024,C042",
+   "rationale": "Derived from INV-36-C024,C042.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "policy.Authorizer.enforce",
+    "endpoint.ControlEndpoint._dispatch"
+   ],
+   "config": [
+    "policy_ref"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::AuthorizationTest",
+     "kind": "security"
+    },
+    {
+     "test": "tests/test_endpoint_integration.py::FullStackTest",
+     "kind": "integration"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-013",
+   "text": "Operations targeting a tenant other than the authenticated principal's tenant SHALL be denied unless an explicitly approved rule allows it.",
+   "type": "functional",
+   "category": "isolation",
+   "safety_security_critical": true,
+   "source": "INV-36-C046",
+   "rationale": "Derived from INV-36-C046.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "policy.Authorizer.decide"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::AuthorizationTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-014",
+   "text": "When authorization policy is absent, expired or rolled back without recovery authorization, all operations SHALL be denied.",
+   "type": "functional",
+   "category": "authorization",
+   "safety_security_critical": true,
+   "source": "INV-36-C048",
+   "rationale": "Derived from INV-36-C048.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "policy.PolicyStore"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::AuthorizationTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-015",
+   "text": "Long-lived keys SHALL be obtained only via secretref:// handles from a KeyProvider and SHALL NOT appear in configuration, logs, evidence, repr or pickles.",
+   "type": "functional",
+   "category": "key-custody",
+   "safety_security_critical": true,
+   "source": "INV-36-C039",
+   "rationale": "Derived from INV-36-C039.",
+   "verification": "test+scan",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "keys.SigningKey",
+    "keys.KeyCache",
+    "config.validate"
+   ],
+   "config": [
+    "identity_key_ref"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::KeyCustodyTest",
+     "kind": "security"
+    },
+    {
+     "test": "tests/test_platform_gate_governance.py::GovernanceConsistencyTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "security",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-016",
+   "text": "Identity key epochs SHALL only increase; the previous epoch SHALL be accepted only within the grace window; rollback SHALL require recovery authorization.",
+   "type": "functional",
+   "category": "key-rotation",
+   "safety_security_critical": true,
+   "source": "INV-36-C047",
+   "rationale": "Derived from INV-36-C047.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "keys.EpochPolicy"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::KeyCustodyTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-017",
+   "text": "Revoked credentials or key epochs SHALL be refused at handshake; if revocation data is unavailable or stale the handshake SHALL fail closed unless an approved cache window applies.",
+   "type": "functional",
+   "category": "revocation",
+   "safety_security_critical": true,
+   "source": "INV-36-C048",
+   "rationale": "Derived from INV-36-C048.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "handshake._check_credential"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::DisasterPartitionTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_handshake.py::HandshakeNegativeTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-018",
+   "text": "Failures of the time, trust, attestation or key services SHALL fail new session establishment closed with typed errors.",
+   "type": "functional",
+   "category": "dependency-failure",
+   "safety_security_critical": true,
+   "source": "INV-36-C048",
+   "rationale": "Derived from INV-36-C048.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "handshake.HandshakePolicy.now",
+    "handshake.AllowlistAttestation"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::DisasterPartitionTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_handshake.py::HandshakeNegativeTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-019",
+   "text": "Configuration SHALL be validated (schema, ranges, cross-field, security) before activation; invalid security-critical configuration SHALL NOT activate; unknown fields SHALL be rejected.",
+   "type": "functional",
+   "category": "configuration",
+   "safety_security_critical": true,
+   "source": "INV-36-C033,C034",
+   "rationale": "Derived from INV-36-C033,C034.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "config.validate"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::ConfigurationTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-020",
+   "text": "Configuration activation SHALL be atomic, recorded with provenance, rolled back automatically on failed health checks, and SHALL refuse rollback to revoked configurations.",
+   "type": "functional",
+   "category": "configuration",
+   "safety_security_critical": false,
+   "source": "INV-36-C036,C037,C038",
+   "rationale": "Derived from INV-36-C036,C037,C038.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "config.ConfigStore"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::ConfigurationTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-021",
+   "text": "The component SHALL expose live/ready/degraded health with reason codes, SHALL NOT report ready while a required dependency is down, and SHALL apply hysteresis.",
+   "type": "functional",
+   "category": "health",
+   "safety_security_critical": false,
+   "source": "INV-36-C052,C071",
+   "rationale": "Derived from INV-36-C052,C071.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.HealthMonitor"
+   ],
+   "config": [
+    "stall_threshold_ms"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::HealthTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-022",
+   "text": "Retries SHALL be bounded, jittered, deadline-aware, budgeted across sessions, and SHALL NOT occur after terminal authentication, authorization, protocol or integrity errors.",
+   "type": "functional",
+   "category": "resilience",
+   "safety_security_critical": false,
+   "source": "INV-36-C053",
+   "rationale": "Derived from INV-36-C053.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.RetryPolicy",
+    "health.RetryBudget"
+   ],
+   "config": [
+    "retry_max_attempts",
+    "retry_base_ms",
+    "retry_cap_ms"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::RetryTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-023",
+   "text": "Admission SHALL be bounded with high/low water marks and per-tenant quotas; overload SHALL shed optional traffic first and return stable retryable errors.",
+   "type": "functional",
+   "category": "backpressure",
+   "safety_security_critical": false,
+   "source": "INV-36-C054,C017",
+   "rationale": "Derived from INV-36-C054,C017.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.AdmissionController"
+   ],
+   "config": [
+    "send_queue_high_water",
+    "send_queue_low_water",
+    "max_sessions_per_tenant"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::BreakerAdmissionFailoverTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-024",
+   "text": "Calls to failing dependencies SHALL be guarded by a circuit breaker with bounded half-open probing.",
+   "type": "functional",
+   "category": "resilience",
+   "safety_security_critical": false,
+   "source": "INV-36-C054",
+   "rationale": "Derived from INV-36-C054.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.CircuitBreaker"
+   ],
+   "config": [
+    "breaker_failure_threshold",
+    "breaker_reset_ms"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::BreakerAdmissionFailoverTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-025",
+   "text": "Failover SHALL select only residency- and tenant-compatible alternates and SHALL fence stale owners so no two owners are active.",
+   "type": "functional",
+   "category": "failover",
+   "safety_security_critical": true,
+   "source": "INV-36-C055",
+   "rationale": "Derived from INV-36-C055.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.FailoverSelector"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::BreakerAdmissionFailoverTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-026",
+   "text": "Cryptographic session state SHALL NOT be persisted or resumed; restart SHALL force a new handshake; persisted metadata SHALL be checksummed, versioned and reject corruption.",
+   "type": "functional",
+   "category": "recovery",
+   "safety_security_critical": true,
+   "source": "INV-36-C057",
+   "rationale": "Derived from INV-36-C057.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "recovery.StateStore",
+    "recovery.RecoveryManager"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::DisasterPartitionTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_resilience_recovery.py::RecoveryTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-027",
+   "text": "Quarantine directives SHALL be signed, versioned, time-bounded, scope-validated, require two approvers for broad scopes, override allow policy, and terminate matching sessions on activation.",
+   "type": "functional",
+   "category": "quarantine",
+   "safety_security_critical": true,
+   "source": "INV-36-C059,C092",
+   "rationale": "Derived from INV-36-C059,C092.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "quarantine.QuarantineRegistry"
+   ],
+   "config": [],
+   "runbook": "docs/RUNBOOKS.md#quarantine",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::QuarantineTest",
+     "kind": "security"
+    },
+    {
+     "test": "tests/test_endpoint_integration.py::QuarantineIntegrationTest",
+     "kind": "integration"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-028",
+   "text": "An OS-permission-guarded local kill switch SHALL disable session establishment and dispatch when present.",
+   "type": "functional",
+   "category": "quarantine",
+   "safety_security_critical": true,
+   "source": "INV-36-C059",
+   "rationale": "Derived from INV-36-C059.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "quarantine.QuarantineRegistry.kill_switch_engaged"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_control_planes.py::QuarantineTest",
+     "kind": "security"
+    },
+    {
+     "test": "tests/test_endpoint_integration.py::QuarantineIntegrationTest",
+     "kind": "integration"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-029",
+   "text": "Security-sensitive actions SHALL be recorded in a hash-chained audit log with signed checkpoints whose offline verification detects deletion, insertion, reordering and modification.",
+   "type": "functional",
+   "category": "audit",
+   "safety_security_critical": true,
+   "source": "INV-36-C049",
+   "rationale": "Derived from INV-36-C049.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "audit_log.AuditLog",
+    "audit_log.verify_log"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_audit_observability.py::AuditLogTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-030",
+   "text": "Metrics SHALL follow the published catalog with bounded label cardinality and documented units/buckets.",
+   "type": "functional",
+   "category": "observability",
+   "safety_security_critical": false,
+   "source": "INV-36-C072",
+   "rationale": "Derived from INV-36-C072.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "observability.MetricsRegistry"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_audit_observability.py::ObservabilityTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_endpoint_integration.py::SoakFleetShortTest",
+     "kind": "performance"
+    }
+   ],
+   "test_kinds": [
+    "performance",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-031",
+   "text": "Logs SHALL be structured JSON with stable identifiers, pseudonymized tenant IDs, redacted secrets/payloads and rate-limited repeats; security events SHALL NOT be debug-only.",
+   "type": "functional",
+   "category": "observability",
+   "safety_security_critical": true,
+   "source": "INV-36-C073,C075",
+   "rationale": "Derived from INV-36-C073,C075.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "observability.StructuredLogger"
+   ],
+   "config": [
+    "log_level"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_audit_observability.py::ObservabilityTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-032",
+   "text": "Trace context SHALL be continued only from authenticated in-estate peers and replaced at untrusted boundaries.",
+   "type": "functional",
+   "category": "observability",
+   "safety_security_critical": false,
+   "source": "INV-36-C074",
+   "rationale": "Derived from INV-36-C074.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "observability.accept_trace"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_audit_observability.py::ObservabilityTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-033",
+   "text": "An operator explain view SHALL summarize health, sessions, policy version, queue pressure, quarantine and recent decision reasons.",
+   "type": "functional",
+   "category": "observability",
+   "safety_security_critical": false,
+   "source": "INV-36-C076,C077",
+   "rationale": "Derived from INV-36-C076,C077.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "endpoint.ControlEndpoint.explain"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::FullStackTest",
+     "kind": "integration"
+    }
+   ],
+   "test_kinds": [
+    "integration"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-034",
+   "text": "All refusals SHALL map to stable machine-readable error codes (inv36.error/1) with retryability and bounded detail.",
+   "type": "functional",
+   "category": "interfaces",
+   "safety_security_critical": false,
+   "source": "INV-36-C026",
+   "rationale": "Derived from INV-36-C026.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "errors.ErrorCode",
+    "errors.Inv36Error"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_protocol_layers.py::ErrorTaxonomyTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-035",
+   "text": "Seal+open of a 64-byte frame SHALL have p99 latency <= 50 us on a certified target profile.",
+   "type": "non_functional",
+   "category": "performance",
+   "safety_security_critical": false,
+   "source": "INV-36-C062",
+   "rationale": "Derived from INV-36-C062.",
+   "verification": "benchmark",
+   "threshold": "p99 <= 50 us (certified target)",
+   "design": "ADR-0001",
+   "implementation": [
+    "transport.Session"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "bench.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [],
+   "test_kinds": [],
+   "status": "evidence-external"
+  },
+  {
+   "id": "INV36-REQ-036",
+   "text": "In the reference environment, handshake p99 SHALL be <= 50 ms and control-operation round trip p99 <= 25 ms.",
+   "type": "non_functional",
+   "category": "performance",
+   "safety_security_critical": false,
+   "source": "INV-36-C062",
+   "rationale": "Derived from INV-36-C062.",
+   "verification": "benchmark",
+   "threshold": "see perf/thresholds.json",
+   "design": "ADR-0001",
+   "implementation": [
+    "endpoint.ControlEndpoint"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "bench.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [],
+   "test_kinds": [],
+   "status": "evidence-external"
+  },
+  {
+   "id": "INV36-REQ-037",
+   "text": "Defaults SHALL cap sessions at 256 per process and 64 per tenant; established-session memory SHALL be <= 256 KiB per session pair.",
+   "type": "non_functional",
+   "category": "capacity",
+   "safety_security_critical": false,
+   "source": "INV-36-C017,C067",
+   "rationale": "Derived from INV-36-C017,C067.",
+   "verification": "test+benchmark",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "endpoint.ControlEndpoint._limits"
+   ],
+   "config": [
+    "max_sessions",
+    "max_sessions_per_tenant"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::SoakFleetShortTest",
+     "kind": "performance"
+    },
+    {
+     "test": "tests/test_resilience_recovery.py::BreakerAdmissionFailoverTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "performance",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-038",
+   "text": "Under intermittent connectivity the transport SHALL detect stalls via monotonic thresholds, reconnect with jittered backoff and a fresh handshake, and SHALL NOT infer authoritative state from missing messages.",
+   "type": "functional",
+   "category": "connectivity",
+   "safety_security_critical": true,
+   "source": "INV-36-C018",
+   "rationale": "Derived from INV-36-C018.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.HealthMonitor",
+    "health.RetryPolicy"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::DisasterPartitionTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_resilience_recovery.py::HealthTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-039",
+   "text": "When requirements conflict, precedence SHALL be: security/integrity > tenant isolation/residency > availability > latency SLO > cost > operator preference.",
+   "type": "functional",
+   "category": "precedence",
+   "safety_security_critical": true,
+   "source": "INV-36-C019",
+   "rationale": "Derived from INV-36-C019.",
+   "verification": "inspection",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "docs/REQUIREMENTS.md#precedence"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [],
+   "test_kinds": [],
+   "status": "evidence-external"
+  },
+  {
+   "id": "INV36-REQ-040",
+   "text": "Peers SHALL speak PK_CTRL_FRAME/2, PK_CTRL_STREAM/1, PK_CTRL_HS/1 and PK_CTRL_MSG/1; unsupported versions SHALL be rejected deterministically.",
+   "type": "functional",
+   "category": "compatibility",
+   "safety_security_critical": false,
+   "source": "INV-36-C016,C027",
+   "rationale": "Derived from INV-36-C016,C027.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "_wire",
+    "messages.decode",
+    "handshake._unpack"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_platform_gate_governance.py::GovernanceConsistencyTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_protocol_layers.py::WireIdlTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_protocol_layers.py::MessageCodecTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-041",
+   "text": "Channels SHALL follow the lifecycle connecting -> preamble -> authenticating -> ready -> (rekey_due) -> draining -> closed, with quarantine/failure transitions to closed.",
+   "type": "functional",
+   "category": "lifecycle",
+   "safety_security_critical": false,
+   "source": "INV-36-C015",
+   "rationale": "Derived from INV-36-C015.",
+   "verification": "test+inspection",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "endpoint.Channel"
+   ],
+   "config": [
+    "session_max_age_s",
+    "session_max_frames"
+   ],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_endpoint_integration.py::FullStackTest",
+     "kind": "integration"
+    }
+   ],
+   "test_kinds": [
+    "integration"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-042",
+   "text": "Releases SHALL carry an SBOM, in-toto provenance and a signature over artifact digests; verification SHALL fail closed on any mismatch.",
+   "type": "functional",
+   "category": "supply-chain",
+   "safety_security_critical": true,
+   "source": "INV-36-C045,C090",
+   "rationale": "Derived from INV-36-C045,C090.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "tools.release"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_platform_gate_governance.py::ReleaseSupplyChainTest",
+     "kind": "security"
+    }
+   ],
+   "test_kinds": [
+    "security"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-043",
+   "text": "Production certification SHALL require a PASS from the pk_core estate gate; SKIP, ERROR or absence SHALL NOT count as PASS.",
+   "type": "functional",
+   "category": "certification",
+   "safety_security_critical": true,
+   "source": "INV-36-C090,C100",
+   "rationale": "Derived from INV-36-C090,C100.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "gate",
+    "pkcore_adapter"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_component.py::PackageTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_component.py::EstateConformanceTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_platform_gate_governance.py::PkCoreAdapterTest",
+     "kind": "unit"
+    },
+    {
+     "test": "tests/test_platform_gate_governance.py::GateTest",
+     "kind": "integration"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-044",
+   "text": "Parsers for records, frames, messages, handshake messages, configuration, policy and directives SHALL NOT crash or over-allocate on arbitrary input.",
+   "type": "non_functional",
+   "category": "robustness",
+   "safety_security_critical": true,
+   "source": "INV-36-C085",
+   "rationale": "Derived from INV-36-C085.",
+   "verification": "fuzz",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "tools.fuzz"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_platform_gate_governance.py::FuzzPropertyTest",
+     "kind": "fuzz"
+    },
+    {
+     "test": "tests/test_protocol_layers.py::MessageCodecTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "fuzz",
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-045",
+   "text": "Supported deployment contexts SHALL be cloud and datacenter Linux KVM/Firecracker/QEMU hosts; near-/far-edge only where such a host exists; WAN transport is out of scope (GAP-12).",
+   "type": "functional",
+   "category": "deployment",
+   "safety_security_critical": false,
+   "source": "INV-36-C012",
+   "rationale": "Derived from INV-36-C012.",
+   "verification": "inspection",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "docs/ADR-0001.md"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [],
+   "test_kinds": [],
+   "status": "evidence-external"
+  },
+  {
+   "id": "INV36-REQ-046",
+   "text": "Control-channel availability per host/guest pair SHALL be >= 99.95% monthly excluding declared maintenance (proposed SLO).",
+   "type": "non_functional",
+   "category": "availability",
+   "safety_security_critical": false,
+   "source": "INV-36-C013",
+   "rationale": "Derived from INV-36-C013.",
+   "verification": "monitoring",
+   "threshold": "99.95% monthly",
+   "design": "ADR-0001",
+   "implementation": [
+    "health.HealthMonitor"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "SLO dashboard",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [],
+   "test_kinds": [],
+   "status": "evidence-external"
+  },
+  {
+   "id": "INV36-REQ-047",
+   "text": "After a process restart with healthy dependencies the endpoint SHALL be ready within 5 s (RTO).",
+   "type": "non_functional",
+   "category": "recovery",
+   "safety_security_critical": false,
+   "source": "INV-36-C057",
+   "rationale": "Derived from INV-36-C057.",
+   "verification": "test",
+   "threshold": "RTO <= 5 s",
+   "design": "ADR-0001",
+   "implementation": [
+    "recovery.RecoveryManager"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_resilience_recovery.py::RecoveryTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "unit"
+   ],
+   "status": "verified-local"
+  },
+  {
+   "id": "INV36-REQ-048",
+   "text": "The release gate SHALL fail when license, ownership or governance metadata required by the production exit gate is missing.",
+   "type": "functional",
+   "category": "governance",
+   "safety_security_critical": false,
+   "source": "INV-36-C009,C100",
+   "rationale": "Derived from INV-36-C009,C100.",
+   "verification": "test",
+   "threshold": "",
+   "design": "ADR-0001",
+   "implementation": [
+    "gate"
+   ],
+   "config": [],
+   "runbook": "",
+   "evidence": "gate-evidence.json",
+   "owner": "INV-36 technical owner (role; named owner pending MC-21)",
+   "approval": "proposed",
+   "baseline": "5.1.0",
+   "tests": [
+    {
+     "test": "tests/test_platform_gate_governance.py::GateTest",
+     "kind": "integration"
+    },
+    {
+     "test": "tests/test_platform_gate_governance.py::GovernanceConsistencyTest",
+     "kind": "unit"
+    }
+   ],
+   "test_kinds": [
+    "integration",
+    "unit"
+   ],
+   "status": "verified-local"
+  }
+ ],
+ "orphan_tests": [],
+ "problems": []
+}

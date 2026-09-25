@@ -1,0 +1,15 @@
+{
+  "schema": "PK_POLL_DASHBOARD/1",
+  "title": "INV-14 legacy poll (deprecated)",
+  "format": "grafana-compatible panel list; datasource: Prometheus",
+  "panels": [
+    {"title": "Polls by outcome", "expr": "sum by (outcome) (rate(inv14_polls_total[5m]))", "class": "traffic"},
+    {"title": "Refusals by reason", "expr": "sum by (reason) (rate(inv14_polls_total{outcome=\"refused\"}[5m]))", "class": "security/caller/saturation"},
+    {"title": "Cross-owner attempts by tenant", "expr": "sum by (tenant) (rate(inv14_polls_total{reason=\"foreign_owner\"}[5m]))", "class": "security"},
+    {"title": "Admission shedding ratio", "expr": "sum(rate(inv14_polls_total{reason=\"admission\"}[5m])) / clamp_min(sum(rate(inv14_polls_total[5m])),1)", "class": "saturation"},
+    {"title": "Timeout ratio", "expr": "sum(rate(inv14_polls_total{outcome=\"timeout\"}[10m])) / clamp_min(sum(rate(inv14_polls_total{outcome=~\"ready|timeout\"}[10m])),1)", "class": "timeout-load"},
+    {"title": "p50/p99 poll latency (ms)", "expr": "histogram_quantile(0.99, sum by (le) (rate(inv14_poll_latency_ms_bucket[10m])))", "class": "software-defect"},
+    {"title": "Legacy use by tenant (migration burndown)", "expr": "sum by (tenant) (increase(inv14_polls_total{outcome=~\"ready|timeout\"}[1d]))", "class": "migration"},
+    {"title": "Policy refusals (lifecycle/governance)", "expr": "sum(rate(inv14_polls_total{reason=\"policy\"}[15m]))", "class": "migration"}
+  ]
+}

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Language Studio</title>
+<style>
+/* ==========================================================================
+   Language Studio — install and remove
+   A hairline, whitespace-dominant surface. Every animated property is
+   transform or opacity, so nothing in this file can cause a layout jitter.
+   ========================================================================== */
+
+:root{
+  /* soft contrast: no pure black, no pure white, anywhere */
+  --ink:            #1d2127;
+  --ink-soft:       rgba(29,33,39,.66);
+  --ink-faint:      rgba(29,33,39,.40);
+  --ink-ghost:      rgba(29,33,39,.16);
+  --field:          #f4f6f8;
+  --field-2:        #eef1f5;
+  --glass:          rgba(255,255,255,.62);
+  --glass-2:        rgba(255,255,255,.44);
+  --hairline:       rgba(29,33,39,.10);
+  --hairline-soft:  rgba(29,33,39,.06);
+  --accent:         #5b7cfa;
+  --accent-soft:    rgba(91,124,250,.14);
+  --accent-ink:     #3f5ed8;
+  --calm:           #4d9a86;      /* settled, not celebratory */
+  --hold:           #b08949;      /* attention, not alarm */
+  --radius-xl:      26px;
+  --radius-lg:      18px;
+  --radius-pill:    999px;
+  --ease-entrance:  cubic-bezier(.22,1,.36,1);
+  --ease-exit:      cubic-bezier(.4,0,.2,1);
+  --ease-spring:    cubic-bezier(.34,1.56,.64,1);
+  --shadow-float:   0 1px 2px rgba(29,33,39,.04),
+                    0 8px 24px rgba(29,33,39,.06),
+                    0 24px 60px rgba(29,33,39,.05);
+  --shadow-lift:    0 2px 6px rgba(29,33,39,.06),
+                    0 18px 50px rgba(29,33,39,.10),
+                    0 40px 90px rgba(29,33,39,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:           #edf0f4;
+    --ink-soft:      rgba(237,240,244,.66);
+    --ink-faint:     rgba(237,240,244,.38);
+    --ink-ghost:     rgba(237,240,244,.14);
+    --field:         #14171c;
+    --field-2:       #191d23;
+    --glass:         rgba(32,37,45,.58);
+    --glass-2:       rgba(32,37,45,.40);
+    --hairline:      rgba(237,240,244,.12);
+    --hairline-soft: rgba(237,240,244,.07);
+    --accent:        #7d97ff;
+    --accent-soft:   rgba(125,151,255,.16);
+    --accent-ink:    #a7b8ff;
+    --calm:          #6fc0a8;
+    --hold:          #d2ae74;
+    --shadow-float:  0 1px 2px rgba(0,0,0,.30), 0 10px 30px rgba(0,0,0,.34);
+    --shadow-lift:   0 2px 8px rgba(0,0,0,.36), 0 22px 60px rgba(0,0,0,.44);
+  }
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font:400 14px/1.55 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
+       Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  background:var(--field);
+  letter-spacing:-.006em;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+
+/* ---- ambient field ---------------------------------------------------- */
+.ambient{position:fixed;inset:-30%;z-index:0;pointer-events:none;filter:blur(14px);opacity:.9}
+.ambient span{
+  position:absolute;border-radius:50%;opacity:.5;
+  will-change:transform;
+  background:radial-gradient(closest-side,var(--c),transparent 72%);
+}
+.a1{--c:rgba(91,124,250,.26); width:58vmax;height:58vmax;left:2%;top:-6%;
+    animation:drift1 46s var(--ease-exit) infinite alternate}
+.a2{--c:rgba(77,154,134,.20); width:52vmax;height:52vmax;right:-4%;top:22%;
+    animation:drift2 58s var(--ease-exit) infinite alternate}
+.a3{--c:rgba(176,137,73,.15); width:44vmax;height:44vmax;left:26%;bottom:-14%;
+    animation:drift3 64s var(--ease-exit) infinite alternate}
+@keyframes drift1{to{transform:translate3d(6vmax,4vmax,0) scale(1.08)}}
+@keyframes drift2{to{transform:translate3d(-7vmax,-3vmax,0) scale(1.12)}}
+@keyframes drift3{to{transform:translate3d(4vmax,-5vmax,0) scale(1.06)}}
+
+/* ---- shell ------------------------------------------------------------ */
+.shell{
+  position:relative;z-index:1;height:100%;
+  display:grid;grid-template-rows:auto 1fr auto;
+  max-width:900px;margin:0 auto;padding:40px 40px 0;
+  overflow:hidden;
+}
+@media (max-width:640px){.shell{padding:24px 20px 0}}
+
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+h1{
+  font-size:25px;font-weight:530;letter-spacing:-.022em;line-height:1.2;
+}
+.sub{margin-top:7px;color:var(--ink-faint);font-size:12.5px;letter-spacing:-.002em}
+.identity{display:flex;align-items:center;gap:11px}
+.mark{
+  width:30px;height:30px;border-radius:10px;flex:none;
+  background:linear-gradient(150deg,var(--accent),#7fb8a8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 4px 14px rgba(91,124,250,.24);
+  position:relative;
+}
+.mark::after{
+  content:"";position:absolute;inset:8px;border-radius:4px;
+  border:1px solid rgba(255,255,255,.72);
+}
+
+/* ---- pill segmented control ------------------------------------------- */
+.modes{
+  display:inline-flex;position:relative;padding:3px;gap:2px;
+  background:var(--glass-2);border:1px solid var(--hairline);
+  border-radius:var(--radius-pill);
+  -webkit-backdrop-filter:blur(20px) saturate(150%);
+  backdrop-filter:blur(20px) saturate(150%);
+}
+.modes button{
+  position:relative;z-index:1;appearance:none;border:0;background:none;
+  font:inherit;font-size:12.5px;color:var(--ink-soft);
+  padding:7px 17px;border-radius:var(--radius-pill);cursor:pointer;
+  transition:color .34s var(--ease-exit);
+}
+.modes button[aria-selected="true"]{color:var(--ink)}
+.thumb{
+  position:absolute;z-index:0;top:3px;left:3px;height:calc(100% - 6px);
+  border-radius:var(--radius-pill);background:var(--glass);
+  border:1px solid var(--hairline-soft);
+  box-shadow:0 1px 2px rgba(29,33,39,.05);
+  transition:transform .46s var(--ease-spring),width .46s var(--ease-spring);
+  will-change:transform,width;
+}
+
+/* ---- scroll body ------------------------------------------------------ */
+.body{
+  overflow-y:auto;overscroll-behavior:contain;padding:26px 2px 220px;
+  scrollbar-width:thin;scrollbar-color:var(--ink-ghost) transparent;
+}
+.body::-webkit-scrollbar{width:8px}
+.body::-webkit-scrollbar-thumb{background:var(--ink-ghost);border-radius:8px}
+
+.view{display:none}
+.view.on{display:block}
+.stack>*{
+  opacity:0;transform:translate3d(0,10px,0);
+  animation:rise .62s var(--ease-entrance) forwards;
+}
+.stack>*:nth-child(1){animation-delay:.02s}
+.stack>*:nth-child(2){animation-delay:.07s}
+.stack>*:nth-child(3){animation-delay:.12s}
+.stack>*:nth-child(4){animation-delay:.17s}
+.stack>*:nth-child(5){animation-delay:.22s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ---- layered panels --------------------------------------------------- */
+.panel{
+  background:var(--glass);border:1px solid var(--hairline);
+  border-radius:var(--radius-xl);padding:26px 28px;margin-bottom:16px;
+  -webkit-backdrop-filter:blur(30px) saturate(150%);
+  backdrop-filter:blur(30px) saturate(150%);
+  box-shadow:var(--shadow-float),inset 0 1px 0 rgba(255,255,255,.42);
+}
+@media (prefers-color-scheme: dark){
+  .panel{box-shadow:var(--shadow-float),inset 0 1px 0 rgba(255,255,255,.06)}
+}
+.panel.quiet{background:var(--glass-2);box-shadow:none}
+.panel h2{
+  font-size:12px;font-weight:560;letter-spacing:.055em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:18px;
+}
+.rowline{height:1px;background:var(--hairline-soft);margin:18px -28px}
+
+/* ---- hairline input bar ----------------------------------------------- */
+.field{position:relative;padding-top:16px}
+.field+.field{margin-top:22px}
+.field label{
+  position:absolute;top:0;left:0;font-size:11.5px;letter-spacing:.03em;
+  color:var(--ink-faint);
+}
+.bar{position:relative;display:flex;align-items:center;gap:10px}
+.bar input{
+  flex:1;appearance:none;border:0;background:none;font:inherit;font-size:14.5px;
+  color:var(--ink);padding:7px 0 9px;letter-spacing:-.004em;
+}
+.bar input::placeholder{color:var(--ink-ghost)}
+.bar input:focus{outline:none}
+.bar::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:var(--hairline);transform-origin:left center;
+}
+.bar .focusline{
+  position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left center;
+  transition:transform .5s var(--ease-entrance);
+}
+.bar input:focus~.focusline{transform:scaleX(1)}
+
+/* ---- chips ------------------------------------------------------------ */
+.chip{
+  display:inline-flex;align-items:center;gap:7px;margin-top:11px;
+  padding:5px 11px 5px 9px;border-radius:var(--radius-pill);
+  background:var(--glass-2);border:1px solid var(--hairline-soft);
+  font-size:11.5px;color:var(--ink-soft);letter-spacing:-.002em;
+  opacity:0;transform:translate3d(0,-4px,0);
+  transition:opacity .4s var(--ease-entrance),transform .4s var(--ease-entrance);
+}
+.chip.on{opacity:1;transform:none}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ink-ghost);flex:none}
+.dot.ok{background:var(--calm)}
+.dot.hold{background:var(--hold)}
+.dot.busy{background:var(--accent);animation:pulse 1.9s var(--ease-exit) infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ---- ghost buttons ---------------------------------------------------- */
+.ghost{
+  appearance:none;background:none;font:inherit;font-size:12.5px;
+  color:var(--ink-soft);border:1px solid var(--hairline);
+  padding:7px 14px;border-radius:var(--radius-pill);cursor:pointer;
+  transition:transform .32s var(--ease-spring),border-color .3s var(--ease-exit),
+             color .3s var(--ease-exit),background .3s var(--ease-exit);
+}
+.ghost:hover{border-color:var(--ink-ghost);color:var(--ink);transform:translateY(-1px)}
+.ghost:active{transform:translateY(0) scale(.985)}
+.ghost:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---- disclosure ------------------------------------------------------- */
+.disclose>summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  font-size:12.5px;color:var(--ink-faint);padding:4px 0;
+  transition:color .3s var(--ease-exit);
+}
+.disclose>summary::-webkit-details-marker{display:none}
+.disclose>summary:hover{color:var(--ink-soft)}
+.disclose>summary .caret{
+  width:8px;height:8px;border-right:1px solid currentColor;
+  border-bottom:1px solid currentColor;transform:rotate(-45deg);
+  transition:transform .42s var(--ease-spring);
+}
+.disclose[open]>summary .caret{transform:rotate(45deg)}
+.disclose .inner{
+  overflow:hidden;animation:reveal .5s var(--ease-entrance);
+  padding-top:18px;
+}
+@keyframes reveal{from{opacity:0;transform:translate3d(0,-6px,0)}to{opacity:1;transform:none}}
+
+/* ---- switch ----------------------------------------------------------- */
+.switch{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:9px 0}
+.switch+.switch{border-top:1px solid var(--hairline-soft)}
+.switch .t{font-size:13px}
+.switch .d{font-size:11.5px;color:var(--ink-faint);margin-top:3px;max-width:52ch}
+.toggle{
+  appearance:none;flex:none;width:42px;height:25px;border-radius:var(--radius-pill);
+  background:var(--ink-ghost);border:1px solid var(--hairline-soft);
+  position:relative;cursor:pointer;transition:background .38s var(--ease-exit);
+}
+.toggle::after{
+  content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;
+  border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(29,33,39,.22);
+  transition:transform .42s var(--ease-spring);
+}
+.toggle:checked{background:var(--accent)}
+.toggle:checked::after{transform:translate3d(17px,0,0)}
+.toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---- plan list -------------------------------------------------------- */
+.plan{list-style:none;font-size:12.5px;color:var(--ink-soft)}
+.plan li{
+  display:flex;gap:11px;align-items:baseline;padding:7px 0;
+  border-top:1px solid var(--hairline-soft);
+  font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  font-size:11.5px;word-break:break-all;
+}
+.plan li:first-child{border-top:0}
+.plan .k{color:var(--ink-faint);flex:none;font-family:inherit}
+.note{font-size:11.5px;color:var(--ink-faint);margin-top:14px;max-width:64ch}
+
+/* ---- metrics ---------------------------------------------------------- */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
+  background:var(--hairline-soft);border-radius:var(--radius-lg);overflow:hidden}
+.metric{background:var(--glass);padding:15px 16px}
+.metric .v{font-size:19px;font-weight:520;letter-spacing:-.02em}
+.metric .l{font-size:11px;color:var(--ink-faint);margin-top:3px;letter-spacing:.02em}
+
+/* ---- template pills and container rows -------------------------------- */
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{
+  appearance:none;font:inherit;font-size:12.5px;cursor:pointer;
+  padding:7px 15px;border-radius:var(--radius-pill);
+  background:var(--glass-2);border:1px solid var(--hairline);
+  color:var(--ink-soft);
+  transition:transform .34s var(--ease-spring),color .3s var(--ease-exit),
+             border-color .3s var(--ease-exit),background .3s var(--ease-exit);
+}
+.pill:hover{transform:translateY(-1px);color:var(--ink)}
+.pill[aria-checked="true"]{
+  color:var(--ink);border-color:transparent;background:var(--accent-soft);
+}
+.pill:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.crow{
+  display:flex;align-items:center;gap:16px;padding:15px 0;
+  border-top:1px solid var(--hairline-soft);
+  opacity:0;transform:translate3d(0,6px,0);
+  animation:rise .5s var(--ease-entrance) forwards;
+}
+.crow:first-child{border-top:0}
+.crow .who{flex:1;min-width:0}
+.crow .nm{font-size:14px;letter-spacing:-.008em}
+.crow .meta{font-size:11.5px;color:var(--ink-faint);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow .acts{display:flex;gap:8px;flex:none}
+.crow .ghost{padding:6px 13px;font-size:12px}
+.empty{font-size:12.5px;color:var(--ink-faint);padding:8px 0}
+
+/* ---- floating action bubble ------------------------------------------- */
+.dock{
+  position:absolute;left:0;right:0;bottom:0;padding:56px 40px 34px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+  pointer-events:none;
+  background:linear-gradient(to top,var(--field) 46%,
+             color-mix(in srgb,var(--field) 78%,transparent) 74%,transparent);
+  transition:transform .58s var(--ease-entrance);
+  will-change:transform;
+}
+/* the action rides above the drawer rather than being buried by it: the
+   control that opened a surface should never end up underneath it */
+body.drawer-open .dock{transform:translate3d(0,calc(-1 * var(--drawer-h,0px)),0)}
+@media (max-width:640px){.dock{padding:0 20px 24px}}
+.dock>*{pointer-events:auto}
+.statusline{
+  font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;
+  gap:9px;min-height:24px;max-width:56ch;
+  padding:9px 15px;border-radius:var(--radius-pill);
+  background:var(--glass-2);border:1px solid var(--hairline-soft);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+  opacity:0;transform:translate3d(0,6px,0);
+  transition:opacity .45s var(--ease-entrance),transform .45s var(--ease-entrance);
+}
+.statusline.on{opacity:1;transform:none}
+.bubble{
+  appearance:none;border:0;cursor:pointer;font:inherit;font-size:14px;font-weight:500;
+  color:#fff;background:linear-gradient(150deg,var(--accent),var(--accent-ink));
+  padding:15px 30px;border-radius:var(--radius-pill);
+  box-shadow:0 2px 6px rgba(63,94,216,.22),0 14px 34px rgba(63,94,216,.24),
+             inset 0 1px 0 rgba(255,255,255,.28);
+  transition:transform .5s var(--ease-spring),box-shadow .4s var(--ease-exit),
+             opacity .3s var(--ease-exit),filter .4s var(--ease-exit);
+  will-change:transform;
+  display:inline-flex;align-items:center;gap:11px;
+}
+.bubble:hover{transform:translate3d(0,-2px,0)}
+.bubble:active{transform:translate3d(0,0,0) scale(.975)}
+.bubble:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.bubble[disabled]{opacity:.42;cursor:default;filter:saturate(.5);transform:none}
+.bubble.working{padding-left:22px}
+.bubble.settled{background:linear-gradient(150deg,var(--calm),#3f8874);
+  box-shadow:0 2px 6px rgba(63,136,116,.2),0 14px 34px rgba(63,136,116,.22)}
+.ring{width:17px;height:17px;flex:none;display:none}
+.bubble.working .ring{display:block}
+.ring circle{fill:none;stroke-width:2.2;stroke-linecap:round}
+.ring .track{stroke:rgba(255,255,255,.28)}
+.ring .head{stroke:#fff;stroke-dasharray:44;stroke-dashoffset:44;
+  transform:rotate(-90deg);transform-origin:50% 50%;
+  transition:stroke-dashoffset .6s var(--ease-exit)}
+.tick{width:16px;height:16px;display:none}
+.bubble.settled .tick{display:block}
+.tick path{fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;
+  animation:draw .55s var(--ease-entrance) .06s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* ---- contextual drawer ------------------------------------------------ */
+.drawer{
+  position:fixed;left:0;right:0;bottom:0;z-index:3;
+  max-height:56vh;display:flex;flex-direction:column;
+  background:var(--glass);border-top:1px solid var(--hairline);
+  border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  -webkit-backdrop-filter:blur(34px) saturate(160%);
+  backdrop-filter:blur(34px) saturate(160%);
+  box-shadow:var(--shadow-lift);
+  transform:translate3d(0,101%,0);
+  transition:transform .58s var(--ease-entrance);
+  will-change:transform;
+}
+.drawer.open{transform:none}
+.drawer .grip{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 28px;border-bottom:1px solid var(--hairline-soft);flex:none;
+}
+.drawer .grip h3{font-size:12px;font-weight:560;letter-spacing:.055em;
+  text-transform:uppercase;color:var(--ink-faint)}
+.log{
+  overflow-y:auto;padding:16px 28px 26px;
+  font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  font-size:11.5px;line-height:1.72;color:var(--ink-soft);
+}
+.log div{
+  display:flex;gap:12px;padding:3px 0;border-top:1px solid var(--hairline-soft);
+  opacity:0;animation:rise .42s var(--ease-entrance) forwards;
+}
+.log div:first-child{border-top:0}
+.log .p{color:var(--ink-faint);flex:none;min-width:118px}
+.log .m{word-break:break-word}
+.log .bad .p,.log .bad .m{color:var(--hold)}
+
+/* ---- reduced motion: calm technology means honouring this -------------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .stack>*{opacity:1;transform:none}
+  .drawer{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+
+<div class="shell">
+  <header>
+    <div class="identity">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Language Studio</h1>
+        <div class="sub" id="subtitle">Reading this machine…</div>
+      </div>
+    </div>
+    <div class="modes" role="tablist" aria-label="Install or remove">
+      <div class="thumb" id="thumb" aria-hidden="true"></div>
+      <button role="tab" id="tab-install" aria-selected="true" aria-controls="view-install">Install</button>
+      <button role="tab" id="tab-containers" aria-selected="false" aria-controls="view-containers">Containers</button>
+      <button role="tab" id="tab-remove" aria-selected="false" aria-controls="view-remove">Remove</button>
+    </div>
+  </header>
+
+  <div class="body">
+    <!-- ============================ install ============================ -->
+    <section class="view on" id="view-install" role="tabpanel" aria-labelledby="tab-install">
+      <div class="stack">
+        <div class="panel">
+          <h2>Sources</h2>
+          <div class="field">
+            <label for="vm">Runtime package</label>
+            <div class="bar">
+              <input id="vm" type="text" spellcheck="false" autocomplete="off"
+                     placeholder="path to the container VM archive or folder">
+              <span class="focusline"></span>
+            </div>
+            <span class="chip" id="vm-chip"><span class="dot"></span><span class="t"></span></span>
+          </div>
+          <div class="field">
+            <label for="pa21">PA21 delivery</label>
+            <div class="bar">
+              <input id="pa21" type="text" spellcheck="false" autocomplete="off"
+                     placeholder="optional — the folder holding the language packages">
+              <span class="focusline"></span>
+            </div>
+            <span class="chip" id="pa21-chip"><span class="dot"></span><span class="t"></span></span>
+          </div>
+          <div class="rowline"></div>
+          <details class="disclose">
+            <summary><span class="caret"></span>Advanced</summary>
+            <div class="inner">
+              <div class="field" style="margin-top:0">
+                <label for="root">Studio root</label>
+                <div class="bar">
+                  <input id="root" type="text" spellcheck="false" autocomplete="off">
+                  <span class="focusline"></span>
+                </div>
+              </div>
+              <div style="height:14px"></div>
+              <div class="switch">
+                <div><div class="t">Build the runner</div>
+                  <div class="d">Compiles the runtime so images can be executed here. Without it, images can still be compiled and verified.</div></div>
+                <input class="toggle" type="checkbox" id="build" checked>
+              </div>
+              <div class="switch">
+                <div><div class="t">Replace an existing installation</div>
+                  <div class="d">Installs over a studio already at this root.</div></div>
+                <input class="toggle" type="checkbox" id="force">
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="panel quiet" id="plan-panel" hidden>
+          <h2>This will write</h2>
+          <ul class="plan" id="plan-list"></ul>
+          <div class="note" id="plan-note"></div>
+        </div>
+
+        <div class="panel quiet" id="result-panel" hidden>
+          <h2 id="result-title">Result</h2>
+          <div class="metrics" id="result-metrics"></div>
+          <div class="note" id="result-note"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================== containers =========================== -->
+    <section class="view" id="view-containers" role="tabpanel" aria-labelledby="tab-containers">
+      <div class="stack">
+        <div class="panel">
+          <h2>New project</h2>
+          <div class="field">
+            <label for="new-name">Name</label>
+            <div class="bar">
+              <input id="new-name" type="text" spellcheck="false" autocomplete="off"
+                     placeholder="one container will be created for it">
+              <span class="focusline"></span>
+            </div>
+          </div>
+          <div class="rowline"></div>
+          <div id="template-pills" class="pills" role="radiogroup" aria-label="Template"></div>
+          <div class="note" id="template-note"></div>
+          <div style="display:flex;gap:10px;margin-top:18px">
+            <button class="ghost" id="new-btn">Create container</button>
+            <button class="ghost" id="refresh-btn">Refresh</button>
+          </div>
+        </div>
+
+        <div class="panel quiet">
+          <h2>Containers in this studio</h2>
+          <div id="container-list"></div>
+          <div class="note" id="container-note"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ remove ============================= -->
+    <section class="view" id="view-remove" role="tabpanel" aria-labelledby="tab-remove">
+      <div class="stack">
+        <div class="panel">
+          <h2>Installation</h2>
+          <div class="metrics" id="remove-metrics"></div>
+          <div class="rowline"></div>
+          <div class="switch">
+            <div><div class="t">Also remove applications</div>
+              <div class="d">Applications kept inside the studio root are removed as well. Anything stored elsewhere is untouched either way.</div></div>
+            <input class="toggle" type="checkbox" id="purge">
+          </div>
+        </div>
+        <div class="panel quiet" id="remove-plan-panel" hidden>
+          <h2>This will remove</h2>
+          <ul class="plan" id="remove-plan-list"></ul>
+          <div class="note" id="remove-note"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="dock">
+    <div class="statusline" id="statusline" aria-live="polite"></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="ghost" id="log-btn" hidden>Details</button>
+      <button class="bubble" id="action" disabled>
+        <svg class="ring" viewBox="0 0 20 20" aria-hidden="true">
+          <circle class="track" cx="10" cy="10" r="7"></circle>
+          <circle class="head" cx="10" cy="10" r="7"></circle>
+        </svg>
+        <svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15 7"></path></svg>
+        <span id="action-label">Install</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<aside class="drawer" id="drawer" aria-label="Activity">
+  <div class="grip">
+    <h3 id="drawer-title">Activity</h3>
+    <button class="ghost" id="drawer-close">Close</button>
+  </div>
+  <div class="log" id="log"></div>
+</aside>
+
+<script>
+"use strict";
+const TOKEN = new URLSearchParams(location.search).get("token") || "";
+const $ = (id) => document.getElementById(id);
+const api = (p, q = {}) => {
+  const u = new URL(p, location.origin);
+  u.searchParams.set("token", TOKEN);
+  Object.entries(q).forEach(([k, v]) => v !== undefined && v !== null && u.searchParams.set(k, v));
+  return u.toString();
+};
+
+let MODE = "install";
+let STATE = null;
+let BUSY = false;
+let LAST_PLAN = null;
+
+/* ---- mode pill --------------------------------------------------------- */
+function placeThumb() {
+  const on = $("tab-" + MODE);
+  const box = on.parentElement.getBoundingClientRect();
+  const r = on.getBoundingClientRect();
+  const t = $("thumb");
+  t.style.width = r.width + "px";
+  t.style.transform = `translate3d(${r.left - box.left - 3}px,0,0)`;
+}
+const MODES = ["install", "containers", "remove"];
+function setMode(m) {
+  MODE = m;
+  MODES.forEach((x) => {
+    $("tab-" + x).setAttribute("aria-selected", String(m === x));
+    $("view-" + x).classList.toggle("on", m === x);
+  });
+  $("action-label").textContent = m === "install" ? "Install"
+    : m === "remove" ? "Remove" : "Create container";
+  $("action").classList.remove("settled");
+  placeThumb();
+  if (m === "containers") { loadContainers(); $("action").disabled = false; }
+  else refreshPlan();
+}
+MODES.forEach((m) => { $("tab-" + m).onclick = () => setMode(m); });
+addEventListener("resize", placeThumb);
+
+/* ---- drawer ------------------------------------------------------------ */
+function syncDrawerHeight() {
+  const d = $("drawer");
+  const open = d.classList.contains("open");
+  document.body.style.setProperty("--drawer-h",
+    (open ? d.getBoundingClientRect().height : 0) + "px");
+}
+function openDrawer(open) {
+  const d = $("drawer");
+  d.classList.toggle("open", open);
+  document.body.classList.toggle("drawer-open", open);
+  requestAnimationFrame(syncDrawerHeight);
+}
+/* the drawer grows as the log fills, so the lift is kept in step with it
+   rather than measured once and left wrong */
+if (window.ResizeObserver) new ResizeObserver(syncDrawerHeight).observe($("drawer"));
+addEventListener("resize", syncDrawerHeight);
+$("log-btn").onclick = () => openDrawer(!$("drawer").classList.contains("open"));
+$("drawer-close").onclick = () => openDrawer(false);
+addEventListener("keydown", (e) => {
+  if (e.key === "Escape") openDrawer(false);
+  if (e.key === "Enter" && !BUSY && !$("action").disabled &&
+      document.activeElement && document.activeElement.tagName !== "BUTTON") {
+    $("action").click();
+  }
+});
+
+function logLine(phase, message, bad) {
+  const d = document.createElement("div");
+  if (bad) d.className = "bad";
+  const p = document.createElement("span"); p.className = "p"; p.textContent = phase || "";
+  const m = document.createElement("span"); m.className = "m"; m.textContent = message || "";
+  d.append(p, m);
+  $("log").append(d);
+  $("log").scrollTop = $("log").scrollHeight;
+  $("log-btn").hidden = false;
+}
+
+/* ---- status ------------------------------------------------------------ */
+function chip(el, kind, text) {
+  const c = $(el);
+  c.classList.toggle("on", !!text);
+  c.querySelector(".dot").className = "dot " + (kind || "");
+  c.querySelector(".t").textContent = text || "";
+}
+function metrics(target, pairs) {
+  const t = $(target);
+  t.innerHTML = "";
+  pairs.forEach(([v, l]) => {
+    const d = document.createElement("div"); d.className = "metric";
+    const a = document.createElement("div"); a.className = "v"; a.textContent = v;
+    const b = document.createElement("div"); b.className = "l"; b.textContent = l;
+    d.append(a, b); t.append(d);
+  });
+}
+function setStatus(text, kind) {
+  const s = $("statusline");
+  s.innerHTML = "";
+  s.classList.toggle("on", !!text);
+  const d = document.createElement("span"); d.className = "dot " + (kind || "");
+  const t = document.createElement("span"); t.textContent = text;
+  s.append(d, t);
+}
+
+async function loadState() {
+  const r = await fetch(api("/api/state"));
+  STATE = await r.json();
+  const st = STATE.status || {};
+  const caps = st.capabilities || {};
+  $("vm").value = $("vm").value || STATE.defaults.vm || "";
+  $("pa21").value = $("pa21").value || STATE.defaults.pa21 || "";
+  $("root").value = $("root").value || STATE.defaults.root || "";
+  const bits = [];
+  bits.push(st.installed ? "Installed" : "Not installed");
+  bits.push(caps.execute_images ? "can execute images" : "compile only on this machine");
+  if (st.pa21 && st.pa21.found) bits.push(st.pa21.round + " bound");
+  $("subtitle").textContent = bits.join(" · ");
+  metrics("remove-metrics", st.installed ? [
+    [(st.runtime && st.runtime.files) || "—", "runtime files"],
+    [Math.round(((st.runtime && st.runtime.bytes) || 0) / 1024) + " KiB", "on disk"],
+    [(st.apps || []).length, "applications"],
+    [(st.pa21 && st.pa21.found) ? (st.pa21.operational + "/" + st.pa21.items) : "—", "operational items"],
+  ] : [["—", "nothing installed at this root"]]);
+  inspect("vm", "vm-chip");
+  inspect("pa21", "pa21-chip");
+  refreshPlan();
+}
+
+/* ---- predictive inspection -------------------------------------------- */
+const debounce = (fn, ms) => { let h; return (...a) => { clearTimeout(h); h = setTimeout(() => fn(...a), ms); }; };
+async function inspect(inputId, chipId) {
+  const v = $(inputId).value.trim();
+  if (!v) { chip(chipId, "", ""); return; }
+  chip(chipId, "busy", "reading…");
+  try {
+    const r = await fetch(api("/api/inspect", { path: v }));
+    const d = await r.json();
+    const good = d.kind === "runtime_archive" || d.kind === "runtime_directory" ||
+                 d.kind === "pa21_delivery";
+    chip(chipId, good ? "ok" : (d.exists ? "hold" : ""), d.detail || d.kind);
+  } catch (e) { chip(chipId, "hold", "could not read that path"); }
+}
+const onVm = debounce(() => { inspect("vm", "vm-chip"); refreshPlan(); }, 260);
+const onPa = debounce(() => { inspect("pa21", "pa21-chip"); refreshPlan(); }, 260);
+$("vm").addEventListener("input", onVm);
+$("pa21").addEventListener("input", onPa);
+$("root").addEventListener("input", debounce(refreshPlan, 300));
+$("purge").addEventListener("change", refreshPlan);
+
+/* ---- plan -------------------------------------------------------------- */
+async function refreshPlan() {
+  if (BUSY) return;
+  const act = $("action");
+  if (MODE === "install") {
+    $("remove-plan-panel").hidden = true;
+    const vm = $("vm").value.trim();
+    if (!vm) {
+      $("plan-panel").hidden = true; act.disabled = true;
+      setStatus("A runtime package is needed to install.", "");
+      return;
+    }
+    const r = await fetch(api("/api/plan", { vm, pa21: $("pa21").value.trim(), mode: "install" }));
+    const plan = await r.json();
+    LAST_PLAN = plan;
+    if (plan.error) {
+      $("plan-panel").hidden = true; act.disabled = true;
+      setStatus(plan.error, "hold"); return;
+    }
+    const list = $("plan-list"); list.innerHTML = "";
+    (plan.will_write || []).forEach((p) => {
+      const li = document.createElement("li");
+      const k = document.createElement("span"); k.className = "k"; k.textContent = "write";
+      const t = document.createElement("span"); t.textContent = p;
+      li.append(k, t); list.append(li);
+    });
+    $("plan-note").textContent = (plan.notes || []).join(" · ");
+    $("plan-panel").hidden = false;
+    const missing = plan.source && plan.source.kind === "missing";
+    act.disabled = missing;
+    if (missing) setStatus("Nothing at that path yet.", "hold");
+    else if (plan.already_installed && !$("force").checked)
+      setStatus("A studio is already installed at this root. Turn on Replace in Advanced.", "hold");
+    else setStatus(plan.will_build_runner
+      ? "Ready. The runner will be built and proven before this reports success."
+      : "Ready. No compiler here, so images will be compiled and verified but not executed.", "ok");
+    act.disabled = act.disabled || (plan.already_installed && !$("force").checked);
+  } else {
+    $("plan-panel").hidden = true; $("result-panel").hidden = true;
+    const r = await fetch(api("/api/plan", { mode: "uninstall", purge: $("purge").checked ? 1 : 0 }));
+    const plan = await r.json();
+    LAST_PLAN = plan;
+    const list = $("remove-plan-list"); list.innerHTML = "";
+    (plan.will_remove || []).forEach((p) => {
+      const li = document.createElement("li");
+      const k = document.createElement("span"); k.className = "k"; k.textContent = "remove";
+      const t = document.createElement("span"); t.textContent = p;
+      li.append(k, t); list.append(li);
+    });
+    $("remove-note").textContent = plan.note || "";
+    $("remove-plan-panel").hidden = !plan.installed;
+    act.disabled = !plan.installed;
+    setStatus(plan.installed
+      ? `${(plan.will_remove || []).length} path(s), ${Math.round((plan.bytes || 0) / 1024)} KiB.`
+      : "Nothing is installed at this root.", plan.installed ? "" : "");
+  }
+}
+
+/* ---- run --------------------------------------------------------------- */
+function progress(p) {
+  const head = document.querySelector(".ring .head");
+  const c = 2 * Math.PI * 7;
+  head.style.strokeDasharray = c;
+  head.style.strokeDashoffset = c * (1 - Math.max(0, Math.min(1, p || 0)));
+}
+async function runAction() {
+  if (MODE === "containers") { $("new-btn").click(); return; }
+  if (BUSY) return;
+  BUSY = true;
+  const act = $("action");
+  act.disabled = true; act.classList.add("working"); act.classList.remove("settled");
+  $("action-label").textContent = MODE === "install" ? "Installing" : "Removing";
+  $("log").innerHTML = ""; openDrawer(true);
+  $("drawer-title").textContent = MODE === "install" ? "Installing" : "Removing";
+  progress(0.04);
+  const body = MODE === "install"
+    ? { vm: $("vm").value.trim(), pa21: $("pa21").value.trim(),
+        root: $("root").value.trim() || null, build: $("build").checked,
+        force: $("force").checked }
+    : { purge: $("purge").checked, root: $("root").value.trim() || null };
+  let result = null;
+  try {
+    const res = await fetch(api(MODE === "install" ? "/api/install" : "/api/uninstall"),
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+        if (!line) continue;
+        let ev; try { ev = JSON.parse(line); } catch (e) { continue; }
+        if (ev.phase === "result") { result = ev.result; continue; }
+        if (typeof ev.progress === "number") progress(ev.progress);
+        logLine(ev.phase, ev.message, ev.ok === false);
+        setStatus(ev.message || ev.phase || "", ev.ok === false ? "hold" : "busy");
+      }
+    }
+  } catch (e) {
+    logLine("error", String(e), true);
+  }
+  BUSY = false;
+  act.classList.remove("working");
+  progress(1);
+  const ok = result && result.ok;
+  act.classList.toggle("settled", !!ok);
+  $("action-label").textContent = ok
+    ? (MODE === "install" ? "Installed" : "Removed")
+    : (MODE === "install" ? "Install" : "Remove");
+  if (result && result.error) {
+    setStatus(result.error, "hold");
+    logLine("refused", result.error, true);
+  } else if (ok) {
+    setStatus(MODE === "install" ? "Installed." : "Removed.", "ok");
+  } else {
+    setStatus("Finished with steps that did not pass. Details are in the drawer.", "hold");
+  }
+  if (MODE === "install" && result && !result.error) showResult(result);
+  await loadState();
+  act.disabled = false;
+  setTimeout(() => { if (!BUSY) { act.classList.remove("settled");
+    $("action-label").textContent = MODE === "install" ? "Install" : "Remove"; } }, 6000);
+}
+function showResult(r) {
+  const proof = r.proof || {};
+  metrics("result-metrics", [
+    [r.execution_mode === "DEVELOPMENT_RAW" ? "raw" : "none", "execution mode"],
+    [(proof.checks || []).filter((c) => c.ok).length + "/" + (proof.checks || []).length, "proof checks"],
+    [r.seconds + "s", "elapsed"],
+    [(r.pa21 && r.pa21.found) ? (r.pa21.operational + "/" + r.pa21.items) : "—", "operational items"],
+  ]);
+  $("result-title").textContent = r.ok ? "Installed" : "Installed with failures";
+  $("result-note").textContent = (proof.note || "") +
+    (r.execution_mode === "DEVELOPMENT_RAW"
+      ? " Images run through the runtime's development raw-load path, which is the one its own tests use; production trust-chain loading needs a provisioning step this package does not expose."
+      : "");
+  $("result-panel").hidden = false;
+}
+$("action").onclick = runAction;
+
+/* ---- containers -------------------------------------------------------- */
+let TEMPLATE = "hello";
+function renderTemplates(list) {
+  const box = $("template-pills");
+  if (box.dataset.done === "1") return;
+  box.innerHTML = "";
+  (list || []).forEach((t) => {
+    const b = document.createElement("button");
+    b.className = "pill"; b.type = "button"; b.role = "radio";
+    b.textContent = t.name;
+    b.setAttribute("aria-checked", String(t.name === TEMPLATE));
+    b.onclick = () => {
+      TEMPLATE = t.name;
+      [...box.children].forEach((c) =>
+        c.setAttribute("aria-checked", String(c.textContent === TEMPLATE)));
+      $("template-note").textContent = t.summary;
+    };
+    box.append(b);
+    if (t.name === TEMPLATE) $("template-note").textContent = t.summary;
+  });
+  box.dataset.done = "1";
+}
+
+async function loadContainers() {
+  const r = await fetch(api("/api/containers", { verify: 1 }));
+  const d = await r.json();
+  renderTemplates(d.templates);
+  const box = $("container-list");
+  box.innerHTML = "";
+  if (!d.containers || !d.containers.length) {
+    const e = document.createElement("div");
+    e.className = "empty";
+    e.textContent = "No containers yet. Every project created here becomes one.";
+    box.append(e);
+  }
+  (d.containers || []).forEach((c, i) => {
+    const row = document.createElement("div");
+    row.className = "crow";
+    row.style.animationDelay = (i * 0.04) + "s";
+    const who = document.createElement("div"); who.className = "who";
+    const nm = document.createElement("div"); nm.className = "nm";
+    nm.textContent = `${c.name} ${c.version || ""}`.trim();
+    const meta = document.createElement("div"); meta.className = "meta";
+    const seal = c.sealed ? "sealed"
+      : c.state === "DRAFT" ? "edited since build"
+      : c.state === "SOURCE_ONLY" ? "not built yet" : "seal broken";
+    const gate = c.gate ? (c.gate.satisfied ? "gate ok" : "gate blocked") : "";
+    meta.textContent = [c.state, seal, gate,
+                        (c.devices || []).join(", ") || "no services"]
+                       .filter(Boolean).join(" · ");
+    who.append(nm, meta);
+    const acts = document.createElement("div"); acts.className = "acts";
+    const mk = (label, fn) => {
+      const b = document.createElement("button");
+      b.className = "ghost"; b.textContent = label; b.onclick = fn;
+      return b;
+    };
+    if (c.state === "SEALED")
+      acts.append(mk("Run", () => containerAction("run", c.name)));
+    else
+      acts.append(mk("Build", () => containerAction("build", c.name)));
+    acts.append(mk("Pack", () => containerAction("pack", c.name)));
+    acts.append(mk("Remove", () => containerAction("remove", c.name)));
+    row.append(who, acts);
+    box.append(row);
+  });
+  $("container-note").textContent =
+    `${d.count} container(s) in ${d.containers_dir} · format ${d.format}`;
+}
+
+async function containerAction(what, name) {
+  setStatus(`${what} ${name}…`, "busy");
+  const r = await fetch(api("/api/container/" + what),
+    { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }) });
+  const d = await r.json();
+  $("log").innerHTML = "";
+  if (d.error) {
+    logLine(what, d.error, true);
+    setStatus(d.error, "hold");
+  } else if (what === "run") {
+    const f = d.fabric || {};
+    logLine("status", `${d.status_name} trap=${d.trap} in ${d.seconds}s`);
+    const live = Object.entries(d.registers || {}).filter(([, v]) => v);
+    logLine("registers", live.length
+      ? live.map(([k, v]) => `${k}=${v}`).join(" ") +
+        `  (+${Object.keys(d.registers || {}).length - live.length} zero)`
+      : "all zero");
+    if (f.console_out_bytes)
+      logLine("console", `${f.console_out_bytes} byte(s): ${f.console_out_text}`);
+    (f.storage || []).filter((o) => o.framed_bytes).forEach((o) =>
+      logLine("storage", `object ${o.object}: ${o.framed_bytes} framed bytes`));
+    logLine("fabric", `${d.adapter} adapter on ${d.backend}, monotonic ${f.monotonic}`);
+    // a call that ran and left no trace is the one thing a status line
+    // cannot show, so it is said rather than left to be noticed
+    ((d.effects || {}).quiet || []).forEach((q) =>
+      logLine("quiet", `${q.service}: ${q.why} — ${q.do}`));
+    (d.expectation_checks || []).forEach((c) =>
+      logLine(c.ok ? "expected" : "unmet",
+              `${c.field}: expected ${c.expected}, got ${c.actual}`, !c.ok));
+    setStatus(d.ok ? `${name} ran and met its expectations.`
+                   : `${name} ran; some expectations were not met.`,
+              d.ok ? "ok" : "hold");
+    openDrawer(true);
+    $("drawer-title").textContent = name;
+  } else {
+    Object.entries(d).forEach(([k, v]) => {
+      if (typeof v !== "object") logLine(k, String(v));
+    });
+    setStatus(`${name}: ${what} done.`, "ok");
+    if (what !== "pack") openDrawer(true);
+    $("drawer-title").textContent = name;
+  }
+  loadContainers();
+}
+
+$("new-btn").onclick = async () => {
+  const name = $("new-name").value.trim();
+  if (!name) { setStatus("A name is needed to create a container.", "hold"); return; }
+  setStatus(`creating ${name}…`, "busy");
+  const r = await fetch(api("/api/container/new"),
+    { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, template: TEMPLATE }) });
+  const d = await r.json();
+  if (d.error) { setStatus(d.error, "hold"); return; }
+  $("new-name").value = "";
+  setStatus(`${name} created: ${d.sealed_files} files sealed, state ${d.state}.`, "ok");
+  loadContainers();
+};
+$("refresh-btn").onclick = loadContainers;
+
+/* ---- start ------------------------------------------------------------- */
+placeThumb();
+loadState().then(() => setTimeout(placeThumb, 60));
+setInterval(() => { if (!BUSY) loadState(); }, 15000);
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+# GAP-01 Edge Node Supervisor -- systemd service definition (56, 65, 28)
+[Unit]
+Description=GAP-01 Edge Node Supervisor (local lifecycle authority)
+Documentation=file:///usr/share/doc/gap01/RUNBOOKS.md
+After=local-fs.target network-online.target
+Wants=network-online.target
+# The supervisor must be up before any workload runtime accepts launches.
+Before=gap01-runtimes.target
+ConditionPathExists=!/var/lib/gap01/DISABLED
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=gap01
+Group=gap01
+ExecStart=/usr/bin/python3 -m gap01_edge_node_supervisor.bootstrap \
+    --node %H --state-dir /var/lib/gap01 --socket /run/gap01/control.sock \
+    --probe-port 9101 --require-manifest --config /etc/gap01/config.json --config-key /etc/gap01/keys/config.key \
+    --node-key /etc/gap01/keys/node.key --signals /etc/gap01/signals.json \
+    --caller-key control-plane=/etc/gap01/keys/control-plane.key \
+    --caller-key health=/etc/gap01/keys/health.key \
+    --caller-key operator=/etc/gap01/keys/operator.key \
+    --bind control-plane=control-plane --bind health=health-reporter --bind operator=operator
+Restart=on-failure
+RestartSec=2s
+StartLimitIntervalSec=60
+StartLimitBurst=5
+WatchdogSec=15s
+TimeoutStopSec=30s
+KillMode=mixed
+# ---- least privilege (28) ----
+NoNewPrivileges=yes
+CapabilityBoundingSet=CAP_KILL
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+SystemCallArchitectures=native
+SystemCallFilter=@system-service @process
+SystemCallFilter=~@privileged @resources @mount @swap @reboot @raw-io @module @debug
+UMask=0077
+StateDirectory=gap01
+StateDirectoryMode=0700
+RuntimeDirectory=gap01
+RuntimeDirectoryMode=0700
+ConfigurationDirectory=gap01
+ReadWritePaths=/var/lib/gap01 /run/gap01
+# ---- resource ceilings (58) ----
+MemoryMax=256M
+TasksMax=256
+LimitNOFILE=4096
+CPUWeight=200
+
+[Install]
+WantedBy=multi-user.target

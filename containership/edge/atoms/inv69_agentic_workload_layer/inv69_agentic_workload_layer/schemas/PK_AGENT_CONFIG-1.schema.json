@@ -1,0 +1,401 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:agent:config:1",
+  "title": "PK_AGENT_CONFIG/1 (layer document)",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "x-reloadable": false,
+      "x-sensitive": false,
+      "x-locked-at": "base",
+      "const": "PK_AGENT_CONFIG/1"
+    },
+    "profile": {
+      "type": "string",
+      "x-reloadable": false,
+      "x-sensitive": false,
+      "x-locked-at": "environment",
+      "enum": [
+        "cloud",
+        "datacenter",
+        "near_edge",
+        "far_edge"
+      ]
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_steps": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "steps",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "max_cost": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "cost-units",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "max_transcript_events": {
+          "type": "integer",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "site",
+          "x-unit": "events",
+          "minimum": 2,
+          "maximum": 1000000
+        }
+      }
+    },
+    "concurrency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_active": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "runs",
+          "minimum": 3,
+          "maximum": 100000
+        },
+        "max_waiting": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "runs",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "reserved_critical": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "site",
+          "x-unit": "runs",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    },
+    "timeouts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authorization": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.01,
+          "maximum": 60
+        },
+        "policy": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.01,
+          "maximum": 60
+        },
+        "tool_execution": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.1,
+          "maximum": 3600
+        },
+        "sandbox_launch_heavy": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.1,
+          "maximum": 600
+        },
+        "overall_run": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 1,
+          "maximum": 86400
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "attempts",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "base_delay": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.001,
+          "maximum": 10
+        },
+        "max_delay": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.001,
+          "maximum": 60
+        }
+      }
+    },
+    "sandbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "high_risk_tier": {
+          "type": "string",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "base",
+          "enum": [
+            "heavy"
+          ]
+        },
+        "generated_code_tier": {
+          "type": "string",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "base",
+          "enum": [
+            "heavy",
+            "reject"
+          ]
+        },
+        "low_risk_tier": {
+          "type": "string",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "environment",
+          "enum": [
+            "heavy",
+            "fast"
+          ]
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_for_side_effects": {
+          "type": "boolean",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "base"
+        },
+        "ttl_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "environment",
+          "x-unit": "s",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        "allow_cached_offline": {
+          "type": "boolean",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "environment"
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "export_endpoint": {
+          "type": "string",
+          "x-reloadable": true,
+          "x-sensitive": true,
+          "x-locked-at": "site",
+          "pattern": "^secretref://"
+        },
+        "require_remote_anchor": {
+          "type": "boolean",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "environment"
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "environment"
+        },
+        "trace_sample_rate": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "ratio",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "residency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zone": {
+          "type": "string",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "environment"
+        },
+        "allowed_failover_zones": {
+          "type": "array",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "environment",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "offline": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "queue_enabled": {
+          "type": "boolean",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "site"
+        },
+        "max_queue": {
+          "type": "integer",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "site",
+          "x-unit": "ops",
+          "minimum": 0,
+          "maximum": 100000
+        }
+      }
+    },
+    "trust": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_policy_age_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "environment",
+          "x-unit": "s",
+          "minimum": 0,
+          "maximum": 86400
+        },
+        "max_time_skew_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "environment",
+          "x-unit": "s",
+          "minimum": 0,
+          "maximum": 3600
+        }
+      }
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stall_warning_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.1,
+          "maximum": 86400
+        },
+        "stall_critical_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.1,
+          "maximum": 86400
+        },
+        "queue_age_warning_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.01,
+          "maximum": 3600
+        },
+        "queue_age_critical_s": {
+          "type": "number",
+          "x-reloadable": true,
+          "x-sensitive": false,
+          "x-locked-at": "instance",
+          "x-unit": "s",
+          "minimum": 0.01,
+          "maximum": 3600
+        }
+      }
+    },
+    "precedence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_version": {
+          "type": "string",
+          "x-reloadable": false,
+          "x-sensitive": false,
+          "x-locked-at": "base"
+        }
+      }
+    }
+  }
+}

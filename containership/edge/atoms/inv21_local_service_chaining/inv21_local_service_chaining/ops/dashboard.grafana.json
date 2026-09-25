@@ -1,0 +1,145 @@
+{
+ "title": "INV-21 Local Service Chaining",
+ "schemaVersion": 39,
+ "tags": [
+  "inv21",
+  "pk"
+ ],
+ "panels": [
+  {
+   "id": 1,
+   "type": "timeseries",
+   "title": "Hops local vs remote",
+   "targets": [
+    {
+     "expr": "sum(rate(inv21_hops_local_total[1m]))",
+     "refId": "A"
+    },
+    {
+     "expr": "sum(rate(inv21_hops_remote_total[1m]))",
+     "refId": "B"
+    }
+   ],
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   }
+  },
+  {
+   "id": 2,
+   "type": "timeseries",
+   "title": "Refusals by reason",
+   "targets": [
+    {
+     "expr": "sum by (reason)(rate(inv21_refused_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   }
+  },
+  {
+   "id": 3,
+   "type": "timeseries",
+   "title": "Saturation",
+   "targets": [
+    {
+     "expr": "max(inv21_saturation_ratio)",
+     "refId": "A"
+    },
+    {
+     "expr": "sum(inv21_admission_shed)",
+     "refId": "B"
+    }
+   ],
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   }
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "Local decision latency p50/p99",
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.5,sum by (le)(rate(inv21_local_dispatch_decision_us_bucket[5m])))",
+     "refId": "A"
+    },
+    {
+     "expr": "histogram_quantile(0.99,sum by (le)(rate(inv21_local_dispatch_decision_us_bucket[5m])))",
+     "refId": "B"
+    }
+   ],
+   "gridPos": {
+    "x": 12,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   }
+  },
+  {
+   "id": 5,
+   "type": "timeseries",
+   "title": "Residency health",
+   "targets": [
+    {
+     "expr": "max(inv21_residency_placements)",
+     "refId": "A"
+    },
+    {
+     "expr": "increase(inv21_residency_stale_hits[10m])",
+     "refId": "B"
+    }
+   ],
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   }
+  },
+  {
+   "id": 6,
+   "type": "timeseries",
+   "title": "Remote failures by code",
+   "targets": [
+    {
+     "expr": "sum by (code)(rate(inv21_remote_failures_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "gridPos": {
+    "x": 12,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   }
+  },
+  {
+   "id": 7,
+   "type": "timeseries",
+   "title": "Readiness",
+   "targets": [
+    {
+     "expr": "min(inv21_ready)",
+     "refId": "A"
+    }
+   ],
+   "gridPos": {
+    "x": 0,
+    "y": 24,
+    "w": 12,
+    "h": 8
+   }
+  }
+ ]
+}

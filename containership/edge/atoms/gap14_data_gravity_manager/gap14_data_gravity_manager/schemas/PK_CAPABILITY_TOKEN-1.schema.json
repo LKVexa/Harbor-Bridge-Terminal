@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_CAPABILITY_TOKEN:1",
+  "title": "PK_CAPABILITY_TOKEN/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claims",
+    "sig"
+  ],
+  "properties": {
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "sub",
+        "tenants",
+        "scopes",
+        "aud",
+        "iat",
+        "exp",
+        "jti"
+      ],
+      "properties": {
+        "schema": {
+          "const": "PK_CAPABILITY_TOKEN/1"
+        },
+        "sub": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        },
+        "tenants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "gravity:recommend",
+              "gravity:handoff",
+              "gravity:explain",
+              "gravity:simulate",
+              "gravity:admin"
+            ]
+          }
+        },
+        "aud": {
+          "const": "gap14.data-gravity"
+        },
+        "iat": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exp": {
+          "type": "number",
+          "minimum": 0
+        },
+        "jti": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        }
+      }
+    },
+    "sig": {
+      "$ref": "PK_SIGNATURE-1.schema.json"
+    }
+  }
+}

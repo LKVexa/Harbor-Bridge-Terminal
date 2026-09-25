@@ -1,0 +1,55 @@
+# Component 02 - installable project metadata for the INV-08 reference package
+# plus its production overlay.  Validated statically by
+# inv08_dynamic_infrastructure_model/production/pyproject_check.py (no build is
+# executed in CI here: no network / no isolated build environment).
+#
+# Version choice: "4.3.0.dev1".  The candidate package is 4.2.0 and the overlay is
+# 1.0.0.  A PEP 440 local label (4.2.0+overlay1.0.0) is rejected by public
+# indexes; 4.2.0.post1 would claim a post-release of the *same* reviewed 4.2.0
+# code; the overlay adds functionality, so it is the development pre-release of
+# the next minor, which sorts below any final 4.3.0 and cannot be mistaken for a
+# certified release.  The package's own __version__ stays 4.2.0 (candidate files
+# are read-only); pyproject_check verifies the base version matches VERSION.
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv08-dynamic-infrastructure-model"
+version = "4.3.0.dev1"
+description = "INV-08 dynamic infrastructure model: lease-backed elastic pool plus production overlay (reference, not certified)"
+readme = {file = "inv08_dynamic_infrastructure_model/README.md", content-type = "text/markdown"}
+# Pending an accountable owner's licence decision (component 05, BLOCKED).
+license = {text = "LicenseRef-UNASSIGNED"}
+requires-python = ">=3.10"
+dependencies = []
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Private :: Do Not Upload",
+]
+
+[project.optional-dependencies]
+# Unpinned until component 01 resolves pk_core (lock state UNRESOLVED).
+pk-core = ["pk_core"]
+# Tests use stdlib unittest only.
+test = []
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["inv08_dynamic_infrastructure_model*"]
+exclude = ["*.__pycache__"]
+
+[tool.setuptools.package-data]
+inv08_dynamic_infrastructure_model = ["*.json", "*.md", "*.txt", "VERSION", "SHA256SUMS"]
+"inv08_dynamic_infrastructure_model.production" = ["*.json", "docs/*.md", "components/*.json", "packaging/*.json", "schemas/*.json", "fixtures/*.json", "fixtures/golden/*.json", "fixtures/dashboards/*.json"]

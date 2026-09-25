@@ -1,0 +1,100 @@
+{"id": "C18-001", "status": "PASS", "evidence": ["docs/SECURITY.md#assets-and-trust-boundaries", "client/ws-adapter.js"], "note": "Browser client identified as trust boundary; ws-adapter.js is the browser client"}
+{"id": "C18-002", "status": "PASS", "evidence": ["gateway/config.js:44", "gateway/origin.js:24"], "note": "VWS_ALLOW_NO_ORIGIN comment: native clients (header auth only)"}
+{"id": "C18-003", "status": "PASS", "evidence": ["gateway/server.js", "gateway/origin.js"], "note": "checkWsOrigin gates /ws/terminal upgrade; corsHeaders gates /api/ws-ticket"}
+{"id": "C18-004", "status": "PASS", "evidence": ["gateway/origin.js:16-31"], "note": "checkWsOrigin (admission) and corsHeaders (HTTP response headers) are separate functions"}
+{"id": "C18-005", "status": "PASS", "evidence": ["tests/security/authz.test.js:19"], "note": "'a forged allowed Origin is not identity' - allowed origin still needs credential (401)"}
+{"id": "C18-006", "status": "OPEN", "evidence": [], "note": "No document references an external 'article' origin-whitelist requirement"}
+{"id": "C18-007", "status": "OPEN", "evidence": [], "note": "No record of verifying browser WS origin behavior against an external CORS article"}
+{"id": "C18-008", "status": "PASS", "evidence": ["docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "'Forged Origin' row states expected outcome: exact-match allowlist, no substitution for identity"}
+{"id": "C18-009", "status": "OPEN", "evidence": [], "note": "No document names an owner/role responsible for the trusted-origin list"}
+{"id": "C18-010", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "RELEASE.md records a gate decision but no explicit origin-policy decision table approval"}
+{"id": "C18-011", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md:31"], "note": "VWS_ALLOWED_ORIGINS documented as mechanism; no concrete inventory of actual production origin values"}
+{"id": "C18-012", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md:31"], "note": "Same single mechanism for all origins; no separate dev-origin inventory"}
+{"id": "C18-013", "status": "PASS", "evidence": ["gateway/config.js:29-32"], "note": "originList requires scheme and bare origin (host[:port]) via URL parse"}
+{"id": "C18-014", "status": "OPEN", "evidence": [], "note": "No documented mechanism distinguishing environments (dev/prod) beyond one env var value"}
+{"id": "C18-015", "status": "PASS", "evidence": ["gateway/config.js:29-32", "tests/gateway/config.test.js:19"], "note": "Malformed origins throw ConfigError; test covers *, path, bad scheme, wildcard host"}
+{"id": "C18-016", "status": "OPEN", "evidence": ["gateway/config.js:26-34"], "note": "originList does not dedupe or reject duplicate configured origins"}
+{"id": "C18-017", "status": "PASS", "evidence": ["gateway/config.js:32"], "note": "Wildcards/patterns explicitly rejected by regex + error message"}
+{"id": "C18-018", "status": "OPEN", "evidence": [], "note": "No review gate/process implemented or documented for adding broad-matching entries"}
+{"id": "C18-019", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md:31"], "note": "Allowlist is an env var; no versioning/review record for allowlist changes exists in repo"}
+{"id": "C18-020", "status": "PASS", "evidence": ["gateway/config.js:26-27", "tests/gateway/config.test.js"], "note": "Absent -> empty list; same-origin still allowed via origin.js sameOriginOf"}
+{"id": "C18-021", "status": "PASS", "evidence": ["gateway/origin.js:23"], "note": "checkWsOrigin reads req.headers.origin"}
+{"id": "C18-022", "status": "IN_PROGRESS", "evidence": ["gateway/origin.js:16-25"], "note": "undefined vs allowNoOrigin handled; empty-string origin falls through to allowed() and rejected, but no explicit test found for empty-string case"}
+{"id": "C18-023", "status": "PASS", "evidence": ["gateway/origin.js:17", "tests/security/authz.test.js:16"], "note": "origin==='null' explicitly rejected; test confirms 403"}
+{"id": "C18-024", "status": "OPEN", "evidence": [], "note": "No handling/design note for repeated or multi-value Origin headers"}
+{"id": "C18-025", "status": "PASS", "evidence": ["gateway/origin.js:17"], "note": "origin.length > 300 rejected before any further processing"}
+{"id": "C18-026", "status": "PASS", "evidence": ["gateway/origin.js:16-21"], "note": "Origin treated as opaque string for exact array match / URL construction only"}
+{"id": "C18-027", "status": "PASS", "evidence": ["gateway/origin.js:18", "tests/security/authz.test.js:17"], "note": "cfg.origins.includes(origin) is exact match; suffix-domain test rejected (403)"}
+{"id": "C18-028", "status": "PASS", "evidence": ["gateway/config.js:31"], "note": "Configured origins normalized via URL.origin at load time; compared exactly"}
+{"id": "C18-029", "status": "PASS", "evidence": ["gateway/log.js:10"], "note": "Logger drops secret-like fields by key pattern rather than dumping full header set"}
+{"id": "C18-030", "status": "PASS", "evidence": ["tests/ui/browser.test.js", "tests/security/authz.test.js"], "note": "Chromium browser test + header-credential native-client tests both exercise origin extraction"}
+{"id": "C18-031", "status": "PASS", "evidence": ["gateway/origin.js:8", "gateway/origin.js:18"], "note": "Comment: 'Matching is exact on the serialized origin. No wildcards, suffixes or regexes.'"}
+{"id": "C18-032", "status": "OPEN", "evidence": [], "note": "No explicit design/code for hostname case normalization at comparison time"}
+{"id": "C18-033", "status": "PASS", "evidence": ["gateway/config.js:31"], "note": "u.origin includes explicit port; bare origin format enforced (scheme://host[:port])"}
+{"id": "C18-034", "status": "PASS", "evidence": ["gateway/config.js:30"], "note": "Scheme must be http/https and is part of the exact-match origin string"}
+{"id": "C18-035", "status": "PASS", "evidence": ["tests/security/authz.test.js:17"], "note": "'https://term.example.evil.example' origin rejected (403)"}
+{"id": "C18-036", "status": "PASS", "evidence": ["tests/security/authz.test.js:17"], "note": "Same evidence: approved hostname as substring of attacker domain is rejected"}
+{"id": "C18-037", "status": "PASS", "evidence": ["gateway/origin.js:17", "gateway/config.js:29-32"], "note": "Non-string/oversize/malformed origins rejected at request time and at config load"}
+{"id": "C18-038", "status": "OPEN", "evidence": [], "note": "No design note on internationalized hostname (IDN/punycode) handling"}
+{"id": "C18-039", "status": "PASS", "evidence": ["gateway/origin.js:16-25"], "note": "Pure function over cfg.origins array; same input -> same output"}
+{"id": "C18-040", "status": "IN_PROGRESS", "evidence": ["tests/security/authz.test.js"], "note": "Matching rules exercised only via the live gateway (rawConnect over a real socket), not an isolated unit test of origin.js"}
+{"id": "C18-041", "status": "PASS", "evidence": ["gateway/origin.js:22-25", "tests/security/authz.test.js:18"], "note": "Listed origin accepted through to credential stage (401, not 403)"}
+{"id": "C18-042", "status": "PASS", "evidence": ["gateway/origin.js:22-25", "tests/security/authz.test.js:15"], "note": "Unlisted origin -> 403 before upgrade"}
+{"id": "C18-043", "status": "PASS", "evidence": ["gateway/origin.js:24", "gateway/config.js:44"], "note": "Missing Origin allowed only when VWS_ALLOW_NO_ORIGIN is set (native clients)"}
+{"id": "C18-044", "status": "PASS", "evidence": ["gateway/origin.js:17", "tests/security/authz.test.js:16"], "note": "Literal 'null' Origin explicitly rejected (403)"}
+{"id": "C18-045", "status": "PASS", "evidence": ["gateway/origin.js:17"], "note": "Non-string/oversize origin values rejected (ok:false)"}
+{"id": "C18-046", "status": "PASS", "evidence": ["gateway/origin.js:22-31", "tests/security/authz.test.js"], "note": "checkWsOrigin/corsHeaders return {ok:false} objects; no uncaught throw observed in tests"}
+{"id": "C18-047", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js", "tests/security/authz.test.js"], "note": "Capacity refused/released before a worker is spawned (EVIDENCE_INDEX capacity row); origin rejection precedes worker spawn"}
+{"id": "C18-048", "status": "IN_PROGRESS", "evidence": ["gateway/log.js:10"], "note": "Logger redacts secret-like fields generally, but no specific 'rejection category' record distinct from raw origin was verified"}
+{"id": "C18-049", "status": "PASS", "evidence": ["tests/security/authz.test.js:18-19"], "note": "Allowed origin still requires credential (401) - credential check remains mandatory"}
+{"id": "C18-050", "status": "OPEN", "evidence": [], "note": "No document listing exceptions to the origin policy and their rationale"}
+{"id": "C18-051", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:163"], "note": "checkUpgrade/origin check occurs before acceptUpgrade in server.js; no dedicated test isolates the ordering itself"}
+{"id": "C18-052", "status": "PASS", "evidence": ["gateway/server.js"], "note": "Origin decision feeds the same upgrade path (checkUpgrade/acceptUpgrade) in gateway/server.js"}
+{"id": "C18-053", "status": "IN_PROGRESS", "evidence": [], "note": "No explicit mechanism found preventing a later handler from overriding an origin rejection; single code path suggests it but not directly tested"}
+{"id": "C18-054", "status": "PASS", "evidence": ["gateway/origin.js:27-32"], "note": "corsHeaders is a separate function/component from checkWsOrigin"}
+{"id": "C18-055", "status": "PASS", "evidence": ["tests/security/authz.test.js:15"], "note": "rawConnect against real port with disallowed origin -> 403"}
+{"id": "C18-056", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "Chromium browser end-to-end test: sign-in -> terminal -> reconnect"}
+{"id": "C18-057", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "Header-credential (native) path tested without Origin present"}
+{"id": "C18-058", "status": "OPEN", "evidence": [], "note": "No test/code found for client disconnect mid-origin-evaluation"}
+{"id": "C18-059", "status": "PASS", "evidence": ["tests/security/authz.test.js:15-18"], "note": "Rejections return concrete HTTP status codes (403/401), confirming responses complete"}
+{"id": "C18-060", "status": "PASS", "evidence": ["tests/security/authz.test.js", "tests/gateway/e2e.test.js"], "note": "Later valid handshake in same suite reaches 101/open successfully"}
+{"id": "C18-061", "status": "PASS", "evidence": ["tests/security/authz.test.js:17"], "note": "term.example.evil.example (lookalike) tested and rejected"}
+{"id": "C18-062", "status": "IN_PROGRESS", "evidence": [], "note": "No dedicated test found using approved hostname with a different scheme (http vs https)"}
+{"id": "C18-063", "status": "IN_PROGRESS", "evidence": [], "note": "No dedicated test found using approved hostname with an unapproved port"}
+{"id": "C18-064", "status": "PASS", "evidence": ["tests/security/authz.test.js:18", "gateway/origin.js:24"], "note": "Missing Origin behavior follows allowNoOrigin policy, exercised via header-credential path"}
+{"id": "C18-065", "status": "PASS", "evidence": ["tests/security/authz.test.js:16"], "note": "Literal 'null' Origin -> 403"}
+{"id": "C18-066", "status": "IN_PROGRESS", "evidence": ["gateway/origin.js:17"], "note": "Length cap (300) implemented but no test found sending an over-300-char Origin"}
+{"id": "C18-067", "status": "OPEN", "evidence": [], "note": "No test found for whitespace/malformed authority strings in Origin header"}
+{"id": "C18-068", "status": "OPEN", "evidence": [], "note": "No test found for multiple/duplicate Origin header values"}
+{"id": "C18-069", "status": "PASS", "evidence": ["tests/security/authz.test.js:19"], "note": "'a forged allowed Origin is not identity' - allowed origin without credential still 401"}
+{"id": "C18-070", "status": "IN_PROGRESS", "evidence": ["gateway/log.js:10"], "note": "Log redaction exists generally; no specific test of diagnostics under untrusted-origin injection"}
+{"id": "C18-071", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md:31"], "note": "Origin list is env-var driven, implying a redeploy/restart to change; not explicitly stated as the update mechanism"}
+{"id": "C18-072", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md:31"], "note": "Env-var config implies deployment/restart required, but not explicitly documented as a decision"}
+{"id": "C18-073", "status": "OPEN", "evidence": [], "note": "No documented behavior for active sessions when their origin is later removed from the allowlist"}
+{"id": "C18-074", "status": "OPEN", "evidence": [], "note": "No test exercising a newly-added origin against a running instance"}
+{"id": "C18-075", "status": "OPEN", "evidence": [], "note": "No test exercising a removed origin against a running instance"}
+{"id": "C18-076", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md:31"], "note": "No default dev origins are baked in (empty default), but no explicit policy statement separating dev from prod"}
+{"id": "C18-077", "status": "OPEN", "evidence": [], "note": "No review process implemented/documented for temporary origin exceptions"}
+{"id": "C18-078", "status": "OPEN", "evidence": [], "note": "No expiry/review-date mechanism for temporary origin exceptions"}
+{"id": "C18-079", "status": "OPEN", "evidence": [], "note": "No record of configuration rollback behavior for the origin allowlist specifically"}
+{"id": "C18-080", "status": "OPEN", "evidence": [], "note": "No artifact records which allowlist revision was in effect for a given test run"}
+{"id": "C18-081", "status": "OPEN", "evidence": ["gateway/log.js"], "note": "Structured logs exist but no evidence of a tracked accepted/rejected origin metric or counter"}
+{"id": "C18-082", "status": "OPEN", "evidence": [], "note": "No evidence rejections are categorized (missing vs unapproved) distinctly in logs/metrics"}
+{"id": "C18-083", "status": "PASS", "evidence": ["gateway/log.js:10"], "note": "Logger drops token/cookie/secret/authorization-like fields; minimizes retained identifying metadata"}
+{"id": "C18-084", "status": "OPEN", "evidence": [], "note": "No rate limiting specific to rejection diagnostics found (rate limit in connection.js is for message traffic, not origin-rejection logging)"}
+{"id": "C18-085", "status": "IN_PROGRESS", "evidence": ["gateway/log.js"], "note": "Structured single-line JSON logs exist; explicit correlation of origin rejection with handshake result not directly verified"}
+{"id": "C18-086", "status": "OPEN", "evidence": [], "note": "No documented browser-client troubleshooting example found"}
+{"id": "C18-087", "status": "OPEN", "evidence": [], "note": "No documented native-client troubleshooting example found"}
+{"id": "C18-088", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "/config.json exposes public config (EVIDENCE_INDEX) but does not list the origin allowlist; no doc on safely inspecting it"}
+{"id": "C18-089", "status": "PASS", "evidence": ["docs/SECURITY.md#residual-risks"], "note": "Residual risks section documents limits/accepted risks of the security controls"}
+{"id": "C18-090", "status": "OPEN", "evidence": [], "note": "No document assigns an owner for origin-policy incident response"}
+{"id": "C18-091", "status": "PASS", "evidence": ["docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "Forged Origin row published as the decision/control summary"}
+{"id": "C18-092", "status": "IN_PROGRESS", "evidence": ["gateway/origin.js:8"], "note": "Code comment publishes the matching rule: exact match, no wildcards/suffixes/regexes [downgraded: RECORD item without a written record]"}
+{"id": "C18-093", "status": "PASS", "evidence": ["docs/SECURITY.md", "tests/ui/browser.test.js"], "note": "SECURITY.md cites 'Origin: unlisted...' test name, linking to authz.test.js/browser.test.js"}
+{"id": "C18-094", "status": "IN_PROGRESS", "evidence": ["tests/security/authz.test.js"], "note": "Native (header-credential, no-origin) path is tested but not distinctly linked as a named applicability test in docs"}
+{"id": "C18-095", "status": "PASS", "evidence": ["docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "SECURITY.md links 'Origin: unlisted...' adversarial test evidence"}
+{"id": "C18-096", "status": "IN_PROGRESS", "evidence": ["gateway/origin.js:1-9"], "note": "Code comments distinguish checkWsOrigin from corsHeaders, but no dedicated doc section explains HTTP CORS vs WS origin policy difference"}
+{"id": "C18-097", "status": "OPEN", "evidence": [], "note": "No record of which allowlist configuration revision/value was used for a given release/test run"}
+{"id": "C18-098", "status": "OPEN", "evidence": [], "note": "No document lists unresolved browser/runtime origin-behavior questions"}
+{"id": "C18-099", "status": "OPEN", "evidence": [], "note": "No documented process for requesting/approving an origin-policy exception"}
+{"id": "C18-100", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RELEASE.md#gate-decision", "tests/security/authz.test.js"], "note": "Release gate decision exists and origin tests pass, but no explicit sign-off statement tied to origin accept/reject demonstration"}

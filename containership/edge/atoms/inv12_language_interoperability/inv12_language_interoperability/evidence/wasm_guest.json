@@ -1,0 +1,72 @@
+{
+ "engine": "node v22.22.2 (V8 WebAssembly)",
+ "guest": "go wasip1/wasm c-shared",
+ "memory_bytes": 8388608,
+ "checks": [
+  {
+   "name": "lift guest-produced record",
+   "ok": true,
+   "detail": {
+    "ok": {
+     "id": "42",
+     "name": "gu\u00e9st-\ud83e\udd80",
+     "tags": [
+      "wasm",
+      "go"
+     ]
+    }
+   }
+  },
+  {
+   "name": "post_return reset guest arena",
+   "ok": true
+  },
+  {
+   "name": "lower into guest via cabi_realloc",
+   "ok": true,
+   "detail": {
+    "low": {
+     "root": 931904,
+     "allocations": 5
+    },
+    "got": 7010,
+    "expect": 7010
+   }
+  },
+  {
+   "name": "allocations accounted",
+   "ok": true,
+   "detail": {
+    "guest": 5,
+    "host": 5
+   }
+  },
+  {
+   "name": "allocations released exactly once",
+   "ok": true
+  },
+  {
+   "name": "hostile guest pointer refused",
+   "ok": true,
+   "detail": {
+    "err": "PK_INTEROP_MEMORY_BOUNDS"
+   }
+  },
+  {
+   "name": "hostile/exhausted realloc refused",
+   "ok": true,
+   "detail": {
+    "err": "PK_INTEROP_REALLOC"
+   }
+  },
+  {
+   "name": "root beyond memory refused",
+   "ok": true,
+   "detail": {
+    "err": "PK_INTEROP_MEMORY_BOUNDS"
+   }
+  }
+ ],
+ "verdict": "PASS",
+ "guest_wasm_sha256": "30d6b610f383e09e7f3edc61add2d1dc2dbc60a7d297ecfaf6b69383040e3c0b"
+}

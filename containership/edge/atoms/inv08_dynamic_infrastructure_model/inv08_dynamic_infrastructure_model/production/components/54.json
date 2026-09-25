@@ -1,0 +1,73 @@
+{
+ "component": 54,
+ "title": "Telemetry governance",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "telemetry retention classes",
+   "state": "PARTIAL",
+   "spec": "production/telemetry_gov.py::RETENTION_CLASSES",
+   "modules": [
+    "production/telemetry_gov.py::retention_class",
+    "production/telemetry_gov.py::expired"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.TelemetryGovTests.test_retention_classes"
+   ],
+   "blocker": "approval of PROPOSED retention durations by data owner (UNASSIGNED)"
+  },
+  {
+   "name": "sampling and aggregation policy",
+   "state": "IMPLEMENTED",
+   "spec": "production/telemetry_gov.py::keep_sample",
+   "modules": [
+    "production/telemetry_gov.py::keep_sample",
+    "production/telemetry_gov.py::rollup"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.TelemetryGovTests.test_sampling_and_aggregation"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "privacy/data-minimization controls",
+   "state": "IMPLEMENTED",
+   "spec": "production/telemetry_gov.py::FIELD_ALLOWLIST",
+   "modules": [
+    "production/telemetry_gov.py::minimize",
+    "production/telemetry_gov.py::pseudonymise"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.TelemetryGovTests.test_minimization"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "export/egress and residency rules",
+   "state": "PARTIAL",
+   "spec": "production/telemetry_gov.py::EGRESS_RULES",
+   "modules": [
+    "production/telemetry_gov.py::check_egress"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.TelemetryGovTests.test_egress_residency"
+   ],
+   "blocker": "actual residency regions/destinations and legal residency decision (UNASSIGNED)"
+  },
+  {
+   "name": "high-cardinality detection and cost controls",
+   "state": "IMPLEMENTED",
+   "spec": "production/telemetry_gov.py::detect_high_cardinality",
+   "modules": [
+    "production/telemetry_gov.py::detect_high_cardinality",
+    "production/metrics.py::Registry._key"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.TelemetryGovTests.test_high_cardinality_detection",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_label_cardinality_governance"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Cost model constant BYTES_PER_SERIES is PROPOSED."
+}

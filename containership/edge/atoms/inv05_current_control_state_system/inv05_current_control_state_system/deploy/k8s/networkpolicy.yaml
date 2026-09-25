@@ -1,0 +1,18 @@
+# MC-021-06: only labelled clients, peers and the metrics scraper may reach INV-05; egress limited to DNS + peers.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: inv05}
+spec:
+  podSelector: {matchLabels: {app: inv05}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - podSelector: {matchLabels: {inv05-client: "true"}}
+    - podSelector: {matchLabels: {app: inv05}}
+    - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: monitoring}}
+    ports: [{port: 2479, protocol: TCP}]
+  egress:
+  - to: [{podSelector: {matchLabels: {app: inv05}}}]
+    ports: [{port: 2479, protocol: TCP}]
+  - to: [{namespaceSelector: {}, podSelector: {matchLabels: {k8s-app: kube-dns}}}]
+    ports: [{port: 53, protocol: UDP}]

@@ -1,0 +1,12 @@
+{
+  "kind": "PK_SERVICE_MANIFEST/1",
+  "element": "INV-65",
+  "name": "inv65-provider-host",
+  "entrypoint": ["python3", "-m", "inv65_capability_providers.host.server", "--config", "/etc/inv65/host.json"],
+  "requires": {"python": ">=3.10", "extras": ["crypto"]},
+  "probes": {"liveness": {"path": "/livez", "period_s": 5}, "readiness": {"path": "/readyz", "period_s": 5}},
+  "shutdown": {"signal": "SIGTERM", "drain_grace_s": 30},
+  "state": {"dir": "/var/lib/inv65", "durable": true, "backup": "tools/backup_state.py"},
+  "security": {"tls": "required (mTLS)", "run_as_non_root": true, "read_only_root_fs": true},
+  "notes": "Target orchestrator (INV-60 fabric) manifest translation is owned by INV-60; this is the orchestrator-neutral contract."
+}

@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:msg:config:1",
+  "title": "PK_MSG_CONFIG/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "metadata",
+    "limits",
+    "predicate_view",
+    "topics",
+    "telemetry"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "enum": [
+        "PK_MSG_CONFIG/1"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "author"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_routes_per_topic": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        },
+        "max_dead_letters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "max_payload_bytes": {
+          "type": "integer",
+          "minimum": 256,
+          "maximum": 16777216
+        },
+        "max_json_depth": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 256
+        },
+        "max_decisions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "max_topics": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "dedup_window": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        }
+      }
+    },
+    "predicate_view": {
+      "type": "string",
+      "enum": [
+        "copy",
+        "frozen"
+      ]
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "per_app_rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "per_app_burst": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "per_topic_rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "per_topic_burst": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "publishers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "FROZEN",
+              "QUARANTINED",
+              "DISABLED"
+            ]
+          },
+          "owner": {
+            "type": "string"
+          },
+          "residency": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "sample_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "log_retention_events": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "export": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "metrics",
+              "decisions",
+              "logs",
+              "audit"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,150 @@
+{
+ "title": "INV-15 async ABI (reference host) \u2014 PROPOSED, never imported",
+ "schemaVersion": 39,
+ "panels": [
+  {
+   "id": 1,
+   "title": "Open subtasks",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (instance)(pk_async_subtasks_open)"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "title": "Ready unread",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 8,
+    "y": 0,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (instance)(pk_async_subtasks_ready)"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "title": "Refusals by scope",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 16,
+    "y": 0,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (scope)(rate(pk_async_refusals_total[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "title": "Cancel ack p99",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.99, rate(pk_async_cancel_ack_ns_bucket[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "title": "Ready->resume p99",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 8,
+    "y": 8,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.99, rate(pk_async_ready_to_resume_ns_bucket[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "title": "Foreign handles",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 16,
+    "y": 8,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "increase(pk_async_foreign_handle_total[5m])"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "title": "Late completions",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "rate(pk_async_late_completions_total[5m])"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "title": "Host-table memory",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 8,
+    "y": 16,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum(pk_async_memory_bytes)"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "title": "Wait size p95",
+   "type": "timeseries",
+   "gridPos": {
+    "x": 16,
+    "y": 16,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.95, rate(pk_async_wait_size_bucket[5m]))"
+    }
+   ]
+  }
+ ]
+}

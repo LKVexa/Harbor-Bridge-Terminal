@@ -1,0 +1,1714 @@
+{
+"component": "C40",
+"items": [
+{
+"id": "C40-001",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define connection states used by the application.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "CONNECTING->AUTHENTICATED->OPENING->ACTIVE->DRAINING->CLOSED states defined",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gateway-connectionjs"
+]
+},
+{
+"id": "C40-002",
+"task_class": "IMPLEMENT",
+"area": "01. Lifecycle model",
+"req": "Map observable managed WebSocket states to application lifecycle decisions.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Connection state machine driven by ws 'text'/'close'/'drain' events mapped to app states",
+"prior_evidence": [
+"gateway/connection.js:19-51",
+"gateway/ws.js:53"
+]
+},
+{
+"id": "C40-003",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define normal peer closure.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Peer-initiated Close frame handling defined (echoed close code)",
+"prior_evidence": [
+"gateway/ws.js:211-225 _onClose"
+]
+},
+{
+"id": "C40-004",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define normal local closure.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Local orderly close path defined (session.close, drain, shutdown)",
+"prior_evidence": [
+"gateway/connection.js:286-301 end()"
+]
+},
+{
+"id": "C40-005",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define unexpected disconnect.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Unexpected disconnect (network loss, no prior closing) explicitly handled as distinct branch",
+"prior_evidence": [
+"gateway/connection.js:312-334 _onSocketClose"
+]
+},
+{
+"id": "C40-006",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define local cancellation.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Local cancellation (Ctrl-C/SIGINT) defined and distinct from close",
+"prior_evidence": [
+"gateway/connection.js:139 terminal.signal",
+"worker/kernel.test.js"
+]
+},
+{
+"id": "C40-007",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define terminal protocol or I/O failure.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Terminal protocol/I/O failures mapped to close codes 1002/1003/1007/1008/1009",
+"prior_evidence": [
+"gateway/ws.js:123-129 _fail()"
+]
+},
+{
+"id": "C40-008",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Define disposal completion.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Disposal completion is the terminal 'close' event with destroyed flag",
+"prior_evidence": [
+"gateway/ws.js:131-140 _destroy()"
+]
+},
+{
+"id": "C40-009",
+"task_class": "SPECIFY",
+"area": "01. Lifecycle model",
+"req": "Identify one lifecycle coordinator for each socket.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'One idempotent _destroy() releases buffers, timers and the socket' \u2014 one coordinator per socket",
+"prior_evidence": [
+"gateway/ws.js:9-12 header comment"
+]
+},
+{
+"id": "C40-010",
+"task_class": "IMPLEMENT",
+"area": "01. Lifecycle model",
+"req": "Approve the connection-state transition table.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Transition table is documented but no explicit sign-off/approval record found",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gateway-connectionjs"
+]
+},
+{
+"id": "C40-011",
+"task_class": "MEASURE",
+"area": "02. State observation",
+"req": "Observe state through the owned socket reference.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Connection observes state via its owned `this.ws` reference (e.g. queuedBytes getter, state field)",
+"prior_evidence": [
+"gateway/connection.js:38-40",
+"gateway/ws.js:68"
+]
+},
+{
+"id": "C40-012",
+"task_class": "IMPLEMENT",
+"area": "02. State observation",
+"req": "Avoid relying on a stale state snapshot before every operation.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "State (`this.state`) is read live at each operation, not cached beforehand",
+"prior_evidence": [
+"gateway/ws.js:95 sendText()",
+"gateway/connection.js:104 _onText"
+]
+},
+{
+"id": "C40-013",
+"task_class": "IMPLEMENT",
+"area": "02. State observation",
+"req": "Combine state observations with actual operation outcomes.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Returns false (operation outcome) combined with the state check to drive backpressure",
+"prior_evidence": [
+"gateway/ws.js:94-101 sendText()"
+]
+},
+{
+"id": "C40-014",
+"task_class": "IMPLEMENT",
+"area": "02. State observation",
+"req": "Read close results through the receive interpreter.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Close results read through the same receive path (_parse -> _onClose)",
+"prior_evidence": [
+"gateway/ws.js:211-225 _onClose()"
+]
+},
+{
+"id": "C40-015",
+"task_class": "IMPLEMENT",
+"area": "02. State observation",
+"req": "Capture exceptions from pending send and receive operations.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Send/decode exceptions are caught (try/catch) and logged [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/ws.js:63 socket 'error' handler",
+"gateway/connection.js:62"
+]
+},
+{
+"id": "C40-016",
+"task_class": "IMPLEMENT",
+"area": "02. State observation",
+"req": "Distinguish a completed close handshake from an attempted close.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "closeSent flag + weInitiated distinguish a completed handshake from a mere attempt",
+"prior_evidence": [
+"gateway/ws.js:105-120 close()",
+":211 _onClose"
+]
+},
+{
+"id": "C40-017",
+"task_class": "DOCUMENT",
+"area": "02. State observation",
+"req": "Record the final lifecycle reason.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "session.exit payload.reason plus log.info('session.exit', ...) records the final lifecycle reason [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:274-283 _finalExit()"
+]
+},
+{
+"id": "C40-018",
+"task_class": "IMPLEMENT",
+"area": "02. State observation",
+"req": "Avoid translating every exception into the same generic disconnect category.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Distinct codes/paths for transport error, socket close, socket end rather than one generic category",
+"prior_evidence": [
+"gateway/ws.js:63-65"
+]
+},
+{
+"id": "C40-019",
+"task_class": "TEST",
+"area": "02. State observation",
+"req": "Test state observation on the chosen runtime.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "15 conformance tests exercise state observation via a raw-socket peer against gateway/ws.js",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C40-020",
+"task_class": "DOCUMENT",
+"area": "02. State observation",
+"req": "Record runtime-specific differences found during tests.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of runtime-specific state-observation differences (e.g. across Node versions)",
+"prior_evidence": []
+},
+{
+"id": "C40-021",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Detect a peer Close result.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Peer Close frame detected via opcode dispatch",
+"prior_evidence": [
+"gateway/ws.js:198,211 OP.CLOSE -> _onClose"
+]
+},
+{
+"id": "C40-022",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Preserve an allowed close status and bounded description.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "validCloseCode() + reason bounded via TextDecoder; status preserved in `info`",
+"prior_evidence": [
+"gateway/ws.js:36,211-217"
+]
+},
+{
+"id": "C40-023",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Stop new application send admission according to policy.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "`if (this.state !== 'OPEN') return false` stops new send admission per state policy",
+"prior_evidence": [
+"gateway/ws.js:95 sendText()"
+]
+},
+{
+"id": "C40-024",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Coordinate acknowledgment through the owning close path.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Acknowledgment (peer Close) coordinated through the single close()/closeTimer path",
+"prior_evidence": [
+"gateway/ws.js:115-119 close()"
+]
+},
+{
+"id": "C40-025",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Avoid starting a second receive loop during acknowledgment.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'existing receive path observes the peer's Close; no second reader is started'",
+"prior_evidence": [
+"gateway/ws.js:116 comment"
+]
+},
+{
+"id": "C40-026",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Handle peer close during partial message assembly.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "CLOSING state ignores non-close frames; fragment buffers dropped on close/fail",
+"prior_evidence": [
+"gateway/ws.js:179,129 _dropFragments()"
+]
+},
+{
+"id": "C40-027",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Handle peer close while outbound work is pending.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Bounded 2s grace flush of pendingOut before closing when outbound work is pending",
+"prior_evidence": [
+"gateway/connection.js:303-309 _closeSocket()"
+]
+},
+{
+"id": "C40-028",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Handle peer close immediately after connection acceptance.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Worker-spawn path exists but no dedicated test for a peer close arriving immediately after acceptance/before session.open",
+"prior_evidence": [
+"gateway/connection.js:166-195 _open()"
+]
+},
+{
+"id": "C40-029",
+"task_class": "IMPLEMENT",
+"area": "03. Peer closure",
+"req": "Complete worker cleanup after closure finishes or times out.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "1500ms SIGKILL timer ensures worker cleanup completes after closure or times out",
+"prior_evidence": [
+"gateway/connection.js:267-272 _killWorker()"
+]
+},
+{
+"id": "C40-030",
+"task_class": "TEST",
+"area": "03. Peer closure",
+"req": "Test repeated peer-close-related notifications.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Repeated post-close frames/notifications are ignored (idempotent destroyed guard)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js#data-after-our-close-is-ignored"
+]
+},
+{
+"id": "C40-031",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Accept a local request to close the connection.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Local close request accepted via session.close message -> end()",
+"prior_evidence": [
+"gateway/connection.js:146 session.close case"
+]
+},
+{
+"id": "C40-032",
+"task_class": "DOCUMENT",
+"area": "04. Local closure",
+"req": "Record the deliberate close reason.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "this.endReason set and logged in session.exit [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:286-288 end()"
+]
+},
+{
+"id": "C40-033",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Stop application work at the approved boundary.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "`if (this.state === 'CLOSED' || this.closing) return;` stops further app work",
+"prior_evidence": [
+"gateway/connection.js:104 _onText guard"
+]
+},
+{
+"id": "C40-034",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Coordinate queued sends with the chosen drain policy.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Queued sends drained under a bounded grace period before final close",
+"prior_evidence": [
+"gateway/connection.js:303-309 _closeSocket()"
+]
+},
+{
+"id": "C40-035",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Initiate closure through one owner.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "`if (this.closing || this.state === 'CLOSED') return;` ensures a single owner initiates closure",
+"prior_evidence": [
+"gateway/connection.js:287 end()"
+]
+},
+{
+"id": "C40-036",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Bound waiting for the peer's response.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "closeWaitMs (3000ms) timer bounds waiting for the peer's Close",
+"prior_evidence": [
+"gateway/ws.js:117-119"
+]
+},
+{
+"id": "C40-037",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Handle a peer that disappears during closure.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "closeTimer -> _destroy on timeout; socket close/error also drive _destroy",
+"prior_evidence": [
+"gateway/ws.js:117",
+":63-65"
+]
+},
+{
+"id": "C40-038",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Handle an exception from the close operation.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "_write/_frame wrapped defensively; socket 'error' event caught separately",
+"prior_evidence": [
+"gateway/ws.js:81-88 _write()",
+":63"
+]
+},
+{
+"id": "C40-039",
+"task_class": "IMPLEMENT",
+"area": "04. Local closure",
+"req": "Signal worker completion after cleanup.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "session.exit sent to signal worker/session completion after cleanup steps",
+"prior_evidence": [
+"gateway/connection.js:274-283 _finalExit()"
+]
+},
+{
+"id": "C40-040",
+"task_class": "TEST",
+"area": "04. Local closure",
+"req": "Test a local close while the connection is idle.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'exit command -> session.exit{logout, code}' exercises local close on an idle/active session",
+"prior_evidence": [
+"tests/gateway/e2e.test.js#exit-command"
+]
+},
+{
+"id": "C40-041",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Detect an abruptly terminated client connection.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Abrupt TCP loss detected via socket close/end handlers and tested",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#abrupt-tcp-loss",
+"gateway/ws.js:64-65"
+]
+},
+{
+"id": "C40-042",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Detect a send failure indicating connection loss.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Returns false when socket/connection destroyed, signalling send failure",
+"prior_evidence": [
+"gateway/ws.js:82 _write()"
+]
+},
+{
+"id": "C40-043",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Detect a receive failure indicating connection loss.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Receive-side failures caught via socket 'error' -> _destroy(1006,...)",
+"prior_evidence": [
+"gateway/ws.js:63 socket 'error'"
+]
+},
+{
+"id": "C40-044",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Discard incomplete inbound messages according to policy.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Incomplete inbound fragment buffers discarded on failure/close",
+"prior_evidence": [
+"gateway/ws.js:126,129 _fail()/_dropFragments()"
+]
+},
+{
+"id": "C40-045",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Release unsent outbound data according to policy.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Unsent outbound queue is released on socket close",
+"prior_evidence": [
+"gateway/connection.js:331 pendingOut.length=0"
+]
+},
+{
+"id": "C40-046",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Mark the connection unavailable to new producers.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Connection marked CLOSED, unavailable to new producers (_onText guard)",
+"prior_evidence": [
+"gateway/connection.js:328 state='CLOSED'"
+]
+},
+{
+"id": "C40-047",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Remove the connection from active registry lookup.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Connection removed from active registry lookup on close",
+"prior_evidence": [
+"gateway/connection.js:333 registry.forget(this)"
+]
+},
+{
+"id": "C40-048",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Preserve a safe failure category for reconnection analysis.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "workerExit.reason categories (worker_failure/expired/closed/shutdown) preserved for client/analysis",
+"prior_evidence": [
+"gateway/connection.js:230,254-266"
+]
+},
+{
+"id": "C40-049",
+"task_class": "IMPLEMENT",
+"area": "05. Unexpected disconnect",
+"req": "Avoid retrying I/O on a terminal socket indefinitely.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "destroyed/exitSent guards prevent any I/O retry on a terminal socket",
+"prior_evidence": [
+"gateway/ws.js:82,132",
+"connection.js:198"
+]
+},
+{
+"id": "C40-050",
+"task_class": "TEST",
+"area": "05. Unexpected disconnect",
+"req": "Test a dropped network path in an isolated environment.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'abrupt TCP loss: worker is stopped, session released, no orphan process' \u2014 passing test",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#abrupt-tcp-loss"
+]
+},
+{
+"id": "C40-051",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Handle local close racing with peer close.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "closeSent flag correctly resolves the race between local close() and an incoming peer Close",
+"prior_evidence": [
+"gateway/ws.js:219-220 _onClose() weInitiated"
+]
+},
+{
+"id": "C40-052",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Handle send failure racing with receive completion.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_write failure path exists but no dedicated test for send-failure racing a receive completion",
+"prior_evidence": [
+"gateway/ws.js:82-88"
+]
+},
+{
+"id": "C40-053",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Handle cancellation racing with normal close completion.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "`if (g === this.gen)` guards every timer/worker callback against a later close/cancellation",
+"prior_evidence": [
+"gateway/connection.js:54-56,183 gen fencing"
+]
+},
+{
+"id": "C40-054",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Handle worker cleanup racing with registry enumeration.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "release()/forget() use Set semantics (idempotent), but no explicit test of cleanup racing registry enumeration",
+"prior_evidence": [
+"gateway/server.js:49-51 registry"
+]
+},
+{
+"id": "C40-055",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Handle a new outbound request racing with disconnect.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "New inbound/outbound requests rejected once `this.closing` is set, handling the race with disconnect",
+"prior_evidence": [
+"gateway/connection.js:104 _onText guard"
+]
+},
+{
+"id": "C40-056",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Handle connection replacement racing with stale client state.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "New sid per opened session prevents stale addressing, but no dedicated 'connection replacement' race test",
+"prior_evidence": [
+"gateway/connection.js:214 sid regeneration per session"
+]
+},
+{
+"id": "C40-057",
+"task_class": "REVIEW",
+"area": "06. Concurrency races",
+"req": "Ensure one final lifecycle result is recorded.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "`if (this.exitSent || this.sid === null) return;` guarantees exactly one session.exit",
+"prior_evidence": [
+"gateway/connection.js:275-277 _finalExit()"
+]
+},
+{
+"id": "C40-058",
+"task_class": "REVIEW",
+"area": "06. Concurrency races",
+"req": "Ensure cleanup executes through the selected idempotent path.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Both socket disposal and session exit paths are idempotent guarded",
+"prior_evidence": [
+"gateway/ws.js:132 _destroy()",
+"connection.js:275"
+]
+},
+{
+"id": "C40-059",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency races",
+"req": "Repeat race tests under representative concurrency.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Chaos suite covers several failure modes but no explicit repeated-concurrency race stress test",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C40-060",
+"task_class": "DOCUMENT",
+"area": "06. Concurrency races",
+"req": "Document any unresolved race requiring a design change.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented unresolved race requiring a design change",
+"prior_evidence": []
+},
+{
+"id": "C40-061",
+"task_class": "IMPLEMENT",
+"area": "07. State-dependent admission",
+"req": "Permit new application sends only in approved states.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Sends permitted only when state === 'OPEN'",
+"prior_evidence": [
+"gateway/ws.js:95 sendText()"
+]
+},
+{
+"id": "C40-062",
+"task_class": "IMPLEMENT",
+"area": "07. State-dependent admission",
+"req": "Permit new receives only in approved states.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Receives (_onText) rejected once CLOSED or closing",
+"prior_evidence": [
+"gateway/connection.js:104 _onText"
+]
+},
+{
+"id": "C40-063",
+"task_class": "IMPLEMENT",
+"area": "07. State-dependent admission",
+"req": "Reject work for a disposed connection.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "destroyed flag rejects work for a disposed connection",
+"prior_evidence": [
+"gateway/ws.js:82,132"
+]
+},
+{
+"id": "C40-064",
+"task_class": "IMPLEMENT",
+"area": "07. State-dependent admission",
+"req": "Reject work for a connection already scheduled for terminal cleanup.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "`this.closing` flag rejects new work once terminal cleanup is scheduled",
+"prior_evidence": [
+"gateway/connection.js:104,287"
+]
+},
+{
+"id": "C40-065",
+"task_class": "IMPLEMENT",
+"area": "07. State-dependent admission",
+"req": "Avoid treating closing connections as available capacity for resumption.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "registry.reserve()/release() only counts an OPENING/ACTIVE connection as capacity, not a closing one",
+"prior_evidence": [
+"gateway/server.js:49-51",
+"connection.js:170"
+]
+},
+{
+"id": "C40-066",
+"task_class": "SPECIFY",
+"area": "07. State-dependent admission",
+"req": "Define how callers learn that a target connection has ended.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "session.exit message and TerminalTransport onExit callback tell callers a connection ended",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors",
+"client/transport.js onExit"
+]
+},
+{
+"id": "C40-067",
+"task_class": "SPECIFY",
+"area": "07. State-dependent admission",
+"req": "Define whether session state outlives the connection.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Session state does not outlive the connection: reconnect = new session (resume=false)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C40-068",
+"task_class": "IMPLEMENT",
+"area": "07. State-dependent admission",
+"req": "Keep session termination distinct from transport termination.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "session.exit (session termination) is a distinct message/path from ws.close() (transport termination)",
+"prior_evidence": [
+"gateway/connection.js:274-283 vs 303-310"
+]
+},
+{
+"id": "C40-069",
+"task_class": "TEST",
+"area": "07. State-dependent admission",
+"req": "Test stale connection identifiers against registry lookup.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Stale/foreign sids tested against registry/connection lookup, indistinguishable from unknown",
+"prior_evidence": [
+"tests/security/authz.test.js#session-ids-authorize-nothing"
+]
+},
+{
+"id": "C40-070",
+"task_class": "DOCUMENT",
+"area": "07. State-dependent admission",
+"req": "Document caller-visible state outcomes.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Errors section documents caller-visible codes/outcomes (FORBIDDEN, STALE_EPOCH, etc.)",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C40-071",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Cancel or finish pending operations according to the lifecycle policy.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Pending worker operations finished/cancelled per policy (snapshot then close/kill)",
+"prior_evidence": [
+"gateway/connection.js:290-300 end()/proceed()"
+]
+},
+{
+"id": "C40-072",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Release message accumulators after terminal disconnect.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Fragment accumulator released on terminal disconnect",
+"prior_evidence": [
+"gateway/ws.js:129 _dropFragments() in _destroy"
+]
+},
+{
+"id": "C40-073",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Release payload queues after terminal disconnect.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Payload queues released after terminal disconnect",
+"prior_evidence": [
+"gateway/connection.js:331 pendingOut/outBytesBySeq.clear()"
+]
+},
+{
+"id": "C40-074",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Release cancellation resources.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Cancellation/timer resources released on close",
+"prior_evidence": [
+"gateway/connection.js:330 _clearTimers()"
+]
+},
+{
+"id": "C40-075",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Dispose the socket through its owner.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Socket disposed through its owner (_destroy)",
+"prior_evidence": [
+"gateway/ws.js:138 socket.destroy()"
+]
+},
+{
+"id": "C40-076",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Release worker or job references.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "this.worker=null / SIGKILL releases worker/job references",
+"prior_evidence": [
+"gateway/connection.js:261,267-272"
+]
+},
+{
+"id": "C40-077",
+"task_class": "IMPLEMENT",
+"area": "08. Cleanup integration",
+"req": "Update connection and worker counts once.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "activate()/release() each called at most once per connection via exitSent/state guards",
+"prior_evidence": [
+"gateway/server.js:49-51 registry"
+]
+},
+{
+"id": "C40-078",
+"task_class": "DOCUMENT",
+"area": "08. Cleanup integration",
+"req": "Record incomplete cleanup as a distinct result.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "A skipped-snapshot case is logged, but no general 'incomplete cleanup' distinct result category found",
+"prior_evidence": [
+"gateway/connection.js:298 snapshot.skipped log"
+]
+},
+{
+"id": "C40-079",
+"task_class": "TEST",
+"area": "08. Cleanup integration",
+"req": "Test cleanup after every state-table terminal transition.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Several terminal transitions are tested (worker kill, TCP loss, SIGTERM) but not verified against every row of the state table",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C40-080",
+"task_class": "VERIFY",
+"area": "08. Cleanup integration",
+"req": "Verify resource counts return to the expected baseline.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Multiple tests assert capacity/session counts return to baseline after cleanup",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#capacity-released"
+]
+},
+{
+"id": "C40-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Track normal and abnormal disconnects separately.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "session.exit reason field distinguishes logout/expired/worker_failure/shutdown/closed",
+"prior_evidence": [
+"gateway/connection.js:262,280 workerExit.reason"
+]
+},
+{
+"id": "C40-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Track deliberate server shutdown separately from network loss.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'shutdown' reason kept distinct from network-loss ('closed') paths",
+"prior_evidence": [
+"gateway/connection.js:292 bridgeReason list"
+]
+},
+{
+"id": "C40-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Include safe connection and instance identifiers.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Structured logs include conn id; gateway/log.js redacts secret-like fields",
+"prior_evidence": [
+"gateway/log.js",
+"gateway/connection.js:22 this.id"
+]
+},
+{
+"id": "C40-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Bound peer-provided close-description logging.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Peer close reason sliced to 100 bytes before logging/framing",
+"prior_evidence": [
+"gateway/ws.js:109"
+]
+},
+{
+"id": "C40-085",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Record last successful operation timing when useful.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Last activity timestamp tracked and used for idle detection [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:34,105 this.lastActivity"
+]
+},
+{
+"id": "C40-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Avoid treating missing application messages as proof of network failure without evidence.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'A paused worker (backpressure) is not treated as stalled' \u2014 explicit evidence requirement before declaring failure",
+"prior_evidence": [
+"docs/RECOVERY.md#liveness"
+]
+},
+{
+"id": "C40-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Provide client reconnection with an allowed failure classification when applicable.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Reconnect policy classifies failures by close code (policy closes vs others) for the client",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C40-088",
+"task_class": "SPECIFY",
+"area": "09. Diagnostics and recovery",
+"req": "Define operational alerts based on measured abnormal-disconnect rates.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "OPEN",
+"prior_note": "No operational alerting thresholds based on measured abnormal-disconnect rates found in docs/OPERATIONS.md",
+"prior_evidence": []
+},
+{
+"id": "C40-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Provide a stale-connection troubleshooting procedure.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "OPEN",
+"prior_note": "No stale-connection troubleshooting procedure found in docs/OPERATIONS.md",
+"prior_evidence": []
+},
+{
+"id": "C40-090",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and recovery",
+"req": "Document limits of state visibility in managed APIs.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Notes 'Browser tab suspension can delay pongs' but does not comprehensively document Node WS state-visibility limits",
+"prior_evidence": [
+"docs/RECOVERY.md#liveness"
+]
+},
+{
+"id": "C40-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the lifecycle transition table.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Lifecycle/state transition table is published",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gateway-connectionjs"
+]
+},
+{
+"id": "C40-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish state-dependent work-admission rules.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "State-dependent admission rules (capacity, sid/epoch, seq, ack range) published in the rules table",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gateway-connectionjs table"
+]
+},
+{
+"id": "C40-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link peer-close and local-close tests.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Peer-close and local-close behavior both covered by the conformance suite",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js#close-handshake"
+]
+},
+{
+"id": "C40-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link abrupt-disconnect tests.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Abrupt-disconnect test linked in the chaos suite",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#abrupt-tcp-loss"
+]
+},
+{
+"id": "C40-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link close-send-receive race tests.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Race-safety exists via generation fencing, but no test file specifically labeled/targeted at close/send/receive races",
+"prior_evidence": [
+"gateway/connection.js:54-56 gen fencing"
+]
+},
+{
+"id": "C40-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link terminal-state cleanup tests.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Terminal-state cleanup tests (capacity release, no orphan) are present and linked",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#capacity-released",
+"#no-orphan-process"
+]
+},
+{
+"id": "C40-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document session-versus-connection lifetime decisions.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "Session-vs-connection lifetime decision explicitly recorded (single-instance, resume=false, new session on reconnect)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C40-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record runtime-specific state observations.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Runtime (Node v22.22.2, Linux 6.18) recorded generally, not WS-state-observation-specific",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#recorded-decisions"
+]
+},
+{
+"id": "C40-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved disconnect classifications.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'Not run: store failure, multi-instance replacement, real network partitions, hosted restarts' lists unresolved disconnect-related classifications",
+"prior_evidence": [
+"docs/RECOVERY.md#failure-experiments-run-i054"
+]
+},
+{
+"id": "C40-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve lifecycle handling only when each connection reaches one final accounted outcome.",
+"ram_overlay": "Make terminal connection states explicit and monotonic. Pending reads, writes, and terminal promises must all settle before the final lease release.",
+"challenge": "Test remote close, local close, exception, timeout, and repeated close calls with no duplicate exit notification.",
+"ref_work": [
+"R11",
+"R23"
+],
+"prior_status": "PASS",
+"prior_note": "'Exactly one authoritative session.exit' with exitSent guard embodies the one-final-accounted-outcome approval criterion",
+"prior_evidence": [
+"gateway/connection.js:274-277 _finalExit() comment"
+]
+}
+]
+}

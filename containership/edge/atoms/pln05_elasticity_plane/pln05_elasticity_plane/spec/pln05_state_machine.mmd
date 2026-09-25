@@ -1,0 +1,30 @@
+%% PLN-05 controller lifecycle (per plane instance) and scope modes (per workload scope)
+stateDiagram-v2
+    [*] --> initializing
+    initializing --> ready: config valid & keys active & state loaded
+    initializing --> failed: config integrity failure (E_STATE_CORRUPT on active.json)
+    ready --> active: first lease acquired for a scope
+    active --> degraded: audit sink down / breaker open / scope demand lost
+    degraded --> active: dependency restored / fresh sample
+    active --> unready: time fault / no active key / state corrupt / audit buffer full
+    degraded --> unready: same predicates
+    unready --> active: predicate cleared (clock caught up, key rotated in, buffer drained)
+    active --> stalled: queue non-empty and no progress for stall_after_s (monotonic)
+    stalled --> active: progress resumes
+    active --> draining: drain()
+    draining --> stopped: queue empty
+    stopped --> [*]
+
+    state "scope modes" as scope {
+        [*] --> s_active
+        s_active --> s_stale: demand age > stale_after_s (publish stale-input-hold)
+        s_stale --> s_degraded: demand age > degraded_after_s (publish degraded hold)
+        s_stale --> s_active: fresh authenticated in-order sample (outcome recovery)
+        s_degraded --> s_active: fresh authenticated in-order sample (outcome recovery)
+        s_active --> s_frozen: control.freeze (scope or tenant)
+        s_frozen --> s_active: two-person control.resume or expiry
+        s_active --> s_quarantined: control.quarantine (scope, tenant or source)
+        s_quarantined --> s_active: two-person control.resume
+        s_active --> s_disabled: control.disable
+        s_disabled --> s_active: two-person control.resume
+    }

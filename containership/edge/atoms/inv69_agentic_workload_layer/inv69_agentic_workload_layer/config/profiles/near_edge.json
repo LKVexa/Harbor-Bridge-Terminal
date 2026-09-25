@@ -1,0 +1,46 @@
+{
+  "schema": "PK_AGENT_PROFILE/1",
+  "context": "near_edge",
+  "applicability": "optional",
+  "rationale": "Regional edge PoPs: intermittent WAN; read-only tools may queue audit export; approvals still require online authority.",
+  "mandatory_capabilities": [
+    "allowlist",
+    "step_budget",
+    "cost_budget",
+    "transcript",
+    "approval_gate",
+    "heavy_sandbox"
+  ],
+  "prohibited_capabilities": [
+    "offline_cached_approval",
+    "cross_zone_failover"
+  ],
+  "defaults": {
+    "offline": {
+      "queue_enabled": true,
+      "max_queue": 1024
+    },
+    "audit": {
+      "require_remote_anchor": false
+    },
+    "concurrency": {
+      "max_active": 16,
+      "max_waiting": 64
+    },
+    "timeouts": {
+      "authorization": 1.0
+    }
+  },
+  "environment": {
+    "network": "intermittent WAN",
+    "control_plane": "may be unreachable for minutes",
+    "storage": "local SSD, durable",
+    "clock": "NTP when connected; skew may grow",
+    "hardware": "moderate",
+    "operator_access": "remote, intermittent"
+  },
+  "resource_envelope": {
+    "max_active_runs": 16
+  },
+  "security_posture": "side-effecting tools blocked while offline; audit queued with local sequence and reconciled"
+}

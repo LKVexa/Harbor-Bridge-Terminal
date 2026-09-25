@@ -1,0 +1,1722 @@
+{
+"component": "C31",
+"items": [
+{
+"id": "C31-001",
+"task_class": "SPECIFY",
+"area": "01. Writer contract",
+"req": "Define the payload representation accepted by the writer.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendText/_write accept a string (text) or Buffer (control/close payload)",
+"prior_evidence": [
+"gateway/ws.js:81-101"
+]
+},
+{
+"id": "C31-002",
+"task_class": "IMPLEMENT",
+"area": "01. Writer contract",
+"req": "Require a valid WebSocket message type.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "WebSocketMessageType is a .NET ClientWebSocket concept; ws.js hardcodes opcode per call site",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-003",
+"task_class": "IMPLEMENT",
+"area": "01. Writer contract",
+"req": "Require an explicit endOfMessage decision.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "endOfMessage is a .NET SendAsync parameter; ws.js frames are always complete (no manual fragmentation)",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-004",
+"task_class": "SPECIFY",
+"area": "01. Writer contract",
+"req": "Define ownership of the target socket.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "WsConnection owns exactly one raw socket per instance",
+"prior_evidence": [
+"gateway/ws.js:38-44"
+]
+},
+{
+"id": "C31-005",
+"task_class": "SPECIFY",
+"area": "01. Writer contract",
+"req": "Define ownership of payload bytes during a pending send.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer held by _write until socket.write() call returns",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-006",
+"task_class": "SPECIFY",
+"area": "01. Writer contract",
+"req": "Define the cancellation input.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "CancellationToken has no meaning; Node uses socket.destroy()/terminate() instead",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-007",
+"task_class": "SPECIFY",
+"area": "01. Writer contract",
+"req": "Define a successful send outcome.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_write returns true when socket.write() accepted the frame",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-008",
+"task_class": "SPECIFY",
+"area": "01. Writer contract",
+"req": "Define a failed send outcome.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_write/sendText return false for destroyed socket, non-OPEN state, or budget exceeded",
+"prior_evidence": [
+"gateway/ws.js:82,95,98"
+]
+},
+{
+"id": "C31-009",
+"task_class": "IMPLEMENT",
+"area": "01. Writer contract",
+"req": "Distinguish local send completion from application-level delivery acknowledgment.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'request.ack means accepted for delivery to the shell, never command completed' distinguishes local send from app ack",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-010",
+"task_class": "IMPLEMENT",
+"area": "01. Writer contract",
+"req": "Approve the message-writer contract.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit sign-off record approving this writer contract",
+"prior_evidence": []
+},
+{
+"id": "C31-011",
+"task_class": "DOCUMENT",
+"area": "02. Runtime invocation",
+"req": "Record the selected SendAsync overload.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "SendAsync overload selection has no meaning; gateway uses socket.write(Buffer)",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-012",
+"task_class": "VERIFY",
+"area": "02. Runtime invocation",
+"req": "Verify overload resolution from PowerShell.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "PowerShell overload resolution has no meaning in the Node gateway",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-013",
+"task_class": "REVIEW",
+"area": "02. Runtime invocation",
+"req": "Validate ArraySegment bounds before invocation.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Buffer length/budget is checked before write, but no test named for 'segment bounds' validation specifically",
+"prior_evidence": [
+"gateway/ws.js:96-98"
+]
+},
+{
+"id": "C31-014",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Pass the intended message type explicitly.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_frame(op,...) takes explicit opcode (OP.TEXT/CLOSE/PING/PONG) for every call",
+"prior_evidence": [
+"gateway/ws.js:72-88"
+]
+},
+{
+"id": "C31-015",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Pass endOfMessage explicitly.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "endOfMessage parameter has no meaning; frames are always FIN=1 in this implementation",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-016",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Pass the approved cancellation input.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "CancellationToken has no meaning in the Node net.Socket write path",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-017",
+"task_class": "MEASURE",
+"area": "02. Runtime invocation",
+"req": "Observe completion through the selected task bridge.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET task/await bridge has no meaning; socket.write is synchronous with a boolean/drain-event result",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-018",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Capture the underlying exception from a failed task.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "socket 'error' event captures the underlying error and routes to _destroy(1006,'socket error',...) [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/ws.js:63",
+"gateway/connection.js"
+]
+},
+{
+"id": "C31-019",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Keep the payload unchanged until the task completes.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "payload Buffer is not mutated between construction and socket.write() call",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-020",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Save a minimal send compatibility probe in the target runtime.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ws-conformance tests exercise send against Node's own WS client but no dedicated minimal compatibility probe artifact found",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C31-021",
+"task_class": "REVIEW",
+"area": "03. Admission",
+"req": "Check that the socket is eligible for application sending.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_write/sendText check this.destroyed, socket.destroyed and this.state==='OPEN' before sending [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/ws.js:82,95"
+]
+},
+{
+"id": "C31-022",
+"task_class": "REVIEW",
+"area": "03. Admission",
+"req": "Check whether shutdown or closure has begun.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "state check covers CLOSING/CLOSED before admitting a data send [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/ws.js:95,114-119"
+]
+},
+{
+"id": "C31-023",
+"task_class": "IMPLEMENT",
+"area": "03. Admission",
+"req": "Accept sends only through the approved serialized path.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "outbound control/data messages routed only through ws.sendText from the connection's queue path",
+"prior_evidence": [
+"gateway/connection.js:64,73"
+]
+},
+{
+"id": "C31-024",
+"task_class": "IMPLEMENT",
+"area": "03. Admission",
+"req": "Reject unsupported application message types.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Binary application messages rejected (1003); only TEXT accepted per hermit.vws.v1",
+"prior_evidence": [
+"gateway/ws.js:181-183"
+]
+},
+{
+"id": "C31-025",
+"task_class": "IMPLEMENT",
+"area": "03. Admission",
+"req": "Reject payloads beyond the approved outbound limit.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "queuedBytes+payload.length checked against sendQueueBytes/controlReserve budget",
+"prior_evidence": [
+"gateway/ws.js:97-98",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C31-026",
+"task_class": "IMPLEMENT",
+"area": "03. Admission",
+"req": "Apply the selected empty-message policy.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit empty-message policy stated for outbound sendText (see C30-023 similarly)",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C31-027",
+"task_class": "REVIEW",
+"area": "03. Admission",
+"req": "Confirm the payload remains owned after queue admission.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut queue entries retained until sendText/_write succeed [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/connection.js:73",
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-028",
+"task_class": "SPECIFY",
+"area": "03. Admission",
+"req": "Define behavior when outbound capacity is exhausted.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendText returns false and sets congested=true when the send-queue budget is exhausted; caller must fail/backpressure",
+"prior_evidence": [
+"gateway/ws.js:98",
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C31-029",
+"task_class": "IMPLEMENT",
+"area": "03. Admission",
+"req": "Reject a send targeting an unknown or stale connection.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "unknown/foreign sid -> FORBIDDEN, indistinguishable from unknown, per authz tests",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C31-030",
+"task_class": "IMPLEMENT",
+"area": "03. Admission",
+"req": "Keep rejected sends out of the pending-operation count.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Rejected sends return false without incrementing stats.txMessages, but no explicit pending-count metric to verify against",
+"prior_evidence": [
+"gateway/ws.js:82,95,98"
+]
+},
+{
+"id": "C31-031",
+"task_class": "SPECIFY",
+"area": "04. Message boundaries",
+"req": "Define whether each writer call completes one logical message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Every _write call frames exactly one complete logical message (FIN always set)",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-032",
+"task_class": "IMPLEMENT",
+"area": "04. Message boundaries",
+"req": "Use endOfMessage true for complete-message calls under that policy.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_frame always sets FIN bit (0x80) for every outbound frame",
+"prior_evidence": [
+"gateway/ws.js:75-78"
+]
+},
+{
+"id": "C31-033",
+"task_class": "SPECIFY",
+"area": "04. Message boundaries",
+"req": "Define explicit sequencing if fragmented outbound messages are supported.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No manual outbound fragmentation is supported/negotiated; N/A per C31-040",
+"prior_evidence": [
+"D-001",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C31-034",
+"task_class": "IMPLEMENT",
+"area": "04. Message boundaries",
+"req": "Preserve the message type across an intentionally fragmented message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Manual fragmentation is not implemented; message-type preservation across fragments is moot",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-035",
+"task_class": "IMPLEMENT",
+"area": "04. Message boundaries",
+"req": "Prevent another application message from interleaving within a fragmented message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "socket.cork()/write()/uncork() sequence per call prevents interleaving of header/payload for one message",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-036",
+"task_class": "TEST",
+"area": "04. Message boundaries",
+"req": "Test one complete text message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "vertical slice hello->open->output covers one complete text message",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C31-037",
+"task_class": "TEST",
+"area": "04. Message boundaries",
+"req": "Test one complete binary message when supported.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary application messages are not supported (close 1003); no binary-send test applicable",
+"prior_evidence": [
+"D-001",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C31-038",
+"task_class": "TEST",
+"area": "04. Message boundaries",
+"req": "Test an empty complete message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Empty text send is technically possible but no dedicated empty-message test identified",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C31-039",
+"task_class": "TEST",
+"area": "04. Message boundaries",
+"req": "Test a large complete logical message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "in-process producer larger than worker output buffer / 150000-line bulk-output tests cover large complete logical messages",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-040",
+"task_class": "IMPLEMENT",
+"area": "04. Message boundaries",
+"req": "Mark manual-fragmentation features N/A when not implemented.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'No extensions negotiated' and always-FIN framing marks manual fragmentation as not implemented",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C31-041",
+"task_class": "DOCUMENT",
+"area": "05. Task completion",
+"req": "Record when a send operation is admitted.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut queueing happens but no explicit log/record event for admission distinct from send",
+"prior_evidence": [
+"gateway/connection.js:73"
+]
+},
+{
+"id": "C31-042",
+"task_class": "DOCUMENT",
+"area": "05. Task completion",
+"req": "Record when SendAsync begins.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No log event marking SendAsync/socket.write begin distinctly",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-043",
+"task_class": "DOCUMENT",
+"area": "05. Task completion",
+"req": "Record when its task completes.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "stats.txBytes/txMessages updated at write call, but no discrete 'task completed' record separate from the synchronous call",
+"prior_evidence": [
+"gateway/ws.js:84-88"
+]
+},
+{
+"id": "C31-044",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Release payload ownership only after the operation permits it.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer ownership is released to socket.write only after admission checks pass",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-045",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Notify the queue or caller of success.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_flush loop advances pendingOut.shift() only after sendText succeeds (implicit success notification to queue)",
+"prior_evidence": [
+"gateway/connection.js:73"
+]
+},
+{
+"id": "C31-046",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Notify the queue or caller of failure.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendText returning false triggers ws.terminate(1008,...) as a failure path",
+"prior_evidence": [
+"gateway/ws.js:82,95,98",
+"gateway/connection.js:64"
+]
+},
+{
+"id": "C31-047",
+"task_class": "MEASURE",
+"area": "05. Task completion",
+"req": "Observe faulted tasks even if the client disconnects.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "socket 'error'/'close'/'end' handlers always fire and call _destroy regardless of client disconnect timing",
+"prior_evidence": [
+"gateway/ws.js:63-65"
+]
+},
+{
+"id": "C31-048",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Avoid reporting success before task completion.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "socket.write() return/boolean reflects Node's actual buffering result, not a premature success",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-049",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Avoid claiming remote application processing from local task completion.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'request.ack means accepted for delivery to the shell, never command completed' explicitly avoids claiming remote processing",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-050",
+"task_class": "DOCUMENT",
+"area": "05. Task completion",
+"req": "Document the completion semantics visible to callers.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Completion semantics documented (ack vs completion) for callers",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-051",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency",
+"req": "Enforce one outstanding application send per socket.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "single pendingOut FIFO per connection enforces one send at a time",
+"prior_evidence": [
+"gateway/connection.js:73",
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C31-052",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency",
+"req": "Allow receive ownership to continue independently.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "socket 'data' handler (_onData/_parse) runs independently of the send path",
+"prior_evidence": [
+"gateway/ws.js:61,144-149"
+]
+},
+{
+"id": "C31-053",
+"task_class": "TEST",
+"area": "06. Concurrency",
+"req": "Test simultaneous send and receive.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "vertical-slice and slow-consumer tests exercise simultaneous send/receive",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-054",
+"task_class": "TEST",
+"area": "06. Concurrency",
+"req": "Test two producers attempting to send to one socket.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut queue serializes writers, but no test named specifically for two producers racing one socket",
+"prior_evidence": [
+"gateway/connection.js:73"
+]
+},
+{
+"id": "C31-055",
+"task_class": "TEST",
+"area": "06. Concurrency",
+"req": "Test sends to several different sockets concurrently.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'8 concurrent sessions' bench and 'a fast tenant is unaffected' cover concurrent sends to different sockets",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-056",
+"task_class": "REVIEW",
+"area": "06. Concurrency",
+"req": "Ensure a slow connection does not serialize all other connections globally.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "slow consumer test: 'a fast tenant is unaffected' shows no global serialization by one slow connection",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"docs/RESOURCE_MODEL.md#W3"
+]
+},
+{
+"id": "C31-057",
+"task_class": "IMPLEMENT",
+"area": "06. Concurrency",
+"req": "Prevent closure code from racing with ordinary sends without coordination.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "close()/_fail() check this.state before acting, avoiding uncoordinated races with sendText",
+"prior_evidence": [
+"gateway/ws.js:105-127"
+]
+},
+{
+"id": "C31-058",
+"task_class": "TEST",
+"area": "06. Concurrency",
+"req": "Test shutdown while one send is pending.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "real-process SIGTERM drain test exercises shutdown with sessions/sends pending [downgraded on manual spot-check: SIGTERM drain test does not isolate a pending s",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-059",
+"task_class": "TEST",
+"area": "06. Concurrency",
+"req": "Test queue advancement only after the previous send completes.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_flush breaks on first failed sendText, so the queue advances only after prior sends complete [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/connection.js:73"
+]
+},
+{
+"id": "C31-060",
+"task_class": "DOCUMENT",
+"area": "06. Concurrency",
+"req": "Record violations as internal invariant failures.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Structured logging exists generally but no dedicated 'internal invariant failure' category found for concurrency violations",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C31-061",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test peer disconnect during a send.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'abrupt TCP loss: worker is stopped, session released' covers peer disconnect during send",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-062",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test local cancellation during a send.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Explicit CancellationToken-driven mid-send cancellation has no meaning; Node uses socket.destroy()/terminate() instead",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-063",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test sending after closure begins.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "sendText returns false once state leaves OPEN (CLOSING/CLOSED), covering send-after-closure [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/ws.js:95,114-119"
+]
+},
+{
+"id": "C31-064",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test sending to a disposed socket through a controlled negative case.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_write checks this.destroyed/socket.destroyed, giving a controlled negative-case path instead of a .NET disposed-object exception [downgraded: VERIFY item witho",
+"prior_evidence": [
+"gateway/ws.js:82"
+]
+},
+{
+"id": "C31-065",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test an invalid segment rejected before API invocation.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Budget check happens, but no explicit 'invalid segment' pre-invocation validation test since ArraySegment is N/A (D-001)",
+"prior_evidence": [
+"gateway/ws.js:96-98"
+]
+},
+{
+"id": "C31-066",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test payload allocation failure before sending.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found simulating Buffer allocation failure before sending",
+"prior_evidence": []
+},
+{
+"id": "C31-067",
+"task_class": "TEST",
+"area": "07. Failure scenarios",
+"req": "Test a task fault and verify caller notification.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "socket 'error' -> _destroy(1006,...) path is exercised by chaos tests (TCP loss, worker kill)",
+"prior_evidence": [
+"gateway/ws.js:63",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-068",
+"task_class": "SPECIFY",
+"area": "07. Failure scenarios",
+"req": "Define whether retrying an interrupted application message is safe.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'After a lost connection the client reports unacknowledged inputs as outcome UNKNOWN and re-sends nothing' defines retry-safety explicitly",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-069",
+"task_class": "IMPLEMENT",
+"area": "07. Failure scenarios",
+"req": "Avoid automatically replaying uncertain sends without an application policy.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'re-sends nothing' on uncertain outcome confirms no automatic replay",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-070",
+"task_class": "IMPLEMENT",
+"area": "07. Failure scenarios",
+"req": "Release resources after every tested failure path.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_destroy is a single idempotent path releasing buffers/timers/socket on every failure route",
+"prior_evidence": [
+"gateway/ws.js:131-140"
+]
+},
+{
+"id": "C31-071",
+"task_class": "IMPLEMENT",
+"area": "08. Data integrity",
+"req": "Compare received text with the serialized original.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "e2e/codec tests compare received text against sent/serialized originals",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C31-072",
+"task_class": "IMPLEMENT",
+"area": "08. Data integrity",
+"req": "Compare received binary bytes with the original payload.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary application payloads are not supported by hermit.vws.v1 (close 1003)",
+"prior_evidence": [
+"D-001",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C31-073",
+"task_class": "TEST",
+"area": "08. Data integrity",
+"req": "Test a short message after a long message.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'in-process producer larger than output buffer' followed by normal operation covers short-after-long sequencing",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-074",
+"task_class": "TEST",
+"area": "08. Data integrity",
+"req": "Test back-to-back messages with distinct identifiers.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "seq-based ordering ('Output seq starts at 1, contiguous') covers distinct-identifier back-to-back messages [downgraded: VERIFY item without a test or measuremen",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C31-075",
+"task_class": "TEST",
+"area": "08. Data integrity",
+"req": "Test non-ASCII text.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "non-ASCII covered via codec UTF-8 vectors and browser e2e terminal use",
+"prior_evidence": [
+"tests/protocol/codec.test.js",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C31-076",
+"task_class": "TEST",
+"area": "08. Data integrity",
+"req": "Test a payload occupying only part of a larger array.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "ArraySegment 'part of larger array' concept has no meaning; Node Buffers used here are exactly sized",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C31-077",
+"task_class": "REVIEW",
+"area": "08. Data integrity",
+"req": "Confirm unused buffer bytes are not transmitted.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_frame uses payload.length exactly; no unused-capacity bytes are ever included in the frame [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/ws.js:73-79,96"
+]
+},
+{
+"id": "C31-078",
+"task_class": "REVIEW",
+"area": "08. Data integrity",
+"req": "Confirm message order under the approved queue policy.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut FIFO plus contiguous output seq enforces message order [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/connection.js:73",
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C31-079",
+"task_class": "VERIFY",
+"area": "08. Data integrity",
+"req": "Verify completed-message boundaries at the peer.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "FIN-delimited frames verified at a raw-socket peer confirm completed-message boundaries",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C31-080",
+"task_class": "IMPLEMENT",
+"area": "08. Data integrity",
+"req": "Preserve sent and received synthetic fixtures.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "VWS200 valid/invalid vectors are preserved fixtures used for sent/received comparison",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C31-081",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track successfully completed send operations.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "stats.txMessages incremented on each successful sendText",
+"prior_evidence": [
+"gateway/ws.js:58,99"
+]
+},
+{
+"id": "C31-082",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track attempted and completed outbound byte counts separately when useful.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "stats.txBytes tracked separately from rxBytes",
+"prior_evidence": [
+"gateway/ws.js:58,84"
+]
+},
+{
+"id": "C31-083",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track send duration.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Round-trip latency measured (W1) but per-send duration is not tracked as a running metric in code",
+"prior_evidence": [
+"e/I053/bench.json"
+]
+},
+{
+"id": "C31-084",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track send failures by safe category.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Logger exists but no distinct safe-category breakdown of send failures found in code",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C31-085",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track pending-send count without exceeding the approved invariant.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "queuedBytes getter plus budget check enforces/tracks pending-send bound without exceeding sendQueueBytes",
+"prior_evidence": [
+"gateway/ws.js:68,97-98"
+]
+},
+{
+"id": "C31-086",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Avoid logging complete outgoing payloads.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "logger drops fields matching /payload|data/i, preventing full outgoing payload logging",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C31-087",
+"task_class": "MEASURE",
+"area": "09. Performance and diagnostics",
+"req": "Measure behavior with a slow-reading client.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'slow consumer' test measures behavior under a peer that stops reading/acking",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-088",
+"task_class": "MEASURE",
+"area": "09. Performance and diagnostics",
+"req": "Measure throughput under representative payload sizes.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "W2 measures 4.19 MiB/s raw throughput for bulk output",
+"prior_evidence": [
+"e/I053/bench.json",
+"docs/RESOURCE_MODEL.md#W2"
+]
+},
+{
+"id": "C31-089",
+"task_class": "DOCUMENT",
+"area": "09. Performance and diagnostics",
+"req": "Record the exact concurrency and size limits used for measurement.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Host spec, session count (8), and limits used for W1-W3 measurements are recorded",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C31-090",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Provide a send-failure troubleshooting procedure.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Maintainer notes exist but a dedicated send-failure troubleshooting procedure was not confirmed",
+"prior_evidence": [
+"docs/OPERATIONS.md"
+]
+},
+{
+"id": "C31-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the writer input and completion contract.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Input/completion semantics documented but not as one consolidated 'writer contract' publication",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish message-boundary rules.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Message-boundary rules (FIN always set, no extensions) published in Transport section",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C31-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the serialization and queue handoff.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Serialization/queue handoff documented via bridge + flow-control sections",
+"prior_evidence": [
+"docs/PROTOCOL.md#local-bridge",
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C31-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link exact-byte and ordering tests.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Exact-byte and ordering tests linked from codec/e2e suites",
+"prior_evidence": [
+"tests/protocol/codec.test.js",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C31-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link one-send-one-receive concurrency tests.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "e2e and slow-consumer chaos tests cover one-send-one-receive concurrency behavior",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link disconnect and cancellation tests.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "TCP-loss/worker-kill tests link disconnect scenarios; cancellation is via terminate()/close() paths",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link slow-client measurements.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "slow-consumer chaos test plus bench.json link slow-client measurements",
+"prior_evidence": [
+"e/I053/bench.json",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C31-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document interrupted-send replay decisions outside the writer.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'client ... re-sends nothing' documents the interrupted-send replay decision outside the writer",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C31-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved runtime limitations.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'Not run' section lists some gaps but no consolidated record of unresolved runtime limitations for this writer specifically",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C31-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the writer only after completion and payload ownership are reliable.",
+"ram_overlay": "Keep one send owner per socket, retain the payload lease until send completion, and define bounded drain/abort behavior for partial or failed sends.",
+"challenge": "Delay send completion and disconnect the peer; verify no early recycle or duplicate application acknowledgement.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit sign-off record approving the writer after ownership/completion review",
+"prior_evidence": []
+}
+]
+}

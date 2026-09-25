@@ -1,0 +1,41 @@
+{
+ "schema": "RAMWS/TASK_EVIDENCE/1",
+ "task_id": "R23",
+ "title": "Repair lifecycle, input, and output integration hazards",
+ "status": "PASS",
+ "applicability": "NODE-WEB profile",
+ "applicability_approval": "owner decisions RD-01..RD-05 (2026-09-21)",
+ "selected_profile": "LOCAL_VOLATILE",
+ "source_identity": "ledger/ramws_source.json",
+ "runtime_identity": "Linux 6.18.44 x86_64, 2 vCPU, Node v22.22.2, Chromium 1194; loopback only",
+ "configuration_identity": "gateway/config.js defaults; e/R28/experiment.frozen.json for R28",
+ "predecessor_evidence": [
+  "e/native/R11.json",
+  "e/native/R15.json",
+  "e/native/R22.json"
+ ],
+ "decision_or_code_delta": "src/main/spiral/kernel.js: Lifecycle hazards: close settles readers, split UTF-8/escapes, paste hand-off, Ctrl-C cases, close during readline, repeated close.",
+ "command": "node --test \"tests/*/*.test.js\" (e/full-suite.tap)",
+ "started_at": "2026-09-21T20:30:00Z",
+ "finished_at": "2026-09-21T22:23:36Z",
+ "expected": "Pending promises settle, running commands receive cancellation, one exit is emitted, input is not silently lost, and all retained terminal state is quota-bounded.",
+ "observed": "4 linked tests, all ok",
+ "raw_result_paths": [
+  "e/full-suite.tap"
+ ],
+ "memory_scope": "gateway process (+ worker threads) and worker processes",
+ "allocation_change_bytes": null,
+ "cpu_scope": null,
+ "cpu_change_seconds": null,
+ "residency_status": "UNKNOWN",
+ "residual_risks": [
+  "self-reviewed by the implementer; no independent verification"
+ ],
+ "rollback": "delete ram/, gateway/worker-link.js, worker/core.js, worker/thread.js; restore the v1 files from hermit-vws 1.1.0-vws.1 (hashes in ledger/ramws_source.json)",
+ "linked_tests": [
+  "parser state persists across arbitrary chunk boundaries (every split point of a mixed stream)",
+  "F04 close settles the active reader and emits exactly one exit",
+  "Ctrl-C at prompt, during command, and SIGINT signal are distinct and non-fatal",
+  "type-ahead: pasted multi-line input executes every line in order"
+ ]
+}

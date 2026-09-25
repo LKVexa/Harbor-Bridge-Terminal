@@ -1,0 +1,35 @@
+{
+ "schema": "PK_ALERTS/1",
+ "alerts": [
+  {
+   "name": "SealBypassSuspected",
+   "expr": "increase(uk_images_admitted_total{outcome=\"admitted\"}[5m]) > 0 and on() uk_trust_root_age_seconds > 86400",
+   "severity": "page",
+   "runbook": "ops/INCIDENT.md#seal-bypass"
+  },
+  {
+   "name": "SealFailureSpike",
+   "expr": "sum(rate(uk_seal_failures_total[10m])) > 1",
+   "severity": "ticket",
+   "runbook": "ops/RUNBOOK.md#seal-failures"
+  },
+  {
+   "name": "TrustRootStale",
+   "expr": "uk_trust_root_age_seconds > 72000",
+   "severity": "page",
+   "runbook": "ops/RUNBOOK.md#trust-root"
+  },
+  {
+   "name": "AdmissionShedding",
+   "expr": "rate(uk_shed_total[5m]) > 5",
+   "severity": "ticket",
+   "runbook": "ops/RUNBOOK.md#overload"
+  },
+  {
+   "name": "AdmissionLatencyP99",
+   "expr": "histogram_quantile(0.99, uk_run_latency_ms_bucket) > 100",
+   "severity": "ticket",
+   "runbook": "ops/RUNBOOK.md#latency"
+  }
+ ]
+}

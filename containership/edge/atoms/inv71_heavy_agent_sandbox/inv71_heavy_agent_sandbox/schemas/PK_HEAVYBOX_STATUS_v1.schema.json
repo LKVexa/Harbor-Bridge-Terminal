@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:heavybox:status:1",
+  "title": "PK_HEAVYBOX_STATUS/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "live",
+    "ready_for_new_sessions",
+    "state",
+    "degraded_dependencies",
+    "config_digest",
+    "policy_version",
+    "api",
+    "audit"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_HEAVYBOX_STATUS/1"
+    },
+    "live": {
+      "type": "boolean"
+    },
+    "ready_for_new_sessions": {
+      "type": "boolean"
+    },
+    "state": {
+      "enum": [
+        "READY",
+        "DEGRADED",
+        "NOT_READY",
+        "QUARANTINED"
+      ]
+    },
+    "degraded_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "api": {
+      "type": "string"
+    },
+    "audit": {
+      "type": "object",
+      "required": [
+        "seq",
+        "anchor_failures"
+      ],
+      "properties": {
+        "seq": {
+          "type": "integer"
+        },
+        "anchor_failures": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sessions_by_state": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "owner": {
+      "type": "string"
+    }
+  }
+}

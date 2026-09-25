@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68,<76", "wheel>=0.42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv22-alternative-wasi-branch"
+dynamic = ["version"]
+description = "INV-22 Alternative WASI branch: fail-closed branch compatibility matrix, shims, certification"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+# License intentionally not declared: owner decision outstanding (MC-56).
+authors = [{ name = "LinearFinance.org Research Division" }]
+dependencies = ["cryptography>=46,<47"]
+
+[project.optional-dependencies]
+framework = []            # pk_core: not published; supplied by the estate (MC-01)
+test = ["jsonschema>=4.26,<5"]
+lint = ["ruff==0.15.11", "mypy==1.20.2"]
+coverage = ["coverage>=7.6,<8"]
+
+[project.scripts]
+inv22 = "inv22_alternative_wasi_branch.cli:main"
+
+[tool.setuptools]
+package-dir = { "inv22_alternative_wasi_branch" = "." }
+packages = ["inv22_alternative_wasi_branch"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+inv22_alternative_wasi_branch = [
+  "VERSION", "CHECKLIST.json", "*.md", "schemas/*.json", "baselines/*.json", "dependencies/*.json",
+  "data/*.json", "proofs/*.json", "docs/*.md", "fixtures/*/*.json",
+]
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
+
+[tool.ruff]
+line-length = 150
+target-version = "py310"
+extend-exclude = ["build", "dist", "evidence"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "UP"]
+ignore = ["S101", "S603", "S608", "E731", "UP035", "B017"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B", "E402", "E501"]
+# legacy v4.2.0 tests kept verbatim
+"tests/test_component.py" = ["E401", "E702", "UP031"]
+"tests/test_core_logic.py" = ["E701", "E702"]
+"evidence.py" = ["UP031"]
+"contract.py" = ["E501"]   # legacy v4.2.0 prose strings
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = true
+
+[tool.coverage.run]
+branch = true
+source = ["inv22_alternative_wasi_branch"]
+omit = ["*/tests/*", "*/component.py", "*/contract.py"]
+
+[tool.coverage.report]
+fail_under = 85

@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+"""INV-38-C077 operator explain CLI. Usage: inv38-explain <decision_json> [--machine]"""
+import json, sys
+sys.path.insert(0, __file__.rsplit("/tools/", 1)[0] + "/..")
+from inv38_kernel_bypass_transport.decisions import explain
+
+def main():
+    if len(sys.argv) < 2:
+        print("usage: inv38-explain <decision.json> [--machine]"); return 2
+    decision = json.load(open(sys.argv[1]))
+    machine = "--machine" in sys.argv[2:]
+    out = explain(decision, machine=machine)
+    print(json.dumps(out, indent=2) if machine else out)
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())

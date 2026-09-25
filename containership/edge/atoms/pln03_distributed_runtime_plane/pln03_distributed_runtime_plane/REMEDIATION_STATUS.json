@@ -1,0 +1,813 @@
+{
+  "schema": "pk.remediation-status/1",
+  "version": "4.3.0",
+  "counts": {
+    "PENDING_APPROVAL": 6,
+    "IMPLEMENTED": 33,
+    "PARTIAL": 11,
+    "BLOCKED": 6
+  },
+  "items": [
+    {
+      "id": "MC-001",
+      "component": "Accountable production owner and escalation path",
+      "checklist": "C009",
+      "status": "PENDING_APPROVAL",
+      "artifacts": [
+        "OWNERS.yaml",
+        ".github/CODEOWNERS",
+        "docs/RACI.md",
+        "docs/ESCALATION.md",
+        "telemetry.py"
+      ],
+      "tests": [
+        "test_governance.py::test_mc001_owners_registry_complete_and_enforced"
+      ],
+      "open": "Role slots, RACI, escalation, emergency authority and owner-in-health defined; no named principals exist - owner must fill OWNERS.yaml from the identity/on-call system (audit fails release while unresolved)."
+    },
+    {
+      "id": "MC-002",
+      "component": "Approved architecture decision record (ADR)",
+      "checklist": "C010",
+      "status": "PENDING_APPROVAL",
+      "artifacts": [
+        "docs/adr/ADR-0001-runtime-technology.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc002_mc052_adrs_have_status_alternatives_and_approval_slot"
+      ],
+      "open": "ADR written as Proposed; needs Architecture Board approval record."
+    },
+    {
+      "id": "MC-003",
+      "component": "Normative SHALL-level requirements specification",
+      "checklist": "C011-C012",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "docs/REQUIREMENTS.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc003_requirements_have_unique_ids_and_tests"
+      ],
+      "open": "19 SHALL requirements with site classes, implementation and tests."
+    },
+    {
+      "id": "MC-004",
+      "component": "Complete NFR specification",
+      "checklist": "C013",
+      "status": "PARTIAL",
+      "artifacts": [
+        "docs/NFR.md",
+        "PERF_BUDGET.json"
+      ],
+      "tests": [
+        "test_governance.py::test_mc004_nfrs_cover_required_dimensions"
+      ],
+      "open": "NFRs specified; power (NFR-PWR-01) and fleet availability need target hardware/fleet telemetry."
+    },
+    {
+      "id": "MC-005",
+      "component": "Success/degraded/retryable/terminal outcome model",
+      "checklist": "C014",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "envelope.py",
+        "docs/SEMANTICS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc005_every_code_has_one_outcome_class"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-006",
+      "component": "Lifecycle state machine",
+      "checklist": "C015",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "lifecycle.py",
+        "docs/SEMANTICS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc006_calls_refused_before_ready",
+        "test_remediation.py::test_mc006_illegal_transitions_refused"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-007",
+      "component": "Compatibility and deprecation policy",
+      "checklist": "C016",
+      "status": "PENDING_APPROVAL",
+      "artifacts": [
+        "docs/COMPATIBILITY.md",
+        "negotiation.py"
+      ],
+      "tests": [
+        "test_governance.py::test_mc007_mc050_compatibility_policy_matches_code"
+      ],
+      "open": "Policy written and enforced in negotiation; needs owner/board approval."
+    },
+    {
+      "id": "MC-008",
+      "component": "Quota and fairness model",
+      "checklist": "C017",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "resilience.py",
+        "docs/LIMITS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc008_mc038_rate_limit_and_tenant_fairness"
+      ],
+      "open": "Per-tenant state byte quota declared but not enforced (needs adapter accounting)."
+    },
+    {
+      "id": "MC-009",
+      "component": "Disconnected/intermittent-network semantics",
+      "checklist": "C018",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "durability.py",
+        "plane.py",
+        "docs/SEMANTICS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc009_mc040_partition_buffer_and_reconcile_without_duplicates"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-010",
+      "component": "Constraint precedence policy",
+      "checklist": "C019",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "config.py",
+        "durability.py",
+        "docs/SEMANTICS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc010_residency_precedes_slo"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-011",
+      "component": "Requirements traceability matrix",
+      "checklist": "C020",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "TRACEABILITY.json",
+        "tools/traceability.py"
+      ],
+      "tests": [
+        "test_governance.py::test_mc011_traceability_covers_100_items"
+      ],
+      "open": "Generated 100-item matrix; release revision field is filled by release_evidence."
+    },
+    {
+      "id": "MC-012",
+      "component": "Versioned typed external schemas/WIT contracts",
+      "checklist": "C021-C022",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "schemas/",
+        "wit/pk-runtime.wit",
+        "wire.py"
+      ],
+      "tests": [
+        "test_contract.py::test_mc012_all_schemas_parse_and_are_closed",
+        "test_contract.py::test_mc012_wit_declares_every_interface"
+      ],
+      "open": "WIT not compiled with wit-bindgen here (toolchain unpinned)."
+    },
+    {
+      "id": "MC-013",
+      "component": "Authentication and capability-token enforcement",
+      "checklist": "C023-C024",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "tokens.py",
+        "plane.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc013_absent_token_fails_closed",
+        "test_remediation.py::test_mc013_expired_token_fails_closed",
+        "test_remediation.py::test_mc013_tampered_wrong_subject_wrong_capability",
+        "test_remediation.py::test_mc013_valid_token_but_no_binding_still_denied"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-014",
+      "component": "Timeout, cancellation, retry, and backpressure contract",
+      "checklist": "C025",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "resilience.py",
+        "docs/SEMANTICS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc014_deadline_and_cancellation"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-015",
+      "component": "Serializable machine-readable error envelope",
+      "checklist": "C026",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "envelope.py",
+        "schemas/error-envelope.v1.json"
+      ],
+      "tests": [
+        "test_contract.py::test_mc015_error_envelope_matches_packaged_schema",
+        "test_governance.py::test_mc015_every_error_code_documented",
+        "test_remediation.py::test_mc015_envelope_round_trips_and_validates_for_every_error_class",
+        "test_remediation.py::test_mc015_unknown_exception_maps_to_internal"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-016",
+      "component": "Mixed-version peer negotiation",
+      "checklist": "C027",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "negotiation.py",
+        "schemas/hello.v1.json"
+      ],
+      "tests": [
+        "test_contract.py::test_mc016_hello_matches_schema",
+        "test_remediation.py::test_mc016_common_major_selected_and_mismatch_terminal"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-017",
+      "component": "Complete interface resource-limit specification",
+      "checklist": "C028",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "resilience.py",
+        "docs/LIMITS.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc017_every_limit_is_documented"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-018",
+      "component": "Reference client/server examples and conformance fixtures",
+      "checklist": "C029",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "fixtures/conformance/core.v1.json",
+        "wire.py"
+      ],
+      "tests": [
+        "test_contract.py::test_mc018_conformance_fixtures"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-019",
+      "component": "Adjacent-layer integration test suite",
+      "checklist": "C030",
+      "status": "BLOCKED",
+      "artifacts": [
+        "docs/INTEGRATION.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc019_mc028_mc029_mc053_blockers_are_declared_not_claimed"
+      ],
+      "open": "Contracts documented; PLN-02/INV-49/PLN-04/PLN-06/PLN-07 are not packaged or pinned, so no end-to-end suite can run."
+    },
+    {
+      "id": "MC-020",
+      "component": "Pinned implementation/specification manifest",
+      "checklist": "C031",
+      "status": "PARTIAL",
+      "artifacts": [
+        "DEPENDENCIES.lock.json"
+      ],
+      "tests": [
+        "test_governance.py::test_mc020_mc055_dependency_lock_is_honest"
+      ],
+      "open": "Manifest exists; wasmCloud/wRPC/Wadm/adjacent planes have no versions to pin until ADR-0001 is approved."
+    },
+    {
+      "id": "MC-021",
+      "component": "Declarative runtime configuration system",
+      "checklist": "C032-C035",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "config.py",
+        "schemas/config.v1.json"
+      ],
+      "tests": [
+        "test_contract.py::test_mc021_default_config_matches_schema",
+        "test_remediation.py::test_mc021_invalid_configs_refused_before_activation",
+        "test_remediation.py::test_mc021_secure_defaults_validate"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-022",
+      "component": "Configuration provenance ledger",
+      "checklist": "C036",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "config.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc022_mc024_provenance_and_rollback"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-023",
+      "component": "Atomic configuration update mechanism",
+      "checklist": "C037",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "config.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc023_atomic_activation_under_concurrency"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-024",
+      "component": "Configuration rollback mechanism",
+      "checklist": "C038",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "config.py",
+        "docs/operations/RUNBOOKS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc022_mc024_provenance_and_rollback"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-025",
+      "component": "Secret-safe configuration/diagnostic policy enforcement",
+      "checklist": "C039",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "config.py",
+        "telemetry.py",
+        "audit_log.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc025_no_payload_or_secret_in_logs_audit_or_metrics",
+        "test_remediation.py::test_mc025_secrets_refused_and_redacted"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-026",
+      "component": "Deterministic bootstrap/install path",
+      "checklist": "C040",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "pyproject.toml",
+        "tools/bootstrap.sh",
+        "DEPENDENCIES.lock.json"
+      ],
+      "tests": [
+        "test_governance.py::test_mc026_bootstrap_and_package_manifest"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-027",
+      "component": "Full threat model artifact",
+      "checklist": "C041",
+      "status": "PENDING_APPROVAL",
+      "artifacts": [
+        "docs/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc027_threat_model_structure"
+      ],
+      "open": "Needs security_contact review record."
+    },
+    {
+      "id": "MC-028",
+      "component": "Ambient-authority isolation implementation",
+      "checklist": "C043",
+      "status": "BLOCKED",
+      "artifacts": [
+        "docs/INTEGRATION.md",
+        "plane.py"
+      ],
+      "tests": [
+        "test_governance.py::test_mc019_mc028_mc029_mc053_blockers_are_declared_not_claimed"
+      ],
+      "open": "Adapter quarantine added; process/Wasm/microVM isolation belongs to PLN-04 which is not in the archive."
+    },
+    {
+      "id": "MC-029",
+      "component": "Node/peer/artifact/provider/control-plane authentication",
+      "checklist": "C044",
+      "status": "BLOCKED",
+      "artifacts": [
+        "tokens.py",
+        "docs/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc019_mc028_mc029_mc053_blockers_are_declared_not_claimed"
+      ],
+      "open": "Workload tokens verified; node/peer/control-plane identity (mTLS/SPIFFE) needs PLN-07."
+    },
+    {
+      "id": "MC-030",
+      "component": "Artifact signature/digest/provenance verification",
+      "checklist": "C045",
+      "status": "PARTIAL",
+      "artifacts": [
+        "artifacts.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc030_digest_allowlist_and_provenance"
+      ],
+      "open": "Digest allowlist + provenance + seal done; public-key signature (Sigstore) and SBOM attestation verification not integrated."
+    },
+    {
+      "id": "MC-031",
+      "component": "Complete tenant/workload isolation",
+      "checklist": "C046",
+      "status": "PARTIAL",
+      "artifacts": [
+        "runtime.py",
+        "tokens.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc031_tenant_isolation_across_every_capability"
+      ],
+      "open": "Data-plane tenant isolation tested on every capability; execution/memory/network/device/side-channel isolation is PLN-04."
+    },
+    {
+      "id": "MC-032",
+      "component": "Encryption and managed key rotation",
+      "checklist": "C047",
+      "status": "PARTIAL",
+      "artifacts": [
+        "tokens.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc032_key_rotation_and_retirement"
+      ],
+      "open": "Token-key rotation/retirement implemented; transport and at-rest encryption and KMS contract need PLN-07."
+    },
+    {
+      "id": "MC-033",
+      "component": "Identity/attestation/policy/key/time outage behavior",
+      "checklist": "C048",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "tokens.py",
+        "docs/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc033_time_and_revocation_outage_fail_closed"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-034",
+      "component": "Tamper-evident security audit events",
+      "checklist": "C049",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "audit_log.py",
+        "plane.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc034_every_call_and_denial_is_chained",
+        "test_remediation.py::test_mc034_tamper_detected_and_seal_enforced"
+      ],
+      "open": "Chain head should be shipped to PLN-07 for truncation detection."
+    },
+    {
+      "id": "MC-035",
+      "component": "Comprehensive adversarial security tests",
+      "checklist": "C050",
+      "status": "PARTIAL",
+      "artifacts": [
+        "tests/test_contract.py",
+        "tests/test_remediation.py"
+      ],
+      "tests": [
+        "test_contract.py::test_mc035_mc046_fuzz_wire_never_crashes_or_leaks",
+        "test_contract.py::test_mc035_oversize_request_rejected_before_parse",
+        "test_contract.py::test_mc035_replay_of_publish_is_idempotent_across_wire"
+      ],
+      "open": "Fuzz/injection/spoofing/replay/exhaustion covered; escape and side-channel campaigns need PLN-04 isolation."
+    },
+    {
+      "id": "MC-036",
+      "component": "Failure catalog plus health/stall detectors",
+      "checklist": "C051-C052",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "telemetry.py",
+        "docs/FAILURE_CATALOG.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc036_watchdog_detects_stall_and_readiness_drops"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-037",
+      "component": "Bounded retry with backoff/jitter",
+      "checklist": "C053",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "resilience.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc037_retries_only_retryable_with_bounded_jittered_backoff",
+        "test_remediation.py::test_mc037_retry_budget_exhaustion_stops_retry_storm"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-038",
+      "component": "Full admission/load-shedding/circuit-breaker layer",
+      "checklist": "C054",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "resilience.py",
+        "plane.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc008_mc038_rate_limit_and_tenant_fairness",
+        "test_remediation.py::test_mc038_circuit_breaker_opens_and_half_opens",
+        "test_remediation.py::test_mc038_plane_breaker_opens_on_dead_adapter"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-039",
+      "component": "Residency/consistency-safe failover",
+      "checklist": "C055",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "durability.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc039_failover_respects_residency_then_consistency"
+      ],
+      "open": "Selection + fencing implemented; wiring to a real site inventory is PLN-04."
+    },
+    {
+      "id": "MC-040",
+      "component": "Degraded operation mode",
+      "checklist": "C056",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "durability.py",
+        "plane.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc009_mc040_partition_buffer_and_reconcile_without_duplicates",
+        "test_remediation.py::test_mc040_without_buffer_policy_partition_is_retryable_error"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-041",
+      "component": "Crash consistency, replay, fencing, and split-brain protection",
+      "checklist": "C057-C058",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "durability.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc041_fencing_refuses_stale_writer",
+        "test_remediation.py::test_mc041_interior_corruption_is_fatal",
+        "test_remediation.py::test_mc041_journal_replay_after_crash_and_torn_tail"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-042",
+      "component": "Quarantine/freeze/disable controls",
+      "checklist": "C059",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "lifecycle.py",
+        "plane.py",
+        "docs/operations/RUNBOOKS.md"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc042_emergency_disable_and_adapter_quarantine",
+        "test_remediation.py::test_mc042_freeze_allows_reads_refuses_writes"
+      ],
+      "open": ""
+    },
+    {
+      "id": "MC-043",
+      "component": "Fault-injection recovery suite",
+      "checklist": "C060",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "tests/test_faults.py"
+      ],
+      "tests": [
+        "test_faults.py::test_mc043_handler_exceptions_do_not_leak_slots",
+        "test_faults.py::test_mc043_random_adapter_outages_preserve_invariants"
+      ],
+      "open": "In-process fault injection; network-level injection needs a deployed topology."
+    },
+    {
+      "id": "MC-044",
+      "component": "Performance engineering and release-regression suite",
+      "checklist": "C061-C070",
+      "status": "PARTIAL",
+      "artifacts": [
+        "tools/bench.py",
+        "PERF_BUDGET.json"
+      ],
+      "tests": [
+        "test_governance.py::test_mc044_bench_gate_runs"
+      ],
+      "open": "Reproducible latency gate done; power, fleet capacity model and target-hardware budgets open."
+    },
+    {
+      "id": "MC-045",
+      "component": "Operational telemetry/explainability stack",
+      "checklist": "C071-C080",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "telemetry.py",
+        "plane.py"
+      ],
+      "tests": [
+        "test_remediation.py::test_mc045_metric_cardinality_is_bounded",
+        "test_remediation.py::test_mc045_metrics_health_and_trace_propagation"
+      ],
+      "open": "No HTTP server shipped; health()/exposition() are the endpoints' bodies."
+    },
+    {
+      "id": "MC-046",
+      "component": "Interface contract, compatibility, and fuzz testing",
+      "checklist": "C082-C085",
+      "status": "PARTIAL",
+      "artifacts": [
+        "tests/test_contract.py"
+      ],
+      "tests": [
+        "test_contract.py::test_mc035_mc046_fuzz_wire_never_crashes_or_leaks"
+      ],
+      "open": "Schema/fixture/fuzz done; cross-architecture/provider compatibility needs other hosts."
+    },
+    {
+      "id": "MC-047",
+      "component": "Security, scale, soak, disaster, partition/reconnect test suites",
+      "checklist": "C087-C089",
+      "status": "PARTIAL",
+      "artifacts": [
+        "tests/test_faults.py"
+      ],
+      "tests": [
+        "test_faults.py::test_mc047_concurrent_multi_tenant_soak",
+        "test_faults.py::test_mc047_mc050_restart_restore_from_journal_copy"
+      ],
+      "open": "Security, soak, partition/reconnect, restore suites done in-process; fleet-scale certification open."
+    },
+    {
+      "id": "MC-048",
+      "component": "Captured machine-readable acceptance evidence",
+      "checklist": "C090",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "tools/release_evidence.py",
+        "evidence/"
+      ],
+      "tests": [
+        "test_governance.py::test_mc048_evidence_tool_present"
+      ],
+      "open": "Evidence built and hashed; sealing uses PK_EVIDENCE_KEY if provided, else marked UNSEALED. pk_core gate still unavailable."
+    },
+    {
+      "id": "MC-049",
+      "component": "Canary/staged rollout and emergency-disable implementation",
+      "checklist": "C092",
+      "status": "PARTIAL",
+      "artifacts": [
+        "docs/operations/ROLLOUT.md",
+        "plane.py"
+      ],
+      "tests": [
+        "test_governance.py::test_mc049_mc051_operational_artifacts"
+      ],
+      "open": "Criteria + emergency disable done; promotion controller belongs to deployment system."
+    },
+    {
+      "id": "MC-050",
+      "component": "Compatibility, vulnerability/EOL, and backup/restore governance",
+      "checklist": "C093-C095",
+      "status": "IMPLEMENTED",
+      "artifacts": [
+        "docs/COMPATIBILITY.md",
+        "docs/operations/BACKUP_RESTORE.md"
+      ],
+      "tests": [
+        "test_faults.py::test_mc047_mc050_restart_restore_from_journal_copy",
+        "test_governance.py::test_mc007_mc050_compatibility_policy_matches_code"
+      ],
+      "open": "SLAs need owner approval."
+    },
+    {
+      "id": "MC-051",
+      "component": "Production operations/governance artifacts",
+      "checklist": "C096-C100",
+      "status": "PENDING_APPROVAL",
+      "artifacts": [
+        "docs/operations/"
+      ],
+      "tests": [
+        "test_governance.py::test_mc049_mc051_operational_artifacts"
+      ],
+      "open": "Runbooks, governance, exception register written; need owner approval."
+    },
+    {
+      "id": "MC-052",
+      "component": "Actor and workflow service surface",
+      "checklist": "C010-C012",
+      "status": "PENDING_APPROVAL",
+      "artifacts": [
+        "docs/adr/ADR-0002-actor-workflow-scope.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc002_mc052_adrs_have_status_alternatives_and_approval_slot"
+      ],
+      "open": "Proposed as approved-NA; needs board approval and CHECKLIST wording change."
+    },
+    {
+      "id": "MC-053",
+      "component": "wasmCloud/wRPC/Wadm concrete integration",
+      "checklist": "C010-C012,C030",
+      "status": "BLOCKED",
+      "artifacts": [
+        "wit/pk-runtime.wit",
+        "docs/adr/ADR-0001-runtime-technology.md"
+      ],
+      "tests": [
+        "test_governance.py::test_mc019_mc028_mc029_mc053_blockers_are_declared_not_claimed"
+      ],
+      "open": "WIT package written; no wasmCloud host/provider, wRPC transport or Wadm manifest can be built or interop-tested until versions are chosen."
+    },
+    {
+      "id": "MC-054",
+      "component": "MASTER.md master-prompt/workflow artifact",
+      "checklist": "n/a",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "tests": [
+        "test_governance.py::test_mc054_master_md_absence_is_declared_not_claimed"
+      ],
+      "open": "Original MASTER.md must be supplied by the owner; it was not reconstructed to avoid fabricating a source document."
+    },
+    {
+      "id": "MC-055",
+      "component": "pk_core dependency declaration/vendor bundle",
+      "checklist": "C031,C040,C090",
+      "status": "BLOCKED",
+      "artifacts": [
+        "DEPENDENCIES.lock.json",
+        "pyproject.toml"
+      ],
+      "tests": [
+        "test_governance.py::test_mc020_mc055_dependency_lock_is_honest"
+      ],
+      "open": "Declared as UNPINNED; pk_core source/version/digest must be supplied."
+    },
+    {
+      "id": "MC-056",
+      "component": "License, SBOM, provenance, and CI policy artifacts",
+      "checklist": "C045,C094",
+      "status": "PARTIAL",
+      "artifacts": [
+        "SBOM.cdx.json",
+        "tools/sbom.py",
+        ".github/workflows/ci.yml",
+        "NOTICE"
+      ],
+      "tests": [
+        "test_governance.py::test_mc056_sbom_ci_notice"
+      ],
+      "open": "SBOM, CI, provenance hashing done; LICENSE choice is the owner's (BLOCKED)."
+    }
+  ]
+}

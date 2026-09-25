@@ -1,0 +1,82 @@
+{
+  "$defs": {
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\x00-\\x1f\\x7f\\s]([^\\x00-\\x1f\\x7f]*[^\\x00-\\x1f\\x7f\\s])?$",
+      "type": "string"
+    },
+    "identity": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/id"
+        },
+        "environment": {
+          "$ref": "#/$defs/id"
+        },
+        "site": {
+          "$ref": "#/$defs/id"
+        },
+        "tenant": {
+          "$ref": "#/$defs/id"
+        },
+        "workload": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "tenant",
+        "environment",
+        "site",
+        "workload",
+        "component"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:pk:inv65:pk_provider_link:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "config": {
+      "type": "object"
+    },
+    "config_version": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "contract_id": {
+      "$ref": "#/$defs/id"
+    },
+    "identity": {
+      "$ref": "#/$defs/identity"
+    },
+    "link_name": {
+      "$ref": "#/$defs/id"
+    },
+    "residency": {
+      "maxLength": 64,
+      "type": "string"
+    },
+    "schema": {
+      "const": "PK_PROVIDER_LINK/1"
+    },
+    "secret_ref": {
+      "pattern": "^secret://[a-z0-9][a-z0-9._/-]{0,250}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "identity",
+    "link_name",
+    "contract_id",
+    "config",
+    "config_version"
+  ],
+  "title": "PK_PROVIDER_LINK/1",
+  "type": "object",
+  "x-compat": "additive-only within v1; breaking changes require v2",
+  "x-version": "1.0"
+}

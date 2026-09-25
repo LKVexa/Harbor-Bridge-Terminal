@@ -1,0 +1,137 @@
+{
+  "title": "INV-16 Async component functions",
+  "schemaVersion": 39,
+  "tags": [
+    "inv16"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "In-flight by function",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (function) (inv16_calls_in_flight)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Queued",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "inv16_calls_queued"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Refusals/s",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (instance) (rate(inv16_reentrancy_refusals_total[5m])) + sum by (instance) (rate(inv16_concurrency_refusals_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Terminal outcomes/s",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(inv16_completed_calls_total[5m]) or rate(inv16_cancelled_calls_total[5m]) or rate(inv16_trapped_calls_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Double delivery attempts (must be 0)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "increase(inv16_double_delivery_attempts_total[1h])"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Bridge p99 (ns) vs 5000 SLO",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(inv16_bridge_latency_ns_bucket[10m])))"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Tombstones / evictions",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "inv16_tombstones"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Call ids remaining",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "inv16_call_ids_remaining"
+        }
+      ]
+    }
+  ]
+}

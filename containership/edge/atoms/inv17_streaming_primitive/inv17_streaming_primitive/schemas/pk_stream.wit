@@ -1,0 +1,29 @@
+// INV-17 streaming primitive -- WIT rendering of PK_STREAM/1, PK_STREAM_CREDIT/1, PK_STREAM_CLOSE/1.
+// Normative JSON Schemas live beside this file; this WIT is the component-model view of the
+// same surface (hashed in interfaces/schema-manifest.json).
+package pk:inv17@1.0.0;
+
+interface pk-stream {
+  enum stream-state { open, credit-stalled, frozen, ended, writer-dropped, reader-dropped }
+  enum close-kind { end, drop-reader, drop-writer }
+  record limits { max-credit: u32, max-buffer: u32, idempotency-window: u32 }
+  record stream-error { code: string, message: string }
+
+  resource stream {
+    // PK_STREAM/1
+    state: func() -> stream-state;
+    limits: func() -> limits;
+    // PK_STREAM_CREDIT/1 -- reader side
+    grant: func(credit: u32) -> result<_, stream-error>;
+    // writer side; returns false for an idempotent duplicate
+    write: func(element: list<u8>, idempotency-key: option<string>) -> result<bool, stream-error>;
+    // reader side: none = not ready; some(none) = graceful end-of-stream
+    read: func() -> result<option<option<list<u8>>>, stream-error>;
+    // PK_STREAM_CLOSE/1
+    close: func(kind: close-kind, reason: option<string>) -> result<_, stream-error>;
+  }
+}
+
+world inv17 {
+  export pk-stream;
+}

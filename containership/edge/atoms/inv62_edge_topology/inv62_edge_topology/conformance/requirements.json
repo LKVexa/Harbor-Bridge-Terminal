@@ -1,0 +1,842 @@
+{
+  "schema": "INV62_REQUIREMENTS/1",
+  "version": "4.3.0",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "contexts": [
+        "all"
+      ],
+      "statement": "The service SHALL store every non-cloud node with a validated parent of the immediately higher tier; device and parent site SHALL agree.",
+      "implementation": [
+        "topology.py::Topology.add"
+      ],
+      "verification": [
+        "tests/test_topology.py::test_invalid_hierarchy_is_rejected",
+        "tests/test_topology.py::test_hierarchy_is_retained"
+      ],
+      "checklist": [
+        "C011",
+        "C012"
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "contexts": [
+        "all"
+      ],
+      "statement": "The service SHALL reject duplicate node registration, dangling links, self-links, non-finite/negative latency and non-Boolean link state.",
+      "implementation": [
+        "topology.py::Topology.connect"
+      ],
+      "verification": [
+        "tests/test_topology.py::test_link_validation_rejects_unsafe_values",
+        "tests/test_topology.py::test_duplicate_nodes_do_not_silently_mutate_state"
+      ],
+      "checklist": [
+        "C011"
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Identifiers SHALL match [A-Za-z0-9-_.:]{1,128} with no surrounding whitespace.",
+      "implementation": [
+        "topology.py::validate_identifier"
+      ],
+      "verification": [
+        "tests/test_topology.py::test_identifier_grammar_rejects_injection"
+      ],
+      "checklist": [
+        "C011",
+        "C028"
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Resolution SHALL never traverse a link that is down.",
+      "implementation": [
+        "topology.py::Topology._neighbours"
+      ],
+      "verification": [
+        "tests/test_fuzz.py::test_routing_matches_reference_and_never_uses_down_links"
+      ],
+      "checklist": [
+        "C011"
+      ]
+    },
+    {
+      "id": "REQ-005",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Resolution SHALL return the lowest-latency reachable node that satisfies capability and policy, ties broken by lowest node name.",
+      "implementation": [
+        "production/policy.py::resolve"
+      ],
+      "verification": [
+        "tests/test_fuzz.py::test_routing_matches_reference_and_never_uses_down_links",
+        "tests/test_service.py::test_failover_when_preferred_node_lost"
+      ],
+      "checklist": [
+        "C011",
+        "C012"
+      ]
+    },
+    {
+      "id": "REQ-006",
+      "contexts": [
+        "far-edge",
+        "near-edge"
+      ],
+      "statement": "A site SHALL be reported partitioned iff no member can reach the designated cloud-tier node over live links.",
+      "implementation": [
+        "production/service.py::_partitioned_sites"
+      ],
+      "verification": [
+        "tests/test_election.py::test_partition_status_lifecycle_and_reconciliation",
+        "tests/test_faults.py::test_multi_site_isolation"
+      ],
+      "checklist": [
+        "C011",
+        "C018"
+      ]
+    },
+    {
+      "id": "REQ-007",
+      "contexts": [
+        "far-edge",
+        "near-edge"
+      ],
+      "statement": "While partitioned, on-site resolution SHALL continue and SHALL be marked outcome=degraded with degraded_mode=partitioned_local.",
+      "implementation": [
+        "production/service.py::_resolve"
+      ],
+      "verification": [
+        "tests/test_service.py::test_partitioned_origin_answers_locally_degraded"
+      ],
+      "checklist": [
+        "C014",
+        "C018"
+      ]
+    },
+    {
+      "id": "REQ-008",
+      "contexts": [
+        "far-edge",
+        "near-edge"
+      ],
+      "statement": "At most one node SHALL hold a site lease at a time; terms SHALL be strictly increasing and persisted before a grant is returned.",
+      "implementation": [
+        "production/election.py::LeaseAuthority.acquire"
+      ],
+      "verification": [
+        "tests/test_election.py::test_single_holder_and_monotonic_terms",
+        "tests/test_concurrency.py::test_contended_lease_has_single_winner",
+        "tests/test_election.py::test_terms_survive_restart"
+      ],
+      "checklist": [
+        "C015",
+        "C058"
+      ]
+    },
+    {
+      "id": "REQ-009",
+      "contexts": [
+        "far-edge",
+        "near-edge"
+      ],
+      "statement": "A fencing token lower than the current term SHALL be rejected with TOPO.STALE_LEADER.",
+      "implementation": [
+        "production/election.py::LeaseAuthority.validate_token"
+      ],
+      "verification": [
+        "tests/test_election.py::test_fencing_rejects_stale_leader"
+      ],
+      "checklist": [
+        "C058"
+      ]
+    },
+    {
+      "id": "REQ-010",
+      "contexts": [
+        "far-edge",
+        "near-edge"
+      ],
+      "statement": "A lease candidate SHALL be coordinator-capable, unquarantined, a member of the site and able to reach a strict majority of eligible voters.",
+      "implementation": [
+        "production/election.py::LeaseAuthority.quorum"
+      ],
+      "verification": [
+        "tests/test_election.py::test_minority_side_cannot_acquire",
+        "tests/test_election.py::test_ineligible_and_foreign_candidates_refused"
+      ],
+      "checklist": [
+        "C058"
+      ]
+    },
+    {
+      "id": "REQ-011",
+      "contexts": [
+        "all"
+      ],
+      "statement": "When a partition heals the site-local lease SHALL be revoked so the term fences the former local leader.",
+      "implementation": [
+        "production/service.py::_partition"
+      ],
+      "verification": [
+        "tests/test_election.py::test_partition_status_lifecycle_and_reconciliation"
+      ],
+      "checklist": [
+        "C018",
+        "C058"
+      ]
+    },
+    {
+      "id": "REQ-012",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Every externally visible request/response SHALL conform to the versioned JSON Schemas in schemas/.",
+      "implementation": [
+        "production/wire.py::validate_request"
+      ],
+      "verification": [
+        "tests/test_contract.py::test_every_fixture_behaves_as_documented",
+        "tests/test_service.py::test_every_response_matches_response_schema"
+      ],
+      "checklist": [
+        "C021",
+        "C022"
+      ]
+    },
+    {
+      "id": "REQ-013",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Every request SHALL carry a PKT1 credential that is MAC-valid, audience-bound, unexpired within 30 s skew and at most 900 s long-lived.",
+      "implementation": [
+        "production/auth.py::Authenticator.authenticate"
+      ],
+      "verification": [
+        "tests/test_security.py::test_T01_forged_signature_rejected",
+        "tests/test_security.py::test_T02_expired_and_future_credentials_rejected"
+      ],
+      "checklist": [
+        "C023",
+        "C044"
+      ]
+    },
+    {
+      "id": "REQ-014",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Mutating requests SHALL consume a single-use nonce; replays SHALL be rejected and a full replay cache SHALL fail closed.",
+      "implementation": [
+        "production/auth.py::ReplayCache.spend"
+      ],
+      "verification": [
+        "tests/test_security.py::test_T03_replay_of_mutating_credential_rejected",
+        "tests/test_security.py::test_T03_replay_cache_fails_closed_when_full"
+      ],
+      "checklist": [
+        "C023",
+        "C050"
+      ]
+    },
+    {
+      "id": "REQ-015",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Authorisation SHALL be default-deny by (family, op) permission, explicit tenant grant, and node binding for lease operations.",
+      "implementation": [
+        "production/auth.py::Authorizer.authorize"
+      ],
+      "verification": [
+        "tests/test_security.py::test_T04_role_cannot_exceed_matrix",
+        "tests/test_security.py::test_T05_node_agent_bound_to_own_node",
+        "tests/test_security.py::test_T06_cross_tenant_access_denied_and_isolated"
+      ],
+      "checklist": [
+        "C024",
+        "C042",
+        "C043",
+        "C046"
+      ]
+    },
+    {
+      "id": "REQ-016",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Identity, policy, key or time dependency outage SHALL fail closed with TOPO.DEPENDENCY_UNAVAILABLE and mark the service not ready.",
+      "implementation": [
+        "production/service.py::health"
+      ],
+      "verification": [
+        "tests/test_security.py::test_policy_outage",
+        "tests/test_security.py::test_key_outage",
+        "tests/test_security.py::test_time_outage"
+      ],
+      "checklist": [
+        "C048"
+      ]
+    },
+    {
+      "id": "REQ-017",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Every failure SHALL be reported as a stable TOPO.* code with outcome, retryable flag and secret-free details.",
+      "implementation": [
+        "production/errors.py::TopoError.to_wire"
+      ],
+      "verification": [
+        "tests/test_service.py::test_error_codes_are_stable_and_unique",
+        "tests/test_security.py::test_errors_do_not_leak_internals"
+      ],
+      "checklist": [
+        "C014",
+        "C026"
+      ]
+    },
+    {
+      "id": "REQ-018",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Payloads SHALL be bounded (256 KiB, depth 16, 1000 mutations, 16 candidates) and graphs bounded by configured node/link/degree/capability limits.",
+      "implementation": [
+        "production/wire.py::decode"
+      ],
+      "verification": [
+        "tests/test_security.py::test_T07_hostile_payloads_rejected_without_internal_error",
+        "tests/test_security.py::test_T08_graph_quota_and_batch_limits",
+        "tests/test_topology.py::test_resource_bounds_are_enforced"
+      ],
+      "checklist": [
+        "C017",
+        "C028",
+        "C067"
+      ]
+    },
+    {
+      "id": "REQ-019",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Requests SHALL carry or default a deadline; an apply whose deadline expires before commit SHALL leave no persisted or visible change.",
+      "implementation": [
+        "production/service.py::_apply"
+      ],
+      "verification": [
+        "tests/test_resilience.py::test_apply_aborts_before_commit_when_deadline_passes"
+      ],
+      "checklist": [
+        "C025"
+      ]
+    },
+    {
+      "id": "REQ-020",
+      "contexts": [
+        "all"
+      ],
+      "statement": "A mutation retried with the same idempotency key and payload SHALL return the original response without re-applying; a different payload SHALL be refused.",
+      "implementation": [
+        "production/resilience.py::IdempotencyStore"
+      ],
+      "verification": [
+        "tests/test_resilience.py::test_service_retry_with_same_key_applies_once",
+        "tests/test_resilience.py::test_same_key_same_payload_returns_cached"
+      ],
+      "checklist": [
+        "C025"
+      ]
+    },
+    {
+      "id": "REQ-021",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Admission SHALL enforce per-tenant token buckets after authorisation and a global in-flight bound, shedding with retryable codes.",
+      "implementation": [
+        "production/resilience.py::Admission"
+      ],
+      "verification": [
+        "tests/test_security.py::test_T09_rate_limit_sheds_per_tenant",
+        "tests/test_security.py::test_T10_anonymous_flood_cannot_drain_victim_bucket",
+        "tests/test_resilience.py::test_in_flight_and_tenant_table_bounds"
+      ],
+      "checklist": [
+        "C017",
+        "C025",
+        "C054"
+      ]
+    },
+    {
+      "id": "REQ-022",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Peers SHALL negotiate the highest mutually supported major version and SHALL be refused on unknown required features.",
+      "implementation": [
+        "production/wire.py::negotiate"
+      ],
+      "verification": [
+        "tests/test_service.py::test_version_negotiation"
+      ],
+      "checklist": [
+        "C016",
+        "C027"
+      ]
+    },
+    {
+      "id": "REQ-023",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Configuration SHALL be schema- and semantics-validated, with secrets only as secret:// references, before any activation.",
+      "implementation": [
+        "production/config.py::validate"
+      ],
+      "verification": [
+        "tests/test_config.py::test_semantic_rules",
+        "tests/test_config.py::test_inline_secret_rejected",
+        "tests/test_config.py::test_auth_cannot_be_disabled"
+      ],
+      "checklist": [
+        "C033",
+        "C034",
+        "C039"
+      ]
+    },
+    {
+      "id": "REQ-024",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Configuration activation SHALL be compare-and-set on generation and all-or-nothing; failed activation SHALL leave the prior generation serving.",
+      "implementation": [
+        "production/config.py::ConfigStore.activate"
+      ],
+      "verification": [
+        "tests/test_config.py::test_failed_activation_is_atomic",
+        "tests/test_config.py::test_provenance_cas_and_rollback"
+      ],
+      "checklist": [
+        "C037"
+      ]
+    },
+    {
+      "id": "REQ-025",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Rollback SHALL re-validate and re-activate a prior generation as a new generation, preserving history.",
+      "implementation": [
+        "production/config.py::ConfigStore.rollback"
+      ],
+      "verification": [
+        "tests/test_config.py::test_provenance_cas_and_rollback"
+      ],
+      "checklist": [
+        "C038"
+      ]
+    },
+    {
+      "id": "REQ-026",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Each generation SHALL record digest, author, source, creation/activation time, predecessor and optional signature.",
+      "implementation": [
+        "production/config.py::Provenance"
+      ],
+      "verification": [
+        "tests/test_config.py::test_provenance_cas_and_rollback",
+        "tests/test_config.py::test_signed_config_enforced"
+      ],
+      "checklist": [
+        "C036"
+      ]
+    },
+    {
+      "id": "REQ-027",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Effective configuration SHALL be composed defaults <- base <- environment overlay <- site overlay without null deletion.",
+      "implementation": [
+        "production/config.py::compose"
+      ],
+      "verification": [
+        "tests/test_config.py::test_precedence_and_no_null_deletion"
+      ],
+      "checklist": [
+        "C035"
+      ]
+    },
+    {
+      "id": "REQ-028",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Every state change SHALL be written to an authenticated, hash-chained WAL before it becomes visible; restart SHALL replay to identical state.",
+      "implementation": [
+        "production/persistence.py::StateStore"
+      ],
+      "verification": [
+        "tests/test_persistence.py::test_restart_replays_wal_to_identical_state",
+        "tests/test_persistence.py::test_tampered_or_reordered_wal_refuses_start"
+      ],
+      "checklist": [
+        "C057"
+      ]
+    },
+    {
+      "id": "REQ-029",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Security-relevant events SHALL be appended to a tamper-evident HMAC hash chain with allow-listed fields.",
+      "implementation": [
+        "production/audit.py::AuditTrail"
+      ],
+      "verification": [
+        "tests/test_security.py::test_audit_chain_detects_tampering"
+      ],
+      "checklist": [
+        "C049"
+      ]
+    },
+    {
+      "id": "REQ-030",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Routing SHALL apply constraints in the fixed precedence security > tenant_isolation > residency > availability > slo > cost.",
+      "implementation": [
+        "production/policy.py::resolve"
+      ],
+      "verification": [
+        "tests/test_service.py::test_residency_precedes_latency",
+        "tests/test_election.py::test_quarantine_excludes_from_routing_and_is_audited"
+      ],
+      "checklist": [
+        "C019",
+        "C055"
+      ]
+    },
+    {
+      "id": "REQ-031",
+      "contexts": [
+        "all"
+      ],
+      "statement": "When residency is required, nodes without a residency label SHALL NOT be selected.",
+      "implementation": [
+        "production/policy.py::resolve"
+      ],
+      "verification": [
+        "tests/test_service.py::test_unlabelled_nodes_fail_closed_under_residency"
+      ],
+      "checklist": [
+        "C019",
+        "C055"
+      ]
+    },
+    {
+      "id": "REQ-032",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Cross-site failover SHALL be disabled unless explicitly enabled by policy.",
+      "implementation": [
+        "production/policy.py::resolve"
+      ],
+      "verification": [
+        "tests/test_service.py::test_cross_site_failover_disabled_by_default"
+      ],
+      "checklist": [
+        "C055"
+      ]
+    },
+    {
+      "id": "REQ-033",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Links SHALL move UP->SUSPECT->DOWN only after the configured failure threshold, DOWN->UP only after the success threshold, and be held down while flapping.",
+      "implementation": [
+        "production/health.py::LinkHealth"
+      ],
+      "verification": [
+        "tests/test_health_lifecycle.py::test_hysteresis",
+        "tests/test_health_lifecycle.py::test_flap_suppression_holds_link_down",
+        "tests/test_faults.py::test_link_flap_is_suppressed"
+      ],
+      "checklist": [
+        "C052"
+      ]
+    },
+    {
+      "id": "REQ-034",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Latency older than stale_after_s SHALL be excluded (default) or used only with outcome=degraded, degraded_mode=stale_data.",
+      "implementation": [
+        "production/policy.py::resolve"
+      ],
+      "verification": [
+        "tests/test_service.py::test_stale_links_excluded_or_degraded"
+      ],
+      "checklist": [
+        "C052",
+        "C056"
+      ]
+    },
+    {
+      "id": "REQ-035",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Operators SHALL be able to freeze automated changes and quarantine/release nodes; quarantine SHALL revoke any lease the node holds.",
+      "implementation": [
+        "production/service.py::admin"
+      ],
+      "verification": [
+        "tests/test_election.py::test_freeze_blocks_automated_changes_but_not_reads",
+        "tests/test_election.py::test_quarantine_excludes_from_routing_and_is_audited"
+      ],
+      "checklist": [
+        "C059"
+      ]
+    },
+    {
+      "id": "REQ-036",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Every resolution SHALL produce a decision record (inputs, considered candidates with layer/reason, graph revision, config generation, release) retrievable as an operator explanation.",
+      "implementation": [
+        "production/policy.py::explain"
+      ],
+      "verification": [
+        "tests/test_service.py::test_explain_view"
+      ],
+      "checklist": [
+        "C076",
+        "C077",
+        "C078"
+      ]
+    },
+    {
+      "id": "REQ-037",
+      "contexts": [
+        "all"
+      ],
+      "statement": "The health surface SHALL expose liveness, readiness, dependency status, mode, config generation/digest, release lineage and freshness without tenant topology or secrets.",
+      "implementation": [
+        "production/service.py::health"
+      ],
+      "verification": [
+        "tests/test_service.py::test_health_surface_has_no_topology_or_secrets"
+      ],
+      "checklist": [
+        "C071"
+      ]
+    },
+    {
+      "id": "REQ-038",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Metrics, logs and traces SHALL follow the documented schemas; label values SHALL be capped; secrets and credentials SHALL never be emitted; node names SHALL be pseudonymised by default.",
+      "implementation": [
+        "production/telemetry.py::Logger"
+      ],
+      "verification": [
+        "tests/test_service.py::test_metrics_logs_traces_and_lineage",
+        "tests/test_service.py::test_label_cardinality_is_capped",
+        "tests/test_security.py::test_credentials_and_secrets_never_logged",
+        "tests/test_service.py::test_node_names_pseudonymised_in_logs"
+      ],
+      "checklist": [
+        "C072",
+        "C073",
+        "C074",
+        "C075",
+        "C079"
+      ]
+    },
+    {
+      "id": "REQ-039",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Bootstrap SHALL build a validated, ready topology from an empty environment deterministically and idempotently.",
+      "implementation": [
+        "production/bootstrap.py::run"
+      ],
+      "verification": [
+        "tests/test_bootstrap.py::test_clean_bootstrap_is_deterministic_and_idempotent"
+      ],
+      "checklist": [
+        "C040"
+      ]
+    },
+    {
+      "id": "REQ-040",
+      "contexts": [
+        "all"
+      ],
+      "statement": "State SHALL be exportable and importable with full validation to reconstruct a site on an empty host.",
+      "implementation": [
+        "production/service.py::import_state"
+      ],
+      "verification": [
+        "tests/test_persistence.py::test_export_import_reconstructs_on_empty_host",
+        "tests/test_faults.py::test_disaster_total_state_loss_restore_from_backup"
+      ],
+      "checklist": [
+        "C095"
+      ]
+    },
+    {
+      "id": "REQ-041",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Readers SHALL never observe a partially applied mutation batch.",
+      "implementation": [
+        "production/service.py::_apply"
+      ],
+      "verification": [
+        "tests/test_concurrency.py::test_parallel_writers_and_readers"
+      ],
+      "checklist": [
+        "C086"
+      ]
+    },
+    {
+      "id": "REQ-042",
+      "contexts": [
+        "cloud",
+        "datacenter"
+      ],
+      "statement": "The engine nearest query SHALL meet p99 < 1 ms for graphs up to 10 000 nodes on the reference host.",
+      "implementation": [
+        "topology.py::Topology.nearest"
+      ],
+      "verification": [
+        "tools/bench.py::gate"
+      ],
+      "checklist": [
+        "C013",
+        "C062"
+      ]
+    },
+    {
+      "id": "REQ-043",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Spent mutating nonces SHALL be durable before the request proceeds so a credential cannot be replayed after restart or compaction.",
+      "implementation": [
+        "production/service.py::_persist_nonce"
+      ],
+      "verification": [
+        "tests/test_review_regressions.py::test_R1_replay_is_refused_after_restart",
+        "tests/test_review_regressions.py::test_S6_failed_nonce_persist_does_not_consume_nonce"
+      ],
+      "checklist": [
+        "C023",
+        "C050",
+        "C057"
+      ]
+    },
+    {
+      "id": "REQ-044",
+      "contexts": [
+        "far-edge",
+        "near-edge"
+      ],
+      "statement": "A lease SHALL be revoked when its holder is removed, quarantined or no longer eligible, and renew/validate SHALL re-check eligibility.",
+      "implementation": [
+        "production/service.py::_check_holder"
+      ],
+      "verification": [
+        "tests/test_review_regressions.py::test_R2_removed_or_ineligible_holder_loses_lease"
+      ],
+      "checklist": [
+        "C058"
+      ]
+    },
+    {
+      "id": "REQ-045",
+      "contexts": [
+        "all"
+      ],
+      "statement": "Link-health hysteresis state SHALL be part of persisted state and SHALL NOT be changed by a rejected batch; timestamps more than 30 s in the future SHALL be rejected.",
+      "implementation": [
+        "production/health.py::LinkHealth.to_dict",
+        "production/service.py::_apply_mutations"
+      ],
+      "verification": [
+        "tests/test_review_regressions.py::test_R3_probe_hysteresis_survives_checkpoint_and_restart",
+        "tests/test_review_regressions.py::test_R4_rejected_batch_does_not_touch_live_health",
+        "tests/test_review_regressions.py::test_R5_future_timestamps_rejected"
+      ],
+      "checklist": [
+        "C052",
+        "C057"
+      ]
+    }
+  ],
+  "base_items": {
+    "C001": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C002": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C003": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C004": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C005": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C006": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C007": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C008": [
+      "docs/ARCHITECTURE.md",
+      "contract.py::build"
+    ],
+    "C081": [
+      "tests/test_topology.py",
+      "tests/test_health_lifecycle.py"
+    ]
+  }
+}

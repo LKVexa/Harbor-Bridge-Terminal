@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_DECISION_PROVENANCE:1",
+  "title": "PK_DECISION_PROVENANCE/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision_id",
+    "issued_at",
+    "mode",
+    "engine",
+    "identity",
+    "actor",
+    "request",
+    "inputs",
+    "input_digest",
+    "obligations",
+    "quality",
+    "trace",
+    "schema_versions"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "pattern": "^dec-[0-9a-f]{32}$"
+    },
+    "issued_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "mode": {
+      "enum": [
+        "production",
+        "staging",
+        "development",
+        "test"
+      ]
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package",
+        "version",
+        "model_revision"
+      ],
+      "properties": {
+        "package": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "model_revision": {
+          "type": "string"
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "workload_id",
+        "environment"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        },
+        "workload_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        },
+        "environment": {
+          "type": "string"
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "token_id"
+      ],
+      "properties": {
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        },
+        "token_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        }
+      }
+    },
+    "request": {
+      "type": "object"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topology",
+        "placement",
+        "convergence",
+        "policy",
+        "config",
+        "request",
+        "identity"
+      ],
+      "properties": {
+        "topology": {
+          "type": "object"
+        },
+        "placement": {
+          "type": "object"
+        },
+        "convergence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "config": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "revision",
+            "digest",
+            "mode"
+          ],
+          "properties": {
+            "revision": {
+              "type": "integer"
+            },
+            "digest": {
+              "type": "string"
+            },
+            "mode": {
+              "type": "string"
+            }
+          }
+        },
+        "request": {
+          "type": "object"
+        },
+        "identity": {
+          "type": "object"
+        }
+      }
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "obligations": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "stale_sources"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "fresh",
+            "degraded"
+          ]
+        },
+        "stale_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trace_id",
+        "span_id"
+      ],
+      "properties": {
+        "trace_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "span_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{16}$"
+        }
+      }
+    },
+    "schema_versions": {
+      "type": "object"
+    }
+  }
+}

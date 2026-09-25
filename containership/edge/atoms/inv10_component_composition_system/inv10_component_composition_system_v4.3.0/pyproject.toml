@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv10-component-composition-system"
+version = "4.3.0"
+description = "INV-10 deterministic, fail-closed component composition (linker) with control-plane services"
+readme = "inv10_component_composition_system/README.md"
+requires-python = ">=3.10,<3.14"
+license = { text = "UNDECLARED - owner must choose before distribution" }
+authors = [{ name = "David Paul Russell", email = "davidpaulrussell@linearfinance.org" }]
+dependencies = []            # the linker and all service layers are stdlib-only
+
+[project.optional-dependencies]
+# pk_core provides the checklist/evidence adapter (component.py, contract.py).
+# Range is a declared assumption; qualify per docs/COMPATIBILITY.json.
+pkcore = ["pk_core>=1.0.0,<2.0.0"]
+
+[project.scripts]
+inv10 = "inv10_component_composition_system.cli:main"
+
+[tool.setuptools]
+packages = ["inv10_component_composition_system", "inv10_component_composition_system.tests"]
+
+[tool.setuptools.package-data]
+inv10_component_composition_system = ["schemas/*.json", "VERSION", "*.md", "CHECKLIST.json"]

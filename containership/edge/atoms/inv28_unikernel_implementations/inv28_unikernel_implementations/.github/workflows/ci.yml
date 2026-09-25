@@ -1,0 +1,36 @@
+# INV-28 CI (MC-081).  Blocks merge on any lane failure.  Stdlib-only; optional linters run when available.
+name: inv28-ci
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv28_unikernel_implementations }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - name: bootstrap
+        run: python -B -m inv28_unikernel_implementations.tools.bootstrap
+      - name: all local gate lanes (lint, sast, secrets, deps, master, mc-status, tests, tests -O, pk gate, manifest)
+        run: python -B -m inv28_unikernel_implementations.tools.check_all --ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-${{ matrix.os }}-${{ matrix.python }}
+          path: inv28_unikernel_implementations/evidence/
+  optional-linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv28_unikernel_implementations }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install ruff==0.15.11 mypy==1.20.2
+      - run: cd inv28_unikernel_implementations && ruff check . && mypy --config-file pyproject.toml .

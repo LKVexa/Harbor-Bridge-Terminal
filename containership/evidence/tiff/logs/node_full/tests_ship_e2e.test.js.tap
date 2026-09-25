@@ -1,0 +1,116 @@
+TAP version 13
+# Subtest: actual containership read commands over thread WebSocket
+not ok 1 - actual containership read commands over thread WebSocket
+  ---
+  duration_ms: 950.095897
+  type: 'test'
+  location: '/mnt/data/work/UC250/vws/tests/ship/e2e.test.js:12:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /"uc_release": "UC-2\.5\.0"/. Input:
+    
+    '\roperator@hermit ~ › ship capabilities; echo READ-DONE\r\r\n' +
+      '{\r\n' +
+      '  "detail": {},\r\n' +
+      '  "error": "ship is busy in another process; retry after its operation finishes",\r\n' +
+      '  "refused": true\r\n' +
+      '}\r\n' +
+      'READ-DONE\r\n' +
+      'operator@hermit ~ › '
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    operator@hermit ~ › ship capabilities; echo READ-DONE
+    {
+      "detail": {},
+      "error": "ship is busy in another process; retry after its operation finishes",
+      "refused": true
+    }
+    READ-DONE
+    operator@hermit ~ › 
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/work/UC250/vws/tests/ship/e2e.test.js:16:86)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: principal without ship.read has no ship command (thread)
+ok 2 - principal without ship.read has no ship command (thread)
+  ---
+  duration_ms: 83.956883
+  type: 'test'
+  ...
+# Subtest: actual containership read commands over process WebSocket
+not ok 3 - actual containership read commands over process WebSocket
+  ---
+  duration_ms: 2507.21519
+  type: 'test'
+  location: '/mnt/data/work/UC250/vws/tests/ship/e2e.test.js:12:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /UC\/PIXEL_INSPECT\/1/. Input:
+    
+    'operator@hermit ~ › \roperator@hermit ~ › ship pixels inspect vm_small DF_Small; echo PIXELS-DONE\r\r\n' +
+      '{\r\n' +
+      '  "detail": {},\r\n' +
+      '  "error": "ship is busy in another process; retry after its operation finishes",\r\n' +
+      '  "refused": true\r\n' +
+      '}\r\n' +
+      'PIXELS-DONE\r\n' +
+      'operator@hermit ~ › '
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    operator@hermit ~ › operator@hermit ~ › ship pixels inspect vm_small DF_Small; echo PIXELS-DONE
+    {
+      "detail": {},
+      "error": "ship is busy in another process; retry after its operation finishes",
+      "refused": true
+    }
+    PIXELS-DONE
+    operator@hermit ~ › 
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (/mnt/data/work/UC250/vws/tests/ship/e2e.test.js:18:113)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: principal without ship.read has no ship command (process)
+ok 4 - principal without ship.read has no ship command (process)
+  ---
+  duration_ms: 56.609208
+  type: 'test'
+  ...
+# Subtest: control-enabled gateway still denies read-only principal
+ok 5 - control-enabled gateway still denies read-only principal
+  ---
+  duration_ms: 149.082508
+  type: 'test'
+  ...
+# Subtest: Ctrl-C cancels gateway-owned Python job and returns terminal exit 130
+ok 6 - Ctrl-C cancels gateway-owned Python job and returns terminal exit 130
+  ---
+  duration_ms: 124.677129
+  type: 'test'
+  ...
+# Subtest: disconnect cancels gateway job rather than orphaning it
+ok 7 - disconnect cancels gateway job rather than orphaning it
+  ---
+  duration_ms: 120.314524
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 5
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4783.122136

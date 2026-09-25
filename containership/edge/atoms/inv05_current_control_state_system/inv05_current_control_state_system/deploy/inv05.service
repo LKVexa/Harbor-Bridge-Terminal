@@ -1,0 +1,34 @@
+[Unit]
+Description=INV-05 control-state service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=inv05
+Group=inv05
+ExecStartPre=/usr/bin/python3 /opt/inv05/tools/preflight.py --config /etc/inv05/base.json --env /etc/inv05/prod.json --site /etc/inv05/site.json --secret-dir /run/inv05/secrets
+ExecStart=/usr/bin/python3 -m inv05_current_control_state_system.serve --config /etc/inv05/base.json --env /etc/inv05/prod.json --site /etc/inv05/site.json --secret-dir /run/inv05/secrets
+KillSignal=SIGTERM
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+MemoryMax=4G
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/inv05
+ReadOnlyPaths=/etc/inv05 /run/inv05/secrets
+SystemCallFilter=@system-service
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

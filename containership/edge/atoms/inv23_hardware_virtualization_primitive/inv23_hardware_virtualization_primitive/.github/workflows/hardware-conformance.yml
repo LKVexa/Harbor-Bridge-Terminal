@@ -1,0 +1,30 @@
+name: hardware-conformance
+# Runs on lab self-hosted runners labelled with a COMPATIBILITY.md row id. Each row job
+# asserts that row's expected outcome and uploads evidence; a green run is what promotes a
+# row to "verified" (edit compatibility.json with date + environment, regenerate the doc).
+on: { workflow_dispatch: {}, schedule: [{ cron: "0 6 * * 1" }] }
+permissions: { contents: read }
+defaults: { run: { working-directory: inv23_hardware_virtualization_primitive } }
+jobs:
+  row:
+    strategy:
+      fail-fast: false
+      matrix:
+        row: [LNX-BM-INTEL, LNX-BM-AMD, LNX-GUEST-NOVT, LNX-GUEST-NESTED, LNX-NO-DEVKVM, LNX-DEVKVM-EACCES,
+              LNX-CTR-HIDDEN, LNX-CTR-PASSTHRU, WIN-X64-INTEL-HV, WIN-X64-AMD-HV, WIN-X64-HV-OFF,
+              WIN-GUEST-NESTED-OFF, MAC-ARM64-HVF, MAC-X64-HVF, MAC-VIRTUALIZED]
+    runs-on: [self-hosted, "inv23-${{ matrix.row }}"]
+    env: { INV23_MATRIX_ROW: "${{ matrix.row }}", INV23_MACHINE_CLASS: "${{ matrix.row }}", INV23_CONFORMANCE: release }
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/run_suite.py hardware | tee hw.json
+      - run: python tools/run_suite.py multiprocess
+      - run: python benchmarks/benchmark_probe.py --samples 5000 --out evidence/benchmark-${{ matrix.row }}.json
+      - uses: actions/upload-artifact@v4
+        with: { name: "hw-${{ matrix.row }}", path: "inv23_hardware_virtualization_primitive/{hw.json,evidence/benchmark-*.json}" }
+  lifecycle:
+    # Reboot / firmware-toggle / L2 nesting scenarios require lab orchestration (IPMI/Redfish);
+    # they are tracked as open items and run manually against the runbook until automated.
+    if: false
+    runs-on: [self-hosted, inv23-lab-orchestrator]
+    steps: [{ run: echo "see work order open items" }]

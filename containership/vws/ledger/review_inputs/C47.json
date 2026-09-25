@@ -1,0 +1,1686 @@
+{
+"component": "C47",
+"items": [
+{
+"id": "C47-001",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Identify the termination signal described by the article.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "SIGTERM/SIGINT identified as the termination signals handled",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C47-002",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Define which process is expected to receive it.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Node process (PID 1 via exec-form ENTRYPOINT) is the receiving process",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"deploy/Dockerfile"
+]
+},
+{
+"id": "C47-003",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Define shutdown responsibilities owned by the signal handler.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Shutdown sequence (draining, notify, drain, exit) spelled out",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C47-004",
+"task_class": "IMPLEMENT",
+"area": "01. Signal-handling requirements",
+"req": "Keep lengthy cleanup outside the minimal signal-notification path where the runtime requires it.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "onSignal only sets a flag and calls gw.shutdown(); cleanup runs async afterward",
+"prior_evidence": [
+"gateway/server.js:252-256"
+]
+},
+{
+"id": "C47-005",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Define how shutdown intent reaches the lifecycle coordinator.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "registry.draining/shutdownPromise carry intent but no doc states the mechanism as a decision",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C47-006",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Define behavior for repeated termination requests.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "signalled flag + shutdownPromise guard exist in code; no explicit design note documents the choice",
+"prior_evidence": [
+"gateway/server.js:219,253"
+]
+},
+{
+"id": "C47-007",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Define behavior when termination arrives during startup.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no doc/code comment defines behavior if SIGTERM arrives before listen() resolves; server.js:257 looks unguarded for this race",
+"prior_evidence": []
+},
+{
+"id": "C47-008",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Define behavior when no listener has been created.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no defined behavior for termination before any listener exists",
+"prior_evidence": []
+},
+{
+"id": "C47-009",
+"task_class": "SPECIFY",
+"area": "01. Signal-handling requirements",
+"req": "Identify runtime-specific signal integration questions.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "D-001 and the Windows taskkill/SIGTERM note identify runtime-specific signal questions",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions",
+"docs/OPERATIONS.md#run-it-locally-loopback"
+]
+},
+{
+"id": "C47-010",
+"task_class": "IMPLEMENT",
+"area": "01. Signal-handling requirements",
+"req": "Approve the signal-to-shutdown contract.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit approval record for the signal-to-shutdown contract found",
+"prior_evidence": []
+},
+{
+"id": "C47-011",
+"task_class": "VERIFY",
+"area": "02. Platform and runtime verification",
+"req": "VERIFY the current hosting termination sequence.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Render hosting termination sequence never run (no authorization)",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C47-012",
+"task_class": "VERIFY",
+"area": "02. Platform and runtime verification",
+"req": "VERIFY the actual shutdown grace period for the selected service.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "actual hosted grace period unverified; only the Blueprint value is referenced",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C47-013",
+"task_class": "VERIFY",
+"area": "02. Platform and runtime verification",
+"req": "VERIFY the PowerShell or .NET signal-registration mechanism available in the image.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no PowerShell/.NET runtime in this candidate",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C47-014",
+"task_class": "VERIFY",
+"area": "02. Platform and runtime verification",
+"req": "VERIFY registration syntax in the selected PowerShell runtime.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no PowerShell registration syntax applies",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C47-015",
+"task_class": "VERIFY",
+"area": "02. Platform and runtime verification",
+"req": "VERIFY callback execution behavior and thread constraints.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Node handler runs synchronously on the single event loop; not explicitly documented or tested as such",
+"prior_evidence": [
+"gateway/server.js:253-256"
+]
+},
+{
+"id": "C47-016",
+"task_class": "VERIFY",
+"area": "02. Platform and runtime verification",
+"req": "VERIFY whether the selected mechanism handles the intended signal.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "real SIGTERM delivered to a spawned process and handled (exit 0, drain observed)",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C47-017",
+"task_class": "DOCUMENT",
+"area": "02. Platform and runtime verification",
+"req": "Record the exact image and runtime used.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "authoring runtime recorded (Linux, Node v22.22.2); container image digest not yet pinned/recorded",
+"prior_evidence": [
+"docs/ARCHITECTURE.md:3",
+"deploy/Dockerfile:7"
+]
+},
+{
+"id": "C47-018",
+"task_class": "IMPLEMENT",
+"area": "02. Platform and runtime verification",
+"req": "Compare observed behavior with the article's generic signal description.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "observed sequence documented but no explicit comparison against the source article's generic description",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C47-019",
+"task_class": "IMPLEMENT",
+"area": "02. Platform and runtime verification",
+"req": "Avoid claiming successful trapping from registration alone.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "real-process test verifies actual drain/exit rather than assuming registration alone worked",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C47-020",
+"task_class": "IMPLEMENT",
+"area": "02. Platform and runtime verification",
+"req": "Preserve a controlled signal-delivery probe.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "controlled real SIGTERM probe kept in the suite",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C47-021",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Register the chosen handler during controlled startup.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "process.on('SIGTERM'/'SIGINT') registered at controlled module-load startup",
+"prior_evidence": [
+"gateway/server.js:252-257"
+]
+},
+{
+"id": "C47-022",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Register before the service begins accepting persistent work where feasible.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "handlers registered before gw.listen() is called",
+"prior_evidence": [
+"gateway/server.js:252-257"
+]
+},
+{
+"id": "C47-023",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Retain any registration object required for its lifetime.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Node process.on has no disposable registration object like .NET CancellationTokenRegistration",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C47-024",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Avoid duplicate registrations after repeated initialization.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "single require.main===module block; handlers registered exactly once per process",
+"prior_evidence": [
+"gateway/server.js:247-257"
+]
+},
+{
+"id": "C47-025",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Capture registration failures explicitly.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no code captures or logs a registration failure for process.on",
+"prior_evidence": []
+},
+{
+"id": "C47-026",
+"task_class": "SPECIFY",
+"area": "03. Registration",
+"req": "Decide whether failed registration blocks readiness.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented decision on whether failed registration blocks readiness",
+"prior_evidence": []
+},
+{
+"id": "C47-027",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Avoid depending on interactive-console events for container termination without testing.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Windows Ctrl+C fallback explicitly noted/tested rather than assumed for container termination",
+"prior_evidence": [
+"docs/OPERATIONS.md#run-it-locally-loopback"
+]
+},
+{
+"id": "C47-028",
+"task_class": "IMPLEMENT",
+"area": "03. Registration",
+"req": "Keep handler configuration separate from application message handling.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "signal handling is a separate top-level block from connection message handling",
+"prior_evidence": [
+"gateway/server.js:252-257",
+"gateway/connection.js"
+]
+},
+{
+"id": "C47-029",
+"task_class": "DOCUMENT",
+"area": "03. Registration",
+"req": "Document the registration owner.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "code shows the single registration site but no doc names an explicit owner",
+"prior_evidence": [
+"gateway/server.js:247-257"
+]
+},
+{
+"id": "C47-030",
+"task_class": "TEST",
+"area": "03. Registration",
+"req": "Test cleanup after partial signal-handler initialization.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for cleanup after partial signal-handler initialization found",
+"prior_evidence": []
+},
+{
+"id": "C47-031",
+"task_class": "SPECIFY",
+"area": "04. Notification behavior",
+"req": "Set shutdown intent through a synchronization mechanism safe for the chosen runtime.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining boolean + shutdownPromise; safe under Node's single-threaded model",
+"prior_evidence": [
+"gateway/server.js:216-221"
+]
+},
+{
+"id": "C47-032",
+"task_class": "DOCUMENT",
+"area": "04. Notification behavior",
+"req": "Record the first shutdown request time.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.draining log line carries an ISO ts field at first shutdown request [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/log.js:9",
+"gateway/server.js:222"
+]
+},
+{
+"id": "C47-033",
+"task_class": "DOCUMENT",
+"area": "04. Notification behavior",
+"req": "Record the initiating signal or approved reason.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reason ('deploy'/'shutdown') passed through and logged [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:218-222,254"
+]
+},
+{
+"id": "C47-034",
+"task_class": "IMPLEMENT",
+"area": "04. Notification behavior",
+"req": "Avoid launching a second independent shutdown coordinator.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "shutdownPromise guard prevents a second coordinator instance",
+"prior_evidence": [
+"gateway/server.js:219"
+]
+},
+{
+"id": "C47-035",
+"task_class": "IMPLEMENT",
+"area": "04. Notification behavior",
+"req": "Keep repeated notifications idempotent.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "repeat calls return the same promise / are ignored via signalled flag",
+"prior_evidence": [
+"gateway/server.js:219,253"
+]
+},
+{
+"id": "C47-036",
+"task_class": "IMPLEMENT",
+"area": "04. Notification behavior",
+"req": "Avoid writing secret-bearing state from the handler.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "logger strips secret-like fields; shutdown path writes no secret state",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved",
+"gateway/log.js:10"
+]
+},
+{
+"id": "C47-037",
+"task_class": "IMPLEMENT",
+"area": "04. Notification behavior",
+"req": "Avoid unbounded logging in a repeated-signal path.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "signalled flag ensures only one shutdown log/path even under repeated signals",
+"prior_evidence": [
+"gateway/server.js:253"
+]
+},
+{
+"id": "C47-038",
+"task_class": "IMPLEMENT",
+"area": "04. Notification behavior",
+"req": "Avoid blocking the signal path on a remote datastore.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() makes no remote datastore calls (single-instance profile, D-004)",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C47-039",
+"task_class": "IMPLEMENT",
+"area": "04. Notification behavior",
+"req": "Notify the main lifecycle coordinator through the defined interface.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "onSignal calls gw.shutdown(reason), the defined coordinator interface",
+"prior_evidence": [
+"gateway/server.js:254"
+]
+},
+{
+"id": "C47-040",
+"task_class": "TEST",
+"area": "04. Notification behavior",
+"req": "Test the callback under the actual runtime execution model.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "real spawned-process SIGTERM test exercises the actual Node event-loop execution model",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C47-041",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Stop new application work through the coordinator.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining checked in admit() to stop new upgrades once shutdown starts",
+"prior_evidence": [
+"gateway/server.js:172,221"
+]
+},
+{
+"id": "C47-042",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Coordinate ingress stopping using verified listener behavior.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "draining flag gates admission; health/upgrade 503 behavior tested",
+"prior_evidence": [
+"gateway/server.js:172",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C47-043",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Notify active connection workers.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "service.draining message sent to every connection before ending it",
+"prior_evidence": [
+"gateway/server.js:236-238"
+]
+},
+{
+"id": "C47-044",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Start the approved connection-drain sequence.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "c.end('shutdown',1001,...) starts the connection's orderly drain sequence",
+"prior_evidence": [
+"gateway/server.js:238",
+"gateway/connection.js:286-301"
+]
+},
+{
+"id": "C47-045",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Bound waiting according to the verified service budget.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "hard setTimeout at cfg.shutdownMs (VWS_SHUTDOWN_MS, default 20000) bounds the wait",
+"prior_evidence": [
+"gateway/server.js:232",
+"config/limits.json"
+]
+},
+{
+"id": "C47-046",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Track workers that complete normally.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "registry.onEmpty fires when registry.conns drains to zero, tracking normal completion",
+"prior_evidence": [
+"gateway/server.js:233",
+"gateway/server.js:51"
+]
+},
+{
+"id": "C47-047",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Track workers requiring forced local cleanup.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "finish(forced) distinguishes forced hard-timeout cleanup from graceful completion",
+"prior_evidence": [
+"gateway/server.js:224-232"
+]
+},
+{
+"id": "C47-048",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Stop backend resources only after their users release them.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "worker kill happens only after the connection's end()/snapshot sequence runs",
+"prior_evidence": [
+"gateway/connection.js:286-301"
+]
+},
+{
+"id": "C47-049",
+"task_class": "IMPLEMENT",
+"area": "05. Shutdown orchestration",
+"req": "Produce a final shutdown result for process termination.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() resolves {forced, drainMs}; process.exit(r.forced?1:0) uses it",
+"prior_evidence": [
+"gateway/server.js:230,254"
+]
+},
+{
+"id": "C47-050",
+"task_class": "DOCUMENT",
+"area": "05. Shutdown orchestration",
+"req": "Document the responsibility split between handler and coordinator.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "doc + code comment split handler (signal) vs coordinator (shutdown()) responsibilities",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"gateway/server.js:216-217"
+]
+},
+{
+"id": "C47-051",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Inspect the actual primary container process.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no container was ever built/run to inspect the primary process",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C47-052",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Inspect any wrapper or child process involved.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "direct process topology tested (no wrapper); containerized/Render topology unverified",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:141-142"
+]
+},
+{
+"id": "C47-053",
+"task_class": "IMPLEMENT",
+"area": "06. Process topology",
+"req": "Send the signal to the expected process in a controlled test.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "p.kill('SIGTERM') sent directly to the spawned gateway process in a controlled test",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:146"
+]
+},
+{
+"id": "C47-054",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Confirm the registered handler actually runs.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "exit 0, service.draining and session.exit{shutdown} confirm the handler actually ran",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:146-151"
+]
+},
+{
+"id": "C47-055",
+"task_class": "TEST",
+"area": "06. Process topology",
+"req": "Test signal forwarding through an approved wrapper when applicable.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no Docker wrapper available to test signal forwarding",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C47-056",
+"task_class": "TEST",
+"area": "06. Process topology",
+"req": "Test direct pwsh execution when no wrapper is used.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no pwsh execution in this candidate",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C47-057",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Confirm process exit is not intercepted by an unrelated shell.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "spawn(process.execPath,...) with no shell in between; exec-form ENTRYPOINT documented similarly",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:139-146"
+]
+},
+{
+"id": "C47-058",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Confirm no detached server process remains after shutdown.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "p.on('exit') resolves with code 0, confirming no detached process lingers past the awaited exit",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:147-149"
+]
+},
+{
+"id": "C47-059",
+"task_class": "DOCUMENT",
+"area": "06. Process topology",
+"req": "Record the tested entry-point configuration.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "tested entry point (gateway/server.js) matches the documented ENTRYPOINT",
+"prior_evidence": [
+"deploy/Dockerfile:39",
+"tests/chaos/lifecycle.test.js:139"
+]
+},
+{
+"id": "C47-060",
+"task_class": "IMPLEMENT",
+"area": "06. Process topology",
+"req": "Reject untested assumptions about process identity.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Docker/Render assumptions explicitly flagged BLOCKED rather than asserted",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed",
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C47-061",
+"task_class": "MEASURE",
+"area": "07. Timing tests",
+"req": "Measure delay from signal receipt to shutdown intent.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no measurement isolates signal-receipt-to-intent delay specifically",
+"prior_evidence": []
+},
+{
+"id": "C47-062",
+"task_class": "MEASURE",
+"area": "07. Timing tests",
+"req": "Measure delay from intent to ingress-stop completion.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no measurement isolates intent-to-ingress-stop delay specifically",
+"prior_evidence": []
+},
+{
+"id": "C47-063",
+"task_class": "MEASURE",
+"area": "07. Timing tests",
+"req": "Measure delay from intent to worker notification.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no measurement isolates intent-to-worker-notification delay specifically",
+"prior_evidence": []
+},
+{
+"id": "C47-064",
+"task_class": "MEASURE",
+"area": "07. Timing tests",
+"req": "Measure connection-drain duration.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "connection-drain duration measured (wallMs, gatewayReportedDrainMs)",
+"prior_evidence": [
+"e/I049/drain-measure.json",
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C47-065",
+"task_class": "MEASURE",
+"area": "07. Timing tests",
+"req": "Measure backend cleanup duration.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "backend/worker cleanup duration not isolated from total drain time",
+"prior_evidence": []
+},
+{
+"id": "C47-066",
+"task_class": "MEASURE",
+"area": "07. Timing tests",
+"req": "Measure total process shutdown duration.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "total shutdown wall time measured (20ms / 15ms for the two runs)",
+"prior_evidence": [
+"e/I049/drain-measure.json",
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C47-067",
+"task_class": "TEST",
+"area": "07. Timing tests",
+"req": "Test the timings with no active clients.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "zero-connection path exists in code (registry.conns.size===0) but not exercised in a dedicated measurement",
+"prior_evidence": [
+"gateway/server.js:234"
+]
+},
+{
+"id": "C47-068",
+"task_class": "TEST",
+"area": "07. Timing tests",
+"req": "Test the timings with representative active clients.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "3 sessions, idle and running-command, measured",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C47-069",
+"task_class": "TEST",
+"area": "07. Timing tests",
+"req": "Test the timings with an unresponsive client.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no measured shutdown scenario with an unresponsive client",
+"prior_evidence": []
+},
+{
+"id": "C47-070",
+"task_class": "IMPLEMENT",
+"area": "07. Timing tests",
+"req": "Compare measured results with the verified hosting budget.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "measured drain compared against an assumed 30s Blueprint budget, but that budget itself is unverified (BLOCKED)",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C47-071",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Deliver termination during listener initialization.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test delivers termination while the listener is initializing",
+"prior_evidence": []
+},
+{
+"id": "C47-072",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Deliver termination during worker backend initialization.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test delivers termination during worker backend initialization",
+"prior_evidence": []
+},
+{
+"id": "C47-073",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Deliver termination during connection handoff.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test delivers termination specifically during connection hand-off",
+"prior_evidence": []
+},
+{
+"id": "C47-074",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Deliver termination during a large receive.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test delivers termination during a large in-flight receive",
+"prior_evidence": []
+},
+{
+"id": "C47-075",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Deliver termination during a large send.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_closeSocket has a bounded flush grace period for pending output, but not tested combined with SIGTERM",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C47-076",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Deliver two termination requests close together.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "signalled flag and shutdownPromise make two close terminations harmless by construction",
+"prior_evidence": [
+"gateway/server.js:219,253"
+]
+},
+{
+"id": "C47-077",
+"task_class": "IMPLEMENT",
+"area": "08. Race and failure tests",
+"req": "Trigger a worker failure while shutdown is in progress.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "_finalExit is idempotent (exitSent guard), so a worker failure racing shutdown still yields one exit",
+"prior_evidence": [
+"gateway/connection.js:254-266,274-283"
+]
+},
+{
+"id": "C47-078",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test a handler-registration failure.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for a handler-registration failure",
+"prior_evidence": []
+},
+{
+"id": "C47-079",
+"task_class": "TEST",
+"area": "08. Race and failure tests",
+"req": "Test cleanup that exceeds the approved budget in an isolated environment.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "measured drains (15-20ms) never approach VWS_SHUTDOWN_MS; no test forces the hard-timeout path",
+"prior_evidence": []
+},
+{
+"id": "C47-080",
+"task_class": "DOCUMENT",
+"area": "08. Race and failure tests",
+"req": "Record whether final process behavior matches the intended policy.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "real-process test asserts exit code 0 matches the intended policy [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-151"
+]
+},
+{
+"id": "C47-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Emit one safe shutdown-requested event.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "one gateway.draining event emitted per shutdown, no secrets",
+"prior_evidence": [
+"gateway/server.js:222"
+]
+},
+{
+"id": "C47-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Include the signal reason when safely available.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "reason field included when available",
+"prior_evidence": [
+"gateway/server.js:222"
+]
+},
+{
+"id": "C47-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Include the release and instance identity.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no release version or instance identity field exists anywhere in the logger",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C47-084",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record transition timings without private payloads.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.stopped logs drainMs; log.js strips payload/token fields [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:229",
+"gateway/log.js:10"
+]
+},
+{
+"id": "C47-085",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record incomplete cleanup categories.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only a single 'forced' boolean is recorded, not itemized cleanup categories",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C47-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid treating an expected termination as an unexplained crash.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'shutdown' reason distinguished from 'worker_failure'; graceful exit is never logged as a crash",
+"prior_evidence": [
+"gateway/connection.js:262-266"
+]
+},
+{
+"id": "C47-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Distinguish graceful completion from forced termination.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "finish(forced) boolean and differing exit codes distinguish graceful vs forced",
+"prior_evidence": [
+"gateway/server.js:224-231"
+]
+},
+{
+"id": "C47-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Preserve the earliest shutdown failure.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit tracking of the earliest shutdown failure distinct from the overall forced flag",
+"prior_evidence": []
+},
+{
+"id": "C47-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide an operator procedure for reproducing signal handling locally.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "local run instructions plus a reproducible real-SIGTERM test",
+"prior_evidence": [
+"docs/OPERATIONS.md#run-it-locally-loopback",
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C47-090",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Document which hosted observations remain unavailable.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'Not run' table lists Docker/Render/TLS-edge/WAN observations as unavailable",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C47-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the selected signal-registration mechanism.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "SIGTERM/SIGINT registered before listen is published",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C47-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the handler-to-coordinator contract.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "handler-to-coordinator sequence published",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C47-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link exact-container signal-delivery evidence.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no container built; exact-container evidence cannot be linked",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C47-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link direct or wrapped process-topology evidence.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "direct-process evidence linked; wrapped/container evidence missing",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C47-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link startup-active-idle signal tests.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "active/idle signal behavior linked; no startup-time signal test link found",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C47-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link repeated-signal idempotence tests.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test sends two SIGTERMs to verify idempotence; only the code guard exists",
+"prior_evidence": []
+},
+{
+"id": "C47-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record the verified platform shutdown budget.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "platform shutdown budget (Blueprint 30s) is referenced but never actually verified on the platform",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C47-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document measured shutdown timing limits.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "measured drain timing documented",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C47-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved signal or callback behavior.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "general unresolved items listed, but not itemized specifically for signal/callback behavior",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why",
+"docs/RELEASE.md#release-notes"
+]
+},
+{
+"id": "C47-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve signal handling only after receipt triggers the intended shutdown sequence.",
+"ram_overlay": "Convert SIGTERM into one shutdown token and a measured deadline. Memory volatility must be disclosed rather than hidden behind a best-effort end-of-life flush.",
+"challenge": "Race termination with input and send completion; record which admitted operations completed, failed, or became ambiguous.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "real SIGTERM test proves receipt triggers the intended sequence before the release gate approves local use",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-152",
+"docs/RELEASE.md#gate-decision"
+]
+}
+]
+}

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv27-unikernel-execution"
+version = "4.3.0"
+description = "INV-27 unikernel image admission (seal verification from bytes) and supervised execution"
+requires-python = ">=3.10"
+dependencies = []            # stdlib-only runtime; pk_core is vendored under _vendor/
+license = { text = "UNLICENSED - owner to choose (W-LICENSE)" }
+
+[project.optional-dependencies]
+crypto = ["cryptography>=42"]   # constant-time Ed25519 backend + AES-GCM sealed_store
+
+[tool.setuptools]
+package-dir = { "inv27_unikernel_execution" = "." }
+packages = ["inv27_unikernel_execution", "inv27_unikernel_execution.image", "inv27_unikernel_execution.trust", "inv27_unikernel_execution.tools"]
+
+[tool.inv27.lint]
+runtime_modules = ["admission.py", "authz.py", "audit.py", "bootcontract.py", "config.py", "errors.py", "explain.py", "isolation.py", "lifecycle.py", "manifest.py", "precedence.py", "redaction.py", "resilience.py", "runtime.py", "sealed_store.py", "service.py", "telemetry.py", "vmm.py", "image/blob.py", "image/elf.py", "image/facts.py", "trust/signing.py", "trust/ed25519.py"]
+coverage_threshold = 85

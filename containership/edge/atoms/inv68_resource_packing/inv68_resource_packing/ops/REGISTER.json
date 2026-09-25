@@ -1,0 +1,18 @@
+{
+  "schema": "PK_PACK_REGISTER/1",
+  "rule": "Every entry needs owner, approvers, rationale, risk, compensating controls and an expiry. Expired or unowned entries fail the release gate. No entry is 'active' until a named approver signs.",
+  "entries": [
+    {"id": "DEBT-001", "type": "debt", "title": "HMAC token trust root instead of mTLS/SPIFFE or OIDC", "affected": ["MC-06", "MC-14"], "severity": "High",
+     "owner": null, "approvers": [], "status": "proposed", "rationale": "stdlib-only boundary for this archive; interface is replaceable", "risk": "shared-key compromise lets an attacker mint tokens until rotation",
+     "compensating_controls": ["short TTL (<=1h)", "nonce replay protection", "kind capability ceilings", "kid-based rotation"], "expires": "2026-12-31"},
+    {"id": "DEBT-002", "type": "debt", "title": "in-process idempotency cache and rate windows (not shared across replicas)", "affected": ["MC-07", "MC-05"], "severity": "Medium",
+     "owner": null, "approvers": [], "status": "proposed", "rationale": "single-instance-per-site model (contract boundaries.site)", "risk": "multi-replica deployments double-count or miss replays",
+     "compensating_controls": ["deterministic packing makes replays harmless", "per-site instance"], "expires": "2026-12-31"},
+    {"id": "DEBT-003", "type": "debt", "title": "no edge power/thermal measurement on constrained hardware", "affected": ["MC-23"], "severity": "Medium",
+     "owner": null, "approvers": [], "status": "proposed", "rationale": "no far-edge device available to this build", "risk": "unknown energy cost per pack on ARM/low-power nodes",
+     "compensating_controls": ["peak allocation and latency measured", "O(n log n + n*open_hosts) algorithm"], "expires": "2026-12-31"},
+    {"id": "DEP-001", "type": "deprecation", "title": "lower_bound() default counts unplaceable workloads (4.2.0 semantics)", "affected": ["MC-22"], "severity": "Low",
+     "owner": null, "approvers": [], "status": "proposed", "rationale": "compatibility; placeable_only=True added in 4.3.0", "risk": "callers relying on default overstate the bound",
+     "compensating_controls": ["service, explain, bench use placeable_only=True"], "expires": "2027-03-31"}
+  ]
+}

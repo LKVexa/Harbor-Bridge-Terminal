@@ -1,0 +1,75 @@
+{
+ "component": 53,
+ "title": "Decision journal/explain API",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "durable decision journal schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/explain.py::SCHEMA",
+   "modules": [
+    "production/explain.py::DecisionJournal.record_tick",
+    "production/explain.py::verify_records"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_journal_schema_durable",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_tampered_journal_refused"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "reason graph linking inputs/policies/constraints",
+   "state": "IMPLEMENTED",
+   "spec": "production/explain.py::build_graph",
+   "modules": [
+    "production/explain.py::build_graph"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_reason_graph",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_reason_graph_expiry"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "explain API/query surface",
+   "state": "IMPLEMENTED",
+   "spec": "production/explain.py::DecisionJournal.explain",
+   "modules": [
+    "production/explain.py::DecisionJournal.explain",
+    "production/explain.py::DecisionJournal.query"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_explain_query"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "decision replay/diff capability",
+   "state": "IMPLEMENTED",
+   "spec": "production/explain.py::replay",
+   "modules": [
+    "production/explain.py::replay",
+    "production/explain.py::diff"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_replay_and_diff"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "retention and access policy for decision evidence",
+   "state": "PARTIAL",
+   "spec": "production/explain.py::ACCESS_POLICY",
+   "modules": [
+    "production/explain.py::view",
+    "production/explain.py::may_purge"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.ExplainTests.test_retention_and_access",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialAuthz.test_explain_role_denied_and_tenant_view_minimal"
+   ],
+   "blocker": "retention duration and role model approval by data owner (UNASSIGNED); caller identity/authN is not provided here"
+  }
+ ],
+ "notes": "Single-writer journal: two DecisionJournal instances on one file fork the chain (detected on reopen, not prevented)."
+}

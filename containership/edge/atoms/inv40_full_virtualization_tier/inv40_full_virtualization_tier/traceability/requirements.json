@@ -1,0 +1,2261 @@
+{
+ "schema": "PK_FULL_VM_TRACEABILITY/1",
+ "element": "INV-40",
+ "version": "4.3.0",
+ "blocker_catalog": {
+  "OWNER": "accountable humans must be bound to roles and approve closure (docs/OWNERS.md)",
+  "HW-KVM": "no host with /dev/kvm + QEMU was available; hardware-backed lane not run",
+  "PK-CORE": "pk_core distribution not supplied; cannot pin, lock or run integration",
+  "PROD-ENV": "no provisioned environment / collector / transport to deploy into",
+  "SEC-KMS": "no KMS/IdP binding for keys; no at-rest/in-transit encryption",
+  "SEC-SIGN": "no asymmetric signing identity / attestation service",
+  "DIST-STORE": "no linearizable lease store (INV-33) for multi-node fencing/failover",
+  "ELAPSED": "requires elapsed real time (drills, soak, recurring reviews)",
+  "FLEET": "requires fleet-scale hardware",
+  "EDGE-HW": "requires instrumented constrained edge nodes",
+  "ADJ-LAYERS": "adjacent elements (INV-23, PLN-04, INV-32, INV-33) not in this repository",
+  "LICENSE": "licence choice is the owner's decision"
+ },
+ "status_counts": {
+  "PARTIAL": 37,
+  "IMPLEMENTED": 59,
+  "BLOCKED": 10
+ },
+ "requirements": [
+  {
+   "id": "REPO-001",
+   "dimension": "Repository",
+   "requirement": "pk_core dependency packaging/pin",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/compat.py",
+    "pyproject.toml"
+   ],
+   "tests": [
+    "test_fvt_units.CompatTest"
+   ],
+   "docs": [
+    "docs/DEPENDENCIES.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "PK-CORE"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "API surface declared + import-time diagnostic + extra; range unpinned"
+  },
+  {
+   "id": "REPO-002",
+   "dimension": "Repository",
+   "requirement": "MASTER.md source artifact",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/MASTER_RETIREMENT.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "retirement PROPOSED; not reconstructed"
+  },
+  {
+   "id": "REPO-003",
+   "dimension": "Repository",
+   "requirement": "production hypervisor/provider adapter",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/provider.py",
+    "fvt/service.py"
+   ],
+   "tests": [
+    "test_fvt_units.ProviderTest",
+    "test_fvt_service",
+    "test_fvt_lanes.KvmLaneTest"
+   ],
+   "docs": [
+    "docs/adr/ADR-0001-full-virtualization-tier.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "QemuKvmProvider + QMP client implemented and unit-tested; hardware lane NOT RUN"
+  },
+  {
+   "id": "REPO-004",
+   "dimension": "Repository",
+   "requirement": "build/install metadata",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "pyproject.toml"
+   ],
+   "tests": [
+    "tools/ci.py:install-check"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "zero-dependency build metadata"
+  },
+  {
+   "id": "REPO-005",
+   "dimension": "Repository",
+   "requirement": "license file",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "LICENSE-DECISION-REQUIRED.md",
+    "THIRD-PARTY-NOTICES.md"
+   ],
+   "blockers": [
+    "LICENSE",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "REPO-006",
+   "dimension": "Repository",
+   "requirement": "CI/release workflow",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    ".github/workflows/ci.yml",
+    "tools/ci.py"
+   ],
+   "tests": [
+    "evidence/ci_run.json"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER",
+    "SEC-SIGN"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "CI + evidence + gate; release signing absent"
+  },
+  {
+   "id": "INV-40-C001",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define the exact production responsibility of Full virtualization tier.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Responsibility is explicitly defined in contract.py and README.md."
+  },
+  {
+   "id": "INV-40-C002",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document what Full virtualization tier owns and explicitly does not own.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Owns/not-owns boundaries are explicit in contract.py and README.md."
+  },
+  {
+   "id": "INV-40-C003",
+   "dimension": "Architecture & Scope",
+   "requirement": "Identify upstream, downstream, and peer dependencies of Full virtualization tier.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Upstream/downstream/peer dependencies are enumerated in contract.py."
+  },
+  {
+   "id": "INV-40-C004",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define the authoritative source of truth used by Full virtualization tier.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "The hardware virtualization primitive is named as the source of truth."
+  },
+  {
+   "id": "INV-40-C005",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document assumptions Full virtualization tier makes about nodes, runtimes, networks, storage, and control planes.",
+   "priority": "P1",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/ASSUMPTIONS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C006",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define tenant, environment, site, and workload boundaries relevant to Full virtualization tier.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Tenant/environment/site/workload boundaries are defined in contract.py."
+  },
+  {
+   "id": "INV-40-C007",
+   "dimension": "Architecture & Scope",
+   "requirement": "Separate mandatory Full virtualization tier capabilities from optional optimizations.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Mandatory and optional capability lists are separated in contract.py."
+  },
+  {
+   "id": "INV-40-C008",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document unsupported deployment patterns and non-goals for Full virtualization tier.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Unsupported/non-goal behavior is explicitly documented."
+  },
+  {
+   "id": "INV-40-C009",
+   "dimension": "Architecture & Scope",
+   "requirement": "Assign an accountable owner and escalation path for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OWNERS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "roles/authority defined; nobody bound"
+  },
+  {
+   "id": "INV-40-C010",
+   "dimension": "Architecture & Scope",
+   "requirement": "Approve an architecture decision record for Full virtualization tier, its technologies (EC2/QEMU-style full VMs), and its function (Maximum legacy compatibility/compliance isolation).",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/adr/ADR-0001-full-virtualization-tier.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "ADR PROPOSED, unapproved"
+  },
+  {
+   "id": "INV-40-C011",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Translate the source function of Full virtualization tier \u2014 Maximum legacy compatibility/compliance isolation \u2014 into testable SHALL-level requirements.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [
+    "test_fvt_service.SecurityTest"
+   ],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "FVT-R01..R06 each mapped to a test"
+  },
+  {
+   "id": "INV-40-C012",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define functional requirements for Full virtualization tier across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "cloud adapter not implemented"
+  },
+  {
+   "id": "INV-40-C013",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [
+    "tools/bench.py"
+   ],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "targets PROPOSED"
+  },
+  {
+   "id": "INV-40-C014",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/errors.py"
+   ],
+   "tests": [
+    "test_fvt_units.ErrorsTest",
+    "test_fvt_service.ContractTest.test_degraded_boot_reported"
+   ],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C015",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define lifecycle states and legal state transitions managed or exposed by Full virtualization tier.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "runtime.py implements guarded created/running/stopped/destroyed lifecycle transitions with unit tests."
+  },
+  {
+   "id": "INV-40-C016",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define versioning and backward-compatibility requirements for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/compat.py"
+   ],
+   "tests": [
+    "test_fvt_units.CompatTest"
+   ],
+   "docs": [
+    "docs/VERSIONING.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C017",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Full virtualization tier.",
+   "priority": "P1",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/resilience.py"
+   ],
+   "tests": [
+    "test_fvt_units.ResilienceTest.test_admission_shed_and_quota",
+    "test_fvt_service.ConcurrencyTest"
+   ],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C018",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define behavior when network connectivity is intermittent or absent.",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/identity.py",
+    "fvt/telemetry.py",
+    "fvt/fencing.py"
+   ],
+   "tests": [
+    "test_fvt_units.IdentityTest.test_trust_services_unavailable_fail_closed",
+    "test_fvt_service.FaultInjectionTest.test_telemetry_outage_is_degraded_not_fatal"
+   ],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "serve_cached_readonly mode declared, not implemented"
+  },
+  {
+   "id": "INV-40-C019",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define precedence rules when Full virtualization tier requirements conflict with security, residency, SLO, or cost constraints.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "precedence documented; decisions recorded"
+  },
+  {
+   "id": "INV-40-C020",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Maintain a requirements traceability matrix from each Full virtualization tier requirement to implementation and verification evidence.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "tools/build_traceability.py"
+   ],
+   "tests": [
+    "test_fvt_gate"
+   ],
+   "docs": [
+    "traceability/requirements.json"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C021",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/INTERFACES.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C022",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Use versioned typed schemas for all externally visible Full virtualization tier contracts.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "schemas/",
+    "fvt/schema.py"
+   ],
+   "tests": [
+    "test_fvt_units.SchemaTest",
+    "test_fvt_service.ContractTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C023",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define authentication requirements at each Full virtualization tier boundary.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/identity.py"
+   ],
+   "tests": [
+    "test_fvt_units.IdentityTest"
+   ],
+   "docs": [
+    "docs/INTERFACES.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "SEC-KMS"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "HMAC tokens; asymmetric issuer + IdP pending"
+  },
+  {
+   "id": "INV-40-C024",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define authorization and explicit capability requirements at each Full virtualization tier boundary.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/identity.py"
+   ],
+   "tests": [
+    "test_fvt_service.SecurityTest"
+   ],
+   "docs": [
+    "docs/INTERFACES.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C025",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/resilience.py",
+    "fvt/service.py"
+   ],
+   "tests": [
+    "test_fvt_units.ResilienceTest",
+    "test_fvt_service.ContractTest.test_idempotent_create"
+   ],
+   "docs": [
+    "docs/INTERFACES.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C026",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define structured failure codes and machine-readable error details for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/errors.py"
+   ],
+   "tests": [
+    "test_fvt_units.ErrorsTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C027",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define compatibility behavior when peers use different supported versions.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/compat.py"
+   ],
+   "tests": [
+    "test_fvt_units.CompatTest.test_negotiate"
+   ],
+   "docs": [
+    "docs/VERSIONING.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "only one major exists"
+  },
+  {
+   "id": "INV-40-C028",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Document payload, concurrency, queue, connection, or resource limits at Full virtualization tier interfaces.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/schema.py",
+    "fvt/resilience.py"
+   ],
+   "tests": [
+    "test_fvt_units.SchemaTest.test_size_and_depth_bounds"
+   ],
+   "docs": [
+    "docs/INTERFACES.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C029",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Provide reference examples and conformance fixtures for Full virtualization tier.",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "docs/examples/"
+   ],
+   "tests": [
+    "test_fvt_lanes.FixtureTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C030",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Create automated integration tests proving Full virtualization tier interoperates with adjacent architectural layers.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/TESTING.md"
+   ],
+   "blockers": [
+    "ADJ-LAYERS",
+    "OWNER",
+    "PK-CORE"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C031",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Select and pin approved implementations, versions, or specifications for Full virtualization tier: EC2/QEMU-style full VMs.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/provider.py"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/adr/ADR-0001-full-virtualization-tier.md",
+    "docs/DEPENDENCIES.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "KVM/QEMU selected; exact version pin unverified"
+  },
+  {
+   "id": "INV-40-C032",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Separate immutable artifacts from mutable configuration and state for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/CONFIGURATION.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C033",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Define declarative configuration and secure defaults for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py",
+    "schemas/PK_FULL_VM_CONFIG.v1.schema.json"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest.test_secure_defaults_valid"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C034",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C035",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py::layer"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest.test_layering_without_rebuild"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C036",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Record configuration provenance, version, author, and activation time.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py::ConfigStore"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest.test_activate_provenance_and_rollback"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C037",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py::_atomic_write"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest.test_invalid_never_partially_applied"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C038",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Define automatic and operator-driven rollback for failed Full virtualization tier changes.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py::rollback"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest.test_auto_rollback_on_failed_health"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "package rollback is a release procedure (docs/OPERATIONS.md)"
+  },
+  {
+   "id": "INV-40-C039",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Keep credentials and secret material out of ordinary Full virtualization tier configuration and diagnostics.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/config.py",
+    "fvt/telemetry.py",
+    "fvt/audit.py"
+   ],
+   "tests": [
+    "test_fvt_units.ConfigTest.test_secret_material_refused",
+    "test_fvt_units.TelemetryTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C040",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Full virtualization tier operation.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "tools/bootstrap.py"
+   ],
+   "tests": [
+    "test_fvt_lanes.BootstrapTest"
+   ],
+   "docs": [
+    "docs/CONFIGURATION.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "healthy path proven only on the fake lane"
+  },
+  {
+   "id": "INV-40-C041",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Threat-model Full virtualization tier against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C042",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Apply least privilege to every identity and capability used by Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/identity.py",
+    "fvt/provider.py"
+   ],
+   "tests": [
+    "test_fvt_service.SecurityTest.test_quarantine"
+   ],
+   "docs": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "uid/cgroup/namespace confinement of QEMU is a host deployment step"
+  },
+  {
+   "id": "INV-40-C043",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Full virtualization tier permits.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/provider.py::argv"
+   ],
+   "tests": [
+    "test_fvt_units.ProviderTest.test_qemu_argv_is_kvm_only_and_full_model"
+   ],
+   "docs": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C044",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/identity.py"
+   ],
+   "tests": [
+    "test_fvt_units.IdentityTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER",
+    "SEC-KMS",
+    "SEC-SIGN"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "callers authenticated; node/provider attestation absent"
+  },
+  {
+   "id": "INV-40-C045",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/integrity.py",
+    "fvt/service.py"
+   ],
+   "tests": [
+    "test_fvt_units.IntegrityTest",
+    "test_fvt_service.SecurityTest.test_unapproved_image_and_gpu_policy"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER",
+    "SEC-SIGN"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "HMAC signature only"
+  },
+  {
+   "id": "INV-40-C046",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Enforce tenant/workload isolation across Full virtualization tier execution, memory, state, network, and device boundaries as applicable.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [
+    "runtime.py",
+    "fvt/identity.py",
+    "fvt/resilience.py"
+   ],
+   "tests": [
+    "test_fvt_service.SecurityTest",
+    "test_fvt_service.ConcurrencyTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "memory/network isolation relies on KVM/QEMU, unverified on hardware"
+  },
+  {
+   "id": "INV-40-C047",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Encrypt sensitive Full virtualization tier data in transit and at rest with managed key rotation.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV",
+    "SEC-KMS"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C048",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/identity.py"
+   ],
+   "tests": [
+    "test_fvt_units.IdentityTest.test_trust_services_unavailable_fail_closed",
+    "test_fvt_service.SecurityTest.test_key_service_down_fails_closed"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "attestation service not modelled (none exists)"
+  },
+  {
+   "id": "INV-40-C049",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Emit tamper-evident audit events for security-sensitive Full virtualization tier operations.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/audit.py"
+   ],
+   "tests": [
+    "test_fvt_units.AuditTest",
+    "test_fvt_service.SecurityTest.test_cross_tenant_denied_and_audited"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "head must be anchored off-host in production"
+  },
+  {
+   "id": "INV-40-C050",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [
+    "test_fvt_service.SecurityTest",
+    "tools/fuzz.py"
+   ],
+   "docs": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "escape and side-channel tests need hardware"
+  },
+  {
+   "id": "INV-40-C051",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/FAILURE_MODES.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C052",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define automated health and stall detection thresholds for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/service.py::health"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/FAILURE_MODES.md",
+    "ops/alerts.json"
+   ],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "thresholds PROPOSED, not deployed"
+  },
+  {
+   "id": "INV-40-C053",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/resilience.py::retry"
+   ],
+   "tests": [
+    "test_fvt_units.ResilienceTest.test_retry_semantics"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C054",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Full virtualization tier failure cascades.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/resilience.py"
+   ],
+   "tests": [
+    "test_fvt_units.ResilienceTest",
+    "test_fvt_service.FaultInjectionTest.test_breaker_opens_then_recovers"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C055",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/FAILURE_MODES.md"
+   ],
+   "blockers": [
+    "DIST-STORE",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "tier refuses rather than relocates"
+  },
+  {
+   "id": "INV-40-C056",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py"
+   ],
+   "tests": [
+    "test_fvt_service.FaultInjectionTest.test_telemetry_outage_is_degraded_not_fatal"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C057",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Full virtualization tier state.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/journal.py",
+    "fvt/service.py::recover"
+   ],
+   "tests": [
+    "test_fvt_units.JournalTest",
+    "test_fvt_service.FaultInjectionTest.test_crash_restart_reconciles"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C058",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/fencing.py",
+    "runtime.py::DeviceLeaseRegistry"
+   ],
+   "tests": [
+    "test_fvt_units.FencingTest",
+    "test_fvt_service.FencingServiceTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "DIST-STORE",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "single-process fencing only"
+  },
+  {
+   "id": "INV-40-C059",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Full virtualization tier behavior.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/service.py::quarantine"
+   ],
+   "tests": [
+    "test_fvt_service.SecurityTest.test_quarantine"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C060",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Run fault-injection tests proving Full virtualization tier recovery against documented objectives.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/provider.py::FakeProvider"
+   ],
+   "tests": [
+    "test_fvt_service.FaultInjectionTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "HW-KVM",
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "in-process injection only"
+  },
+  {
+   "id": "INV-40-C061",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Establish reproducible baselines for Full virtualization tier latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "tools/bench.py"
+   ],
+   "tests": [
+    "evidence/bench.json"
+   ],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "control-plane baseline only"
+  },
+  {
+   "id": "INV-40-C062",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Full virtualization tier.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "ci/bench_thresholds.json"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "thresholds PROPOSED, need approval"
+  },
+  {
+   "id": "INV-40-C063",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure Full virtualization tier under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "tools/bench.py"
+   ],
+   "tests": [
+    "evidence/bench.json"
+   ],
+   "docs": [],
+   "blockers": [
+    "FLEET",
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "steady + burst/overload measured; scale-out/in not"
+  },
+  {
+   "id": "INV-40-C064",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure per-workload and per-tenant overhead introduced by Full virtualization tier.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C065",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Full virtualization tier.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [],
+   "tests": [
+    "evidence/bench.json"
+   ],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "fsync-per-op identified"
+  },
+  {
+   "id": "INV-40-C066",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "group-commit identified, not applied (semantics change)"
+  },
+  {
+   "id": "INV-40-C067",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/resilience.py",
+    "fvt/telemetry.py",
+    "fvt/journal.py"
+   ],
+   "tests": [
+    "test_fvt_units.TelemetryTest",
+    "test_fvt_units.JournalTest"
+   ],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C068",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [],
+   "blockers": [
+    "EDGE-HW",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C069",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Define capacity models and saturation signals that predict when Full virtualization tier needs more resources.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/service.py::health"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "saturation signals only"
+  },
+  {
+   "id": "INV-40-C070",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Block releases that regress approved Full virtualization tier startup, density, throughput, or tail-latency thresholds.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "tools/ci.py",
+    "fvt/gate.py"
+   ],
+   "tests": [
+    "test_fvt_gate"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "regression check wired; thresholds unapproved"
+  },
+  {
+   "id": "INV-40-C071",
+   "dimension": "Observability & Explainability",
+   "requirement": "Expose Full virtualization tier health, readiness, version, configuration, dependency status, and active capability set.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/service.py::health"
+   ],
+   "tests": [
+    "test_fvt_service.ObservabilityTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C072",
+   "dimension": "Observability & Explainability",
+   "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py::Metrics"
+   ],
+   "tests": [
+    "test_fvt_units.TelemetryTest"
+   ],
+   "docs": [
+    "docs/OBSERVABILITY.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C073",
+   "dimension": "Observability & Explainability",
+   "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py::Logger"
+   ],
+   "tests": [
+    "test_fvt_service.ObservabilityTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C074",
+   "dimension": "Observability & Explainability",
+   "requirement": "Propagate trace context across all relevant Full virtualization tier boundaries.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py"
+   ],
+   "tests": [
+    "test_fvt_service.ObservabilityTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C075",
+   "dimension": "Observability & Explainability",
+   "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py"
+   ],
+   "tests": [
+    "test_fvt_units.TelemetryTest.test_redaction_cardinality_trace"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C076",
+   "dimension": "Observability & Explainability",
+   "requirement": "Record the reason for every automated decision made by Full virtualization tier.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py::Decisions"
+   ],
+   "tests": [
+    "test_fvt_service.ContractTest.test_degraded_boot_reported"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C077",
+   "dimension": "Observability & Explainability",
+   "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/telemetry.py::Decisions.explain"
+   ],
+   "tests": [
+    "test_fvt_units.TelemetryTest.test_explain"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C078",
+   "dimension": "Observability & Explainability",
+   "requirement": "Correlate Full virtualization tier events with application release lineage and the live infrastructure graph.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OBSERVABILITY.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "no release-lineage / infra-graph service"
+  },
+  {
+   "id": "INV-40-C079",
+   "dimension": "Observability & Explainability",
+   "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/config.py"
+   ],
+   "tests": [],
+   "docs": [
+    "docs/OBSERVABILITY.md"
+   ],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "policy declared; exporter + enforcement absent"
+  },
+  {
+   "id": "INV-40-C080",
+   "dimension": "Observability & Explainability",
+   "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "ops/alerts.json",
+    "ops/dashboard.json"
+   ],
+   "tests": [],
+   "docs": [],
+   "blockers": [
+    "OWNER",
+    "PROD-ENV"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "defined, not deployed"
+  },
+  {
+   "id": "INV-40-C081",
+   "dimension": "Testing & Certification",
+   "requirement": "Create unit tests for deterministic Full virtualization tier logic and state transitions.",
+   "priority": "n/a-present",
+   "v420_status": "present",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_runtime"
+   ],
+   "docs": [
+    "README.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "Deterministic runtime logic and state transitions have standalone unit tests that pass without pk_core."
+  },
+  {
+   "id": "INV-40-C082",
+   "dimension": "Testing & Certification",
+   "requirement": "Create contract tests for every public Full virtualization tier interface.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "schemas/"
+   ],
+   "tests": [
+    "test_fvt_service.ContractTest"
+   ],
+   "docs": [
+    "docs/TESTING.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C083",
+   "dimension": "Testing & Certification",
+   "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/TESTING.md"
+   ],
+   "blockers": [
+    "ADJ-LAYERS",
+    "OWNER",
+    "PK-CORE"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C084",
+   "dimension": "Testing & Certification",
+   "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [
+    "test_fvt_units.CompatTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "protocol + CPython matrix; arch/hypervisor not"
+  },
+  {
+   "id": "INV-40-C085",
+   "dimension": "Testing & Certification",
+   "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "tools/fuzz.py"
+   ],
+   "tests": [
+    "evidence/fuzz.json"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C086",
+   "dimension": "Testing & Certification",
+   "requirement": "Create concurrency and race-condition tests for shared/distributed Full virtualization tier state.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/service.py",
+    "runtime.py::DeviceLeaseRegistry"
+   ],
+   "tests": [
+    "test_fvt_service.ConcurrencyTest",
+    "test_runtime (lease race)"
+   ],
+   "docs": [
+    "docs/TESTING.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C087",
+   "dimension": "Testing & Certification",
+   "requirement": "Create security tests derived directly from the Full virtualization tier threat model.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [
+    "test_fvt_service.SecurityTest"
+   ],
+   "docs": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "T1/T14 untested"
+  },
+  {
+   "id": "INV-40-C088",
+   "dimension": "Testing & Certification",
+   "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Full virtualization tier.",
+   "priority": "P2",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [
+    "tools/bench.py"
+   ],
+   "tests": [
+    "evidence/bench.json"
+   ],
+   "docs": [],
+   "blockers": [
+    "ELAPSED",
+    "FLEET",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "burst only; no soak/fleet"
+  },
+  {
+   "id": "INV-40-C089",
+   "dimension": "Testing & Certification",
+   "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [
+    "test_fvt_service.FaultInjectionTest",
+    "test_fvt_service.FencingServiceTest"
+   ],
+   "docs": [],
+   "blockers": [
+    "DIST-STORE",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "in-process only"
+  },
+  {
+   "id": "INV-40-C090",
+   "dimension": "Testing & Certification",
+   "requirement": "Require machine-readable acceptance evidence before certifying a Full virtualization tier release for production.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "tools/ci.py",
+    "fvt/gate.py"
+   ],
+   "tests": [
+    "test_fvt_gate"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C091",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define production SLOs, error budgets, and support commitments for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "PROPOSED; support owner unassigned"
+  },
+  {
+   "id": "INV-40-C092",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [
+    "fvt/service.py::quarantine"
+   ],
+   "tests": [
+    "test_fvt_service.SecurityTest.test_quarantine"
+   ],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "ELAPSED",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "procedures written, not exercised"
+  },
+  {
+   "id": "INV-40-C093",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Maintain a supported-version compatibility matrix for Full virtualization tier and adjacent dependencies.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "HW-KVM",
+    "OWNER",
+    "PK-CORE"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C094",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Full virtualization tier.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "SLAs PROPOSED"
+  },
+  {
+   "id": "INV-40-C095",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Provide backup, restore, migration, or reconstruction procedures for Full virtualization tier state where applicable.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/journal.py"
+   ],
+   "tests": [
+    "test_fvt_units.JournalTest"
+   ],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": ""
+  },
+  {
+   "id": "INV-40-C096",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+   "priority": "P0",
+   "v420_status": "partial",
+   "status": "PARTIAL",
+   "implementation": [
+    "tools/bootstrap.py"
+   ],
+   "tests": [
+    "test_fvt_lanes.BootstrapTest"
+   ],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "ELAPSED",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "runbooks not exercised"
+  },
+  {
+   "id": "INV-40-C097",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "PARTIAL",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "ELAPSED",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "no drill"
+  },
+  {
+   "id": "INV-40-C098",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+   "priority": "P1",
+   "v420_status": "missing",
+   "status": "BLOCKED",
+   "implementation": [],
+   "tests": [],
+   "docs": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "ELAPSED",
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "cadence proposed; none occurred"
+  },
+  {
+   "id": "INV-40-C099",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "governance/EXCEPTIONS.json",
+    "fvt/gate.py"
+   ],
+   "tests": [
+    "test_fvt_gate"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "entries unowned"
+  },
+  {
+   "id": "INV-40-C100",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+   "priority": "P0",
+   "v420_status": "missing",
+   "status": "IMPLEMENTED",
+   "implementation": [
+    "fvt/gate.py"
+   ],
+   "tests": [
+    "test_fvt_gate"
+   ],
+   "docs": [],
+   "blockers": [
+    "OWNER"
+   ],
+   "owner": "UNASSIGNED",
+   "note": "gate returns NO_GO on this build"
+  }
+ ]
+}

@@ -1,0 +1,96 @@
+{
+ "schema": "PK_INV32_GOVERNANCE/1",
+ "owners": {
+  "service_owner": null,
+  "security_owner": null,
+  "oncall_owner": null,
+  "deputy": null
+ },
+ "owners_status": "BLOCKED: must be named by the organisation; tooling cannot invent accountable people",
+ "escalation": {
+  "availability": [
+   "oncall_owner",
+   "service_owner"
+  ],
+  "integrity": [
+   "oncall_owner",
+   "security_owner",
+   "service_owner"
+  ],
+  "security": [
+   "security_owner",
+   "service_owner"
+  ],
+  "tenant_isolation": [
+   "security_owner",
+   "service_owner"
+  ]
+ },
+ "boundaries": {
+  "INV-33 virtualization controller": "issues requests; owns placement and guest registration",
+  "PLN-05 elasticity plane": "owns capacity targets",
+  "GAP-10 thermal scheduler": "owns host ceilings (contract TBD)",
+  "INV-24 microVM runtime": "owns guest lifecycle; provider identity"
+ },
+ "review_cadence": {
+  "access_review": "quarterly",
+  "authz_policy_review": "quarterly",
+  "dependency_vulnerability_review": "monthly",
+  "config_defaults_review": "quarterly",
+  "architecture_threat_model_review": "semi-annual",
+  "slo_capacity_benchmark_review": "quarterly"
+ },
+ "severity": {
+  "SEV1": [
+   "reserve violation",
+   "cross-tenant mutation",
+   "audit corruption"
+  ],
+  "SEV2": [
+   "widespread mutation failure",
+   "split brain",
+   "credential compromise"
+  ],
+  "SEV3": [
+   "performance degradation beyond SLO",
+   "single-host provider outage"
+  ],
+  "SEV4": [
+   "telemetry-only issue"
+  ]
+ },
+ "paging": {
+  "SEV1": {
+   "page": "oncall+security",
+   "ack_minutes": 5,
+   "escalate_minutes": 15
+  },
+  "SEV2": {
+   "page": "oncall",
+   "ack_minutes": 15,
+   "escalate_minutes": 30
+  },
+  "SEV3": {
+   "ticket": "oncall",
+   "ack_minutes": 240
+  },
+  "SEV4": {
+   "ticket": "service_owner",
+   "ack_minutes": 1440
+  }
+ },
+ "containment": [
+  "emergency disable",
+  "host quarantine",
+  "credential revoke",
+  "controller drain",
+  "provider isolation (circuit/force open)"
+ ],
+ "evidence_preservation": [
+  "copy state_dir read-only before any repair",
+  "export anchors",
+  "snapshot logs/traces by trace_id"
+ ],
+ "post_incident_review": "required for SEV1/SEV2; corrective actions tracked to closure in the waiver/tech-debt register",
+ "governance_evidence_log": []
+}

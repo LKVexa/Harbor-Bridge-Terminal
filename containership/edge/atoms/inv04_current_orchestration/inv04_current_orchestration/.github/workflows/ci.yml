@@ -1,0 +1,90 @@
+# INV-04 CI matrix (component 68). Written for GitHub Actions; not yet executed in the owner's CI.
+name: inv04-ci
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: py${{ matrix.python }} ${{ matrix.os }} ${{ matrix.mode }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        mode: ["normal", "optimized"]
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv04_current_orchestration }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - name: Unit, property, fuzz, chaos, parity, interface suites
+        shell: bash
+        run: |
+          FLAG=""; [ "${{ matrix.mode }}" = "optimized" ] && FLAG="-O"
+          for t in inv04_current_orchestration/tests/test_*.py; do
+            [ "$(basename $t)" = "test_component.py" ] && continue
+            python $FLAG "$t" || exit 1
+          done
+
+  static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -c constraints.txt ruff mypy pip-audit
+      - run: python tools/lint_gate.py          # assert/unsafe-call/secret scan + ruff + mypy
+      - run: python tools/evidence_gate.py      # evidence-quality gate (77)
+      - run: pip-audit --strict -r constraints.txt   # dev/build tool CVEs; runtime has no third-party deps (67)
+
+  conformance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv04_current_orchestration }
+      - uses: actions/checkout@v4
+        with: { repository: "${{ vars.PK_CORE_REPO }}", ref: "${{ vars.PK_CORE_REF }}", path: pk }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: PK_CORE_PATH=pk python inv04_current_orchestration/tools/pk_core_gate.py   # fails if pk_core missing (78)
+
+  soak:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv04_current_orchestration }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: INV04_ITERATIONS=20000 python inv04_current_orchestration/tests/test_properties.py
+      - run: python inv04_current_orchestration/tools/bench.py --nodes 200 --pods 4000 --drains 20 --out bench.json
+      - uses: actions/upload-artifact@v4
+        with: { name: bench, path: bench.json }
+
+  kind-integration:
+    # Component 58: placeholder job - requires the production ClusterAPI adapter (not in this package).
+    if: false
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        k8s: ["v1.30.10", "v1.31.6", "v1.32.2", "v1.33.0"]
+    steps:
+      - run: echo "Blocked on the official-client ClusterAPI adapter (ADR-0001)"; exit 1
+
+  release:
+    needs: [unit, static]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions: { contents: read, id-token: write }
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/release.py --out dist --source-rev "$GITHUB_SHA" --builder "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - run: python tools/release.py --out dist --verify
+      - uses: sigstore/cosign-installer@v3
+      - run: cosign sign-blob --yes --bundle dist/inv04.bundle dist/*.zip

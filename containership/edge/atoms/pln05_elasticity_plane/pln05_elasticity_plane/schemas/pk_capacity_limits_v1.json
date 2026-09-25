@@ -1,0 +1,108 @@
+{
+  "$id": "urn:pk:schema:PK_CAPACITY_LIMITS:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ceiling": {
+      "description": "Units of capacity (replicas)",
+      "maximum": 1000000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "correlation_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "pattern": "^[A-Za-z0-9._:-]{8,64}$",
+      "type": "string"
+    },
+    "floor": {
+      "description": "Units of capacity (replicas)",
+      "maximum": 1000000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "grace_samples": {
+      "maximum": 1000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "issued_at": {
+      "description": "Unix epoch seconds (UTC); freshness is judged against the plane's trusted clock",
+      "maximum": 32503680000,
+      "minimum": 0,
+      "type": "number"
+    },
+    "issuer": {
+      "description": "Authority source (PLN-01 intent plane principal); provenance of the envelope",
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+      "type": "string"
+    },
+    "revision": {
+      "description": "Monotonic per workload; a revision <= the active one is rejected",
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "scale_down_at": {
+      "exclusiveMaximum": 1,
+      "exclusiveMinimum": 0,
+      "type": "number"
+    },
+    "scale_up_at": {
+      "exclusiveMaximum": 1,
+      "exclusiveMinimum": 0,
+      "type": "number"
+    },
+    "schema": {
+      "const": "PK_CAPACITY_LIMITS/1"
+    },
+    "site": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+      "type": "string"
+    },
+    "tenant": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+      "type": "string"
+    },
+    "traceparent": {
+      "description": "W3C traceparent",
+      "pattern": "^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$",
+      "type": "string"
+    },
+    "workload": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "revision",
+    "tenant",
+    "site",
+    "workload",
+    "floor",
+    "ceiling",
+    "scale_up_at",
+    "scale_down_at",
+    "grace_samples",
+    "issuer",
+    "issued_at"
+  ],
+  "title": "PK_CAPACITY_LIMITS/1 declared capacity envelope",
+  "type": "object",
+  "x-compatibility": "Adding an optional field or an x- extension is non-breaking (minor). Removing/renaming a field, tightening a range, or changing units is breaking and requires a new major schema id (/2).",
+  "x-cross-field": [
+    "floor <= ceiling",
+    "0 < scale_down_at < scale_up_at < 1"
+  ],
+  "x-extension-rule": "Top-level keys beginning with 'x-' are non-critical extensions and are ignored; any other unknown key is a critical extension and is rejected (E_SCHEMA_UNKNOWN_CRITICAL).",
+  "x-schema-version": "1.0.0"
+}

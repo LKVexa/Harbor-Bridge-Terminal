@@ -1,0 +1,43 @@
+{
+  "schema": "inv55-config/1",
+  "environment": "production",
+  "provider": {
+    "kind": "vault-kv2",
+    "address": "https://vault.REPLACE-ME.internal:8200",
+    "mount": "secret",
+    "auth": "approle",
+    "ca_file": "/etc/inv55/vault-ca.pem"
+  },
+  "identity": {
+    "issuer": "https://idp.REPLACE-ME.internal",
+    "audience": "inv55",
+    "max_skew_s": 30
+  },
+  "lease": {
+    "ttl_s": 300,
+    "max_ttl_s": 3600
+  },
+  "limits": {
+    "max_inflight": 256,
+    "rate_per_s": 50,
+    "burst": 100,
+    "max_request_bytes": 16384
+  },
+  "cache": {
+    "fresh_s": 30,
+    "max_stale_s": 30,
+    "allow_stale": false
+  },
+  "retry": {
+    "attempts": 3,
+    "base_s": 0.05,
+    "cap_s": 0.5,
+    "deadline_s": 2.0,
+    "breaker_threshold": 5,
+    "breaker_cooldown_s": 10
+  },
+  "telemetry": {
+    "max_series": 2000,
+    "audit_path": "/var/lib/inv55/audit.jsonl"
+  }
+}

@@ -1,0 +1,178 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:inv55:config",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "environment",
+  "provider",
+  "limits",
+  "telemetry",
+  "audit"
+ ],
+ "properties": {
+  "schema_version": {
+   "type": "integer",
+   "enum": [
+    1
+   ]
+  },
+  "environment": {
+   "type": "string",
+   "enum": [
+    "dev",
+    "test",
+    "staging",
+    "prod"
+   ]
+  },
+  "site": {
+   "type": "string",
+   "pattern": "^[a-z0-9-]{1,32}$"
+  },
+  "provider": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind"
+   ],
+   "properties": {
+    "kind": {
+     "type": "string",
+     "enum": [
+      "vault",
+      "memory"
+     ]
+    },
+    "address": {
+     "type": "string",
+     "pattern": "^https://[^\\s]+$|^http://(127\\.0\\.0\\.1|localhost)(:\\d+)?$"
+    },
+    "mount": {
+     "type": "string",
+     "pattern": "^[a-z0-9_-]{1,64}$"
+    },
+    "kv_version": {
+     "type": "integer",
+     "enum": [
+      1,
+      2
+     ]
+    },
+    "namespace": {
+     "type": "string",
+     "maxLength": 128
+    },
+    "ca_file": {
+     "type": "string"
+    },
+    "auth": {
+     "type": "string",
+     "enum": [
+      "token",
+      "approle",
+      "kubernetes"
+     ]
+    },
+    "auth_ref": {
+     "type": "string",
+     "description": "reference (file path / env var NAME) - never a value",
+     "maxLength": 256
+    },
+    "timeout_s": {
+     "type": "number",
+     "minimum": 0.05,
+     "maximum": 30
+    }
+   }
+  },
+  "limits": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "lease_ttl_s": {
+     "type": "number",
+     "minimum": 1,
+     "maximum": 3600
+    },
+    "max_lease_ttl_s": {
+     "type": "number",
+     "minimum": 1,
+     "maximum": 86400
+    },
+    "cache_ttl_s": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 600
+    },
+    "stale_grace_s": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 3600
+    },
+    "max_in_flight": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 100000
+    },
+    "tenant_rate": {
+     "type": "number",
+     "minimum": 0.1
+    },
+    "workload_rate": {
+     "type": "number",
+     "minimum": 0.1
+    },
+    "max_active_leases": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 10000000
+    }
+   }
+  },
+  "telemetry": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "log_level": {
+     "type": "string",
+     "enum": [
+      "debug",
+      "info",
+      "warn",
+      "error"
+     ]
+    },
+    "trace_sample_ratio": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "metrics_max_series": {
+     "type": "integer",
+     "minimum": 10,
+     "maximum": 100000
+    }
+   }
+  },
+  "audit": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "path"
+   ],
+   "properties": {
+    "path": {
+     "type": "string"
+    },
+    "fsync": {
+     "type": "boolean"
+    },
+    "hmac_key_ref": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

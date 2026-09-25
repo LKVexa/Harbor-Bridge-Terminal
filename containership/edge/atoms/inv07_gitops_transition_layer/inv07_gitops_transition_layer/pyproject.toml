@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv07-gitops-transition-layer"
+version = "5.0.0"
+description = "INV-07 GitOps transition layer: signed-commit verification, provenance, fenced reconciliation, drift revert and rollback by revert"
+requires-python = ">=3.10"
+dependencies = []
+license = {text = "UNDECLARED - owner decision pending (see components/docs/WAIVERS.json W-006)"}
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent"]
+
+[project.optional-dependencies]
+conformance = []          # pk_core is supplied by the parent monorepo, not PyPI
+test-lanes = ["jsonschema>=4.18"]
+
+[project.scripts]
+inv07 = "inv07_gitops_transition_layer.components.cli:main"
+
+[tool.setuptools]
+include-package-data = false
+packages = ["inv07_gitops_transition_layer", "inv07_gitops_transition_layer.components",
+            "inv07_gitops_transition_layer.components.checklist", "inv07_gitops_transition_layer.components.tools"]
+
+[tool.setuptools.package-dir]
+"inv07_gitops_transition_layer" = "."
+
+[tool.setuptools.package-data]
+"inv07_gitops_transition_layer" = ["VERSION", "CHECKLIST.json", "*.md", "NOTICE"]
+"inv07_gitops_transition_layer.components" = ["schemas/*.json", "vectors/*.json", "docs/*", "deploy/*", "deploy/kubernetes/*"]

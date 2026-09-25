@@ -1,0 +1,32 @@
+DECISION dec-2a183cb2d3da4ec9  outcome=success  code=-
+  principal        : sched
+  requested        : {'class': 'gpu-large', 'mem_gb': 80, 'count': 2, 'interconnect': True, 'tenant': 't1'}
+  evaluated as     : {'class': 'gpu-large', 'mem_gb': 80, 'count': 2, 'interconnect': True, 'tenant': 't1'}
+  inventory        : generation=1 source=gap02-a state=fresh age_s=0.0 devices=5
+  configuration    : generation=1 digest=89821f31bb096bf4…
+  tenant quota     : 16 device(s)
+  selected         : ['a0', 'a1']   reservation=rsv-4387126e5b7d4ae6
+  rationale        :
+    - 5 device(s) of class gpu-large
+    - 4 with >= 80 GB
+    - 3 eligible after isolation/ownership rules
+    - first interconnect group in (node, link_group) order with >= 2: n1/nvl-1
+  device reasons   :
+    - [ACCEL_PARTITION_DEDICATED] (refused) p0: partition not allowed for dedicated isolation
+  lineage          : component=4.3.0 manifest=None workload_release=example-trainer@1.0.0
+  trace            : c3f53aa2f96f4c7c6f54a6819987c47f
+
+DECISION dec-478106dfb4d54f65  outcome=refused  code=ACCEL_INSUFFICIENT_MEMORY
+  principal        : sched
+  requested        : {'class': 'gpu-large', 'mem_gb': 120, 'tenant': 't2'}
+  evaluated as     : {'class': 'gpu-large', 'mem_gb': 120, 'tenant': 't2'}
+  inventory        : generation=1 source=gap02-a state=fresh age_s=0.0 devices=5
+  configuration    : generation=1 digest=89821f31bb096bf4…
+  tenant quota     : 16 device(s)
+  selected         : none   reservation=-
+  rationale        :
+    - 5 device(s) of class gpu-large
+  device reasons   :
+    - [ACCEL_INSUFFICIENT_MEMORY] (refused) largest gpu-large has 80 GB < 120 GB
+  lineage          : component=4.3.0 manifest=None workload_release=example-trainer@1.0.0
+  trace            : 3b6cb01c10e10f11293f614931ce4c2b

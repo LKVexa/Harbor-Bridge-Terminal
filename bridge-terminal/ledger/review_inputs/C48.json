@@ -1,0 +1,1683 @@
+{
+"component": "C48",
+"items": [
+{
+"id": "C48-001",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Define the point after which new requests are not accepted.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining gates /api/ws-ticket and WS upgrade admission",
+"prior_evidence": [
+"gateway/server.js:172,120",
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-002",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Identify the listener owner authorized to stop ingress.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "only shutdown() sets registry.draining=true; a single coordinator owns the stop",
+"prior_evidence": [
+"gateway/server.js:218-221"
+]
+},
+{
+"id": "C48-003",
+"task_class": "IMPLEMENT",
+"area": "01. Ingress-stop contract",
+"req": "Distinguish rejecting new work from draining existing connections.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "admit() rejects new upgrades separately from the per-connection drain loop for existing sessions",
+"prior_evidence": [
+"gateway/server.js:172,221-238"
+]
+},
+{
+"id": "C48-004",
+"task_class": "DOCUMENT",
+"area": "01. Ingress-stop contract",
+"req": "Record listener.Stop as the article's proposed operation.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no HttpListener.Stop in the Node candidate; server.close()+draining flag substitute",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-005",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Define treatment of already accepted HTTP contexts.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "finish() calls server.closeAllConnections(), which can abruptly cut lingering plain HTTP requests; no written policy for already-accepted HTTP contexts",
+"prior_evidence": [
+"gateway/server.js:225-227"
+]
+},
+{
+"id": "C48-006",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Define treatment of upgrades currently in progress.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "admit() runs synchronously per upgrade event, so there is no async gap for an 'in-progress' upgrade to straddle",
+"prior_evidence": [
+"gateway/server.js:166-206"
+]
+},
+{
+"id": "C48-007",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Define treatment of upgraded sockets awaiting handoff.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade + Connection creation happen synchronously within admit(), with try/catch release on failure",
+"prior_evidence": [
+"gateway/server.js:192-204"
+]
+},
+{
+"id": "C48-008",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Define treatment of active connection workers.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "active connection worker treatment (snapshot, close, kill after 1.5s) documented",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-009",
+"task_class": "SPECIFY",
+"area": "01. Ingress-stop contract",
+"req": "Identify race conditions at the stop boundary.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "hand-off-after-101 race explicitly commented and handled",
+"prior_evidence": [
+"gateway/server.js:200-203"
+]
+},
+{
+"id": "C48-010",
+"task_class": "IMPLEMENT",
+"area": "01. Ingress-stop contract",
+"req": "Approve an ingress-stop decision table.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no formal published ingress-stop decision table found",
+"prior_evidence": []
+},
+{
+"id": "C48-011",
+"task_class": "VERIFY",
+"area": "02. Runtime behavior gate",
+"req": "VERIFY what listener.Stop does in the exact selected runtime.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no HttpListener.Stop in Node",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-012",
+"task_class": "TEST",
+"area": "02. Runtime behavior gate",
+"req": "Test its effect on pending GetContextAsync.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no GetContextAsync concept in Node's event-driven http server",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-013",
+"task_class": "TEST",
+"area": "02. Runtime behavior gate",
+"req": "Test its effect on ordinary HTTP requests already being handled.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "health-during-draining is tested; a dedicated 'already in-flight ordinary request survives shutdown' test was not found",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C48-014",
+"task_class": "TEST",
+"area": "02. Runtime behavior gate",
+"req": "Test its effect on upgraded WebSocket connections.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "upgraded WS connections observed to receive service.draining and close 1001 during shutdown",
+"prior_evidence": [
+"e/I049/drain-measure.json",
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C48-015",
+"task_class": "TEST",
+"area": "02. Runtime behavior gate",
+"req": "Test its effect on an upgrade currently in progress.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "synchronous admission avoids the race by construction, but no dedicated in-progress-upgrade race test exists",
+"prior_evidence": [
+"gateway/server.js:166-206"
+]
+},
+{
+"id": "C48-016",
+"task_class": "DOCUMENT",
+"area": "02. Runtime behavior gate",
+"req": "Record whether active connections survive long enough for the planned drain.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "sessions received service.draining and session.exit{shutdown} before close, confirming survival through the drain",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C48-017",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior gate",
+"req": "Compare observed results with the article's stop-then-drain sequence.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "observed draining->notify->exit->close sequence matches the documented stop-then-drain design",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C48-018",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior gate",
+"req": "Revise the implementation plan explicitly if the tested sequence is incompatible.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "D-001 itself is the plan revision (flag-based draining instead of listener.Stop), but no explicit 'tested sequence incompatible' note exists",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-019",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior gate",
+"req": "Preserve the original source claim in the verification notes.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no verification notes file preserving the original source claim was found",
+"prior_evidence": []
+},
+{
+"id": "C48-020",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior gate",
+"req": "Gate graceful-shutdown claims on this behavior test.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "GO/CONDITIONAL/NO-GO gates are tied to actual test evidence (95/95), not assumed behavior",
+"prior_evidence": [
+"docs/RELEASE.md#gate-decision"
+]
+},
+{
+"id": "C48-021",
+"task_class": "IMPLEMENT",
+"area": "03. Stop-request handling",
+"req": "Accept stop requests through one coordinator-owned path.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() is the single coordinator-owned entry point for stop requests",
+"prior_evidence": [
+"gateway/server.js:218"
+]
+},
+{
+"id": "C48-022",
+"task_class": "DOCUMENT",
+"area": "03. Stop-request handling",
+"req": "Record ingress-stop intent atomically under the chosen synchronization design.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "registry.draining=true set synchronously first, then logged (Node single-threaded => atomic) [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:221-222"
+]
+},
+{
+"id": "C48-023",
+"task_class": "IMPLEMENT",
+"area": "03. Stop-request handling",
+"req": "Prevent the dispatcher from assigning new work after the approved boundary.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "admit() and _open() both check registry.draining before assigning new work",
+"prior_evidence": [
+"gateway/server.js:172",
+"gateway/connection.js:169"
+]
+},
+{
+"id": "C48-024",
+"task_class": "IMPLEMENT",
+"area": "03. Stop-request handling",
+"req": "Make repeated stop requests harmless.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "shutdownPromise guard makes repeated stop requests harmless",
+"prior_evidence": [
+"gateway/server.js:219"
+]
+},
+{
+"id": "C48-025",
+"task_class": "IMPLEMENT",
+"area": "03. Stop-request handling",
+"req": "Avoid stopping the listener from arbitrary connection workers.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "only the top-level shutdown() function can flip registry.draining; Connection objects have no such access",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C48-026",
+"task_class": "DOCUMENT",
+"area": "03. Stop-request handling",
+"req": "Record the first stop-request reason.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reason captured and logged as part of gateway.draining [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:218,222"
+]
+},
+{
+"id": "C48-027",
+"task_class": "SPECIFY",
+"area": "03. Stop-request handling",
+"req": "Define behavior when the listener was never started.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no defined behavior if shutdown() runs before listen() completes",
+"prior_evidence": []
+},
+{
+"id": "C48-028",
+"task_class": "SPECIFY",
+"area": "03. Stop-request handling",
+"req": "Define behavior when the listener has already failed.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "gw.listen().catch just logs and exits 1 with no interplay defined with shutdown()",
+"prior_evidence": [
+"gateway/server.js:257"
+]
+},
+{
+"id": "C48-029",
+"task_class": "SPECIFY",
+"area": "03. Stop-request handling",
+"req": "Define behavior when the listener reference is absent.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented decision for an absent listener/server reference",
+"prior_evidence": []
+},
+{
+"id": "C48-030",
+"task_class": "TEST",
+"area": "03. Stop-request handling",
+"req": "Test all permitted entry states.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no systematic test of all permitted entry states for stop handling",
+"prior_evidence": []
+},
+{
+"id": "C48-031",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Stop scheduling additional acceptance operations.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining gate stops new upgrade admission",
+"prior_evidence": [
+"gateway/server.js:172"
+]
+},
+{
+"id": "C48-032",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Release or complete the pending acceptance wait through tested listener behavior.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Node's event-driven server has no blocking pending-accept task like .NET's GetContextAsync to release",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-033",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Classify the resulting exception or completion as expected shutdown where appropriate.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "session.exit{shutdown} explicitly classifies the shutdown path as expected, distinct from worker_failure",
+"prior_evidence": [
+"gateway/connection.js:262-266",
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-034",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Avoid restarting the accept loop after intentional stopping.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining is never reset false; no restart path exists",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C48-035",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Handle a context completed just before the stop request.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "connections registered before the shutdown for-loop are included and drained normally",
+"prior_evidence": [
+"gateway/server.js:236"
+]
+},
+{
+"id": "C48-036",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Handle a context completed just after stop intent is recorded.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "draining flag is set before any per-connection loop runs, so no new connection appears after intent is recorded",
+"prior_evidence": [
+"gateway/server.js:172,221"
+]
+},
+{
+"id": "C48-037",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Close or reject undispatched contexts according to the decision table.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "503 rejection implemented for undispatched requests, but no formal decision table backs it (see C48-010)",
+"prior_evidence": [
+"gateway/server.js:120,172"
+]
+},
+{
+"id": "C48-038",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Signal that the acceptance loop has fully exited.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "server.close(callback) + gateway.stopped log signal the accept path has fully exited",
+"prior_evidence": [
+"gateway/server.js:226,229"
+]
+},
+{
+"id": "C48-039",
+"task_class": "IMPLEMENT",
+"area": "04. Acceptance-loop integration",
+"req": "Track contexts remaining in-flight.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns Set tracks in-flight contexts; exposed via /live",
+"prior_evidence": [
+"gateway/server.js:39-52,105"
+]
+},
+{
+"id": "C48-040",
+"task_class": "TEST",
+"area": "04. Acceptance-loop integration",
+"req": "Test stop with no incoming requests.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "zero-connection immediate-onEmpty path exists in code but no dedicated zero-request drain measurement found",
+"prior_evidence": [
+"gateway/server.js:234"
+]
+},
+{
+"id": "C48-041",
+"task_class": "IMPLEMENT",
+"area": "05. Upgrade integration",
+"req": "Recheck stop intent before accepting a new upgrade.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining rechecked at the top of admit() before any upgrade is accepted",
+"prior_evidence": [
+"gateway/server.js:172"
+]
+},
+{
+"id": "C48-042",
+"task_class": "IMPLEMENT",
+"area": "05. Upgrade integration",
+"req": "Recheck stop intent before transferring an upgraded socket.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "same synchronous check precedes acceptUpgrade() later in admit()",
+"prior_evidence": [
+"gateway/server.js:172,192"
+]
+},
+{
+"id": "C48-043",
+"task_class": "SPECIFY",
+"area": "05. Upgrade integration",
+"req": "Define rejection behavior for an upgrade racing with shutdown.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "503 'draining' with Retry-After documented and implemented for a racing upgrade",
+"prior_evidence": [
+"gateway/server.js:172",
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-044",
+"task_class": "SPECIFY",
+"area": "05. Upgrade integration",
+"req": "Define ownership for an upgrade that finishes after stop intent.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "synchronous admission means an upgrade either fully completes before draining or is rejected; no ownership gap",
+"prior_evidence": [
+"gateway/server.js:166-206"
+]
+},
+{
+"id": "C48-045",
+"task_class": "IMPLEMENT",
+"area": "05. Upgrade integration",
+"req": "Avoid orphaning successfully upgraded sockets.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns.add(conn) happens immediately on successful hand-off; try/catch releases on failure",
+"prior_evidence": [
+"gateway/server.js:199,200-203"
+]
+},
+{
+"id": "C48-046",
+"task_class": "IMPLEMENT",
+"area": "05. Upgrade integration",
+"req": "Close or hand off those sockets according to one documented policy.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "single uniform policy: every registry.conns member gets service.draining + end()",
+"prior_evidence": [
+"gateway/server.js:236-239"
+]
+},
+{
+"id": "C48-047",
+"task_class": "IMPLEMENT",
+"area": "05. Upgrade integration",
+"req": "Prevent worker-capacity accounting from leaking during the race.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "reserve/release pattern with try/catch prevents capacity leaks during hand-off races; capacity tests pass",
+"prior_evidence": [
+"gateway/server.js:194-204",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C48-048",
+"task_class": "TEST",
+"area": "05. Upgrade integration",
+"req": "Test a deliberately slow upgrade during ingress stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for a deliberately slow upgrade racing ingress stop",
+"prior_evidence": []
+},
+{
+"id": "C48-049",
+"task_class": "TEST",
+"area": "05. Upgrade integration",
+"req": "Test simultaneous upgrade attempts at the stop boundary.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for simultaneous upgrade attempts at the stop boundary",
+"prior_evidence": []
+},
+{
+"id": "C48-050",
+"task_class": "IMPLEMENT",
+"area": "05. Upgrade integration",
+"req": "Preserve one final outcome for every request.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "_finalExit's exitSent guard preserves exactly one final outcome per request/session",
+"prior_evidence": [
+"gateway/connection.js:274-283"
+]
+},
+{
+"id": "C48-051",
+"task_class": "SPECIFY",
+"area": "06. HTTP integration",
+"req": "Define health response behavior after shutdown intent.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "/health returns 503 once registry.draining is true, documented",
+"prior_evidence": [
+"gateway/server.js:96-101",
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C48-052",
+"task_class": "SPECIFY",
+"area": "06. HTTP integration",
+"req": "Define completion behavior for ordinary HTTP requests already in progress.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented policy for completion of ordinary HTTP requests already in progress at shutdown",
+"prior_evidence": []
+},
+{
+"id": "C48-053",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP integration",
+"req": "Bound any remaining HTTP response writes.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "headersTimeout/requestTimeout exist generally; not specifically bounding remaining writes during shutdown",
+"prior_evidence": [
+"gateway/server.js:146-148"
+]
+},
+{
+"id": "C48-054",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP integration",
+"req": "Avoid advertising readiness after the chosen shutdown boundary.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "/health checks !registry.draining before reporting ok, so readiness is not advertised after the boundary",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C48-055",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP integration",
+"req": "Handle a client disconnect while an HTTP response is finishing.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "res.on('error', () => {}) handles a client disconnecting mid-response",
+"prior_evidence": [
+"gateway/server.js:94"
+]
+},
+{
+"id": "C48-056",
+"task_class": "TEST",
+"area": "06. HTTP integration",
+"req": "Test a health request immediately before stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated test for a health request timed immediately before stop",
+"prior_evidence": []
+},
+{
+"id": "C48-057",
+"task_class": "TEST",
+"area": "06. HTTP integration",
+"req": "Test a health request racing with stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated health-request-racing-stop test found",
+"prior_evidence": []
+},
+{
+"id": "C48-058",
+"task_class": "TEST",
+"area": "06. HTTP integration",
+"req": "Test an ordinary unsupported route racing with stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for an unsupported route racing with stop",
+"prior_evidence": []
+},
+{
+"id": "C48-059",
+"task_class": "DOCUMENT",
+"area": "06. HTTP integration",
+"req": "Record actual edge-visible behavior during ingress stopping.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "actual client-visible drain behavior recorded",
+"prior_evidence": [
+"e/I049/drain-measure.json",
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C48-060",
+"task_class": "IMPLEMENT",
+"area": "06. HTTP integration",
+"req": "Distinguish application rejection from platform routing changes.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no hosting-platform routing layer exists to compare against; deployment never run",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C48-061",
+"task_class": "IMPLEMENT",
+"area": "07. Existing-connection coordination",
+"req": "Notify the drain coordinator when ingress stopping begins.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() itself begins draining then immediately proceeds to notify connections",
+"prior_evidence": [
+"gateway/server.js:221-238"
+]
+},
+{
+"id": "C48-062",
+"task_class": "IMPLEMENT",
+"area": "07. Existing-connection coordination",
+"req": "Use the verified active-socket behavior to order drain actions.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "documented and implemented ordering: draining -> notify -> per-conn end -> kill -> exit",
+"prior_evidence": [
+"gateway/server.js:221-240",
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-063",
+"task_class": "IMPLEMENT",
+"area": "07. Existing-connection coordination",
+"req": "Avoid disposing worker-owned sockets from an unrelated stop helper.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "finish() calls c._killWorker/c.ws.terminate via each Connection's own methods, not an unrelated helper",
+"prior_evidence": [
+"gateway/server.js:225"
+]
+},
+{
+"id": "C48-064",
+"task_class": "IMPLEMENT",
+"area": "07. Existing-connection coordination",
+"req": "Snapshot active connections through the approved registry mechanism.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns Set is the single approved mechanism iterated to drain",
+"prior_evidence": [
+"gateway/server.js:39-52,236"
+]
+},
+{
+"id": "C48-065",
+"task_class": "IMPLEMENT",
+"area": "07. Existing-connection coordination",
+"req": "Resolve connections accepted but not fully registered.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "hand-off-exception path releases/removes not-fully-registered connections; test confirms no leak",
+"prior_evidence": [
+"gateway/server.js:200-203",
+"tests/chaos/lifecycle.test.js:154-165"
+]
+},
+{
+"id": "C48-066",
+"task_class": "REVIEW",
+"area": "07. Existing-connection coordination",
+"req": "Ensure no new untracked worker appears after the snapshot boundary.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "draining checked before any new worker/Connection is created, so none appear after the boundary",
+"prior_evidence": [
+"gateway/server.js:172,221"
+]
+},
+{
+"id": "C48-067",
+"task_class": "TEST",
+"area": "07. Existing-connection coordination",
+"req": "Test existing idle sessions during ingress stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "runningCommand:false case exercises idle sessions during ingress stop",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C48-068",
+"task_class": "TEST",
+"area": "07. Existing-connection coordination",
+"req": "Test existing busy sessions during ingress stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "runningCommand:true case exercises busy sessions during ingress stop",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C48-069",
+"task_class": "DOCUMENT",
+"area": "07. Existing-connection coordination",
+"req": "Record connections terminated before orderly close was possible.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no forced/interrupted-close scenario was recorded; both measured drains were clean",
+"prior_evidence": []
+},
+{
+"id": "C48-070",
+"task_class": "DOCUMENT",
+"area": "07. Existing-connection coordination",
+"req": "Document limitations rather than claiming uninterrupted draining.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "docs consistently mark unmeasured/unverified items rather than claiming uninterrupted draining",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why",
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C48-071",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Handle Stop throwing an exception.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "server.close(() => {}) ignores any error argument from the close callback",
+"prior_evidence": [
+"gateway/server.js:226"
+]
+},
+{
+"id": "C48-072",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Handle listener disposal racing with Stop.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no handling or test for a listener-disposal race distinct from close()",
+"prior_evidence": []
+},
+{
+"id": "C48-073",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Handle a pending acceptance task that does not complete promptly.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Node's event-driven server has no blocking pending-acceptance task analogous to .NET's",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-074",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Bound waiting for the acceptance loop to exit.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no accept loop to bound the exit of; overall drain is bounded by VWS_SHUTDOWN_MS instead",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-075",
+"task_class": "DOCUMENT",
+"area": "08. Failure behavior",
+"req": "Record an ingress-stop failure as distinct from connection-drain failure.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "a single 'forced' flag covers all failure modes; ingress-stop failure is not distinguished from drain failure",
+"prior_evidence": []
+},
+{
+"id": "C48-076",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Avoid infinite retries against a terminal listener.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "no retry loop around server.close() exists, so no infinite-retry risk",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C48-077",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Preserve resources still needed by workers until the owner decides otherwise.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "connection end() sequence (snapshot, worker close, 1.5s grace) preserves resources until workers release them",
+"prior_evidence": [
+"gateway/connection.js:286-301"
+]
+},
+{
+"id": "C48-078",
+"task_class": "IMPLEMENT",
+"area": "08. Failure behavior",
+"req": "Escalate to the process coordinator when the stop boundary cannot be enforced.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "hard timeout forces cleanup and process.exit(1) when the boundary can't be enforced gracefully",
+"prior_evidence": [
+"gateway/server.js:232,254"
+]
+},
+{
+"id": "C48-079",
+"task_class": "TEST",
+"area": "08. Failure behavior",
+"req": "Test partial shutdown after ingress-stop failure.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "measured drains never hit the hard-timeout path; no partial-shutdown-after-failure test found",
+"prior_evidence": []
+},
+{
+"id": "C48-080",
+"task_class": "DOCUMENT",
+"area": "08. Failure behavior",
+"req": "Document the final forced-cleanup policy.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "forced-cleanup policy (hard timer kills workers, terminates sockets, exits 1) documented",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-081",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and testing",
+"req": "Record ingress-stop requested.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.draining logged when ingress stop is requested [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:222"
+]
+},
+{
+"id": "C48-082",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and testing",
+"req": "Record listener stop attempted.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only the final gateway.stopped result is logged; no separate 'attempted' event before the outcome",
+"prior_evidence": [
+"gateway/server.js:226,229"
+]
+},
+{
+"id": "C48-083",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and testing",
+"req": "Record acceptance loop exited.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.stopped logged once registry drains and server.close() completes, signaling exit of the accept path [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C48-084",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and testing",
+"req": "Record the count of contexts requiring final resolution.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "connections count logged in gateway.draining [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:222"
+]
+},
+{
+"id": "C48-085",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and testing",
+"req": "Record the count of active workers at the boundary.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "connections count is a 1:1 proxy for active workers under D-003 (one worker per session) [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:222"
+]
+},
+{
+"id": "C48-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and testing",
+"req": "Correlate stop events with shutdown timing.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "gateway.stopped includes drainMs; ts field on every log line correlates timing",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C48-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and testing",
+"req": "Avoid logging complete request metadata from in-flight contexts.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "logger filters out payload/data/token fields; shutdown logs carry only counts/booleans",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C48-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and testing",
+"req": "Repeat boundary races under load.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no load-scale repetition of boundary races found",
+"prior_evidence": []
+},
+{
+"id": "C48-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and testing",
+"req": "Compare active-registry counts before and after stopping.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.reserved.size asserted before/after events (worker kill, TCP loss)",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:18-19,44"
+]
+},
+{
+"id": "C48-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and testing",
+"req": "Preserve the exact runtime and test configuration.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "exact environment and test command preserved",
+"prior_evidence": [
+"docs/VALIDATION.md#validation-what-ran-what-it-proves-what-did-not-run"
+]
+},
+{
+"id": "C48-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the ingress-stop decision table.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no published ingress-stop decision table document found",
+"prior_evidence": []
+},
+{
+"id": "C48-092",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link listener.Stop behavior evidence.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no listener.Stop behavior exists to link in the Node candidate",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link pending-acceptance termination tests.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no pending-acceptance construct exists to test termination of",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions"
+]
+},
+{
+"id": "C48-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link upgrade-handoff race tests.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'exception during hand-off after the 101' test covers the upgrade-handoff race",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:154-165"
+]
+},
+{
+"id": "C48-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link ordinary HTTP shutdown tests.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated ordinary-HTTP-request-during-shutdown test found",
+"prior_evidence": []
+},
+{
+"id": "C48-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link active-session stop behavior.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "active-session stop behavior measured and tested",
+"prior_evidence": [
+"e/I049/drain-measure.json",
+"tests/chaos/lifecycle.test.js:136-152"
+]
+},
+{
+"id": "C48-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document the chosen drain ordering and its justification.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "drain ordering and its rationale documented",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C48-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record incomplete or forced request outcomes.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no forced/incomplete outcome was ever recorded; only clean drains were measured",
+"prior_evidence": []
+},
+{
+"id": "C48-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved listener shutdown semantics.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "general unresolved items listed but not itemized specifically for listener/ingress-stop semantics",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why",
+"docs/RELEASE.md#release-notes"
+]
+},
+{
+"id": "C48-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve ingress stopping only after the actual no-new-work boundary is demonstrated.",
+"ram_overlay": "Stop admitting sessions and commands while preserving the narrowly scoped health/drain path. Capacity released during shutdown must not reopen admission.",
+"challenge": "Verify late requests are refused and an old readiness snapshot cannot re-admit work.",
+"ref_work": [
+"R12",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "503 rejection during draining demonstrated by tests before the release gate approves local/loopback use",
+"prior_evidence": [
+"gateway/server.js:100,172",
+"tests/gateway/e2e.test.js",
+"docs/RELEASE.md#gate-decision"
+]
+}
+]
+}

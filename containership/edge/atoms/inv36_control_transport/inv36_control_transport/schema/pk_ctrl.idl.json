@@ -1,0 +1,75 @@
+{
+  "idl": "inv36.wire-idl/1",
+  "idl_revision": 1,
+  "notes": "Language-neutral wire definition for INV-36. All integers are unsigned big-endian. tools/gen_wire.py generates _wire.py and docs/WIRE.md from this file; CI fails if they drift.",
+  "protocols": {
+    "PK_CTRL_FRAME": {
+      "version": 2,
+      "status": "current",
+      "header": [
+        {"name": "magic", "type": "bytes", "size": 4, "const_ascii": "PKCT"},
+        {"name": "version", "type": "u8", "const": 2},
+        {"name": "algorithm", "type": "u8", "enum": {"AES_256_GCM_SIV": 1}},
+        {"name": "sequence", "type": "u64", "min": 1, "max": 18446744073709551615}
+      ],
+      "body": {"name": "ciphertext_and_tag", "type": "bytes", "min": 16, "max": 65552},
+      "limits": {"max_plaintext": 65536, "tag_size": 16},
+      "aad": "PK_CTRL_FRAME/2\\0 || direction_context || header (canonical: exactly the received 14 header bytes)"
+    },
+    "PK_CTRL_STREAM": {
+      "version": 1,
+      "status": "current",
+      "preamble": {"type": "bytes", "size": 6, "const_hex": "504b5354" , "version_byte": 1, "reserved_byte": 0},
+      "record_header": [
+        {"name": "record_type", "type": "u8", "enum": {"HANDSHAKE": 1, "FRAME": 2, "CLOSE": 3}},
+        {"name": "reserved", "type": "u8", "const": 0},
+        {"name": "length", "type": "u32", "min": 0, "max": 65566}
+      ],
+      "rules": ["length is validated before any payload allocation", "CLOSE carries length 0", "unknown record_type or nonzero reserved is a protocol error"]
+    },
+    "PK_CTRL_MSG": {
+      "version": 1,
+      "status": "current",
+      "fields": [
+        {"name": "version", "type": "u8", "const": 1},
+        {"name": "flags", "type": "u8", "const": 0, "reserved": true},
+        {"name": "msg_type", "type": "u16", "registry": "message_types"},
+        {"name": "ext_count", "type": "u16", "const": 0, "reserved": true},
+        {"name": "op_id", "type": "bytes", "size": 16},
+        {"name": "tenant", "type": "lp8_ascii", "min": 1, "max": 64, "charset": "[a-z0-9][a-z0-9._-]*"},
+        {"name": "traceparent", "type": "lp8_ascii", "allowed_lengths": [0, 55]},
+        {"name": "body", "type": "lp32_bytes", "min": 0, "max": 65000}
+      ],
+      "rules": ["decoder must consume exactly all bytes (no trailing data)", "unknown msg_type is rejected before dispatch", "ext_count > 0 is rejected in version 1; extensions require a minor protocol negotiation defined in a later revision"]
+    },
+    "PK_CTRL_HS": {
+      "version": 1,
+      "status": "current",
+      "messages": {
+        "CLIENT_HELLO": 1, "SERVER_HELLO": 2, "CLIENT_FINISH": 3, "ALERT": 15
+      },
+      "suites": {"X25519_ED25519_HKDFSHA256_AES256GCMSIV": 1},
+      "reserved_suites": {"NULL": 0},
+      "limits": {"max_message": 8192, "max_suites": 8, "nonce": 32, "x25519_pub": 32, "ed25519_sig": 64}
+    }
+  },
+  "registries": {
+    "message_types": {
+      "PLACEMENT": 1,
+      "LEASE_GRANT": 2,
+      "LEASE_RENEW": 3,
+      "LEASE_REVOKE": 4,
+      "HEARTBEAT": 5,
+      "DRAIN": 6,
+      "STATUS_QUERY": 7,
+      "ERROR_REPORT": 8
+    },
+    "message_type_ranges": {
+      "assigned": [1, 32767],
+      "reserved_future": [32768, 61439],
+      "private_never_emitted": [61440, 65535]
+    },
+    "registry_process": "New message types are assigned sequentially by the INV-36 technical owner via a reviewed change to this file; numbers are never reused; retired types move to 'retired_message_types'.",
+    "retired_message_types": {}
+  }
+}

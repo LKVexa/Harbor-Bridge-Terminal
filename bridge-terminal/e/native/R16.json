@@ -1,0 +1,41 @@
+{
+ "schema": "RAMWS/TASK_EVIDENCE/1",
+ "task_id": "R16",
+ "title": "Harden metadata, extents, and integrity",
+ "status": "PASS",
+ "applicability": "NODE-WEB profile",
+ "applicability_approval": "owner decisions RD-01..RD-05 (2026-09-21)",
+ "selected_profile": "LOCAL_VOLATILE",
+ "source_identity": "ledger/ramws_source.json",
+ "runtime_identity": "Linux 6.18.44 x86_64, 2 vCPU, Node v22.22.2, Chromium 1194; loopback only",
+ "configuration_identity": "gateway/config.js defaults; e/R28/experiment.frozen.json for R28",
+ "predecessor_evidence": [
+  "e/native/R03.json",
+  "e/native/R11.json",
+  "e/native/R13.json",
+  "e/native/R15.json"
+ ],
+ "decision_or_code_delta": "ram/descriptor.js: Extents, generations, epoch and plan identity checked on every operation.",
+ "command": "node --test \"tests/*/*.test.js\" (e/full-suite.tap)",
+ "started_at": "2026-09-21T20:30:00Z",
+ "finished_at": "2026-09-21T22:23:36Z",
+ "expected": "Invalid metadata is rejected before memory access or command side effects, and checksums never replace authorization.",
+ "observed": "3 linked tests, all ok",
+ "raw_result_paths": [
+  "e/full-suite.tap"
+ ],
+ "memory_scope": "gateway process (+ worker threads) and worker processes",
+ "allocation_change_bytes": null,
+ "cpu_scope": null,
+ "cpu_change_seconds": null,
+ "residency_status": "UNKNOWN",
+ "residual_risks": [
+  "self-reviewed by the implementer; no independent verification"
+ ],
+ "rollback": "delete ram/, gateway/worker-link.js, worker/core.js, worker/thread.js; restore the v1 files from hermit-vws 1.1.0-vws.1 (hashes in ledger/ramws_source.json)",
+ "linked_tests": [
+  "Ownership/Validity: another principal, another session, stale epoch, stale plan (policy revoked), stale or foreign lease are all REJECTED with a reason",
+  "Validity: stale generation and foreign handles are refused and counted",
+  "stale epoch, replayed rid, duplicated input seq, client-forged server message, second session.open"
+ ]
+}

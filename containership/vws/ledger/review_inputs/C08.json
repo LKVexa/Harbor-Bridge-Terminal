@@ -1,0 +1,1658 @@
+{
+"component": "C08",
+"items": [
+{
+"id": "C08-001",
+"task_class": "SPECIFY",
+"area": "01. Internal transport scope",
+"req": "Identify the edge-to-listener transport boundary.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "topology diagram shows edge -> gateway/server.js single listener boundary",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C08-002",
+"task_class": "IMPLEMENT",
+"area": "01. Internal transport scope",
+"req": "Distinguish internal HTTP requests from upgraded WebSocket traffic.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "http.createServer handles ordinary requests; separate 'upgrade' event handler for WS",
+"prior_evidence": [
+"gateway/server.js:91-149,152-185"
+]
+},
+{
+"id": "C08-003",
+"task_class": "DOCUMENT",
+"area": "01. Internal transport scope",
+"req": "Record the internal host and port configuration.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "PORT/VWS_HOST documented (0.0.0.0 default, PORT 1..65535)",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C08-004",
+"task_class": "SPECIFY",
+"area": "01. Internal transport scope",
+"req": "Identify any intended private-network clients.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no separate private-network client concept; single Node listener behind platform edge (Render specifics BLOCKED)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-001"
+]
+},
+{
+"id": "C08-005",
+"task_class": "IMPLEMENT",
+"area": "01. Internal transport scope",
+"req": "Separate local development access from hosted internal access.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "loopback-dev auth refused off-loopback vs static-file for hosted; tools/start-local.js binds 127.0.0.1",
+"prior_evidence": [
+"docs/OPERATIONS.md#run-it-locally-loopback",
+"gateway/config.js"
+]
+},
+{
+"id": "C08-006",
+"task_class": "SPECIFY",
+"area": "01. Internal transport scope",
+"req": "Define what data crosses the internal transport.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "envelope schema/protocol doc defines exactly what crosses: JSON text envelopes, base64 terminal bytes",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C08-007",
+"task_class": "SPECIFY",
+"area": "01. Internal transport scope",
+"req": "Identify authentication that remains necessary at the application boundary.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "identity check before upgrade + sid ownership check remain required regardless of transport",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order-before-upgrade",
+"gateway/connection.js:124-128"
+]
+},
+{
+"id": "C08-008",
+"task_class": "DOCUMENT",
+"area": "01. Internal transport scope",
+"req": "Record trust assumptions about the internal network.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "TLS expected from platform edge; X-Forwarded-Proto trust assumption documented",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks item 5,6"
+]
+},
+{
+"id": "C08-009",
+"task_class": "DOCUMENT",
+"area": "01. Internal transport scope",
+"req": "Document any requirement for additional internal transport protection.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "TLS-at-edge is stated as expected but no explicit additional-protection requirement analysis beyond that line",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks item 5"
+]
+},
+{
+"id": "C08-010",
+"task_class": "IMPLEMENT",
+"area": "01. Internal transport scope",
+"req": "Approve the internal transport model.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit sign-off/approval record for the internal transport model itself",
+"prior_evidence": []
+},
+{
+"id": "C08-011",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Configure the listener with the intended internal HTTP scheme.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "http.createServer (plain HTTP) is the intended internal scheme; TLS terminated at platform edge (D per SECURITY.md)",
+"prior_evidence": [
+"gateway/server.js:91",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C08-012",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Resolve the port through the shared PORT resolver.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "PORT rule: absent->10000; valid kept; malformed present value errors, tested",
+"prior_evidence": [
+"gateway/config.js",
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C08-013",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Register the intended listener prefix.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "exact path /ws/terminal is the registered upgrade prefix",
+"prior_evidence": [
+"gateway/server.js:152-158"
+]
+},
+{
+"id": "C08-014",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Match the listener's interface binding to incoming edge traffic.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_HOST default 0.0.0.0 matches edge-forwarded traffic; loopback-dev restricts to loopback bind",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference VWS_HOST"
+]
+},
+{
+"id": "C08-015",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Keep public WSS URIs out of internal listener configuration.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "internal listener config has no wss:// URI concept; public URIs only appear in client config, not listener config",
+"prior_evidence": [
+"gateway/config.js",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C08-016",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Keep internal development URIs out of production client configuration.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "publicConfig is an explicit allowlist (no internal paths/files/limits internals/environment), tested in config.test.js [downgraded: cited evidence path not foun",
+"prior_evidence": [
+"gateway/config.js publicConfig()"
+]
+},
+{
+"id": "C08-017",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define a local test endpoint.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "local test endpoint defined: 127.0.0.1:10000 via tools/start-local.js",
+"prior_evidence": [
+"docs/OPERATIONS.md#run-it-locally-loopback"
+]
+},
+{
+"id": "C08-018",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define a hosted internal test endpoint when applicable.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no Render/hosted service exists (no account authorization); hosted internal endpoint never defined/run",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C08-019",
+"task_class": "REVIEW",
+"area": "02. Configuration",
+"req": "Validate required configuration before listener startup.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "config validated before listen(); malformed values exit 78 before startup, tested",
+"prior_evidence": [
+"tests/gateway/config.test.js",
+"gateway/config.js"
+]
+},
+{
+"id": "C08-020",
+"task_class": "DOCUMENT",
+"area": "02. Configuration",
+"req": "Record the effective non-secret transport settings.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "gateway.listening log records host/port/auth/fabric/maxSessions (non-secret settings)",
+"prior_evidence": [
+"gateway/server.js:191",
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C08-021",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Accept ordinary HTTP requests on the internal listener.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "http.createServer handles /health /live /config.json /api/ws-ticket and static routes; tested",
+"prior_evidence": [
+"gateway/server.js:91-144",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C08-022",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Return a deliberate response for the designated health path.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "GET /health returns 200/503 deliberately, tested including drain->503",
+"prior_evidence": [
+"gateway/server.js:95-101",
+"docs/OPERATIONS.md#health-and-logs",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C08-023",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Close completed HTTP responses.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "json() helper always calls res.end(); server closes completed responses",
+"prior_evidence": [
+"gateway/server.js:74-78"
+]
+},
+{
+"id": "C08-024",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Reject unsupported request paths according to the routing policy.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "unmatched paths -> 404 'not found'",
+"prior_evidence": [
+"gateway/server.js:139"
+]
+},
+{
+"id": "C08-025",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Reject unsupported methods according to the routing policy.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "unsupported methods -> 405 with Allow header on each route",
+"prior_evidence": [
+"gateway/server.js:98,103,107,117,134",
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C08-026",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Bound request processing that precedes a WebSocket upgrade.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "server.headersTimeout / requestTimeout set to cfg.handshakeTimeoutMs bounding pre-upgrade processing",
+"prior_evidence": [
+"gateway/server.js:145-146"
+]
+},
+{
+"id": "C08-027",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Avoid interpreting every HTTP request as a WebSocket attempt.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "/ws/terminal via plain GET returns 426; only the 'upgrade' event path attempts a WS handshake, not every request",
+"prior_evidence": [
+"gateway/server.js:132,152-158"
+]
+},
+{
+"id": "C08-028",
+"task_class": "TEST",
+"area": "03. HTTP behavior",
+"req": "Test header availability after edge forwarding.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "x-forwarded-proto read in code, but no dedicated test verifying header availability after edge forwarding (edge is BLOCKED, no real edge to test)",
+"prior_evidence": [
+"gateway/origin.js:13"
+]
+},
+{
+"id": "C08-029",
+"task_class": "IMPLEMENT",
+"area": "03. HTTP behavior",
+"req": "Preserve required request metadata for application processing.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "Origin, Host, Authorization headers preserved and used for admission logic",
+"prior_evidence": [
+"gateway/origin.js",
+"gateway/connection.js"
+]
+},
+{
+"id": "C08-030",
+"task_class": "DOCUMENT",
+"area": "03. HTTP behavior",
+"req": "Document expected behavior for malformed HTTP requests.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "clientError handler sends 400 for malformed requests but docs do not describe expected malformed-HTTP behavior explicitly",
+"prior_evidence": [
+"gateway/server.js:149"
+]
+},
+{
+"id": "C08-031",
+"task_class": "IMPLEMENT",
+"area": "04. Upgrade behavior",
+"req": "Detect an eligible WebSocket upgrade request.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade() validates RFC6455 eligibility (version/key/subprotocol) before accept",
+"prior_evidence": [
+"gateway/ws.js",
+"gateway/server.js:163"
+]
+},
+{
+"id": "C08-032",
+"task_class": "IMPLEMENT",
+"area": "04. Upgrade behavior",
+"req": "Apply connection checks before accepting the upgrade.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "path->draining->Origin->handshake->identity->capacity checks all run before acceptUpgrade",
+"prior_evidence": [
+"gateway/server.js:158-177",
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C08-033",
+"task_class": "IMPLEMENT",
+"area": "04. Upgrade behavior",
+"req": "Complete the managed WebSocket upgrade on the internal listener.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade completes 101 handshake with subprotocol, tested against raw socket peer",
+"prior_evidence": [
+"gateway/server.js:180",
+"gateway/ws.js",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C08-034",
+"task_class": "IMPLEMENT",
+"area": "04. Upgrade behavior",
+"req": "Transfer the upgraded context to the owning worker.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "new WsConnection/Connection created on upgrade; connection spawns and owns the worker process",
+"prior_evidence": [
+"gateway/server.js:181-183",
+"gateway/connection.js:181"
+]
+},
+{
+"id": "C08-035",
+"task_class": "IMPLEMENT",
+"area": "04. Upgrade behavior",
+"req": "Prevent ordinary HTTP response handling after a successful upgrade.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "WsConnection takes over the raw socket after 101; ordinary http response handling ends (socket handed off)",
+"prior_evidence": [
+"gateway/ws.js"
+]
+},
+{
+"id": "C08-036",
+"task_class": "TEST",
+"area": "04. Upgrade behavior",
+"req": "Test failed upgrades without leaking listener resources.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "'wrong subprotocol/version/key/path are refused without upgrade' - tests failed upgrades don't leak resources (rejectUpgrade closes socket)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C08-037",
+"task_class": "TEST",
+"area": "04. Upgrade behavior",
+"req": "Test an upgrade on an unsupported application path.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "path check rejects upgrade attempts on any path other than /ws/terminal with 404",
+"prior_evidence": [
+"gateway/server.js:158",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C08-038",
+"task_class": "TEST",
+"area": "04. Upgrade behavior",
+"req": "Test several upgrades while health requests continue.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "'health stays responsive (<250ms) while a session streams bulk output' exercises upgrades concurrent with health requests",
+"prior_evidence": [
+"tests/gateway/e2e.test.js#health-stays-responsive"
+]
+},
+{
+"id": "C08-039",
+"task_class": "VERIFY",
+"area": "04. Upgrade behavior",
+"req": "Verify the upgraded connection supports bidirectional application traffic.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "hello->open->opened->output->input->output->close verifies bidirectional traffic over the upgraded connection",
+"prior_evidence": [
+"tests/gateway/e2e.test.js#vertical-slice",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C08-040",
+"task_class": "DOCUMENT",
+"area": "04. Upgrade behavior",
+"req": "Record the internal upgrade test results.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "ws-conformance and e2e suite results recorded, 95/95 passing in full-suite.tap",
+"prior_evidence": [
+"e/_runs/full-suite.tap",
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C08-041",
+"task_class": "IMPLEMENT",
+"area": "05. Trust boundary",
+"req": "Determine whether private-network reachability grants any application privileges.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "reachability grants nothing; identity/sid checks apply regardless of network location",
+"prior_evidence": [
+"docs/SECURITY.md#controls Cross-tenant / Unauthenticated use rows",
+"gateway/connection.js:124-128"
+]
+},
+{
+"id": "C08-042",
+"task_class": "IMPLEMENT",
+"area": "05. Trust boundary",
+"req": "Keep session authorization separate from transport location.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "authorization is per-connection sid ownership, independent of transport/location",
+"prior_evidence": [
+"gateway/connection.js:124-128",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C08-043",
+"task_class": "REVIEW",
+"area": "05. Trust boundary",
+"req": "Review which forwarded headers may be trusted.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "X-Forwarded-Proto trust reviewed and documented as a residual risk, but no dedicated forwarded-header review test",
+"prior_evidence": [
+"gateway/origin.js:13",
+"docs/SECURITY.md#residual-risks item 6"
+]
+},
+{
+"id": "C08-044",
+"task_class": "IMPLEMENT",
+"area": "05. Trust boundary",
+"req": "Reject spoofed connection metadata where it affects authorization.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "sid ownership check rejects spoofed/foreign session ids identically to unknown ones",
+"prior_evidence": [
+"gateway/connection.js:124-128",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C08-045",
+"task_class": "IMPLEMENT",
+"area": "05. Trust boundary",
+"req": "Avoid exposing internal diagnostics through ordinary application routes.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "exact-key static asset map; /gateway/server.js and traversal paths return 404, tested",
+"prior_evidence": [
+"gateway/server.js:133-139",
+"docs/SECURITY.md#static-file-traversal"
+]
+},
+{
+"id": "C08-046",
+"task_class": "IMPLEMENT",
+"area": "05. Trust boundary",
+"req": "Restrict secrets included in internal request logs.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "logger drops secret-like fields, strips query strings, tested",
+"prior_evidence": [
+"gateway/log.js",
+"tests/gateway/config.test.js#logger"
+]
+},
+{
+"id": "C08-047",
+"task_class": "DOCUMENT",
+"area": "05. Trust boundary",
+"req": "Document the intended origin policy for non-browser internal clients.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "native/no-Origin client policy documented but no dedicated 'origin policy for non-browser clients' section",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference VWS_ALLOW_NO_ORIGIN"
+]
+},
+{
+"id": "C08-048",
+"task_class": "DOCUMENT",
+"area": "05. Trust boundary",
+"req": "Document credential requirements for internal clients.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "credential requirements documented: bearer header or ticket cookie, principals file",
+"prior_evidence": [
+"docs/OPERATIONS.md#principals",
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C08-049",
+"task_class": "TEST",
+"area": "05. Trust boundary",
+"req": "Test an unauthorized client that can reach the listener.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "'no credential / wrong credential / malformed header -> 401 before upgrade' tests an unauthorized reachable client",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C08-050",
+"task_class": "DOCUMENT",
+"area": "05. Trust boundary",
+"req": "Record residual risks accepted for internal transport.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "residual risks list (TLS from edge, X-Forwarded-Proto trust, no OS sandbox) recorded",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C08-051",
+"task_class": "IMPLEMENT",
+"area": "06. Direct connectivity tests",
+"req": "Connect to the listener from the local development environment.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "local dev connects via 127.0.0.1:10000, exercised in browser test",
+"prior_evidence": [
+"docs/OPERATIONS.md#run-it-locally-loopback",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C08-052",
+"task_class": "IMPLEMENT",
+"area": "06. Direct connectivity tests",
+"req": "Connect through the container's intended networking setup.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Docker build/run BLOCKED: no Docker daemon, no registry access",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-053",
+"task_class": "IMPLEMENT",
+"area": "06. Direct connectivity tests",
+"req": "Connect through the hosted edge to the same listener.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no Render/hosted edge exists; never connected through a hosted edge",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed",
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-054",
+"task_class": "IMPLEMENT",
+"area": "06. Direct connectivity tests",
+"req": "Compare direct and edge-forwarded message behavior.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "BLOCKED",
+"prior_note": "cannot compare direct vs edge-forwarded behavior without a real edge (BLOCKED)",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-055",
+"task_class": "TEST",
+"area": "06. Direct connectivity tests",
+"req": "Test a valid nondefault internal port.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "PORT is configurable and validated (config.test.js), but no test connects on a chosen nondefault port end-to-end",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference PORT"
+]
+},
+{
+"id": "C08-056",
+"task_class": "TEST",
+"area": "06. Direct connectivity tests",
+"req": "Test an incorrect internal port.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "malformed/out-of-range PORT rejected as a startup error, tested",
+"prior_evidence": [
+"tests/gateway/config.test.js#PORT"
+]
+},
+{
+"id": "C08-057",
+"task_class": "TEST",
+"area": "06. Direct connectivity tests",
+"req": "Test loopback-only binding as a controlled negative case.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "'loopback-dev auth is refused off loopback' tests the loopback-only negative case",
+"prior_evidence": [
+"tests/gateway/config.test.js#bind-address"
+]
+},
+{
+"id": "C08-058",
+"task_class": "TEST",
+"area": "06. Direct connectivity tests",
+"req": "Test name-resolution failure for an intended private-network client.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no real private network / DNS exists in this environment; no intended private-network client to fail resolution for",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-059",
+"task_class": "DOCUMENT",
+"area": "06. Direct connectivity tests",
+"req": "Record which direct-access tests are unavailable in the environment.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "table explicitly records unavailable direct-access tests (Docker, Render edge, TLS, real WAN) and why",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-060",
+"task_class": "IMPLEMENT",
+"area": "06. Direct connectivity tests",
+"req": "Avoid marking an unexecuted network path as validated.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "deploy files explicitly marked 'AUTHORED, NEVER EXECUTED'; not claimed validated",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed",
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-061",
+"task_class": "IMPLEMENT",
+"area": "07. Data handling",
+"req": "Send text over the internal upgraded connection.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "text frames (terminal.input/output) sent and tested over upgraded connection",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C08-062",
+"task_class": "IMPLEMENT",
+"area": "07. Data handling",
+"req": "Send binary data when supported by the application.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary frames intentionally closed 1003; text-only + base64 chosen (D-007), so binary sending is not supported by design",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-007"
+]
+},
+{
+"id": "C08-063",
+"task_class": "IMPLEMENT",
+"area": "07. Data handling",
+"req": "Send a payload larger than the receive buffer.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "oversize payload cases and 'producer larger than worker output buffer' tested",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C08-064",
+"task_class": "VERIFY",
+"area": "07. Data handling",
+"req": "Verify byte counts across internal send and receive boundaries.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "150000 lines delivered gap-free after catch-up verifies byte-count integrity across send/receive",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#150000-lines-gap-free",
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C08-065",
+"task_class": "VERIFY",
+"area": "07. Data handling",
+"req": "Verify no internal middleware rewrites application payloads unexpectedly.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no dedicated middleware exists internally beyond the gateway itself; no test explicitly verifying an intermediary doesn't rewrite payloads (no real edge present",
+"prior_evidence": [
+"docs/SECURITY.md#controls"
+]
+},
+{
+"id": "C08-066",
+"task_class": "VERIFY",
+"area": "07. Data handling",
+"req": "Verify completed-message boundaries are preserved by application assembly.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "message boundary tests: byte-at-a-time, split UTF-8 reassembled before decoding, fragment assembly",
+"prior_evidence": [
+"tests/protocol/bridge.test.js",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C08-067",
+"task_class": "TEST",
+"area": "07. Data handling",
+"req": "Test an empty application message.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "zero-length/oversize are rejected (codec.test.js) but a specifically-empty valid application message is not called out as its own test case",
+"prior_evidence": [
+"protocol/codec.js"
+]
+},
+{
+"id": "C08-068",
+"task_class": "TEST",
+"area": "07. Data handling",
+"req": "Test a non-ASCII message.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "non-ASCII typing tested in Chromium; split UTF-8 character reassembly tested at protocol level",
+"prior_evidence": [
+"tests/ui/browser.test.js#typing-incl-non-ascii",
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C08-069",
+"task_class": "TEST",
+"area": "07. Data handling",
+"req": "Test interrupted transfer without delivering a partial message as complete.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "truncated record distinguished from clean EOF; stalled fragment assembly hits deadline -> 1008, not delivered as complete",
+"prior_evidence": [
+"tests/protocol/bridge.test.js#truncated-record",
+"tests/gateway/ws-conformance.test.js#stalled-fragment"
+]
+},
+{
+"id": "C08-070",
+"task_class": "IMPLEMENT",
+"area": "07. Data handling",
+"req": "Save representative payload-integrity test results.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "payload-integrity test results (protocol/bridge, ws-conformance) recorded in the TAP run and evidence index",
+"prior_evidence": [
+"e/_runs/full-suite.tap",
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C08-071",
+"task_class": "IMPLEMENT",
+"area": "08. Connection lifecycle",
+"req": "Keep an internal connection open during the agreed test interval.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "connections held open across bulk-output and heartbeat-interval test scenarios",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C08-072",
+"task_class": "TEST",
+"area": "08. Connection lifecycle",
+"req": "Exercise the selected keep-alive configuration.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeat.ping/pong interval+window keep-alive exercised: 'a peer that never answers is closed 1008... an answering peer stays'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application-heartbeat",
+"docs/RECOVERY.md#liveness-i036"
+]
+},
+{
+"id": "C08-073",
+"task_class": "DOCUMENT",
+"area": "08. Connection lifecycle",
+"req": "Record observed behavior during an idle interval.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "idle session expiry (VWS_IDLE_MS 30 min) and browser tab suspension note recorded as observed behavior during idle",
+"prior_evidence": [
+"docs/RECOVERY.md#liveness-i036"
+]
+},
+{
+"id": "C08-074",
+"task_class": "IMPLEMENT",
+"area": "08. Connection lifecycle",
+"req": "Close a connection normally.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "session.close -> normal close 1000, tested (exit command test)",
+"prior_evidence": [
+"gateway/connection.js:146,286-301",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C08-075",
+"task_class": "IMPLEMENT",
+"area": "08. Connection lifecycle",
+"req": "Terminate a client unexpectedly.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "'abrupt TCP loss: worker is stopped, session released, no orphan process' tests unexpected client termination",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#abrupt-tcp-loss"
+]
+},
+{
+"id": "C08-076",
+"task_class": "IMPLEMENT",
+"area": "08. Connection lifecycle",
+"req": "Stop the listener while internal sessions exist.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown() drains active sessions; real-process SIGTERM test with idle+busy sessions",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#sigterm-drains",
+"gateway/server.js#shutdown"
+]
+},
+{
+"id": "C08-077",
+"task_class": "DOCUMENT",
+"area": "08. Connection lifecycle",
+"req": "Record the actual effect of listener stopping on active upgraded sockets.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "measured effect of listener stopping on active sockets (drain-measure.json, exit 0 in 20ms/15ms)",
+"prior_evidence": [
+"e/I049/drain-measure.json",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C08-078",
+"task_class": "TEST",
+"area": "08. Connection lifecycle",
+"req": "Test recovery after application process replacement.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tests worker process replacement (SIGKILL), but not the gateway/application listener process itself being replaced",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#worker-killed"
+]
+},
+{
+"id": "C08-079",
+"task_class": "REVIEW",
+"area": "08. Connection lifecycle",
+"req": "Ensure connection-local resources are released.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "_onSocketClose clears timers, pendingOut, registry.release/forget on every close path",
+"prior_evidence": [
+"gateway/connection.js:329-333"
+]
+},
+{
+"id": "C08-080",
+"task_class": "DOCUMENT",
+"area": "08. Connection lifecycle",
+"req": "Document lifecycle differences between direct and edge-routed tests.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "lists edge-routed tests as BLOCKED but doesn't explicitly document lifecycle differences between direct and (nonexistent) edge-routed runs",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-081",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Record internal listener startup success.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "gateway.listening log line recorded on successful listener startup",
+"prior_evidence": [
+"gateway/server.js:191",
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C08-082",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Record the effective bound port.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "server.address().port logged as part of gateway.listening [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:191"
+]
+},
+{
+"id": "C08-083",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track failures that occur before protocol upgrade.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "ws.rejected logged for pre-upgrade failures (path/origin/identity/capacity)",
+"prior_evidence": [
+"gateway/server.js:155,191",
+"docs/OPERATIONS.md#health-and-logs ws.rejected"
+]
+},
+{
+"id": "C08-084",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track failures that occur after protocol upgrade.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "worker.failed and conn.closed logged for post-upgrade failures",
+"prior_evidence": [
+"gateway/connection.js:263,315",
+"docs/OPERATIONS.md#health-and-logs worker.failed conn.closed"
+]
+},
+{
+"id": "C08-085",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Correlate internal connection logs with public request observations.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "per-connection id correlates internal logs, but no correlation to a separate 'public request' log since there is one listener (no distinct edge log)",
+"prior_evidence": [
+"gateway/connection.js conn.id",
+"gateway/server.js ws.accepted"
+]
+},
+{
+"id": "C08-086",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Avoid printing raw authorization headers.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "logger drops secret-like fields incl. Authorization; tested",
+"prior_evidence": [
+"gateway/log.js",
+"tests/gateway/config.test.js#logger"
+]
+},
+{
+"id": "C08-087",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Provide a wrong-port troubleshooting procedure.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "PORT rules documented but no explicit 'wrong port' troubleshooting walkthrough",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C08-088",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Provide a wrong-interface troubleshooting procedure.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VWS_HOST documented but no explicit 'wrong interface' troubleshooting steps written",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference VWS_HOST"
+]
+},
+{
+"id": "C08-089",
+"task_class": "SPECIFY",
+"area": "09. Operations",
+"req": "Define ownership of internal networking configuration.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "D. P. Russell recorded as decision owner; maintainer notes assign config/limit ownership generally",
+"prior_evidence": [
+"docs/OPERATIONS.md#maintainer-notes",
+"docs/ARCHITECTURE.md D-001"
+]
+},
+{
+"id": "C08-090",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Record the limits of available hosted network visibility.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "'Not measured: WAN latency, TLS edge, the target container... hosted restarts' records visibility limits",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#not-measured",
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the internal transport boundary description.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "internal transport boundary published in ARCHITECTURE.md topology and PROTOCOL.md",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C08-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the listener configuration contract.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "listener configuration contract (PORT, VWS_HOST, etc.) published",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C08-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link direct and edge-routed smoke tests.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "direct smoke tests linked (ws-conformance, e2e); edge-routed smoke tests cannot be linked since edge is BLOCKED",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C08-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link payload-integrity tests.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "payload-integrity tests linked in the evidence table",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/protocol/bridge.test.js",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C08-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link unauthorized direct-client tests.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "unauthorized direct-client tests linked ('no credential...->401 before upgrade')",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C08-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link connection lifecycle tests.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "connection lifecycle tests linked (SIGTERM drain, TCP loss, heartbeat)",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C08-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document the treatment of private-network clients.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no distinct private-network client class exists in this single-listener Node profile",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-001"
+]
+},
+{
+"id": "C08-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document any additional internal security decision.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "additional internal security decisions documented (TLS-at-edge expectation, X-Forwarded-Proto trust)",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C08-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved network assumptions.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "unresolved network assumptions listed: X-Forwarded-Proto trust, TLS edge unverified, real WAN not run",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks item-6",
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C08-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve only the internal paths that were actually tested.",
+"ram_overlay": "Bound the internal transport and count its buffers. A local bridge between .NET and SPIRAL is an explicit IPC boundary, not shared allocation identity.",
+"challenge": "Observe maximum IPC backlog and distinct allocations; refuse unauthenticated or oversized bridge records.",
+"ref_work": [
+"R08"
+],
+"prior_status": "PASS",
+"prior_note": "doc explicitly separates OBSERVED (loopback, direct) from BLOCKED (Docker/Render/edge), not claiming untested paths",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why",
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+}
+]
+}

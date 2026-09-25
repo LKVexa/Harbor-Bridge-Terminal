@@ -1,0 +1,308 @@
+{
+  "$id": "urn:pk:PK_NODE_LIFECYCLE:1:request",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "args": {
+      "type": "object"
+    },
+    "caller": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "nonce": {
+      "pattern": "^[A-Za-z0-9_-]{8,128}$",
+      "type": "string"
+    },
+    "op": {
+      "enum": [
+        "transition",
+        "cordon",
+        "uncordon",
+        "drain",
+        "drain_override",
+        "report_health",
+        "admit",
+        "terminate",
+        "emergency_enter",
+        "emergency_exit",
+        "disable",
+        "status",
+        "diagnostics",
+        "reload_config",
+        "cordon_ack",
+        "control_plane_heartbeat"
+      ]
+    },
+    "request_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "PK_NODE_LIFECYCLE/1"
+    },
+    "sig": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "traceparent": {
+      "maxLength": 64,
+      "type": "string"
+    },
+    "ts": {
+      "type": "number"
+    },
+    "x-extensions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "caller",
+    "request_id",
+    "nonce",
+    "ts",
+    "op",
+    "args",
+    "sig"
+  ],
+  "title": "PK_NODE_LIFECYCLE/1 request",
+  "type": "object",
+  "x-op-args": {
+    "admit": {
+      "additionalProperties": false,
+      "properties": {
+        "argv": {
+          "items": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "type": "array"
+        },
+        "image": {
+          "maxLength": 512,
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "wasm",
+            "microvm",
+            "unikernel",
+            "process"
+          ]
+        },
+        "memory_mb": {
+          "maximum": 1048576,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "trust_class": {
+          "enum": [
+            "hostile",
+            "untrusted",
+            "third-party",
+            "first-party",
+            "trusted"
+          ]
+        },
+        "workload": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workload",
+        "trust_class"
+      ],
+      "type": "object"
+    },
+    "control_plane_heartbeat": {
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "cordon": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "cordon_ack": {
+      "additionalProperties": false,
+      "properties": {
+        "generation": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "generation"
+      ],
+      "type": "object"
+    },
+    "diagnostics": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "disable": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "drain": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        },
+        "timeout_s": {
+          "maximum": 86400,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "drain_override": {
+      "additionalProperties": false,
+      "properties": {
+        "extend_s": {
+          "maximum": 86400,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "force_now": {
+          "type": "boolean"
+        },
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "emergency_enter": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "emergency_exit": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "reload_config": {
+      "additionalProperties": false,
+      "properties": {
+        "changes": {
+          "maxProperties": 32,
+          "type": "object"
+        }
+      },
+      "required": [
+        "changes"
+      ],
+      "type": "object"
+    },
+    "report_health": {
+      "additionalProperties": false,
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "signal": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signal",
+        "ok"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "terminate": {
+      "additionalProperties": false,
+      "properties": {
+        "force": {
+          "type": "boolean"
+        },
+        "workload": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workload"
+      ],
+      "type": "object"
+    },
+    "transition": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        },
+        "timeout_s": {
+          "maximum": 86400,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "to": {
+          "enum": [
+            "joining",
+            "ready",
+            "cordoned",
+            "draining",
+            "stopped"
+          ]
+        }
+      },
+      "required": [
+        "to"
+      ],
+      "type": "object"
+    },
+    "uncordon": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "maxLength": 256,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

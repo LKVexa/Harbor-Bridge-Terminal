@@ -1,0 +1,1668 @@
+{
+"component": "C50",
+"items": [
+{
+"id": "C50-001",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Define when the application may terminate successfully.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "clean drain completion (r.forced=false) defines successful termination",
+"prior_evidence": [
+"gateway/server.js:253-254"
+]
+},
+{
+"id": "C50-002",
+"task_class": "DOCUMENT",
+"area": "01. Termination contract",
+"req": "Record exit zero as the article's successful-shutdown proposal.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "process.exit(r.forced?1:0) exits 0 on successful shutdown [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:254"
+]
+},
+{
+"id": "C50-003",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Define nonzero outcomes for incomplete startup.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "process.exit(e instanceof ConfigError?78:1) covers incomplete startup",
+"prior_evidence": [
+"gateway/server.js:250"
+]
+},
+{
+"id": "C50-004",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Define nonzero outcomes for unexpected fatal runtime failure.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "listen failure maps to exit(1); no process-wide uncaughtException handler defines other fatal runtime failures",
+"prior_evidence": [
+"gateway/server.js:257"
+]
+},
+{
+"id": "C50-005",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Define how incomplete shutdown is reported.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'forced' flag from finish() is reflected into exit(1) when shutdown didn't complete cleanly",
+"prior_evidence": [
+"gateway/server.js:224-232,254"
+]
+},
+{
+"id": "C50-006",
+"task_class": "IMPLEMENT",
+"area": "01. Termination contract",
+"req": "Distinguish application exit intent from externally forced termination.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "onSignal distinguishes SIGTERM/SIGINT deliberate exit; a signalled guard prevents re-entry",
+"prior_evidence": [
+"gateway/server.js:252-256"
+]
+},
+{
+"id": "C50-007",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Identify the process authorized to issue final exit.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "only the require.main===module entrypoint block calls process.exit",
+"prior_evidence": [
+"gateway/server.js:247-258"
+]
+},
+{
+"id": "C50-008",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Define what cleanup must precede exit.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "drain, snapshot, worker exit sequence defined as required before exit",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C50-009",
+"task_class": "SPECIFY",
+"area": "01. Termination contract",
+"req": "Define the maximum finalization budget.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SHUTDOWN_MS (20000 default) is the maximum finalization budget",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C50-010",
+"task_class": "IMPLEMENT",
+"area": "01. Termination contract",
+"req": "Approve the final process-outcome table.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no single approved process-outcome table found; codes (0/1/78) are scattered across code, not consolidated",
+"prior_evidence": []
+},
+{
+"id": "C50-011",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm new ingress is no longer being accepted.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'health flips to 503 while draining' covers /health but no dedicated test confirms WS/ticket ingress refusal specifically at shutdown time",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C50-012",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm outstanding accepted contexts have a deliberate disposition.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test confirms every outstanding accepted context gets a deliberate disposition before exit",
+"prior_evidence": []
+},
+{
+"id": "C50-013",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm connection-drain coordination has finished or reached its approved deadline.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "real-process SIGTERM test only exits after drain coordination completes or the hard timer fires",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C50-014",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm worker outcomes have been collected.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "each session receives session.exit before process exit, i.e. worker outcomes are collected",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C50-015",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm payload queues have been drained or abandoned explicitly.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "queue draining is implemented but not asserted by a dedicated exit-prerequisite test",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C50-016",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm incomplete message storage has been released or reported.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test confirms incomplete inbound message storage is released/reported before exit",
+"prior_evidence": []
+},
+{
+"id": "C50-017",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm backend cleanup has been attempted.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker kill attempted within budget, shown by the test, but not framed as an explicit prerequisite check",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C50-018",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm signal registration no longer needs to remain active.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test or code confirms signal handlers are deregistered before exit",
+"prior_evidence": []
+},
+{
+"id": "C50-019",
+"task_class": "REVIEW",
+"area": "02. Prerequisite checks",
+"req": "Confirm final diagnostics can be emitted safely.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.stopped log line is emitted and the test suite shows no throw around it, but nothing asserts it explicitly 'can be emitted safely'",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C50-020",
+"task_class": "IMPLEMENT",
+"area": "02. Prerequisite checks",
+"req": "Avoid treating unknown cleanup status as proven success.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "forced is only false when registry.onEmpty genuinely fires (all real closes observed); never defaulted to success",
+"prior_evidence": [
+"gateway/server.js:224-234"
+]
+},
+{
+"id": "C50-021",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Map clean initialization failure to the approved nonzero code category.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "clean init failure not caused by config -> exit 1",
+"prior_evidence": [
+"gateway/server.js:250"
+]
+},
+{
+"id": "C50-022",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Map invalid configuration to the approved nonzero code category.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "ConfigError -> exit 78, explicit code category",
+"prior_evidence": [
+"gateway/server.js:250"
+]
+},
+{
+"id": "C50-023",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Map listener-wide fatal failure to the approved nonzero code category.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "server.listen failure -> exit 1",
+"prior_evidence": [
+"gateway/server.js:257"
+]
+},
+{
+"id": "C50-024",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Map deliberate successful shutdown to the approved success code.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "deliberate successful shutdown -> exit 0",
+"prior_evidence": [
+"gateway/server.js:254"
+]
+},
+{
+"id": "C50-025",
+"task_class": "SPECIFY",
+"area": "03. Exit-code selection",
+"req": "Define policy for forced local cleanup after a drain timeout.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "forced local cleanup after a drain timeout maps to exit 1",
+"prior_evidence": [
+"gateway/server.js:224-232,254"
+]
+},
+{
+"id": "C50-026",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Preserve an earlier fatal outcome when cleanup later succeeds.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no scenario in the running process carries a prior fatal outcome into a later successful-looking shutdown to overwrite; applicability unclear",
+"prior_evidence": [
+"gateway/server.js:216-258"
+]
+},
+{
+"id": "C50-027",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Avoid overwriting a failure code with an unconditional exit zero.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "exit code is strictly r.forced?1:0, never unconditionally 0 regardless of failure",
+"prior_evidence": [
+"gateway/server.js:254"
+]
+},
+{
+"id": "C50-028",
+"task_class": "IMPLEMENT",
+"area": "03. Exit-code selection",
+"req": "Keep wrapper exit behavior consistent with the PowerShell process.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no PowerShell wrapper process exists in the Node gateway profile",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C50-029",
+"task_class": "TEST",
+"area": "03. Exit-code selection",
+"req": "Test the selected codes through the actual container entry point.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "container entry point never built/run: 'AUTHORED, NOT EXECUTED', no Docker daemon available",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-030",
+"task_class": "DOCUMENT",
+"area": "03. Exit-code selection",
+"req": "Document what each outcome means to operators.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only exit 78 (malformed config) is explicitly documented for operators; 0/1 not spelled out as a table",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C50-031",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Emit one final shutdown-result record.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "log.info('gateway.stopped', {forced, drainMs}) is the one final shutdown-result record",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C50-032",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Include whether cleanup completed fully.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'forced' field indicates whether cooperative cleanup completed fully",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C50-033",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Include whether any connection exceeded its drain budget.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "same 'forced' field doubles as the drain-budget-exceeded indicator",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C50-034",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Include the selected process exit category.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log has forced/drainMs but the actual chosen exit code is computed after the log line, not itself logged",
+"prior_evidence": [
+"gateway/server.js:229,254"
+]
+},
+{
+"id": "C50-035",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Include the release identifier.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no release/version identifier field found in any shutdown log line",
+"prior_evidence": []
+},
+{
+"id": "C50-036",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Include measured shutdown duration.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "drainMs (Date.now()-t0) is the measured shutdown duration included in the record",
+"prior_evidence": [
+"gateway/server.js:228-229"
+]
+},
+{
+"id": "C50-037",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Avoid printing raw session identifiers when unnecessary.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "per-connection logs use short conn.id, not raw session sid tokens; gateway.stopped has no ids at all",
+"prior_evidence": [
+"gateway/connection.js:315",
+"gateway/server.js:229"
+]
+},
+{
+"id": "C50-038",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Avoid printing credentials or payload contents.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "logs 'never contain tokens, cookies, query strings or terminal bytes'",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C50-039",
+"task_class": "IMPLEMENT",
+"area": "04. Final diagnostics",
+"req": "Bound final log output.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "final log payload is a small fixed set of fields (forced, drainMs), inherently bounded",
+"prior_evidence": [
+"gateway/server.js:229"
+]
+},
+{
+"id": "C50-040",
+"task_class": "DOCUMENT",
+"area": "04. Final diagnostics",
+"req": "Record limitations of final-log delivery during forced termination.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented caveat about log delivery being unreliable under a forced (e.g. SIGKILL) stop",
+"prior_evidence": []
+},
+{
+"id": "C50-041",
+"task_class": "MEASURE",
+"area": "05. Task completion",
+"req": "Observe remaining worker completion handles within the final budget.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.onEmpty observes remaining worker/connection completion within the hard-timer budget",
+"prior_evidence": [
+"gateway/server.js:233-234"
+]
+},
+{
+"id": "C50-042",
+"task_class": "MEASURE",
+"area": "05. Task completion",
+"req": "Observe faulted send or receive tasks where still owned.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "worker 'error' and socket error listeners handle faulted operations while still owned",
+"prior_evidence": [
+"gateway/connection.js:191",
+"gateway/ws.js"
+]
+},
+{
+"id": "C50-043",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Avoid starting new network operations during finalization.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining blocks new tickets and WS upgrades during finalization",
+"prior_evidence": [
+"gateway/server.js:120,172"
+]
+},
+{
+"id": "C50-044",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Avoid waiting indefinitely on a worker that cannot complete.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "hard setTimeout(cfg.shutdownMs) prevents indefinite waiting on a stuck worker",
+"prior_evidence": [
+"gateway/server.js:232"
+]
+},
+{
+"id": "C50-045",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Release completed job handles.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "registry.release frees completed job/session handles",
+"prior_evidence": [
+"gateway/connection.js:282,332"
+]
+},
+{
+"id": "C50-046",
+"task_class": "IMPLEMENT",
+"area": "05. Task completion",
+"req": "Release backend resources after dependent tasks stop.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "backend (worker process) resources released once dependent 'exit'/kill handling completes",
+"prior_evidence": [
+"gateway/connection.js:260-272"
+]
+},
+{
+"id": "C50-047",
+"task_class": "SPECIFY",
+"area": "05. Task completion",
+"req": "Define escalation for a nonterminating background operation.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no defined escalation beyond the single hard timer if server.close()/closeAllConnections() itself hangs",
+"prior_evidence": []
+},
+{
+"id": "C50-048",
+"task_class": "TEST",
+"area": "05. Task completion",
+"req": "Test exit with no background work.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "sessions:3, runningCommand:false case is the no-background-work exit measurement",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-049",
+"task_class": "TEST",
+"area": "05. Task completion",
+"req": "Test exit after several completed workers.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "sessions:3, runningCommand:true case exercises exit after several active/completed workers",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-050",
+"task_class": "TEST",
+"area": "05. Task completion",
+"req": "Test exit after one failed worker.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker SIGKILL test exists but isn't paired with a subsequent graceful-shutdown exit-code assertion",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C50-051",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Confirm the expected container primary process exits.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no built container to confirm a 'primary process' exits; Docker never built or run",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-052",
+"task_class": "REVIEW",
+"area": "06. Process topology",
+"req": "Confirm no detached application process remains serving traffic.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no deployed/containerized run to check for a detached surviving process",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-053",
+"task_class": "VERIFY",
+"area": "06. Process topology",
+"req": "Verify wrapper propagation of the intended exit code when applicable.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Node runs as PID 1 via exec-form ENTRYPOINT with no shell wrapper, so there is no wrapper exit-code propagation to verify",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049",
+"D-001"
+]
+},
+{
+"id": "C50-054",
+"task_class": "VERIFY",
+"area": "06. Process topology",
+"req": "Verify local container tooling reports the expected result.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "local container tooling was never exercised (no Docker daemon)",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-055",
+"task_class": "VERIFY",
+"area": "06. Process topology",
+"req": "VERIFY hosted observability of the selected exit outcome.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "hosted (Render) observability never exercised, deployment authorization absent",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-056",
+"task_class": "IMPLEMENT",
+"area": "06. Process topology",
+"req": "Avoid assuming a success exit code proves client messages were delivered.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "un-acked output is tracked/reported as UNKNOWN, never assumed delivered just because exit was clean",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect",
+"gateway/connection.js:141-143"
+]
+},
+{
+"id": "C50-057",
+"task_class": "DOCUMENT",
+"area": "06. Process topology",
+"req": "Record any additional process created by the approved runtime path.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "records DF CLI child processes spawned by fabric jobs as additional processes",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#per-session-memory-bound"
+]
+},
+{
+"id": "C50-058",
+"task_class": "SPECIFY",
+"area": "06. Process topology",
+"req": "Define ownership of those additional processes.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "each worker child process is owned and killed exclusively by its Connection instance",
+"prior_evidence": [
+"gateway/connection.js:181-193,267-272"
+]
+},
+{
+"id": "C50-059",
+"task_class": "TEST",
+"area": "06. Process topology",
+"req": "Test their behavior during clean shutdown.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "worker behavior during clean SIGTERM drain and forced worker kill are both tested",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-060",
+"task_class": "DOCUMENT",
+"area": "06. Process topology",
+"req": "Document process-topology limits of the verification.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no doc explicitly states process-topology verification limits (e.g. Docker/container aspects unverified)",
+"prior_evidence": []
+},
+{
+"id": "C50-061",
+"task_class": "MEASURE",
+"area": "07. Timing",
+"req": "Measure time from drain completion to process exit.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "wallMs/gatewayReportedDrainMs approximate drain-completion-to-exit timing (12-17ms)",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-062",
+"task_class": "MEASURE",
+"area": "07. Timing",
+"req": "Measure time spent in backend disposal.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no isolated measurement of time spent specifically in worker/backend disposal",
+"prior_evidence": []
+},
+{
+"id": "C50-063",
+"task_class": "MEASURE",
+"area": "07. Timing",
+"req": "Measure time spent waiting for final task observation.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no isolated measurement of time waiting for final task/worker observation",
+"prior_evidence": []
+},
+{
+"id": "C50-064",
+"task_class": "IMPLEMENT",
+"area": "07. Timing",
+"req": "Reserve headroom below the verified hosting termination deadline.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SHUTDOWN_MS(20s) kept below the platform's 30s allowance, reserving headroom",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C50-065",
+"task_class": "TEST",
+"area": "07. Timing",
+"req": "Test finalization with many completed worker handles.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only 3 completed worker handles measured, not clearly 'many'",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-066",
+"task_class": "TEST",
+"area": "07. Timing",
+"req": "Test finalization after a startup failure.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "malformed PORT -> exit 78 exercises finalization immediately after a startup failure",
+"prior_evidence": [
+"tests/gateway/config.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C50-067",
+"task_class": "TEST",
+"area": "07. Timing",
+"req": "Test finalization after an ingress-stop failure.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for finalization after an ingress-stop (server.close) failure",
+"prior_evidence": []
+},
+{
+"id": "C50-068",
+"task_class": "TEST",
+"area": "07. Timing",
+"req": "Test finalization after a drain timeout.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test drives the hard-timer forced path (exit 1) with a genuinely unresponsive peer through full process shutdown",
+"prior_evidence": []
+},
+{
+"id": "C50-069",
+"task_class": "DOCUMENT",
+"area": "07. Timing",
+"req": "Record cases where the process was externally forced to stop.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no recorded cases of the process being externally SIGKILLed",
+"prior_evidence": []
+},
+{
+"id": "C50-070",
+"task_class": "IMPLEMENT",
+"area": "07. Timing",
+"req": "Avoid reporting a forced stop as a passing graceful-shutdown test.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "worker SIGKILL and real-process SIGTERM are kept as separate, distinctly-named tests, not conflated",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C50-071",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Handle an exception during final diagnostic emission.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no try/catch found specifically around the final log.info('gateway.stopped', ...) call",
+"prior_evidence": []
+},
+{
+"id": "C50-072",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Handle backend disposal failure.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "worker.kill wrapped in try/catch, handling backend disposal failure",
+"prior_evidence": [
+"gateway/connection.js:269"
+]
+},
+{
+"id": "C50-073",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Handle signal-registration disposal failure.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Node process signal handlers need no explicit disposal before the process itself exits",
+"prior_evidence": [
+"gateway/server.js:255-256"
+]
+},
+{
+"id": "C50-074",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Handle repeated requests to terminate.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "signalled guard and cached shutdownPromise both prevent repeated termination requests from re-running cleanup",
+"prior_evidence": [
+"gateway/server.js:253",
+"gateway/server.js:219"
+]
+},
+{
+"id": "C50-075",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Preserve the original failure cause alongside cleanup failures.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "worker failure cause (stderr tail, code/sig) is preserved in workerExit/logs alongside subsequent cleanup",
+"prior_evidence": [
+"gateway/connection.js:263,283"
+]
+},
+{
+"id": "C50-076",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Avoid recursive termination handlers.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "signalled flag prevents onSignal from re-entering itself recursively",
+"prior_evidence": [
+"gateway/server.js:253"
+]
+},
+{
+"id": "C50-077",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Avoid unlimited retries in finalization.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown path makes one bounded attempt (hard timer), no retry loop present",
+"prior_evidence": [
+"gateway/server.js:216-242"
+]
+},
+{
+"id": "C50-078",
+"task_class": "IMPLEMENT",
+"area": "08. Failure handling",
+"req": "Produce the best available final result within the approved budget.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "finish(forced) always resolves with the best available result once the hard timer fires",
+"prior_evidence": [
+"gateway/server.js:224-232"
+]
+},
+{
+"id": "C50-079",
+"task_class": "TEST",
+"area": "08. Failure handling",
+"req": "Test finalization when resources are only partially initialized.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for shutdown occurring while resources are only partially initialized (e.g. before registry/session setup)",
+"prior_evidence": []
+},
+{
+"id": "C50-080",
+"task_class": "DOCUMENT",
+"area": "08. Failure handling",
+"req": "Document what remains unverified after an abrupt process kill.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'Not run' list covers store failure/hosted restarts generally, not specifically SIGKILL verification gaps",
+"prior_evidence": [
+"docs/RECOVERY.md#failure-experiments-run"
+]
+},
+{
+"id": "C50-081",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test normal shutdown with no clients.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated zero-client shutdown test found; drain-measure.json always has 3 sessions",
+"prior_evidence": []
+},
+{
+"id": "C50-082",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test normal shutdown with cooperative active clients.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "both idle and running-command variants with 3 cooperative clients are measured",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-083",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test shutdown with an unresponsive client.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "unresponsive-heartbeat closing exists but not combined with a full shutdown/exit-code scenario",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C50-084",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test shutdown during application startup.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for shutdown signal arriving during application startup",
+"prior_evidence": []
+},
+{
+"id": "C50-085",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test startup with invalid configuration.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'malformed or out-of-range PRESENT value is an error, never defaulted' covers startup with invalid config",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C50-086",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test startup with a listener bind failure.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test exercising an actual listener bind failure (e.g. port already in use)",
+"prior_evidence": []
+},
+{
+"id": "C50-087",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test a worker fault followed by deliberate service shutdown.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "worker-fault and deliberate-shutdown are each tested separately; no combined scenario found",
+"prior_evidence": []
+},
+{
+"id": "C50-088",
+"task_class": "TEST",
+"area": "09. Validation matrix",
+"req": "Test a fatal service error.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for an unhandled fatal service-wide error/crash path",
+"prior_evidence": []
+},
+{
+"id": "C50-089",
+"task_class": "VERIFY",
+"area": "09. Validation matrix",
+"req": "Verify expected exit results for every matrix row.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no consolidated matrix test verifying exit results across all listed rows",
+"prior_evidence": []
+},
+{
+"id": "C50-090",
+"task_class": "IMPLEMENT",
+"area": "09. Validation matrix",
+"req": "Preserve observed results from the actual built image.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "results are from the bare Node process, not the built container image, which was never built",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the process-outcome table.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "exit codes exist in code/docs but no single published outcome table",
+"prior_evidence": [
+"gateway/server.js:250,254,257",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C50-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish finalization prerequisites.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SHUTDOWN_MS finalization budget is published",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C50-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the cleanup-incomplete reporting policy.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'forced' reporting exists in code but isn't published as a named policy document",
+"prior_evidence": [
+"gateway/server.js:224-234"
+]
+},
+{
+"id": "C50-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link clean and failed startup exit tests.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "clean-config-startup and malformed-PORT(exit 78) tests are both listed in the evidence index",
+"prior_evidence": [
+"tests/gateway/config.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C50-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link cooperative and timed-out shutdown exit tests.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "cooperative shutdown test exists; no timed-out/forced shutdown exit test is linked",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:136-150"
+]
+},
+{
+"id": "C50-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link wrapper or primary-process verification.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no wrapper exists and no container/primary-process verification was performed (Docker never run)",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment"
+]
+},
+{
+"id": "C50-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record measured finalization timing.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "finalization timing (wallMs, gatewayReportedDrainMs) is recorded",
+"prior_evidence": [
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C50-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document observability limitations under forced termination.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no documentation of observability limits under forced termination",
+"prior_evidence": []
+},
+{
+"id": "C50-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved process-exit behavior.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'Not run' list is the closest thing to this, but doesn't specifically enumerate unresolved process-exit behavior",
+"prior_evidence": [
+"docs/RECOVERY.md#failure-experiments-run"
+]
+},
+{
+"id": "C50-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve final termination only when exit reporting reflects observed cleanup outcomes.",
+"ram_overlay": "Terminate only after managed cleanup or the explicit abort boundary. Preserve an exit summary without serializing private terminal payloads.",
+"challenge": "Verify bounded exit with stuck consumers and no orphan worker or bridge process.",
+"ref_work": [
+"R11",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit statement gating final-termination approval on separately accounted acks/timeouts/cleanup",
+"prior_evidence": []
+}
+]
+}

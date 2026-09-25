@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_DECLARATION/1",
+  "title": "PK_DECLARATION/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "operation", "node", "request_id"],
+  "properties": {
+    "schema": {"const": "PK_DECLARATION/1"},
+    "operation": {"enum": ["declare", "retract"]},
+    "node": {"$ref": "#/$defs/node"},
+    "spec": {"type": "object", "maxProperties": 1024},
+    "after": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/node"}},
+    "cascade": {"type": "boolean"},
+    "expected_version": {"type": "integer", "minimum": 0},
+    "request_id": {"$ref": "#/$defs/token"},
+    "site": {"type": "string", "minLength": 1, "maxLength": 128},
+    "context": {"enum": ["cloud", "datacenter", "near-edge", "far-edge"]},
+    "artifacts": {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/artifact"}}
+  },
+  "$defs": {
+    "token": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^\\S(.*\\S)?$"},
+    "node": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/token"}},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "digest"],
+      "properties": {
+        "name": {"$ref": "#/$defs/token"},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "signature": {"type": "string", "maxLength": 1024},
+        "signer": {"$ref": "#/$defs/token"},
+        "provenance": {"type": "object"}
+      }
+    }
+  }
+}

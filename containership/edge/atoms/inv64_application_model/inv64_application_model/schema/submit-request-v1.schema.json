@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv64:submit-request:v1",
+  "title": "PK_APP_SUBMIT_REQUEST/1",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "operation",
+    "tenant",
+    "environment",
+    "site",
+    "app",
+    "manifest_json"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "PK_APP_SUBMIT_REQUEST/1"
+    },
+    "version": {
+      "enum": [
+        "PK_APP_SUBMIT/1",
+        "PK_APP_SUBMIT/2"
+      ]
+    },
+    "operation": {
+      "enum": [
+        "submit",
+        "validate",
+        "canonicalize"
+      ]
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+    },
+    "environment": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+    },
+    "site": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+    },
+    "app": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+    },
+    "manifest_json": {
+      "type": "string",
+      "maxLength": 1048576,
+      "description": "UTF-8 JSON text of an app/v1 manifest; byte ceiling 1 MiB enforced on encoded bytes"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{16,128}$",
+      "description": "required when operation=submit"
+    },
+    "deadline_ms": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "deadline_at_ms": {
+      "type": "number",
+      "description": "absolute propagated deadline (epoch ms); never extended"
+    }
+  },
+  "x-transport-metadata": {
+    "credential": "token (v1.<header>.<claims>.<sig>) \u2014 never in the body",
+    "channel_binding": "TLS exporter digest",
+    "traceparent": "W3C trace context"
+  },
+  "x-unknown-fields": "refused with request.invalid (no parser differential)"
+}

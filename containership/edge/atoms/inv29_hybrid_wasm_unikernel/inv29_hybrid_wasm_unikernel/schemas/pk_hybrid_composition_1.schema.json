@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:inv29:PK_HYBRID_COMPOSITION/1",
+  "title": "PK_HYBRID_COMPOSITION/1",
+  "description": "Composition record emitted by inv29 compose()/admit(). 'admission' and 'signature' are optional additive fields introduced in 4.3.0; a production consumer MUST require both (see SCHEMA_EVOLUTION.md).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "module", "host", "layers", "layer_count", "imports", "defence_in_depth", "verification"],
+  "properties": {
+    "schema": {"const": "PK_HYBRID_COMPOSITION/1"},
+    "module": {"$ref": "#/$defs/name"},
+    "host": {"$ref": "#/$defs/name"},
+    "layers": {
+      "type": "array", "minItems": 2, "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["layer", "guarantee"],
+        "properties": {
+          "layer": {"enum": ["unikernel", "wasm", "hardware-capability"]},
+          "guarantee": {"type": "string", "maxLength": 256}
+        }
+      }
+    },
+    "layer_count": {"type": "integer", "minimum": 2, "maximum": 8},
+    "imports": {"type": "array", "maxItems": 4096, "uniqueItems": true, "items": {"$ref": "#/$defs/capability"}},
+    "defence_in_depth": {"const": true},
+    "verification": {"type": "object"},
+    "admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tenant", "module_digest", "host_digest", "nonce", "issued_at", "expires_at", "policy_generation", "attestations", "interfaces"],
+      "properties": {
+        "tenant": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"},
+        "module_digest": {"$ref": "#/$defs/digest"},
+        "host_digest": {"$ref": "#/$defs/digest"},
+        "nonce": {"type": "string", "pattern": "^[A-Za-z0-9_-]{16,128}$"},
+        "issued_at": {"type": "integer", "minimum": 0},
+        "expires_at": {"type": "integer", "minimum": 0},
+        "policy_generation": {"type": "integer", "minimum": 0},
+        "attestations": {
+          "type": "array", "minItems": 2, "maxItems": 8,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["claim", "subject", "key_id", "verified"],
+            "properties": {
+              "claim": {"enum": ["sealed", "hardened", "measured-boot"]},
+              "subject": {"$ref": "#/$defs/digest"},
+              "key_id": {"type": "string", "maxLength": 128},
+              "verified": {"const": true}
+            }
+          }
+        },
+        "interfaces": {"type": "array", "maxItems": 512}
+      }
+    },
+    "signature": {
+      "type": "object", "additionalProperties": false, "required": ["alg", "key_id", "value"],
+      "properties": {
+        "alg": {"enum": ["HMAC-SHA256"]},
+        "key_id": {"type": "string", "maxLength": 128},
+        "value": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "$defs": {
+    "name": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "\\S"},
+    "capability": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "\\S"},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

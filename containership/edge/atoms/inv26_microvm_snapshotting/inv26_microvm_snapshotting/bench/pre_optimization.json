@@ -1,0 +1,148 @@
+{
+ "adapter": "reference",
+ "breakdown": {
+  "copies_identified": [
+   "blob read into memory (1x ciphertext)",
+   "AEAD output accumulated into a bytearray, then bytes() (2x plaintext transiently)",
+   "unframe slices state/memory (1x plaintext)",
+   "adapter writes memory file for VMM load (1x plaintext on tmpfs)"
+  ],
+  "digest_plus_aead_ms": 78.37,
+  "image_bytes": 16777267,
+  "memory_mib": 16,
+  "optimization_candidates": [
+   "stream-decrypt chunks directly into the VMM memory file after full-tag pre-verification pass",
+   "memoryview slicing in unframe to avoid a copy",
+   "UFFD memory backend (Firecracker) to page in lazily from a decrypted cache"
+  ],
+  "peak_alloc_over_image": 3.06,
+  "peak_python_alloc_bytes": 51270380,
+  "storage_read_ms": 8.167,
+  "unframe_ms": 2.811
+ },
+ "capture": [
+  {
+   "memory_mib": 1,
+   "request_ms": {
+    "max": 18.7503,
+    "mean": 14.2944,
+    "n": 15,
+    "p50": 13.6512,
+    "p95": 18.7503,
+    "p99": 18.7503
+   }
+  }
+ ],
+ "certifiable": false,
+ "certifiable_reason": "reference hypervisor: VMM restore cost excluded; not an SLO measurement",
+ "environment": {
+  "cores": 2,
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+  "cryptography": "46.0.7",
+  "kernel": "6.18.44-fc-v37",
+  "kvm_present": false,
+  "machine": "x86_64",
+  "python": "3.11.15"
+ },
+ "load": [
+  {
+   "admission_rejected_total": 0,
+   "concurrency": 4,
+   "latency_ms": {
+    "max": 35.4775,
+    "mean": 24.9942,
+    "n": 60,
+    "p50": 25.5056,
+    "p95": 34.3312,
+    "p99": 35.4775
+   },
+   "ok": 60,
+   "rejected": {
+    "SNAP_OVERLOADED": 0
+   },
+   "tenants": 2,
+   "throughput_per_s": 154.1,
+   "unexpected_errors": {}
+  },
+  {
+   "admission_rejected_total": 0,
+   "concurrency": 16,
+   "latency_ms": {
+    "max": 200.2463,
+    "mean": 105.0549,
+    "n": 240,
+    "p50": 103.565,
+    "p95": 159.5064,
+    "p99": 191.646
+   },
+   "ok": 240,
+   "rejected": {
+    "SNAP_OVERLOADED": 0
+   },
+   "tenants": 4,
+   "throughput_per_s": 145.5,
+   "unexpected_errors": {}
+  }
+ ],
+ "max_rss_kib": 216960,
+ "profile": "quick",
+ "restore": [
+  {
+   "cpu_ms": {
+    "max": 10.0108,
+    "mean": 7.4052,
+    "n": 60,
+    "p50": 7.2067,
+    "p95": 8.5813,
+    "p99": 10.0108
+   },
+   "memory_mib": 1,
+   "request_ms": {
+    "max": 17.3808,
+    "mean": 8.853,
+    "n": 60,
+    "p50": 8.4986,
+    "p95": 10.3097,
+    "p99": 17.3808
+   },
+   "restore_path_ms": {
+    "max": 14.1927,
+    "mean": 6.0721,
+    "n": 60,
+    "p50": 5.8083,
+    "p95": 6.7905,
+    "p99": 14.1927
+   }
+  },
+  {
+   "cpu_ms": {
+    "max": 90.802,
+    "mean": 77.9606,
+    "n": 20,
+    "p50": 76.5287,
+    "p95": 86.936,
+    "p99": 90.802
+   },
+   "memory_mib": 16,
+   "request_ms": {
+    "max": 95.3523,
+    "mean": 81.0861,
+    "n": 20,
+    "p50": 79.5743,
+    "p95": 89.3715,
+    "p99": 95.3523
+   },
+   "restore_path_ms": {
+    "max": 91.7114,
+    "mean": 77.769,
+    "n": 20,
+    "p50": 76.0073,
+    "p95": 86.4296,
+    "p99": 91.7114
+   }
+  }
+ ],
+ "schema": "PK_SNAPSHOT_BENCH/1",
+ "seconds": 5.32,
+ "note": "BEFORE PERF-1 (whole-blob SHA-256 on restore hot path). Kept as the comparison point for C066."
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "INV52_OWNERS/1",
+  "component": "INV-52",
+  "roles": {
+    "accountable_owner": "UNASSIGNED",
+    "deputy_owner": "UNASSIGNED",
+    "service_team": "UNASSIGNED",
+    "security_owner": "UNASSIGNED",
+    "release_owner": "UNASSIGNED",
+    "oncall_escalation": "UNASSIGNED",
+    "architecture_reviewer": "UNASSIGNED",
+    "operations_reviewer": "UNASSIGNED"
+  },
+  "raci": {
+    "architecture_approval": {
+      "R": "architecture_reviewer",
+      "A": "accountable_owner",
+      "C": [
+        "security_owner"
+      ],
+      "I": [
+        "service_team"
+      ]
+    },
+    "dapr_or_broker_upgrade": {
+      "R": "service_team",
+      "A": "accountable_owner",
+      "C": [
+        "security_owner",
+        "operations_reviewer"
+      ],
+      "I": [
+        "release_owner"
+      ]
+    },
+    "policy_change": {
+      "R": "service_team",
+      "A": "security_owner",
+      "C": [
+        "accountable_owner"
+      ],
+      "I": [
+        "oncall_escalation"
+      ]
+    },
+    "production_deployment": {
+      "R": "release_owner",
+      "A": "accountable_owner",
+      "C": [
+        "operations_reviewer"
+      ],
+      "I": [
+        "service_team"
+      ]
+    },
+    "emergency_disable": {
+      "R": "oncall_escalation",
+      "A": "accountable_owner",
+      "C": [
+        "security_owner"
+      ],
+      "I": [
+        "service_team"
+      ]
+    },
+    "vulnerability_response": {
+      "R": "security_owner",
+      "A": "accountable_owner",
+      "C": [
+        "service_team"
+      ],
+      "I": [
+        "release_owner"
+      ]
+    },
+    "deprecation": {
+      "R": "service_team",
+      "A": "accountable_owner",
+      "C": [
+        "architecture_reviewer"
+      ],
+      "I": [
+        "release_owner"
+      ]
+    }
+  },
+  "escalation_minutes": {
+    "sev1": {
+      "ack": 5,
+      "escalate_owner": 15,
+      "escalate_exec": 60
+    },
+    "sev2": {
+      "ack": 15,
+      "escalate_owner": 60
+    },
+    "security_exception_unresolved_days": 7,
+    "failed_rollout": 30,
+    "error_budget_exhausted": "immediate"
+  },
+  "note": "Named people must be supplied by the organisation; the release gate fails closed while any role is UNASSIGNED."
+}

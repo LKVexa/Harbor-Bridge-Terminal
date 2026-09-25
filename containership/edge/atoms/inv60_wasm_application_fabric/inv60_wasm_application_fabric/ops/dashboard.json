@@ -1,0 +1,26 @@
+{
+ "title": "INV-60 Wasm application fabric",
+ "schemaVersion": 1,
+ "panels": [
+  {
+   "title": "Operations by code",
+   "expr": "sum by (code) (rate(inv60_operations_total[5m]))"
+  },
+  {
+   "title": "Call latency p50/p95/p99",
+   "expr": "histogram_quantile(0.99, rate(inv60_call_seconds_bucket[5m]))"
+  },
+  {
+   "title": "Failovers",
+   "expr": "increase(inv60_failovers_total[1h])"
+  },
+  {
+   "title": "Hosts / instances",
+   "expr": "inv60_hosts; inv60_instances"
+  },
+  {
+   "title": "Security refusals",
+   "expr": "sum by (code) (rate(inv60_operations_total{code=~\"UNAUTHENTICATED|PERMISSION_DENIED|SIGNATURE_INVALID|DIGEST_MISMATCH\"}[5m]))"
+  }
+ ]
+}

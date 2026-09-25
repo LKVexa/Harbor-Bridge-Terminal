@@ -1,0 +1,19 @@
+{
+  "schema": "inv36.alerts/1",
+  "format": "Prometheus-style expressions over metrics in observability.METRICS_CATALOG",
+  "alerts": [
+    {"name": "INV36AuthFailureSpike", "class": "attack", "severity": "SEV2", "expr": "sum(rate(inv36_auth_failures_total[5m])) > 1", "for": "5m", "runbook": "docs/RUNBOOKS.md#auth-failure-spike", "synthetic_metric": "inv36_auth_failures_total", "synthetic_threshold": 10},
+    {"name": "INV36ReplayOrReorder", "class": "attack", "severity": "SEV2", "expr": "sum(rate(inv36_integrity_failures_total{reason=~\"replay|out_of_order\"}[5m])) > 0.2", "for": "10m", "runbook": "docs/RUNBOOKS.md#auth-failure-spike"},
+    {"name": "INV36HandshakeFailuresDependency", "class": "dependency_failure", "severity": "SEV2", "expr": "sum(rate(inv36_handshakes_total{outcome=\"failure\",code=\"HS_DEPENDENCY\"}[5m])) > 0", "for": "5m", "runbook": "docs/RUNBOOKS.md#identity-dependency-outage"},
+    {"name": "INV36PolicyDenialsHigh", "class": "policy_rejection", "severity": "SEV3", "expr": "sum(rate(inv36_authz_denials_total[10m])) > 5", "for": "10m", "runbook": "docs/RUNBOOKS.md#policy-misconfiguration"},
+    {"name": "INV36Overload", "class": "overload", "severity": "SEV3", "expr": "max(inv36_saturation_ratio) > 0.9", "for": "5m", "runbook": "docs/RUNBOOKS.md#overload"},
+    {"name": "INV36CriticalShed", "class": "overload", "severity": "SEV2", "expr": "sum(rate(inv36_dropped_total{priority=\"CRITICAL\"}[5m])) > 0", "for": "2m", "runbook": "docs/RUNBOOKS.md#overload"},
+    {"name": "INV36HighLoadInfo", "class": "load", "severity": "SEV4", "expr": "sum(rate(inv36_frames_total[5m])) > 5000", "for": "15m", "runbook": "docs/RUNBOOKS.md#overload"},
+    {"name": "INV36TailLatency", "class": "degradation", "severity": "SEV3", "expr": "histogram_quantile(0.99, sum(rate(inv36_latency_seconds_bucket{stage=\"dispatch\"}[5m])) by (le)) > 0.025", "for": "10m", "runbook": "docs/RUNBOOKS.md#latency-degradation"},
+    {"name": "INV36BreakerOpen", "class": "dependency_failure", "severity": "SEV3", "expr": "max(inv36_breaker_state) == 2", "for": "5m", "runbook": "docs/RUNBOOKS.md#identity-dependency-outage"},
+    {"name": "INV36TelemetryDrops", "class": "degradation", "severity": "SEV4", "expr": "increase(inv36_telemetry_dropped_total[15m]) > 0", "for": "15m", "runbook": "docs/RUNBOOKS.md#telemetry-outage"},
+    {"name": "INV36ReconnectStorm", "class": "degradation", "severity": "SEV2", "expr": "sum(rate(inv36_reconnects_total[1m])) > 50", "for": "3m", "runbook": "docs/RUNBOOKS.md#reconnect-storm"},
+    {"name": "INV36FdLeak", "class": "software_defect", "severity": "SEV3", "expr": "deriv(inv36_process_open_fds[1h]) > 0.05", "for": "2h", "runbook": "docs/RUNBOOKS.md#software-defect"},
+    {"name": "INV36QuarantineActive", "class": "attack", "severity": "SEV2", "expr": "max(inv36_quarantine_active) > 0", "for": "0m", "runbook": "docs/RUNBOOKS.md#quarantine"}
+  ]
+}

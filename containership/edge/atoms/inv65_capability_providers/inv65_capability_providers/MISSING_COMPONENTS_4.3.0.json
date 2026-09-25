@@ -1,0 +1,590 @@
+{
+ "element": "INV-65",
+ "version": "4.3.0",
+ "audit_date": "2026-09-22",
+ "input": "4.2.0 hardened + remediation checklist 4.2.0",
+ "summary": {
+  "blocked": 4,
+  "closed-local": 18,
+  "partial": 18
+ },
+ "p0_open": [
+  "M02",
+  "M04",
+  "M07",
+  "M09",
+  "M17",
+  "M19",
+  "M23",
+  "M26",
+  "M30"
+ ],
+ "status_vocabulary": {
+  "closed-local": "implemented with passing executable tests in this archive; nothing external required",
+  "partial": "implemented and tested locally; a named external condition remains",
+  "blocked": "cannot be completed inside this archive without inventing inputs"
+ },
+ "components": [
+  {
+   "id": "M01",
+   "priority": "P1",
+   "status": "blocked",
+   "deliverables": [
+    "docs/master/SOURCE_PROVENANCE.md"
+   ],
+   "tests": [
+    "tests/test_release_tooling.py"
+   ],
+   "remaining": "authoritative MASTER.md corpus not supplied; not fabricated"
+  },
+  {
+   "id": "M02",
+   "priority": "P0",
+   "status": "blocked",
+   "deliverables": [
+    "docs/dependencies/pk_core.md",
+    "lock/pk_core.lock.json",
+    "ci/scripts/check_pk_core.py",
+    "pyproject.toml"
+   ],
+   "tests": [],
+   "remaining": "pk_core source/version/digest not supplied; runtime decoupled from it; gate fails check_pk_core"
+  },
+  {
+   "id": "M03",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "schemas/",
+    "schemas/COMPATIBILITY.md",
+    "schemas/SCHEMA_LOCK.json"
+   ],
+   "tests": [
+    "tests/contract/test_golden_vectors.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M04",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "host/server.py",
+    "host/bootstrap.py",
+    "transport/http_adapter.py",
+    "deployment/provider-host.service.json"
+   ],
+   "tests": [
+    "tests/integration/test_host_http.py"
+   ],
+   "remaining": "HTTP/JSON transport only; WIT/RPC mapping belongs to INV-61; mTLS path not exercised with real certificates"
+  },
+  {
+   "id": "M05",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "state/store.py",
+    "state/migrations.py"
+   ],
+   "tests": [
+    "tests/fault/test_state_recovery.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M06",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "identity/context.py",
+    "schemas/identity_context/v1.json",
+    "docs/identity-trust-boundaries.md"
+   ],
+   "tests": [
+    "tests/security/test_identity_binding.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M07",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "authn/authenticator.py",
+    "docs/authentication.md"
+   ],
+   "tests": [
+    "tests/security/test_authentication.py"
+   ],
+   "remaining": "HMAC workload-token adapter; production SPIFFE/attested issuer from INV-60 must be plugged in"
+  },
+  {
+   "id": "M08",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "authz/decision.py",
+    "schemas/authz_decision/v1.json",
+    "docs/authorization-integration.md"
+   ],
+   "tests": [
+    "tests/security/test_authorization_enforcement.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M09",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "secret_refs/resolver.py",
+    "schemas/secret_ref/v1.json",
+    "docs/secret-lifecycle.md"
+   ],
+   "tests": [
+    "tests/security/test_secret_handling.py",
+    "tests/integration/test_adjacent_layers.py"
+   ],
+   "remaining": "INV-55 exercised through an in-memory fixture backend; real INV-55 client absent"
+  },
+  {
+   "id": "M10",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "config/model.py"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M11",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "lifecycle/state_machines.py",
+    "docs/lifecycle-state-machines.md"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M12",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "registry/model.py",
+    "schemas/provider_registration/v1.json"
+   ],
+   "tests": [
+    "tests/integration/test_registry_negotiation.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M13",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "errors/mapping.py",
+    "schemas/pk_provider_error/v1.json",
+    "docs/error-catalog.md"
+   ],
+   "tests": [
+    "tests/contract/test_error_compatibility.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M14",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "runtime/call_control.py",
+    "runtime/idempotency.py",
+    "schemas/call_metadata/v1.json"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py",
+    "tests/fault/test_fault_scenarios.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M15",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "runtime/admission.py",
+    "runtime/quotas.py",
+    "runtime/circuit_breaker.py"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py",
+    "benchmarks/harness.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M16",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "health/model.py",
+    "health/probes.py",
+    "schemas/pk_provider_health/v1.json"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py",
+    "tests/integration/test_host_http.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M17",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "resilience/failover.py",
+    "resilience/fencing.py",
+    "docs/failure-mode-matrix.md"
+   ],
+   "tests": [
+    "tests/fault/test_failover_splitbrain.py"
+   ],
+   "remaining": "lease manager is in-process; a shared lease service (etcd-like) across hosts is external"
+  },
+  {
+   "id": "M18",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "audit/emitter.py",
+    "audit/verification.py",
+    "schemas/audit_event/v1.json"
+   ],
+   "tests": [
+    "tests/security/test_audit_chain.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M19",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "crypto/at_rest.py",
+    "crypto/transport.py",
+    "docs/key-management.md"
+   ],
+   "tests": [
+    "tests/security/test_key_rotation.py"
+   ],
+   "remaining": "KMS/HSM integration and certificate issuance external; mTLS not exercised end-to-end"
+  },
+  {
+   "id": "M20",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "supply_chain/trust.py",
+    "supply_chain/provider_catalog.json",
+    "sbom/",
+    "provenance/"
+   ],
+   "tests": [
+    "tests/integration/test_registry_negotiation.py"
+   ],
+   "remaining": "SBOM/provenance generated but UNSIGNED (owner-held key)"
+  },
+  {
+   "id": "M21",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "observability/telemetry.py",
+    "docs/telemetry-policy.md"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py"
+   ],
+   "remaining": "no exporter to a real metrics/trace backend; no release-lineage correlation"
+  },
+  {
+   "id": "M22",
+   "priority": "P2",
+   "status": "partial",
+   "deliverables": [
+    "dashboards/provider-overview.json",
+    "alerts/provider-rules.json",
+    "docs/oncall/provider-alerts.md"
+   ],
+   "tests": [
+    "tests/monitoring/test_alert_rules.py"
+   ],
+   "remaining": "definitions validated against emitted metrics; not loaded into a monitoring stack"
+  },
+  {
+   "id": "M23",
+   "priority": "P0",
+   "status": "blocked",
+   "deliverables": [
+    "tests/integration/test_adjacent_layers.py"
+   ],
+   "tests": [
+    "tests/integration/test_adjacent_layers.py"
+   ],
+   "remaining": "INV-60/55/64/61 repositories absent; seams tested against contract stubs only"
+  },
+  {
+   "id": "M24",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "conformance/fixtures/v1/",
+    "conformance/fixtures/invalid/",
+    "conformance/mixed_version_matrix.json"
+   ],
+   "tests": [
+    "tests/contract/test_golden_vectors.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M25",
+   "priority": "P0",
+   "status": "closed-local",
+   "deliverables": [
+    "fuzz/harness.py",
+    "docs/threat-model.md"
+   ],
+   "tests": [
+    "tests/security/test_adversarial.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M26",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "tests/fault/fault_matrix.json",
+    "evidence/fault-results.json"
+   ],
+   "tests": [
+    "tests/fault/"
+   ],
+   "remaining": "network partition simulated via lease clock; no real disaster/partition environment"
+  },
+  {
+   "id": "M27",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "benchmarks/harness.py",
+    "benchmarks/baselines/local.json",
+    "benchmarks/scenarios.json",
+    "evidence/performance-results.json"
+   ],
+   "tests": [
+    "tests/test_release_tooling.py"
+   ],
+   "remaining": "single host; fleet-scale not run"
+  },
+  {
+   "id": "M28",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "compatibility/matrix.json",
+    "compatibility/policy.md",
+    ".github/workflows/inv65.yml",
+    "evidence/compatibility-results.json"
+   ],
+   "tests": [],
+   "remaining": "only CPython 3.11 x86_64 linux executed; CI matrix defined but not run"
+  },
+  {
+   "id": "M29",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    ".github/workflows/inv65.yml",
+    "ci/scripts/ci.sh",
+    "release/manifest.schema.json",
+    "docs/release-process.md",
+    "tools/release_gate.py"
+   ],
+   "tests": [],
+   "remaining": "CI defined, executed locally only; release signing not performed"
+  },
+  {
+   "id": "M30",
+   "priority": "P0",
+   "status": "partial",
+   "deliverables": [
+    "evidence/pk_evidence.jsonl",
+    "conformance/PK_GATE_RESULTS.json",
+    "schemas/evidence_record/v1.json",
+    "tools/verify_evidence.py"
+   ],
+   "tests": [
+    "tests/test_release_tooling.py"
+   ],
+   "remaining": "evidence produced and verified; pk_core 100-item conformance still not_run"
+  },
+  {
+   "id": "M31",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "traceability/INV65_RTM.json",
+    "tools/build_rtm.py",
+    "tools/check_rtm.py",
+    "docs/traceability.md"
+   ],
+   "tests": [
+    "tests/test_release_tooling.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M32",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "docs/adr/ADR-0001-provider-runtime.md",
+    "docs/threat-model.md",
+    "docs/runbooks/",
+    "docs/ownership-escalation.md"
+   ],
+   "tests": [],
+   "remaining": "owner/reviewer UNASSIGNED; ADR PROPOSED, not approved"
+  },
+  {
+   "id": "M33",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "rollout/controller.py",
+    "rollout/canary-policy.json",
+    "docs/runbooks/rollout-rollback.md"
+   ],
+   "tests": [
+    "tests/integration/test_rollout.py"
+   ],
+   "remaining": "not exercised against production-like durable state"
+  },
+  {
+   "id": "M34",
+   "priority": "P2",
+   "status": "partial",
+   "deliverables": [
+    "governance/VULNERABILITY_POLICY.md",
+    "governance/EOL_POLICY.md",
+    "governance/waivers.json",
+    "governance/review-calendar.md"
+   ],
+   "tests": [
+    "tests/test_release_tooling.py"
+   ],
+   "remaining": "waiver owners UNASSIGNED; reviews never held"
+  },
+  {
+   "id": "M35",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "tools/backup_state.py",
+    "state/migrations.py",
+    "docs/runbooks/backup-restore.md"
+   ],
+   "tests": [
+    "tests/fault/test_state_recovery.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M36",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "pyproject.toml",
+    "lock/constraints.txt"
+   ],
+   "tests": [
+    "tests/test_release_tooling.py"
+   ],
+   "remaining": "wheel builds reproducibly (verified in a venv); lock has no hashes (no approved mirror); pk_core unpinned"
+  },
+  {
+   "id": "M37",
+   "priority": "P2",
+   "status": "blocked",
+   "deliverables": [
+    "NOTICE",
+    "THIRD-PARTY-NOTICES.md",
+    "docs/licensing.md"
+   ],
+   "tests": [],
+   "remaining": "licence choice is the owner's; not invented"
+  },
+  {
+   "id": "M38",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "fixtures/providers/keyvalue.py",
+    "fixtures/providers/http.py",
+    "fixtures/providers/broker.py"
+   ],
+   "tests": [
+    "tests/conformance/test_adapter_suite.py"
+   ],
+   "remaining": null
+  },
+  {
+   "id": "M39",
+   "priority": "P1",
+   "status": "partial",
+   "deliverables": [
+    "slo/SLO.json",
+    "slo/measurement.md",
+    "slo/error_budget.py",
+    "evidence/slo-results.json"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py"
+   ],
+   "remaining": "measured on one host; isolation/restart SLIs are test-suite proxies"
+  },
+  {
+   "id": "M40",
+   "priority": "P1",
+   "status": "closed-local",
+   "deliverables": [
+    "residency/engine.py",
+    "schemas/residency_policy/v1.json"
+   ],
+   "tests": [
+    "tests/test_runtime_units.py",
+    "tests/fault/test_failover_splitbrain.py"
+   ],
+   "remaining": null
+  }
+ ],
+ "deviations_from_checklist_paths": [
+  "secrets/ -> secret_refs/: a package directory named 'secrets' shadows the stdlib 'secrets' module whenever the package dir is on sys.path",
+  "*.yaml deliverables -> *.json: the runtime is stdlib-only and Python has no stdlib YAML parser",
+  "lifecycle/provider_state.py + link_state.py -> lifecycle/state_machines.py (one module, both machines)",
+  "observability/{metrics,logging,tracing,explain}.py -> observability/telemetry.py (one module)",
+  "registry/client.py -> registry/model.py ProviderRegistry.discover (in-process); remote client = HTTP /v1/contract",
+  "tests/security/test_residency_constraints.py, tests/test_config_transactions.py, tests/test_lifecycle_transitions.py, tests/test_call_control.py, tests/test_health_state.py -> classes in tests/test_runtime_units.py",
+  "authn/ trust-root configuration -> host.json keys (docs/authentication.md)"
+ ]
+}

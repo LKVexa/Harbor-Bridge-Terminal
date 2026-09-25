@@ -1,0 +1,120 @@
+{
+ "$id": "urn:pk:harden:eval:2",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "admit": {
+      "const": true
+     }
+    }
+   },
+   "then": {
+    "properties": {
+     "failed": {
+      "maxItems": 0
+     },
+     "reason": {
+      "const": "ADMIT"
+     }
+    }
+   }
+  }
+ ],
+ "properties": {
+  "admit": {
+   "type": "boolean"
+  },
+  "at": {
+   "type": "integer"
+  },
+  "baseline_digest": {
+   "pattern": "^sha256:[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "baseline_epoch": {
+   "minimum": 1,
+   "type": "integer"
+  },
+  "baseline_version": {
+   "type": "string"
+  },
+  "decision_id": {
+   "minLength": 8,
+   "type": "string"
+  },
+  "errors": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "excepted": {
+   "items": {
+    "required": [
+     "control",
+     "exception_id",
+     "expires"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "explain": {
+   "type": "object"
+  },
+  "failed": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array",
+   "uniqueItems": true
+  },
+  "lineage": {
+   "type": "object"
+  },
+  "reason": {
+   "enum": [
+    "ADMIT",
+    "POLICY_REJECTED",
+    "MALFORMED_INPUT",
+    "DEPENDENCY_FAILURE",
+    "UNAUTHENTICATED",
+    "UNAUTHORIZED",
+    "UNSUPPORTED_CONFIGURATION",
+    "INTERNAL_DEFECT",
+    "EMERGENCY_DENY_ALL",
+    "BASELINE_UNAVAILABLE",
+    "CLOCK_UNTRUSTED",
+    "SANDBOX_RUNTIME_UNAVAILABLE"
+   ]
+  },
+  "schema": {
+   "const": "PK_HARDEN_EVAL/2"
+  },
+  "scope": {
+   "type": "object"
+  },
+  "trace": {
+   "type": "object"
+  },
+  "workload": {
+   "maxLength": 253,
+   "type": "string"
+  }
+ },
+ "required": [
+  "schema",
+  "admit",
+  "reason",
+  "workload",
+  "scope",
+  "failed",
+  "excepted",
+  "errors",
+  "decision_id"
+ ],
+ "title": "PK_HARDEN_EVAL/2",
+ "type": "object"
+}

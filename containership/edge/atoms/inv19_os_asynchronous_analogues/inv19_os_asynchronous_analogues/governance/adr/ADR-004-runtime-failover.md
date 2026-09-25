@@ -1,0 +1,3 @@
+# ADR-004 — Runtime failover (v1, PROPOSED)
+**Decision.** Supported, *without state transfer*: admission stops, in-flight ops on the failing backend are resolved exactly once as CANCELLED(cause=BACKEND_RECOVERY), the backend is closed and quarantined, the next available backend is opened, admission resumes. Callers retry idempotent ops per `RetryPolicy`. A quarantined backend never auto-returns (anti-flapping); `unquarantine` is an audited operator action.
+**Rejected.** Migrating in-flight native operations between rings/ports — impossible without re-issuing I/O whose side effects may already have happened.

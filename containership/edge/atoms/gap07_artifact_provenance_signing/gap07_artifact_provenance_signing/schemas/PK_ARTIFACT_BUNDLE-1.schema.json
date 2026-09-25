@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:PK_ARTIFACT_BUNDLE:1",
+  "title": "PK_ARTIFACT_BUNDLE/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact",
+    "attestations",
+    "registry",
+    "schema",
+    "signatures",
+    "transparency"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_ARTIFACT_BUNDLE/1"
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "digest",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "kind": {
+          "enum": [
+            "attestation",
+            "bundle",
+            "code",
+            "grant",
+            "label",
+            "microvm-image",
+            "oci-image",
+            "oci-index",
+            "policy",
+            "provider-bundle",
+            "sbom",
+            "trust-config",
+            "wasm-component",
+            "wasm-module"
+          ]
+        }
+      }
+    },
+    "signatures": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "$ref": "urn:pk:PK_SIGNATURE:3"
+      }
+    },
+    "attestations": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "required": [
+          "payloadType",
+          "payload",
+          "signatures"
+        ]
+      }
+    },
+    "transparency": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "envelope_digest",
+          "evidence"
+        ]
+      }
+    },
+    "registry": {
+      "type": "object"
+    }
+  }
+}

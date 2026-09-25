@@ -1,0 +1,68 @@
+{
+ "$defs": {
+  "hash": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "id": {
+   "maxLength": 255,
+   "minLength": 1,
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,254}$",
+   "type": "string"
+  }
+ },
+ "$id": "urn:inv32:schema:PK_HOST_RESOURCES:1.1",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": true,
+ "properties": {
+  "allocated_mib": {
+   "maximum": 1099511627776,
+   "minimum": 0,
+   "type": "integer"
+  },
+  "audit_head": {
+   "$ref": "#/$defs/hash"
+  },
+  "free_mib": {
+   "maximum": 1099511627776,
+   "minimum": 0,
+   "type": "integer"
+  },
+  "guest_count": {
+   "minimum": 0,
+   "type": "integer"
+  },
+  "host": {
+   "$ref": "#/$defs/id"
+  },
+  "reserve_mib": {
+   "minimum": 1,
+   "type": "integer"
+  },
+  "schema": {
+   "const": "PK_HOST_RESOURCES/1"
+  },
+  "total_mib": {
+   "maximum": 1099511627776,
+   "minimum": 1,
+   "type": "integer"
+  }
+ },
+ "required": [
+  "schema",
+  "host",
+  "total_mib",
+  "reserve_mib",
+  "allocated_mib",
+  "free_mib",
+  "guest_count",
+  "audit_head"
+ ],
+ "title": "PK_HOST_RESOURCES/1. Units MiB. Invariants: free_mib = total_mib - reserve_mib - allocated_mib; free_mib >= 0; reserve_mib >= 1.",
+ "type": "object",
+ "x-invariants": [
+  "free_mib == total_mib - reserve_mib - allocated_mib",
+  "free_mib >= 0",
+  "reserve_mib >= 1"
+ ]
+}

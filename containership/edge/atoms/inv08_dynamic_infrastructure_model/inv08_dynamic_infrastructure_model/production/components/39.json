@@ -1,0 +1,78 @@
+{
+ "component": 39,
+ "title": "Tamper-evident security audit log",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "append-only audit event schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/audit.py::SCHEMA",
+   "modules": [
+    "production/audit.py::AuditLog.append",
+    "production/audit.py::REQUIRED"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_schema_fields_and_redaction"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "hash chaining or signed checkpointing",
+   "state": "IMPLEMENTED",
+   "spec": "production/audit.py::AuditLog.checkpoint",
+   "modules": [
+    "production/audit.py::verify_entries",
+    "production/audit.py::AuditLog.checkpoint",
+    "production/audit.py::verify_against_checkpoint"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_hash_chain_and_signed_checkpoint",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_forged_checkpoint_signature"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "trusted timestamp/sequence semantics",
+   "state": "PARTIAL",
+   "spec": "production/audit.py::AuditLog.append",
+   "modules": [
+    "production/audit.py::AuditLog.append"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_sequence_and_timestamp_monotonic"
+   ],
+   "blocker": "trusted timestamp authority (RFC 3161 TSA or equivalent); sequence + non-decreasing local clock implemented"
+  },
+  {
+   "name": "tamper detection and verification tooling",
+   "state": "IMPLEMENTED",
+   "spec": "production/audit.py::verify_file",
+   "modules": [
+    "production/audit.py::verify_file",
+    "production/audit.py::main"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_tamper_detected",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_reorder_detected",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_deletion_of_middle_detected",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_truncation_only_detected_by_checkpoint",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_corrupt_line_detected",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_audit_line_fuzz"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "retention/export/legal-hold policy",
+   "state": "PARTIAL",
+   "spec": "production/audit.py::RETENTION_POLICY",
+   "modules": [
+    "production/audit.py::may_delete"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AuditLogTests.test_retention_and_legal_hold"
+   ],
+   "blocker": "retention period approval by legal/data owner (UNASSIGNED) and an export/WORM storage target"
+  }
+ ],
+ "notes": "Tests only; audit.py not edited. DEFECT found: read_entries raises UnicodeDecodeError on non-UTF-8 bytes instead of reporting an unparseable line (pinned as expectedFailure AuditKnownDefects.test_invalid_utf8_reported_not_raised). Checkpoint signatures are non-production HMAC."
+}

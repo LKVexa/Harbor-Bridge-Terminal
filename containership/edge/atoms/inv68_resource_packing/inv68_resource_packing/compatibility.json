@@ -1,0 +1,31 @@
+{
+  "schema": "PK_PACK_COMPATIBILITY/1",
+  "component_version": "4.3.0",
+  "support_window": "current minor + previous minor; a minor is supported for 12 months after its successor ships",
+  "protocols": {"PK_PACK/1": {"status": "supported", "since": "4.2.0", "negotiation": "request.protocol list; absent = PK_PACK/1"}},
+  "schemas": {"PK_PACK_REQUEST/1": "supported (4.2.0 shape valid)", "PK_PACK_RESPONSE/1": "supported", "PK_PACK_CAPACITY/1": "supported",
+              "PK_PACK_FRAG/1": "supported", "PK_PACK_CONFIG/1": "new in 4.3.0", "PK_PACK_ERROR/1": "new in 4.3.0",
+              "PK_PACK_STATUS/1": "new in 4.3.0", "PK_PACK_EXPLAIN/1": "new in 4.3.0", "PK_PACK_AUDIT/1": "new in 4.3.0"},
+  "python": [
+    {"version": "3.10", "status": "declared", "tested": false},
+    {"version": "3.11", "status": "supported", "tested": true, "evidence": "evidence/TESTS.json (CPython 3.11, Linux x86_64)"},
+    {"version": "3.12", "status": "declared", "tested": false},
+    {"version": "3.13", "status": "declared", "tested": false}
+  ],
+  "platforms": [
+    {"os": "linux", "arch": "x86_64", "tested": true},
+    {"os": "linux", "arch": "aarch64", "tested": false},
+    {"os": "windows", "arch": "x86_64", "tested": false, "note": "bootstrap.ps1 provided; not executed in this build"},
+    {"os": "macos", "arch": "arm64", "tested": false}
+  ],
+  "pk_core": {"pin_version": null, "pin_revision": null, "pin_sha256": null, "status": "BLOCKED_EXTERNAL -- not supplied; not pinned to a guess"},
+  "adjacent": {
+    "INV-67": {"interface": "Pod resources.requests -> PK_PACK/1 workloads", "tested": "emulator only"},
+    "SCH-01": {"interface": "PackingService.pack + retry policy", "tested": "emulator only"},
+    "GAP-10": {"interface": "consumes PK_PACK_SERVICE_RESPONSE/1", "tested": "emulator only"},
+    "INV-72": {"interface": "accelerator workloads split before packing", "tested": "emulator only"}
+  },
+  "runtimes_hypervisors_providers": "not applicable to the pure engine; the service is a Python library boundary. Execution-tier certification requires the real deployment targets (MC-29 open).",
+  "deprecated": [{"item": "lower_bound() default counting unplaceable workloads", "replacement": "placeable_only=True", "removal_not_before": "5.0.0"}],
+  "ci_matrix": ".github/workflows/ci.yml (python 3.10-3.13 x ubuntu/windows/macos) -- defined, not executed here"
+}

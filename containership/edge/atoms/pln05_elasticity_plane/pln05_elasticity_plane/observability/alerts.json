@@ -1,0 +1,141 @@
+{
+ "schema": "PLN05_ALERTS/1",
+ "note": "Rules are evaluated by tools/alerts.py against metric snapshots (one per evaluation window) and tested in tests/test_ops.py; a Prometheus rendering is produced by tools/alerts.py --prometheus.",
+ "rules": [
+  {
+   "name": "PLN05NotReady",
+   "expr": {
+    "health": "ready",
+    "op": "==",
+    "value": false
+   },
+   "for_windows": 2,
+   "severity": "page",
+   "route": "pln05.oncall-primary",
+   "runbook": "docs/runbooks/day2-incidents.md#not-ready"
+  },
+  {
+   "name": "PLN05DecisionFailures",
+   "expr": {
+    "rate": "errors",
+    "labels": {
+     "reason_code": "E_INTERNAL"
+    },
+    "op": ">",
+    "value": 0
+   },
+   "for_windows": 1,
+   "severity": "page",
+   "route": "pln05.oncall-primary",
+   "runbook": "docs/runbooks/day2-incidents.md#decision-failures"
+  },
+  {
+   "name": "PLN05StaleDemand",
+   "expr": {
+    "gauge": "demand_staleness_seconds",
+    "op": ">",
+    "value": 30
+   },
+   "for_windows": 3,
+   "severity": "ticket",
+   "route": "gap09.owner",
+   "runbook": "docs/runbooks/day2-incidents.md#stale-demand"
+  },
+  {
+   "name": "PLN05LeaseLoss",
+   "expr": {
+    "rate": "errors",
+    "labels": {
+     "reason_code": "E_NOT_LEADER"
+    },
+    "op": ">",
+    "value": 5
+   },
+   "for_windows": 2,
+   "severity": "page",
+   "route": "pln05.oncall-primary",
+   "runbook": "docs/runbooks/day2-incidents.md#lease-loss"
+  },
+  {
+   "name": "PLN05Fenced",
+   "expr": {
+    "rate": "errors",
+    "labels": {
+     "reason_code": "E_FENCED"
+    },
+    "op": ">",
+    "value": 0
+   },
+   "for_windows": 1,
+   "severity": "page",
+   "route": "pln05.oncall-primary",
+   "runbook": "docs/runbooks/day2-incidents.md#split-brain"
+  },
+  {
+   "name": "PLN05AuditPressure",
+   "expr": {
+    "health_degraded": "R_AUDIT_SINK_DOWN"
+   },
+   "for_windows": 1,
+   "severity": "page",
+   "route": "pln05.security-contact",
+   "runbook": "docs/runbooks/day2-incidents.md#audit-sink"
+  },
+  {
+   "name": "PLN05RetryStorm",
+   "expr": {
+    "rate": "publish_failed",
+    "op": ">",
+    "value": 50
+   },
+   "for_windows": 2,
+   "severity": "ticket",
+   "route": "pln05.oncall-primary",
+   "runbook": "docs/runbooks/day2-incidents.md#provider-outage"
+  },
+  {
+   "name": "PLN05PersistentCeiling",
+   "expr": {
+    "rate": "decisions",
+    "labels": {
+     "reason_code": "R_AT_CEILING"
+    },
+    "op": ">",
+    "value": 100
+   },
+   "for_windows": 6,
+   "severity": "ticket",
+   "route": "pln01.owner",
+   "runbook": "docs/runbooks/day1-operations.md#ceiling-pressure"
+  },
+  {
+   "name": "PLN05AuthAttack",
+   "expr": {
+    "rate": "errors",
+    "labels": {
+     "reason_code": "E_AUTHZ_SCOPE"
+    },
+    "op": ">",
+    "value": 10
+   },
+   "for_windows": 1,
+   "severity": "page",
+   "route": "pln05.security-contact",
+   "runbook": "docs/runbooks/day2-incidents.md#security"
+  },
+  {
+   "name": "PLN05SLOBurn",
+   "expr": {
+    "burn": "decision_failure_ratio",
+    "fast_windows": 1,
+    "fast_rate": 14.4,
+    "slow_windows": 6,
+    "slow_rate": 6.0,
+    "slo": 0.999
+   },
+   "severity": "page",
+   "route": "pln05.oncall-primary",
+   "runbook": "docs/runbooks/day2-incidents.md#slo-burn"
+  }
+ ]
+}

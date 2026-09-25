@@ -1,0 +1,34 @@
+{
+  "schema": "INV42_SPEC_MANIFEST/1",
+  "element": "INV-42",
+  "version": "4.3.0",
+  "protocols": {
+    "PK_DESCRIPTOR/2": {"status": "current", "schema": "schemas/PK_DESCRIPTOR_v2.schema.json"},
+    "PK_DESCRIPTOR/1": {"status": "rejected", "reason": "unauthenticated; forgeable"},
+    "PK_DESCRIPTOR_CLOSE/2": {"status": "current", "schema": "schemas/PK_DESCRIPTOR_CLOSE_v2.schema.json"},
+    "PK_DESCRIPTOR_TABLE_STATUS/1": {"status": "current", "schema": "schemas/PK_DESCRIPTOR_TABLE_STATUS_v1.schema.json"},
+    "PK_DESCRIPTOR_EVENT/1": {"status": "current", "schema": "schemas/PK_DESCRIPTOR_EVENT_v1.schema.json"},
+    "PK_DESCRIPTOR_DELEGATION/1": {"status": "current", "schema": "schemas/PK_DESCRIPTOR_DELEGATION_v1.schema.json"},
+    "PK_DESCRIPTOR_TRANSPORT/1": {"status": "current", "doc": "transport.py", "tls": "1.3 only, mutual X.509"}
+  },
+  "runtime": {"python": ">=3.10,<3.14", "tested": ["3.10", "3.11", "3.12", "3.13"], "third_party_runtime_dependencies": []},
+  "dependencies": {
+    "pk_core": {
+      "role": "certification framework (component.py, contract.py only); runtime modules do not import it",
+      "requirement": "pk_core==OWNER_TO_PIN",
+      "supported_versions": [],
+      "source": "Post-Kubernetes suite repository (owner to record URL + commit + sha256)",
+      "integrity_sha256": null,
+      "required_api": ["pk_core.checklist.ChecklistItem", "pk_core.checklist.Finding", "pk_core.component.Component",
+                       "pk_core.contract.Contract", "pk_core.contract.Dependency", "pk_core.contract.Slo"],
+      "status": "UNPINNED - see WAIVERS.json W-001; certification profile fails until pinned"
+    }
+  },
+  "adjacent_layers": {
+    "INV-41 Capability security": {"direction": "upstream", "interface": "in-process reference object passed to DescriptorTable.open(resource)", "adapter": "adapters.py::InProcessCapabilitySource", "version": "contract-only"},
+    "INV-13 System interface": {"direction": "downstream", "interface": "PK_DESCRIPTOR/2 wire dict", "adapter": "adapters.py::SystemInterfaceBoundary", "version": "contract-only"},
+    "INV-11 Interface contract language": {"direction": "peer", "interface": "wit/inv42-descriptor.wit", "version": "WIT draft, owner to pin toolchain"},
+    "PLN-03 Distributed runtime plane": {"direction": "downstream", "interface": "PK_DESCRIPTOR_TRANSPORT/1", "adapter": "transport.py", "version": "contract-only"}
+  },
+  "tooling_only": {"cryptography": ">=42 (release signing in tools/release.py)", "openssl": "CLI, tests mint throwaway PKI", "coverage": "optional, CI"}
+}

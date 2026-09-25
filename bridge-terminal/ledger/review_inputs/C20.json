@@ -1,0 +1,1557 @@
+{
+"component": "C20",
+"items": [
+{
+"id": "C20-001",
+"task_class": "IMPLEMENT",
+"area": "01. OPTIONS scope",
+"req": "Inventory ordinary HTTP routes needing OPTIONS handling.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only /api/ws-ticket has OPTIONS handling; no written inventory table of routes needing it",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C20-002",
+"task_class": "SPECIFY",
+"area": "01. OPTIONS scope",
+"req": "Identify platform health requests separately from browser HTTP preflight.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "/health (platform readiness) is a distinct branch from the /api/ws-ticket OPTIONS/preflight branch",
+"prior_evidence": [
+"gateway/server.js#L95-101",
+"gateway/server.js#L112"
+]
+},
+{
+"id": "C20-003",
+"task_class": "SPECIFY",
+"area": "01. OPTIONS scope",
+"req": "Identify WebSocket upgrade routes separately from HTTP preflight routes.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "server.on('upgrade',...) handles WS upgrades separately from the HTTP OPTIONS branch in the request handler",
+"prior_evidence": [
+"gateway/server.js#L152-185",
+"gateway/server.js#L112"
+]
+},
+{
+"id": "C20-004",
+"task_class": "VERIFY",
+"area": "01. OPTIONS scope",
+"req": "VERIFY whether the actual browser WebSocket path issues a preflight.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "BASELINE.md Q01: OBSERVED in Chromium the WS upgrade carries Origin with no preflight [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C20-005",
+"task_class": "IMPLEMENT",
+"area": "01. OPTIONS scope",
+"req": "Avoid making an unverified preflight assumption a connection prerequisite.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md admission order gates the WS upgrade on Origin policy directly, not on any preflight result",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C20-006",
+"task_class": "SPECIFY",
+"area": "01. OPTIONS scope",
+"req": "Define supported OPTIONS request shapes.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only one OPTIONS shape (ticket preflight) is implemented; no design doc enumerating supported shapes",
+"prior_evidence": [
+"gateway/server.js#L112-116"
+]
+},
+{
+"id": "C20-007",
+"task_class": "SPECIFY",
+"area": "01. OPTIONS scope",
+"req": "Define the relationship to the HTTP CORS component.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "OPTIONS branch calls corsHeaders(), the same function used for the HTTP CORS component",
+"prior_evidence": [
+"gateway/origin.js#L1-9",
+"gateway/server.js#L111"
+]
+},
+{
+"id": "C20-008",
+"task_class": "SPECIFY",
+"area": "01. OPTIONS scope",
+"req": "Define the relationship to ordinary route authorization.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "OPTIONS branch runs before req.method!=='POST' 405 check and before identity.authenticate(), i.e. ahead of ordinary route authorization",
+"prior_evidence": [
+"gateway/server.js#L112-117"
+]
+},
+{
+"id": "C20-009",
+"task_class": "SPECIFY",
+"area": "01. OPTIONS scope",
+"req": "Define the expected response for unsupported OPTIONS targets.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "unmatched paths fall through to a generic 404 json response; no OPTIONS-specific \"unsupported target\" design note",
+"prior_evidence": [
+"gateway/server.js#L139"
+]
+},
+{
+"id": "C20-010",
+"task_class": "IMPLEMENT",
+"area": "01. OPTIONS scope",
+"req": "Approve an applicability and routing table.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no approved applicability/routing table document found for OPTIONS handling",
+"prior_evidence": []
+},
+{
+"id": "C20-011",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Recognize OPTIONS through the managed HTTP method value.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "req.method === 'OPTIONS' checked via Node's parsed HTTP method",
+"prior_evidence": [
+"gateway/server.js#L112"
+]
+},
+{
+"id": "C20-012",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Keep OPTIONS requests on the ordinary HTTP path.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "OPTIONS requests are handled inside the same http.createServer request callback as GET/POST, not a separate path",
+"prior_evidence": [
+"gateway/server.js#L91-144"
+]
+},
+{
+"id": "C20-013",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Match the intended target route.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "safePath(req.url) computed once and matched against p==='/api/ws-ticket' before the OPTIONS branch runs",
+"prior_evidence": [
+"gateway/server.js#L92,110"
+]
+},
+{
+"id": "C20-014",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Distinguish a policy preflight from other OPTIONS requests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "any OPTIONS to /api/ws-ticket is treated as a preflight; no separate check of Access-Control-Request-Method presence to distinguish a bare OPTIONS probe",
+"prior_evidence": [
+"gateway/server.js#L112-115"
+]
+},
+{
+"id": "C20-015",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Read the requested-method metadata when applicable.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no code found reading Access-Control-Request-Method from the request",
+"prior_evidence": []
+},
+{
+"id": "C20-016",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Read requested-header metadata when applicable.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no code found reading Access-Control-Request-Headers from the request",
+"prior_evidence": []
+},
+{
+"id": "C20-017",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Read Origin through the approved origin-policy path.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders(req,cfg) reads req.headers.origin through the origin-policy module",
+"prior_evidence": [
+"gateway/server.js#L111",
+"gateway/origin.js#L27-32"
+]
+},
+{
+"id": "C20-018",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Handle missing required preflight metadata deliberately.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no deliberate handling found for a preflight missing Access-Control-Request-Method/Headers (they are never read)",
+"prior_evidence": []
+},
+{
+"id": "C20-019",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Handle malformed request metadata deliberately.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "safePath/query stripping and header-count/size server limits (maxHeadersCount, requestTimeout) bound malformed requests generally, not OPTIONS-specific parsing",
+"prior_evidence": [
+"gateway/server.js#L92",
+"gateway/log.js"
+]
+},
+{
+"id": "C20-020",
+"task_class": "IMPLEMENT",
+"area": "02. Request classification",
+"req": "Prevent OPTIONS handling from invoking AcceptWebSocketAsync.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the OPTIONS branch runs inside http.createServer's request handler; WS upgrades only happen via the separate server.on('upgrade') listener, never from this path",
+"prior_evidence": [
+"gateway/server.js#L91-144",
+"gateway/server.js#L152"
+]
+},
+{
+"id": "C20-021",
+"task_class": "REVIEW",
+"area": "03. Policy evaluation",
+"req": "Validate the requesting origin according to the HTTP policy.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders validates req.headers.origin against cfg.origins allowlist; authz.test.js confirms allow/deny",
+"prior_evidence": [
+"gateway/origin.js#L27-32",
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C20-022",
+"task_class": "REVIEW",
+"area": "03. Policy evaluation",
+"req": "Validate the requested method against the route policy.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no requested-method validation exists (Access-Control-Request-Method is never read/validated); Allow-Methods is a fixed constant",
+"prior_evidence": []
+},
+{
+"id": "C20-023",
+"task_class": "REVIEW",
+"area": "03. Policy evaluation",
+"req": "Validate requested headers against the configured policy.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no requested-header validation exists (Access-Control-Request-Headers is never read/validated); Allow-Headers is a fixed constant",
+"prior_evidence": []
+},
+{
+"id": "C20-024",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Apply the approved credentials policy.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Allow-Credentials:'true' applied whenever origin is approved, consistent with the credentials policy",
+"prior_evidence": [
+"gateway/origin.js#L31"
+]
+},
+{
+"id": "C20-025",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Apply any route-specific cross-origin restrictions.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "the only cross-origin route (/api/ws-ticket) has its own inline policy; no generalized route-specific restriction mechanism for other routes",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C20-026",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Reject unsupported policy combinations.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "unapproved origin -> 403; but there is no rejection of unsupported method/header combinations since those are never evaluated",
+"prior_evidence": [
+"gateway/server.js#L112-113"
+]
+},
+{
+"id": "C20-027",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Keep the result distinct from authenticated application execution.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "OPTIONS branch returns before reaching req.method!=='POST' / identity.authenticate() (the actual application execution)",
+"prior_evidence": [
+"gateway/server.js#L112-125"
+]
+},
+{
+"id": "C20-028",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Avoid performing the requested application action during preflight.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "OPTIONS branch returns res.end() immediately after corsHeaders check; it never calls identity.authenticate or tickets.issue",
+"prior_evidence": [
+"gateway/server.js#L112-116"
+]
+},
+{
+"id": "C20-029",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Return one deliberate policy decision for each request.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "exactly one of {403, 204} is returned per OPTIONS request based on cors.ok",
+"prior_evidence": [
+"gateway/server.js#L112-116"
+]
+},
+{
+"id": "C20-030",
+"task_class": "IMPLEMENT",
+"area": "03. Policy evaluation",
+"req": "Unit-test all policy decision branches.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only 2 of the branch outcomes (approved-origin 204, unapproved-origin 403) are unit-tested; other combinations are untested since request/header validation does",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C20-031",
+"task_class": "SPECIFY",
+"area": "04. Response construction",
+"req": "Select the approved success status for accepted OPTIONS requests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "204 No Content selected for an accepted OPTIONS/preflight request",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C20-032",
+"task_class": "SPECIFY",
+"area": "04. Response construction",
+"req": "Select the approved rejection response for disallowed requests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "403 with {error:\"origin\"} selected for a disallowed preflight (unapproved origin)",
+"prior_evidence": [
+"gateway/server.js#L113"
+]
+},
+{
+"id": "C20-033",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Emit only the CORS headers applicable to the decision.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "headers are the same fixed set regardless of decision nuance (only Vary/Allow-Origin/Allow-Credentials differ by cors.ok); no evidence of per-decision header pr",
+"prior_evidence": [
+"gateway/server.js#L113-115"
+]
+},
+{
+"id": "C20-034",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Emit configured method permissions consistently.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Access-Control-Allow-Methods: 'POST' emitted consistently on every accepted OPTIONS response for this route",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C20-035",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Emit configured header permissions consistently.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Access-Control-Allow-Headers: 'Authorization, Content-Type' emitted consistently",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C20-036",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Emit the approved preflight caching directive when applicable.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Access-Control-Max-Age: '600' emitted on every accepted OPTIONS response",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C20-037",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Keep the response body bounded and intentional.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Content-Length: '0' set and res.end() called with no body",
+"prior_evidence": [
+"gateway/server.js#L114-115"
+]
+},
+{
+"id": "C20-038",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Finalize the ordinary HTTP response.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "res.writeHead(204,...); res.end() finalizes the ordinary HTTP response",
+"prior_evidence": [
+"gateway/server.js#L114-115"
+]
+},
+{
+"id": "C20-039",
+"task_class": "IMPLEMENT",
+"area": "04. Response construction",
+"req": "Avoid conflicting headers from shared middleware or helpers.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "headers are built with one object spread (...cors.headers plus fixed keys), not layered through separate middleware that could conflict",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C20-040",
+"task_class": "TEST",
+"area": "04. Response construction",
+"req": "Test the exact response produced by the handler.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js asserts exact status (204/403) and exact access-control-allow-origin header value",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C20-041",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test OPTIONS to an unknown path.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for OPTIONS to an unknown path (falls through to generic 404, untested for OPTIONS specifically)",
+"prior_evidence": []
+},
+{
+"id": "C20-042",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test OPTIONS with an unapproved origin.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js: OPTIONS to /api/ws-ticket with origin https://evil.example -> 403",
+"prior_evidence": [
+"tests/security/authz.test.js#L27"
+]
+},
+{
+"id": "C20-043",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test OPTIONS requesting a prohibited method.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for OPTIONS requesting a prohibited method (Access-Control-Request-Method is not read at all)",
+"prior_evidence": []
+},
+{
+"id": "C20-044",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test OPTIONS requesting an unapproved header.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for OPTIONS requesting an unapproved header (Access-Control-Request-Headers is not read)",
+"prior_evidence": []
+},
+{
+"id": "C20-045",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test OPTIONS missing required preflight metadata.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for OPTIONS missing required preflight metadata (none is required by the current implementation)",
+"prior_evidence": []
+},
+{
+"id": "C20-046",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test OPTIONS containing malformed header-list text.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for malformed header-list text since no header-list is parsed",
+"prior_evidence": []
+},
+{
+"id": "C20-047",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test an oversized requested-header list against the approved limit.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no oversized-header-list test and no such limit implemented for OPTIONS specifically",
+"prior_evidence": []
+},
+{
+"id": "C20-048",
+"task_class": "TEST",
+"area": "05. Negative cases",
+"req": "Test unsupported credential-policy combinations.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for unsupported credential-policy combinations (only true is ever emitted)",
+"prior_evidence": []
+},
+{
+"id": "C20-049",
+"task_class": "REVIEW",
+"area": "05. Negative cases",
+"req": "Confirm rejection does not run application business logic.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "rejection (403) returns before identity.authenticate()/tickets.issue(), so no business logic runs; confirmed by authz.test.js status assertions",
+"prior_evidence": [
+"gateway/server.js#L112-116",
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C20-050",
+"task_class": "REVIEW",
+"area": "05. Negative cases",
+"req": "Confirm rejection leaves no persistent connection worker.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OPTIONS handling never spawns a worker/session, so no persistent connection is created, but no explicit test asserts zero registry/worker side effects after an ",
+"prior_evidence": [
+"gateway/server.js#L112-116"
+]
+},
+{
+"id": "C20-051",
+"task_class": "IMPLEMENT",
+"area": "06. Integration with HTTP routes",
+"req": "Pair each accepted preflight with the actual HTTP request it permits.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the OPTIONS preflight and the POST ticket request are handled in the same route block, pairing accepted preflight with the permitted POST",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C20-052",
+"task_class": "REVIEW",
+"area": "06. Integration with HTTP routes",
+"req": "Confirm the actual route still enforces authentication.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the POST path still calls identity.authenticate() regardless of a prior OPTIONS; authz.test.js exercises auth on the POST path",
+"prior_evidence": [
+"gateway/server.js#L122-123",
+"tests/security/authz.test.js#L1-30"
+]
+},
+{
+"id": "C20-053",
+"task_class": "REVIEW",
+"area": "06. Integration with HTTP routes",
+"req": "Confirm the actual route still enforces method restrictions.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "non-POST methods to /api/ws-ticket still get 405 even after an OPTIONS preflight would have been accepted [downgraded: VERIFY item without a test or measurement",
+"prior_evidence": [
+"gateway/server.js#L117"
+]
+},
+{
+"id": "C20-054",
+"task_class": "REVIEW",
+"area": "06. Integration with HTTP routes",
+"req": "Confirm the actual route uses compatible CORS response policy.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "both OPTIONS and POST branches call the same corsHeaders(req,cfg) function, so policy stays compatible [downgraded: VERIFY item without a test or measurement ci",
+"prior_evidence": [
+"gateway/server.js#L111,117-130"
+]
+},
+{
+"id": "C20-055",
+"task_class": "TEST",
+"area": "06. Integration with HTTP routes",
+"req": "Test a policy change affecting both preflight and actual response.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found that changes the origin/method policy and checks both the preflight and the actual POST response afterward",
+"prior_evidence": []
+},
+{
+"id": "C20-056",
+"task_class": "TEST",
+"area": "06. Integration with HTTP routes",
+"req": "Test HTTP error responses after an accepted preflight.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for HTTP error responses (e.g. 401/429/503 on POST) specifically following an accepted OPTIONS preflight",
+"prior_evidence": []
+},
+{
+"id": "C20-057",
+"task_class": "IMPLEMENT",
+"area": "06. Integration with HTTP routes",
+"req": "Keep health-route OPTIONS behavior explicit.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "/health has its own explicit method check (405 for non-GET/HEAD) with no OPTIONS/CORS branch \u2014 OPTIONS on /health falls to generic 404, which is explicit code b",
+"prior_evidence": [
+"gateway/server.js#L95-101"
+]
+},
+{
+"id": "C20-058",
+"task_class": "IMPLEMENT",
+"area": "06. Integration with HTTP routes",
+"req": "Prevent broad prefix matching from authorizing unintended routes.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "routes are matched by exact string equality (p===...) or an exact-key assets Map; no prefix matching is used",
+"prior_evidence": [
+"gateway/server.js#L92,110,133"
+]
+},
+{
+"id": "C20-059",
+"task_class": "DOCUMENT",
+"area": "06. Integration with HTTP routes",
+"req": "Document route-specific differences.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no document found describing route-specific OPTIONS differences (e.g. /health vs /api/ws-ticket)",
+"prior_evidence": []
+},
+{
+"id": "C20-060",
+"task_class": "IMPLEMENT",
+"area": "06. Integration with HTTP routes",
+"req": "Link every supported route to an integration test.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only /api/ws-ticket (the one route supporting OPTIONS) is linked to a test; there is only one such route so coverage is total for what exists, but no explicit l",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C20-061",
+"task_class": "TEST",
+"area": "07. WebSocket separation",
+"req": "Test the browser WebSocket connection path independently.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "browser.test.js drives the WS terminal connection independently in real Chromium",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C20-062",
+"task_class": "MEASURE",
+"area": "07. WebSocket separation",
+"req": "Observe whether OPTIONS occurs in that tested path.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "BASELINE.md Q01 explicitly observes no preflight occurs on that WS path in Chromium",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C20-063",
+"task_class": "DOCUMENT",
+"area": "07. WebSocket separation",
+"req": "Record observed browser and client versions.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "VALIDATION.md records 'Chromium 1194 via Playwright 1.56'",
+"prior_evidence": [
+"docs/VALIDATION.md#environment"
+]
+},
+{
+"id": "C20-064",
+"task_class": "IMPLEMENT",
+"area": "07. WebSocket separation",
+"req": "Keep server-side Origin checks on the upgrade request.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "server.on('upgrade') calls checkWsOrigin(req,cfg) on every upgrade request",
+"prior_evidence": [
+"gateway/server.js#L161-162",
+"gateway/origin.js#L22-26"
+]
+},
+{
+"id": "C20-065",
+"task_class": "IMPLEMENT",
+"area": "07. WebSocket separation",
+"req": "Keep credential checks on the upgrade request.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "upgrade handler performs identity/ticket checks (principal resolution) on every upgrade request",
+"prior_evidence": [
+"gateway/server.js#L167-177"
+]
+},
+{
+"id": "C20-066",
+"task_class": "IMPLEMENT",
+"area": "07. WebSocket separation",
+"req": "Avoid granting WebSocket access because an earlier OPTIONS succeeded.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the upgrade handler has no reference to any prior OPTIONS state; it re-validates Origin and identity from scratch on each upgrade request",
+"prior_evidence": [
+"gateway/server.js#L152-185"
+]
+},
+{
+"id": "C20-067",
+"task_class": "IMPLEMENT",
+"area": "07. WebSocket separation",
+"req": "Avoid allocating socket state during an OPTIONS request.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the ordinary HTTP request handler (where OPTIONS is processed) never touches WsConnection/socket state; that is only created in the upgrade listener",
+"prior_evidence": [
+"gateway/server.js#L91-144"
+]
+},
+{
+"id": "C20-068",
+"task_class": "TEST",
+"area": "07. WebSocket separation",
+"req": "Test an OPTIONS request containing upgrade-like headers.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found sending OPTIONS with Upgrade/Connection:Upgrade-like headers to confirm it stays on the ordinary HTTP path",
+"prior_evidence": []
+},
+{
+"id": "C20-069",
+"task_class": "VERIFY",
+"area": "07. WebSocket separation",
+"req": "Verify it remains ordinary HTTP under the classifier policy.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "code structurally keeps OPTIONS as ordinary HTTP (separate from server.on('upgrade')), but no explicit test verifies this for an OPTIONS request carrying upgrad",
+"prior_evidence": [
+"gateway/server.js#L91-144"
+]
+},
+{
+"id": "C20-070",
+"task_class": "DOCUMENT",
+"area": "07. WebSocket separation",
+"req": "Document conclusions separately from the article's original claim.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "BASELINE.md documents the corrected conclusion (no WS preflight) distinctly from an unverified source claim",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C20-071",
+"task_class": "IMPLEMENT",
+"area": "08. Performance and abuse",
+"req": "Keep preflight policy evaluation bounded.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "the OPTIONS branch does O(1) allowlist lookup and fixed header construction (bounded), but no explicit bound/test documents this",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C20-072",
+"task_class": "IMPLEMENT",
+"area": "08. Performance and abuse",
+"req": "Avoid external calls unless explicitly required by the approved design.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the OPTIONS handler makes no external/network calls; it only reads cfg and writes a response",
+"prior_evidence": [
+"gateway/server.js#L112-116"
+]
+},
+{
+"id": "C20-073",
+"task_class": "IMPLEMENT",
+"area": "08. Performance and abuse",
+"req": "Bound processed header and origin lengths.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "origin length is capped at 300 chars in allowed(); no bound found on header-list lengths since none are parsed",
+"prior_evidence": [
+"gateway/origin.js#L17"
+]
+},
+{
+"id": "C20-074",
+"task_class": "TEST",
+"area": "08. Performance and abuse",
+"req": "Test a burst of repeated OPTIONS requests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no load/burst test found for repeated OPTIONS requests",
+"prior_evidence": []
+},
+{
+"id": "C20-075",
+"task_class": "REVIEW",
+"area": "08. Performance and abuse",
+"req": "Confirm WebSocket acceptance remains responsive during that burst.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found confirming WS acceptance responsiveness during an OPTIONS burst",
+"prior_evidence": []
+},
+{
+"id": "C20-076",
+"task_class": "REVIEW",
+"area": "08. Performance and abuse",
+"req": "Confirm health requests remain responsive during that burst.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "e2e.test.js verifies /health stays responsive (<250ms) under bulk output load, though not specifically during an OPTIONS burst",
+"prior_evidence": [
+"tests/gateway/e2e.test.js#health-latency"
+]
+},
+{
+"id": "C20-077",
+"task_class": "IMPLEMENT",
+"area": "08. Performance and abuse",
+"req": "Limit repetitive diagnostic messages.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no rate limiting specific to OPTIONS/diagnostic messages found (allowTicket() rate limiting applies only to POST ticket issuance, not OPTIONS)",
+"prior_evidence": []
+},
+{
+"id": "C20-078",
+"task_class": "REVIEW",
+"area": "08. Performance and abuse",
+"req": "Check repeated OPTIONS responses do not accumulate retained contexts.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found checking that repeated OPTIONS responses do not accumulate retained state",
+"prior_evidence": []
+},
+{
+"id": "C20-079",
+"task_class": "SPECIFY",
+"area": "08. Performance and abuse",
+"req": "Define operational visibility for unusual request volume.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no operational visibility (metrics/alerting) defined for unusual OPTIONS volume",
+"prior_evidence": []
+},
+{
+"id": "C20-080",
+"task_class": "DOCUMENT",
+"area": "08. Performance and abuse",
+"req": "Record any missing admission or rate-control decision as an open task.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found listing a missing admission/rate-control decision for OPTIONS as an open task",
+"prior_evidence": []
+},
+{
+"id": "C20-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track accepted OPTIONS requests by route.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no per-route counter for accepted OPTIONS requests found (counters object tracks upgrades/rejected/tickets/sessions/healthProbes only)",
+"prior_evidence": []
+},
+{
+"id": "C20-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track rejected OPTIONS requests by safe reason category.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ws.rejected logging exists for upgrade rejections with a reason string, but there is no equivalent logged category for rejected OPTIONS preflights",
+"prior_evidence": [
+"gateway/server.js#L155"
+]
+},
+{
+"id": "C20-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid recording raw tokens or cookies.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "log.js redacts secret-like fields from all structured logs, including any OPTIONS-path logging",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C20-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging arbitrary header values unnecessarily.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "general logger avoids logging arbitrary header values by design (redaction), but there is no OPTIONS-specific log statement to evaluate",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C20-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide examples distinguishing preflight rejection from actual-request rejection.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no examples found distinguishing preflight rejection from actual-request rejection in logs or docs",
+"prior_evidence": []
+},
+{
+"id": "C20-086",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record policy revision during relevant tests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found of policy revisions during relevant tests",
+"prior_evidence": []
+},
+{
+"id": "C20-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for reproducing an OPTIONS request.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OPERATIONS.md documents general run/health/log procedures but no specific OPTIONS-reproduction procedure",
+"prior_evidence": [
+"docs/OPERATIONS.md"
+]
+},
+{
+"id": "C20-088",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record browser console observations where useful.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "browser.test.js/e/I055 records some browser console observations generally, not for OPTIONS specifically",
+"prior_evidence": [
+"e/I055"
+]
+},
+{
+"id": "C20-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate handler outcomes with response status.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "the code path deterministically ties each outcome to one status code, but no correlated diagnostic log/metric is emitted for it",
+"prior_evidence": [
+"gateway/server.js#L112-116"
+]
+},
+{
+"id": "C20-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Assign ownership for preflight-policy failures.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no ownership assignment record found for preflight-policy failures",
+"prior_evidence": []
+},
+{
+"id": "C20-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Publish the OPTIONS applicability decision.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "BASELINE.md Q01 records the applicability finding (no WS preflight) but there is no single published OPTIONS-component verdict document",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C20-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Publish the route and policy table.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "the route/policy exists only as code, not as a published table (only one route: /api/ws-ticket)",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C20-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link accepted-request response tests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js links the accepted-OPTIONS response test (204 + allow-origin)",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26"
+]
+},
+{
+"id": "C20-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link origin-method-header rejection tests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js links the origin-rejection test (evil.example -> 403)",
+"prior_evidence": [
+"tests/security/authz.test.js#L27"
+]
+},
+{
+"id": "C20-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link preflight-to-actual-request integration tests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test links a preflight OPTIONS to its subsequent actual POST request in one integration scenario",
+"prior_evidence": []
+},
+{
+"id": "C20-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link the separate WebSocket behavior observation.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "the separate WS behavior observation (no preflight) is linked via browser.test.js + BASELINE.md Q01",
+"prior_evidence": [
+"tests/ui/browser.test.js",
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C20-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link load and response-completion tests.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no load/response-completion test specific to OPTIONS is linked (bench.js measures W1/W2/W3, none involve OPTIONS)",
+"prior_evidence": []
+},
+{
+"id": "C20-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Document unsupported OPTIONS behavior.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no document found describing unsupported OPTIONS behavior (e.g. OPTIONS to routes other than /api/ws-ticket)",
+"prior_evidence": []
+},
+{
+"id": "C20-099",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Mark the component N/A only when its HTTP use case is absent.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OPTIONS is implemented for one real route rather than marked N/A, which is consistent with the requirement, but no explicit \"N/A only if absent\" rationale doc e",
+"prior_evidence": [
+"gateway/server.js#L91-144"
+]
+},
+{
+"id": "C20-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Approve only the OPTIONS behavior actually implemented and tested.",
+"ram_overlay": "Handle HTTP OPTIONS within its own bounded HTTP route policy. Do not impose an invented OPTIONS preflight dependency on every WebSocket connection.",
+"challenge": "Exercise approved and rejected HTTP preflight paths independently of the WebSocket upgrade path.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only the /api/ws-ticket accept/reject-by-origin behavior is implemented and tested; broader OPTIONS behavior (methods/headers negotiation) is not implemented, s",
+"prior_evidence": [
+"gateway/server.js#L110-131",
+"tests/security/authz.test.js#L25-27"
+]
+}
+]
+}

@@ -1,0 +1,130 @@
+{
+ "title": "INV-42 Capability descriptors",
+ "uid": "inv42",
+ "schemaVersion": 39,
+ "tags": [
+  "inv42",
+  "security"
+ ],
+ "panels": [
+  {
+   "id": 1,
+   "type": "timeseries",
+   "title": "Operations/s by class",
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (class) (rate(inv42_operations_total[5m]))",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "type": "timeseries",
+   "title": "Security rejections/s by outcome",
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (outcome) (rate(inv42_operations_total{class=\"terminal\",outcome!=\"ok\"}[5m]))",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "type": "timeseries",
+   "title": "Resolve latency p50/p99",
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.99, sum by (le) (rate(inv42_operation_duration_seconds_bucket{op=\"resolve\"}[5m])))",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "Table saturation",
+   "gridPos": {
+    "x": 12,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "max by (table_fp) (inv42_table_saturation_ratio)",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "type": "timeseries",
+   "title": "Session saturation",
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "max by (table_fp) (inv42_session_saturation_ratio)",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "type": "stat",
+   "title": "Emergency disabled",
+   "gridPos": {
+    "x": 12,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "max(inv42_emergency_disabled)",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "type": "stat",
+   "title": "Availability SLI (30d)",
+   "gridPos": {
+    "x": 0,
+    "y": 24,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "1 - sum(increase(inv42_operations_total{outcome=~\"internal_error|component_disabled|key_unavailable\"}[30d])) / sum(increase(inv42_operations_total[30d]))",
+     "refId": "A"
+    }
+   ]
+  }
+ ]
+}

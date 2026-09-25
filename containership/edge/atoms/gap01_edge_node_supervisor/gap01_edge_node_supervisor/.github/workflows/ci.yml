@@ -1,0 +1,38 @@
+# CI pipeline (43): lint, types, unit/property/integration/chaos, coverage gate,
+# schema fixtures, benchmarks (regression gate), release build and exit gate.
+name: gap01-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-24.04-arm]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: gap01_edge_node_supervisor}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install -r gap01_edge_node_supervisor/requirements-dev.txt
+      - run: cd gap01_edge_node_supervisor && ruff check . && mypy --config-file pyproject.toml .
+      - run: GAP01_PROPERTY_SEEDS=300 python -m coverage run --rcfile=gap01_edge_node_supervisor/pyproject.toml -m unittest discover -s gap01_edge_node_supervisor/tests
+      - run: python -m coverage report --rcfile=gap01_edge_node_supervisor/pyproject.toml
+      - run: python gap01_edge_node_supervisor/verify.py
+      - run: python gap01_edge_node_supervisor/tools/check_repo.py
+  release:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: gap01_edge_node_supervisor}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python gap01_edge_node_supervisor/tools/bench.py 500 > bench.json && python gap01_edge_node_supervisor/tools/perf_gate.py bench.json
+      - run: python gap01_edge_node_supervisor/tools/evidence.py --out evidence.json
+      - run: python gap01_edge_node_supervisor/tools/build_release.py
+      - run: python gap01_edge_node_supervisor/tools/exit_gate.py --evidence evidence.json
+      - uses: actions/upload-artifact@v4
+        with: {name: gap01-release-evidence, path: "evidence.json\nbench.json\ngap01_edge_node_supervisor/RELEASE_MANIFEST.json\ngap01_edge_node_supervisor/sbom.cdx.json"}

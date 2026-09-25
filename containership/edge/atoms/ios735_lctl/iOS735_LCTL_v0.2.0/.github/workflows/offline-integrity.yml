@@ -1,0 +1,44 @@
+name: offline-integrity
+
+# Unprivileged: runs on every push and PR (including forks). No secrets, no owner toolchains.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-integrity:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.13"]
+    steps:
+      # Owner action item (M03.2): replace version tags with reviewed full commit SHAs.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Syntax check
+        run: python -m compileall -q tools tests
+      - name: Offline integrity + hardening tests (simulator only; no owner toolchain)
+        run: python -m unittest discover -s tests -v
+      - name: Schemas, lock, SBOM
+        shell: bash
+        run: |
+          python tools/schema_check.py
+          python tools/toolchain_trust.py --check-lock
+          python tools/sbom.py --check
+      - name: Release gate status (informational)
+        shell: bash
+        run: python tools/release.py preflight || true

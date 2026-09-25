@@ -1,0 +1,109 @@
+{
+  "admission": {
+    "burst": 1000,
+    "rate_per_s": 500.0,
+    "tenant_share": 0.5
+  },
+  "artifact_key_ref": "secretref://kms/inv58/artifact",
+  "audit_key_ref": "secretref://kms/inv58/audit",
+  "breaker": {
+    "failure_threshold": 5,
+    "half_open_max": 1,
+    "reset_timeout_s": 30.0
+  },
+  "deadline_ms": {
+    "default": 1000,
+    "max": 30000
+  },
+  "default_budget": 3,
+  "health": {
+    "max_error_ratio": 0.5,
+    "min_samples": 20,
+    "stall_after_s": 30.0
+  },
+  "limits": {
+    "max_destinations": 10000,
+    "max_flags": 1024,
+    "max_inflight": 256,
+    "max_label_cardinality": 1000,
+    "max_payload_bytes": 16384,
+    "max_queue": 1024,
+    "max_routes": 10000,
+    "max_routes_per_tenant": 2000
+  },
+  "max_budget": 5,
+  "meshed_destinations": [],
+  "policy": {
+    "max_age_s": 86400.0,
+    "roles": {
+      "break-glass": [
+        "control.break_glass"
+      ],
+      "config-publisher": [
+        "artifact.verify",
+        "config.activate",
+        "config.validate"
+      ],
+      "mesh-controller": [
+        "artifact.verify",
+        "bypass.read",
+        "reconcile.evaluate",
+        "route.migrate",
+        "route.read",
+        "status.read"
+      ],
+      "mesh-node": [
+        "bypass.report",
+        "identity.map"
+      ],
+      "mesh-observer": [
+        "bypass.read",
+        "route.read",
+        "status.read"
+      ],
+      "mesh-operator": [
+        "bypass.read",
+        "config.rollback",
+        "config.validate",
+        "control.freeze",
+        "control.quarantine",
+        "route.read",
+        "state.restore",
+        "status.read"
+      ],
+      "security-auditor": [
+        "audit.export",
+        "audit.read",
+        "bypass.read",
+        "route.read",
+        "status.read"
+      ]
+    },
+    "version": "p0"
+  },
+  "retry": {
+    "base_delay_ms": 25,
+    "max_delay_ms": 2000,
+    "max_elapsed_ms": 10000
+  },
+  "schema": "PK_MESH_CONFIG/1",
+  "spiffe_bindings": {},
+  "telemetry": {
+    "redact_high_cardinality": true,
+    "retention_days": 30,
+    "sample_rate": 1.0
+  },
+  "tenants": [],
+  "token_key_ref": "secretref://kms/inv58/token",
+  "trust_domain": "estate.local",
+  "trust_outage_policy": {
+    "attestation": "fail_closed",
+    "audit_sink": "fail_closed",
+    "identity": "fail_closed",
+    "key": "fail_closed",
+    "policy": "fail_closed",
+    "telemetry": "fail_safe_degraded",
+    "time": "fail_closed"
+  },
+  "version": "0"
+}

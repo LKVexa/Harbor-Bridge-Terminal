@@ -1,0 +1,161 @@
+{
+ "schema": "PLN05_NFR/1",
+ "version": "1.0.0",
+ "nfrs": [
+  {
+   "id": "NFR-BOUNDS",
+   "req": "zero targets outside the active floor/ceiling",
+   "threshold": "0 violations",
+   "verify": [
+    "tests/fuzz/test_fuzz.py::test_controller_invariants_long_random_sequences",
+    "tests/fault/test_faults.py (INV-A)"
+   ],
+   "source": "SLO target bounds"
+  },
+  {
+   "id": "NFR-REACT",
+   "req": "p95 scale-up within two samples of threshold breach",
+   "threshold": "scale-up is emitted on the first breaching sample (1 sample)",
+   "verify": [
+    "tests/test_controller.py::test_scale_up_and_ceiling_reason"
+   ],
+   "source": "SLO reaction time"
+  },
+  {
+   "id": "NFR-STAB",
+   "req": "<= 1 direction change per workload per grace period",
+   "threshold": "0 scale-downs under alternating samples",
+   "verify": [
+    "tests/security/test_adversarial.py::test_T05_reorder_and_oscillation_induction",
+    "tests/fault/test_faults.py::test_FS14"
+   ],
+   "source": "SLO stability"
+  },
+  {
+   "id": "NFR-LAT-P95",
+   "req": "in-process decision latency p95",
+   "threshold": "<= 1.0 ms",
+   "verify": [
+    "benchmarks/bench.py",
+    "ci/performance_gate.py"
+   ]
+  },
+  {
+   "id": "NFR-LAT-P99",
+   "req": "in-process decision latency p99",
+   "threshold": "<= 2.0 ms",
+   "verify": [
+    "benchmarks/bench.py",
+    "ci/performance_gate.py"
+   ]
+  },
+  {
+   "id": "NFR-LAT-P50",
+   "req": "in-process decision latency p50 (reported)",
+   "threshold": "reported; no gate",
+   "verify": [
+    "benchmarks/bench.py"
+   ]
+  },
+  {
+   "id": "NFR-LAT-PERSIST",
+   "req": "decision latency p95 with durable state",
+   "threshold": "<= 10 ms",
+   "verify": [
+    "benchmarks/bench.py"
+   ]
+  },
+  {
+   "id": "NFR-START",
+   "req": "cold start to first decision p50",
+   "threshold": "<= 25 ms",
+   "verify": [
+    "benchmarks/bench.py"
+   ]
+  },
+  {
+   "id": "NFR-THR",
+   "req": "sustained single-process throughput",
+   "threshold": ">= 2000 decisions/s",
+   "verify": [
+    "benchmarks/bench.py"
+   ]
+  },
+  {
+   "id": "NFR-CPU",
+   "req": "CPU per decision",
+   "threshold": "<= 1000 us",
+   "verify": [
+    "benchmarks/bench.py"
+   ]
+  },
+  {
+   "id": "NFR-MEM",
+   "req": "memory bounded; no growth after bounded stores fill",
+   "threshold": "peak <= 64 MiB per 10k decisions; growth after warm-up < 5%",
+   "verify": [
+    "benchmarks/bench.py",
+    "tests/scale/test_soak.py"
+   ]
+  },
+  {
+   "id": "NFR-RECOVERY",
+   "req": "latency after overload clears",
+   "threshold": "p95 <= 1.0 ms",
+   "verify": [
+    "benchmarks/bench.py"
+   ]
+  },
+  {
+   "id": "NFR-AVAIL",
+   "req": "availability of decision publication",
+   "threshold": "99.9% monthly for scopes with a healthy coordination service (NOT MEASURABLE in this repository; production SLO)",
+   "verify": [
+    "observability/alerts.json::PLN05SLOBurn"
+   ],
+   "status": "production-only"
+  },
+  {
+   "id": "NFR-RTO",
+   "req": "recovery time after process crash",
+   "threshold": "<= lease.duration_s (15 s default) for a peer takeover; immediate for same-instance restart",
+   "verify": [
+    "tests/fault/test_faults.py::test_FS01",
+    "tests/fault/test_faults.py::test_FS07"
+   ]
+  },
+  {
+   "id": "NFR-RPO",
+   "req": "recovery point for controller state",
+   "threshold": "0 decisions: persist-before-publish",
+   "verify": [
+    "tests/fault/test_faults.py::test_FS06",
+    "tests/test_plane.py::PersistenceAndFailoverTest"
+   ]
+  },
+  {
+   "id": "NFR-DET",
+   "req": "deterministic decision for identical state+input",
+   "threshold": "restore(snapshot) reproduces future decisions",
+   "verify": [
+    "tests/fuzz/test_fuzz.py::test_controller_invariants_long_random_sequences"
+   ]
+  },
+  {
+   "id": "NFR-ISO",
+   "req": "no cross-tenant read/write/effect",
+   "threshold": "0",
+   "verify": [
+    "tests/security/test_adversarial.py::test_T06_cross_tenant_and_site"
+   ]
+  },
+  {
+   "id": "NFR-ERR",
+   "req": "acceptable decision error rate (non-rejection failures)",
+   "threshold": "0 E_INTERNAL in soak",
+   "verify": [
+    "tests/scale/test_soak.py"
+   ]
+  }
+ ]
+}

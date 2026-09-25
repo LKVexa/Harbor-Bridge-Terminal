@@ -1,0 +1,1681 @@
+{
+"component": "C28",
+"items": [
+{
+"id": "C28-001",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define the maximum permitted logical message size.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes/envelopeBytes=65536 defines logical message size limit",
+"prior_evidence": [
+"config/limits.json",
+"gateway/ws.js:45"
+]
+},
+{
+"id": "C28-002",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Select MemoryStream or List[byte] for the initial implementation.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "MemoryStream/List[byte] is a .NET API; Node uses Buffer/array of chunks (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C28-003",
+"task_class": "DOCUMENT",
+"area": "01. Accumulation requirements",
+"req": "Record why the selected structure fits the workload.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No document found explaining rationale for chunks-array + Buffer.concat approach",
+"prior_evidence": []
+},
+{
+"id": "C28-004",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define one accumulator owner per active connection message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag is a single instance field per WsConnection (one per socket)",
+"prior_evidence": [
+"gateway/ws.js:38-51"
+]
+},
+{
+"id": "C28-005",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define the byte-order preservation requirement.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Byte order preserved in code (push then concat) but no explicit design statement of the requirement",
+"prior_evidence": [
+"gateway/ws.js:193-194"
+]
+},
+{
+"id": "C28-006",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define when a logical message begins.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Message begins on a non-control TEXT frame with fin=false starting this.frag",
+"prior_evidence": [
+"gateway/ws.js:184-189"
+]
+},
+{
+"id": "C28-007",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define when a logical message completes.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Completes on CONT frame with fin=true, or immediately if the single frame has fin=true",
+"prior_evidence": [
+"gateway/ws.js:191-195"
+]
+},
+{
+"id": "C28-008",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define behavior for incomplete messages at disconnect.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments called from _fail/_destroy on disconnect/error/end",
+"prior_evidence": [
+"gateway/ws.js:129-140"
+]
+},
+{
+"id": "C28-009",
+"task_class": "SPECIFY",
+"area": "01. Accumulation requirements",
+"req": "Define memory bounds across all concurrent accumulators.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "RESOURCE_MODEL.md gives per-session receive-assembly bound and admission_limit formula across sessions",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C28-010",
+"task_class": "IMPLEMENT",
+"area": "01. Accumulation requirements",
+"req": "Approve the accumulation contract.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit approval/sign-off record found for the accumulation contract specifically",
+"prior_evidence": []
+},
+{
+"id": "C28-011",
+"task_class": "IMPLEMENT",
+"area": "02. Initialization",
+"req": "Create message accumulation state before appending the first segment.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag={chunks:[payload],bytes:len} created before any CONT append",
+"prior_evidence": [
+"gateway/ws.js:186"
+]
+},
+{
+"id": "C28-012",
+"task_class": "SPECIFY",
+"area": "02. Initialization",
+"req": "Set the active message type.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Protocol restricts fragmentable messages to TEXT (binary always 1003); active type implicitly fixed",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-013",
+"task_class": "IMPLEMENT",
+"area": "02. Initialization",
+"req": "Initialize the accumulated byte count.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "bytes:len initializes accumulated byte count at fragment start",
+"prior_evidence": [
+"gateway/ws.js:186"
+]
+},
+{
+"id": "C28-014",
+"task_class": "IMPLEMENT",
+"area": "02. Initialization",
+"req": "Initialize the chosen stream or byte list.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "chunks:[payload] initializes the chosen storage (array of Buffer chunks)",
+"prior_evidence": [
+"gateway/ws.js:186"
+]
+},
+{
+"id": "C28-015",
+"task_class": "SPECIFY",
+"area": "02. Initialization",
+"req": "Define whether storage is allocated eagerly or on first data.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Storage allocated lazily on first fragment (code shows this) but decision not documented",
+"prior_evidence": [
+"gateway/ws.js:186"
+]
+},
+{
+"id": "C28-016",
+"task_class": "IMPLEMENT",
+"area": "02. Initialization",
+"req": "Keep accumulation storage separate from the reusable receive buffer.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "payload is a freshly allocated Buffer (unmask copy loop), separate from this.buf receive buffer",
+"prior_evidence": [
+"gateway/ws.js:172-177"
+]
+},
+{
+"id": "C28-017",
+"task_class": "IMPLEMENT",
+"area": "02. Initialization",
+"req": "Handle allocation failure explicitly.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit allocation-failure handling (try/catch around Buffer.allocUnsafe) found",
+"prior_evidence": []
+},
+{
+"id": "C28-018",
+"task_class": "IMPLEMENT",
+"area": "02. Initialization",
+"req": "Avoid carrying bytes from the previous message into a new message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments resets frag to null on completion/failure; a fresh object is created for the next message",
+"prior_evidence": [
+"gateway/ws.js:129,186,194"
+]
+},
+{
+"id": "C28-019",
+"task_class": "TEST",
+"area": "02. Initialization",
+"req": "Test initialization after a previously completed message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test found for initialization state after a previously completed message",
+"prior_evidence": []
+},
+{
+"id": "C28-020",
+"task_class": "TEST",
+"area": "02. Initialization",
+"req": "Test initialization after an empty message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test found for initialization state after an empty message",
+"prior_evidence": []
+},
+{
+"id": "C28-021",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Append only the current result's Count bytes.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "payload buffer sized exactly to len parsed from the frame header, not from the raw chunk length",
+"prior_evidence": [
+"gateway/ws.js:157-176"
+]
+},
+{
+"id": "C28-022",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Respect the ArraySegment offset.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "ArraySegment offset is a .NET concept; Node parses length/offset (off) directly from the frame header (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C28-023",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Preserve incoming byte order.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "chunks pushed in arrival order and concatenated in that order at completion",
+"prior_evidence": [
+"gateway/ws.js:193-194"
+]
+},
+{
+"id": "C28-024",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Copy bytes before the receive buffer can be overwritten.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Payload copied into a new Buffer via unmask loop before this.buf is advanced",
+"prior_evidence": [
+"gateway/ws.js:172-176"
+]
+},
+{
+"id": "C28-025",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Update the accumulated byte count after successful append.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag.bytes += len updates the count after each successful append",
+"prior_evidence": [
+"gateway/ws.js:193"
+]
+},
+{
+"id": "C28-026",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Avoid appending an entire buffer when it was partially filled.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "payload length is len from the header, not the full chunk/buffer size",
+"prior_evidence": [
+"gateway/ws.js:173"
+]
+},
+{
+"id": "C28-027",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Avoid decoding incomplete UTF-8 fragments during append.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "UTF-8 decoding happens only in _message() on the complete byte sequence, not per fragment",
+"prior_evidence": [
+"gateway/ws.js:204-208"
+]
+},
+{
+"id": "C28-028",
+"task_class": "IMPLEMENT",
+"area": "03. Appending",
+"req": "Avoid dispatching incomplete binary data as a finished object.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_message (dispatch) is only invoked when fin is true; no path emits on partial data",
+"prior_evidence": [
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C28-029",
+"task_class": "TEST",
+"area": "03. Appending",
+"req": "Test repeated appends of varied sizes.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Ping-interleaved/split-UTF8 fragment tests exercise repeated appends but no test named for varied sizes specifically",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:36-51"
+]
+},
+{
+"id": "C28-030",
+"task_class": "REVIEW",
+"area": "03. Appending",
+"req": "Confirm the count matches the actual stored payload length.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found asserting frag.bytes equals the concatenated payload length",
+"prior_evidence": []
+},
+{
+"id": "C28-031",
+"task_class": "REVIEW",
+"area": "04. Growth and bounds",
+"req": "Validate the configured logical-message size limit.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Declared length over cap and fragmented-over-cap tests validate the configured maxMessageBytes limit",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:22-27"
+]
+},
+{
+"id": "C28-032",
+"task_class": "REVIEW",
+"area": "04. Growth and bounds",
+"req": "Check the prospective total before increasing storage.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Size checked from header (len+frag.bytes) before buffering; test 'before buffering the offending fragment'",
+"prior_evidence": [
+"gateway/ws.js:170",
+"tests/gateway/ws-conformance.test.js:25-27"
+]
+},
+{
+"id": "C28-033",
+"task_class": "IMPLEMENT",
+"area": "04. Growth and bounds",
+"req": "Reject a message that would exceed the approved limit.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Fails with 1009 'message too large' when prospective total exceeds maxMessageBytes",
+"prior_evidence": [
+"gateway/ws.js:170"
+]
+},
+{
+"id": "C28-034",
+"task_class": "IMPLEMENT",
+"area": "04. Growth and bounds",
+"req": "Protect size arithmetic from overflow.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "64-bit length hi!==0 / >0x7fffffff rejected before use, bounding arithmetic",
+"prior_evidence": [
+"gateway/ws.js:161-165"
+]
+},
+{
+"id": "C28-035",
+"task_class": "SPECIFY",
+"area": "04. Growth and bounds",
+"req": "Define the initial storage capacity.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Initial storage capacity is a List/MemoryStream concept; JS arrays/Buffers have no meaningful preallocated capacity (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C28-036",
+"task_class": "SPECIFY",
+"area": "04. Growth and bounds",
+"req": "Define growth behavior through the selected collection implementation.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Growth is implicit (array push, concat at end) but not documented as an explicit design decision",
+"prior_evidence": [
+"gateway/ws.js:193-194"
+]
+},
+{
+"id": "C28-037",
+"task_class": "MEASURE",
+"area": "04. Growth and bounds",
+"req": "Measure allocation behavior for representative large messages.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No allocation-behavior measurement for large inbound fragmented messages found (bench.json covers server-side output only)",
+"prior_evidence": []
+},
+{
+"id": "C28-038",
+"task_class": "IMPLEMENT",
+"area": "04. Growth and bounds",
+"req": "Bound aggregate memory through connection admission or approved policy.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Per-session cap (maxMessageBytes) plus registry.reserve() session admission bound aggregate memory",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md",
+"gateway/connection.js:170"
+]
+},
+{
+"id": "C28-039",
+"task_class": "IMPLEMENT",
+"area": "04. Growth and bounds",
+"req": "Avoid interpreting a large receive buffer as permission for unbounded messages.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Cap enforced from header regardless of arriving chunk/buffer size",
+"prior_evidence": [
+"gateway/ws.js:170"
+]
+},
+{
+"id": "C28-040",
+"task_class": "DOCUMENT",
+"area": "04. Growth and bounds",
+"req": "Document expected behavior when growth cannot be satisfied.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No document found describing behavior when growth/allocation cannot be satisfied",
+"prior_evidence": []
+},
+{
+"id": "C28-041",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Complete only when EndOfMessage is true.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_message only invoked when fin is true (EndOfMessage analog)",
+"prior_evidence": [
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C28-042",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Produce the complete ordered byte sequence.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.concat(frag.chunks, frag.bytes) produces the complete ordered byte sequence",
+"prior_evidence": [
+"gateway/ws.js:194"
+]
+},
+{
+"id": "C28-043",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Preserve the logical message type for the decoder.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Only TEXT-typed frames are accumulated/dispatched; binary is rejected immediately",
+"prior_evidence": [
+"gateway/ws.js:181-189"
+]
+},
+{
+"id": "C28-044",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Transfer or copy ownership using a documented rule.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Completed buffer is emitted via event; no explicit documented ownership-transfer rule",
+"prior_evidence": [
+"gateway/ws.js:194,208"
+]
+},
+{
+"id": "C28-045",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Deliver the completed message exactly once.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_message called exactly once per completed message (single call site per path)",
+"prior_evidence": [
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C28-046",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Reset the accumulated count after successful handoff.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments() resets frag before _message dispatch",
+"prior_evidence": [
+"gateway/ws.js:194"
+]
+},
+{
+"id": "C28-047",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Release or reset storage according to the selected reuse policy.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "frag set to null on completion; storage is not reused, GC-released",
+"prior_evidence": [
+"gateway/ws.js:129"
+]
+},
+{
+"id": "C28-048",
+"task_class": "IMPLEMENT",
+"area": "05. Completion",
+"req": "Prevent completed data from changing during subsequent receives.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Emitted bytes are independent copies (per-chunk unmask copy + concat), unaffected by later receives",
+"prior_evidence": [
+"gateway/ws.js:172-176,194"
+]
+},
+{
+"id": "C28-049",
+"task_class": "TEST",
+"area": "05. Completion",
+"req": "Test completion after one receive result.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Single-frame completion exercised broadly in e2e vertical slice, but no dedicated one-receive accumulator test",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C28-050",
+"task_class": "TEST",
+"area": "05. Completion",
+"req": "Test completion after many receive results.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Split UTF-8 across fragments / ping-interleaved fragmented text tests exercise many-receive completion",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:44-51"
+]
+},
+{
+"id": "C28-051",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test ASCII text split across several receives.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Fragment reassembly test covers a split multi-byte char but no dedicated plain-ASCII split test",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:44"
+]
+},
+{
+"id": "C28-052",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test multibyte UTF-8 characters split across receive boundaries.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "'split UTF-8 character across fragments is reassembled before strict decoding'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:44"
+]
+},
+{
+"id": "C28-053",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test a text message exactly equal to buffer capacity.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for a text message exactly equal to a buffer-capacity boundary (Node has no fixed receive-buffer capacity)",
+"prior_evidence": []
+},
+{
+"id": "C28-054",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test a text message one byte larger than buffer capacity.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Fragmented-over-cap test is close but tests envelope cap, not a fixed receive-buffer-capacity+1 boundary",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:25-27"
+]
+},
+{
+"id": "C28-055",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test an empty text message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for an empty text message through the accumulator path",
+"prior_evidence": []
+},
+{
+"id": "C28-056",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test a large structured text payload.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No large structured inbound text payload accumulator test found",
+"prior_evidence": []
+},
+{
+"id": "C28-057",
+"task_class": "IMPLEMENT",
+"area": "06. Text boundary cases",
+"req": "Compare the final decoded text with the original input.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js VWS200 valid vectors compare decoded output to expected input",
+"prior_evidence": [
+"tests/protocol/codec.test.js:13-17"
+]
+},
+{
+"id": "C28-058",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test invalid UTF-8 handling through the decoder policy.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "'invalid UTF-8 text -> 1007' test",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:21"
+]
+},
+{
+"id": "C28-059",
+"task_class": "TEST",
+"area": "06. Text boundary cases",
+"req": "Test text interrupted before EndOfMessage.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "'stalled fragment assembly hits the deadline -> 1008' tests interruption before EndOfMessage",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:52-55"
+]
+},
+{
+"id": "C28-060",
+"task_class": "VERIFY",
+"area": "06. Text boundary cases",
+"req": "Verify incomplete text is not delivered as a complete application message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Assembly-deadline test plus code structure (dispatch only on fin) confirm incomplete text is never delivered",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:52-55",
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C28-061",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test a binary message containing zero bytes.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-062",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test a binary message with an easily verified byte pattern.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-063",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test a binary message exactly equal to buffer capacity.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-064",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test a binary message larger than several buffers.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-065",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test an empty binary message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-066",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test uneven segment sizes.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-067",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test a one-byte final segment.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-068",
+"task_class": "VERIFY",
+"area": "07. Binary boundary cases",
+"req": "Verify final length and byte-for-byte equality.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-069",
+"task_class": "TEST",
+"area": "07. Binary boundary cases",
+"req": "Test a binary transfer interrupted before completion.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-070",
+"task_class": "VERIFY",
+"area": "07. Binary boundary cases",
+"req": "Verify incomplete binary data is not delivered as a complete object.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003 by design); no binary accumulation path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C28-071",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Release accumulation state after peer disconnect.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "socket error/close/end handlers call _destroy which drops fragments",
+"prior_evidence": [
+"gateway/ws.js:63-66,131-140"
+]
+},
+{
+"id": "C28-072",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Release accumulation state after local cancellation.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "terminate() calls _destroy directly, dropping fragments",
+"prior_evidence": [
+"gateway/ws.js:121,131-140"
+]
+},
+{
+"id": "C28-073",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Release accumulation state after a size-limit violation.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_fail() (used for 1009 size violation) clears buf and calls _dropFragments",
+"prior_evidence": [
+"gateway/ws.js:123-129"
+]
+},
+{
+"id": "C28-074",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Release accumulation state after an append failure.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit append-failure handling path found in the fragment CONT branch",
+"prior_evidence": []
+},
+{
+"id": "C28-075",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Release accumulation state after decoder rejection.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "_message's UTF-8 rejection routes through _fail(1007), which drops fragment state",
+"prior_evidence": [
+"gateway/ws.js:123-129,206-208"
+]
+},
+{
+"id": "C28-076",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Handle close while a partial message is present.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Both _fail and _destroy handle a partial frag object present at close time",
+"prior_evidence": [
+"gateway/ws.js:129,136"
+]
+},
+{
+"id": "C28-077",
+"task_class": "IMPLEMENT",
+"area": "08. Failure and cleanup",
+"req": "Prevent double disposal when worker cleanup also runs.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "this.destroyed flag guards _destroy against re-entry/double disposal",
+"prior_evidence": [
+"gateway/ws.js:131-133"
+]
+},
+{
+"id": "C28-078",
+"task_class": "TEST",
+"area": "08. Failure and cleanup",
+"req": "Test a new connection after an accumulator failure.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test found for a new connection succeeding after a prior accumulator failure",
+"prior_evidence": []
+},
+{
+"id": "C28-079",
+"task_class": "VERIFY",
+"area": "08. Failure and cleanup",
+"req": "Verify failed message data is not retained in ordinary logs.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "SECURITY.md and authz.test.js: 'secrets and host details never reach the shell, the protocol, or the logs'",
+"prior_evidence": [
+"docs/SECURITY.md",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C28-080",
+"task_class": "DOCUMENT",
+"area": "08. Failure and cleanup",
+"req": "Record which failure paths intentionally close the connection.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md Transport section records which conditions close with 1002/1003/1007/1008/1009",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C28-081",
+"task_class": "IMPLEMENT",
+"area": "09. Concurrency and performance",
+"req": "Keep each accumulator isolated to its socket owner.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag is a per-WsConnection instance field, isolated per socket",
+"prior_evidence": [
+"gateway/ws.js:38,51"
+]
+},
+{
+"id": "C28-082",
+"task_class": "IMPLEMENT",
+"area": "09. Concurrency and performance",
+"req": "Prevent parallel append operations to one logical message.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Node's single-threaded event loop plus synchronous _onData/_parse prevents parallel appends to one message",
+"prior_evidence": [
+"gateway/ws.js:144-149"
+]
+},
+{
+"id": "C28-083",
+"task_class": "TEST",
+"area": "09. Concurrency and performance",
+"req": "Test simultaneous large messages on many connections.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "8-concurrent-sessions measurement (W3) and lifecycle 'slow consumer'/other-tenant-unaffected tests",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"docs/RESOURCE_MODEL.md:W3"
+]
+},
+{
+"id": "C28-084",
+"task_class": "MEASURE",
+"area": "09. Concurrency and performance",
+"req": "Measure peak accumulated memory under the target workload.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3 measures overall worker/gateway RSS for 8 sessions, not accumulator-specific peak memory",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md:W3"
+]
+},
+{
+"id": "C28-085",
+"task_class": "MEASURE",
+"area": "09. Concurrency and performance",
+"req": "Measure time to assemble representative large payloads.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No measurement isolating inbound fragment-assembly time for large payloads found",
+"prior_evidence": []
+},
+{
+"id": "C28-086",
+"task_class": "IMPLEMENT",
+"area": "09. Concurrency and performance",
+"req": "Compare selected structure behavior with the alternate only if needed.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No alternate structure was implemented/needed, so a comparison was not required",
+"prior_evidence": []
+},
+{
+"id": "C28-087",
+"task_class": "IMPLEMENT",
+"area": "09. Concurrency and performance",
+"req": "Avoid unnecessary full-payload copies before message completion.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Chunks are only pushed (no interim copy) until Buffer.concat at completion",
+"prior_evidence": [
+"gateway/ws.js:193-194"
+]
+},
+{
+"id": "C28-088",
+"task_class": "IMPLEMENT",
+"area": "09. Concurrency and performance",
+"req": "Account for any copy required by the completed-payload handoff.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.concat at completion is the single accounted copy for handoff",
+"prior_evidence": [
+"gateway/ws.js:194"
+]
+},
+{
+"id": "C28-089",
+"task_class": "REVIEW",
+"area": "09. Concurrency and performance",
+"req": "Confirm health responses remain responsive under accumulation load.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "'health stays responsive (< 250 ms) while ... large inbound messages arrive'",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C28-090",
+"task_class": "DOCUMENT",
+"area": "09. Concurrency and performance",
+"req": "Record limits used during performance tests.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "RESOURCE_MODEL.md records host/config and config/limits.json records the limits used",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md",
+"config/limits.json"
+]
+},
+{
+"id": "C28-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the selected accumulation structure and rationale.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Code comments describe the ownership model but no separate publish/rationale document found",
+"prior_evidence": [
+"gateway/ws.js:9-12"
+]
+},
+{
+"id": "C28-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish per-message and aggregate memory limits.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "config/limits.json + RESOURCE_MODEL.md publish per-message and aggregate memory limits",
+"prior_evidence": [
+"config/limits.json",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C28-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish append-complete-reset ownership rules.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Rules are visible in code but not published as a standalone ownership document",
+"prior_evidence": [
+"gateway/ws.js:129,193-194"
+]
+},
+{
+"id": "C28-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link text fragmentation integrity tests.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md links ws-conformance.test.js which includes fragmentation integrity tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C28-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link binary fragmentation integrity tests.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary is not supported, so no binary fragmentation integrity tests are applicable",
+"prior_evidence": []
+},
+{
+"id": "C28-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link size-limit and interruption tests.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "PASS",
+"prior_note": "Oversize and stalled-assembly tests cover size-limit and interruption cases",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C28-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link concurrent memory measurements.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "RESOURCE_MODEL.md links W3 concurrency measurement but it is not accumulator-specific",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C28-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document cleanup after failed or abandoned messages.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No document found specifically describing cleanup after failed/abandoned messages",
+"prior_evidence": []
+},
+{
+"id": "C28-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved growth and ownership decisions.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "OPEN",
+"prior_note": "No ledger entry found recording unresolved growth/ownership decisions for the accumulator",
+"prior_evidence": []
+},
+{
+"id": "C28-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve accumulation only when no completed message is truncated or contaminated.",
+"ram_overlay": "Accumulate fragments with capped segments and explicit total-byte, segment-count, and completion-time limits. Do not grow arrays or concatenate unbounded strings on every fragment.",
+"challenge": "Send tiny fragments up to and beyond the total cap, including slow-drip cases, and prove exact reconstruction or bounded refusal.",
+"ref_work": [
+"R09",
+"R10"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit sign-off statement found; behavior is only evidenced indirectly via passing tests",
+"prior_evidence": []
+}
+]
+}

@@ -1,0 +1,13 @@
+adr: ADR-0038
+title: Kernel-bypass backend selection
+status: accepted
+decision_date: 2026-09-22
+selected: RDMA (rdma-core verbs, RoCEv2 primary / InfiniBand where present)
+alternatives_considered: [rdma_verbs, roce_v2, infiniband, dpdk_polling, io_uring_fallback, non_bypass_baseline]
+drivers: [latency, cpu_overhead, nic_offload, mr_registration_cost, iommu_isolation, sriov_support, portability, failure_recovery]
+data_control_split: {data_plane: verbs_queue_pairs, control_plane: registration+policy}
+security_consequences: [dma_authority, mr_key_lifetime, stale_key_risk, device_reset, privileged_setup, firmware_trust, side_channel]
+fail_closed_to: kernel-path
+revisit_triggers: [provider_disqualified, new_nic_class, security_finding]
+rollback_strategy: kernel-path baseline + previous sealed evidence head
+approvers: [architecture-board, security-architecture-board]

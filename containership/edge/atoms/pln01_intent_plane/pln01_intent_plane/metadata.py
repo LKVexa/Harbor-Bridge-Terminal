@@ -1,0 +1,8 @@
+"""Stable package metadata that does not depend on ``pk_core``."""
+
+ELEMENT_ID = "PLN-01"
+ELEMENT_NAME = "Intent plane"
+SCHEMA_DECLARATION = "PK_DECLARATION/1"
+SCHEMA_PLAN = "PK_RECONCILIATION_PLAN/1"
+SCHEMA_ACTUAL_STATE = "PK_ACTUAL_STATE/1"
+SCHEMA_GRAPH = "PK_INTENT_GRAPH/1"

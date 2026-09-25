@@ -1,0 +1,37 @@
+# GitHub Actions workflow (copy to .github/workflows/inv61.yml). DEFINED, NOT YET EXECUTED IN CI (W-010).
+name: inv61
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m unittest discover -s tests -t tests -v
+      - run: python -O -m unittest discover -s tests -t tests
+      - run: python tools/build_traceability.py --check
+      - run: python tools/gen_fixtures.py --check
+  gate-pk-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --require-hashes -r requirements-gate.lock   # needs W-002
+      - run: python tests/test_component.py   # must report zero skips
+  netns-two-host:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo ./ci/netns_two_host.sh
+  release:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/make_release.py && python tools/verify_release.py dist
+      - run: python bench/bench.py && python tools/perf_gate.py
+      - run: python tools/exit_gate.py

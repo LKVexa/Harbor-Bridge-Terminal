@@ -1,0 +1,11 @@
+{"schema": "PK_FULL_VM_ALERTS/1", "status": "PROPOSED", "rules": [
+ {"id": "FVT-A01", "class": "attack", "expr": "rate(authz_denials[5m]) > 10", "severity": "SEV2", "meaning": "credential probing or cross-tenant attempts"},
+ {"id": "FVT-A02", "class": "attack", "expr": "increase(ops_total{result=\"PK_FULL_VM_UNAUTHENTICATED\"}[5m]) > 20", "severity": "SEV2", "meaning": "replay/forgery attempts"},
+ {"id": "FVT-A03", "class": "isolation", "expr": "increase(ops_total{result=\"PK_FULL_VM_DEVICE_CONFLICT\"}[15m]) > 0", "severity": "SEV1", "meaning": "device-sharing attempt reached enforcement"},
+ {"id": "FVT-A04", "class": "dependency", "expr": "breaker_state == 1", "severity": "SEV2", "meaning": "hypervisor provider circuit open"},
+ {"id": "FVT-A05", "class": "dependency", "expr": "increase(ops_total{result=\"PK_FULL_VM_TRUST_UNAVAILABLE\"}[5m]) > 0", "severity": "SEV2", "meaning": "identity/key/time service down; failing closed"},
+ {"id": "FVT-A06", "class": "load", "expr": "rate(ops_total{result=\"PK_FULL_VM_OVERLOADED\"}[5m]) / rate(ops_total[5m]) > 0.05", "severity": "SEV3", "meaning": "shedding under load"},
+ {"id": "FVT-A07", "class": "degradation", "expr": "histogram_quantile(0.95, boot_ms) > 8000", "severity": "SEV3", "meaning": "boot budget missed"},
+ {"id": "FVT-A08", "class": "policy", "expr": "increase(primitive_refusals[1h]) > 0", "severity": "SEV3", "meaning": "placement sent work to a host without the primitive"},
+ {"id": "FVT-A09", "class": "defect", "expr": "increase(ops_total{result=\"PK_FULL_VM_PROVIDER_FAILED\"}[15m]) > 3", "severity": "SEV2", "meaning": "non-retryable provider failures (software defect suspect)"},
+ {"id": "FVT-A10", "class": "integrity", "expr": "audit_chain_valid == 0", "severity": "SEV1", "meaning": "audit chain verification failed"}]}

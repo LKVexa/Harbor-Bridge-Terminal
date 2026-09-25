@@ -1,0 +1,118 @@
+{
+  "schema": "urn:pk:inv17:threats:1",
+  "doc": "security/THREAT_MODEL.md",
+  "threats": [
+    {
+      "id": "T01",
+      "title": "Unbounded buffering exhausts host memory",
+      "severity": "high",
+      "mitigation": "stream.py::StreamConfig ceilings; control.py quotas + global budget",
+      "tests": [
+        "tests/test_adversarial.py::test_memory_exhaustion_is_bounded"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T02",
+      "title": "Writer continues after reader is gone",
+      "severity": "high",
+      "mitigation": "stream.py::Stream.write EndDropped",
+      "tests": [
+        "tests/test_fault_injection.py::test_reader_process_death_mid_stream"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T03",
+      "title": "Type confusion",
+      "severity": "medium",
+      "mitigation": "runtime type check incl. bool/int; adapters lift re-check",
+      "tests": [
+        "tests/test_adversarial.py::test_type_confusion_matrix"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T04",
+      "title": "Lost end-of-stream leaves reader waiting forever",
+      "severity": "medium",
+      "mitigation": "explicit end/drop; bounded waits never infer EOF",
+      "tests": [
+        "tests/test_stream_ops.py::TimeoutCancelTest"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T05",
+      "title": "Capability forgery / tampering",
+      "severity": "high",
+      "mitigation": "HMAC-SHA256 tokens, constant-time compare",
+      "tests": [
+        "tests/test_security.py::test_forgery_and_tamper"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T06",
+      "title": "Token replay on transfer",
+      "severity": "high",
+      "mitigation": "single-use nonce cache",
+      "tests": [
+        "tests/test_adversarial.py::test_token_spoofing_and_replay_are_audited"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T07",
+      "title": "Cross-tenant stream access",
+      "severity": "high",
+      "mitigation": "tenant/workload binding + registry check",
+      "tests": [
+        "tests/test_security.py::IsolationTest"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T08",
+      "title": "Trust-service outage turns into fail-open",
+      "severity": "high",
+      "mitigation": "TrustServiceUnavailable fail-closed",
+      "tests": [
+        "tests/test_security.py::TrustOutageTest"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T09",
+      "title": "Audit log tampering/truncation",
+      "severity": "medium",
+      "mitigation": "HMAC chain + external head anchor",
+      "tests": [
+        "tests/test_security.py::AuditTest"
+      ],
+      "status": "mitigated",
+      "residual": "truncation needs an externally stored anchor"
+    },
+    {
+      "id": "T10",
+      "title": "Noisy tenant starves others",
+      "severity": "medium",
+      "mitigation": "TenantQuota + FairCreditScheduler",
+      "tests": [
+        "tests/test_adversarial.py::test_tenant_flood_cannot_starve_others"
+      ],
+      "status": "mitigated"
+    },
+    {
+      "id": "T11",
+      "title": "Key compromise",
+      "severity": "high",
+      "mitigation": "rotation/retire in KeyRing",
+      "tests": [
+        "tests/test_security.py::test_key_rotation"
+      ],
+      "status": "partially_mitigated",
+      "residual": "no HSM/KMS integration; key custody is the embedding host's"
+    }
+  ]
+}

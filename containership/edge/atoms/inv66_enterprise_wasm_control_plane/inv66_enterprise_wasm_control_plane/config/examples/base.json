@@ -1,0 +1,196 @@
+{
+ "schema": "PK_ECP_CONFIG/1",
+ "org": "acme",
+ "limits": {
+  "max_components": 256,
+  "max_manifest_bytes": 1000000,
+  "default_deadline_ms": 5000,
+  "max_inflight": 256,
+  "audit_segment_records": 10000,
+  "retention_days": 400
+ },
+ "quotas": {
+  "default": {
+   "rate_per_s": 1000.0,
+   "burst": 1000,
+   "max_inflight": 64
+  },
+  "tenants": {
+   "payments": {
+    "rate_per_s": 1000.0,
+    "burst": 1000,
+    "max_inflight": 64
+   }
+  }
+ },
+ "roles": {
+  "release-manager": [
+   "admit",
+   "admit.dry_run",
+   "inventory.read",
+   "explain.read"
+  ]
+ },
+ "bindings": [
+  {
+   "subject": "ops",
+   "role": "deployer",
+   "scope": "acme/payments/prod",
+   "effect": "allow"
+  },
+  {
+   "subject": "dev",
+   "role": "deployer",
+   "scope": "acme/payments/staging",
+   "effect": "allow"
+  },
+  {
+   "group": "platform-admins",
+   "role": "org-admin",
+   "scope": "acme",
+   "effect": "allow"
+  },
+  {
+   "subject": "sec1",
+   "role": "security-admin",
+   "scope": "acme",
+   "effect": "allow"
+  },
+  {
+   "subject": "sec2",
+   "role": "security-admin",
+   "scope": "acme",
+   "effect": "allow"
+  },
+  {
+   "subject": "auditor",
+   "role": "auditor",
+   "scope": "acme",
+   "effect": "allow"
+  },
+  {
+   "subject": "tadmin",
+   "role": "tenant-admin",
+   "scope": "acme/payments",
+   "effect": "allow"
+  },
+  {
+   "subject": "contractor",
+   "role": "deployer",
+   "scope": "acme/payments",
+   "effect": "allow"
+  },
+  {
+   "subject": "contractor",
+   "role": "deployer",
+   "scope": "acme/payments/prod",
+   "effect": "deny"
+  },
+  {
+   "subject": "payments/deployer",
+   "role": "deployer",
+   "scope": "acme/payments",
+   "effect": "allow"
+  }
+ ],
+ "registries": [
+  {
+   "host": "registry.estate.local",
+   "scope": "acme"
+  },
+  {
+   "host": "eu.registry.estate.local",
+   "scope": "acme"
+  }
+ ],
+ "signers": [
+  {
+   "id": "release-signer",
+   "public_key": "ueX9bNuDds1P+VNDvW1HwwI9lxbAM+B+tU+LIx+mH/U=",
+   "scope": "acme"
+  },
+  {
+   "id": "team-b-signer",
+   "public_key": "X3VaUi9SBWBeFj6rTQAf05Qn09gYldMAXhx+EPaolB4=",
+   "scope": "acme/analytics"
+  },
+  {
+   "id": "ci-builder",
+   "public_key": "E3b3PrhzJjT3ggKqfvxC+bZUTrWoxknC55ZusuWqhgM=",
+   "scope": "acme"
+  }
+ ],
+ "provenance": {
+  "require_digest": true,
+  "require_signature": true,
+  "require_attestation": false,
+  "trusted_builders": [
+   "https://ci.acme.example/builder@v3"
+  ]
+ },
+ "policy": {
+  "engine": "local",
+  "on_unavailable": "deny",
+  "cache_ttl_s": 30,
+  "rules": [
+   {
+    "id": "SEC-NO-DEBUG",
+    "effect": "deny",
+    "priority": 100,
+    "class": "security",
+    "when": {
+     "component_name": "debug-shell"
+    },
+    "message": "debug shells never deploy"
+   },
+   {
+    "id": "RES-EU-PROD",
+    "effect": "require",
+    "priority": 50,
+    "class": "residency",
+    "when": {
+     "tenant": "payments",
+     "lattice": "prod"
+    },
+    "require_image_prefix": "eu.registry.estate.local/",
+    "message": "payments prod images must come from the EU registry"
+   },
+   {
+    "id": "COST-EXEMPT-RES",
+    "effect": "exempt",
+    "priority": 10,
+    "class": "cost",
+    "when": {
+     "tenant": "payments"
+    },
+    "targets": [
+     "RES-EU-PROD"
+    ],
+    "message": "cost exemption (must be refused)"
+   }
+  ]
+ },
+ "dual_authorization": {
+  "config_activate": 1,
+  "quarantine_release": 2
+ },
+ "dependencies": {
+  "deployment": {
+   "required": false,
+   "endpoint": "http://inv63.local",
+   "timeout_ms": 2000
+  }
+ },
+ "secrets": {
+  "anchor_key": "env:INV66_ANCHOR_KEY"
+ },
+ "telemetry": {
+  "log_level": "info",
+  "trace_sample_ratio": 1.0,
+  "log_retention_days": 30,
+  "metrics_retention_days": 90,
+  "redact_subjects": false
+ },
+ "environment": "dev",
+ "site": "dev-local"
+}

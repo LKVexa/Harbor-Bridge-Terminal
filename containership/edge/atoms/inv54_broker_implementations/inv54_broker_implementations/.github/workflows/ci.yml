@@ -1,0 +1,42 @@
+# CI/release automation (component 100).  Authored; NOT yet executed on a hosted runner.
+name: inv54
+on: [push, pull_request, workflow_dispatch]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: {python: ["3.10", "3.11", "3.12"]}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv54_broker_implementations}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install cryptography==46.0.7
+      - name: static checks
+        run: python -m compileall -q inv54_broker_implementations
+      - name: schema drift
+        run: python inv54_broker_implementations/tools/gen_schemas.py --check
+      - name: ownership
+        run: python inv54_broker_implementations/tools/check_owners.py
+      - name: unit + contract + property + security tests
+        run: python -B -m unittest discover -s inv54_broker_implementations/tests -p 'test_*.py'
+      - name: performance gate
+        run: python inv54_broker_implementations/bench/harness.py --n 20000 --gate
+      - name: evidence
+        run: python -B inv54_broker_implementations/tools/gen_evidence.py
+      - uses: actions/upload-artifact@v4
+        with: {name: "evidence-${{ matrix.python }}", path: inv54_broker_implementations/evidence/}
+  provider-certification:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: provider-certification   # protected credentials
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv54_broker_implementations}
+      - run: pip install confluent-kafka==2.6.1 pika==1.3.2 boto3==1.35.99
+      - run: python inv54_broker_implementations/tools/certify_providers.py
+        env:
+          INV54_KAFKA_BOOTSTRAP: ${{ secrets.INV54_KAFKA_BOOTSTRAP }}
+          INV54_RABBITMQ_URL: ${{ secrets.INV54_RABBITMQ_URL }}
+          INV54_SQS_REGION: ${{ vars.INV54_SQS_REGION }}

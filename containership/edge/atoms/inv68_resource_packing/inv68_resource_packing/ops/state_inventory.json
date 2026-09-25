@@ -1,0 +1,16 @@
+{
+  "schema": "PK_PACK_STATE_INVENTORY/1",
+  "authoritative": [
+    {"state": "configuration snapshots", "path": "<state>/cfg/snapshots/<sha256>.json", "durability": "fsync + atomic rename", "backup": "ConfigStore.export()", "rpo": "last committed activation", "rto": "restore + digest verification (seconds)"},
+    {"state": "configuration journal", "path": "<state>/cfg/journal.jsonl", "durability": "fsync per append; torn tail ignored"},
+    {"state": "active pointer + controller epoch", "path": "<state>/cfg/ACTIVE", "durability": "atomic rename"},
+    {"state": "freeze marker", "path": "<state>/cfg/FROZEN", "durability": "atomic rename; unreadable marker keeps the service frozen (fail closed)"},
+    {"state": "security audit ledger", "path": "<state>/audit.jsonl (+ sealed anchor)", "durability": "fsync per append; hash chain + HMAC anchor", "backup": "copy ledger + anchor; verify with inv68-audit verify"}
+  ],
+  "reconstructible": [
+    {"state": "placements", "how": "recomputed deterministically from request + config digest + capacity snapshot"},
+    {"state": "idempotency cache / rate windows", "how": "empty on restart; replays recompute identical results"},
+    {"state": "metrics / admission counters", "how": "reset on restart"}
+  ],
+  "external_source_of_truth": {"host capacity ledger": "owned upstream (INV-67 / inventory); INV-68 reads it with a staleness bound"}
+}

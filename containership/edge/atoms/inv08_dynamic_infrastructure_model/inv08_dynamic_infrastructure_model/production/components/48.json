@@ -1,0 +1,72 @@
+{
+ "component": 48,
+ "title": "Tail-latency/SLO thresholds and regression gate",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "p50/p95/p99/worst-case latency budgets",
+   "state": "PARTIAL",
+   "spec": "production/bench.py::LATENCY_BUDGETS",
+   "modules": [
+    "production/bench.py::check_budgets"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_budgets_proposed_and_checked"
+   ],
+   "blocker": "approval of PROPOSED budgets by a performance owner (UNASSIGNED) measured on reference hardware"
+  },
+  {
+   "name": "SLO and error-budget definitions",
+   "state": "PARTIAL",
+   "spec": "production/bench.py::SLOS",
+   "modules": [
+    "production/bench.py::error_budget_remaining"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_slo_error_budget"
+   ],
+   "blocker": "SLO approval by service owner (UNASSIGNED) and production SLI data"
+  },
+  {
+   "name": "release regression thresholds",
+   "state": "PARTIAL",
+   "spec": "production/bench.py::REGRESSION_THRESHOLDS",
+   "modules": [
+    "production/bench.py::compare"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_regression_gate_noise_tolerance"
+   ],
+   "blocker": "threshold approval (UNASSIGNED); values PROPOSED"
+  },
+  {
+   "name": "noise normalization/warm-up methodology",
+   "state": "IMPLEMENTED",
+   "spec": "production/bench.py::run_case",
+   "modules": [
+    "production/bench.py::run_case",
+    "production/bench.py::compare"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_harness_warmup_and_stats",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_regression_gate_noise_tolerance"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "CI performance gate with baseline comparison",
+   "state": "IMPLEMENTED",
+   "spec": "production/bench.py::compare",
+   "modules": [
+    "production/bench.py::compare",
+    "production/bench.py::main"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_ci_gate_cli",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.BenchTests.test_regression_gate_noise_tolerance"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Gate is a CLI returning non-zero on regression; wiring into an actual CI pipeline is outside this overlay."
+}

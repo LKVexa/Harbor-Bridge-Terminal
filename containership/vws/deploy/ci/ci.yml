@@ -1,0 +1,15 @@
+# CI workflow (GitHub Actions syntax). STATUS: AUTHORED, NEVER RUN — no CI system was available (series I057: IN_PROGRESS).
+# No secrets, no deploy step, no publish step. Deployment stays a separately authorized manual action.
+name: vws-ci
+on: [push, pull_request]
+permissions: { contents: read }
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4            # pin to a commit SHA before use
+      - uses: actions/setup-node@v4          # pin to a commit SHA before use
+        with: { node-version: '22' }
+      - run: node scripts/syntax-check.js
+      - run: node tools/verify.js             # release manifest hashes
+      - run: npm test                         # zero-install: no third-party runtime dependency; fabric tests skip without DF containers

@@ -1,0 +1,80 @@
+{
+ "component": 35,
+ "title": "Node/workload attestation integration",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "hardware root-of-trust evidence format",
+   "state": "PARTIAL",
+   "spec": "production/attestation.py::SCHEMA",
+   "modules": [
+    "production/attestation.py::SimulatedDevice",
+    "production/attestation.py::AttestationVerifier.evaluate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_rot_evidence_valid_admitted",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_rot_unsupported_hardware_types_denied",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_rot_forged_quote_quarantined"
+   ],
+   "blocker": "TPM2/SEV-SNP/TDX hardware and vendor root certificates (EK chain); only rot.type=sim (HMAC test double) is verifiable"
+  },
+  {
+   "name": "software/boot measurement evidence",
+   "state": "PARTIAL",
+   "spec": "production/attestation.py::replay_event_log",
+   "modules": [
+    "production/attestation.py::extend",
+    "production/attestation.py::replay_event_log"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_boot_measurement_replay_and_mismatch",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_boot_measurement_unexpected_kernel"
+   ],
+   "blocker": "real measured-boot event log from TPM hardware and approved golden PCR values"
+  },
+  {
+   "name": "freshness nonce/challenge protocol",
+   "state": "IMPLEMENTED",
+   "spec": "production/attestation.py::NonceIssuer",
+   "modules": [
+    "production/attestation.py::NonceIssuer"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_nonce_replay_unknown_and_stale",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_nonce_issuer_bounded",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialReplaySpoof.test_nonce_replay_across_verifiers_is_unknown"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "attestation policy evaluation",
+   "state": "IMPLEMENTED",
+   "spec": "production/attestation.py::AttestationPolicy",
+   "modules": [
+    "production/attestation.py::AttestationPolicy",
+    "production/attestation.py::AttestationVerifier"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_policy_evaluation_malformed_evidence",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_policy_evidence_too_old"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "quarantine/deny/degrade actions on attestation failure",
+   "state": "IMPLEMENTED",
+   "spec": "production/attestation.py::ACTION_POLICY",
+   "modules": [
+    "production/attestation.py::Action",
+    "production/attestation.py::AttestationVerifier._finish",
+    "production/attestation.py::AttestationVerifier.schedulable"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_actions_severity_and_audit",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AttestationTests.test_nonce_replay_unknown_and_stale"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Verified against a simulated verifier/device; no hardware attestation claimed."
+}

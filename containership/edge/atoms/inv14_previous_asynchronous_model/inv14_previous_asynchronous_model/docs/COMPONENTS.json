@@ -1,0 +1,2139 @@
+{
+ "components": [
+  {
+   "artifacts": [
+    "deps/pk_core.lock.json"
+   ],
+   "blocked_by": [
+    "The exact compatible pk_core was not supplied; lock is UNRESOLVED"
+   ],
+   "boundary": "Owns the declaration and verification of pk_core. Does not own pk_core itself, its build or its index.",
+   "ceilings": "Lock file read once; tree digest bounded by the core's file count.",
+   "cleanup_evidence": [
+    "T:C01PkCorePin"
+   ],
+   "codes": [
+    "PK_CORE_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "stateless",
+   "config_sources": {
+    "constant": "REQUIRED_SYMBOLS",
+    "external_policy": "deps/pk_core.lock.json",
+    "runtime": "installed pk_core tree"
+   },
+   "correlation": "core version/hash in diagnostics",
+   "defects": [],
+   "fail_mode": "fail closed on every dependency condition; no degraded mode",
+   "id": "01",
+   "interface": "core_probe.probe() -> {ok, code, core}",
+   "kind": "runtime",
+   "modules": [
+    "core_probe.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C01PkCorePin.test_c01_floating_and_mutable_pins_rejected"
+     ],
+     "id": "R01-01",
+     "text": "The lock MUST name pk_core with an exact X.Y.Z version, immutable source and tree sha256; floating/mutable pins MUST be rejected."
+    },
+    {
+     "evidence": [
+      "T:C01PkCorePin"
+     ],
+     "id": "R01-02",
+     "text": "The probe MUST fail closed with a stable code for unpinned, absent, wrong-version, hash-mismatched, API-incompatible or wrong-interpreter cores."
+    },
+    {
+     "evidence": [
+      "T:C01PkCorePin.test_c01_probe_absent_version_hash_api_ok_paths"
+     ],
+     "id": "R01-03",
+     "text": "Diagnostics MUST NOT disclose local filesystem paths."
+    },
+    {
+     "evidence": [
+      "T:C27ReleasePipeline.test_c27_missing_pk_core_blocks_release_exit_2"
+     ],
+     "id": "R01-04",
+     "text": "Release MUST be BLOCKED while the lock is UNRESOLVED."
+    }
+   ],
+   "runbook": "R0",
+   "signals": "diagnostics.pk_core",
+   "threats": [
+    {
+     "mitigation": "tree sha256 + version equality",
+     "tests": [
+      "T:C01PkCorePin.test_c01_probe_absent_version_hash_api_ok_paths"
+     ],
+     "threat": "substituted or tampered core"
+    },
+    {
+     "mitigation": "gate exits 2",
+     "tests": [
+      "T:C27ReleasePipeline"
+     ],
+     "threat": "silent skip when core absent"
+    }
+   ],
+   "title": "Pinned pk_core runtime/dependency package"
+  },
+  {
+   "artifacts": [
+    "wit/inv14-legacy-poll.wit"
+   ],
+   "blocked_by": [
+    "No WASI 0.2 runtime (wasmtime/jco) or compiled component fixture in this environment",
+    "No WIT parser/toolchain (wasm-tools) available to validate the WIT in CI"
+   ],
+   "boundary": "Owns the translation PK_POLL/1 <-> wasi:io/poll. Does not own the runtime, handles' underlying resources or component compilation.",
+   "ceilings": "Set <= max_pollables; timeout <= max_timeout_ticks and 60 s.",
+   "cleanup_evidence": [
+    "T:C02WasiAdapter.test_c02_empty_set_refused_before_trap_and_timer_dropped"
+   ],
+   "codes": [
+    "PK_POLL_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "host-provided; reference host uses one condition variable",
+   "config_sources": {
+    "config": "PK_CLOCK_CONFIG/1",
+    "constant": "WASI_IO/WASI_CLOCK ids",
+    "runtime": "host handles"
+   },
+   "correlation": "result carries owner/set_size",
+   "defects": [],
+   "fail_mode": "fail closed on invalid input; real-runtime gate BLOCKED",
+   "id": "02",
+   "interface": "WasiHost protocol (subscribe_duration, poll, drop, owner_of)",
+   "kind": "runtime",
+   "modules": [
+    "wasi_adapter.py",
+    "clock.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C02WasiAdapter.test_c02_timeout_maps_timer_index_to_timed_out"
+     ],
+     "id": "R02-01",
+     "text": "The adapter MUST append a monotonic-clock timer pollable and map a timer-only result to timed_out."
+    },
+    {
+     "evidence": [
+      "T:C02WasiAdapter.test_c02_ready_indexes_exclude_timer_and_match_python_semantics"
+     ],
+     "id": "R02-02",
+     "text": "ready_indexes MUST exclude the timer and match the Python reference semantics."
+    },
+    {
+     "evidence": [
+      "T:C02WasiAdapter.test_c02_empty_set_refused_before_trap_and_timer_dropped"
+     ],
+     "id": "R02-03",
+     "text": "Empty sets MUST be refused before wasi:io/poll can trap; the timer handle MUST be dropped on every path."
+    },
+    {
+     "evidence": [
+      "T:C02WasiAdapter.test_c02_foreign_duplicate_and_limit_refusals"
+     ],
+     "id": "R02-04",
+     "text": "Foreign/duplicate/over-limit requests MUST map to the canonical PK_POLL_ERROR/1 codes."
+    },
+    {
+     "evidence": [
+      "G:wasi_0_2_interop"
+     ],
+     "id": "R02-05",
+     "text": "Interop MUST be proven on a real WASI 0.2 runtime before release."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "same PK_POLL/1 result",
+   "threats": [
+    {
+     "mitigation": "owner_of check before subscribe",
+     "tests": [
+      "T:C02WasiAdapter.test_c02_foreign_duplicate_and_limit_refusals"
+     ],
+     "threat": "foreign handle smuggled into poll"
+    }
+   ],
+   "title": "WASI 0.2 / wasi:io integration adapter"
+  },
+  {
+   "artifacts": [
+    "wit/inv14-legacy-poll.wit",
+    "schemas/pk_poll.schema.json",
+    "schemas/pk_pollable.schema.json",
+    "schemas/pk_poll_error.schema.json",
+    "schemas/pk_poll_metrics.schema.json",
+    "schemas/error_codes.json",
+    "docs/CONTRACT_POLICY.md"
+   ],
+   "blocked_by": [],
+   "boundary": "Owns the serialized contract. Does not own transport encodings beyond JSON and the component model.",
+   "ceilings": "set_size <= 65536, strings <= 256, message <= 1024 (schema maxima).",
+   "cleanup_evidence": [
+    "T:C03Contracts"
+   ],
+   "codes": [
+    "(defines all)"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "static artifacts",
+   "config_sources": {
+    "constant": "schema files",
+    "generated": "error_codes.json, WIT enum, error schema enum"
+   },
+   "correlation": "schema ids in every payload",
+   "defects": [
+    "D-05"
+   ],
+   "fail_mode": "gate fails on drift",
+   "id": "03",
+   "interface": "schemas/*.json, wit/*.wit",
+   "kind": "artifact",
+   "modules": [
+    "schema_check.py",
+    "tools/gen_contracts.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C03Contracts.test_c03_wit_records_match_json_schemas"
+     ],
+     "id": "R03-01",
+     "text": "Every PK_POLL/1, PK_POLLABLE/1, PK_POLL_ERROR/1, PK_POLL_METRICS/1 field MUST be defined in both WIT and JSON Schema and the two MUST agree."
+    },
+    {
+     "evidence": [
+      "T:C03Contracts.test_c03_generated_contracts_are_current",
+      "T:C03Contracts.test_c03_error_schema_enum_equals_code_registry"
+     ],
+     "id": "R03-02",
+     "text": "The error-code enumeration MUST be generated from source and the committed artifacts MUST be current."
+    },
+    {
+     "evidence": [
+      "T:C03Contracts.test_c03_every_schema_is_versioned",
+      "T:C00Diagnostics"
+     ],
+     "id": "R03-03",
+     "text": "Every schema MUST carry an immutable version id; digests MUST appear in diagnostics."
+    },
+    {
+     "evidence": [
+      "T:C03Contracts.test_c03_validator_fails_closed_on_unknown_keyword"
+     ],
+     "id": "R03-04",
+     "text": "The validator MUST fail closed on unsupported schema keywords."
+    }
+   ],
+   "runbook": "R1",
+   "signals": "n/a (static)",
+   "threats": [
+    {
+     "mitigation": "generated artifacts + --check gate",
+     "tests": [
+      "T:C03Contracts"
+     ],
+     "threat": "contract drift between code and schema"
+    }
+   ],
+   "title": "Versioned WIT/JSON schema contracts"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [
+    "INV-15 real ABI not supplied; shims proven against the protocol only"
+   ],
+   "boundary": "Owns shims and per-consumer stage machine. Does not own INV-15 or consumer code.",
+   "ceilings": "One PollSet per forward shim; stage history bounded by transitions.",
+   "cleanup_evidence": [
+    "T:C04Migration"
+   ],
+   "codes": [
+    "PK_MIGRATION_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "state machine guarded by a lock",
+   "config_sources": {
+    "external_policy": "governance/MIGRATION_REGISTRY.json",
+    "runtime": "per-consumer MigrationStateMachine"
+   },
+   "correlation": "consumer id + stage history",
+   "defects": [],
+   "fail_mode": "refuse advancement on missing/failed parity",
+   "id": "04",
+   "interface": "PollableFuture, FuturePollable, MigrationStateMachine, parity_check",
+   "kind": "runtime",
+   "modules": [
+    "migration.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C04Migration.test_c04_parity_between_legacy_and_shim",
+      "T:C04Migration.test_c04_reverse_shim_signals_once_from_inv15_future"
+     ],
+     "id": "R04-01",
+     "text": "Forward and reverse shims MUST give the same ready/timeout outcomes as the legacy path (parity)."
+    },
+    {
+     "evidence": [
+      "T:C04Migration.test_c04_state_machine_requires_parity_and_allows_rollback"
+     ],
+     "id": "R04-02",
+     "text": "A consumer MUST NOT advance past DUAL_STACK/CANARY without a passing parity record; rollback MUST be legal from those stages only."
+    },
+    {
+     "evidence": [
+      "T:C04Migration.test_c04_forward_shim_cancel_is_idempotent"
+     ],
+     "id": "R04-03",
+     "text": "Cancel on the forward shim MUST be idempotent."
+    },
+    {
+     "evidence": [
+      "T:C13MigrationRegistry.test_c13_overdue_needs_live_waiver_and_migrated_regression_refused"
+     ],
+     "id": "R04-04",
+     "text": "A MIGRATED consumer MUST NOT silently regress to INV-14."
+    },
+    {
+     "evidence": [
+      "T:C20Adjacent.test_c20_inv15_future_satisfies_bridge_protocol"
+     ],
+     "id": "R04-05",
+     "text": "The bridge MUST be proven against the real INV-15."
+    }
+   ],
+   "runbook": "R7",
+   "signals": "migration stage per consumer",
+   "threats": [
+    {
+     "mitigation": "PK_MIGRATION_PARITY_REQUIRED",
+     "tests": [
+      "T:C04Migration.test_c04_state_machine_requires_parity_and_allows_rollback"
+     ],
+     "threat": "cutover without parity"
+    }
+   ],
+   "title": "INV-14 -> INV-15 migration bridge"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [],
+   "boundary": "Owns caller-driven cancellation of one poll. Does not own INV-15 cancellation semantics.",
+   "ceilings": "Reason truncated to 64 chars; one waiter per poll per token.",
+   "cleanup_evidence": [
+    "T:C05Cancellation.test_c05_cancel_race_stress_no_leak_no_hang"
+   ],
+   "codes": [
+    "PK_POLL_CANCELLED",
+    "PK_POLL_INVALID_CANCEL_TOKEN"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "lock + durable Event registration",
+   "config_sources": {
+    "constant": "precedence ready > cancel > timeout"
+   },
+   "correlation": "correlation_id added to error details by the service",
+   "defects": [],
+   "fail_mode": "n/a",
+   "id": "05",
+   "interface": "PollSet.poll(..., cancel=CancelToken)",
+   "kind": "runtime",
+   "modules": [
+    "polling.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C05Cancellation.test_c05_cancel_wakes_blocked_poll_with_structured_error"
+     ],
+     "id": "R05-01",
+     "text": "A CancelToken MUST wake a blocked poll and raise PK_POLL_CANCELLED distinct from timeout."
+    },
+    {
+     "evidence": [
+      "T:C05Cancellation.test_c05_precancelled_token_and_readiness_wins_tie"
+     ],
+     "id": "R05-02",
+     "text": "Readiness MUST win a tie with cancellation; a pre-cancelled token MUST refuse before waiting."
+    },
+    {
+     "evidence": [
+      "T:C05Cancellation.test_c05_cancel_is_idempotent_and_token_type_checked"
+     ],
+     "id": "R05-03",
+     "text": "cancel() MUST be idempotent and latched."
+    },
+    {
+     "evidence": [
+      "T:C05Cancellation.test_c05_cancel_race_stress_no_leak_no_hang",
+      "X:interleave"
+     ],
+     "id": "R05-04",
+     "text": "Cancellation races MUST NOT leak waiters or hang."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "polls_cancelled, outcome=cancelled",
+   "threats": [
+    {
+     "mitigation": "token is a caller-held object, never addressable by id",
+     "tests": [
+      "T:C05Cancellation"
+     ],
+     "threat": "cross-principal cancellation"
+    }
+   ],
+   "title": "Cancellation contract"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [],
+   "boundary": "Owns in-process admission. Does not own fleet-wide quotas.",
+   "ceilings": "max_concurrent<=100000, tenant_max<=max_concurrent, queue_depth<=100000.",
+   "cleanup_evidence": [
+    "T:C06Admission.test_c06_slot_releases_on_exception"
+   ],
+   "codes": [
+    "PK_POLL_OVERLOADED",
+    "PK_POLL_TENANT_QUOTA"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "Condition variable",
+   "config_sources": {
+    "config": "PK_POLL_CONFIG/1 limits"
+   },
+   "correlation": "refusal audited with correlation id",
+   "defects": [],
+   "fail_mode": "shed (fail closed) on overload",
+   "id": "06",
+   "interface": "AdmissionController.acquire/release/slot/snapshot",
+   "kind": "runtime",
+   "modules": [
+    "admission.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C06Admission.test_c06_global_and_tenant_ceilings_shed_deterministically"
+     ],
+     "id": "R06-01",
+     "text": "Global and per-tenant concurrent-poll ceilings MUST shed deterministically with PK_POLL_OVERLOADED / PK_POLL_TENANT_QUOTA."
+    },
+    {
+     "evidence": [
+      "T:C06Admission.test_c06_bounded_fifo_queue_and_timeout"
+     ],
+     "id": "R06-02",
+     "text": "Queueing, when enabled, MUST be bounded FIFO with a bounded wait."
+    },
+    {
+     "evidence": [
+      "T:C06Admission.test_c06_slot_releases_on_exception",
+      "X:soak"
+     ],
+     "id": "R06-03",
+     "text": "Slots MUST be released on every path."
+    },
+    {
+     "evidence": [
+      "T:C12EmergencyDisable.test_c12_disable_refuses_new_polls_drains_inflight_then_rolls_back"
+     ],
+     "id": "R06-04",
+     "text": "Admission MUST run before waiter allocation."
+    }
+   ],
+   "runbook": "R4",
+   "signals": "reason=admission, snapshot.shed/peak",
+   "threats": [
+    {
+     "mitigation": "per-tenant quota",
+     "tests": [
+      "T:C25Soak",
+      "T:C06Admission"
+     ],
+     "threat": "tenant monopolises wait capacity"
+    }
+   ],
+   "title": "Admission / backpressure"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [
+    "No runtime attestation service; no replay-nonce store (tokens are short-lived bearer capabilities)"
+   ],
+   "boundary": "Owns token format and verification. Does not own key distribution or attestation.",
+   "ceilings": "token <= 2048 bytes, ttl <= 3600 s, key >= 32 bytes.",
+   "cleanup_evidence": [
+    "T:C07Identity"
+   ],
+   "codes": [
+    "PK_POLL_TOKEN_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "stateless",
+   "config_sources": {
+    "constant": "TOKEN_SCHEMA",
+    "external_policy": "trusted issuer keys"
+   },
+   "correlation": "refusal audited",
+   "defects": [],
+   "fail_mode": "fail closed (no trust root => refuse)",
+   "id": "07",
+   "interface": "Issuer.mint / Verifier.verify",
+   "kind": "runtime",
+   "modules": [
+    "identity.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C07Identity.test_c07_valid_token_binds_owner"
+     ],
+     "id": "R07-01",
+     "text": "A poll MUST present an HMAC-signed capability whose subject equals the PollSet owner principal tenant/component/instance."
+    },
+    {
+     "evidence": [
+      "T:C07Identity.test_c07_cross_tenant_expired_forged_untrusted_refused",
+      "T:C07Identity.test_c07_right_and_key_rotation"
+     ],
+     "id": "R07-02",
+     "text": "Forged, untrusted, expired, cross-tenant and wrong-right tokens MUST be refused with distinct stable codes."
+    },
+    {
+     "evidence": [
+      "T:C07Identity.test_c07_refusal_does_not_disclose_other_principal"
+     ],
+     "id": "R07-03",
+     "text": "Refusals MUST NOT disclose another principal."
+    },
+    {
+     "evidence": [
+      "T:C07Identity.test_c07_malformed_tokens_and_principals"
+     ],
+     "id": "R07-04",
+     "text": "Principal segments MUST be canonical lower-case ASCII (no Unicode look-alikes)."
+    },
+    {
+     "evidence": [
+      "G:independent_review"
+     ],
+     "id": "R07-05",
+     "text": "Identity MUST be bound to runtime attestation."
+    }
+   ],
+   "runbook": "R3",
+   "signals": "reason=identity",
+   "threats": [
+    {
+     "mitigation": "signed subject",
+     "tests": [
+      "T:C07Identity"
+     ],
+     "threat": "owner-string spoofing"
+    }
+   ],
+   "title": "Authenticated identity / capability"
+  },
+  {
+   "artifacts": [
+    "schemas/pk_poll_audit.schema.json"
+   ],
+   "blocked_by": [
+    "No approved durable/WORM sink, retention owner or key custody"
+   ],
+   "boundary": "Owns record format, chaining and local append. Does not own durable/WORM storage, retention or export.",
+   "ceilings": "record <= 4096 bytes; closed event vocabulary.",
+   "cleanup_evidence": [
+    "T:C08Audit"
+   ],
+   "codes": [
+    "PK_AUDIT_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "lock around append",
+   "config_sources": {
+    "external_policy": "audit key",
+    "runtime": "sink path"
+   },
+   "correlation": "correlation_id per record",
+   "defects": [],
+   "fail_mode": "fail closed",
+   "id": "08",
+   "interface": "AuditSink.append / verify_chain",
+   "kind": "runtime",
+   "modules": [
+    "audit.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C08Audit.test_c08_chain_verifies_and_detects_edit_delete_reorder_truncate"
+     ],
+     "id": "R08-01",
+     "text": "Records MUST be hash-chained and HMAC'd; verify MUST detect edit, delete, reorder and (with external head) truncation."
+    },
+    {
+     "evidence": [
+      "T:C08Audit.test_c08_unwritable_sink_fails_closed_and_secrets_redacted",
+      "X:faults"
+     ],
+     "id": "R08-02",
+     "text": "An unwritable sink MUST fail the operation closed with PK_AUDIT_UNAVAILABLE."
+    },
+    {
+     "evidence": [
+      "T:C08Audit.test_c08_reopen_resumes_and_corrupt_log_refused"
+     ],
+     "id": "R08-03",
+     "text": "A corrupt existing log MUST be refused on open; a valid one MUST resume its sequence."
+    },
+    {
+     "evidence": [
+      "T:C08Audit.test_c08_unwritable_sink_fails_closed_and_secrets_redacted"
+     ],
+     "id": "R08-04",
+     "text": "Records MUST be redacted and schema-valid."
+    }
+   ],
+   "runbook": "R3",
+   "signals": "audit_head in diagnostics",
+   "threats": [
+    {
+     "mitigation": "chain + MAC + external head",
+     "tests": [
+      "T:C08Audit"
+     ],
+     "threat": "log tampering"
+    }
+   ],
+   "title": "Tamper-evident audit sink"
+  },
+  {
+   "artifacts": [
+    "ops/dashboard.json"
+   ],
+   "blocked_by": [
+    "No collector endpoint for remote export"
+   ],
+   "boundary": "Owns metric catalog and exposition bodies. Does not own push transport or collectors.",
+   "ceilings": "<= 64 tenant series + 16 buckets; closed outcome/reason sets.",
+   "cleanup_evidence": [
+    "T:C09Telemetry"
+   ],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "lock",
+   "config_sources": {
+    "config": "sample_rate",
+    "constant": "OUTCOMES, REASONS, LATENCY_BUCKETS_MS"
+   },
+   "correlation": "no ids as labels (TEL-2)",
+   "defects": [],
+   "fail_mode": "pull-based; cannot block poll",
+   "id": "09",
+   "interface": "Telemetry.record / prometheus_text / otlp_json",
+   "kind": "runtime",
+   "modules": [
+    "telemetry.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C09Telemetry.test_c09_prometheus_exposition_parses_with_stable_labels"
+     ],
+     "id": "R09-01",
+     "text": "Prometheus exposition MUST parse and carry only allow-listed labels."
+    },
+    {
+     "evidence": [
+      "T:C09Telemetry.test_c09_tenant_cardinality_is_bounded"
+     ],
+     "id": "R09-02",
+     "text": "Tenant label cardinality MUST be bounded."
+    },
+    {
+     "evidence": [
+      "T:C09Telemetry.test_c09_sampling_applies_to_latency_only"
+     ],
+     "id": "R09-03",
+     "text": "Sampling MUST apply to latency only; counters are never sampled."
+    },
+    {
+     "evidence": [
+      "T:C09Telemetry.test_c09_otlp_json_shape"
+     ],
+     "id": "R09-04",
+     "text": "An OTLP/JSON body MUST be produced."
+    }
+   ],
+   "runbook": "R4",
+   "signals": "inv14_polls_total, inv14_poll_latency_ms",
+   "threats": [
+    {
+     "mitigation": "bucketing",
+     "tests": [
+      "T:C09Telemetry.test_c09_tenant_cardinality_is_bounded"
+     ],
+     "threat": "cardinality attack"
+    }
+   ],
+   "title": "Telemetry exporter"
+  },
+  {
+   "artifacts": [
+    "schemas/pk_poll_log.schema.json"
+   ],
+   "blocked_by": [],
+   "boundary": "Owns log schema and emission. Does not own transport/retention.",
+   "ceilings": "line <= 4096 bytes.",
+   "cleanup_evidence": [
+    "T:C10Logging"
+   ],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "lock",
+   "config_sources": {
+    "constant": "LEVELS, OPERATIONS"
+   },
+   "correlation": "correlation_id, trace_id",
+   "defects": [],
+   "fail_mode": "fail open (drop + count) -- logging never blocks polls; audit is the fail-closed record",
+   "id": "10",
+   "interface": "StructLogger.log",
+   "kind": "runtime",
+   "modules": [
+    "pollog.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C10Logging.test_c10_records_match_schema_with_stable_ids_and_redaction"
+     ],
+     "id": "R10-01",
+     "text": "Every record MUST match PK_POLL_LOG/1 with tenant, workload, component, operation, correlation and trace ids."
+    },
+    {
+     "evidence": [
+      "T:C10LoggingService.test_c10_injection_safe_single_line_with_monotonic_duration"
+     ],
+     "id": "R10-02",
+     "text": "Records MUST be single-line JSON (injection safe) and include monotonic duration for polls."
+    },
+    {
+     "evidence": [
+      "T:C10LoggingService.test_c10_concurrent_emission_produces_whole_records",
+      "T:C10Logging.test_c10_unknown_level_and_operation_are_normalised_and_stream_failure_counted"
+     ],
+     "id": "R10-03",
+     "text": "Emission MUST be concurrency-safe and backend failure MUST NOT change poll semantics."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "dropped counter",
+   "threats": [
+    {
+     "mitigation": "JSON encoding + redaction",
+     "tests": [
+      "T:C10LoggingService",
+      "T:C31Redaction"
+     ],
+     "threat": "log injection / secret leakage"
+    }
+   ],
+   "title": "Structured logging"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [
+    "No span exporter/tracing backend"
+   ],
+   "boundary": "Owns context parsing/propagation. Does not own span export.",
+   "ceilings": "tracestate <= 512 chars / 32 members.",
+   "cleanup_evidence": [
+    "T:C11Tracing"
+   ],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "stateless",
+   "config_sources": {
+    "constant": "W3C version 00"
+   },
+   "correlation": "trace_id in logs",
+   "defects": [],
+   "fail_mode": "fail open (new root)",
+   "id": "11",
+   "interface": "child_context()",
+   "kind": "runtime",
+   "modules": [
+    "tracing.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C11Tracing.test_c11_valid_parent_propagates_trace_id"
+     ],
+     "id": "R11-01",
+     "text": "A valid W3C traceparent MUST be propagated as the parent of a new child span."
+    },
+    {
+     "evidence": [
+      "T:C11Tracing.test_c11_invalid_parent_starts_new_root_and_is_flagged"
+     ],
+     "id": "R11-02",
+     "text": "Invalid context MUST start a new root without failing the poll."
+    },
+    {
+     "evidence": [
+      "T:C11Tracing.test_c11_service_returns_child_traceparent"
+     ],
+     "id": "R11-03",
+     "text": "The service MUST return the child traceparent."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "inbound_valid flag",
+   "threats": [
+    {
+     "mitigation": "bounded tracestate",
+     "tests": [
+      "T:C11Tracing"
+     ],
+     "threat": "baggage as data channel"
+    }
+   ],
+   "title": "Trace-context propagation"
+  },
+  {
+   "artifacts": [
+    "docs/RUNBOOK.md"
+   ],
+   "blocked_by": [
+    "Actor is recorded but not authenticated (no admin identity provider)",
+    "No fleet policy distribution"
+   ],
+   "boundary": "Owns process-local switch. Does not own fleet propagation.",
+   "ceilings": "drain <= 60 s.",
+   "cleanup_evidence": [
+    "T:C12EmergencyDisable"
+   ],
+   "codes": [
+    "PK_POLL_DRAINING",
+    "PK_POLL_DISABLED"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "Condition variable; admission atomic with state",
+   "config_sources": {
+    "external": "operator",
+    "runtime": "lifecycle state"
+   },
+   "correlation": "transition audited",
+   "defects": [],
+   "fail_mode": "fail closed",
+   "id": "12",
+   "interface": "Lifecycle.emergency_disable / transition",
+   "kind": "runtime",
+   "modules": [
+    "lifecycle.py",
+    "service.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C12EmergencyDisable.test_c12_disable_refuses_new_polls_drains_inflight_then_rolls_back"
+     ],
+     "id": "R12-01",
+     "text": "Disable MUST refuse new polls at once, let in-flight polls finish, then reach DISABLED."
+    },
+    {
+     "evidence": [
+      "T:C12EmergencyDisable.test_c12_drain_timeout_leaves_draining_not_disabled"
+     ],
+     "id": "R12-02",
+     "text": "A drain that does not complete in time MUST stay DRAINING, never force DISABLED."
+    },
+    {
+     "evidence": [
+      "T:C12EmergencyDisable",
+      "T:C33Runbook"
+     ],
+     "id": "R12-03",
+     "text": "Rollback DISABLED -> DEPRECATED MUST be available and attributed."
+    },
+    {
+     "evidence": [
+      "G:independent_review"
+     ],
+     "id": "R12-04",
+     "text": "Policy changes MUST be authenticated separately from poll callers."
+    }
+   ],
+   "runbook": "R2",
+   "signals": "reason=policy",
+   "threats": [
+    {
+     "mitigation": "DRAINING refuses immediately",
+     "tests": [
+      "T:C12EmergencyDisable"
+     ],
+     "threat": "abuse continues during incident"
+    }
+   ],
+   "title": "Emergency disable / policy hook"
+  },
+  {
+   "artifacts": [
+    "governance/MIGRATION_REGISTRY.json"
+   ],
+   "blocked_by": [
+    "No consumer inventory supplied (inventory_status NOT_STARTED)"
+   ],
+   "boundary": "Owns schema + enforcement. Does not own the inventory data.",
+   "ceilings": "component_id <= 128 chars.",
+   "cleanup_evidence": [
+    "T:C13MigrationRegistry"
+   ],
+   "codes": [
+    "PK_POLL_UNREGISTERED_CONSUMER",
+    "PK_POLL_MIGRATION_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "read-mostly",
+   "config_sources": {
+    "external_policy": "governance/*.json"
+   },
+   "correlation": "consumer id",
+   "defects": [],
+   "fail_mode": "fail closed",
+   "id": "13",
+   "interface": "ConsumerGate.check/register",
+   "kind": "runtime",
+   "modules": [
+    "governance.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C13MigrationRegistry.test_c13_unregistered_consumer_refused_registered_admitted"
+     ],
+     "id": "R13-01",
+     "text": "Unregistered consumers MUST be refused."
+    },
+    {
+     "evidence": [
+      "T:C13MigrationRegistry.test_c13_overdue_needs_live_waiver_and_migrated_regression_refused"
+     ],
+     "id": "R13-02",
+     "text": "Overdue consumers MUST need a live waiver; MIGRATED consumers MUST NOT regress."
+    },
+    {
+     "evidence": [
+      "T:C13MigrationRegistry.test_c13_registry_validation"
+     ],
+     "id": "R13-03",
+     "text": "Registry entries MUST validate (ids, stages, dates)."
+    },
+    {
+     "evidence": [
+      "G:governance"
+     ],
+     "id": "R13-04",
+     "text": "The registry MUST contain the real deployed consumer inventory."
+    }
+   ],
+   "runbook": "R7",
+   "signals": "reason=policy",
+   "threats": [
+    {
+     "mitigation": "ConsumerGate",
+     "tests": [
+      "T:C13MigrationRegistry"
+     ],
+     "threat": "shadow consumers"
+    }
+   ],
+   "title": "Per-component migration registry"
+  },
+  {
+   "artifacts": [
+    "schemas/pk_poll_lifecycle.json"
+   ],
+   "blocked_by": [
+    "No RETIRED state yet (EOL removal withdraws the package instead); replica reconciliation not applicable in-process"
+   ],
+   "boundary": "Process-local state machine.",
+   "ceilings": "history <= 128.",
+   "cleanup_evidence": [
+    "T:C14Lifecycle"
+   ],
+   "codes": [
+    "PK_POLL_ILLEGAL_TRANSITION"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "Condition variable",
+   "config_sources": {
+    "artifact": "schemas/pk_poll_lifecycle.json",
+    "constant": "TRANSITIONS"
+   },
+   "correlation": "transition records",
+   "defects": [],
+   "fail_mode": "fail closed",
+   "id": "14",
+   "interface": "Lifecycle",
+   "kind": "runtime",
+   "modules": [
+    "lifecycle.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C14Lifecycle.test_c14_every_illegal_transition_refused_and_state_unchanged"
+     ],
+     "id": "R14-01",
+     "text": "Every illegal transition MUST be refused leaving state unchanged; every legal one MUST apply."
+    },
+    {
+     "evidence": [
+      "T:C14Lifecycle.test_c14_admission_by_state_and_artifact_matches_code"
+     ],
+     "id": "R14-02",
+     "text": "Admission per state MUST match the machine-readable model."
+    },
+    {
+     "evidence": [
+      "T:C14Lifecycle.test_c14_unattributed_and_idempotent_transitions"
+     ],
+     "id": "R14-03",
+     "text": "Transitions MUST be attributed; repeats idempotent."
+    }
+   ],
+   "runbook": "R2",
+   "signals": "diagnostics.lifecycle",
+   "threats": [
+    {
+     "mitigation": "explicit table",
+     "tests": [
+      "T:C14Lifecycle"
+     ],
+     "threat": "coerced state"
+    }
+   ],
+   "title": "Lifecycle/state model"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [],
+   "boundary": "Owns process-local checkpoint. Readiness reconstruction is the host's job (RST-1).",
+   "ceilings": "checkpoint <= 16 KiB.",
+   "cleanup_evidence": [
+    "T:C15Restart.test_c15_atomic_save_leaves_no_temp_files"
+   ],
+   "codes": [
+    "PK_CHECKPOINT_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "atomic os.replace",
+   "config_sources": {
+    "runtime": "checkpoint path"
+   },
+   "correlation": "process_epoch in diagnostics/logs",
+   "defects": [],
+   "fail_mode": "fail closed to safe defaults",
+   "id": "15",
+   "interface": "checkpoint.save/load/restore_or_default",
+   "kind": "runtime",
+   "modules": [
+    "checkpoint.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C15Restart.test_c15_checkpoint_roundtrip_never_persists_readiness",
+      "T:C15Restart.test_c15_atomic_save_leaves_no_temp_files"
+     ],
+     "id": "R15-01",
+     "text": "Readiness MUST NOT be persisted; counters/lifecycle/config version MUST be checkpointed atomically with a digest."
+    },
+    {
+     "evidence": [
+      "T:C15Restart.test_c15_corrupt_truncated_tampered_checkpoints_refused"
+     ],
+     "id": "R15-02",
+     "text": "Corrupt/tampered/oversized checkpoints MUST be refused."
+    },
+    {
+     "evidence": [
+      "X:faults"
+     ],
+     "id": "R15-03",
+     "text": "A killed process MUST restart from its checkpoint and re-observe live resources."
+    }
+   ],
+   "runbook": "R10",
+   "signals": "checkpoint_error",
+   "threats": [
+    {
+     "mitigation": "readiness_persisted=false",
+     "tests": [
+      "T:C15Restart"
+     ],
+     "threat": "false wake from stale readiness"
+    }
+   ],
+   "title": "Restart/replay semantics"
+  },
+  {
+   "artifacts": [
+    "schemas/pk_clock_config.schema.json"
+   ],
+   "blocked_by": [],
+   "boundary": "Owns tick semantics.",
+   "ceilings": "1 us <= tick <= 1 s.",
+   "cleanup_evidence": [
+    "T:C16Clock"
+   ],
+   "codes": [
+    "PK_CLOCK_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "stateless",
+   "config_sources": {
+    "config": "PK_CLOCK_CONFIG/1"
+   },
+   "correlation": "tick in diagnostics",
+   "defects": [],
+   "fail_mode": "fail closed on bad config",
+   "id": "16",
+   "interface": "validate_clock_config, ticks_to_ns",
+   "kind": "runtime",
+   "modules": [
+    "clock.py",
+    "polling.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C16Clock.test_c16_config_validation_bounds"
+     ],
+     "id": "R16-01",
+     "text": "One tick MUST be an integer nanosecond count of the monotonic clock with tick*max <= 60 s."
+    },
+    {
+     "evidence": [
+      "T:C16Clock.test_c16_pollset_follows_clock_authority"
+     ],
+     "id": "R16-02",
+     "text": "PollSet MUST follow the configured tick and max."
+    },
+    {
+     "evidence": [
+      "T:C16Clock.test_c16_backward_clock_cannot_extend_wait",
+      "X:faults"
+     ],
+     "id": "R16-03",
+     "text": "A clock anomaly MUST NOT extend a wait past the real monotonic bound."
+    },
+    {
+     "evidence": [
+      "T:C02WasiAdapter.test_c02_tick_to_wasi_duration_is_exact_integer"
+     ],
+     "id": "R16-04",
+     "text": "Tick->WASI duration MUST be exact integer arithmetic."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "diagnostics.tick_seconds",
+   "threats": [
+    {
+     "mitigation": "independent monotonic hard deadline",
+     "tests": [
+      "T:C16Clock"
+     ],
+     "threat": "clock manipulation extends blocking"
+    }
+   ],
+   "title": "Clock/tick authority"
+  },
+  {
+   "artifacts": [
+    "governance/OWNERS.json",
+    "CODEOWNERS"
+   ],
+   "blocked_by": [
+    "The build cannot name owners, on-call routes or escalation"
+   ],
+   "boundary": "Metadata only.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [
+    "T:C17Owners"
+   ],
+   "codes": [
+    "PK_GOVERNANCE_INVALID"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "static",
+   "config_sources": {
+    "external_policy": "governance/OWNERS.json"
+   },
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "blocks certification",
+   "id": "17",
+   "interface": "governance/OWNERS.json",
+   "kind": "governance",
+   "modules": [
+    "governance.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C17Owners"
+     ],
+     "id": "R17-01",
+     "text": "An owners file MUST exist and validate."
+    },
+    {
+     "evidence": [
+      "T:C17Owners",
+      "G:governance"
+     ],
+     "id": "R17-02",
+     "text": "UNASSIGNED ownership MUST block certification."
+    }
+   ],
+   "runbook": "R0",
+   "signals": "verify_release governance gate",
+   "threats": [
+    {
+     "mitigation": "production_blockers",
+     "tests": [
+      "T:C17Owners"
+     ],
+     "threat": "orphaned component"
+    }
+   ],
+   "title": "Owner/escalation metadata"
+  },
+  {
+   "artifacts": [
+    "docs/adr/ADR-0001-retain-legacy-poll-model.md"
+   ],
+   "blocked_by": [
+    "ADR is PROPOSED; no deciders exist to approve it"
+   ],
+   "boundary": "Documentation.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "n/a",
+   "id": "18",
+   "interface": "docs/adr/",
+   "kind": "governance",
+   "modules": [],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C18Adr"
+     ],
+     "id": "R18-01",
+     "text": "ADR MUST state status, context, decision, limits, migration target, retirement criteria, consequences."
+    },
+    {
+     "evidence": [
+      "G:governance"
+     ],
+     "id": "R18-02",
+     "text": "ADR MUST be approved by named deciders."
+    }
+   ],
+   "runbook": "R0",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Architecture Decision Record"
+  },
+  {
+   "artifacts": [
+    "docs/COMPATIBILITY_MATRIX.json"
+   ],
+   "blocked_by": [
+    "Only one cell (CPython 3.11 / linux / x86_64, simulated WASI) could be executed here"
+   ],
+   "boundary": "Documentation + CI matrix.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "untested = unsupported",
+   "id": "19",
+   "interface": "docs/COMPATIBILITY_MATRIX.json",
+   "kind": "governance",
+   "modules": [],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C19CompatMatrix"
+     ],
+     "id": "R19-01",
+     "text": "The matrix MUST be machine-readable, never equate untested with supported, and tie TESTED_PASS to evidence."
+    },
+    {
+     "evidence": [
+      "A:ci/release.yml"
+     ],
+     "id": "R19-02",
+     "text": "Supported cells MUST be run in CI."
+    }
+   ],
+   "runbook": "R1",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Compatibility matrix"
+  },
+  {
+   "artifacts": [
+    "tests/test_integration_adjacent.py"
+   ],
+   "blocked_by": [
+    "INV-13, INV-15 and GAP-15 packages were not supplied"
+   ],
+   "boundary": "Tests only.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {
+    "env": "PK_ADJACENT_PATH, INV14_RELEASE"
+   },
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "fail in release",
+   "id": "20",
+   "interface": "unittest",
+   "kind": "verification",
+   "modules": [],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C20Adjacent"
+     ],
+     "id": "R20-01",
+     "text": "Integration tests MUST run against real INV-13/INV-15/GAP-15."
+    },
+    {
+     "evidence": [
+      "T:C27ReleasePipeline.test_c27_release_mode_turns_absent_layers_into_failures"
+     ],
+     "id": "R20-02",
+     "text": "Absent layers MUST fail in release mode and be visible skips otherwise."
+    }
+   ],
+   "runbook": "R1",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Adjacent-layer integration tests"
+  },
+  {
+   "artifacts": [
+    "tests/fixtures/golden",
+    "tests/fixtures/negative"
+   ],
+   "blocked_by": [
+    "No WIT bindings in a second language to round-trip"
+   ],
+   "boundary": "Tests only.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "fail on drift",
+   "id": "21",
+   "interface": "fixtures",
+   "kind": "verification",
+   "modules": [
+    "tools/gen_fixtures.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C21ContractFixtures.test_c21_golden_fixtures_validate",
+      "T:C21ContractFixtures.test_c21_golden_matches_current_behaviour"
+     ],
+     "id": "R21-01",
+     "text": "Golden fixtures MUST validate and match current behaviour."
+    },
+    {
+     "evidence": [
+      "T:C21ContractFixtures.test_c21_negative_fixtures_are_rejected"
+     ],
+     "id": "R21-02",
+     "text": "Negative fixtures MUST be rejected."
+    }
+   ],
+   "runbook": "R1",
+   "signals": "n/a",
+   "threats": [],
+   "title": "WIT/protocol contract tests"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [
+    "No coverage-guided engine (atheris) or coverage report"
+   ],
+   "boundary": "Tests only.",
+   "ceilings": "2 s per input.",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "seed",
+   "defects": [
+    "D-02",
+    "D-03"
+   ],
+   "fail_mode": "n/a",
+   "id": "22",
+   "interface": "tools/fuzz.py",
+   "kind": "verification",
+   "modules": [
+    "tools/fuzz.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C22Fuzz.test_c22_seeded_fuzz_has_no_findings",
+      "G:fuzz"
+     ],
+     "id": "R22-01",
+     "text": "Seeded fuzzing of poll, token, config and trace targets MUST produce zero findings."
+    },
+    {
+     "evidence": [
+      "T:C22Fuzz.test_c22_regression_D02_non_json_config_is_structured",
+      "T:C22Fuzz.test_c22_regression_D03_unknown_provenance_key_refused"
+     ],
+     "id": "R22-02",
+     "text": "Every fuzz finding MUST become a regression test."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Fuzz harness"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [
+    "No TSAN-equivalent: no native bindings exist yet"
+   ],
+   "boundary": "Tests only; the model is of the protocol, not the bytecode.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [
+    "D-01"
+   ],
+   "fail_mode": "n/a",
+   "id": "23",
+   "interface": "tools/interleave.py",
+   "kind": "verification",
+   "modules": [
+    "tools/interleave.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C23Concurrency.test_c23_exhaustive_model_check_and_mutant_detected",
+      "G:interleave_model_check"
+     ],
+     "id": "R23-01",
+     "text": "Exhaustive interleavings of the wake protocol MUST have zero lost wakeups, and the known mutant MUST be caught."
+    },
+    {
+     "evidence": [
+      "T:C23Concurrency.test_c23_thread_stress_clear_vs_signal_multi_set"
+     ],
+     "id": "R23-02",
+     "text": "Thread stress with clear-vs-signal over multiple poll sets MUST not leak or hang."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Concurrency model checking"
+  },
+  {
+   "artifacts": [
+    "ops/perf_thresholds.json"
+   ],
+   "blocked_by": [
+    "Thresholds are PROPOSED; power/thermal not measurable"
+   ],
+   "boundary": "Tests only.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {
+    "external_policy": "ops/perf_thresholds.json"
+   },
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "n/a",
+   "id": "24",
+   "interface": "tools/bench.py",
+   "kind": "verification",
+   "modules": [
+    "tools/bench.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C24Bench",
+      "G:bench_thresholds"
+     ],
+     "id": "R24-01",
+     "text": "p50/p95/p99/max latency, wake latency, overshoot, throughput, fan-out and allocation MUST be measured on the executing host."
+    },
+    {
+     "evidence": [
+      "G:governance"
+     ],
+     "id": "R24-02",
+     "text": "Thresholds MUST be approved per cell."
+    }
+   ],
+   "runbook": "R8",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Benchmarks + thresholds"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [
+    "Long-duration and fleet-scale runs not performed here"
+   ],
+   "boundary": "Tests only; single process.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [
+    "T:C25Soak"
+   ],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "n/a",
+   "id": "25",
+   "interface": "tools/soak.py",
+   "kind": "verification",
+   "modules": [
+    "tools/soak.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C25Soak",
+      "G:soak_burst"
+     ],
+     "id": "R25-01",
+     "text": "Burst beyond admission limits MUST shed with registered codes and recover with >= 99% success and zero leaked slots/waiters."
+    }
+   ],
+   "runbook": "R4",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Soak/burst harness"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [],
+   "boundary": "Tests only. Network partition not applicable (no network I/O).",
+   "ceilings": "n/a",
+   "cleanup_evidence": [
+    "T:C26Faults"
+   ],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [
+    "D-04"
+   ],
+   "fail_mode": "n/a",
+   "id": "26",
+   "interface": "tools/faults.py",
+   "kind": "verification",
+   "modules": [
+    "tools/faults.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C26Faults",
+      "T:C27ReleasePipeline.test_c27_missing_pk_core_blocks_release_exit_2",
+      "G:fault_injection"
+     ],
+     "id": "R26-01",
+     "text": "Clock jumps, audit loss, stall, dependency loss, SIGKILL, torn checkpoint and control-plane degradation MUST each reach their defined outcome."
+    }
+   ],
+   "runbook": "R10",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Fault-injection harness"
+  },
+  {
+   "artifacts": [
+    "ci/release.yml"
+   ],
+   "blocked_by": [
+    "The workflow has not executed on a CI service; branch protection is a repository setting"
+   ],
+   "boundary": "Pipeline definition.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {
+    "env": "INV14_RELEASE"
+   },
+   "correlation": "report JSON",
+   "defects": [
+    "D-04"
+   ],
+   "fail_mode": "fail closed",
+   "id": "27",
+   "interface": "verify_release.py",
+   "kind": "verification",
+   "modules": [
+    "verify_release.py",
+    "tools/manifest.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C27ReleasePipeline",
+      "G:manifest"
+     ],
+     "id": "R27-01",
+     "text": "The release verifier MUST run every local gate and exit 1 on failure, 2 on any unmet external gate, 0 only when all pass."
+    },
+    {
+     "evidence": [
+      "T:C27ReleasePipeline.test_c27_ci_workflow_runs_gate_in_release_mode_across_matrix"
+     ],
+     "id": "R27-02",
+     "text": "The CI workflow MUST run the verifier in release mode across a version/OS matrix."
+    }
+   ],
+   "runbook": "R0",
+   "signals": "n/a",
+   "threats": [
+    {
+     "mitigation": "no pass without all gates",
+     "tests": [
+      "T:C27ReleasePipeline"
+     ],
+     "threat": "assumed-pass path"
+    }
+   ],
+   "title": "CI release pipeline"
+  },
+  {
+   "artifacts": [
+    "sbom/inv14.cdx.json",
+    "sbom/provenance.intoto.json",
+    "sbom/dependency_scan.json"
+   ],
+   "blocked_by": [
+    "pk_core cannot be scanned until pinned; provenance unsigned"
+   ],
+   "boundary": "Supply-chain metadata.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "digest",
+   "defects": [],
+   "fail_mode": "INDETERMINATE is not a pass",
+   "id": "28",
+   "interface": "sbom/*",
+   "kind": "supply-chain",
+   "modules": [
+    "tools/sbom.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C28Sbom",
+      "G:sbom_stdlib_only"
+     ],
+     "id": "R28-01",
+     "text": "A CycloneDX SBOM with per-file hashes and an import scan proving stdlib-only runtime MUST be generated."
+    },
+    {
+     "evidence": [
+      "G:trusted_signature"
+     ],
+     "id": "R28-02",
+     "text": "Provenance MUST be signed by a trusted builder."
+    }
+   ],
+   "runbook": "R0",
+   "signals": "n/a",
+   "threats": [
+    {
+     "mitigation": "AST import scan",
+     "tests": [
+      "T:C28Sbom"
+     ],
+     "threat": "undeclared dependency"
+    }
+   ],
+   "title": "SBOM / provenance"
+  },
+  {
+   "artifacts": [
+    "governance/TRUSTED_KEYS.json",
+    "MANIFEST.sha256.sig.json"
+   ],
+   "blocked_by": [
+    "Only an UNTRUSTED_DEV key exists; no HSM/KMS, trust root or transparency log"
+   ],
+   "boundary": "Signing tooling; key custody is external.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {
+    "external_policy": "governance/TRUSTED_KEYS.json"
+   },
+   "correlation": "key_id",
+   "defects": [
+    "D-06"
+   ],
+   "fail_mode": "fail closed",
+   "id": "29",
+   "interface": "tools/sign.py",
+   "kind": "supply-chain",
+   "modules": [
+    "tools/sign.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C29Signing.test_c29_sign_verify_tamper_and_trust_policy"
+     ],
+     "id": "R29-01",
+     "text": "verify MUST fail closed on missing signature, unknown/revoked/untrusted signer, manifest change or bad signature."
+    },
+    {
+     "evidence": [
+      "T:C29Signing.test_c29_openssl_backend_agrees_when_present"
+     ],
+     "id": "R29-02",
+     "text": "Two independent backends MUST agree."
+    },
+    {
+     "evidence": [
+      "G:trusted_signature"
+     ],
+     "id": "R29-03",
+     "text": "Releases MUST be signed by a TRUSTED key."
+    }
+   ],
+   "runbook": "R0",
+   "signals": "n/a",
+   "threats": [
+    {
+     "mitigation": "Ed25519 over manifest",
+     "tests": [
+      "T:C29Signing"
+     ],
+     "threat": "tampered release"
+    }
+   ],
+   "title": "Artifact signing + verification"
+  },
+  {
+   "artifacts": [
+    "schemas/pk_poll_config.schema.json"
+   ],
+   "blocked_by": [
+    "Update authorization not authenticated (no admin identity)"
+   ],
+   "boundary": "Owns validation and activation.",
+   "ceilings": "doc <= 64 KiB, history <= 64.",
+   "cleanup_evidence": [
+    "T:C30Config"
+   ],
+   "codes": [
+    "PK_CONFIG_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "lock",
+   "config_sources": {
+    "config": "PK_POLL_CONFIG/1"
+   },
+   "correlation": "config version + digest",
+   "defects": [
+    "D-02",
+    "D-03"
+   ],
+   "fail_mode": "fail closed (active config kept)",
+   "id": "30",
+   "interface": "ConfigStore.update",
+   "kind": "runtime",
+   "modules": [
+    "config.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C30Config.test_c30_missing_provenance_and_unknown_keys_refused"
+     ],
+     "id": "R30-01",
+     "text": "Config MUST carry provenance and exactly the governed limit keys within bounds; unknown keys refused."
+    },
+    {
+     "evidence": [
+      "T:C30Config.test_c30_overlays_atomic_update_history"
+     ],
+     "id": "R30-02",
+     "text": "Overlays MUST merge base->environment->site; updates MUST be atomic, keep history and refuse version reuse."
+    },
+    {
+     "evidence": [
+      "T:C22Fuzz.test_c22_regression_D03_unknown_provenance_key_refused",
+      "X:fuzz"
+     ],
+     "id": "R30-03",
+     "text": "Code validation and the JSON schema MUST agree."
+    }
+   ],
+   "runbook": "R4",
+   "signals": "history",
+   "threats": [
+    {
+     "mitigation": "validate-then-swap",
+     "tests": [
+      "T:C30Config"
+     ],
+     "threat": "unsafe live change"
+    }
+   ],
+   "title": "Configuration schema + provenance"
+  },
+  {
+   "artifacts": [],
+   "blocked_by": [],
+   "boundary": "Owns redaction function.",
+   "ceilings": "256 chars, depth 4, 32 items.",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "pure",
+   "config_sources": {
+    "constant": "patterns"
+   },
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "redact on doubt",
+   "id": "31",
+   "interface": "redact()",
+   "kind": "runtime",
+   "modules": [
+    "redaction.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C31Redaction.test_c31_secret_keys_and_shapes_redacted",
+      "T:C31Redaction.test_c31_bounds_and_totality"
+     ],
+     "id": "R31-01",
+     "text": "Secret-named keys and credential-shaped values MUST be redacted; output bounded in size/depth/items."
+    },
+    {
+     "evidence": [
+      "T:C31Redaction.test_c31_error_details_and_diagnostics_carry_no_secrets"
+     ],
+     "id": "R31-02",
+     "text": "Tokens and keys MUST never appear in logs, audit or diagnostics."
+    }
+   ],
+   "runbook": "R3",
+   "signals": "n/a",
+   "threats": [
+    {
+     "mitigation": "key + value patterns",
+     "tests": [
+      "T:C31Redaction"
+     ],
+     "threat": "credential leak"
+    }
+   ],
+   "title": "Secret handling / redaction"
+  },
+  {
+   "artifacts": [
+    "ops/dashboard.json",
+    "ops/alerts.yml"
+   ],
+   "blocked_by": [
+    "Not loaded into a live Prometheus/Grafana; thresholds not SLO-approved; no data-freshness alert source"
+   ],
+   "boundary": "Ops as code.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {},
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "n/a",
+   "id": "32",
+   "interface": "ops/*",
+   "kind": "operations",
+   "modules": [],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C32DashboardAlerts"
+     ],
+     "id": "R32-01",
+     "text": "Alerts MUST reference exported metrics, closed reasons, runbook anchors, and distinguish failure classes."
+    }
+   ],
+   "runbook": "R3",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Dashboards + alerts"
+  },
+  {
+   "artifacts": [
+    "docs/RUNBOOK.md"
+   ],
+   "blocked_by": [
+    "No game-day/tabletop with a real on-call team; paging targets UNASSIGNED"
+   ],
+   "boundary": "Ops procedure.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "n/a",
+   "config_sources": {
+    "env": "INV14_AUDIT_KEY_HEX"
+   },
+   "correlation": "audit records",
+   "defects": [],
+   "fail_mode": "refuse without audit key",
+   "id": "33",
+   "interface": "tools/runbook.py",
+   "kind": "operations",
+   "modules": [
+    "tools/runbook.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C33Runbook"
+     ],
+     "id": "R33-01",
+     "text": "status, disable, rollback, transition, verify-audit MUST execute and refuse illegal actions."
+    }
+   ],
+   "runbook": "R0-R10",
+   "signals": "n/a",
+   "threats": [],
+   "title": "Incident runbook"
+  },
+  {
+   "artifacts": [
+    "governance/WAIVERS.json"
+   ],
+   "blocked_by": [],
+   "boundary": "Schema + enforcement; data is organisational.",
+   "ceilings": "180 days.",
+   "cleanup_evidence": [],
+   "codes": [
+    "PK_GOVERNANCE_*"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "static",
+   "config_sources": {
+    "external_policy": "governance/WAIVERS.json"
+   },
+   "correlation": "waiver_id",
+   "defects": [],
+   "fail_mode": "fail closed",
+   "id": "34",
+   "interface": "validate_waivers, ConsumerGate",
+   "kind": "governance",
+   "modules": [
+    "governance.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C34Waivers",
+      "T:C13MigrationRegistry.test_c13_overdue_needs_live_waiver_and_migrated_regression_refused"
+     ],
+     "id": "R34-01",
+     "text": "Waivers MUST name owner and a different approver, be <= 180 days, and admit only their consumer while live."
+    }
+   ],
+   "runbook": "R7",
+   "signals": "basis in gate result",
+   "threats": [
+    {
+     "mitigation": "approver != owner",
+     "tests": [
+      "T:C34Waivers"
+     ],
+     "threat": "self-approved waiver"
+    }
+   ],
+   "title": "Waiver registry"
+  },
+  {
+   "artifacts": [
+    "governance/EOL_POLICY.json"
+   ],
+   "blocked_by": [
+    "Dates are PROPOSED; no approving authority"
+   ],
+   "boundary": "Policy + enforcement.",
+   "ceilings": "n/a",
+   "cleanup_evidence": [],
+   "codes": [
+    "PK_POLL_EOL_REMOVED",
+    "PK_POLL_REGISTRY_CLOSED"
+   ],
+   "compat_impact": "Additive to v4.2.0: PK_POLL/1 result fields, ready/timeout/ownership semantics and the 12 v4.2.0 tests are unchanged (G:test_polling.py:normal, G:test_polling.py:optimized).",
+   "concurrency": "static",
+   "config_sources": {
+    "external_policy": "governance/EOL_POLICY.json"
+   },
+   "correlation": "n/a",
+   "defects": [],
+   "fail_mode": "fail closed after REMOVED",
+   "id": "35",
+   "interface": "eol_phase, ConsumerGate",
+   "kind": "governance",
+   "modules": [
+    "governance.py"
+   ],
+   "owner": "UNASSIGNED",
+   "requirements": [
+    {
+     "evidence": [
+      "T:C35Eol.test_c35_eol_phases_enforced"
+     ],
+     "id": "R35-01",
+     "text": "EOL phases MUST be enforced: registry closure, waiver-only, removal."
+    },
+    {
+     "evidence": [
+      "T:C35Eol.test_c35_eol_validation"
+     ],
+     "id": "R35-02",
+     "text": "Milestones MUST be strictly increasing and end in REMOVED."
+    },
+    {
+     "evidence": [
+      "G:governance"
+     ],
+     "id": "R35-03",
+     "text": "The policy MUST be APPROVED by a named authority."
+    }
+   ],
+   "runbook": "R7",
+   "signals": "eol_phase",
+   "threats": [
+    {
+     "mitigation": "waivers cannot pass REMOVED",
+     "tests": [
+      "T:C35Eol"
+     ],
+     "threat": "silent support extension"
+    }
+   ],
+   "title": "Formal end-of-life policy"
+  }
+ ],
+ "schema": "PK_POLL_COMPONENTS/1",
+ "version": "4.3.0"
+}

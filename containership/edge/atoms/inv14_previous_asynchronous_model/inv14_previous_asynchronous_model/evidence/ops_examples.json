@@ -1,0 +1,151 @@
+{
+ "audit_records": [
+  {
+   "correlation_id": "e1f8bc8de2c06948",
+   "details": {
+    "outcome": "timeout",
+    "set_size": 1,
+    "tenant": "acme"
+   },
+   "event": "poll.deprecated_use",
+   "mac": "85dd35f29700df97c59e1cfa0499bbd5816bde7dead1834e6f6e9b66c1aede05",
+   "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+   "schema": "PK_POLL_AUDIT/1",
+   "seq": 1,
+   "ts": 1790127598.500323
+  },
+  {
+   "correlation_id": "47ed6532315f6f17",
+   "details": {
+    "code": "PK_POLL_FOREIGN_OWNER"
+   },
+   "event": "poll.refused.foreign_owner",
+   "mac": "332d6d71f31a0a349c44a433cf16490bd8d233962afa8c6a58b7485b87ae58cd",
+   "prev": "07de5e52444b21ad9625219c6ccf35da4896748889a2f2857ce20c04320ea4e7",
+   "schema": "PK_POLL_AUDIT/1",
+   "seq": 2,
+   "ts": 1790127598.500641
+  }
+ ],
+ "diagnostics": {
+  "admission": {
+   "active": 0,
+   "max_concurrent": 8,
+   "peak": 1,
+   "queue_depth": 0,
+   "queued": 0,
+   "shed": {
+    "global": 0,
+    "queue_full": 0,
+    "queue_timeout": 0,
+    "tenant": 0
+   },
+   "tenant_max": 4,
+   "tenants_active": 0
+  },
+  "audit_head": "18c3845e54f29b4d",
+  "clock": "monotonic",
+  "component": "INV-14",
+  "in_flight": 0,
+  "lifecycle": "DEPRECATED",
+  "lifecycle_model": "PK_POLL_LIFECYCLE/1",
+  "pk_core": {
+   "code": "PK_CORE_UNPINNED",
+   "ok": false,
+   "version": null
+  },
+  "poll_sets": 1,
+  "process_epoch": "775ffd837d14",
+  "schema_digests": {
+   "error_codes.json": "cfdae34d4a3e28a7",
+   "pk_clock_config.schema.json": "055383ec556542ef",
+   "pk_poll.schema.json": "ecb5213d5bbf8d91",
+   "pk_poll_audit.schema.json": "d000c9d68716db91",
+   "pk_poll_config.schema.json": "1eca10d343304a5d",
+   "pk_poll_error.schema.json": "84a7ea1be4934175",
+   "pk_poll_lifecycle.json": "6db0dcfb206b70c0",
+   "pk_poll_log.schema.json": "687dbf53f1722f4a",
+   "pk_poll_metrics.schema.json": "9bb4f5fb7e0636d3",
+   "pk_pollable.schema.json": "3d02ca860af4a3a3"
+  },
+  "schemas": [
+   "PK_POLL/1",
+   "PK_POLLABLE/1",
+   "PK_POLL_ERROR/1",
+   "PK_POLL_METRICS/1"
+  ],
+  "telemetry_series": 3,
+  "tick_seconds": 0.001,
+  "version": "4.3.0"
+ },
+ "error_payload": {
+  "code": "PK_POLL_FOREIGN_OWNER",
+  "deprecated": true,
+  "details": {
+   "correlation_id": "47ed6532315f6f17",
+   "foreign_pollables": [
+    "x"
+   ],
+   "owner": "acme/billing/i-1"
+  },
+  "message": "acme/billing/i-1: pollables ['x'] belong to another instance and do not compose",
+  "migrate_to": "INV-15 New asynchronous ABI",
+  "schema": "PK_POLL_ERROR/1"
+ },
+ "log_records": [
+  {
+   "component": "INV-14",
+   "component_version": "4.3.0",
+   "correlation_id": "e1f8bc8de2c06948",
+   "event": "poll.timeout",
+   "fields": {
+    "duration_ms": 1.415,
+    "epoch": "775ffd837d14",
+    "set_size": 1
+   },
+   "level": "INFO",
+   "operation": "poll",
+   "schema": "PK_POLL_LOG/1",
+   "tenant": "acme",
+   "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+   "ts": 1790127598.50047,
+   "workload": "-"
+  },
+  {
+   "component": "INV-14",
+   "component_version": "4.3.0",
+   "correlation_id": "47ed6532315f6f17",
+   "event": "poll.refused.foreign_owner",
+   "fields": {
+    "code": "PK_POLL_FOREIGN_OWNER"
+   },
+   "level": "WARN",
+   "operation": "poll",
+   "schema": "PK_POLL_LOG/1",
+   "tenant": "acme",
+   "trace_id": "38ac0e7b6e442bb3d018241e4fc8556a",
+   "ts": 1790127598.500705,
+   "workload": "-"
+  }
+ ],
+ "prometheus_exposition": [
+  "# HELP inv14_polls_total Legacy INV-14 polls by outcome.",
+  "# TYPE inv14_polls_total counter",
+  "inv14_polls_total{component=\"INV-14\",tenant=\"acme\",outcome=\"refused\",reason=\"foreign_owner\"} 1",
+  "inv14_polls_total{component=\"INV-14\",tenant=\"acme\",outcome=\"timeout\",reason=\"none\"} 1",
+  "# HELP inv14_poll_latency_ms Poll wait latency (sampled).",
+  "# TYPE inv14_poll_latency_ms histogram",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"1\"} 0",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"5\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"10\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"50\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"100\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"500\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"1000\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"5000\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"60000\"} 1",
+  "inv14_poll_latency_ms_bucket{component=\"INV-14\",tenant=\"acme\",le=\"+Inf\"} 1",
+  "inv14_poll_latency_ms_sum{component=\"INV-14\",tenant=\"acme\"} 1.254",
+  "inv14_poll_latency_ms_count{component=\"INV-14\",tenant=\"acme\"} 1"
+ ]
+}

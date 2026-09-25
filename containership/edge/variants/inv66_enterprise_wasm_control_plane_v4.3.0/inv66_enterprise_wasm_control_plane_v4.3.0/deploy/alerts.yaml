@@ -1,0 +1,43 @@
+# Prometheus alerting rules for INV-66 (MC-054).  runbook links -> docs/OPERATIONS.md sections.
+groups:
+- name: inv66
+  rules:
+  - alert: Inv66AuditChainBroken
+    expr: probe_success{job="inv66-healthz"} == 0
+    for: 1m
+    labels: {severity: sev1}
+    annotations: {summary: "INV-66 /healthz failing (audit chain does not verify)", runbook: "docs/OPERATIONS.md#7-incident-response-and-on-call-mc-065"}
+  - alert: Inv66AnchorStale
+    expr: (max(inv66_audit_head_sequence) - max(inv66_audit_anchor_sequence)) > 0 and changes(inv66_audit_anchor_sequence[15m]) == 0
+    for: 15m
+    labels: {severity: sev2}
+    annotations: {summary: "No audit anchor published for 15m", runbook: "docs/ARCHITECTURE.md#5-offline--partition--degraded-semantics-mc-010-mc-040"}
+  - alert: Inv66NoLeader
+    expr: sum(inv66_leader) < 1
+    for: 2m
+    labels: {severity: sev1}
+    annotations: {summary: "No INV-66 leader holds the lease", runbook: "docs/OPERATIONS.md#5-day-2-operations-mc-064"}
+  - alert: Inv66PolicyEngineDown
+    expr: rate(inv66_admissions_total{outcome="rejected"}[5m]) > 0 and on() inv66_breaker_open{dependency="policy-engine"} == 1
+    for: 5m
+    labels: {severity: sev2}
+    annotations: {summary: "GAP-13 unreachable; admissions failing closed"}
+  - alert: Inv66StoreFailures
+    expr: increase(inv66_store_failures_total[5m]) > 0
+    labels: {severity: sev2}
+    annotations: {summary: "Journal writes failing (disk full / I/O)", runbook: "docs/OPERATIONS.md#6-backup-restore-migration-reconstruction-mc-063"}
+  - alert: Inv66OutboxBacklog
+    expr: inv66_outbox_depth > 0 and deriv(inv66_outbox_depth[30m]) >= 0
+    for: 30m
+    labels: {severity: sev2}
+    annotations: {summary: "Admitted manifests not reaching INV-63"}
+  - alert: Inv66LatencySLOBurn
+    expr: histogram_quantile(0.99, sum by (le) (rate(inv66_admission_latency_ms_bucket[10m]))) > 50
+    for: 30m
+    labels: {severity: sev3}
+    annotations: {summary: "Admission p99 above 50 ms SLO"}
+  - alert: Inv66Shedding
+    expr: rate(inv66_admissions_total{outcome="OVERLOADED"}[5m]) > 0
+    for: 10m
+    labels: {severity: sev3}
+    annotations: {summary: "Load shedding active; see capacity thresholds"}

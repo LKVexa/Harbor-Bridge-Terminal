@@ -1,0 +1,563 @@
+{
+  "schema": "PK_POLICY_TRACEABILITY/1",
+  "requirements_doc": "docs/REQUIREMENTS.md",
+  "engine_release": "5.0.0",
+  "rows": [
+    {
+      "requirement": "REQ-EVL-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine.evaluate",
+      "tests": [
+        "test_engine.EngineTests.test_deny_by_default",
+        "test_fuzz_property.Properties.test_deny_by_default_property"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine._ordered_matches",
+      "tests": [
+        "test_engine.EngineTests.test_specificity_and_deny_first_tie_break",
+        "test_fuzz_property.Properties.test_allow_implies_matching_allow_rule_and_no_more_specific_deny"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine.evaluate",
+      "tests": [
+        "test_engine.EngineTests.test_rule_name_tie_break_is_deterministic",
+        "test_security.SecurityTests.test_TM06_tie_break_manipulation"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine.evaluate",
+      "tests": [
+        "test_fuzz_property.Properties.test_order_independence_and_determinism",
+        "test_bundle_schema.GoldenTests.test_goldens_reproduce_exactly"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-005",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine._identity",
+      "tests": [
+        "test_bundle_schema.SchemaArtifactTests.test_fixtures_validate",
+        "test_bundle_schema.SchemaArtifactTests.test_service_verdict_validates"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-006",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::Rule.matches",
+      "tests": [
+        "test_engine.RuleTests.test_type_strict_matching",
+        "test_security.SecurityTests.test_TM08_type_confusion"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-007",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::CompiledIndex",
+      "tests": [
+        "test_engine.IndexEquivalenceTests.test_random_equivalence",
+        "test_engine.IndexEquivalenceTests.test_index_visits_fewer_rules"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-008",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "bench.py",
+      "tests": [
+        "bench:sizes.10000.engine_ms.p99"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-EVL-009",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine.explain; service.py::PolicyService.evaluate",
+      "tests": [
+        "test_engine.EngineTests.test_explain_redacts_values",
+        "test_service.ConfigAdmissionErrorTests.test_explain_detail_requires_capability",
+        "test_security.SecurityTests.test_TM11_information_disclosure_explain"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "verify.py::BundleVerifier.verify",
+      "tests": [
+        "test_verify.VerifyTests.test_valid",
+        "test_verify.VerifyTests.test_negative_vectors",
+        "test_security.SecurityTests.test_TM01_unsigned_permissive_bundle"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine.load/activate; verify.py::VerificationResult",
+      "tests": [
+        "test_engine.EngineTests.test_caller_asserted_verification_is_refused",
+        "test_engine.EngineTests.test_load_rejects_substituted_rules"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "verify.py::ALGORITHMS",
+      "tests": [
+        "test_verify.VerifyTests.test_no_negotiation",
+        "test_security.SecurityTests.test_TM12_algorithm_downgrade_via_bundle"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "canonical.py; bundle.py::parse_bundle",
+      "tests": [
+        "test_bundle_schema.ParserTests.test_rejections"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-005",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "bundle.py::strict_json_loads/parse_bundle",
+      "tests": [
+        "test_bundle_schema.ParserTests.test_rejections",
+        "test_fuzz_property.ParserFuzz.test_parser_never_crashes"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-006",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "bundle.py; config.py::Limits",
+      "tests": [
+        "test_bundle_schema.ParserTests.test_limits",
+        "test_security.SecurityTests.test_TM07_resource_exhaustion"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-007",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "verify.py::BundleVerifier.verify",
+      "tests": [
+        "test_verify.VerifyTests.test_key_lifecycle",
+        "test_integration.IntegrationTests.test_gap07_signing_and_rotation"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-008",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "verify.py::BundleVerifier.verify",
+      "tests": [
+        "test_verify.VerifyTests.test_negative_vectors"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-009",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "replay.py::AntiReplayState",
+      "tests": [
+        "test_replay_authz_audit.ReplayTests.test_floor_replay_collision_rollback",
+        "test_security.SecurityTests.test_TM05_replay_downgrade",
+        "test_faults.FaultTests.test_restore_from_old_cache_cannot_downgrade"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-010",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "replay.py::AntiReplayState.check",
+      "tests": [
+        "test_replay_authz_audit.ReplayTests.test_floor_replay_collision_rollback"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-011",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "replay.py::AntiReplayState.__init__",
+      "tests": [
+        "test_replay_authz_audit.ReplayTests.test_durable_across_restart_and_corruption_not_reset",
+        "test_replay_authz_audit.ReplayTests.test_partial_write_keeps_old_state"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-012",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::check_scope",
+      "tests": [
+        "test_engine.EngineTests.test_tenant_rules",
+        "test_security.SecurityTests.test_TM04_tenant_widening"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-BND-013",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "engine.py::PolicyEngine.activate; service.py::_activate_locked",
+      "tests": [
+        "test_engine.EngineTests.test_activation_is_atomic",
+        "test_concurrency.SwapRaceTests.test_every_verdict_is_from_exactly_one_consistent_snapshot"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ATT-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "attributes.py::build_request",
+      "tests": [
+        "test_replay_authz_audit.AttributeTests.test_protected_cannot_be_self_asserted",
+        "test_security.SecurityTests.test_TM02_attribute_injection_privilege",
+        "test_security.SecurityTests.test_TM03_cross_tenant_isolation"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ATT-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "attributes.py::AttributeSchema",
+      "tests": [
+        "test_replay_authz_audit.AttributeTests.test_types_normalisation_unknown",
+        "test_fuzz_property.RequestFuzz.test_build_request_only_raises_policy_errors"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ATT-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "attributes.py::AttributeSchema.normalise",
+      "tests": [
+        "test_security.SecurityTests.test_TM09_unicode_confusables_rejected"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ATT-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "attributes.py::StaticContextProvider; service.py::evaluate",
+      "tests": [
+        "test_faults.FaultTests.test_context_outage_fails_closed",
+        "test_replay_authz_audit.AttributeTests.test_provider_outage_and_unknown_subject"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-STL-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::PolicyService.bundle_age",
+      "tests": [
+        "test_service.StaleTests.test_wall_clock_rollback_does_not_extend_trust",
+        "test_service.StaleTests.test_wall_forward_jump_shortens_trust"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-STL-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::PolicyService._staleness",
+      "tests": [
+        "test_service.StaleTests.test_fail_closed_boundaries"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-STL-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::PolicyService.evaluate",
+      "tests": [
+        "test_service.StaleTests.test_fail_closed_boundaries",
+        "test_service.StaleTests.test_deny_only_mode",
+        "test_service.StaleTests.test_freeze_lkg_mode",
+        "test_service.StaleTests.test_bundle_expiry"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-STL-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "attributes.py::build_request",
+      "tests": [
+        "test_service.StaleTests.test_request_cannot_weaken_staleness"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-STL-005",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::restore_from_cache",
+      "tests": [
+        "test_service.StaleTests.test_restart_does_not_reset_age",
+        "test_faults.FaultTests.test_clock_rollback_across_restart"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-CTL-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::set_control/quarantine",
+      "tests": [
+        "test_service.RollbackAndControlTests.test_control_transitions_need_capability_and_reason",
+        "test_service.RollbackAndControlTests.test_deny_only_and_disable"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-CTL-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::_load_control",
+      "tests": [
+        "test_service.RollbackAndControlTests.test_freeze_blocks_updates_and_survives_restart_and_reconfig",
+        "test_service.RollbackAndControlTests.test_corrupt_control_state_is_conservative"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-CTL-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::reconfigure/_control_state",
+      "tests": [
+        "test_service.RollbackAndControlTests.test_freeze_blocks_updates_and_survives_restart_and_reconfig",
+        "test_service.RollbackAndControlTests.test_time_bounded_control_expires"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-CTL-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::quarantine",
+      "tests": [
+        "test_service.RollbackAndControlTests.test_quarantine_active_bundle_rolls_back",
+        "test_service.RollbackAndControlTests.test_quarantine_only_bundle_forces_deny_only"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ADM-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "authz.py::Authorizer.require",
+      "tests": [
+        "test_replay_authz_audit.AuthTests.test_capabilities_scope_and_privilege_confusion",
+        "test_security.SecurityTests.test_TM10_spoofed_principal_and_privileged_ops"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ADM-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "authz.py::HIGH_IMPACT",
+      "tests": [
+        "test_replay_authz_audit.AuthTests.test_step_up_required"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ADM-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "authz.py::Principal.capabilities",
+      "tests": [
+        "test_replay_authz_audit.AuthTests.test_capabilities_scope_and_privilege_confusion"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ADM-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "authz.py::TokenAuthenticator",
+      "tests": [
+        "test_replay_authz_audit.AuthTests.test_valid_and_negative_tokens",
+        "test_replay_authz_audit.AuthTests.test_replay_and_revocation",
+        "test_replay_authz_audit.AuthTests.test_dependency_outage_denies"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-ADM-005",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::activate",
+      "tests": [
+        "test_service.LifecycleTests.test_separation_of_duties"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-AUD-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "audit.py",
+      "tests": [
+        "test_replay_authz_audit.AuditTests.test_chain_valid_and_redacted",
+        "test_replay_authz_audit.AuditTests.test_tamper_detection",
+        "test_replay_authz_audit.AuditTests.test_reopen_refuses_tampered_file",
+        "test_service.ConfigAdmissionErrorTests.test_audit_chain_intact_after_workflow"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-AUD-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "audit.py::_redact",
+      "tests": [
+        "test_replay_authz_audit.AuditTests.test_chain_valid_and_redacted"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-AUD-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "audit.py::require_capacity",
+      "tests": [
+        "test_replay_authz_audit.AuditTests.test_sink_outage_buffer_and_recovery",
+        "test_faults.FaultTests.test_audit_sink_outage_blocks_privileged_ops_when_buffer_full"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::health",
+      "tests": [
+        "test_service.StaleTests.test_fail_closed_boundaries",
+        "test_service.LifecycleTests.test_no_policy_fails_closed"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::status",
+      "tests": [
+        "test_service.LifecycleTests.test_status_exposes_generation_floor_provenance"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "telemetry.py::Metrics",
+      "tests": [
+        "test_telemetry.TelemetryTests.test_metrics",
+        "test_telemetry.TelemetryTests.test_cardinality_guard"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-004",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "telemetry.py::StructuredLogger/Redactor",
+      "tests": [
+        "test_telemetry.TelemetryTests.test_logging_stable_ids_privacy",
+        "test_telemetry.TelemetryTests.test_redaction_allowlist"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-005",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "telemetry.py::Tracer",
+      "tests": [
+        "test_telemetry.TelemetryTests.test_tracing_propagation",
+        "test_rpc_distribution.RpcTests.test_flow"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-006",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::_admit",
+      "tests": [
+        "test_service.ConfigAdmissionErrorTests.test_admission_control_sheds",
+        "bench:overload.shed"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-007",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "errors.py",
+      "tests": [
+        "test_service.ConfigAdmissionErrorTests.test_error_codes_unique_and_stable",
+        "test_bundle_schema.SchemaArtifactTests.test_error_objects_validate"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-008",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "config.py::ConfigProvenance; service.py::reconfigure",
+      "tests": [
+        "test_service.ConfigAdmissionErrorTests.test_config_provenance_chain",
+        "test_service.ConfigAdmissionErrorTests.test_config_validation"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-009",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "distribution.py",
+      "tests": [
+        "test_rpc_distribution.DistributionTests.test_backoff_full_jitter_capped",
+        "test_rpc_distribution.DistributionTests.test_https_only",
+        "test_rpc_distribution.DistributionTests.test_rejected_bundle_not_retried_until_new",
+        "test_integration.IntegrationTests.test_gap04_disconnected_operation"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-OPS-010",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "service.py::restore_from_cache",
+      "tests": [
+        "test_faults.FaultTests.test_restart_restores_lkg_and_reverifies",
+        "test_faults.FaultTests.test_corrupt_cache_on_restart"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-GOV-001",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "certify.py",
+      "tests": [
+        "test_packaging.PackagingTests.test_certify_manifest_roundtrip"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-GOV-002",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "release_gate.py",
+      "tests": [
+        "test_packaging.PackagingTests.test_release_gate_blocks_on_failures"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    },
+    {
+      "requirement": "REQ-GOV-003",
+      "design": "docs/ADR-001-evaluator-architecture.md",
+      "code": "tests/test_packaging.py",
+      "tests": [
+        "test_packaging.PackagingTests.test_documents_claimed_are_present"
+      ],
+      "evidence": "evidence manifest -> test_results[<test>]"
+    }
+  ]
+}

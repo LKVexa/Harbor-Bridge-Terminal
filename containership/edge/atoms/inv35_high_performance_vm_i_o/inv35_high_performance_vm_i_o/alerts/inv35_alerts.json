@@ -1,0 +1,107 @@
+{
+  "groups": [
+    {
+      "name": "inv35-page",
+      "rules": [
+        {
+          "alert": "INV35BoundsViolations",
+          "expr": "increase(inv35_bounds_violations_total[5m]) > 0",
+          "for": "0m",
+          "labels": {
+            "severity": "page",
+            "sev": "SEV2"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-03-bounds-violations"
+          }
+        },
+        {
+          "alert": "INV35QueueStalled",
+          "expr": "max(inv35_stalled) == 1",
+          "for": "1m",
+          "labels": {
+            "severity": "page",
+            "sev": "SEV2"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-04-stalled-queue"
+          }
+        },
+        {
+          "alert": "INV35SecurityRefusalSpike",
+          "expr": "sum(rate(inv35_security_refusals_total[5m])) > 1",
+          "for": "5m",
+          "labels": {
+            "severity": "page",
+            "sev": "SEV2"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-05-auth-failures"
+          }
+        },
+        {
+          "alert": "INV35NotReady",
+          "expr": "inv35_ready == 0",
+          "for": "2m",
+          "labels": {
+            "severity": "page",
+            "sev": "SEV1"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-06-not-ready"
+          }
+        }
+      ]
+    },
+    {
+      "name": "inv35-ticket",
+      "rules": [
+        {
+          "alert": "INV35SaturationHigh",
+          "expr": "inv35_saturation > 0.8",
+          "for": "15m",
+          "labels": {
+            "severity": "ticket"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-07-saturation"
+          }
+        },
+        {
+          "alert": "INV35SaturationCritical",
+          "expr": "inv35_saturation > 0.95",
+          "for": "5m",
+          "labels": {
+            "severity": "page",
+            "sev": "SEV3"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-07-saturation"
+          }
+        },
+        {
+          "alert": "INV35SubmitLatencyP99",
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(inv35_submit_latency_us_bucket[10m]))) > 1000",
+          "for": "30m",
+          "labels": {
+            "severity": "ticket"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-08-latency"
+          }
+        },
+        {
+          "alert": "INV35DegradedTooLong",
+          "expr": "count(inv35_queue_mode{mode!=\"none\"} == 1) > 0",
+          "for": "1h",
+          "labels": {
+            "severity": "ticket"
+          },
+          "annotations": {
+            "runbook": "runbooks/RUNBOOKS.md#rb-09-degraded"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# Packaging metadata (G14-P1-27).  Build from the folder that CONTAINS this package directory
+# with the estate build backend; the package itself has zero third-party runtime dependencies.
+[build-system]
+requires = ["setuptools==75.8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gap14-data-gravity-manager"
+version = "4.3.0"
+description = "GAP-14 data-gravity manager: residency-first move-compute / move-data decisions with signed estate inputs"
+requires-python = ">=3.11,<3.14"
+license = { text = "Proprietary - LinearFinance.org (see OWNERS.md)" }
+authors = [{ name = "LinearFinance.org Research Division" }]
+maintainers = [{ name = "GAP-14 service owner (see OWNERS.md)" }]
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Private :: Do Not Upload",
+]
+dependencies = []                      # stdlib only; pk_core is an optional, externally pinned gate runtime
+
+[project.optional-dependencies]
+conformance = ["pk_core>=1.0.0,<2.0.0"]   # exact certified digest pinned in compat.PKCORE_PIN
+
+[project.scripts]
+gap14 = "gap14_data_gravity_manager.__main__:main"
+
+[tool.setuptools]
+packages = ["gap14_data_gravity_manager", "gap14_data_gravity_manager.tests", "gap14_data_gravity_manager.tests.fixtures"]
+
+[tool.setuptools.package-data]
+gap14_data_gravity_manager = ["schemas/*.json", "VERSION", "*.md", "CHECKLIST.json", "docs/*.md", "evidence/*.json"]

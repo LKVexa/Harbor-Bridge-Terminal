@@ -1,0 +1,139 @@
+{
+ "schema": "PK_SNAPSHOT_BOUNDARIES/1",
+ "boundaries": [
+  {
+   "id": "B01",
+   "name": "public capture/restore/admin API",
+   "direction": "in",
+   "transport": "in-process call via SnapshotService.handle (HTTP/gRPC front-end not included)",
+   "schema": [
+    "PK_SNAPSHOT_CAPTURE_REQUEST/2",
+    "PK_SNAPSHOT_RESTORE_REQUEST/2",
+    "PK_SNAPSHOT_ERROR/1"
+   ],
+   "caller": "control plane / INV-24 runtime",
+   "authn": "EdDSA service credential (aud/env/site bound)",
+   "authz": "snapshot.* capabilities",
+   "sensitivity": "confidential metadata",
+   "timeout_ms": "config.timeouts_ms",
+   "retry": "client retries retryable codes with same idempotency key",
+   "owner": "INV-26",
+   "version_authority": "schema major version"
+  },
+  {
+   "id": "B02",
+   "name": "restore grant",
+   "direction": "in",
+   "transport": "field in B01",
+   "schema": [
+    "PK_SNAPSHOT_TOKEN/1 (grant claims)"
+   ],
+   "caller": "grant issuer (control plane)",
+   "authn": "EdDSA grant-issuer key",
+   "authz": "one-shot nonce, node+vm+manifest bound",
+   "sensitivity": "authorization",
+   "owner": "control plane",
+   "version_authority": "typ header"
+  },
+  {
+   "id": "B03",
+   "name": "hypervisor API (Firecracker / Cloud Hypervisor)",
+   "direction": "out",
+   "transport": "HTTP/1.1 over per-VM Unix socket",
+   "schema": [
+    "Firecracker API v1.x /vm, /snapshot/create, /snapshot/load",
+    "Cloud Hypervisor /api/v1/vm.*"
+   ],
+   "authn": "filesystem permission on socket (jailer uid)",
+   "sensitivity": "guest memory (secret)",
+   "timeout_ms": "timeouts_ms.hypervisor",
+   "retry": "retryable only",
+   "owner": "INV-24",
+   "version_authority": "runtime.version in config + manifest"
+  },
+  {
+   "id": "B04",
+   "name": "snapshot working files",
+   "direction": "local",
+   "transport": "files under service workdir (must be private tmpfs, 0700)",
+   "sensitivity": "guest memory plaintext",
+   "owner": "INV-26",
+   "notes": "state files wiped; mapped memory files unlinked only (see hypervisor.py)"
+  },
+  {
+   "id": "B05",
+   "name": "guest entropy channel",
+   "direction": "out",
+   "transport": "vsock host UDS (CONNECT <port>) -> in-guest agent",
+   "schema": [
+    "{op: reseed, seed, nonce} -> {ok, proof}"
+   ],
+   "authn": "per-VM socket; proof = sha256(seed||nonce)",
+   "sensitivity": "secret (seed)",
+   "timeout_ms": "timeouts_ms.entropy",
+   "retry": "none (fail closed)",
+   "owner": "INV-26 + guest image owner"
+  },
+  {
+   "id": "B06",
+   "name": "blob storage",
+   "direction": "out",
+   "transport": "BlobStore port (filesystem adapter; object store adapter BLOCKED_EXTERNAL)",
+   "sensitivity": "ciphertext",
+   "timeout_ms": "timeouts_ms.storage",
+   "retry": "retryable only",
+   "owner": "storage service"
+  },
+  {
+   "id": "B07",
+   "name": "key service (KMS)",
+   "direction": "out",
+   "transport": "KeyService port (LocalKeyService only; cloud KMS adapter BLOCKED_EXTERNAL)",
+   "sensitivity": "key material",
+   "timeout_ms": "timeouts_ms.kms",
+   "retry": "retryable only; no DEK caching",
+   "owner": "security platform"
+  },
+  {
+   "id": "B08",
+   "name": "metadata store",
+   "direction": "local",
+   "transport": "files: state.json, wal.jsonl, .lock (flock)",
+   "sensitivity": "confidential metadata incl. wrapped DEKs",
+   "owner": "INV-26"
+  },
+  {
+   "id": "B09",
+   "name": "security audit sink",
+   "direction": "out",
+   "transport": "append-only JSONL with hash chain + HMAC + sealed anchor",
+   "sensitivity": "confidential",
+   "owner": "INV-26 (sink: security platform)"
+  },
+  {
+   "id": "B10",
+   "name": "operational telemetry",
+   "direction": "out",
+   "transport": "Prometheus text / JSON logs to stream / in-process health document",
+   "sensitivity": "internal (redacted)",
+   "owner": "observability platform"
+  },
+  {
+   "id": "B11",
+   "name": "configuration",
+   "direction": "in",
+   "transport": "PK_SNAPSHOT_CONFIG/1 documents activated through ConfigStore",
+   "sensitivity": "internal (no secrets permitted)",
+   "owner": "service_owner"
+  },
+  {
+   "id": "B12",
+   "name": "process environment",
+   "direction": "in",
+   "transport": "environment variables / argv",
+   "sensitivity": "n/a",
+   "owner": "INV-26",
+   "notes": "the runtime reads NO environment variables; tools read only INV26_* documented ones"
+  }
+ ]
+}

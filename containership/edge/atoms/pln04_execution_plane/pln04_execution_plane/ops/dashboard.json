@@ -1,0 +1,30 @@
+{
+  "schema": "PK_PLN04_DASHBOARD/1",
+  "status": "DEFINED-NOT-DEPLOYED",
+  "panels": [
+    {
+      "title": "Admissions by outcome/tier",
+      "query": "sum by (outcome,tier) (rate(pln04_admissions_total[5m]))"
+    },
+    {
+      "title": "Admission errors by code",
+      "query": "sum by (error_code) (rate(pln04_admission_errors_total[5m]))"
+    },
+    {
+      "title": "Admission latency p50/p99",
+      "query": "histogram_quantile(0.5|0.99, rate(pln04_admission_latency_ms_bucket[5m]))"
+    },
+    {
+      "title": "Provider retries",
+      "query": "sum by (tier) (rate(pln04_provider_retries_total[5m]))"
+    },
+    {
+      "title": "Attestation failures",
+      "query": "sum by (tier) (increase(pln04_attestation_failures_total[1h]))"
+    },
+    {
+      "title": "Reaper stuck instances",
+      "query": "pln04_reaper_stuck"
+    }
+  ]
+}

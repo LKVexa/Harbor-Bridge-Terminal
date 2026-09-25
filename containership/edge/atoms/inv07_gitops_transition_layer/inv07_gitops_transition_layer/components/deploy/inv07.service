@@ -1,0 +1,24 @@
+[Unit]
+Description=INV-07 GitOps transition layer controller (tenant %i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=inv07
+Group=inv07
+ExecStart=/usr/bin/python3 -B -m inv07_gitops_transition_layer.components.cli sync /etc/inv07/%i/config.json --base-dir /var/lib/inv07
+Restart=on-failure
+RestartSec=30
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/inv07
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallFilter=@system-service
+LoadCredential=git-token:/etc/inv07/%i/git-token
+
+[Install]
+WantedBy=multi-user.target

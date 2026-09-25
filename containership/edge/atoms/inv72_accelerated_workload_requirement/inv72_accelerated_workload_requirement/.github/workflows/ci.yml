@@ -1,0 +1,45 @@
+# C070/C084/C085/C090: declared CI.  NOT EXECUTED in this pass (W-002) - the local evidence in evidence/
+# was produced with the same commands on CPython 3.11 / Linux x86_64.
+name: inv72
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv72_accelerated_workload_requirement }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: python -B inv72_accelerated_workload_requirement/tests/run_all.py
+      - run: python -O -B inv72_accelerated_workload_requirement/tests/run_all.py
+      - run: python -B -m inv72_accelerated_workload_requirement.tools.deps_check
+      - run: python -B -m inv72_accelerated_workload_requirement.tools.rtm --check
+      - run: python -B -m inv72_accelerated_workload_requirement.tools.manifest --verify
+      - run: python -B -m inv72_accelerated_workload_requirement.tools.pk_gate
+  fuzz-long:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv72_accelerated_workload_requirement }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: INV72_FUZZ_ITERS=25000 python -B inv72_accelerated_workload_requirement/tests/test_fuzz.py
+  perf-gate:
+    runs-on: [self-hosted, perf-reference]   # hardware consistency requirement (C070)
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv72_accelerated_workload_requirement }
+      - run: python -B inv72_accelerated_workload_requirement/bench/perf_suite.py
+      - run: python -B -m inv72_accelerated_workload_requirement.tools.perf_gate
+  release-gate:
+    needs: [test, perf-gate]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv72_accelerated_workload_requirement }
+      - run: python -B -m inv72_accelerated_workload_requirement.tools.release_gate --skip-perf-run

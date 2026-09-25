@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:pln04:PK_ADMISSION:1",
+  "title": "PK_ADMISSION/1",
+  "description": "Versioned admission request/decision envelope for PLN-04.",
+  "type": "object",
+  "required": [
+    "schema",
+    "kind",
+    "request_id"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_ADMISSION/1"
+    },
+    "kind": {
+      "enum": [
+        "request",
+        "decision"
+      ]
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "workload": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "trust_class": {
+      "enum": [
+        "trusted",
+        "first-party",
+        "third-party",
+        "untrusted",
+        "hostile"
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "admitted",
+        "refused",
+        "conflict",
+        "capacity_exceeded",
+        "quarantined",
+        "unauthorized",
+        "invalid",
+        "provider_failed",
+        "disabled",
+        "queued"
+      ]
+    },
+    "tier": {
+      "enum": [
+        "process",
+        "wasm",
+        "unikernel",
+        "microvm",
+        "vm"
+      ]
+    },
+    "error_code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "artifact_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "classification_token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "deadline_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 600000
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "cpu_milli": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1024000
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        }
+      },
+      "additionalProperties": false
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "retry_after_s": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "request"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "workload",
+          "tenant",
+          "trust_class"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "decision"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "outcome"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,115 @@
+{
+ "schema": "PK_INV31_CI_RUN/1",
+ "interpreter": "CPython 3.11.15",
+ "machine": "x86_64",
+ "subject_sha256": "3751369f4910523e894f907bcd176b41f61b22b70c0e3da6e484b9b3e255263b",
+ "checks": {
+  "unit_runtime": {
+   "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "inv31_function_execution_architecture/tests/test_component.py"
+   ],
+   "exit": 0,
+   "output_sha256": "e987ecb9ad385ccd1995331eb27a34a52e02c173679fbca18c489ed97f903f61",
+   "tail": [
+    "Ran 17 tests in 0.005s",
+    "",
+    "OK (skipped=3)"
+   ]
+  },
+  "unit_runtime_optimised": {
+   "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-O",
+    "inv31_function_execution_architecture/tests/test_component.py"
+   ],
+   "exit": 0,
+   "output_sha256": "3049616befb5a5b16b2aecc5c5456dfe61ddcc52a5689159b15c569cf917b345",
+   "tail": [
+    "Ran 17 tests in 0.006s",
+    "",
+    "OK (skipped=3)"
+   ]
+  },
+  "unit_remediation": {
+   "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "inv31_function_execution_architecture/tests/test_remediation.py"
+   ],
+   "exit": 0,
+   "output_sha256": "9e8ef96255168ed27b8c83a170059ed20b2f5e34404881a64981b707e5d0f9f4",
+   "tail": [
+    "Ran 65 tests in 0.638s",
+    "",
+    "OK"
+   ]
+  },
+  "unit_remediation_optimised": {
+   "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-O",
+    "inv31_function_execution_architecture/tests/test_remediation.py"
+   ],
+   "exit": 0,
+   "output_sha256": "311a52a86345c4182538f493126f43df1cb41c102dd025fd74c0503388a29e50",
+   "tail": [
+    "Ran 65 tests in 0.658s",
+    "",
+    "OK"
+   ]
+  },
+  "compileall": {
+   "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import compileall,sys; sys.exit(0 if compileall.compile_dir('inv31_function_execution_architecture', quiet=1, legacy=False, optimize=0, workers=1, force=True, ddir=None, rx=None) else 1)"
+   ],
+   "exit": 0,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": []
+  },
+  "json_parse": {
+   "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "import json,pathlib; [json.loads(p.read_text()) for p in pathlib.Path('inv31_function_execution_architecture').rglob('*.json') if 'evidence' not in p.parts]"
+   ],
+   "exit": 0,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": []
+  },
+  "schema_fixture_validation": {
+   "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import json,pathlib,jsonschema;P=pathlib.Path('inv31_function_execution_architecture');fx=json.loads((P/'fixtures/conformance_fixtures.json').read_text());req=json.loads((P/'schemas/PK_INVOKE_REQUEST_1.schema.json').read_text());cfg=json.loads((P/'schemas/PK_INV31_CONFIG_1.schema.json').read_text());[jsonschema.validate(r,req) for r in fx['request_valid']];bad=[r for r in fx['request_invalid'] if jsonschema.Draft202012Validator(req).is_valid(r)];assert not bad, bad;[jsonschema.validate(json.loads(p.read_text()),cfg) for p in (P/'config').glob('*.json')];assert not [d for d in fx['config_invalid'] if jsonschema.Draft202012Validator(cfg).is_valid(d)]"
+   ],
+   "exit": 0,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": []
+  },
+  "bench_quick": {
+   "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "inv31_function_execution_architecture/tools/bench.py",
+    "--quick",
+    "--check",
+    "--out",
+    "<root>/inv31_function_execution_architecture/evidence/bench.json"
+   ],
+   "exit": 0,
+   "output_sha256": "60df4e455f667660d16398f1d45904435120c2678e298df2b4af495d9384d3a0",
+   "tail": [
+    "  \"gateway_overhead_p50_ns\": 61314",
+    "}",
+    "BENCH WITHIN_PROPOSED_THRESHOLDS"
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+# Prometheus alert rules for INV-44 (component 15). Thresholds are PROPOSED.
+groups:
+  - name: inv44
+    rules:
+      - alert: Inv44HardeningRefusal
+        expr: increase(inv44_hardening_refusals[5m]) > 0
+        labels: { severity: page }
+        annotations: { summary: "An engine is missing a required hardening feature", runbook: "ops/RUNBOOK.md#WH-HARDENING-INCOMPLETE" }
+      - alert: Inv44VerificationFailures
+        expr: increase(inv44_verification_failures[15m]) > 0
+        labels: { severity: page }
+        annotations: { summary: "Compiled output failed verification" }
+      - alert: Inv44TenantViolation
+        expr: increase(inv44_tenant_violations[5m]) > 0
+        labels: { severity: page }
+        annotations: { summary: "Cross-tenant request refused - investigate as a security event" }
+      - alert: Inv44LoadShedding
+        expr: rate(inv44_load_shed[5m]) > 1
+        labels: { severity: ticket }
+      - alert: Inv44SlowAdmission
+        expr: histogram_quantile(0.99, rate(inv44_instantiate_seconds_bucket[5m])) > 0.05
+        labels: { severity: ticket }

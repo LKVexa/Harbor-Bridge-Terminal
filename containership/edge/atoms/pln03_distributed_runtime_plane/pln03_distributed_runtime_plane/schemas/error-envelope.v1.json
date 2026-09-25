@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.pk.invalid/pln03/pk.error-envelope/1.json",
+  "title": "pk.error-envelope/1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "pk.error-envelope/1"
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^PK_[A-Z_]+$"
+    },
+    "outcome": {
+      "enum": [
+        "success",
+        "degraded",
+        "retryable",
+        "terminal"
+      ]
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "http_status": {
+      "type": "integer"
+    },
+    "grpc_status": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "integer",
+          "boolean"
+        ]
+      }
+    },
+    "trace_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "code",
+    "outcome",
+    "retryable",
+    "http_status",
+    "grpc_status",
+    "message",
+    "details",
+    "trace_id"
+  ]
+}

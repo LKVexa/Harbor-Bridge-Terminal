@@ -1,0 +1,578 @@
+{
+ "schema": "INV67_REQUIREMENTS/1",
+ "terms": "RFC 2119 / RFC 8174",
+ "requirements": [
+  {
+   "id": "INV67-REQ-001",
+   "title": "Supported input surface",
+   "text": "The translator SHALL accept only the documented Pod subset and SHALL refuse every other field by field path.",
+   "items": [
+    3,
+    48,
+    51
+   ],
+   "tests": [
+    "test_translation.TranslationTests.test_unknown_container_field_is_refused_not_dropped",
+    "fuzz.test_property.Fuzz.test_p2_injected_unknown_fields_are_named"
+   ]
+  },
+  {
+   "id": "INV67-REQ-002",
+   "title": "Translation totality",
+   "text": "translate() SHALL either return schema-valid output or raise TranslationError, and SHALL NOT mutate its input.",
+   "items": [
+    3,
+    48,
+    51
+   ],
+   "tests": [
+    "fuzz.test_property.Fuzz.test_p1_total_and_non_mutating",
+    "test_translation.TranslationTests.test_input_is_not_mutated"
+   ]
+  },
+  {
+   "id": "INV67-REQ-003",
+   "title": "Resource fidelity",
+   "text": "Requests and limits SHALL be preserved exactly in canonical requests/limits maps.",
+   "items": [
+    3
+   ],
+   "tests": [
+    "test_translation.TranslationTests.test_translation_preserves_supported_semantics",
+    "test_translation.TranslationTests.test_quantity_matrix"
+   ]
+  },
+  {
+   "id": "INV67-REQ-004",
+   "title": "Quantity grammar",
+   "text": "Quantity parsing SHALL reject negative, malformed, non-finite and >2^63-1 values.",
+   "items": [
+    3,
+    51
+   ],
+   "tests": [
+    "test_translation.TranslationTests.test_quantity_rejects_invalid_or_dangerous_values",
+    "fuzz.test_property.Fuzz.test_p3_quantity_grammar_and_monotonicity"
+   ]
+  },
+  {
+   "id": "INV67-REQ-005",
+   "title": "Privileged refusal",
+   "text": "Privileged containers, hostPath, hostNetwork and hostPID SHALL be refused before any side effect.",
+   "items": [
+    3,
+    23,
+    29
+   ],
+   "tests": [
+    "security.test_adversarial.Adversarial.test_privileged_hostpath_hostnetwork",
+    "test_translation.TranslationTests.test_security_refusal_reports_all_fields"
+   ]
+  },
+  {
+   "id": "INV67-REQ-006",
+   "title": "CRD contract",
+   "text": "The controller SHALL reconcile WasmWorkload inv67.linearfinance.org/v1alpha1 with a status subresource and SHALL NOT prune unknown template fields.",
+   "items": [
+    10,
+    17
+   ],
+   "tests": [
+    "contract.test_contracts.Manifests.test_crd_shape",
+    "contract.test_contracts.Manifests.test_on_disk_manifests_match_generator"
+   ]
+  },
+  {
+   "id": "INV67-REQ-007",
+   "title": "End-to-end lifecycle",
+   "text": "A representative workload SHALL complete create, identity, authz, compat, translate, place, status and delete without manual repair.",
+   "items": [
+    11,
+    13,
+    14,
+    49
+   ],
+   "tests": [
+    "integration.test_end_to_end.EndToEnd.test_full_lifecycle"
+   ]
+  },
+  {
+   "id": "INV67-REQ-008",
+   "title": "Idempotent reconcile",
+   "text": "Repeated reconciles and resyncs SHALL NOT launch a workload more than once per attempt.",
+   "items": [
+    11,
+    34,
+    52
+   ],
+   "tests": [
+    "integration.test_end_to_end.EndToEnd.test_idempotent_reconcile_no_duplicate_launch",
+    "concurrency.test_races.Races.test_runtime_idempotency_under_concurrent_duplicate_places"
+   ]
+  },
+  {
+   "id": "INV67-REQ-009",
+   "title": "Generation tracking",
+   "text": "A new spec generation SHALL produce a new attempt id and replace the prior placement; status SHALL carry observedGeneration.",
+   "items": [
+    4,
+    11,
+    13
+   ],
+   "tests": [
+    "integration.test_end_to_end.EndToEnd.test_new_generation_replaces_placement"
+   ]
+  },
+  {
+   "id": "INV67-REQ-010",
+   "title": "Lifecycle legality",
+   "text": "Every lifecycle transition SHALL be classified legal or illegal and illegal transitions SHALL be rejected.",
+   "items": [
+    4
+   ],
+   "tests": [
+    "unit.test_lifecycle.Lifecycle.test_every_pair_is_decided_and_enforced",
+    "unit.test_lifecycle.Lifecycle.test_terminal_states_only_go_to_deleting_or_revalidate"
+   ]
+  },
+  {
+   "id": "INV67-REQ-011",
+   "title": "Error taxonomy",
+   "text": "Every refusal SHALL carry a registered stable code, reason and retryable flag.",
+   "items": [
+    4,
+    13
+   ],
+   "tests": [
+    "unit.test_lifecycle.Lifecycle.test_error_taxonomy"
+   ]
+  },
+  {
+   "id": "INV67-REQ-012",
+   "title": "Partial success",
+   "text": "Multi-unit workloads SHALL aggregate unit state deterministically (any Failed => Failed).",
+   "items": [
+    4
+   ],
+   "tests": [
+    "unit.test_lifecycle.Lifecycle.test_aggregate",
+    "integration.test_end_to_end.EndToEnd.test_multi_unit_partial_failure_aggregates_failed"
+   ]
+  },
+  {
+   "id": "INV67-REQ-013",
+   "title": "Deletion safety",
+   "text": "Deletion SHALL retain the finalizer until the downstream cancel succeeds.",
+   "items": [
+    4,
+    11
+   ],
+   "tests": [
+    "fault.test_faults.Faults.test_delete_during_downstream_outage_keeps_finalizer_until_cancel"
+   ]
+  },
+  {
+   "id": "INV67-REQ-014",
+   "title": "Identity",
+   "text": "Application identity SHALL include the object uid and SHALL fail closed for unbound namespaces.",
+   "items": [
+    15
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Identity.test_stable_and_uid_scoped",
+    "unit.test_identity_authz_artifact.Identity.test_fail_closed"
+   ]
+  },
+  {
+   "id": "INV67-REQ-015",
+   "title": "Least privilege",
+   "text": "The controller SHALL hold no delete/create on WasmWorkloads, no access to Secrets or Pods, and no wildcards.",
+   "items": [
+    25
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Authz.test_rbac_yaml_matches_policy_verbs",
+    "unit.test_identity_authz_artifact.Authz.test_default_policy_least_privilege"
+   ]
+  },
+  {
+   "id": "INV67-REQ-016",
+   "title": "Authentication",
+   "text": "Unauthenticated, expired, malformed or mis-signed credentials SHALL be refused.",
+   "items": [
+    24
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Authz.test_tokens",
+    "unit.test_identity_authz_artifact.Authz.test_mtls_trust_domain"
+   ]
+  },
+  {
+   "id": "INV67-REQ-017",
+   "title": "Tenancy",
+   "text": "Workloads outside bound namespaces or the configured watch scope SHALL be refused.",
+   "items": [
+    6,
+    25,
+    29
+   ],
+   "tests": [
+    "security.test_adversarial.Adversarial.test_cross_tenant_namespace_not_bound",
+    "security.test_adversarial.Adversarial.test_watch_scope_enforced"
+   ]
+  },
+  {
+   "id": "INV67-REQ-018",
+   "title": "Artifact trust",
+   "text": "Images SHALL come from an allowed registry, be digest-pinned and carry a verifiable attestation when required; with no verifier admission SHALL fail closed.",
+   "items": [
+    26
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Artifact.test_refusals",
+    "security.test_adversarial.Adversarial.test_unsigned_or_unpinned_or_foreign_image"
+   ]
+  },
+  {
+   "id": "INV67-REQ-019",
+   "title": "Certification",
+   "text": "Workloads using features not certified by GAP-15 SHALL be refused.",
+   "items": [
+    16
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Compat.test_certify",
+    "security.test_adversarial.Adversarial.test_uncertified_feature"
+   ]
+  },
+  {
+   "id": "INV67-REQ-020",
+   "title": "Compatibility matrix",
+   "text": "Peers outside the supported version matrix SHALL be refused at startup.",
+   "items": [
+    5,
+    50
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Compat.test_peer_matrix"
+   ]
+  },
+  {
+   "id": "INV67-REQ-021",
+   "title": "Constraint precedence",
+   "text": "Conflicting constraints SHALL resolve by the documented precedence and unknown constraints SHALL deny.",
+   "items": [
+    8
+   ],
+   "tests": [
+    "unit.test_identity_authz_artifact.Precedence.test_order"
+   ]
+  },
+  {
+   "id": "INV67-REQ-022",
+   "title": "Secrets",
+   "text": "Secrets SHALL be referenced by secretRef only, never logged, and missing or world-readable secrets SHALL fail closed.",
+   "items": [
+    21
+   ],
+   "tests": [
+    "unit.test_config_secrets.Secrets.test_memory_and_redaction",
+    "unit.test_config_secrets.Secrets.test_file_provider_permissions_and_traversal",
+    "security.test_adversarial.Adversarial.test_env_secret_not_echoed_in_status_or_audit"
+   ]
+  },
+  {
+   "id": "INV67-REQ-023",
+   "title": "Config validation",
+   "text": "Configuration SHALL be schema-validated and unknown keys refused.",
+   "items": [
+    18
+   ],
+   "tests": [
+    "unit.test_config_secrets.Config.test_rejections",
+    "unit.test_config_secrets.Config.test_defaults_valid_and_schema_conformant"
+   ]
+  },
+  {
+   "id": "INV67-REQ-024",
+   "title": "Config activation",
+   "text": "Activation SHALL be atomic with a provenance record and one-step rollback.",
+   "items": [
+    19,
+    20
+   ],
+   "tests": [
+    "unit.test_config_secrets.Config.test_atomic_activation_provenance_and_rollback",
+    "concurrency.test_races.Races.test_config_activation_is_atomic_for_readers"
+   ]
+  },
+  {
+   "id": "INV67-REQ-025",
+   "title": "Bootstrap",
+   "text": "Startup SHALL run an ordered deterministic check list and abort on the first failure.",
+   "items": [
+    22
+   ],
+   "tests": [
+    "unit.test_config_secrets.Bootstrap.test_ordered_fail_fast_and_success"
+   ]
+  },
+  {
+   "id": "INV67-REQ-026",
+   "title": "Audit trail",
+   "text": "Security-relevant actions SHALL be recorded in a hash chain that detects edit, reorder, deletion and tail truncation.",
+   "items": [
+    28
+   ],
+   "tests": [
+    "unit.test_observability.Audit.test_chain_detects_edit_reorder_delete_truncate",
+    "concurrency.test_races.Races.test_audit_chain_stays_valid_under_concurrent_appends"
+   ]
+  },
+  {
+   "id": "INV67-REQ-027",
+   "title": "Bounded retry",
+   "text": "Retries SHALL use bounded full-jitter backoff and a shared retry budget.",
+   "items": [
+    31
+   ],
+   "tests": [
+    "unit.test_resilience.Resilience.test_backoff_bounded_and_jittered",
+    "unit.test_resilience.Resilience.test_retry_budget_caps_storms",
+    "unit.test_lifecycle.Queue.test_dedupe_earliest_wins_and_delay_preserved_during_processing"
+   ]
+  },
+  {
+   "id": "INV67-REQ-028",
+   "title": "Admission/shedding",
+   "text": "Per-tenant and global in-flight ceilings and rate limits SHALL be enforced; unknown tenants get the default quota.",
+   "items": [
+    6,
+    32
+   ],
+   "tests": [
+    "unit.test_resilience.Resilience.test_admission_fairness_and_shedding",
+    "concurrency.test_races.Races.test_admission_never_exceeds_ceilings"
+   ]
+  },
+  {
+   "id": "INV67-REQ-029",
+   "title": "Circuit breaking",
+   "text": "Downstream failures SHALL open a circuit and status SHALL report Degraded; recovery SHALL not duplicate launches.",
+   "items": [
+    32,
+    36
+   ],
+   "tests": [
+    "unit.test_resilience.Resilience.test_circuit_breaker_open_halfopen_close",
+    "fault.test_faults.Faults.test_downstream_outage_degraded_breaker_then_converges_once"
+   ]
+  },
+  {
+   "id": "INV67-REQ-030",
+   "title": "Leader election",
+   "text": "Exactly one controller SHALL act; a stale leader's writes SHALL be rejected by fencing.",
+   "items": [
+    33,
+    52
+   ],
+   "tests": [
+    "fault.test_faults.Faults.test_leader_failover_and_split_brain_fencing",
+    "concurrency.test_races.Races.test_single_leader_among_contenders",
+    "fault.test_faults.Faults.test_lease_store_partition_loses_leadership_after_margin"
+   ]
+  },
+  {
+   "id": "INV67-REQ-031",
+   "title": "Crash consistency",
+   "text": "Side effects SHALL be journalled before execution and replayed with the original idempotency key after restart.",
+   "items": [
+    34,
+    36
+   ],
+   "tests": [
+    "fault.test_faults.Faults.test_crash_between_intent_and_done_replays_without_duplicate_launch"
+   ]
+  },
+  {
+   "id": "INV67-REQ-032",
+   "title": "Emergency controls",
+   "text": "Freeze SHALL block launches but not deletion; quarantine SHALL be terminal until released.",
+   "items": [
+    35
+   ],
+   "tests": [
+    "unit.test_resilience.Resilience.test_switchboard",
+    "security.test_adversarial.Adversarial.test_frozen_blocks_launch_but_allows_delete"
+   ]
+  },
+  {
+   "id": "INV67-REQ-033",
+   "title": "Disconnected operation",
+   "text": "Loss of the API server SHALL NOT tear down running workloads and SHALL converge on reconnect.",
+   "items": [
+    7,
+    36
+   ],
+   "tests": [
+    "fault.test_faults.Faults.test_disconnected_control_plane_reconnect_converges",
+    "fault.test_faults.Faults.test_api_outage_then_recovery"
+   ]
+  },
+  {
+   "id": "INV67-REQ-034",
+   "title": "Stale observation",
+   "text": "Missing runtime observations beyond staleObservationSec SHALL project Unknown.",
+   "items": [
+    7,
+    30
+   ],
+   "tests": [
+    "fault.test_faults.Faults.test_stale_observation_goes_unknown"
+   ]
+  },
+  {
+   "id": "INV67-REQ-035",
+   "title": "Watch expiry",
+   "text": "A 410 Gone watch SHALL trigger a relist without losing objects.",
+   "items": [
+    12,
+    36
+   ],
+   "tests": [
+    "fault.test_faults.Faults.test_watch_history_expired_relists"
+   ]
+  },
+  {
+   "id": "INV67-REQ-036",
+   "title": "Health endpoints",
+   "text": "/healthz, /readyz, /version, /configz and /metrics SHALL reflect loop progress and dependency health.",
+   "items": [
+    30,
+    41
+   ],
+   "tests": [
+    "unit.test_observability.Obs.test_health_endpoints"
+   ]
+  },
+  {
+   "id": "INV67-REQ-037",
+   "title": "Metrics",
+   "text": "Metrics SHALL be Prometheus-formatted with bounded label cardinality.",
+   "items": [
+    42
+   ],
+   "tests": [
+    "unit.test_observability.Obs.test_metrics_render_and_cardinality_cap"
+   ]
+  },
+  {
+   "id": "INV67-REQ-038",
+   "title": "Logs",
+   "text": "Logs SHALL be structured JSON with secret-like keys redacted.",
+   "items": [
+    43
+   ],
+   "tests": [
+    "unit.test_observability.Obs.test_structured_redacted_logs"
+   ]
+  },
+  {
+   "id": "INV67-REQ-039",
+   "title": "Tracing",
+   "text": "Spans SHALL propagate W3C traceparent context.",
+   "items": [
+    44
+   ],
+   "tests": [
+    "unit.test_observability.Obs.test_trace_propagation"
+   ]
+  },
+  {
+   "id": "INV67-REQ-040",
+   "title": "Explain view",
+   "text": "The explain view SHALL summarize state and redact secret-like values.",
+   "items": [
+    45
+   ],
+   "tests": [
+    "unit.test_observability.Obs.test_explain_redacts"
+   ]
+  },
+  {
+   "id": "INV67-REQ-041",
+   "title": "Conditions",
+   "text": "Condition lastTransitionTime SHALL change only when status flips; messages SHALL be bounded.",
+   "items": [
+    13
+   ],
+   "tests": [
+    "unit.test_observability.Conditions.test_transition_time_only_changes_on_flip"
+   ]
+  },
+  {
+   "id": "INV67-REQ-042",
+   "title": "Wire contracts",
+   "text": "Placement envelopes and conditions emitted at runtime SHALL conform to their published schemas.",
+   "items": [
+    14,
+    48
+   ],
+   "tests": [
+    "contract.test_contracts.Schemas.test_place_envelope_and_conditions_from_live_run_conform",
+    "contract.test_contracts.Schemas.test_refusal_conforms_and_bad_refusal_does_not"
+   ]
+  },
+  {
+   "id": "INV67-REQ-043",
+   "title": "Performance SLO",
+   "text": "Translation p99 SHALL be under 5 ms on the reference benchmark, with regression gating against a baseline.",
+   "items": [
+    37,
+    38,
+    40
+   ],
+   "tests": [
+    "performance.test_benchmark.Bench.test_translate_slo_and_reconcile_throughput",
+    "unit.test_observability.Capacity.test_model_and_regression_gate"
+   ]
+  },
+  {
+   "id": "INV67-REQ-044",
+   "title": "Deployment hardening",
+   "text": "The controller Deployment SHALL run non-root, read-only root FS, no privilege escalation, all capabilities dropped, digest-pinned image.",
+   "items": [
+    17,
+    23
+   ],
+   "tests": [
+    "contract.test_contracts.Manifests.test_deployment_hardening"
+   ]
+  },
+  {
+   "id": "INV67-REQ-045",
+   "title": "Release integrity",
+   "text": "Every shipped file SHALL be listed with SHA-256 in a manifest that fails on unexpected, missing or altered files.",
+   "items": [
+    66,
+    68
+   ],
+   "tests": [
+    "unit.test_release.Release.test_manifest_detects_tamper_missing_extra"
+   ]
+  },
+  {
+   "id": "INV67-REQ-046",
+   "title": "Checklist gate",
+   "text": "The executable gate SHALL evaluate all 68 components and SHALL NOT report PASS without independent evidence.",
+   "items": [
+    54,
+    55,
+    63
+   ],
+   "tests": [
+    "unit.test_release.Release.test_gate_runs_and_refuses_self_acceptance"
+   ]
+  }
+ ]
+}

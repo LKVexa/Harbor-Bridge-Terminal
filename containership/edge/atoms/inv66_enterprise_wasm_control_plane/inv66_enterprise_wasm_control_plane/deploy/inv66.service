@@ -1,0 +1,25 @@
+[Unit]
+Description=INV-66 enterprise Wasm control plane
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=inv66
+Group=inv66
+ExecStart=/opt/inv66/venv/bin/python -m inv66_enterprise_wasm_control_plane.production.server --root /var/lib/inv66 --config /etc/inv66/server.json
+Restart=on-failure
+RestartSec=2
+# hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/inv66
+CapabilityBoundingSet=
+MemoryMax=2G
+TasksMax=512
+LimitNOFILE=65536
+EnvironmentFile=-/etc/inv66/secrets.env
+
+[Install]
+WantedBy=multi-user.target

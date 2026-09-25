@@ -1,0 +1,2295 @@
+{
+ "schema": "cstate.trace/1",
+ "version": "4.3.0",
+ "rows": [
+  {
+   "id": "INV-05-C001",
+   "requirement": "Define the exact production responsibility of Current control-state system.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore",
+    "contract.py::build"
+   ],
+   "tests": [
+    "test_store.CompactionTest.test_cannot_compact_future",
+    "test_store.CompactionTest.test_compaction_drops_deleted_keys",
+    "test_store.CompactionTest.test_protected_revision_blocks_compaction",
+    "test_store.DeleteTest.test_compare_and_delete",
+    "test_store.DeleteTest.test_delete_absent_is_idempotent_and_no_revision",
+    "test_store.DeleteTest.test_delete_tombstone_events_and_recreate",
+    "test_store.DeleteTest.test_null_value_is_a_value_not_a_delete",
+    "test_store.DeleteTest.test_prefix_delete",
+    "test_store.LeaseTest.test_expiry_deletes_attached_keys_with_expire_events",
+    "test_store.LeaseTest.test_fencing_blocks_stale_owner",
+    "test_store.LeaseTest.test_lease_compare_and_revoke",
+    "test_store.LeaseTest.test_remaining_ttl_from_monotonic_clock",
+    "test_store.LeaseTest.test_ttl_bounds_and_quota",
+    "test_store.ReadApiTest.test_compacted_future_and_invalid_revisions",
+    "test_store.ReadApiTest.test_page_size_limit",
+    "test_store.ReadApiTest.test_pagination_is_stable_under_concurrent_writes",
+    "test_store.ReadApiTest.test_point_read_current_and_historical",
+    "test_store.ReadApiTest.test_prefix_end",
+    "test_store.ReadApiTest.test_prefix_order_and_boundaries",
+    "test_store.ReadApiTest.test_tampered_page_token",
+    "test_store.SnapshotTest.test_snapshot_then_watch_from_next_revision_has_no_gap_or_dup",
+    "test_store.TxnTest.test_ambiguous_branches_rejected",
+    "test_store.TxnTest.test_contenders_single_winner",
+    "test_store.TxnTest.test_failure_branch_executes",
+    "test_store.TxnTest.test_idempotent_request_id",
+    "test_store.TxnTest.test_key_policy",
+    "test_store.TxnTest.test_limits",
+    "test_store.TxnTest.test_one_revision_per_txn_and_per_op_results",
+    "test_store.TxnTest.test_rich_predicates",
+    "test_store.TxnTest.test_unsupported_predicates_rejected_before_execution"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C002",
+   "requirement": "Document what Current control-state system owns and explicitly does not own.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "contract.py::build"
+   ],
+   "tests": [
+    "test_component.MetadataTest.test_reference_model_imports_without_pk_core",
+    "test_component.MetadataTest.test_version"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C003",
+   "requirement": "Identify upstream, downstream, and peer dependencies of Current control-state system.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "contract.py::build",
+    "backend.py::ExternalBackendContract",
+    "replication.py::ReplicationSource"
+   ],
+   "tests": [
+    "test_backup_repl.ReplicationTest.test_gap_detected",
+    "test_backup_repl.ReplicationTest.test_ordered_apply_lag_and_idempotent_redelivery",
+    "test_backup_repl.ReplicationTest.test_resync_after_compaction",
+    "test_backup_repl.ReplicationTest.test_stale_epoch_fenced_after_failover"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C004",
+   "requirement": "Define the authoritative source of truth used by Current control-state system.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore.revision"
+   ],
+   "tests": [
+    "test_store.ReadApiTest.test_compacted_future_and_invalid_revisions",
+    "test_store.ReadApiTest.test_page_size_limit",
+    "test_store.ReadApiTest.test_pagination_is_stable_under_concurrent_writes",
+    "test_store.ReadApiTest.test_point_read_current_and_historical",
+    "test_store.ReadApiTest.test_prefix_end",
+    "test_store.ReadApiTest.test_prefix_order_and_boundaries",
+    "test_store.ReadApiTest.test_tampered_page_token"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C005",
+   "requirement": "Document assumptions Current control-state system makes about nodes, runtimes, networks, storage, and control planes.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore"
+   ],
+   "tests": [
+    "test_chaos.RandomScheduleTest.test_fail_closed_under_persistent_io_errors",
+    "test_chaos.RandomScheduleTest.test_random_crash_schedule_preserves_acknowledged_state"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C006",
+   "requirement": "Define tenant, environment, site, and workload boundaries relevant to Current control-state system.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "security.py::Namespace",
+    "service.py::ControlStateService._map_key"
+   ],
+   "tests": [
+    "test_service.IsolationTest.test_client_cannot_escape_namespace_with_crafted_keys",
+    "test_service.IsolationTest.test_cross_namespace_target_requires_policy",
+    "test_service.IsolationTest.test_per_identity_rate_limit",
+    "test_service.IsolationTest.test_same_key_different_tenants_never_collide",
+    "test_service.IsolationTest.test_watch_isolated"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C007",
+   "requirement": "Separate mandatory Current control-state system capabilities from optional optimizations.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "contract.py::build"
+   ],
+   "tests": [
+    "test_store.TxnTest.test_ambiguous_branches_rejected",
+    "test_store.TxnTest.test_contenders_single_winner",
+    "test_store.TxnTest.test_failure_branch_executes",
+    "test_store.TxnTest.test_idempotent_request_id",
+    "test_store.TxnTest.test_key_policy",
+    "test_store.TxnTest.test_limits",
+    "test_store.TxnTest.test_one_revision_per_txn_and_per_op_results",
+    "test_store.TxnTest.test_rich_predicates",
+    "test_store.TxnTest.test_unsupported_predicates_rejected_before_execution"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C008",
+   "requirement": "Document unsupported deployment patterns and non-goals for Current control-state system.",
+   "dimension": "Architecture & Scope",
+   "status": "verified",
+   "implementation": [
+    "config.py::build"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_validation_fails_closed"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C009",
+   "requirement": "Assign an accountable owner and escalation path for Current control-state system.",
+   "dimension": "Architecture & Scope",
+   "status": "partial",
+   "implementation": [
+    "docs/GOVERNANCE.md"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/GOVERNANCE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-006",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C010",
+   "requirement": "Approve an architecture decision record for Current control-state system, its technologies (etcd), and its function (Desired-state persistence for Kubernetes).",
+   "dimension": "Architecture & Scope",
+   "status": "partial",
+   "implementation": [
+    "docs/adr/ADR-001-scope-and-role.md"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/adr/ADR-001-scope-and-role.md",
+    "docs/adr/ADR-002-backend-and-consensus.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-006",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C011",
+   "requirement": "Translate the source function of Current control-state system \u2014 Desired-state persistence for Kubernetes \u2014 into testable SHALL-level requirements.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore.txn"
+   ],
+   "tests": [
+    "test_store.CompactionTest.test_cannot_compact_future",
+    "test_store.CompactionTest.test_compaction_drops_deleted_keys",
+    "test_store.CompactionTest.test_protected_revision_blocks_compaction",
+    "test_store.DeleteTest.test_compare_and_delete",
+    "test_store.DeleteTest.test_delete_absent_is_idempotent_and_no_revision",
+    "test_store.DeleteTest.test_delete_tombstone_events_and_recreate",
+    "test_store.DeleteTest.test_null_value_is_a_value_not_a_delete",
+    "test_store.DeleteTest.test_prefix_delete",
+    "test_store.LeaseTest.test_expiry_deletes_attached_keys_with_expire_events",
+    "test_store.LeaseTest.test_fencing_blocks_stale_owner",
+    "test_store.LeaseTest.test_lease_compare_and_revoke",
+    "test_store.LeaseTest.test_remaining_ttl_from_monotonic_clock",
+    "test_store.LeaseTest.test_ttl_bounds_and_quota",
+    "test_store.ReadApiTest.test_compacted_future_and_invalid_revisions",
+    "test_store.ReadApiTest.test_page_size_limit",
+    "test_store.ReadApiTest.test_pagination_is_stable_under_concurrent_writes",
+    "test_store.ReadApiTest.test_point_read_current_and_historical",
+    "test_store.ReadApiTest.test_prefix_end",
+    "test_store.ReadApiTest.test_prefix_order_and_boundaries",
+    "test_store.ReadApiTest.test_tampered_page_token",
+    "test_store.SnapshotTest.test_snapshot_then_watch_from_next_revision_has_no_gap_or_dup",
+    "test_store.TxnTest.test_ambiguous_branches_rejected",
+    "test_store.TxnTest.test_contenders_single_winner",
+    "test_store.TxnTest.test_failure_branch_executes",
+    "test_store.TxnTest.test_idempotent_request_id",
+    "test_store.TxnTest.test_key_policy",
+    "test_store.TxnTest.test_limits",
+    "test_store.TxnTest.test_one_revision_per_txn_and_per_op_results",
+    "test_store.TxnTest.test_rich_predicates",
+    "test_store.TxnTest.test_unsupported_predicates_rejected_before_execution",
+    "test_watch.WatchTest.test_catch_up_from_revision_and_resume",
+    "test_watch.WatchTest.test_compacted_start_refused",
+    "test_watch.WatchTest.test_compaction_overtaking_catch_up_tells_client_to_relist",
+    "test_watch.WatchTest.test_continuous_writers_during_watch",
+    "test_watch.WatchTest.test_drain_sends_terminal_frames",
+    "test_watch.WatchTest.test_kind_filter_and_prev_value",
+    "test_watch.WatchTest.test_lagging_watch_cancelled_as_slow_consumer",
+    "test_watch.WatchTest.test_large_catch_up_is_paged",
+    "test_watch.WatchTest.test_ordering_and_txn_grouping",
+    "test_watch.WatchTest.test_progress_frames_do_not_fabricate_events",
+    "test_watch.WatchTest.test_quotas",
+    "test_watch.WatchTest.test_slow_consumer_falls_back_losslessly"
+   ],
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C012",
+   "requirement": "Define functional requirements for Current control-state system across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "config.py::SCHEMA"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_defaults_are_secure",
+    "test_config_bootstrap.ConfigTest.test_overlay_precedence_and_provenance",
+    "test_config_bootstrap.ConfigTest.test_restart_required_classification_and_redaction",
+    "test_config_bootstrap.ConfigTest.test_validation_fails_closed"
+   ],
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C013",
+   "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified-single-member",
+   "implementation": [
+    "wal.py::DurableStore",
+    "bench.py::run"
+   ],
+   "tests": [
+    "test_durability.DurabilityTest.test_acknowledged_writes_survive_restart",
+    "test_durability.DurabilityTest.test_bad_crc_on_last_record_requires_operator",
+    "test_durability.DurabilityTest.test_checkpoint_and_recover_from_snapshot_plus_wal",
+    "test_durability.DurabilityTest.test_corrupt_snapshot_is_fatal",
+    "test_durability.DurabilityTest.test_crash_at_every_persistence_boundary",
+    "test_durability.DurabilityTest.test_crash_during_snapshot",
+    "test_durability.DurabilityTest.test_encryption_at_rest_and_key_rotation",
+    "test_durability.DurabilityTest.test_file_permissions",
+    "test_durability.DurabilityTest.test_io_error_fails_closed_and_never_acks",
+    "test_durability.DurabilityTest.test_mid_file_corruption_is_fatal",
+    "test_durability.DurabilityTest.test_tampered_ciphertext_detected",
+    "test_durability.DurabilityTest.test_unsafe_durability_requires_opt_in",
+    "test_linearizability.LinearizabilityTest.test_checker_rejects_a_stale_read",
+    "test_linearizability.LinearizabilityTest.test_checker_rejects_double_cas_winner",
+    "test_linearizability.LinearizabilityTest.test_concurrent_ops_may_linearize_either_way",
+    "test_linearizability.LinearizabilityTest.test_engine_histories_are_linearizable",
+    "test_linearizability.LinearizabilityTest.test_history_under_injected_crash_and_recovery",
+    "test_linearizability.LinearizabilityTest.test_indeterminate_operations"
+   ],
+   "evidence": [
+    "docs/REQUIREMENTS.md",
+    "evidence/bench_smoke.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C014",
+   "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Current control-state system.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "errors.py::ERROR_CATALOG"
+   ],
+   "tests": [
+    "test_protocol.ErrorModelTest.test_categories_cover_required_classes",
+    "test_protocol.ErrorModelTest.test_wire_form_is_safe",
+    "test_store.TxnTest.test_failure_branch_executes"
+   ],
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C015",
+   "requirement": "Define lifecycle states and legal state transitions managed or exposed by Current control-state system.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.readiness",
+    "watch.py::Watcher"
+   ],
+   "tests": [
+    "test_service.ControlsTest.test_break_glass_is_audited_and_disables_data_plane",
+    "test_service.ControlsTest.test_drain",
+    "test_service.ControlsTest.test_failed_store_fails_closed",
+    "test_service.ControlsTest.test_maintenance_exit_criteria",
+    "test_service.ControlsTest.test_quarantine_preserves_state",
+    "test_service.ControlsTest.test_replica_refuses_writes",
+    "test_service.ControlsTest.test_write_freeze_keeps_reads",
+    "test_store.DeleteTest.test_compare_and_delete",
+    "test_store.DeleteTest.test_delete_absent_is_idempotent_and_no_revision",
+    "test_store.DeleteTest.test_delete_tombstone_events_and_recreate",
+    "test_store.DeleteTest.test_null_value_is_a_value_not_a_delete",
+    "test_store.DeleteTest.test_prefix_delete",
+    "test_store.LeaseTest.test_expiry_deletes_attached_keys_with_expire_events",
+    "test_store.LeaseTest.test_fencing_blocks_stale_owner",
+    "test_store.LeaseTest.test_lease_compare_and_revoke",
+    "test_store.LeaseTest.test_remaining_ttl_from_monotonic_clock",
+    "test_store.LeaseTest.test_ttl_bounds_and_quota"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C016",
+   "requirement": "Define versioning and backward-compatibility requirements for Current control-state system.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "schema.py::check_message"
+   ],
+   "tests": [
+    "test_protocol.CompatibilityLockTest.test_breaking_change_detector_detects",
+    "test_protocol.CompatibilityLockTest.test_error_catalog_is_append_only",
+    "test_protocol.CompatibilityLockTest.test_schema_has_no_breaking_change_against_lock"
+   ],
+   "evidence": [
+    "docs/COMPATIBILITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C017",
+   "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Current control-state system.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "limits.py::Limits",
+    "limits.py::TokenBucket"
+   ],
+   "tests": [
+    "test_service.IsolationTest.test_per_identity_rate_limit",
+    "test_watch.WatchTest.test_quotas"
+   ],
+   "evidence": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C018",
+   "requirement": "Define behavior when network connectivity is intermittent or absent.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "client.py::Mirror"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_mirror_converges_under_writers_and_compaction",
+    "test_http.TokenLoopbackAndShutdown.test_bearer_tokens_and_graceful_drain",
+    "test_http.TokenLoopbackAndShutdown.test_quota_maps_to_429_with_retry_after"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C019",
+   "requirement": "Define precedence rules when Current control-state system requirements conflict with security, residency, SLO, or cost constraints.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore._commit"
+   ],
+   "tests": [
+    "test_durability.DurabilityTest.test_io_error_fails_closed_and_never_acks"
+   ],
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C020",
+   "requirement": "Maintain a requirements traceability matrix from each Current control-state system requirement to implementation and verification evidence.",
+   "dimension": "Requirements & Semantics",
+   "status": "verified",
+   "implementation": [
+    "tools_check.py::check_trace"
+   ],
+   "tests": [
+    "test_tooling.ExceptionsTest.test_register_valid_today_and_expiry_enforced",
+    "test_tooling.MasterMdTest.test_current_tree_is_clean",
+    "test_tooling.MasterMdTest.test_detects_false_presence_claim",
+    "test_tooling.ReleaseGateTest.test_ci_gate_skip_policy_only_allows_framework_tests",
+    "test_tooling.ReleaseGateTest.test_release_gate_blocks_on_open_p0",
+    "test_tooling.SupplyChainTest.test_compat_tool_passes",
+    "test_tooling.SupplyChainTest.test_manifest_sbom_provenance",
+    "test_tooling.TraceabilityTest.test_checker_detects_gaps",
+    "test_tooling.TraceabilityTest.test_markdown_render",
+    "test_tooling.TraceabilityTest.test_matrix_is_complete_and_consistent"
+   ],
+   "evidence": [
+    "traceability/trace_matrix.json",
+    "traceability/TRACE_MATRIX.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C021",
+   "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Current control-state system.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "server.py::_Handler"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_client_retries_respect_retry_after_and_budget",
+    "test_http.MTLSEndToEnd.test_duplicate_keys_and_oversized_body",
+    "test_http.MTLSEndToEnd.test_foreign_trust_domain_rejected_and_audited",
+    "test_http.MTLSEndToEnd.test_health_version_metrics",
+    "test_http.MTLSEndToEnd.test_mirror_converges_under_writers_and_compaction",
+    "test_http.MTLSEndToEnd.test_negotiation_and_schema_errors",
+    "test_http.MTLSEndToEnd.test_no_client_cert_rejected",
+    "test_http.MTLSEndToEnd.test_server_certificate_rotation_without_restart",
+    "test_http.MTLSEndToEnd.test_server_identity_verified_by_client",
+    "test_http.MTLSEndToEnd.test_tls_policy_checks",
+    "test_http.MTLSEndToEnd.test_txn_and_range_over_mtls",
+    "test_http.MTLSEndToEnd.test_watch_stream_events_and_progress",
+    "test_http.TokenLoopbackAndShutdown.test_bearer_tokens_and_graceful_drain",
+    "test_http.TokenLoopbackAndShutdown.test_quota_maps_to_429_with_retry_after"
+   ],
+   "evidence": [
+    "docs/INTERFACES.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C022",
+   "requirement": "Use versioned typed schemas for all externally visible Current control-state system contracts.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "schema.py::MESSAGES"
+   ],
+   "tests": [
+    "test_protocol.GoldenTest.test_error_vector_codes_exist",
+    "test_protocol.GoldenTest.test_event_roundtrip",
+    "test_protocol.GoldenTest.test_every_message_type_has_a_golden_vector_that_parses"
+   ],
+   "evidence": [
+    "conformance/schema_lock.json",
+    "conformance/golden_messages_v1.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C023",
+   "requirement": "Define authentication requirements at each Current control-state system boundary.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "security.py::MTLSAuthenticator",
+    "security.py::TokenAuthenticator"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_no_client_cert_rejected",
+    "test_security.MTLSTest.test_rejections",
+    "test_security.MTLSTest.test_valid_identity_binds_namespace",
+    "test_security.TokenTest.test_forgery_and_replay_to_other_audience",
+    "test_security.TokenTest.test_issue_verify_rotate_expire"
+   ],
+   "evidence": [
+    "docs/INTERFACES.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C024",
+   "requirement": "Define authorization and explicit capability requirements at each Current control-state system boundary.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "security.py::Authorizer"
+   ],
+   "tests": [
+    "test_service.AuthzTest.test_admin_actions_require_admin_roles",
+    "test_service.AuthzTest.test_deny_by_default",
+    "test_service.AuthzTest.test_lease_ownership_enforced",
+    "test_service.AuthzTest.test_policy_rollout_and_rollback"
+   ],
+   "evidence": [
+    "docs/INTERFACES.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C025",
+   "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Current control-state system.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "service.py::OP_CLASSES",
+    "client.py::Client.call",
+    "watch.py::Watcher"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_client_retries_respect_retry_after_and_budget",
+    "test_service.DeadlineTest.test_expired_deadline_and_cancellation_do_not_execute",
+    "test_service.DeadlineTest.test_request_id_makes_retries_safe_and_is_scoped_per_identity",
+    "test_watch.WatchTest.test_slow_consumer_falls_back_losslessly"
+   ],
+   "evidence": [
+    "docs/INTERFACES.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C026",
+   "requirement": "Define structured failure codes and machine-readable error details for Current control-state system.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "errors.py::StateError"
+   ],
+   "tests": [
+    "test_protocol.ErrorModelTest.test_categories_cover_required_classes",
+    "test_protocol.ErrorModelTest.test_wire_form_is_safe"
+   ],
+   "evidence": [
+    "conformance/error_catalog_lock.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C027",
+   "requirement": "Define compatibility behavior when peers use different supported versions.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "schema.py::negotiate"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_negotiation_and_schema_errors",
+    "test_protocol.NegotiationTest.test_negotiation",
+    "test_protocol.NegotiationTest.test_strict_parsing"
+   ],
+   "evidence": [
+    "docs/COMPATIBILITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C028",
+   "requirement": "Document payload, concurrency, queue, connection, or resource limits at Current control-state system interfaces.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "limits.py::Limits"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_resource_exhaustion_under_limits",
+    "test_store.TxnTest.test_limits"
+   ],
+   "evidence": [
+    "docs/INTERFACES.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C029",
+   "requirement": "Provide reference examples and conformance fixtures for Current control-state system.",
+   "dimension": "Interfaces & Integration",
+   "status": "verified",
+   "implementation": [
+    "conformance/runner.py::main"
+   ],
+   "tests": [
+    "test_protocol.ConformanceRunnerTest.test_all_vectors_pass",
+    "test_protocol.ConformanceRunnerTest.test_subset_matcher"
+   ],
+   "evidence": [
+    "conformance/vectors_v1.json",
+    "evidence/conformance.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C030",
+   "requirement": "Create automated integration tests proving Current control-state system interoperates with adjacent architectural layers.",
+   "dimension": "Interfaces & Integration",
+   "status": "partial",
+   "implementation": [
+    "replication.py::ReplicaApplier",
+    "server.py::ControlStateHTTPServer"
+   ],
+   "tests": [
+    "test_backup_repl.ReplicationTest.test_gap_detected",
+    "test_backup_repl.ReplicationTest.test_ordered_apply_lag_and_idempotent_redelivery",
+    "test_backup_repl.ReplicationTest.test_resync_after_compaction",
+    "test_backup_repl.ReplicationTest.test_stale_epoch_fenced_after_failover",
+    "test_http.MTLSEndToEnd.test_client_retries_respect_retry_after_and_budget",
+    "test_http.MTLSEndToEnd.test_duplicate_keys_and_oversized_body",
+    "test_http.MTLSEndToEnd.test_foreign_trust_domain_rejected_and_audited",
+    "test_http.MTLSEndToEnd.test_health_version_metrics",
+    "test_http.MTLSEndToEnd.test_mirror_converges_under_writers_and_compaction",
+    "test_http.MTLSEndToEnd.test_negotiation_and_schema_errors",
+    "test_http.MTLSEndToEnd.test_no_client_cert_rejected",
+    "test_http.MTLSEndToEnd.test_server_certificate_rotation_without_restart",
+    "test_http.MTLSEndToEnd.test_server_identity_verified_by_client",
+    "test_http.MTLSEndToEnd.test_tls_policy_checks",
+    "test_http.MTLSEndToEnd.test_txn_and_range_over_mtls",
+    "test_http.MTLSEndToEnd.test_watch_stream_events_and_progress",
+    "test_http.TokenLoopbackAndShutdown.test_bearer_tokens_and_graceful_drain",
+    "test_http.TokenLoopbackAndShutdown.test_quota_maps_to_429_with_retry_after"
+   ],
+   "evidence": [
+    "docs/COMPATIBILITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-004",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C031",
+   "requirement": "Select and pin approved implementations, versions, or specifications for Current control-state system: etcd.",
+   "dimension": "Implementation & Configuration",
+   "status": "blocked-external",
+   "implementation": [
+    "backend.py::ExternalBackendContract"
+   ],
+   "tests": [
+    "test_config_bootstrap.BackendBoundaryTest.test_error_classification",
+    "test_config_bootstrap.BackendBoundaryTest.test_external_backend_fails_closed_until_pinned",
+    "test_config_bootstrap.BackendBoundaryTest.test_local_backend_identity_and_runtime_self_test",
+    "test_config_bootstrap.BackendBoundaryTest.test_pinned_backend_artifact_digest_verification"
+   ],
+   "evidence": [
+    "deploy/backend_pin.json",
+    "docs/adr/ADR-002-backend-and-consensus.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C032",
+   "requirement": "Separate immutable artifacts from mutable configuration and state for Current control-state system.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "config.py::EffectiveConfig",
+    "wal.py::DurableStore"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_defaults_are_secure",
+    "test_config_bootstrap.ConfigTest.test_overlay_precedence_and_provenance",
+    "test_config_bootstrap.ConfigTest.test_restart_required_classification_and_redaction",
+    "test_config_bootstrap.ConfigTest.test_validation_fails_closed"
+   ],
+   "evidence": [
+    "deploy/Dockerfile",
+    "docs/ROLLOUT.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C033",
+   "requirement": "Define declarative configuration and secure defaults for Current control-state system.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "config.py::SCHEMA"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_defaults_are_secure"
+   ],
+   "evidence": [
+    "deploy/config/base.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C034",
+   "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "config.py::build"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_validation_fails_closed"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C035",
+   "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "config.py::load_layers"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_overlay_precedence_and_provenance"
+   ],
+   "evidence": [
+    "deploy/config/prod.json",
+    "deploy/config/site-a.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C036",
+   "requirement": "Record configuration provenance, version, author, and activation time.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "config.py::EffectiveConfig",
+    "bootstrap.py::build_service"
+   ],
+   "tests": [
+    "test_config_bootstrap.BootstrapTest.test_bootstrap_is_deterministic_and_idempotent",
+    "test_config_bootstrap.BootstrapTest.test_bootstrap_refuses_without_keys"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C037",
+   "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "config.py::EffectiveConfig.restart_required_diff",
+    "security.py::Authorizer.rollout"
+   ],
+   "tests": [
+    "test_config_bootstrap.ConfigTest.test_restart_required_classification_and_redaction",
+    "test_service.AuthzTest.test_policy_rollout_and_rollback"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C038",
+   "requirement": "Define automatic and operator-driven rollback for failed Current control-state system changes.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "security.py::Authorizer.rollback"
+   ],
+   "tests": [
+    "test_service.AuthzTest.test_policy_rollout_and_rollback"
+   ],
+   "evidence": [
+    "docs/ROLLOUT.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C039",
+   "requirement": "Keep credentials and secret material out of ordinary Current control-state system configuration and diagnostics.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "security.py::SecretProvider",
+    "security.py::redact"
+   ],
+   "tests": [
+    "test_security.SecretsTest.test_error_messages_never_carry_secret_values",
+    "test_security.SecretsTest.test_key_derivation_separates_purposes",
+    "test_security.SecretsTest.test_redaction",
+    "test_security.SecretsTest.test_secret_file_permissions_and_env"
+   ],
+   "evidence": [
+    "docs/adr/ADR-005-security.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C040",
+   "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Current control-state system operation.",
+   "dimension": "Implementation & Configuration",
+   "status": "verified",
+   "implementation": [
+    "bootstrap.py::build_service"
+   ],
+   "tests": [
+    "test_config_bootstrap.BootstrapTest.test_bootstrap_is_deterministic_and_idempotent",
+    "test_config_bootstrap.BootstrapTest.test_bootstrap_refuses_without_keys"
+   ],
+   "evidence": [
+    "docs/operations/RUNBOOK_DAY0.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C041",
+   "requirement": "Threat-model Current control-state system against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "partial",
+   "implementation": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_authz_privilege_boundaries",
+    "test_fuzz.FuzzTest.test_frames_and_unknown_fields",
+    "test_fuzz.FuzzTest.test_keys_never_crash_or_escape",
+    "test_fuzz.FuzzTest.test_resource_exhaustion_under_limits",
+    "test_fuzz.FuzzTest.test_revisions",
+    "test_fuzz.FuzzTest.test_service_txn_fuzz_never_leaks_or_crashes",
+    "test_security.MTLSTest.test_rejections",
+    "test_security.MTLSTest.test_valid_identity_binds_namespace",
+    "test_security.SecretsTest.test_error_messages_never_carry_secret_values",
+    "test_security.SecretsTest.test_key_derivation_separates_purposes",
+    "test_security.SecretsTest.test_redaction",
+    "test_security.SecretsTest.test_secret_file_permissions_and_env",
+    "test_security.TLSConfigTest.test_client_context_policy",
+    "test_security.TokenTest.test_forgery_and_replay_to_other_audience",
+    "test_security.TokenTest.test_issue_verify_rotate_expire"
+   ],
+   "evidence": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-006",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C042",
+   "requirement": "Apply least privilege to every identity and capability used by Current control-state system.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "security.py::DEFAULT_POLICY"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_authz_privilege_boundaries",
+    "test_service.AuthzTest.test_admin_actions_require_admin_roles",
+    "test_service.AuthzTest.test_deny_by_default",
+    "test_service.AuthzTest.test_lease_ownership_enforced",
+    "test_service.AuthzTest.test_policy_rollout_and_rollback"
+   ],
+   "evidence": [
+    "deploy/inv05.service",
+    "deploy/k8s/statefulset.yaml"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C043",
+   "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Current control-state system permits.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "security.py::SecretProvider.get"
+   ],
+   "tests": [
+    "test_durability.DurabilityTest.test_file_permissions"
+   ],
+   "evidence": [
+    "deploy/inv05.service"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C044",
+   "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "security.py::MTLSAuthenticator.authenticate"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_client_retries_respect_retry_after_and_budget",
+    "test_http.MTLSEndToEnd.test_duplicate_keys_and_oversized_body",
+    "test_http.MTLSEndToEnd.test_foreign_trust_domain_rejected_and_audited",
+    "test_http.MTLSEndToEnd.test_health_version_metrics",
+    "test_http.MTLSEndToEnd.test_mirror_converges_under_writers_and_compaction",
+    "test_http.MTLSEndToEnd.test_negotiation_and_schema_errors",
+    "test_http.MTLSEndToEnd.test_no_client_cert_rejected",
+    "test_http.MTLSEndToEnd.test_server_certificate_rotation_without_restart",
+    "test_http.MTLSEndToEnd.test_server_identity_verified_by_client",
+    "test_http.MTLSEndToEnd.test_tls_policy_checks",
+    "test_http.MTLSEndToEnd.test_txn_and_range_over_mtls",
+    "test_http.MTLSEndToEnd.test_watch_stream_events_and_progress",
+    "test_security.MTLSTest.test_rejections",
+    "test_security.MTLSTest.test_valid_identity_binds_namespace"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C045",
+   "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Current control-state system.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "partial",
+   "implementation": [
+    "backend.py::ExternalBackendContract.verify_artifact",
+    "tools_check.py::manifest"
+   ],
+   "tests": [
+    "test_config_bootstrap.BackendBoundaryTest.test_pinned_backend_artifact_digest_verification"
+   ],
+   "evidence": [
+    "evidence/gate_report.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-008",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C046",
+   "requirement": "Enforce tenant/workload isolation across Current control-state system execution, memory, state, network, and device boundaries as applicable.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService._map_op"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_service_txn_fuzz_never_leaks_or_crashes",
+    "test_service.IsolationTest.test_client_cannot_escape_namespace_with_crafted_keys",
+    "test_service.IsolationTest.test_cross_namespace_target_requires_policy",
+    "test_service.IsolationTest.test_per_identity_rate_limit",
+    "test_service.IsolationTest.test_same_key_different_tenants_never_collide",
+    "test_service.IsolationTest.test_watch_isolated"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C047",
+   "requirement": "Encrypt sensitive Current control-state system data in transit and at rest with managed key rotation.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "wal.py::Sealer",
+    "security.py::server_tls_context"
+   ],
+   "tests": [
+    "test_durability.DurabilityTest.test_encryption_at_rest_and_key_rotation",
+    "test_http.MTLSEndToEnd.test_server_certificate_rotation_without_restart"
+   ],
+   "evidence": [
+    "docs/adr/ADR-005-security.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C048",
+   "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "bootstrap.py::build_service"
+   ],
+   "tests": [
+    "test_config_bootstrap.BootstrapTest.test_bootstrap_refuses_without_keys"
+   ],
+   "evidence": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C049",
+   "requirement": "Emit tamper-evident audit events for security-sensitive Current control-state system operations.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "audit.py::AuditLog"
+   ],
+   "tests": [
+    "test_service.AuditTest.test_chain_verifies_and_detects_tampering",
+    "test_service.AuditTest.test_file_backed_audit_resumes_chain"
+   ],
+   "evidence": [
+    "docs/operations/AUDIT_RETENTION.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C050",
+   "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+   "dimension": "Security, Trust & Isolation",
+   "status": "verified",
+   "implementation": [
+    "security.py::TokenAuthenticator"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_authz_privilege_boundaries",
+    "test_fuzz.FuzzTest.test_frames_and_unknown_fields",
+    "test_fuzz.FuzzTest.test_keys_never_crash_or_escape",
+    "test_fuzz.FuzzTest.test_resource_exhaustion_under_limits",
+    "test_fuzz.FuzzTest.test_revisions",
+    "test_fuzz.FuzzTest.test_service_txn_fuzz_never_leaks_or_crashes",
+    "test_security.TokenTest.test_forgery_and_replay_to_other_audience"
+   ],
+   "evidence": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C051",
+   "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Current control-state system.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "wal.py::DurableStore"
+   ],
+   "tests": [
+    "test_chaos.RandomScheduleTest.test_fail_closed_under_persistent_io_errors",
+    "test_chaos.RandomScheduleTest.test_random_crash_schedule_preserves_acknowledged_state"
+   ],
+   "evidence": [
+    "docs/FAULT_CATALOG.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C052",
+   "requirement": "Define automated health and stall detection thresholds for Current control-state system.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.liveness"
+   ],
+   "tests": [
+    "test_service.HealthTest.test_diagnostics_protected",
+    "test_service.HealthTest.test_liveness_detects_stall",
+    "test_service.HealthTest.test_liveness_readiness_version"
+   ],
+   "evidence": [
+    "observability/alerts/inv05-rules.yml"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C053",
+   "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "client.py::Client.call"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_client_retries_respect_retry_after_and_budget"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C054",
+   "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Current control-state system failure cascades.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "limits.py::ConcurrencyGate",
+    "limits.py::TokenBucket"
+   ],
+   "tests": [
+    "test_http.TokenLoopbackAndShutdown.test_quota_maps_to_429_with_retry_after"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C055",
+   "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "partial",
+   "implementation": [
+    "replication.py::ReplicaApplier"
+   ],
+   "tests": [
+    "test_backup_repl.ReplicationTest.test_stale_epoch_fenced_after_failover"
+   ],
+   "evidence": [
+    "docs/DR_PLAN.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C056",
+   "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.readiness"
+   ],
+   "tests": [
+    "test_service.ControlsTest.test_write_freeze_keeps_reads"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C057",
+   "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Current control-state system state.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "wal.py::DurableStore.open"
+   ],
+   "tests": [
+    "test_durability.DurabilityTest.test_acknowledged_writes_survive_restart",
+    "test_durability.DurabilityTest.test_bad_crc_on_last_record_requires_operator",
+    "test_durability.DurabilityTest.test_checkpoint_and_recover_from_snapshot_plus_wal",
+    "test_durability.DurabilityTest.test_corrupt_snapshot_is_fatal",
+    "test_durability.DurabilityTest.test_crash_at_every_persistence_boundary",
+    "test_durability.DurabilityTest.test_crash_during_snapshot",
+    "test_durability.DurabilityTest.test_encryption_at_rest_and_key_rotation",
+    "test_durability.DurabilityTest.test_file_permissions",
+    "test_durability.DurabilityTest.test_io_error_fails_closed_and_never_acks",
+    "test_durability.DurabilityTest.test_mid_file_corruption_is_fatal",
+    "test_durability.DurabilityTest.test_tampered_ciphertext_detected",
+    "test_durability.DurabilityTest.test_unsafe_durability_requires_opt_in"
+   ],
+   "evidence": [
+    "docs/adr/ADR-004-durability.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C058",
+   "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified-single-member",
+   "implementation": [
+    "store.py::ControlStore.lease_grant"
+   ],
+   "tests": [
+    "test_backup_repl.ReplicationTest.test_stale_epoch_fenced_after_failover",
+    "test_store.LeaseTest.test_fencing_blocks_stale_owner"
+   ],
+   "evidence": [
+    "docs/CONSENSUS_CONTRACT.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C059",
+   "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Current control-state system behavior.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.quarantine",
+    "service.py::ControlStateService.break_glass"
+   ],
+   "tests": [
+    "test_service.ControlsTest.test_break_glass_is_audited_and_disables_data_plane",
+    "test_service.ControlsTest.test_drain",
+    "test_service.ControlsTest.test_failed_store_fails_closed",
+    "test_service.ControlsTest.test_maintenance_exit_criteria",
+    "test_service.ControlsTest.test_quarantine_preserves_state",
+    "test_service.ControlsTest.test_replica_refuses_writes",
+    "test_service.ControlsTest.test_write_freeze_keeps_reads"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C060",
+   "requirement": "Run fault-injection tests proving Current control-state system recovery against documented objectives.",
+   "dimension": "Resilience & Failure Handling",
+   "status": "verified",
+   "implementation": [
+    "wal.py::SimulatedCrash"
+   ],
+   "tests": [
+    "test_chaos.RandomScheduleTest.test_fail_closed_under_persistent_io_errors",
+    "test_chaos.RandomScheduleTest.test_random_crash_schedule_preserves_acknowledged_state",
+    "test_durability.DurabilityTest.test_acknowledged_writes_survive_restart",
+    "test_durability.DurabilityTest.test_bad_crc_on_last_record_requires_operator",
+    "test_durability.DurabilityTest.test_checkpoint_and_recover_from_snapshot_plus_wal",
+    "test_durability.DurabilityTest.test_corrupt_snapshot_is_fatal",
+    "test_durability.DurabilityTest.test_crash_at_every_persistence_boundary",
+    "test_durability.DurabilityTest.test_crash_during_snapshot",
+    "test_durability.DurabilityTest.test_encryption_at_rest_and_key_rotation",
+    "test_durability.DurabilityTest.test_file_permissions",
+    "test_durability.DurabilityTest.test_io_error_fails_closed_and_never_acks",
+    "test_durability.DurabilityTest.test_mid_file_corruption_is_fatal",
+    "test_durability.DurabilityTest.test_tampered_ciphertext_detected",
+    "test_durability.DurabilityTest.test_unsafe_durability_requires_opt_in"
+   ],
+   "evidence": [
+    "docs/FAULT_CATALOG.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C061",
+   "requirement": "Establish reproducible baselines for Current control-state system latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "partial",
+   "implementation": [
+    "bench.py::run"
+   ],
+   "tests": [],
+   "evidence": [
+    "evidence/bench_smoke.json",
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C062",
+   "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Current control-state system.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "partial",
+   "implementation": [
+    "bench.py::run"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C063",
+   "requirement": "Measure Current control-state system under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "partial",
+   "implementation": [
+    "bench.py::run"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_resource_exhaustion_under_limits"
+   ],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C064",
+   "requirement": "Measure per-workload and per-tenant overhead introduced by Current control-state system.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "partial",
+   "implementation": [
+    "limits.py::TokenBucket"
+   ],
+   "tests": [
+    "test_service.IsolationTest.test_per_identity_rate_limit"
+   ],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C065",
+   "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Current control-state system.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore.range"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C066",
+   "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore.txn"
+   ],
+   "tests": [
+    "test_store.TxnTest.test_one_revision_per_txn_and_per_op_results"
+   ],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C067",
+   "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "verified",
+   "implementation": [
+    "limits.py::Limits",
+    "watch.py::Watcher"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_resource_exhaustion_under_limits",
+    "test_watch.WatchTest.test_catch_up_from_revision_and_resume",
+    "test_watch.WatchTest.test_compacted_start_refused",
+    "test_watch.WatchTest.test_compaction_overtaking_catch_up_tells_client_to_relist",
+    "test_watch.WatchTest.test_continuous_writers_during_watch",
+    "test_watch.WatchTest.test_drain_sends_terminal_frames",
+    "test_watch.WatchTest.test_kind_filter_and_prev_value",
+    "test_watch.WatchTest.test_lagging_watch_cancelled_as_slow_consumer",
+    "test_watch.WatchTest.test_large_catch_up_is_paged",
+    "test_watch.WatchTest.test_ordering_and_txn_grouping",
+    "test_watch.WatchTest.test_progress_frames_do_not_fabricate_events",
+    "test_watch.WatchTest.test_quotas",
+    "test_watch.WatchTest.test_slow_consumer_falls_back_losslessly"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C068",
+   "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "partial",
+   "implementation": [
+    "bench.py::run"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C069",
+   "requirement": "Define capacity models and saturation signals that predict when Current control-state system needs more resources.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "partial",
+   "implementation": [
+    "observability.py::METRIC_CATALOG"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/CAPACITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C070",
+   "requirement": "Block releases that regress approved Current control-state system startup, density, throughput, or tail-latency thresholds.",
+   "dimension": "Performance & Resource Efficiency",
+   "status": "verified",
+   "implementation": [
+    "tools/ci_gate.py"
+   ],
+   "tests": [
+    "test_tooling.ExceptionsTest.test_register_valid_today_and_expiry_enforced",
+    "test_tooling.MasterMdTest.test_current_tree_is_clean",
+    "test_tooling.MasterMdTest.test_detects_false_presence_claim",
+    "test_tooling.ReleaseGateTest.test_ci_gate_skip_policy_only_allows_framework_tests",
+    "test_tooling.ReleaseGateTest.test_release_gate_blocks_on_open_p0",
+    "test_tooling.SupplyChainTest.test_compat_tool_passes",
+    "test_tooling.SupplyChainTest.test_manifest_sbom_provenance",
+    "test_tooling.TraceabilityTest.test_checker_detects_gaps",
+    "test_tooling.TraceabilityTest.test_markdown_render",
+    "test_tooling.TraceabilityTest.test_matrix_is_complete_and_consistent"
+   ],
+   "evidence": [
+    "evidence/gate_report.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C071",
+   "requirement": "Expose Current control-state system health, readiness, version, configuration, dependency status, and active capability set.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.version"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_health_version_metrics",
+    "test_service.HealthTest.test_diagnostics_protected",
+    "test_service.HealthTest.test_liveness_detects_stall",
+    "test_service.HealthTest.test_liveness_readiness_version"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C072",
+   "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "observability.py::Metrics"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_metrics_catalog_and_exposition"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C073",
+   "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "observability.py::StructuredLogger"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_structured_log_schema_redaction_and_storm_control"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C074",
+   "requirement": "Propagate trace context across all relevant Current control-state system boundaries.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "observability.py::Tracer"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_trace_propagation_and_error_bias"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C075",
+   "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "observability.py::Metrics._key"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_cardinality_cap"
+   ],
+   "evidence": [
+    "docs/TELEMETRY_POLICY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C076",
+   "requirement": "Record the reason for every automated decision made by Current control-state system.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "observability.py::ExplainStore"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_explain_record"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C077",
+   "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.get_explanation"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_explain_record"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C078",
+   "requirement": "Correlate Current control-state system events with application release lineage and the live infrastructure graph.",
+   "dimension": "Observability & Explainability",
+   "status": "partial",
+   "implementation": [
+    "service.py::BUILD_INFO"
+   ],
+   "tests": [
+    "test_service.ObservabilityTest.test_explain_record"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-004",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C079",
+   "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+   "dimension": "Observability & Explainability",
+   "status": "verified",
+   "implementation": [
+    "observability.py::METRIC_CATALOG"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/TELEMETRY_POLICY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C080",
+   "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+   "dimension": "Observability & Explainability",
+   "status": "partial",
+   "implementation": [
+    "observability.py::Metrics"
+   ],
+   "tests": [],
+   "evidence": [
+    "observability/dashboards/overview.json",
+    "observability/alerts/inv05-rules.yml"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C081",
+   "requirement": "Create unit tests for deterministic Current control-state system logic and state transitions.",
+   "dimension": "Testing & Certification",
+   "status": "verified",
+   "implementation": [
+    "store.py::ControlStore"
+   ],
+   "tests": [
+    "test_state.StateModelTest.test_compaction_cannot_advance_beyond_current_revision",
+    "test_state.StateModelTest.test_compare_and_swap_and_no_partial_write",
+    "test_state.StateModelTest.test_compare_and_write_are_atomic_between_threads",
+    "test_state.StateModelTest.test_exposed_containers_are_snapshots",
+    "test_state.StateModelTest.test_invalid_revisions_and_keys_fail_closed",
+    "test_state.StateModelTest.test_watch_compaction_never_silently_gaps",
+    "test_store.CompactionTest.test_cannot_compact_future",
+    "test_store.CompactionTest.test_compaction_drops_deleted_keys",
+    "test_store.CompactionTest.test_protected_revision_blocks_compaction",
+    "test_store.DeleteTest.test_compare_and_delete",
+    "test_store.DeleteTest.test_delete_absent_is_idempotent_and_no_revision",
+    "test_store.DeleteTest.test_delete_tombstone_events_and_recreate",
+    "test_store.DeleteTest.test_null_value_is_a_value_not_a_delete",
+    "test_store.DeleteTest.test_prefix_delete",
+    "test_store.LeaseTest.test_expiry_deletes_attached_keys_with_expire_events",
+    "test_store.LeaseTest.test_fencing_blocks_stale_owner",
+    "test_store.LeaseTest.test_lease_compare_and_revoke",
+    "test_store.LeaseTest.test_remaining_ttl_from_monotonic_clock",
+    "test_store.LeaseTest.test_ttl_bounds_and_quota",
+    "test_store.ReadApiTest.test_compacted_future_and_invalid_revisions",
+    "test_store.ReadApiTest.test_page_size_limit",
+    "test_store.ReadApiTest.test_pagination_is_stable_under_concurrent_writes",
+    "test_store.ReadApiTest.test_point_read_current_and_historical",
+    "test_store.ReadApiTest.test_prefix_end",
+    "test_store.ReadApiTest.test_prefix_order_and_boundaries",
+    "test_store.ReadApiTest.test_tampered_page_token",
+    "test_store.SnapshotTest.test_snapshot_then_watch_from_next_revision_has_no_gap_or_dup",
+    "test_store.TxnTest.test_ambiguous_branches_rejected",
+    "test_store.TxnTest.test_contenders_single_winner",
+    "test_store.TxnTest.test_failure_branch_executes",
+    "test_store.TxnTest.test_idempotent_request_id",
+    "test_store.TxnTest.test_key_policy",
+    "test_store.TxnTest.test_limits",
+    "test_store.TxnTest.test_one_revision_per_txn_and_per_op_results",
+    "test_store.TxnTest.test_rich_predicates",
+    "test_store.TxnTest.test_unsupported_predicates_rejected_before_execution"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C082",
+   "requirement": "Create contract tests for every public Current control-state system interface.",
+   "dimension": "Testing & Certification",
+   "status": "verified",
+   "implementation": [
+    "conformance/runner.py::run_file"
+   ],
+   "tests": [
+    "test_protocol.CompatibilityLockTest.test_breaking_change_detector_detects",
+    "test_protocol.CompatibilityLockTest.test_error_catalog_is_append_only",
+    "test_protocol.CompatibilityLockTest.test_schema_has_no_breaking_change_against_lock",
+    "test_protocol.ConformanceRunnerTest.test_all_vectors_pass",
+    "test_protocol.ConformanceRunnerTest.test_subset_matcher",
+    "test_protocol.ErrorModelTest.test_categories_cover_required_classes",
+    "test_protocol.ErrorModelTest.test_wire_form_is_safe",
+    "test_protocol.GoldenTest.test_error_vector_codes_exist",
+    "test_protocol.GoldenTest.test_event_roundtrip",
+    "test_protocol.GoldenTest.test_every_message_type_has_a_golden_vector_that_parses",
+    "test_protocol.NegotiationTest.test_negotiation",
+    "test_protocol.NegotiationTest.test_strict_parsing"
+   ],
+   "evidence": [
+    "conformance/vectors_v1.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C083",
+   "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+   "dimension": "Testing & Certification",
+   "status": "partial",
+   "implementation": [
+    "server.py::ControlStateHTTPServer"
+   ],
+   "tests": [
+    "test_http.MTLSEndToEnd.test_client_retries_respect_retry_after_and_budget",
+    "test_http.MTLSEndToEnd.test_duplicate_keys_and_oversized_body",
+    "test_http.MTLSEndToEnd.test_foreign_trust_domain_rejected_and_audited",
+    "test_http.MTLSEndToEnd.test_health_version_metrics",
+    "test_http.MTLSEndToEnd.test_mirror_converges_under_writers_and_compaction",
+    "test_http.MTLSEndToEnd.test_negotiation_and_schema_errors",
+    "test_http.MTLSEndToEnd.test_no_client_cert_rejected",
+    "test_http.MTLSEndToEnd.test_server_certificate_rotation_without_restart",
+    "test_http.MTLSEndToEnd.test_server_identity_verified_by_client",
+    "test_http.MTLSEndToEnd.test_tls_policy_checks",
+    "test_http.MTLSEndToEnd.test_txn_and_range_over_mtls",
+    "test_http.MTLSEndToEnd.test_watch_stream_events_and_progress",
+    "test_http.TokenLoopbackAndShutdown.test_bearer_tokens_and_graceful_drain",
+    "test_http.TokenLoopbackAndShutdown.test_quota_maps_to_429_with_retry_after"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-004",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C084",
+   "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Current control-state system.",
+   "dimension": "Testing & Certification",
+   "status": "partial",
+   "implementation": [
+    "backend.py::runtime_self_test"
+   ],
+   "tests": [
+    "test_protocol.NegotiationTest.test_negotiation",
+    "test_protocol.NegotiationTest.test_strict_parsing"
+   ],
+   "evidence": [
+    ".github/workflows/ci.yml"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-004",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C085",
+   "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Current control-state system.",
+   "dimension": "Testing & Certification",
+   "status": "verified",
+   "implementation": [
+    "schema.py::loads"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_authz_privilege_boundaries",
+    "test_fuzz.FuzzTest.test_frames_and_unknown_fields",
+    "test_fuzz.FuzzTest.test_keys_never_crash_or_escape",
+    "test_fuzz.FuzzTest.test_resource_exhaustion_under_limits",
+    "test_fuzz.FuzzTest.test_revisions",
+    "test_fuzz.FuzzTest.test_service_txn_fuzz_never_leaks_or_crashes"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C086",
+   "requirement": "Create concurrency and race-condition tests for shared/distributed Current control-state system state.",
+   "dimension": "Testing & Certification",
+   "status": "verified",
+   "implementation": [
+    "linearizability.py::check"
+   ],
+   "tests": [
+    "test_linearizability.LinearizabilityTest.test_checker_rejects_a_stale_read",
+    "test_linearizability.LinearizabilityTest.test_checker_rejects_double_cas_winner",
+    "test_linearizability.LinearizabilityTest.test_concurrent_ops_may_linearize_either_way",
+    "test_linearizability.LinearizabilityTest.test_engine_histories_are_linearizable",
+    "test_linearizability.LinearizabilityTest.test_history_under_injected_crash_and_recovery",
+    "test_linearizability.LinearizabilityTest.test_indeterminate_operations",
+    "test_store.TxnTest.test_contenders_single_winner"
+   ],
+   "evidence": [],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C087",
+   "requirement": "Create security tests derived directly from the Current control-state system threat model.",
+   "dimension": "Testing & Certification",
+   "status": "verified",
+   "implementation": [
+    "security.py::Authorizer"
+   ],
+   "tests": [
+    "test_fuzz.FuzzTest.test_authz_privilege_boundaries",
+    "test_security.MTLSTest.test_rejections",
+    "test_security.MTLSTest.test_valid_identity_binds_namespace",
+    "test_security.SecretsTest.test_error_messages_never_carry_secret_values",
+    "test_security.SecretsTest.test_key_derivation_separates_purposes",
+    "test_security.SecretsTest.test_redaction",
+    "test_security.SecretsTest.test_secret_file_permissions_and_env",
+    "test_security.TLSConfigTest.test_client_context_policy",
+    "test_security.TokenTest.test_forgery_and_replay_to_other_audience",
+    "test_security.TokenTest.test_issue_verify_rotate_expire"
+   ],
+   "evidence": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C088",
+   "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Current control-state system.",
+   "dimension": "Testing & Certification",
+   "status": "partial",
+   "implementation": [
+    "bench.py::run"
+   ],
+   "tests": [],
+   "evidence": [
+    "evidence/bench_smoke.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-005",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C089",
+   "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+   "dimension": "Testing & Certification",
+   "status": "partial",
+   "implementation": [
+    "replication.py::sync_once",
+    "backup.py::restore_backup"
+   ],
+   "tests": [
+    "test_backup_repl.BackupTest.test_backup_keys_independent_of_data_keys",
+    "test_backup_repl.BackupTest.test_backup_verify_restore_roundtrip",
+    "test_backup_repl.BackupTest.test_restore_never_overwrites_live_state",
+    "test_backup_repl.BackupTest.test_tampering_is_detected",
+    "test_backup_repl.CompactionControllerTest.test_maintenance_window",
+    "test_backup_repl.CompactionControllerTest.test_policy_margin_protection_watch_floor_and_rate",
+    "test_backup_repl.ReplicationTest.test_gap_detected",
+    "test_backup_repl.ReplicationTest.test_ordered_apply_lag_and_idempotent_redelivery",
+    "test_backup_repl.ReplicationTest.test_resync_after_compaction",
+    "test_backup_repl.ReplicationTest.test_stale_epoch_fenced_after_failover",
+    "test_http.TokenLoopbackAndShutdown.test_bearer_tokens_and_graceful_drain"
+   ],
+   "evidence": [
+    "docs/DR_PLAN.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C090",
+   "requirement": "Require machine-readable acceptance evidence before certifying a Current control-state system release for production.",
+   "dimension": "Testing & Certification",
+   "status": "verified",
+   "implementation": [
+    "tools/ci_gate.py"
+   ],
+   "tests": [
+    "test_tooling.ExceptionsTest.test_register_valid_today_and_expiry_enforced",
+    "test_tooling.MasterMdTest.test_current_tree_is_clean",
+    "test_tooling.MasterMdTest.test_detects_false_presence_claim",
+    "test_tooling.ReleaseGateTest.test_ci_gate_skip_policy_only_allows_framework_tests",
+    "test_tooling.ReleaseGateTest.test_release_gate_blocks_on_open_p0",
+    "test_tooling.SupplyChainTest.test_compat_tool_passes",
+    "test_tooling.SupplyChainTest.test_manifest_sbom_provenance",
+    "test_tooling.TraceabilityTest.test_checker_detects_gaps",
+    "test_tooling.TraceabilityTest.test_markdown_render",
+    "test_tooling.TraceabilityTest.test_matrix_is_complete_and_consistent"
+   ],
+   "evidence": [
+    "evidence/gate_report.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C091",
+   "requirement": "Define production SLOs, error budgets, and support commitments for Current control-state system.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "contract.py::build"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/REQUIREMENTS.md",
+    "observability/alerts/inv05-rules.yml"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C092",
+   "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Current control-state system.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.break_glass"
+   ],
+   "tests": [
+    "test_service.ControlsTest.test_break_glass_is_audited_and_disables_data_plane"
+   ],
+   "evidence": [
+    "docs/ROLLOUT.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C093",
+   "requirement": "Maintain a supported-version compatibility matrix for Current control-state system and adjacent dependencies.",
+   "dimension": "Operations, Release & Governance",
+   "status": "partial",
+   "implementation": [
+    "backend.py::SUPPORTED_PYTHON"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/COMPATIBILITY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C094",
+   "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Current control-state system.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "tools_check.py::sbom"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/SECURITY_POLICY.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C095",
+   "requirement": "Provide backup, restore, migration, or reconstruction procedures for Current control-state system state where applicable.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "backup.py::create_backup",
+    "backup.py::restore_backup"
+   ],
+   "tests": [
+    "test_backup_repl.BackupTest.test_backup_keys_independent_of_data_keys",
+    "test_backup_repl.BackupTest.test_backup_verify_restore_roundtrip",
+    "test_backup_repl.BackupTest.test_restore_never_overwrites_live_state",
+    "test_backup_repl.BackupTest.test_tampering_is_detected"
+   ],
+   "evidence": [
+    "docs/DR_PLAN.md",
+    "evidence/restore_drill.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C096",
+   "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "bootstrap.py::main"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/operations/RUNBOOK_DAY0.md",
+    "docs/operations/RUNBOOK_DAY1.md",
+    "docs/operations/RUNBOOK_DAY2.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C097",
+   "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "service.py::ControlStateService.quarantine"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/operations/INCIDENTS.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C098",
+   "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+   "dimension": "Operations, Release & Governance",
+   "status": "partial",
+   "implementation": [
+    "docs/GOVERNANCE.md"
+   ],
+   "tests": [],
+   "evidence": [
+    "docs/GOVERNANCE.md"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-006",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C099",
+   "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+   "dimension": "Operations, Release & Governance",
+   "status": "verified",
+   "implementation": [
+    "tools_check.py::check_exceptions"
+   ],
+   "tests": [
+    "test_tooling.ExceptionsTest.test_register_valid_today_and_expiry_enforced",
+    "test_tooling.MasterMdTest.test_current_tree_is_clean",
+    "test_tooling.MasterMdTest.test_detects_false_presence_claim",
+    "test_tooling.ReleaseGateTest.test_ci_gate_skip_policy_only_allows_framework_tests",
+    "test_tooling.ReleaseGateTest.test_release_gate_blocks_on_open_p0",
+    "test_tooling.SupplyChainTest.test_compat_tool_passes",
+    "test_tooling.SupplyChainTest.test_manifest_sbom_provenance",
+    "test_tooling.TraceabilityTest.test_checker_detects_gaps",
+    "test_tooling.TraceabilityTest.test_markdown_render",
+    "test_tooling.TraceabilityTest.test_matrix_is_complete_and_consistent"
+   ],
+   "evidence": [
+    "docs/EXCEPTIONS.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "",
+   "last_verified": "4.3.0"
+  },
+  {
+   "id": "INV-05-C100",
+   "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+   "dimension": "Operations, Release & Governance",
+   "status": "partial",
+   "implementation": [
+    "tools/release_gate.py"
+   ],
+   "tests": [
+    "test_tooling.ExceptionsTest.test_register_valid_today_and_expiry_enforced",
+    "test_tooling.MasterMdTest.test_current_tree_is_clean",
+    "test_tooling.MasterMdTest.test_detects_false_presence_claim",
+    "test_tooling.ReleaseGateTest.test_ci_gate_skip_policy_only_allows_framework_tests",
+    "test_tooling.ReleaseGateTest.test_release_gate_blocks_on_open_p0",
+    "test_tooling.SupplyChainTest.test_compat_tool_passes",
+    "test_tooling.SupplyChainTest.test_manifest_sbom_provenance",
+    "test_tooling.TraceabilityTest.test_checker_detects_gaps",
+    "test_tooling.TraceabilityTest.test_markdown_render",
+    "test_tooling.TraceabilityTest.test_matrix_is_complete_and_consistent"
+   ],
+   "evidence": [
+    "evidence/gate_report.json"
+   ],
+   "owner": "engineering-owner (proposed: D. P. Russell)",
+   "reviewer": "security-owner (to be named)",
+   "exception": "EX-001",
+   "last_verified": "4.3.0"
+  }
+ ]
+}

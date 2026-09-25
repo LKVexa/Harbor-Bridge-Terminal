@@ -1,0 +1,100 @@
+{"id": "C21-001", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#admission-order", "gateway/server.js"], "note": "/ws/terminal requires identity in admission order; /health,/live unauthenticated by exception"}
+{"id": "C21-002", "status": "PASS", "evidence": ["gateway/auth.js:71-76", "gateway/server.js:162-177"], "note": "native (bearer, no Origin) vs browser (ticket cookie) categories distinguished in code"}
+{"id": "C21-003", "status": "PASS", "evidence": ["gateway/auth.js:1-13"], "note": "comment states no OIDC/JWT invented; hashed bearer/API-key model chosen and justified"}
+{"id": "C21-004", "status": "PASS", "evidence": ["gateway/auth.js:51", "docs/SECURITY.md#assets-and-trust-boundaries"], "note": "principal={sub,tenant,capabilities,notAfter} defined as worker-facing identity"}
+{"id": "C21-005", "status": "PASS", "evidence": ["gateway/auth.js", "gateway/connection.js:168"], "note": "authenticate() separate from capabilities.has('terminal') route authorization check"}
+{"id": "C21-006", "status": "PASS", "evidence": ["gateway/server.js:162-177", "gateway/origin.js"], "note": "Origin check (o.ok) is a distinct step before/independent of principal auth"}
+{"id": "C21-007", "status": "PASS", "evidence": ["gateway/server.js:97"], "note": "/health/live comment: 'minimal, unauthenticated, constant work, no secrets'"}
+{"id": "C21-008", "status": "PASS", "evidence": ["gateway/auth.js:35,50", "docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "notAfter and revoked fields; 30s re-read sweep ends live sessions"}
+{"id": "C21-009", "status": "IN_PROGRESS", "evidence": ["docs/SECURITY.md#residual-risks"], "note": "residual risks list gaps but not explicitly framed as gaps in a source article's auth detail"}
+{"id": "C21-010", "status": "OPEN", "evidence": [], "note": "no record found of a pre-coding approval step for the authentication contract"}
+{"id": "C21-011", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#admission-order", "gateway/auth.js:71-76"], "note": "native client path documented as bearer header with no Origin"}
+{"id": "C21-012", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "real Chromium sign-in test exercises the browser credential mechanism (ticket flow)"}
+{"id": "C21-013", "status": "PASS", "evidence": ["gateway/tickets.js", "gateway/server.js:110-129"], "note": "ticket-cookie exchange avoids requiring the browser to set an Authorization header"}
+{"id": "C21-014", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#admission-order"], "note": "loopback-dev | bearer header (native) | ticket cookie (browser) enumerated per client category"}
+{"id": "C21-015", "status": "PASS", "evidence": ["gateway/server.js:129", "tests/gateway/config.test.js"], "note": "allowQueryTicket gated on operator confirming query redaction; log redaction of query strings tested"}
+{"id": "C21-016", "status": "PASS", "evidence": ["gateway/log.js:16"], "note": "safePath strips query string before logging"}
+{"id": "C21-017", "status": "PASS", "evidence": ["gateway/server.js:167-177"], "note": "explicit precedence: loopback-dev, then native bearer (Origin null), then ticket"}
+{"id": "C21-018", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:167-177"], "note": "priority order exists but no explicit reject-on-both-present-simultaneously logic found"}
+{"id": "C21-019", "status": "PASS", "evidence": ["docs/SECURITY.md#residual-risks", "gateway/server.js"], "note": "VWS_SECURE_COOKIES default 1 requires HTTPS; secure cookie flag set accordingly"}
+{"id": "C21-020", "status": "PASS", "evidence": ["docs/SECURITY.md#residual-risks"], "note": "TLS-edge assumption, X-Forwarded-Proto trust, static-file identity limits documented"}
+{"id": "C21-021", "status": "PASS", "evidence": ["gateway/auth.js:71-76", "gateway/tickets.js:40-48"], "note": "bearerFrom/cookieValue extract only the named header/cookie field"}
+{"id": "C21-022", "status": "IN_PROGRESS", "evidence": ["gateway/auth.js:71-76"], "note": "missing header and empty/malformed header both yield null identically; not internally distinguished"}
+{"id": "C21-023", "status": "PASS", "evidence": ["gateway/auth.js:74"], "note": "bearer regex rejects malformed encoding/charset"}
+{"id": "C21-024", "status": "PASS", "evidence": ["gateway/auth.js:46,74"], "note": "length bounded 32-512 chars before hashing/compare"}
+{"id": "C21-025", "status": "OPEN", "evidence": [], "note": "no code found explicitly rejecting simultaneous conflicting credential presentations"}
+{"id": "C21-026", "status": "PASS", "evidence": ["gateway/tickets.js:26-34"], "note": "consume() only trusts a ticket matched to a stored SHA-256 verifier, not the decoded bytes alone"}
+{"id": "C21-027", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: Node gateway, no PowerShell content interpretation exists"}
+{"id": "C21-028", "status": "PASS", "evidence": ["gateway/auth.js:31-35"], "note": "only sub/tenant/tokenSha256/capabilities validated and used; no extra normalization"}
+{"id": "C21-029", "status": "PASS", "evidence": ["gateway/log.js:10", "gateway/connection.js"], "note": "logger drops token/cookie/secret/authorization fields; session logs carry conn id/tenant/sub only"}
+{"id": "C21-030", "status": "OPEN", "evidence": [], "note": "no unit test found that exercises bearerFrom/cookieValue independent of the live HTTP/WS upgrade path"}
+{"id": "C21-031", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT not selected as credential format; static-file hashed-bearer model used instead"}
+{"id": "C21-032", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive; no audience configuration exists"}
+{"id": "C21-033", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-034", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-035", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-036", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-037", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-038", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-039", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "JWT branch inactive"}
+{"id": "C21-040", "status": "IN_PROGRESS", "evidence": ["gateway/auth.js:1-13"], "note": "JWT not selected is documented, but no explicit checklist marking of JWT items as N/A exists"}
+{"id": "C21-041", "status": "PASS", "evidence": ["gateway/auth.js:20-40", "docs/OPERATIONS.md#principals"], "note": "operator-owned principals.json is the authoritative key source"}
+{"id": "C21-042", "status": "PASS", "evidence": ["gateway/auth.js:35"], "note": "principal entries map sub/tenant to a capabilities set (terminal, fabric)"}
+{"id": "C21-043", "status": "PASS", "evidence": ["docs/OPERATIONS.md#principals", "tools/mkprincipal.js"], "note": "mkprincipal.js documented as the operator-owned creation/rotation tool"}
+{"id": "C21-044", "status": "PASS", "evidence": ["gateway/auth.js:49"], "note": "crypto.timingSafeEqual used for key comparison, no early exit"}
+{"id": "C21-045", "status": "PASS", "evidence": ["gateway/auth.js:35,51"], "note": "only tokenSha256 stored/held; principal object never carries the raw token"}
+{"id": "C21-046", "status": "PASS", "evidence": ["gateway/auth.js:35,50", "tests/security/authz.test.js"], "note": "revoked flag plus 30s re-read sweep defines revocation behavior"}
+{"id": "C21-047", "status": "PASS", "evidence": ["gateway/auth.js:44-51"], "note": "authenticate() returns null for no match/revoked/expired"}
+{"id": "C21-048", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'revocation ends a live session; revoked token cannot reconnect'"}
+{"id": "C21-049", "status": "OPEN", "evidence": [], "note": "no test found for key rotation without granting unintended access"}
+{"id": "C21-050", "status": "NOT_APPLICABLE", "evidence": ["gateway/auth.js:1-13"], "note": "API-key branch IS the active model here, so the opt-out marking this item asks for does not apply"}
+{"id": "C21-051", "status": "PASS", "evidence": ["gateway/auth.js:51"], "note": "authenticate() returns the minimal {sub,tenant,capabilities,notAfter} object"}
+{"id": "C21-052", "status": "PASS", "evidence": ["gateway/connection.js:168,174"], "note": "terminal/fabric capabilities checked against the requested route's needs"}
+{"id": "C21-053", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'session ids authorize nothing: another connection cannot address a live sid'"}
+{"id": "C21-054", "status": "PASS", "evidence": ["gateway/server.js:167-182"], "note": "principal derived server-side only from validated token/ticket, never a client-supplied field"}
+{"id": "C21-055", "status": "PASS", "evidence": ["gateway/connection.js:20-21", "docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "Connection carries principal object to the worker path; worker env is a fixed allowlist, not the token"}
+{"id": "C21-056", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:184"], "note": "log.info('ws.accepted',{conn.id,tenant,sub,origin}) omits credential contents [downgraded: RECORD item without a written record]"}
+{"id": "C21-057", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:168"], "note": "capability check happens after upgrade at session.open, not pre-upgrade"}
+{"id": "C21-058", "status": "PASS", "evidence": ["gateway/connection.js:168,174"], "note": "terminal/fabric capability checks defined for post-open command handling"}
+{"id": "C21-059", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "session-id ownership test covers one identity addressing another's session"}
+{"id": "C21-060", "status": "PASS", "evidence": ["docs/SECURITY.md#assets-and-trust-boundaries"], "note": "trust-boundary table assigns 'worker entry path, environment allowlist' to the worker side"}
+{"id": "C21-061", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'no credential...-> 401' before upgrade"}
+{"id": "C21-062", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'malformed header -> 401' before upgrade"}
+{"id": "C21-063", "status": "IN_PROGRESS", "evidence": ["gateway/auth.js:50"], "note": "notAfter check implemented in code, but no dedicated expired-credential test was found (only revoked-token test)"}
+{"id": "C21-064", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'revocation ends a live session; revoked token cannot reconnect'"}
+{"id": "C21-065", "status": "PASS", "evidence": ["gateway/connection.js:168", "tests/fabric/fabric-ws.test.js"], "note": "'principal without the fabric capability has no fabric commands at all'"}
+{"id": "C21-066", "status": "PASS", "evidence": ["gateway/auth.js:24,39"], "note": "principals_unreadable vs principals_invalid vs no-match are distinct internal log events"}
+{"id": "C21-067", "status": "PASS", "evidence": ["gateway/server.js:123"], "note": "all auth failures reduce to generic {error:'unauthorized'} 401 response"}
+{"id": "C21-068", "status": "PASS", "evidence": ["gateway/server.js:80"], "note": "per-address ticket rate limit bounds repeated validation attempts"}
+{"id": "C21-069", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#admission-order"], "note": "identity check occurs before capacity reservation/worker spawn"}
+{"id": "C21-070", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "rejected requests return 401, never fall through to a principal (no anonymous default when static-file selected)"}
+{"id": "C21-071", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#state-machine", "gateway/connection.js:49"], "note": "CONNECTING->AUTHENTICATED fixes identity at connection, re-checked via stillValid()"}
+{"id": "C21-072", "status": "PASS", "evidence": ["gateway/connection.js:49", "docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "30s sweep ends sessions on expiry (stillValid check, 'expired' close)"}
+{"id": "C21-073", "status": "PASS", "evidence": ["gateway/connection.js:49", "tests/security/authz.test.js"], "note": "same sweep/close path ends sessions on revocation"}
+{"id": "C21-074", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md", "tests/ui/browser.test.js"], "note": "browser test: transport loss -> fresh-ticket reconnect as a NEW session"}
+{"id": "C21-075", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js"], "note": "full-jitter reconnect backoff exists, but no explicit stop-on-permanently-invalid-credential logic found"}
+{"id": "C21-076", "status": "PASS", "evidence": ["gateway/connection.js:49"], "note": "connection closed 1008 'expired' when stillValid() fails"}
+{"id": "C21-077", "status": "OPEN", "evidence": [], "note": "no test found for reconnection specifically with a rotated credential"}
+{"id": "C21-078", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md", "docs/vws200/PROTOCOL.md#state-machine"], "note": "D-004: session.resume always returns RESUME_UNAVAILABLE, so resumption cannot be tested"}
+{"id": "C21-079", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#state-machine"], "note": "sid ownership enforced per message (FORBIDDEN for any non-owned sid) documents ongoing authorization"}
+{"id": "C21-080", "status": "PASS", "evidence": ["docs/SECURITY.md#residual-risks"], "note": "limitations beyond handshake auth (no MFA/rotation workflow, TLS assumption) recorded"}
+{"id": "C21-081", "status": "PASS", "evidence": ["gateway/server.js:191"], "note": "gateway.listening log fields are host/port/auth/fabric/maxSessions, no secrets"}
+{"id": "C21-082", "status": "PASS", "evidence": ["gateway/server.js:184"], "note": "ws.accepted log omits token/ticket contents"}
+{"id": "C21-083", "status": "PASS", "evidence": ["gateway/log.js:16"], "note": "safePath strips the entire query string before logging"}
+{"id": "C21-084", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#errors"], "note": "'Messages are fixed safe strings (no echoed input, no paths, no stack)'"}
+{"id": "C21-085", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "conn.id (non-secret) used as correlation id in log fields, not the credential"}
+{"id": "C21-086", "status": "PASS", "evidence": ["gateway/server.js:80"], "note": "per-address ticket rate limit bounds repetitive auth-failure diagnostics/attempts"}
+{"id": "C21-087", "status": "IN_PROGRESS", "evidence": ["gateway/auth.js:38"], "note": "'auth.principals_loaded',{count} logged on reload without secret contents [downgraded: RECORD item without a written record]"}
+{"id": "C21-088", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'secrets and host details never reach the shell, the protocol, or the logs' uses synthetic tokens (e.g. 'sk-live')"}
+{"id": "C21-089", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RELEASE.md#supply-chain"], "note": "'no third-party runtime dependencies' documents the crypto/validation dependency review outcome [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C21-090", "status": "PASS", "evidence": ["docs/SECURITY.md", "docs/vws200/RELEASE.md#gate-decision"], "note": "'no independent security review has taken place' and gate table record unverified assumptions as gates"}
+{"id": "C21-091", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md", "docs/SECURITY.md"], "note": "authentication and transport contract published in these documents"}
+{"id": "C21-092", "status": "IN_PROGRESS", "evidence": ["gateway/auth.js:1-13"], "note": "header comment documents the selected static-file hashed-bearer (API-key-like) branch, JWT explicitly not invented [downgraded: RECORD item without a written re"}
+{"id": "C21-093", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md", "tests/ui/browser.test.js"], "note": "validation doc links browser (Chromium) and native (authz) compatibility evidence"}
+{"id": "C21-094", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md", "tests/security/authz.test.js"], "note": "validation table links authz.test.js and e2e.test.js for valid-credential connections"}
+{"id": "C21-095", "status": "IN_PROGRESS", "evidence": ["docs/vws200/VALIDATION.md", "tests/security/authz.test.js"], "note": "malformed/revoked credential tests linked; no expired-credential test to link"}
+{"id": "C21-096", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md", "tests/security/authz.test.js"], "note": "cross-session/tenant authorization test linked via authz.test.js row"}
+{"id": "C21-097", "status": "PASS", "evidence": ["docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "'Credential in URL/logs' control row links to the redaction test"}
+{"id": "C21-098", "status": "PASS", "evidence": ["docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "'Revoked user keeps a session' row documents expiry/revocation behavior for active sessions"}
+{"id": "C21-099", "status": "PASS", "evidence": ["docs/SECURITY.md#residual-risks"], "note": "item 8: desktop build has no lockfile (OPEN) recorded as unresolved runtime requirement"}
+{"id": "C21-100", "status": "PASS", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "GO/CONDITIONAL/NO-GO gates require demonstrated validation/rejection evidence before approval"}

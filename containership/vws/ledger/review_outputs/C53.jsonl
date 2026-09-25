@@ -1,0 +1,100 @@
+{"id": "C53-001", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#The-claim-and-what-it-is-not", "worker/fabric-lease.js"], "note": "No session/app files by design (RAMWS.md), but fabric-lease.js writes owner-pid files under a slot dir, undocumented in the inventory."}
+{"id": "C53-002", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md", "worker/fabric-lease.js"], "note": "No consolidated directory inventory; fabric lease slot dir (mkdirSync) is a real, undocumented write path."}
+{"id": "C53-003", "status": "PASS", "evidence": ["docs/vws200/ARCHITECTURE.md#6-Repository-split"], "note": "Zero third-party runtime deps, nothing to npm install in image; still true (historical doc, unchanged)."}
+{"id": "C53-004", "status": "PASS", "evidence": ["docs/SECURITY.md#Changed-boundaries", "docs/RAMWS.md"], "note": "Disk row: 'No session state reaches disk; nothing to protect at rest' vs bounded ledgered RAM."}
+{"id": "C53-005", "status": "PASS", "evidence": ["docs/RAMWS.md#Decisions", "docs/PROTOCOL_V2.md#Session-open-and-epochs"], "note": "RD-01: none must survive; process loss loses sessions, disclosed via session.reset with exact unknown-outcome count."}
+{"id": "C53-006", "status": "PASS", "evidence": ["docs/RAMWS.md#Decisions"], "note": "All session/transport state is discardable by design (LOCAL_VOLATILE); nothing is deemed durable."}
+{"id": "C53-007", "status": "PASS", "evidence": ["docs/RAMWS.md#The-claim-and-what-it-is-not"], "note": "Explicit: 'ordinary RAM stores data... nothing is spilled to disk, by policy and by code'."}
+{"id": "C53-008", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Docker/Render/target host available in this environment; RD-03/D-001."}
+{"id": "C53-009", "status": "OPEN", "evidence": [], "note": "No named storage-policy owner role/person recorded anywhere in docs."}
+{"id": "C53-010", "status": "PASS", "evidence": ["docs/RAMWS.md#Decisions"], "note": "RD-01 LOCAL_VOLATILE approved by the owner on 2026-09-21, recorded in RAMWS.md."}
+{"id": "C53-011", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "No temp receive/processing files are selected; VFS is in-memory (ram/ledger.js quotas), not disk."}
+{"id": "C53-012", "status": "PASS", "evidence": ["gateway/config.js", "tests/gateway/config.test.js"], "note": "Logs are structured JSON to logSink/stdout only; no local log file path exists in config or server.js."}
+{"id": "C53-013", "status": "NOT_APPLICABLE", "evidence": ["ram/ledger.js", "ram/allowance.js"], "note": "No generated on-disk caches; SlabPool/idle allowance are RAM, ledgered."}
+{"id": "C53-014", "status": "PASS", "evidence": ["docs/vws200/ARCHITECTURE.md#6-Repository-split"], "note": "No runtime dependency downloads (zero third-party deps); nothing downloaded at runtime."}
+{"id": "C53-015", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#Session-open-and-epochs", "ram/descriptor.js"], "note": "Session metadata (descriptors, plan identity) lives only in process RAM per descriptor.js; never persisted."}
+{"id": "C53-016", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "Application does not support uploaded user content (terminal/fabric only)."}
+{"id": "C53-017", "status": "NOT_APPLICABLE", "evidence": ["docs/SECURITY.md"], "note": "No auth cache files; tickets/tokens are in-memory (tests/security/authz.test.js)."}
+{"id": "C53-018", "status": "OPEN", "evidence": [], "note": "No crash-dump policy documented; Node default core/heap dump behavior not addressed."}
+{"id": "C53-019", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md", "docs/SECURITY.md"], "note": "Retention stated qualitatively (nothing persists) but no per-class retention/deletion rule table exists."}
+{"id": "C53-020", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#Not-done-not-claimed"], "note": "'Not done/not claimed' lists major omissions (PIM, durability, multi-instance) but not a file-producing-feature scope table."}
+{"id": "C53-021", "status": "OPEN", "evidence": [], "note": "No document states the working directory explicitly (cwd is implicit repo root in tests/helpers.js only)."}
+{"id": "C53-022", "status": "IN_PROGRESS", "evidence": ["tests/helpers.js", "tests/load/experiment.js"], "note": "Test harnesses use os.tmpdir()/mkdtemp for principals files; not documented as an app write location, only used in tests."}
+{"id": "C53-023", "status": "OPEN", "evidence": [], "note": "No explicitly-writable application directory is documented for production runtime."}
+{"id": "C53-024", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "No tool-created cache directories; no build/package step at runtime (zero deps)."}
+{"id": "C53-025", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md#6-Repository-split"], "note": "No module installation/update at runtime; zero third-party deps."}
+{"id": "C53-026", "status": "PASS", "evidence": ["docs/vws200/ARCHITECTURE.md#6-Repository-split"], "note": "No install step, so no unreviewed writes into runtime install dirs occur."}
+{"id": "C53-027", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Docker/Render/target host available in this environment; RD-03/D-001."}
+{"id": "C53-028", "status": "OPEN", "evidence": [], "note": "worker/fabric-lease.js writes files but no permission requirements are documented for that path."}
+{"id": "C53-029", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Docker/Render/target host available in this environment; RD-03/D-001."}
+{"id": "C53-030", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md", "worker/fabric-lease.js"], "note": "Session/transport writes are documented as none; the fabric-lease slot-directory writes are real but undocumented."}
+{"id": "C53-031", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#Not-done-not-claimed"], "note": "No shared-state architecture selected; DISTRIBUTED_VOLATILE/DURABLE_HYBRID explicitly not implemented (RD-01)."}
+{"id": "C53-032", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "No persistent user files feature exists in this candidate."}
+{"id": "C53-033", "status": "NOT_APPLICABLE", "evidence": ["ram/ledger.js"], "note": "No local disk cache exists to be mistaken for authoritative state; all state is RAM-ledgered."}
+{"id": "C53-034", "status": "NOT_APPLICABLE", "evidence": [], "note": "No disposable disk caches exist to reconstruct (VFS is in-memory and reset on session end)."}
+{"id": "C53-035", "status": "NOT_APPLICABLE", "evidence": [], "note": "No temporary files exist; nothing to recover."}
+{"id": "C53-036", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#Decisions"], "note": "No durable storage is selected (RD-01); the question does not apply."}
+{"id": "C53-037", "status": "IN_PROGRESS", "evidence": ["docs/SECURITY.md#Changed-boundaries"], "note": "Session/terminal data must not touch disk and does not; fabric-lease coordination files are an unaddressed exception."}
+{"id": "C53-038", "status": "PASS", "evidence": ["docs/RAMWS.md#Decisions"], "note": "RD-01 records LOCAL_VOLATILE as a deliberate, owner-approved architectural decision."}
+{"id": "C53-039", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Docker/Render/target host available in this environment; RD-03/D-001."}
+{"id": "C53-040", "status": "PASS", "evidence": ["gateway/config.js"], "note": "Snapshot/persistence env vars (VWS_SNAPSHOTS, VWS_SNAPSHOT_DIR) are explicit startup errors, not silently offered."}
+{"id": "C53-041", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No container/Docker/Render environment available to run an actual container-replacement test."}
+{"id": "C53-042", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No container/Docker/Render environment available to run an actual container-replacement test."}
+{"id": "C53-043", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No container/Docker/Render environment available to run an actual container-replacement test."}
+{"id": "C53-044", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No container/Docker/Render environment available to run an actual container-replacement test."}
+{"id": "C53-045", "status": "PASS", "evidence": ["gateway/server.js", "docs/OPERATIONS.md#Restart-semantics"], "note": "Startup has no dependency on prior local state; config.js refuses persistence options outright so cold start needs none."}
+{"id": "C53-046", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#Decisions"], "note": "No nonlocal session restore is intended under LOCAL_VOLATILE; session.reset replaces it."}
+{"id": "C53-047", "status": "NOT_APPLICABLE", "evidence": [], "note": "No caches exist to be recreated."}
+{"id": "C53-048", "status": "PASS", "evidence": ["tests/ram/v2-e2e.test.js"], "note": "SESSION_RESET tests show a fresh epoch/session is served without cross-session interference; per-session isolation holds."}
+{"id": "C53-049", "status": "IN_PROGRESS", "evidence": ["e/R28/experiment.frozen.json"], "note": "Experiment records host/config for CPU tests, but no equivalent record exists for a storage/replacement test (none run)."}
+{"id": "C53-050", "status": "BLOCKED", "evidence": ["RD-03"], "note": "Only one (absent) storage configuration was ever in scope; cannot avoid generalizing from a test that was not run."}
+{"id": "C53-051", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "No application-owned temporary disk budget exists; RAM budget instead is ram/allowance.js (ceiling formula)."}
+{"id": "C53-052", "status": "NOT_APPLICABLE", "evidence": [], "note": "No local logging is selected (logs go to stdout/logSink only)."}
+{"id": "C53-053", "status": "NOT_APPLICABLE", "evidence": ["ram/ledger.js"], "note": "No disk caches; the in-RAM slab pool has an idle-bytes cap instead (VWS_POOL_IDLE_BYTES)."}
+{"id": "C53-054", "status": "NOT_APPLICABLE", "evidence": [], "note": "No uploads feature exists."}
+{"id": "C53-055", "status": "NOT_APPLICABLE", "evidence": [], "note": "No obsolete temp files exist to clean up."}
+{"id": "C53-056", "status": "NOT_APPLICABLE", "evidence": ["gateway/config.js"], "note": "Local storage unavailability is out of scope; the app never depends on local storage being available."}
+{"id": "C53-057", "status": "NOT_APPLICABLE", "evidence": [], "note": "No application writes depend on disk capacity; ENOSPC on the host filesystem is not handled by the app because it isn't used for session data."}
+{"id": "C53-058", "status": "OPEN", "evidence": [], "note": "No controlled write-failure test exists (no disk write path to test other than fabric-lease, untested for ENOSPC)."}
+{"id": "C53-059", "status": "OPEN", "evidence": [], "note": "No test of startup with an unwritable optional cache directory found in tests/."}
+{"id": "C53-060", "status": "NOT_APPLICABLE", "evidence": [], "note": "No storage capacity tests were run (nothing to bound); RAM limits are recorded instead in e/R28/result.json."}
+{"id": "C53-061", "status": "NOT_APPLICABLE", "evidence": ["docs/SECURITY.md"], "note": "No file classes exist that could contain credentials/payloads; nothing reaches disk."}
+{"id": "C53-062", "status": "PASS", "evidence": ["docs/SECURITY.md#Changed-boundaries", "tests/security/authz.test.js"], "note": "'secrets and host details never reach the shell, the protocol, or the logs' \u2014 tested; and no local files are written at all."}
+{"id": "C53-063", "status": "NOT_APPLICABLE", "evidence": [], "note": "No persisted diagnostics exist; /live is payload/identity-free by design (docs/OPERATIONS.md#Telemetry)."}
+{"id": "C53-064", "status": "NOT_APPLICABLE", "evidence": [], "note": "No approved sensitive temporary files exist."}
+{"id": "C53-065", "status": "NOT_APPLICABLE", "evidence": [], "note": "No sensitive temp artifacts are ever written."}
+{"id": "C53-066", "status": "PASS", "evidence": ["docs/vws200/ARCHITECTURE.md#6-Repository-split"], "note": "No runtime-generated files of any kind are baked into image builds (zero deps, no build step)."}
+{"id": "C53-067", "status": "NOT_APPLICABLE", "evidence": [], "note": "No diagnostic reports with attached files exist; /live is JSON counters only."}
+{"id": "C53-068", "status": "OPEN", "evidence": [], "note": "No test uses synthetic sensitive markers to verify cleanup, since there is no cleanup path to test."}
+{"id": "C53-069", "status": "OPEN", "evidence": [], "note": "No document discusses secure-deletion limitations of the hosting environment (moot given no writes, but unstated)."}
+{"id": "C53-070", "status": "IN_PROGRESS", "evidence": ["docs/SECURITY.md#Retained-residual-risks"], "note": "Residual risks list worker isolation, heap cap and telemetry auth, but not residual disk-storage risk from fabric-lease.js."}
+{"id": "C53-071", "status": "NOT_APPLICABLE", "evidence": [], "note": "No temp processing artifacts are created to clean up."}
+{"id": "C53-072", "status": "PASS", "evidence": ["worker/fabric-lease.js"], "note": "give(slot) rmSync's the lease slot dir on release; a dead owner's stale slot is reclaimed by pid liveness/mtime."}
+{"id": "C53-073", "status": "NOT_APPLICABLE", "evidence": [], "note": "No per-session files exist to remove (session state is RAM-only and released on close, ram/ledger.js Lease.release)."}
+{"id": "C53-074", "status": "NOT_APPLICABLE", "evidence": [], "note": "No cleanup path touches source/binaries; the only real write path (fabric-lease) only ever removes its own slot dirs."}
+{"id": "C53-075", "status": "NOT_APPLICABLE", "evidence": [], "note": "fabric-lease dir path is fixed/configured (worker/fabric-lease.js) and not user-controllable, so unrelated mounts can't be reached."}
+{"id": "C53-076", "status": "IN_PROGRESS", "evidence": ["worker/fabric-lease.js"], "note": "Code-level ownership (creator process removes its own slot) exists but is not documented as an operator-facing cleanup policy."}
+{"id": "C53-077", "status": "PASS", "evidence": ["worker/fabric-lease.js"], "note": "give() wraps rmSync in try/catch (ignores ENOENT/races); repeated calls are safe."}
+{"id": "C53-078", "status": "OPEN", "evidence": [], "note": "No explicit bound on fabric-lease cleanup work during shutdown was found; gateway drain (SIGTERM) doesn't mention it."}
+{"id": "C53-079", "status": "NOT_APPLICABLE", "evidence": [], "note": "No disposable local files persist across restarts to leave behind (nothing written for session data)."}
+{"id": "C53-080", "status": "OPEN", "evidence": [], "note": "fabric-lease.js swallows rmSync errors silently ('/* raced */', '/* noop */'); failures are not surfaced to operators."}
+{"id": "C53-081", "status": "PASS", "evidence": ["docs/OPERATIONS.md#Telemetry", "gateway/server.js"], "note": "/live exposes ledger/pool/traffic/counters for RAM usage inspection; documented in OPERATIONS.md#Telemetry."}
+{"id": "C53-082", "status": "PASS", "evidence": ["docs/OPERATIONS.md#Restart-semantics"], "note": "'There is no session persistence to migrate' and reconnecting clients get session.reset naming unknown-outcome input count."}
+{"id": "C53-083", "status": "OPEN", "evidence": [], "note": "No write-failure counters exist (there's no disk-write path being tracked); fabric-lease errors are unlogged."}
+{"id": "C53-084", "status": "NOT_APPLICABLE", "evidence": [], "note": "No temporary storage growth exists to track (RAM growth is tracked instead via /live ledger)."}
+{"id": "C53-085", "status": "OPEN", "evidence": [], "note": "No cleanup-failure counter exists for fabric-lease's swallowed rmSync errors."}
+{"id": "C53-086", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#Restart-semantics"], "note": "Restart/session.reset behavior is documented, but no dedicated 'missing local state' troubleshooting procedure section exists."}
+{"id": "C53-087", "status": "NOT_APPLICABLE", "evidence": [], "note": "No disk-capacity troubleshooting procedure is needed/provided (no disk budget in scope)."}
+{"id": "C53-088", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#Configuration"], "note": "Config table documents VWS_PROFILE/backend settings, but no separate 'storage configuration' section is included in deployment evidence."}
+{"id": "C53-089", "status": "OPEN", "evidence": [], "note": "No named owner is assigned for durability-policy changes."}
+{"id": "C53-090", "status": "OPEN", "evidence": [], "note": "No review process/checklist ties new file-producing features to the (missing) classification table."}
+{"id": "C53-091", "status": "PASS", "evidence": ["docs/RAMWS.md#Decisions"], "note": "RD-01 LOCAL_VOLATILE published in RAMWS.md, owner-approved."}
+{"id": "C53-092", "status": "OPEN", "evidence": [], "note": "No consolidated runtime write-location inventory has been published (see C53-021..030 gaps)."}
+{"id": "C53-093", "status": "NOT_APPLICABLE", "evidence": [], "note": "No disk budgets/cleanup rules exist to publish (RAM budgets are published instead, docs/RAMWS.md#Memory-plan)."}
+{"id": "C53-094", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No replacement/reconstruction tests were run (no container environment) so nothing can be linked."}
+{"id": "C53-095", "status": "OPEN", "evidence": [], "note": "No write-failure/capacity tests exist to link (no disk-capacity control was implemented)."}
+{"id": "C53-096", "status": "OPEN", "evidence": [], "note": "No sensitive-marker cleanup test exists to link."}
+{"id": "C53-097", "status": "NOT_APPLICABLE", "evidence": [], "note": "No external durable storage dependency is selected (RD-01)."}
+{"id": "C53-098", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Docker/Render/target host available in this environment; RD-03/D-001."}
+{"id": "C53-099", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#Not-done-not-claimed"], "note": "Major gaps are listed (no PIM, no page locking, DISTRIBUTED_VOLATILE/DURABLE_HYBRID not implemented) but fabric-lease's disk writes are not listed as an untested persistence assumption."}
+{"id": "C53-100", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md", "worker/fabric-lease.js"], "note": "Required session data does not depend on unproven local durability (by design), but the storage policy itself is not fully documented/tested per gaps above."}

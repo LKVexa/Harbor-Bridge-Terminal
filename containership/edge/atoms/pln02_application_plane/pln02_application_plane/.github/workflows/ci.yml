@@ -1,0 +1,45 @@
+# MC-34 / MC-36 — compatibility matrix + fail-closed production gate.
+name: pln02-ci
+on: [push, pull_request]
+permissions: {contents: read, id-token: write, attestations: write}
+jobs:
+  matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln02_application_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m pip install jsonschema==4.23.0 cryptography==43.0.1
+      - run: python -m unittest discover -s pln02_application_plane/tests -p "test_*.py" -v
+      - run: python -O -m unittest discover -s pln02_application_plane/tests -p "test_*.py"
+      - run: python -m pln02_application_plane.tools.gate --tier ci --out gate-${{ matrix.os }}-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@v4
+        with: {name: "gate-${{ matrix.os }}-${{ matrix.python }}", path: "gate-*.json"}
+  nightly-fuzz-perf:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln02_application_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: PLN02_FUZZ_ITERATIONS=20000 python -m unittest pln02_application_plane.tests.test_fuzz_property || PLN02_FUZZ_ITERATIONS=20000 python -m unittest discover -s pln02_application_plane/tests -p "test_fuzz*.py"
+      - run: python -m pln02_application_plane.tools.bench --soak 600 --out perf.json
+  release-gate:
+    needs: [matrix, nightly-fuzz-perf]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: pln02_application_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install build && (cd pln02_application_plane && python -m build)
+      - run: python -m pln02_application_plane.tools.gate --tier release --artifact pln02_application_plane/dist --out release-gate.json
+      - uses: actions/attest-build-provenance@v1
+        with: {subject-path: "pln02_application_plane/dist/*"}

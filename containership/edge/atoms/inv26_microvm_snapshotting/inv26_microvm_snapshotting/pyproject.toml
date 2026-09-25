@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv26-microvm-snapshotting"
+dynamic = ["version"]
+description = "INV-26 MicroVM snapshotting: tenant-bound, encrypted, entropy-reseeded snapshot capture/restore with durable metadata, anti-replay restore grants and Firecracker/Cloud Hypervisor adapters."
+readme = "README.md"
+requires-python = ">=3.10"
+# The owner has not chosen a distribution license (LICENSING.md). Do not redistribute.
+license = { text = "LicenseRef-Proprietary-Pending" }
+authors = [{ name = "LinearFinance.org Research Division (owner: David Paul Russell)" }]
+dependencies = ["cryptography>=42"]
+classifiers = ["Programming Language :: Python :: 3", "Private :: Do Not Upload", "License :: Other/Proprietary License"]
+
+[project.optional-dependencies]
+# pk_core is required only by contract.py/component.py; distribution/version/digest unknown -> not pinned (X013).
+conformance = []
+
+[project.scripts]
+inv26-audit = "inv26_microvm_snapshotting.audit:main"
+inv26-preflight = "inv26_microvm_snapshotting.tools.preflight:main"
+inv26-gate = "inv26_microvm_snapshotting.tools.gate:main"
+
+[tool.setuptools]
+package-dir = { "inv26_microvm_snapshotting" = "." }
+packages = ["inv26_microvm_snapshotting", "inv26_microvm_snapshotting.tools", "inv26_microvm_snapshotting.tests"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
+
+[tool.setuptools.package-data]
+inv26_microvm_snapshotting = ["VERSION", "*.md", "NOTICE", "CODEOWNERS", "CHECKLIST.json", "COMPONENTS_STATUS.json",
+                              "compatibility.json", "ERRORS.json", "requirements.lock", "schemas/*", "examples/*.json",
+                              "ops/*", "dashboards/*.json", "bench/*.json", "source/*", "tools/*.sh"]
+"inv26_microvm_snapshotting.tests" = ["fixtures/conformance/*.json"]

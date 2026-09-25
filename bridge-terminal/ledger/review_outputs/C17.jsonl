@@ -1,0 +1,100 @@
+{"id": "C17-001", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md", "gateway/server.js:30"], "note": "RFC6455, subprotocol hermit.vws.v2 required; PROTOCOL constant in server.js"}
+{"id": "C17-002", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "Only one supported protocol; its behavior is the whole state machine, not enumerated per-protocol since there's just one"}
+{"id": "C17-003", "status": "PASS", "evidence": ["gateway/ws.js:31-32", "tests/gateway/ws-conformance.test.js:12"], "note": "checkUpgrade requires offered list include protocol; no-subprotocol request -> 400 (null test)"}
+{"id": "C17-004", "status": "OPEN", "evidence": [], "note": "No document references an external article's null-argument option as a compatibility item"}
+{"id": "C17-005", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31"], "note": "Offered protocol list is parsed from header, but no doc identifies specific real clients requesting a specific subprotocol"}
+{"id": "C17-006", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js:12"], "note": "Null-offer case is tested, but no doc identifies which real clients send none"}
+{"id": "C17-007", "status": "PASS", "evidence": ["gateway/ws.js:21-34", "protocol/codec.js"], "note": "Subprotocol string negotiated in HTTP headers (ws.js); envelope encoding is separate (protocol/codec.js v field)"}
+{"id": "C17-008", "status": "PASS", "evidence": ["gateway/ws.js:21-34", "gateway/server.js:220"], "note": "checkUpgrade (subprotocol) runs independent of identity.authenticate/ticket checks elsewhere in server.js"}
+{"id": "C17-009", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "'v is const 1... a new negotiated contract' states forward-compat intent but no full cross-version matrix"}
+{"id": "C17-010", "status": "OPEN", "evidence": [], "note": "No record of an approved subprotocol decision table"}
+{"id": "C17-011", "status": "PASS", "evidence": ["gateway/server.js:30"], "note": "PROTOCOL = 'hermit.vws.v2' is the server's supported (single) subprotocol"}
+{"id": "C17-012", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31-32"], "note": "Only one supported value exists, so no preference-order logic is implemented or needed; not documented as a deliberate decision"}
+{"id": "C17-013", "status": "PASS", "evidence": ["gateway/server.js:30"], "note": "Defined as a source constant, not runtime configuration"}
+{"id": "C17-014", "status": "OPEN", "evidence": [], "note": "No configured (env/file) subprotocol list exists to validate; value is a hardcoded constant"}
+{"id": "C17-015", "status": "OPEN", "evidence": ["gateway/config.js"], "note": "No configuration mechanism or dedup logic exists for subprotocol values"}
+{"id": "C17-016", "status": "OPEN", "evidence": [], "note": "No case-sensitivity design note; offered.includes() is case-sensitive exact match by default, undocumented"}
+{"id": "C17-017", "status": "PASS", "evidence": ["gateway/server.js:30", "gateway/ws.js:21-34"], "note": "Subprotocol is a fixed non-secret literal; no credential material embedded"}
+{"id": "C17-018", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31-32"], "note": "Only exact-match single value accepted; no explicit rejection logic exists for a subprotocol used as credential transport since no such usage is possible"}
+{"id": "C17-019", "status": "PASS", "evidence": ["gateway/ws.js:31-32", "tests/gateway/ws-conformance.test.js:12"], "note": "No-subprotocol request always rejected (400) - stable, deterministic default"}
+{"id": "C17-020", "status": "OPEN", "evidence": [], "note": "No versioning record of subprotocol-affecting config changes"}
+{"id": "C17-021", "status": "PASS", "evidence": ["gateway/ws.js:21-34"], "note": "checkUpgrade reads req.headers['sec-websocket-protocol'] via the managed request object"}
+{"id": "C17-022", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31"], "note": "Empty/missing header parses to [] (no value) vs a listed-but-unsupported value; both currently rejected the same way (400), not distinguished in the response"}
+{"id": "C17-023", "status": "PASS", "evidence": ["gateway/ws.js:31-32", "tests/gateway/ws-conformance.test.js:11"], "note": "Single requested protocol handled: matches -> 101 with Sec-WebSocket-Protocol echoed"}
+{"id": "C17-024", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31"], "note": "offered list splits on comma so multiple values parse, but no test sends >1 value"}
+{"id": "C17-025", "status": "OPEN", "evidence": [], "note": "No test/code specifically for duplicate requested subprotocol values"}
+{"id": "C17-026", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31"], "note": "Malformed header falls back to empty/filtered list and is rejected (400), but no dedicated malformed-value test"}
+{"id": "C17-027", "status": "OPEN", "evidence": [], "note": "No bound on requested-list length/size found in gateway/ws.js"}
+{"id": "C17-028", "status": "PASS", "evidence": ["gateway/ws.js:32"], "note": "offered.includes(protocol) checks exact membership, not list position"}
+{"id": "C17-029", "status": "PASS", "evidence": ["gateway/ws.js:21-34"], "note": "checkUpgrade returns only {ok,key} or {ok,status,reason}; no extra negotiation metadata retained"}
+{"id": "C17-030", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/ui/browser.test.js"], "note": "Tested against undici WS client and Chromium, but not against 'intended clients' plural/named explicitly"}
+{"id": "C17-031", "status": "PASS", "evidence": ["gateway/ws.js:32"], "note": "Only the exact configured protocol string can be selected"}
+{"id": "C17-032", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:11"], "note": "Exact match -> 101 with matching Sec-WebSocket-Protocol header"}
+{"id": "C17-033", "status": "IN_PROGRESS", "evidence": [], "note": "Only one value is ever supported, so 'several acceptable' case is moot/untested"}
+{"id": "C17-034", "status": "PASS", "evidence": ["gateway/ws.js:32", "tests/gateway/ws-conformance.test.js:12"], "note": "No acceptable value -> 400 refusal without upgrade"}
+{"id": "C17-035", "status": "PASS", "evidence": ["gateway/ws.js:31-32", "tests/gateway/ws-conformance.test.js:12"], "note": "Empty offered list -> includes() false -> 400 (no subprotocol requested is rejected since one is required)"}
+{"id": "C17-036", "status": "PASS", "evidence": ["gateway/ws.js:229-231"], "note": "acceptUpgrade always echoes the fixed PROTOCOL constant; nothing changes post-selection"}
+{"id": "C17-037", "status": "PASS", "evidence": ["gateway/ws.js:21-34"], "note": "Pure function of headers + fixed protocol constant; deterministic"}
+{"id": "C17-038", "status": "PASS", "evidence": ["gateway/ws.js:21-34"], "note": "checkUpgrade returns {ok:true,key} or {ok:false,status,reason} - explicit result object"}
+{"id": "C17-039", "status": "PASS", "evidence": ["gateway/ws.js:21-34"], "note": "checkUpgrade has no side effects (no I/O, no state mutation)"}
+{"id": "C17-040", "status": "OPEN", "evidence": [], "note": "No unit test file found exercising checkUpgrade's decision table directly/in isolation"}
+{"id": "C17-041", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No PowerShell client exists in this candidate (Node gateway replaces PowerShell/.NET, decision D-001)"}
+{"id": "C17-042", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": ".NET NullString has no analog in the Node implementation"}
+{"id": "C17-043", "status": "PASS", "evidence": ["gateway/ws.js:229-231", "tests/gateway/ws-conformance.test.js:11"], "note": "acceptUpgrade always sets Sec-WebSocket-Protocol to the one negotiated constant; not applicable to claim an unselected value since only one exists"}
+{"id": "C17-044", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:12"], "note": "Client with protocol:null tested -> 400"}
+{"id": "C17-045", "status": "IN_PROGRESS", "evidence": [], "note": "Server always requires the subprotocol (no 'permits none' policy exists), so this case is structurally always-reject; no dedicated test for a server configured "}
+{"id": "C17-046", "status": "OPEN", "evidence": [], "note": "No record of observed client acceptance/rejection behavior for the no-subprotocol case"}
+{"id": "C17-047", "status": "PASS", "evidence": ["gateway/ws.js:31"], "note": "offered list built via .filter(Boolean), so an empty string is excluded, not conflated with a real value, by construction"}
+{"id": "C17-048", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:21-34"], "note": "Behavior (400 refusal) is implemented but not documented as 'the exact representation used for no-subprotocol acceptance' since none is ever accepted"}
+{"id": "C17-049", "status": "OPEN", "evidence": [], "note": "No CI/runtime-upgrade pipeline found that specifically includes this null-behavior test as a gate"}
+{"id": "C17-050", "status": "IN_PROGRESS", "evidence": [], "note": "Behavior is resolved by rejecting all no-subprotocol connections; no explicit pre-deployment sign-off record found"}
+{"id": "C17-051", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No AcceptWebSocketAsync exists; Node gateway uses checkUpgrade then acceptUpgrade (gateway/ws.js), functionally analogous but not that .NET API"}
+{"id": "C17-052", "status": "PASS", "evidence": ["gateway/server.js:242"], "note": "acceptUpgrade(socket, up.key, PROTOCOL, extra) passes the selected value through the accept call"}
+{"id": "C17-053", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:11"], "note": "assert.match(ok.headers, /Sec-WebSocket-Protocol: hermit\\.vws\\.v1/i) verifies negotiated value on the real connection"}
+{"id": "C17-054", "status": "PASS", "evidence": ["gateway/connection.js:48"], "note": "hello payload echoes protocol:'hermit.vws.v2' into the application-level handshake too"}
+{"id": "C17-055", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "Post-upgrade processing (state machine) assumes the single agreed protocol throughout connection.js"}
+{"id": "C17-056", "status": "PASS", "evidence": ["gateway/ws.js:32", "tests/gateway/ws-conformance.test.js:12"], "note": "Failed negotiation -> connection refused (400), no upgrade performed"}
+{"id": "C17-057", "status": "PASS", "evidence": ["gateway/server.js:220", "gateway/server.js:242"], "note": "checkUpgrade (incl. subprotocol) runs and is checked before acceptUpgrade is called"}
+{"id": "C17-058", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:12"], "note": "rawConnect with protocol:'other.v1' -> 400 explicitly tested"}
+{"id": "C17-059", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "Failed upgrades return a plain HTTP response and do not open a socket/worker, but no dedicated resource-cleanup test for this path was found"}
+{"id": "C17-060", "status": "OPEN", "evidence": [], "note": "No connection-diagnostics record found that logs successful negotiation outcomes specifically"}
+{"id": "C17-061", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/gateway/e2e.test.js"], "note": "The one supported protocol is exercised end-to-end by the full gateway test suite"}
+{"id": "C17-062", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No native PowerShell client exists in this candidate (D-001)"}
+{"id": "C17-063", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "Chromium browser client tested: sign-in -> terminal -> commands -> reconnect"}
+{"id": "C17-064", "status": "OPEN", "evidence": [], "note": "Only one protocol version exists; no test for an 'older supported protocol' since there is no version history"}
+{"id": "C17-065", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:12"], "note": "Unknown 'other.v1' protocol request tested -> refused (400)"}
+{"id": "C17-066", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:12"], "note": "protocol:null tested -> refused (400)"}
+{"id": "C17-067", "status": "OPEN", "evidence": [], "note": "No test found sending multiple requested subprotocol values in varying order"}
+{"id": "C17-068", "status": "IN_PROGRESS", "evidence": [], "note": "Server always requires the subprotocol; there is no 'no requirement' configuration mode to test"}
+{"id": "C17-069", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js:10-12"], "note": "Docstring/tap names record 3 rows (ok, wrong protocol, null); not a full matrix table with expected/observed columns"}
+{"id": "C17-070", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:32"], "note": "Unsupported clients are refused (400) by code, but no doc explicitly frames this as a documented 'gap' policy"}
+{"id": "C17-071", "status": "PASS", "evidence": ["gateway/origin.js", "gateway/server.js:220"], "note": "Origin check (checkWsOrigin) and subprotocol check (checkUpgrade) are separate, independent functions"}
+{"id": "C17-072", "status": "PASS", "evidence": ["gateway/auth.js", "gateway/server.js"], "note": "Credential verification (identity/ticket) is a separate code path from subprotocol negotiation in server.js"}
+{"id": "C17-073", "status": "PASS", "evidence": ["gateway/server.js:220", "docs/SECURITY.md#Forged Origin"], "note": "Subprotocol is a fixed literal, never used as an identity signal; identity comes from bearer/ticket only"}
+{"id": "C17-074", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:21-34"], "note": "checkUpgrade returns only a short {status,reason} code, not the raw value, limiting diagnostic length implicitly; no explicit length cap on the parsed header it"}
+{"id": "C17-075", "status": "PASS", "evidence": ["gateway/ws.js:21-34"], "note": "400 responses carry only fixed reason codes (e.g. 'subprotocol'), never the raw requested header value"}
+{"id": "C17-076", "status": "OPEN", "evidence": [], "note": "No test found sending an unusually long Sec-WebSocket-Protocol value"}
+{"id": "C17-077", "status": "OPEN", "evidence": [], "note": "No test found for unexpected separators (e.g. semicolons, tabs) in the requested subprotocol list"}
+{"id": "C17-078", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:21-34", "gateway/server.js:220"], "note": "Rejection happens before acceptUpgrade/worker allocation by construction, but no dedicated test proves no worker was allocated on malformed input"}
+{"id": "C17-079", "status": "OPEN", "evidence": [], "note": "No document or review record found addressing whether protocol selection changes authorization scope"}
+{"id": "C17-080", "status": "IN_PROGRESS", "evidence": ["docs/SECURITY.md"], "note": "SECURITY.md documents access rules generally, but nothing protocol-specific since only one protocol exists"}
+{"id": "C17-081", "status": "OPEN", "evidence": [], "note": "No metric/log found tracking accepted-subprotocol distribution (moot with a single supported value, but not implemented)"}
+{"id": "C17-082", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:32", "gateway/server.js"], "note": "Subprotocol rejection (400, reason:'subprotocol') is a distinct HTTP status/reason from auth failures (401/403), but no explicit metrics separation confirmed"}
+{"id": "C17-083", "status": "OPEN", "evidence": [], "note": "No record of the config revision used for negotiation (value is a hardcoded constant, not versioned config)"}
+{"id": "C17-084", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#Maintainer notes"], "note": "OPERATIONS.md gives general maintainer notes but no specific client-version-mismatch diagnostic procedure"}
+{"id": "C17-085", "status": "OPEN", "evidence": [], "note": "No design note on how an old protocol would be deprecated"}
+{"id": "C17-086", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "'A binary profile, resume, or extra capabilities require a new negotiated contract' states intent, but no client-notification mechanism is defined"}
+{"id": "C17-087", "status": "OPEN", "evidence": [], "note": "No test deploys/tests both an old and a new supported client simultaneously (only one protocol version exists)"}
+{"id": "C17-088", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#Rollback and migration"], "note": "OPERATIONS.md covers general rollback/migration, but not a preserved compatible-config artifact specific to subprotocol"}
+{"id": "C17-089", "status": "OPEN", "evidence": [], "note": "No record naming an owner who approved the protocol/subprotocol decision"}
+{"id": "C17-090", "status": "OPEN", "evidence": [], "note": "No review record of configured protocols for unused entries (only one hardcoded value exists)"}
+{"id": "C17-091", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "PROTOCOL.md states the required subprotocol, but no separate formal 'decision table' document was found"}
+{"id": "C17-092", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "PROTOCOL.md documents the full state machine/semantics associated with hermit.vws.v2"}
+{"id": "C17-093", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:31-32", "tests/gateway/ws-conformance.test.js:12"], "note": "No-subprotocol behavior (refused, 400) is implemented and demonstrated by a named test [downgraded: RECORD item without a written record]"}
+{"id": "C17-094", "status": "IN_PROGRESS", "evidence": [], "note": "No NOT_APPLICABLE null/overload compatibility tests exist to link (D-001, no .NET overloads)"}
+{"id": "C17-095", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/ui/browser.test.js"], "note": "Relevant negotiation tests exist and are named in EVIDENCE_INDEX.md, but no doc explicitly links them as a 'supported-client negotiation matrix'"}
+{"id": "C17-096", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:12", "docs/PROTOCOL_V2.md"], "note": "EVIDENCE_INDEX.md/PROTOCOL.md reference the wrong-subprotocol/null test by name"}
+{"id": "C17-097", "status": "PASS", "evidence": ["gateway/connection.js:48", "docs/PROTOCOL_V2.md"], "note": "hello payload and PROTOCOL.md document how the negotiated value flows into the app-level handshake"}
+{"id": "C17-098", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "States 'v is const 1' and that new capabilities need a new contract, but does not fully document version-transition expectations for subprotocol itself"}
+{"id": "C17-099", "status": "OPEN", "evidence": [], "note": "No document lists unresolved subprotocol compatibility questions"}
+{"id": "C17-100", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js", "docs/vws200/RELEASE.md"], "note": "Negotiation tests pass and are part of the release gate, but no explicit sign-off statement tied specifically to subprotocol negotiation was found"}

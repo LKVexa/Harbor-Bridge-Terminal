@@ -1,0 +1,1623 @@
+{
+"component": "C21",
+"items": [
+{
+"id": "C21-001",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Define which WebSocket routes require authentication.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "/ws/terminal requires identity in admission order; /health,/live unauthenticated by exception",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"gateway/server.js"
+]
+},
+{
+"id": "C21-002",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Identify supported client categories.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "native (bearer, no Origin) vs browser (ticket cookie) categories distinguished in code",
+"prior_evidence": [
+"gateway/auth.js:71-76",
+"gateway/server.js:162-177"
+]
+},
+{
+"id": "C21-003",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Select JWT or API-key processing only where justified by the application.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "comment states no OIDC/JWT invented; hashed bearer/API-key model chosen and justified",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-004",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Define authenticated identity information needed by a worker.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "principal={sub,tenant,capabilities,notAfter} defined as worker-facing identity",
+"prior_evidence": [
+"gateway/auth.js:51",
+"docs/SECURITY.md#assets-and-trust-boundaries"
+]
+},
+{
+"id": "C21-005",
+"task_class": "IMPLEMENT",
+"area": "01. Credential requirements",
+"req": "Distinguish authentication from route authorization.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authenticate() separate from capabilities.has('terminal') route authorization check",
+"prior_evidence": [
+"gateway/auth.js",
+"gateway/connection.js:168"
+]
+},
+{
+"id": "C21-006",
+"task_class": "IMPLEMENT",
+"area": "01. Credential requirements",
+"req": "Distinguish authentication from origin acceptance.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Origin check (o.ok) is a distinct step before/independent of principal auth",
+"prior_evidence": [
+"gateway/server.js:162-177",
+"gateway/origin.js"
+]
+},
+{
+"id": "C21-007",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Identify any anonymous route as an explicit exception.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "/health/live comment: 'minimal, unauthenticated, constant work, no secrets'",
+"prior_evidence": [
+"gateway/server.js:97"
+]
+},
+{
+"id": "C21-008",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Define credential expiry and revocation expectations.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "notAfter and revoked fields; 30s re-read sweep ends live sessions",
+"prior_evidence": [
+"gateway/auth.js:35,50",
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C21-009",
+"task_class": "SPECIFY",
+"area": "01. Credential requirements",
+"req": "Identify source gaps in the article's authentication detail.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "residual risks list gaps but not explicitly framed as gaps in a source article's auth detail",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C21-010",
+"task_class": "IMPLEMENT",
+"area": "01. Credential requirements",
+"req": "Approve an authentication contract before writing validation code.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found of a pre-coding approval step for the authentication contract",
+"prior_evidence": []
+},
+{
+"id": "C21-011",
+"task_class": "IMPLEMENT",
+"area": "02. Transport selection",
+"req": "Inventory credential mechanisms supported by intended native clients.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "native client path documented as bearer header with no Origin",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order",
+"gateway/auth.js:71-76"
+]
+},
+{
+"id": "C21-012",
+"task_class": "VERIFY",
+"area": "02. Transport selection",
+"req": "VERIFY credential mechanisms available to intended browser clients.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "real Chromium sign-in test exercises the browser credential mechanism (ticket flow)",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C21-013",
+"task_class": "IMPLEMENT",
+"area": "02. Transport selection",
+"req": "Avoid assuming browser clients can set arbitrary handshake headers.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "ticket-cookie exchange avoids requiring the browser to set an Authorization header",
+"prior_evidence": [
+"gateway/tickets.js",
+"gateway/server.js:110-129"
+]
+},
+{
+"id": "C21-014",
+"task_class": "SPECIFY",
+"area": "02. Transport selection",
+"req": "Define the selected credential transport for each client category.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "loopback-dev | bearer header (native) | ticket cookie (browser) enumerated per client category",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C21-015",
+"task_class": "REVIEW",
+"area": "02. Transport selection",
+"req": "Review query-parameter credential exposure before approving that option.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "allowQueryTicket gated on operator confirming query redaction; log redaction of query strings tested",
+"prior_evidence": [
+"gateway/server.js:129",
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C21-016",
+"task_class": "SPECIFY",
+"area": "02. Transport selection",
+"req": "Define how credentials are excluded from URI logs.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "safePath strips query string before logging",
+"prior_evidence": [
+"gateway/log.js:16"
+]
+},
+{
+"id": "C21-017",
+"task_class": "SPECIFY",
+"area": "02. Transport selection",
+"req": "Define handling for credentials supplied through multiple mechanisms.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "explicit precedence: loopback-dev, then native bearer (Origin null), then ticket",
+"prior_evidence": [
+"gateway/server.js:167-177"
+]
+},
+{
+"id": "C21-018",
+"task_class": "IMPLEMENT",
+"area": "02. Transport selection",
+"req": "Reject ambiguous credential sources according to the policy.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "priority order exists but no explicit reject-on-both-present-simultaneously logic found",
+"prior_evidence": [
+"gateway/server.js:167-177"
+]
+},
+{
+"id": "C21-019",
+"task_class": "IMPLEMENT",
+"area": "02. Transport selection",
+"req": "Require the approved secure public connection path.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_SECURE_COOKIES default 1 requires HTTPS; secure cookie flag set accordingly",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks",
+"gateway/server.js"
+]
+},
+{
+"id": "C21-020",
+"task_class": "DOCUMENT",
+"area": "02. Transport selection",
+"req": "Document transport limitations and unresolved client incompatibilities.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "TLS-edge assumption, X-Forwarded-Proto trust, static-file identity limits documented",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C21-021",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Extract only the selected credential fields.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "bearerFrom/cookieValue extract only the named header/cookie field",
+"prior_evidence": [
+"gateway/auth.js:71-76",
+"gateway/tickets.js:40-48"
+]
+},
+{
+"id": "C21-022",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Distinguish missing credentials from empty credentials.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "missing header and empty/malformed header both yield null identically; not internally distinguished",
+"prior_evidence": [
+"gateway/auth.js:71-76"
+]
+},
+{
+"id": "C21-023",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Reject malformed credential encoding.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "bearer regex rejects malformed encoding/charset",
+"prior_evidence": [
+"gateway/auth.js:74"
+]
+},
+{
+"id": "C21-024",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Bound credential length before further processing.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "length bounded 32-512 chars before hashing/compare",
+"prior_evidence": [
+"gateway/auth.js:46,74"
+]
+},
+{
+"id": "C21-025",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Reject multiple conflicting credentials.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no code found explicitly rejecting simultaneous conflicting credential presentations",
+"prior_evidence": []
+},
+{
+"id": "C21-026",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Avoid treating decoded data as already authenticated.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "consume() only trusts a ticket matched to a stored SHA-256 verifier, not the decoded bytes alone",
+"prior_evidence": [
+"gateway/tickets.js:26-34"
+]
+},
+{
+"id": "C21-027",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Avoid interpreting credential text as executable PowerShell content.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: Node gateway, no PowerShell content interpretation exists",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C21-028",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Normalize only fields permitted by the chosen credential format.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "only sub/tenant/tokenSha256/capabilities validated and used; no extra normalization",
+"prior_evidence": [
+"gateway/auth.js:31-35"
+]
+},
+{
+"id": "C21-029",
+"task_class": "IMPLEMENT",
+"area": "03. Input parsing",
+"req": "Keep raw credentials out of ordinary connection metadata.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "logger drops token/cookie/secret/authorization fields; session logs carry conn id/tenant/sub only",
+"prior_evidence": [
+"gateway/log.js:10",
+"gateway/connection.js"
+]
+},
+{
+"id": "C21-030",
+"task_class": "TEST",
+"area": "03. Input parsing",
+"req": "Test parsing independently of the live upgrade adapter.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no unit test found that exercises bearerFrom/cookieValue independent of the live HTTP/WS upgrade path",
+"prior_evidence": []
+},
+{
+"id": "C21-031",
+"task_class": "DOCUMENT",
+"area": "04. JWT branch when selected",
+"req": "Record the trusted token issuer configuration.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT not selected as credential format; static-file hashed-bearer model used instead",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-032",
+"task_class": "DOCUMENT",
+"area": "04. JWT branch when selected",
+"req": "Record the intended audience configuration.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive; no audience configuration exists",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-033",
+"task_class": "SPECIFY",
+"area": "04. JWT branch when selected",
+"req": "Select and document a maintained validation integration.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-034",
+"task_class": "VERIFY",
+"area": "04. JWT branch when selected",
+"req": "VERIFY supported algorithms in the selected validation integration.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-035",
+"task_class": "REVIEW",
+"area": "04. JWT branch when selected",
+"req": "Validate token integrity through the approved integration.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-036",
+"task_class": "REVIEW",
+"area": "04. JWT branch when selected",
+"req": "Validate applicable token lifetime rules.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-037",
+"task_class": "REVIEW",
+"area": "04. JWT branch when selected",
+"req": "Validate required identity claims.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-038",
+"task_class": "IMPLEMENT",
+"area": "04. JWT branch when selected",
+"req": "Reject unsupported or unexpected algorithm choices according to the policy.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-039",
+"task_class": "TEST",
+"area": "04. JWT branch when selected",
+"req": "Test expired and tampered tokens.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "JWT branch inactive",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-040",
+"task_class": "IMPLEMENT",
+"area": "04. JWT branch when selected",
+"req": "Mark JWT-specific checks N/A when JWTs are not selected.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "JWT not selected is documented, but no explicit checklist marking of JWT items as N/A exists",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-041",
+"task_class": "SPECIFY",
+"area": "05. API-key branch when selected",
+"req": "Define the authoritative source of approved API keys.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "operator-owned principals.json is the authoritative key source",
+"prior_evidence": [
+"gateway/auth.js:20-40",
+"docs/OPERATIONS.md#principals"
+]
+},
+{
+"id": "C21-042",
+"task_class": "SPECIFY",
+"area": "05. API-key branch when selected",
+"req": "Define how keys map to application identities and permissions.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "principal entries map sub/tenant to a capabilities set (terminal, fabric)",
+"prior_evidence": [
+"gateway/auth.js:35"
+]
+},
+{
+"id": "C21-043",
+"task_class": "SPECIFY",
+"area": "05. API-key branch when selected",
+"req": "Define key creation and rotation ownership.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "mkprincipal.js documented as the operator-owned creation/rotation tool",
+"prior_evidence": [
+"docs/OPERATIONS.md#principals",
+"tools/mkprincipal.js"
+]
+},
+{
+"id": "C21-044",
+"task_class": "SPECIFY",
+"area": "05. API-key branch when selected",
+"req": "Define a safe key-comparison implementation for review.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "crypto.timingSafeEqual used for key comparison, no early exit",
+"prior_evidence": [
+"gateway/auth.js:49"
+]
+},
+{
+"id": "C21-045",
+"task_class": "IMPLEMENT",
+"area": "05. API-key branch when selected",
+"req": "Avoid storing raw keys in ordinary session records.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "only tokenSha256 stored/held; principal object never carries the raw token",
+"prior_evidence": [
+"gateway/auth.js:35,51"
+]
+},
+{
+"id": "C21-046",
+"task_class": "SPECIFY",
+"area": "05. API-key branch when selected",
+"req": "Define revocation behavior.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "revoked flag plus 30s re-read sweep defines revocation behavior",
+"prior_evidence": [
+"gateway/auth.js:35,50",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-047",
+"task_class": "IMPLEMENT",
+"area": "05. API-key branch when selected",
+"req": "Reject unknown or malformed keys.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authenticate() returns null for no match/revoked/expired",
+"prior_evidence": [
+"gateway/auth.js:44-51"
+]
+},
+{
+"id": "C21-048",
+"task_class": "TEST",
+"area": "05. API-key branch when selected",
+"req": "Test a revoked key.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'revocation ends a live session; revoked token cannot reconnect'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-049",
+"task_class": "TEST",
+"area": "05. API-key branch when selected",
+"req": "Test rotation without granting unintended access.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for key rotation without granting unintended access",
+"prior_evidence": []
+},
+{
+"id": "C21-050",
+"task_class": "IMPLEMENT",
+"area": "05. API-key branch when selected",
+"req": "Mark API-key-specific checks N/A when API keys are not selected.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "API-key branch IS the active model here, so the opt-out marking this item asks for does not apply",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-051",
+"task_class": "IMPLEMENT",
+"area": "06. Authorization handoff",
+"req": "Create a minimal authenticated identity object after validation.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authenticate() returns the minimal {sub,tenant,capabilities,notAfter} object",
+"prior_evidence": [
+"gateway/auth.js:51"
+]
+},
+{
+"id": "C21-052",
+"task_class": "IMPLEMENT",
+"area": "06. Authorization handoff",
+"req": "Assign permissions needed by the requested route.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "terminal/fabric capabilities checked against the requested route's needs",
+"prior_evidence": [
+"gateway/connection.js:168,174"
+]
+},
+{
+"id": "C21-053",
+"task_class": "REVIEW",
+"area": "06. Authorization handoff",
+"req": "Validate access to any requested session identifier.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'session ids authorize nothing: another connection cannot address a live sid'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-054",
+"task_class": "IMPLEMENT",
+"area": "06. Authorization handoff",
+"req": "Avoid trusting client-supplied identity fields without validation.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "principal derived server-side only from validated token/ticket, never a client-supplied field",
+"prior_evidence": [
+"gateway/server.js:167-182"
+]
+},
+{
+"id": "C21-055",
+"task_class": "IMPLEMENT",
+"area": "06. Authorization handoff",
+"req": "Pass identity rather than raw credentials to the connection worker.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Connection carries principal object to the worker path; worker env is a fixed allowlist, not the token",
+"prior_evidence": [
+"gateway/connection.js:20-21",
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C21-056",
+"task_class": "DOCUMENT",
+"area": "06. Authorization handoff",
+"req": "Record authentication outcome without credential contents.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.info('ws.accepted',{conn.id,tenant,sub,origin}) omits credential contents [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/server.js:184"
+]
+},
+{
+"id": "C21-057",
+"task_class": "IMPLEMENT",
+"area": "06. Authorization handoff",
+"req": "Reject insufficient permissions before upgrade where the design requires it.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "capability check happens after upgrade at session.open, not pre-upgrade",
+"prior_evidence": [
+"gateway/connection.js:168"
+]
+},
+{
+"id": "C21-058",
+"task_class": "SPECIFY",
+"area": "06. Authorization handoff",
+"req": "Define authorization checks needed after the connection opens.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "terminal/fabric capability checks defined for post-open command handling",
+"prior_evidence": [
+"gateway/connection.js:168,174"
+]
+},
+{
+"id": "C21-059",
+"task_class": "TEST",
+"area": "06. Authorization handoff",
+"req": "Test one identity attempting another identity's session.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "session-id ownership test covers one identity addressing another's session",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-060",
+"task_class": "DOCUMENT",
+"area": "06. Authorization handoff",
+"req": "Document the worker's responsibility for ongoing access control.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "trust-boundary table assigns 'worker entry path, environment allowlist' to the worker side",
+"prior_evidence": [
+"docs/SECURITY.md#assets-and-trust-boundaries"
+]
+},
+{
+"id": "C21-061",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Reject missing required credentials before upgrade.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'no credential...-> 401' before upgrade",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-062",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Reject malformed credentials before upgrade.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'malformed header -> 401' before upgrade",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-063",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Reject expired credentials according to the selected format.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "notAfter check implemented in code, but no dedicated expired-credential test was found (only revoked-token test)",
+"prior_evidence": [
+"gateway/auth.js:50"
+]
+},
+{
+"id": "C21-064",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Reject revoked credentials according to the selected format.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'revocation ends a live session; revoked token cannot reconnect'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-065",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Reject valid credentials lacking route permission.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'principal without the fabric capability has no fabric commands at all'",
+"prior_evidence": [
+"gateway/connection.js:168",
+"tests/fabric/fabric-ws.test.js"
+]
+},
+{
+"id": "C21-066",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Distinguish unavailable validation infrastructure from invalid credentials internally.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "principals_unreadable vs principals_invalid vs no-match are distinct internal log events",
+"prior_evidence": [
+"gateway/auth.js:24,39"
+]
+},
+{
+"id": "C21-067",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Keep public errors from revealing sensitive credential-validation detail.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "all auth failures reduce to generic {error:'unauthorized'} 401 response",
+"prior_evidence": [
+"gateway/server.js:123"
+]
+},
+{
+"id": "C21-068",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Bound validation time and retries.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "per-address ticket rate limit bounds repeated validation attempts",
+"prior_evidence": [
+"gateway/server.js:80"
+]
+},
+{
+"id": "C21-069",
+"task_class": "IMPLEMENT",
+"area": "07. Failure behavior",
+"req": "Prevent repeated failures from allocating persistent workers.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "identity check occurs before capacity reservation/worker spawn",
+"prior_evidence": [
+"docs/PROTOCOL.md#admission-order"
+]
+},
+{
+"id": "C21-070",
+"task_class": "REVIEW",
+"area": "07. Failure behavior",
+"req": "Confirm rejected requests do not fall through to anonymous access.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "rejected requests return 401, never fall through to a principal (no anonymous default when static-file selected)",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-071",
+"task_class": "SPECIFY",
+"area": "08. Session lifetime",
+"req": "Define whether authentication is fixed at connection establishment.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "CONNECTING->AUTHENTICATED fixes identity at connection, re-checked via stillValid()",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:49"
+]
+},
+{
+"id": "C21-072",
+"task_class": "SPECIFY",
+"area": "08. Session lifetime",
+"req": "Define handling when credentials expire during an active connection.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "30s sweep ends sessions on expiry (stillValid check, 'expired' close)",
+"prior_evidence": [
+"gateway/connection.js:49",
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C21-073",
+"task_class": "SPECIFY",
+"area": "08. Session lifetime",
+"req": "Define handling when access is revoked during an active connection.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "same sweep/close path ends sessions on revocation",
+"prior_evidence": [
+"gateway/connection.js:49",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-074",
+"task_class": "SPECIFY",
+"area": "08. Session lifetime",
+"req": "Define how reconnecting clients obtain current credentials.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "browser test: transport loss -> fresh-ticket reconnect as a NEW session",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C21-075",
+"task_class": "IMPLEMENT",
+"area": "08. Session lifetime",
+"req": "Avoid retrying permanently invalid credentials indefinitely.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "full-jitter reconnect backoff exists, but no explicit stop-on-permanently-invalid-credential logic found",
+"prior_evidence": [
+"client/ws-adapter.js"
+]
+},
+{
+"id": "C21-076",
+"task_class": "SPECIFY",
+"area": "08. Session lifetime",
+"req": "Define whether a connection must close after authorization loss.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "connection closed 1008 'expired' when stillValid() fails",
+"prior_evidence": [
+"gateway/connection.js:49"
+]
+},
+{
+"id": "C21-077",
+"task_class": "TEST",
+"area": "08. Session lifetime",
+"req": "Test reconnection with a rotated credential.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for reconnection specifically with a rotated credential",
+"prior_evidence": []
+},
+{
+"id": "C21-078",
+"task_class": "TEST",
+"area": "08. Session lifetime",
+"req": "Test resumption with a credential belonging to another identity.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-004: session.resume always returns RESUME_UNAVAILABLE, so resumption cannot be tested",
+"prior_evidence": [
+"docs/ARCHITECTURE.md",
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C21-079",
+"task_class": "DOCUMENT",
+"area": "08. Session lifetime",
+"req": "Document whether application messages require additional authorization.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "sid ownership enforced per message (FORBIDDEN for any non-owned sid) documents ongoing authorization",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C21-080",
+"task_class": "DOCUMENT",
+"area": "08. Session lifetime",
+"req": "Record limitations not solved by handshake-only authentication.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "limitations beyond handshake auth (no MFA/rotation workflow, TLS assumption) recorded",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C21-081",
+"task_class": "IMPLEMENT",
+"area": "09. Security and diagnostics",
+"req": "Exclude credentials from startup logs.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "gateway.listening log fields are host/port/auth/fabric/maxSessions, no secrets",
+"prior_evidence": [
+"gateway/server.js:191"
+]
+},
+{
+"id": "C21-082",
+"task_class": "IMPLEMENT",
+"area": "09. Security and diagnostics",
+"req": "Exclude credentials from handshake diagnostics.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "ws.accepted log omits token/ticket contents",
+"prior_evidence": [
+"gateway/server.js:184"
+]
+},
+{
+"id": "C21-083",
+"task_class": "IMPLEMENT",
+"area": "09. Security and diagnostics",
+"req": "Redact sensitive query parameters.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "safePath strips the entire query string before logging",
+"prior_evidence": [
+"gateway/log.js:16"
+]
+},
+{
+"id": "C21-084",
+"task_class": "IMPLEMENT",
+"area": "09. Security and diagnostics",
+"req": "Avoid including raw tokens in exception messages.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'Messages are fixed safe strings (no echoed input, no paths, no stack)'",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C21-085",
+"task_class": "IMPLEMENT",
+"area": "09. Security and diagnostics",
+"req": "Use non-secret correlation identifiers for authentication events.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "conn.id (non-secret) used as correlation id in log fields, not the credential",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C21-086",
+"task_class": "IMPLEMENT",
+"area": "09. Security and diagnostics",
+"req": "Limit repetitive authentication failure diagnostics.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "per-address ticket rate limit bounds repetitive auth-failure diagnostics/attempts",
+"prior_evidence": [
+"gateway/server.js:80"
+]
+},
+{
+"id": "C21-087",
+"task_class": "DOCUMENT",
+"area": "09. Security and diagnostics",
+"req": "Record key or issuer configuration changes without exposing secrets.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'auth.principals_loaded',{count} logged on reload without secret contents [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/auth.js:38"
+]
+},
+{
+"id": "C21-088",
+"task_class": "TEST",
+"area": "09. Security and diagnostics",
+"req": "Test failure logging with synthetic credentials.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'secrets and host details never reach the shell, the protocol, or the logs' uses synthetic tokens (e.g. 'sk-live')",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-089",
+"task_class": "REVIEW",
+"area": "09. Security and diagnostics",
+"req": "Review token or key validation dependencies for the selected runtime.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'no third-party runtime dependencies' documents the crypto/validation dependency review outcome [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"docs/RELEASE.md#supply-chain"
+]
+},
+{
+"id": "C21-090",
+"task_class": "DOCUMENT",
+"area": "09. Security and diagnostics",
+"req": "Record unverified security assumptions as release gates.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'no independent security review has taken place' and gate table record unverified assumptions as gates",
+"prior_evidence": [
+"docs/SECURITY.md",
+"docs/RELEASE.md#gate-decision"
+]
+},
+{
+"id": "C21-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the authentication and transport contract.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authentication and transport contract published in these documents",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"docs/SECURITY.md"
+]
+},
+{
+"id": "C21-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the selected JWT or API-key branch.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "header comment documents the selected static-file hashed-bearer (API-key-like) branch, JWT explicitly not invented [downgraded: RECORD item without a written re",
+"prior_evidence": [
+"gateway/auth.js:1-13"
+]
+},
+{
+"id": "C21-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link intended-browser and native-client compatibility evidence.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "validation doc links browser (Chromium) and native (authz) compatibility evidence",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C21-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link valid-credential connection tests.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "validation table links authz.test.js and e2e.test.js for valid-credential connections",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link malformed-expired-revoked credential tests as applicable.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "malformed/revoked credential tests linked; no expired-credential test to link",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link cross-session authorization tests.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "cross-session/tenant authorization test linked via authz.test.js row",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C21-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link credential-redaction tests.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'Credential in URL/logs' control row links to the redaction test",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C21-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document expiry and revocation behavior for active sessions.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'Revoked user keeps a session' row documents expiry/revocation behavior for active sessions",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C21-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved validation-library and runtime requirements.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "item 8: desktop build has no lockfile (OPEN) recorded as unresolved runtime requirement",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C21-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve authentication only after validation and rejection paths are demonstrated.",
+"ram_overlay": "Bound credential parsing and identity-cache TTLs, authenticate before large allocation, and redact secrets from retained errors. Bind every live session to the resolved principal.",
+"challenge": "Test expiry, revocation, replayed credentials, oversized credentials, and cross-principal session access.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "GO/CONDITIONAL/NO-GO gates require demonstrated validation/rejection evidence before approval",
+"prior_evidence": [
+"docs/RELEASE.md#gate-decision"
+]
+}
+]
+}

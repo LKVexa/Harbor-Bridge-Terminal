@@ -1,0 +1,17 @@
+# MC-02 / MC-38 ownership. Role categories are fixed; named individuals are the owner's decision.
+# "UNASSIGNED" keeps the release gate BLOCKED for the dependent MC items.
+plane: PLN-02
+accountable_owner: {role: plane-owner, name: UNASSIGNED}
+roles:
+  security-lead:        {name: UNASSIGNED, covers: [MC-11, MC-12, MC-18, MC-19, MC-20, MC-21, MC-22]}
+  schema-governance:    {name: UNASSIGNED, covers: [MC-04, MC-09, MC-10, MC-14]}
+  operations-lead:      {name: UNASSIGNED, covers: [MC-17, MC-23, MC-24, MC-25, MC-30, MC-31, MC-37]}
+  release-manager:      {name: UNASSIGNED, covers: [MC-08, MC-16, MC-34, MC-36, MC-39]}
+  incident-commander:   {name: UNASSIGNED, covers: [MC-38]}
+raci:
+  schema_change:      {R: schema-governance, A: plane-owner, C: [security-lead], I: [operations-lead]}
+  production_release: {R: release-manager,  A: plane-owner, C: [security-lead, operations-lead], I: [incident-commander]}
+  emergency_disable:  {R: operations-lead,  A: incident-commander, C: [security-lead], I: [plane-owner]}
+  security_response:  {R: security-lead,    A: plane-owner, C: [incident-commander], I: [release-manager]}
+  compatibility:      {R: schema-governance, A: plane-owner, C: [release-manager], I: [operations-lead]}
+architecture_change_quorum: {approvers: [plane-owner, security-lead, schema-governance], minimum: 2}

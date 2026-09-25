@@ -1,0 +1,73 @@
+{
+ "component": 55,
+ "title": "Dashboards and differentiated alerts",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "fleet/control-plane overview dashboard",
+   "state": "IMPLEMENTED",
+   "spec": "production/fixtures/dashboards/fleet_overview.json",
+   "modules": [
+    "production/dashboards.py::load_dashboards"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_fleet_overview_dashboard",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_dashboard_unknown_metric_rejected"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "capacity/lease/reconciliation dashboard",
+   "state": "IMPLEMENTED",
+   "spec": "production/fixtures/dashboards/capacity_lease.json",
+   "modules": [
+    "production/dashboards.py::load_dashboards"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_capacity_lease_dashboard"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "security/policy rejection dashboard",
+   "state": "IMPLEMENTED",
+   "spec": "production/fixtures/dashboards/security_policy.json",
+   "modules": [
+    "production/dashboards.py::load_dashboards"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_security_dashboard"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "dependency/provider degradation dashboard",
+   "state": "IMPLEMENTED",
+   "spec": "production/fixtures/dashboards/provider_degradation.json",
+   "modules": [
+    "production/dashboards.py::load_dashboards"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_provider_dashboard"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "differentiated alerts with runbook links and paging routes",
+   "state": "PARTIAL",
+   "spec": "production/fixtures/dashboards/alerts.json",
+   "modules": [
+    "production/dashboards.py::load_alerts",
+    "production/dashboards.py::evaluate_alerts",
+    "production/docs/55_runbooks.md"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_every_alert_references_metric_and_runbook",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_alert_bad_runbook_rejected",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.DashboardTests.test_alerts_evaluate"
+   ],
+   "blocker": "on-call rotation / paging route owners (all routes UNASSIGNED)"
+  }
+ ],
+ "notes": "Dashboards are tool-neutral JSON definitions validated against metrics.CATALOG; not rendered in Grafana (no live env). Provider metrics exist in the catalog but nothing emits them yet (no real provider)."
+}

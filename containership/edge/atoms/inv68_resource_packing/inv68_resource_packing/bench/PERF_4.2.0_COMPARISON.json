@@ -1,0 +1,19 @@
+{
+  "schema": "PK_PACK_PERF_COMPARISON/1",
+  "note": "4.2.0 engine (baseline commit b1ec149) timed on the same machine and datasets as bench.py steady-1000 / worst-5000",
+  "inv68_4_2_0": {
+    "steady-1000": {
+      "p50_ms": 311.2,
+      "max_ms": 521.3,
+      "runs": 10
+    },
+    "worst-5000": {
+      "p50_ms": 51305.7,
+      "max_ms": 51305.7,
+      "runs": 2
+    }
+  },
+  "slo_pack_time_4_2_0": "FAILED (p50 311 ms > 100 ms p99 target)",
+  "cause": "per-candidate re-validation of every workload (_normalize_workload inside Host.fits/place) and full hosts never leaving the first-fit scan: O(n*h) validations",
+  "fix_4_3_0": "validate once; close hosts that cannot fit the smallest remaining request; decisions proven identical by differential test + fuzz reference oracle"
+}

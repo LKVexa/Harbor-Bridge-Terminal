@@ -1,0 +1,39 @@
+{
+ "schema": "INV30_REFERENCE_FLOW/1",
+ "description": "Reference PLN-04 -> INV-30 admission flow: mint root [0x1000,0x2000) rw for tenant-a, then accesses.",
+ "mint": {
+  "tenant": "tenant-a",
+  "base": 4096,
+  "length": 4096,
+  "permissions": [
+   "read",
+   "write"
+  ]
+ },
+ "steps": [
+  {
+   "address": 4096,
+   "size": 8,
+   "operation": "read",
+   "expect": "OK"
+  },
+  {
+   "address": 8184,
+   "size": 8,
+   "operation": "write",
+   "expect": "OK"
+  },
+  {
+   "address": 8188,
+   "size": 8,
+   "operation": "write",
+   "expect": "BOUNDS_VIOLATION"
+  },
+  {
+   "address": 4096,
+   "size": 8,
+   "operation": "execute",
+   "expect": "PERMISSION_VIOLATION"
+  }
+ ]
+}

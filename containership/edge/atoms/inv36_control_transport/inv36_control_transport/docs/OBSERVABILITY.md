@@ -1,0 +1,13 @@
+# Observability (MC-12)
+
+Implementation: `observability.py`, `endpoint.ControlEndpoint.explain`, `health.HealthMonitor.report`.
+
+- **Health/inventory**: `inv36.health/1` (schema in `schema/`), explain view `inv36.explain/1` with health, policy version, sessions (peer, role, tenant, age, sequence counters, rekey due), queue pressure, quarantine state, recent decision reasons. Build/source digest is carried by logs (`build`) and gate evidence.
+- **Metrics catalog** (`METRICS_CATALOG`, Prometheus text exposition): frame rate/bytes, handshake outcomes, auth/integrity failures, authorization denials, reconnects, queue depth, shed work, active sessions, latency by stage, breaker state, saturation, process RSS/FDs/threads/CPU, telemetry drops, quarantine count. Labels are allow-listed (`reason`, `direction`, `operation`, `state`, `dependency`, `priority`, `code`, `breaker`, `outcome`, `tenant_class`, `stage`) and capped at 64 values each (overflow -> `other`); raw tenant/workload IDs are forbidden as labels.
+- **Units/buckets**: latency seconds, buckets 10 us .. 10 s; frame bytes 64 .. 65566.
+- **Logs**: one JSON object per line - `ts`, `mono`, `severity`, `component`, `version`, `build`, `node`, `event`, `reason`, pseudonymized `tenant`/`workload`, `session`, `operation_id`, `duration_ms`, redacted `fields`. Security events are emitted regardless of level; repeats are rate-limited with a `suppressed_repeats` count.
+- **Tracing**: W3C `traceparent` travels inside the authenticated envelope; context is continued only from authenticated in-estate peers (`accept_trace`), otherwise a new trace starts. Spans: connect, handshake, policy, key_service, seal, socket_write, socket_read, open, dispatch (`SPAN_NAMES`); the reference build records policy/dispatch/seal/open/handshake latency.
+- **Retention, sampling, privacy, export**: `observability.TELEMETRY_POLICY` (metrics 400 d prod, logs 30 d, traces 7 d; 1 % trace sampling but 100 % for errors/security events; pseudonymization; mTLS export with a bounded drop-oldest buffer; telemetry outages never block control traffic).
+- **Dashboards/alerts**: `docs/observability/dashboard.json`, `docs/observability/alerts.json` - alerts are classified (`load`, `overload`, `degradation`, `dependency_failure`, `policy_rejection`, `attack`, `software_defect`), carry severity and runbook anchors, and have synthetic tests.
+
+Tests: `tests/test_audit_observability.py::ObservabilityTest`, `tests/test_endpoint_integration.py`. Observability overhead under load is visible in `tools/bench.py` (the full-stack e2e numbers include metrics/tracing).

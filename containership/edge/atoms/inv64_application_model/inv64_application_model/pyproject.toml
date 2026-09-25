@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv64-application-model"
+dynamic = ["version"]
+description = "INV-64 application model: fail-closed app/v1 manifest validation and canonical identity, with authenticated/authorized submission, overlays, atomic activation, audit and release gate."
+readme = "README.md"
+requires-python = ">=3.10"
+# The owner has not chosen a distribution license yet (LICENSING.md). Do not redistribute.
+license = { text = "LicenseRef-Proprietary-Pending" }
+authors = [{ name = "LinearFinance.org Research Division (owner: David Paul Russell)" }]
+maintainers = [{ name = "inv64-component-owner (role; see ops/owners.json)" }]
+dependencies = []  # runtime core is stdlib-only
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: Other/Proprietary License",
+    "Private :: Do Not Upload",
+]
+
+[project.optional-dependencies]
+# Ed25519/EdDSA and AES-256-GCM sealed storage. Absent -> those features refuse (never fall back to plaintext).
+crypto = ["cryptography>=42"]
+# pk_core is required only by contract.py/component.py. Its distribution, version and digest are
+# unknown (compatibility.json pk_core.pin_* = null); it is deliberately NOT pinned to a guess.
+conformance = []
+dev = ["build>=1.0"]
+
+[project.urls]
+Documentation = "https://linearfinance.org/inv64 (placeholder: owner to confirm)"
+
+[project.scripts]
+inv64-release-gate = "inv64_application_model.release_gate:main"
+inv64-audit = "inv64_application_model.audit:main"
+inv64-preflight = "inv64_application_model.tools.preflight:main"
+
+[tool.setuptools]
+package-dir = { "inv64_application_model" = "." }
+packages = ["inv64_application_model", "inv64_application_model.tools", "inv64_application_model.bench", "inv64_application_model.tests"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+
+[tool.setuptools.package-data]
+inv64_application_model = ["VERSION", "*.md", "NOTICE", "CHECKLIST.json", "COMPONENTS_STATUS.json", "compatibility.json",
+                           "schema/*.json", "wit/*.wit", "examples/*.json", "ops/*", "dashboards/*.json",
+                           "provenance/*.json", "source/*"]
+"inv64_application_model.tests" = ["fixtures/*.json"]

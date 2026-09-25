@@ -1,0 +1,32 @@
+// INV-64 application-model component interface (MC-06).
+// Status: CONTRACT ONLY. No Wasm component is built from this package in 4.3.0;
+// the Python API (service.py) is the implementation of record. A Wasm host that
+// embeds INV-64 must implement exactly this interface; payloads are the same
+// JSON documents defined in schema/ (PK_APP_* formats), carried as strings so the
+// JSON schemas stay the single source of truth.
+package pk:inv64@1.0.0;
+
+interface app-model {
+    record issue { code: string, path: string, message: string }
+
+    record canonical-id {
+        form: string,        // "PK_APP_CANONICAL/1"
+        algorithm: string,   // "sha256"
+        digest: string,      // 64 lowercase hex
+    }
+
+    variant validation {
+        valid(canonical-id),
+        invalid(list<issue>),            // sorted by (path, code), at most 1000
+    }
+
+    // error envelope PK_APP_ERROR/1 serialized as JSON
+    type error-json = string;
+
+    validate: func(manifest-json: string) -> result<validation, error-json>;
+    canonicalize: func(manifest-json: string) -> result<canonical-id, error-json>;
+}
+
+world inv64 {
+    export app-model;
+}

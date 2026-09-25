@@ -1,0 +1,1004 @@
+{
+  "schema": "INV37_SELF_AUDIT/1",
+  "element": "INV-37",
+  "version": "4.3.0",
+  "audit_date": "2026-09-22",
+  "gate": "NO_GO",
+  "summary": {
+    "PASS": 15,
+    "PARTIAL": 35,
+    "IMPLEMENTED_PENDING_REVIEW": 48,
+    "MISSING": 2
+  },
+  "test_result": {
+    "see": "artifacts/certification/tests.json"
+  },
+  "production_ready": false,
+  "requirements": [
+    {
+      "check_id": "INV-37-C001",
+      "ordinal": 1,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the exact production responsibility of Bulk data plane.",
+      "status": "PASS",
+      "evidence": "README.md; contract.py",
+      "note": "Production responsibility is explicit."
+    },
+    {
+      "check_id": "INV-37-C002",
+      "ordinal": 2,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document what Bulk data plane owns and explicitly does not own.",
+      "status": "PASS",
+      "evidence": "README.md; contract.py",
+      "note": "Owns / does-not-own boundaries are explicit."
+    },
+    {
+      "check_id": "INV-37-C003",
+      "ordinal": 3,
+      "dimension": "Architecture & Scope",
+      "requirement": "Identify upstream, downstream, and peer dependencies of Bulk data plane.",
+      "status": "PASS",
+      "evidence": "contract.py; COMPATIBILITY.md",
+      "note": "Upstream/downstream/peer dependencies are listed, though not integration-tested."
+    },
+    {
+      "check_id": "INV-37-C004",
+      "ordinal": 4,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the authoritative source of truth used by Bulk data plane.",
+      "status": "PASS",
+      "evidence": "contract.py; data_plane.py",
+      "note": "Manifest recomputation is named as source of truth."
+    },
+    {
+      "check_id": "INV-37-C005",
+      "ordinal": 5,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document assumptions Bulk data plane makes about nodes, runtimes, networks, storage, and control planes.",
+      "status": "PASS",
+      "evidence": "contract.py; SECURITY.md",
+      "note": "Core failure assumptions are documented."
+    },
+    {
+      "check_id": "INV-37-C006",
+      "ordinal": 6,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Bulk data plane.",
+      "status": "PASS",
+      "evidence": "contract.py",
+      "note": "Tenant/environment/site/workload boundaries are declared in the contract."
+    },
+    {
+      "check_id": "INV-37-C007",
+      "ordinal": 7,
+      "dimension": "Architecture & Scope",
+      "requirement": "Separate mandatory Bulk data plane capabilities from optional optimizations.",
+      "status": "PASS",
+      "evidence": "contract.py",
+      "note": "Mandatory versus optional capabilities are separated."
+    },
+    {
+      "check_id": "INV-37-C008",
+      "ordinal": 8,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document unsupported deployment patterns and non-goals for Bulk data plane.",
+      "status": "PASS",
+      "evidence": "README.md; contract.py",
+      "note": "Non-goals are explicit."
+    },
+    {
+      "check_id": "INV-37-C009",
+      "ordinal": 9,
+      "dimension": "Architecture & Scope",
+      "requirement": "Assign an accountable owner and escalation path for Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "governance/OWNERS.json; governance/CODEOWNERS; tools/check_governance.py; tests/test_gates.py",
+      "note": "Open: Name people for all 5 roles; run and record escalation tabletop; bind CODEOWNERS handles to real groups.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C010",
+      "ordinal": 10,
+      "dimension": "Architecture & Scope",
+      "requirement": "Approve an architecture decision record for Bulk data plane, its technologies (Zero-copy shared memory), and its function (Avoid repeated host/guest copies).",
+      "status": "PARTIAL",
+      "evidence": "ADR-0001-zero-copy-transport.md; shm_transport.py",
+      "note": "Open: architecture_approver approval; phase-2 host/guest ADR (virtio/vhost-user).",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C011",
+      "ordinal": 11,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Translate the source function of Bulk data plane \u2014 Avoid repeated host/guest copies \u2014 into testable SHALL-level requirements.",
+      "status": "PARTIAL",
+      "evidence": "REQUIREMENTS.md; tools/check_requirements.py; tests/test_docs.py",
+      "note": "Open: SHALLs for the host/guest path cannot be verified until that path exists.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C012",
+      "ordinal": 12,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define functional requirements for Bulk data plane across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "status": "PARTIAL",
+      "evidence": "SEMANTICS.md; config/profiles/edge.json; tests/test_transport.py",
+      "note": "Open: CI/lab conformance runs on each claimed context (near/far-edge hardware, cross-host).",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C013",
+      "ordinal": 13,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "status": "PARTIAL",
+      "evidence": "SEMANTICS.md; PERF_THRESHOLDS.json; artifacts/benchmarks/baseline.json",
+      "note": "Open: Approval of proposed numbers; production-hardware evidence.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C014",
+      "ordinal": 14,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "outcomes.py; SEMANTICS.md; tests/test_semantics.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C015",
+      "ordinal": 15,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "lifecycle.py; SEMANTICS.md; tests/test_semantics.py; service.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C016",
+      "ordinal": 16,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define versioning and backward-compatibility requirements for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "COMPATIBILITY.md; conformance/golden/v4.2.0.json; conformance/FIXTURES.lock; tests/test_conformance.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C017",
+      "ordinal": 17,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "quota.py; SEMANTICS.md; tests/test_quota.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C018",
+      "ordinal": 18,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "checkpoint.py; service.py; SEMANTICS.md; tests/test_checkpoint.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C019",
+      "ordinal": 19,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define precedence rules when Bulk data plane requirements conflict with security, residency, SLO, or cost constraints.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "policy/precedence.json; precedence.py; tests/test_precedence.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C020",
+      "ordinal": 20,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Maintain a requirements traceability matrix from each Bulk data plane requirement to implementation and verification evidence.",
+      "status": "PASS",
+      "evidence": "TRACEABILITY.md",
+      "note": "TRACEABILITY.md maps every checklist requirement to evidence/status."
+    },
+    {
+      "check_id": "INV-37-C021",
+      "ordinal": 21,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "INTERFACES.md; tests/test_docs.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C022",
+      "ordinal": 22,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Use versioned typed schemas for all externally visible Bulk data plane contracts.",
+      "status": "PASS",
+      "evidence": "schemas/",
+      "note": "Versioned JSON Schemas are supplied for manifest, chunk, and resume contracts."
+    },
+    {
+      "check_id": "INV-37-C023",
+      "ordinal": 23,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authentication requirements at each Bulk data plane boundary.",
+      "status": "PARTIAL",
+      "evidence": "security.py; tests/test_security.py; SECURITY.md",
+      "note": "Open: mTLS/SPIFFE/attested node identity for cross-process/host boundaries.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C024",
+      "ordinal": 24,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authorization and explicit capability requirements at each Bulk data plane boundary.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "security.py; service.py; tests/test_security.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C025",
+      "ordinal": 25,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "retry.py; service.py; INTERFACES.md; tests/test_semantics.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C026",
+      "ordinal": 26,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define structured failure codes and machine-readable error details for Bulk data plane.",
+      "status": "PASS",
+      "evidence": "errors.py",
+      "note": "Stable structured error codes/details are implemented in errors.py."
+    },
+    {
+      "check_id": "INV-37-C027",
+      "ordinal": 27,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "service.py; INTERFACES.md; conformance/fixtures; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C028",
+      "ordinal": 28,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Bulk data plane interfaces.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "INTERFACES.md; config.py; tests/test_quota.py; tests/test_config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C029",
+      "ordinal": 29,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Provide reference examples and conformance fixtures for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "conformance/run.py; conformance/fixtures; conformance/README.md; tests/test_conformance.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C030",
+      "ordinal": 30,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Create automated integration tests proving Bulk data plane interoperates with adjacent architectural layers.",
+      "status": "PARTIAL",
+      "evidence": "tests/test_integration.py; tests/test_transport.py",
+      "note": "Open: Real INV-36/GAP-14/PLN-06/INV-38, identity service and VM topology.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C031",
+      "ordinal": 31,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Select and pin approved implementations, versions, or specifications for Bulk data plane: Zero-copy shared memory.",
+      "status": "PARTIAL",
+      "evidence": "PINS.json; tools/check_pins.py; shm_transport.py; ADR-0001-zero-copy-transport.md",
+      "note": "Open: Host/guest implementation and its drivers/binaries with checksums; approval.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C032",
+      "ordinal": 32,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "CONFIGURATION.md; config.py; checkpoint.py; tests/test_config.py; tests/test_checkpoint.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C033",
+      "ordinal": 33,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define declarative configuration and secure defaults for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "config.py; schemas/INV37_CONFIG_1.schema.json; CONFIGURATION.md; tests/test_config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C034",
+      "ordinal": 34,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "config.py; tests/test_config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C035",
+      "ordinal": 35,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "config.py; config/profiles; tests/test_config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C036",
+      "ordinal": 36,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "config.py; tests/test_config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C037",
+      "ordinal": 37,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "config.py; tests/test_config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C038",
+      "ordinal": 38,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define automatic and operator-driven rollback for failed Bulk data plane changes.",
+      "status": "PARTIAL",
+      "evidence": "config.py; OPERATIONS.md; tests/test_config.py",
+      "note": "Open: Canary/rollback drill evidence.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C039",
+      "ordinal": 39,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Keep credentials and secret material out of ordinary Bulk data plane configuration and diagnostics.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "config.py; telemetry.py; tests/test_config.py; tests/test_telemetry.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C040",
+      "ordinal": 40,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Bulk data plane operation.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "tools/bootstrap.py; CONFIGURATION.md; tests/test_bootstrap.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C041",
+      "ordinal": 41,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Threat-model Bulk data plane against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "THREAT_MODEL.md",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C042",
+      "ordinal": 42,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Apply least privilege to every identity and capability used by Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "security.py; THREAT_MODEL.md; tests/test_security.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C043",
+      "ordinal": 43,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Bulk data plane permits.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "THREAT_MODEL.md; tests/test_docs.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C044",
+      "ordinal": 44,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "status": "PARTIAL",
+      "evidence": "security.py; SECURITY.md",
+      "note": "Open: Node attestation, provider authentication, signed artifacts.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C045",
+      "ordinal": 45,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "tools/check_pins.py; PINS.json; SECURITY.md",
+      "note": "Open: Cryptographic signatures/attestations on artifacts.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C046",
+      "ordinal": 46,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Enforce tenant/workload isolation across Bulk data plane execution, memory, state, network, and device boundaries as applicable.",
+      "status": "PARTIAL",
+      "evidence": "shm_transport.py; quota.py; tests/test_transport.py; tests/test_integration.py",
+      "note": "Open: OS-level isolation (UID/IPC namespaces), side-channel review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C047",
+      "ordinal": 47,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Encrypt sensitive Bulk data plane data in transit and at rest with managed key rotation.",
+      "status": "MISSING",
+      "evidence": "security.py; tests/test_security.py",
+      "note": "Open: Select, pin and integrate an AEAD provider with key rotation; transport encryption.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C048",
+      "ordinal": 48,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "status": "PARTIAL",
+      "evidence": "security.py; SECURITY.md; tests/test_security.py",
+      "note": "Open: Attestation service does not exist yet, so its outage behaviour is specified only on paper; accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C049",
+      "ordinal": 49,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Emit tamper-evident audit events for security-sensitive Bulk data plane operations.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "security.py; tests/test_security.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C050",
+      "ordinal": 50,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "status": "PARTIAL",
+      "evidence": "tests/test_security.py; tests/test_fuzz.py; tests/test_transport.py",
+      "note": "Open: Escape/side-channel testing and independent penetration test.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C051",
+      "ordinal": 51,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "FAILURE_MODES.md",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C052",
+      "ordinal": 52,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define automated health and stall detection thresholds for Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "service.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C053",
+      "ordinal": 53,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "retry.py; tests/test_semantics.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C054",
+      "ordinal": 54,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Bulk data plane failure cascades.",
+      "status": "PASS",
+      "evidence": "data_plane.py::BoundedTransferPool; tests/test_data_plane.py",
+      "note": "BoundedTransferPool implements fail-closed admission control and saturation metrics."
+    },
+    {
+      "check_id": "INV-37-C055",
+      "ordinal": 55,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "status": "PARTIAL",
+      "evidence": "FAILURE_MODES.md; checkpoint.py; tests/test_integration.py",
+      "note": "Open: Multi-node takeover drill on shared/reattached storage.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C056",
+      "ordinal": 56,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "FAILURE_MODES.md; telemetry.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C057",
+      "ordinal": 57,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Bulk data plane state.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "checkpoint.py; tests/test_checkpoint.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C058",
+      "ordinal": 58,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "checkpoint.py; service.py; tests/test_checkpoint.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C059",
+      "ordinal": 59,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Bulk data plane behavior.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "service.py; checkpoint.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C060",
+      "ordinal": 60,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Run fault-injection tests proving Bulk data plane recovery against documented objectives.",
+      "status": "PARTIAL",
+      "evidence": "tests/test_checkpoint.py; tests/test_integration.py; FAILURE_MODES.md",
+      "note": "Open: Node/VM/partition/provider/control-plane fault injection.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C061",
+      "ordinal": 61,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Establish reproducible baselines for Bulk data plane latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "status": "PARTIAL",
+      "evidence": "benchmarks/bench.py; artifacts/benchmarks/baseline.json; PERFORMANCE.md",
+      "note": "Open: Production-hardware baselines; network/storage/power.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C062",
+      "ordinal": 62,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "PERF_THRESHOLDS.json; SEMANTICS.md; tools/perf_gate.py",
+      "note": "Open: Approval of thresholds on production hardware.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C063",
+      "ordinal": 63,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure Bulk data plane under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "status": "PARTIAL",
+      "evidence": "benchmarks/bench.py; PERFORMANCE.md",
+      "note": "Open: Soak, fleet scale-out/scale-in on real deployment.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C064",
+      "ordinal": 64,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "benchmarks/bench.py",
+      "note": "Open: Per-workload overhead inside real embedding services.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C065",
+      "ordinal": 65,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Bulk data plane.",
+      "status": "PASS",
+      "evidence": "ADR-0001-zero-copy-transport.md",
+      "note": "ADR-0001 explicitly identifies receiver copies/final assembly copies and the zero-copy gap."
+    },
+    {
+      "check_id": "INV-37-C066",
+      "ordinal": 66,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "status": "PARTIAL",
+      "evidence": "shm_transport.py; benchmarks/bench.py; PERFORMANCE.md",
+      "note": "Open: Host/guest zero-copy; kernel bypass belongs to INV-38.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C067",
+      "ordinal": 67,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "INTERFACES.md; quota.py; telemetry.py; tests/test_quota.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C068",
+      "ordinal": 68,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "status": "MISSING",
+      "evidence": "PERFORMANCE.md; config/profiles/edge.json",
+      "note": "Open: Measure power/thermal on target edge hardware.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C069",
+      "ordinal": 69,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define capacity models and saturation signals that predict when Bulk data plane needs more resources.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "PERFORMANCE.md; quota.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C070",
+      "ordinal": 70,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Block releases that regress approved Bulk data plane startup, density, throughput, or tail-latency thresholds.",
+      "status": "PARTIAL",
+      "evidence": "tools/perf_gate.py; PERF_THRESHOLDS.json; tests/test_gates.py",
+      "note": "Open: Thresholds are proposed, not approved; production-hardware baseline.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C071",
+      "ordinal": 71,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose Bulk data plane health, readiness, version, configuration, dependency status, and active capability set.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "service.py; OBSERVABILITY.md; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C072",
+      "ordinal": 72,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "telemetry.py; OBSERVABILITY.md; tests/test_telemetry.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C073",
+      "ordinal": 73,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "telemetry.py; tests/test_telemetry.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C074",
+      "ordinal": 74,
+      "dimension": "Observability & Explainability",
+      "requirement": "Propagate trace context across all relevant Bulk data plane boundaries.",
+      "status": "PARTIAL",
+      "evidence": "telemetry.py; service.py; tests/test_integration.py",
+      "note": "Open: Propagation across INV-36/INV-38 and exporter integration.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C075",
+      "ordinal": 75,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "telemetry.py; service.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C076",
+      "ordinal": 76,
+      "dimension": "Observability & Explainability",
+      "requirement": "Record the reason for every automated decision made by Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "telemetry.py; service.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C077",
+      "ordinal": 77,
+      "dimension": "Observability & Explainability",
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "telemetry.py; service.py; tests/test_integration.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C078",
+      "ordinal": 78,
+      "dimension": "Observability & Explainability",
+      "requirement": "Correlate Bulk data plane events with application release lineage and the live infrastructure graph.",
+      "status": "PARTIAL",
+      "evidence": "telemetry.py; OBSERVABILITY.md",
+      "note": "Open: Live infrastructure graph correlation.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C079",
+      "ordinal": 79,
+      "dimension": "Observability & Explainability",
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "OBSERVABILITY.md; config.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C080",
+      "ordinal": 80,
+      "dimension": "Observability & Explainability",
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "status": "PARTIAL",
+      "evidence": "observability/alerts.json; observability/dashboard.json",
+      "note": "Open: Deploy and validate under live failure/load.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C081",
+      "ordinal": 81,
+      "dimension": "Testing & Certification",
+      "requirement": "Create unit tests for deterministic Bulk data plane logic and state transitions.",
+      "status": "PASS",
+      "evidence": "tests/test_data_plane.py",
+      "note": "Dependency-free deterministic unit tests exercise manifest, receiver, state, limits, and admission behavior."
+    },
+    {
+      "check_id": "INV-37-C082",
+      "ordinal": 82,
+      "dimension": "Testing & Certification",
+      "requirement": "Create contract tests for every public Bulk data plane interface.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "tests/test_conformance.py; conformance/fixtures; tests/test_transport.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C083",
+      "ordinal": 83,
+      "dimension": "Testing & Certification",
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "status": "PARTIAL",
+      "evidence": "tests/test_integration.py; tests/test_bootstrap.py",
+      "note": "Open: Real adjacent layers and VM/container tiers.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C084",
+      "ordinal": 84,
+      "dimension": "Testing & Certification",
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "COMPATIBILITY.md",
+      "note": "Open: Multi-arch/multi-runtime/hypervisor CI.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C085",
+      "ordinal": 85,
+      "dimension": "Testing & Certification",
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Bulk data plane.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "tests/test_fuzz.py",
+      "note": "Open: Accountable-role review; optional coverage-guided fuzzing.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C086",
+      "ordinal": 86,
+      "dimension": "Testing & Certification",
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Bulk data plane state.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "tests/test_quota.py; tests/test_data_plane.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C087",
+      "ordinal": 87,
+      "dimension": "Testing & Certification",
+      "requirement": "Create security tests derived directly from the Bulk data plane threat model.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "THREAT_MODEL.md; tests/test_security.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C088",
+      "ordinal": 88,
+      "dimension": "Testing & Certification",
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "benchmarks/bench.py",
+      "note": "Open: Soak and fleet-scale tests.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C089",
+      "ordinal": 89,
+      "dimension": "Testing & Certification",
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "status": "PARTIAL",
+      "evidence": "tests/test_integration.py; tests/test_checkpoint.py",
+      "note": "Open: Partition and disaster tests on real topology.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C090",
+      "ordinal": 90,
+      "dimension": "Testing & Certification",
+      "requirement": "Require machine-readable acceptance evidence before certifying a Bulk data plane release for production.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "tools/run_certification.py; tools/production_gate.py; artifacts/certification",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C091",
+      "ordinal": 91,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define production SLOs, error budgets, and support commitments for Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "OPERATIONS.md",
+      "note": "Open: Owner acceptance.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C092",
+      "ordinal": 92,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "OPERATIONS.md; service.py",
+      "note": "Open: Executed drill evidence.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C093",
+      "ordinal": 93,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Maintain a supported-version compatibility matrix for Bulk data plane and adjacent dependencies.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "COMPATIBILITY.md",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C094",
+      "ordinal": 94,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Bulk data plane.",
+      "status": "PARTIAL",
+      "evidence": "OPERATIONS.md; governance/DEPRECATIONS.json",
+      "note": "Open: Owner acceptance; intake channel staffed.",
+      "prior_status": "MISSING"
+    },
+    {
+      "check_id": "INV-37-C095",
+      "ordinal": 95,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Bulk data plane state where applicable.",
+      "status": "PARTIAL",
+      "evidence": "OPERATIONS.md; checkpoint.py",
+      "note": "Open: Executed restore drill.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C096",
+      "ordinal": 96,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "status": "PASS",
+      "evidence": "RUNBOOK.md",
+      "note": "RUNBOOK.md contains day-0, day-1, and day-2 procedures."
+    },
+    {
+      "check_id": "INV-37-C097",
+      "ordinal": 97,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "status": "PARTIAL",
+      "evidence": "OPERATIONS.md; RUNBOOK.md; governance/OWNERS.json",
+      "note": "Open: Named paging targets; exercised.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C098",
+      "ordinal": 98,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "status": "PARTIAL",
+      "evidence": "OPERATIONS.md; tools/check_governance.py",
+      "note": "Open: Reviews actually performed and recorded.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C099",
+      "ordinal": 99,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "governance/WAIVERS.json; governance/DEPRECATIONS.json; TECHNICAL_DEBT.md; tools/check_governance.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    },
+    {
+      "check_id": "INV-37-C100",
+      "ordinal": 100,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "status": "IMPLEMENTED_PENDING_REVIEW",
+      "evidence": "tools/production_gate.py; schemas/production_gate.schema.json; tests/test_gates.py",
+      "note": "Open: Accountable-role review.",
+      "prior_status": "PARTIAL"
+    }
+  ]
+}

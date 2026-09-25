@@ -1,0 +1,1703 @@
+{
+"component": "C27",
+"items": [
+{
+"id": "C27-001",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Identify Count as the current operation's valid byte count.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "len parsed from header = valid byte count for that frame (Count analog)",
+"prior_evidence": [
+"gateway/ws.js:157-166"
+]
+},
+{
+"id": "C27-002",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Identify MessageType as the managed message category.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "op (TEXT/BIN/CLOSE/...) is the message-category analog of MessageType",
+"prior_evidence": [
+"gateway/ws.js:17,155"
+]
+},
+{
+"id": "C27-003",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Identify EndOfMessage as the managed completion signal.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "fin bit is the EndOfMessage completion signal",
+"prior_evidence": [
+"gateway/ws.js:155"
+]
+},
+{
+"id": "C27-004",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Define the interpreter's input object type.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "parsed frame header fields (fin,op,masked,len) form the interpreter's input",
+"prior_evidence": [
+"gateway/ws.js:151-177"
+]
+},
+{
+"id": "C27-005",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Define the interpreter's output decision structure.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "switch(op) is the output decision structure routing to message/close/control handling",
+"prior_evidence": [
+"gateway/ws.js:180-199"
+]
+},
+{
+"id": "C27-006",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Define access to the buffer and its segment offset.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "off tracks header offset; payload = buf.subarray(off+4, off+4+len)",
+"prior_evidence": [
+"gateway/ws.js:157-176"
+]
+},
+{
+"id": "C27-007",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Define how close metadata is conveyed to lifecycle handling.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "emit('close',{{code,reason,clean,initiator}}) conveys close metadata to Connection",
+"prior_evidence": [
+"gateway/ws.js:139",
+"gateway/connection.js:40,312-334"
+]
+},
+{
+"id": "C27-008",
+"task_class": "SPECIFY",
+"area": "01. Result contract",
+"req": "Define invalid or unexpected input behavior.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "malformed headers/close payloads uniformly routed to _fail()",
+"prior_evidence": [
+"gateway/ws.js:158-168,211-217"
+]
+},
+{
+"id": "C27-009",
+"task_class": "IMPLEMENT",
+"area": "01. Result contract",
+"req": "Keep transport interpretation separate from application payload parsing.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "ws.js hands raw validated bytes; codec.js parses the JSON envelope separately",
+"prior_evidence": [
+"gateway/ws.js:208",
+"protocol/codec.js"
+]
+},
+{
+"id": "C27-010",
+"task_class": "IMPLEMENT",
+"area": "01. Result contract",
+"req": "Approve the result decision table.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "decision logic described in prose; no explicit published decision table found",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-011",
+"task_class": "IMPLEMENT",
+"area": "02. Count handling",
+"req": "Read Count from the completed receive result.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "len read from header before payload extraction",
+"prior_evidence": [
+"gateway/ws.js:157-166"
+]
+},
+{
+"id": "C27-012",
+"task_class": "REVIEW",
+"area": "02. Count handling",
+"req": "Validate Count against the supplied segment capacity.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes check rejects over-capacity length; covered by oversize tests",
+"prior_evidence": [
+"gateway/ws.js:170",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-013",
+"task_class": "IMPLEMENT",
+"area": "02. Count handling",
+"req": "Interpret zero bytes using message type and completion state.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "zero-length payload flows through the same fin-gated path; no special-case bug found",
+"prior_evidence": [
+"gateway/ws.js:151-177"
+]
+},
+{
+"id": "C27-014",
+"task_class": "IMPLEMENT",
+"area": "02. Count handling",
+"req": "Extract exactly Count bytes from the valid buffer window.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "src = buf.subarray(off+4, off+4+len) extracts exactly len bytes",
+"prior_evidence": [
+"gateway/ws.js:174"
+]
+},
+{
+"id": "C27-015",
+"task_class": "IMPLEMENT",
+"area": "02. Count handling",
+"req": "Include the segment offset when calculating the valid window.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "off (header size) included when computing payload window",
+"prior_evidence": [
+"gateway/ws.js:172-176"
+]
+},
+{
+"id": "C27-016",
+"task_class": "IMPLEMENT",
+"area": "02. Count handling",
+"req": "Avoid consuming stale bytes beyond Count.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "buf advanced to off+4+len only, discarding consumed bytes, not stale ones",
+"prior_evidence": [
+"gateway/ws.js:176-177"
+]
+},
+{
+"id": "C27-017",
+"task_class": "IMPLEMENT",
+"area": "02. Count handling",
+"req": "Add Count to message-size accounting safely.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes bound checked before frag.bytes is extended",
+"prior_evidence": [
+"gateway/ws.js:170,193"
+]
+},
+{
+"id": "C27-018",
+"task_class": "REVIEW",
+"area": "02. Count handling",
+"req": "Check accumulation arithmetic before extending storage.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "size check precedes frag extension; oversize-fragment test covers this",
+"prior_evidence": [
+"gateway/ws.js:170",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-019",
+"task_class": "TEST",
+"area": "02. Count handling",
+"req": "Test maximum valid Count for the configured buffer.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for the maximum valid Count exactly at maxMessageBytes",
+"prior_evidence": []
+},
+{
+"id": "C27-020",
+"task_class": "TEST",
+"area": "02. Count handling",
+"req": "Test invalid Count values through unit fixtures.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'declared 64-bit length over the cap -> 1009 from the header alone' is an invalid-Count fixture",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-021",
+"task_class": "IMPLEMENT",
+"area": "03. MessageType handling",
+"req": "Route Text to the text accumulation path.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "case OP.TEXT routes to the text accumulation/delivery path",
+"prior_evidence": [
+"gateway/ws.js:181-190"
+]
+},
+{
+"id": "C27-022",
+"task_class": "IMPLEMENT",
+"area": "03. MessageType handling",
+"req": "Route Binary to the binary accumulation path when supported.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary is explicitly rejected (1003); protocol supports text only, so 'when supported' does not apply",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-023",
+"task_class": "IMPLEMENT",
+"area": "03. MessageType handling",
+"req": "Route Close to connection lifecycle handling.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "case OP.CLOSE routes to _onClose (connection lifecycle)",
+"prior_evidence": [
+"gateway/ws.js:198"
+]
+},
+{
+"id": "C27-024",
+"task_class": "SPECIFY",
+"area": "03. MessageType handling",
+"req": "Define behavior when the application does not support a received data type.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "binary -> _fail(1003, 'binary messages are not part of hermit.vws.v1')",
+"prior_evidence": [
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C27-025",
+"task_class": "IMPLEMENT",
+"area": "03. MessageType handling",
+"req": "Avoid passing Close into UTF-8 payload decoding.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "OP.CLOSE handled in its own switch case, never reaches _message's UTF-8 decode",
+"prior_evidence": [
+"gateway/ws.js:180-199"
+]
+},
+{
+"id": "C27-026",
+"task_class": "IMPLEMENT",
+"area": "03. MessageType handling",
+"req": "Preserve the selected data type across an incomplete message.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "only TEXT can fragment (BIN rejected immediately), so type is trivially preserved across frag",
+"prior_evidence": [
+"gateway/ws.js:186"
+]
+},
+{
+"id": "C27-027",
+"task_class": "SPECIFY",
+"area": "03. MessageType handling",
+"req": "Define behavior for an unexpected type in a synthetic fixture.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'unknown opcode -> 1002' is the fixture for an unexpected type",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-028",
+"task_class": "IMPLEMENT",
+"area": "03. MessageType handling",
+"req": "Keep application content type separate from WebSocket message type.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "WS message type is always TEXT; application envelope 'type' field is handled separately by codec.js",
+"prior_evidence": [
+"protocol/codec.js"
+]
+},
+{
+"id": "C27-029",
+"task_class": "TEST",
+"area": "03. MessageType handling",
+"req": "Test consecutive messages of different supported types.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "only one supported WS message type (text) exists by design; binary unsupported",
+"prior_evidence": []
+},
+{
+"id": "C27-030",
+"task_class": "DOCUMENT",
+"area": "03. MessageType handling",
+"req": "Record every supported interpreter branch.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "Transport section enumerates text/binary/close/ping/pong/oversize/framing behavior",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-031",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Read EndOfMessage after each successful receive.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "fin read from each frame header",
+"prior_evidence": [
+"gateway/ws.js:155"
+]
+},
+{
+"id": "C27-032",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Continue accumulation when completion is false.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "frag chunks accumulate when fin is false",
+"prior_evidence": [
+"gateway/ws.js:185-189,192-193"
+]
+},
+{
+"id": "C27-033",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Deliver a message only when completion is true.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "_message only invoked when fin is true (direct or after CONT reassembly)",
+"prior_evidence": [
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C27-034",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Reset message state only after the completed payload is safely handed off.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments then _message(whole) \u2014 reset tied to the safe handoff point",
+"prior_evidence": [
+"gateway/ws.js:194"
+]
+},
+{
+"id": "C27-035",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Handle a complete empty message according to the contract.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "empty (len=0, fin=true) payload flows to _message with a 0-length buffer",
+"prior_evidence": [
+"gateway/ws.js:151-177,204-209"
+]
+},
+{
+"id": "C27-036",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Handle completion exactly at buffer capacity.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "strict-greater-than check allows len exactly at maxMessageBytes to complete",
+"prior_evidence": [
+"gateway/ws.js:170"
+]
+},
+{
+"id": "C27-037",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Handle completion after several partial receives.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "CONT accumulation with fin on the final fragment; covered by fragmentation tests",
+"prior_evidence": [
+"gateway/ws.js:191-195",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-038",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Avoid inferring completion solely from Count being smaller than capacity.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "completion always taken from explicit fin bit, never inferred from len",
+"prior_evidence": [
+"gateway/ws.js:155,184"
+]
+},
+{
+"id": "C27-039",
+"task_class": "IMPLEMENT",
+"area": "04. Completion handling",
+"req": "Avoid inferring incompletion solely from Count equaling capacity.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "same explicit fin check regardless of len value",
+"prior_evidence": [
+"gateway/ws.js:155,184"
+]
+},
+{
+"id": "C27-040",
+"task_class": "TEST",
+"area": "04. Completion handling",
+"req": "Test every completion inference with explicit fixtures.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "substantial fragmentation/size coverage, but not an exhaustive explicit completion-inference matrix",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C27-041",
+"task_class": "DOCUMENT",
+"area": "05. Message consistency",
+"req": "Record the active logical message type.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "this.frag implicitly types accumulation as text; not explicitly recorded/logged as a field",
+"prior_evidence": [
+"gateway/ws.js:51,186"
+]
+},
+{
+"id": "C27-042",
+"task_class": "REVIEW",
+"area": "05. Message consistency",
+"req": "Check consistency of type across accumulation according to managed API behavior.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'new text inside a fragmented message -> 1002' checks type consistency across accumulation",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-043",
+"task_class": "IMPLEMENT",
+"area": "05. Message consistency",
+"req": "Prevent bytes from two complete messages entering one accumulator.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'if (this.frag) return fail(1002, new message inside fragmented message)' prevents mixing",
+"prior_evidence": [
+"gateway/ws.js:182"
+]
+},
+{
+"id": "C27-044",
+"task_class": "IMPLEMENT",
+"area": "05. Message consistency",
+"req": "Preserve byte order across receive results.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "sequential buffer consumption and chunk pushes preserve byte order",
+"prior_evidence": [
+"gateway/ws.js:176-177,193"
+]
+},
+{
+"id": "C27-045",
+"task_class": "IMPLEMENT",
+"area": "05. Message consistency",
+"req": "Associate each result with the correct socket owner.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "buf/frag/stats are per-WsConnection instance fields, isolated per socket",
+"prior_evidence": [
+"gateway/ws.js:42-58"
+]
+},
+{
+"id": "C27-046",
+"task_class": "IMPLEMENT",
+"area": "05. Message consistency",
+"req": "Reject accidental reuse of a result for another connection.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "per-instance state prevents accidental cross-connection reuse",
+"prior_evidence": [
+"gateway/ws.js:38-58"
+]
+},
+{
+"id": "C27-047",
+"task_class": "TEST",
+"area": "05. Message consistency",
+"req": "Test a short message after a large message.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for a short message immediately following a large message",
+"prior_evidence": []
+},
+{
+"id": "C27-048",
+"task_class": "TEST",
+"area": "05. Message consistency",
+"req": "Test many consecutive empty and nonempty messages.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for many consecutive empty and nonempty messages",
+"prior_evidence": []
+},
+{
+"id": "C27-049",
+"task_class": "REVIEW",
+"area": "05. Message consistency",
+"req": "Confirm message-size accounting resets between messages.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_dropFragments resets frag between messages; no explicit assertion of size-accounting reset cited",
+"prior_evidence": [
+"gateway/ws.js:194"
+]
+},
+{
+"id": "C27-050",
+"task_class": "DOCUMENT",
+"area": "05. Message consistency",
+"req": "Document invariants maintained by the interpreter.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "Transport section documents masking/size/fragmentation invariants",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-051",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Extract available close status safely.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "length-checked readUInt16BE extraction of close code",
+"prior_evidence": [
+"gateway/ws.js:211-217"
+]
+},
+{
+"id": "C27-052",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Extract an allowed close description for diagnostics.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "TextDecoder(fatal) extracts the close reason for diagnostics",
+"prior_evidence": [
+"gateway/ws.js:217"
+]
+},
+{
+"id": "C27-053",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Bound and sanitize diagnostic use of peer-provided close descriptions.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "outgoing reason truncated to 100 bytes; conn.closed log omits raw peer reason text",
+"prior_evidence": [
+"gateway/ws.js:109",
+"gateway/connection.js:315"
+]
+},
+{
+"id": "C27-054",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Tell the lifecycle owner that peer closure was observed.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'close' event with initiator tells Connection peer closure was observed",
+"prior_evidence": [
+"gateway/ws.js:139",
+"gateway/connection.js:312-315"
+]
+},
+{
+"id": "C27-055",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Discard or otherwise handle incomplete data according to the approved policy.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "_fail()/_destroy() reset buf and drop fragments on abnormal termination",
+"prior_evidence": [
+"gateway/ws.js:123-127"
+]
+},
+{
+"id": "C27-056",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Avoid scheduling ordinary message delivery for a Close result.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "OP.CLOSE returns directly to _onClose, never scheduling _message delivery",
+"prior_evidence": [
+"gateway/ws.js:198"
+]
+},
+{
+"id": "C27-057",
+"task_class": "IMPLEMENT",
+"area": "06. Close interpretation",
+"req": "Avoid acknowledging closure through competing receive ownership.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "single _parse loop; no competing reader can acknowledge closure",
+"prior_evidence": [
+"gateway/ws.js:60-61"
+]
+},
+{
+"id": "C27-058",
+"task_class": "TEST",
+"area": "06. Close interpretation",
+"req": "Test Close as the first received result.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "close handshake conformance tests include closing as the first/only exchange",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-059",
+"task_class": "TEST",
+"area": "06. Close interpretation",
+"req": "Test Close during an incomplete message.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for Close arriving during an incomplete (fragmented) message",
+"prior_evidence": []
+},
+{
+"id": "C27-060",
+"task_class": "TEST",
+"area": "06. Close interpretation",
+"req": "Test missing close-status details through an appropriate fixture.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'invalid close code -> 1002; 1-byte close payload -> 1002' cover missing/short close-status fixtures",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-061",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Reject a null result object.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "FrameDecoder/validateRecord rejects rec === null",
+"prior_evidence": [
+"protocol/bridge.js:23"
+]
+},
+{
+"id": "C27-062",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Reject a result incompatible with the expected type.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "validateRecord rejects a record type not allowed for the schema direction",
+"prior_evidence": [
+"protocol/bridge.js:24-25"
+]
+},
+{
+"id": "C27-063",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Reject out-of-range Count in a synthetic test.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "zero-length and >MAX_BODY declared lengths rejected before allocation; tested",
+"prior_evidence": [
+"protocol/bridge.js:80-81",
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C27-064",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Handle buffer-reference loss as an internal error.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit handling found for a lost/invalidated buffer reference as an internal error",
+"prior_evidence": []
+},
+{
+"id": "C27-065",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Handle arithmetic overflow during byte-count accumulation.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "64-bit length hi!==0 / lo>0x7fffffff guarded, preventing overflow in size accounting",
+"prior_evidence": [
+"gateway/ws.js:163-165"
+]
+},
+{
+"id": "C27-066",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Handle application limits reached before completion.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes checked per-fragment before completion, aborting early with 1009",
+"prior_evidence": [
+"gateway/ws.js:170"
+]
+},
+{
+"id": "C27-067",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Distinguish protocol input failure from an application programming invariant failure.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "_fail (transport/protocol) vs codec decode errors (BAD_MESSAGE, application-level) are distinct paths",
+"prior_evidence": [
+"gateway/ws.js:123-168",
+"gateway/connection.js:112-116"
+]
+},
+{
+"id": "C27-068",
+"task_class": "IMPLEMENT",
+"area": "07. Fault behavior",
+"req": "Prevent interpreter exceptions from leaving a worker without cleanup.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "onRecord wrapped in try/catch -> _fail; worker exit/error listeners ensure cleanup",
+"prior_evidence": [
+"protocol/bridge.js:98-99",
+"gateway/connection.js:184-193"
+]
+},
+{
+"id": "C27-069",
+"task_class": "DOCUMENT",
+"area": "07. Fault behavior",
+"req": "Record error categories without payload dumps.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "log.error('worker.bridge_error', {{conn, code}}) logs category only, no payload [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:186"
+]
+},
+{
+"id": "C27-070",
+"task_class": "TEST",
+"area": "07. Fault behavior",
+"req": "Test a failed interpretation followed by deliberate connection termination.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'decoder stops after a fatal error' + onError triggers _workerFailed (connection termination)",
+"prior_evidence": [
+"tests/protocol/bridge.test.js",
+"gateway/connection.js:186"
+]
+},
+{
+"id": "C27-071",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for complete text.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "vertical slice covers a complete text message fixture",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C27-072",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for incomplete text.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "fragmented/partial-delivery tests cover incomplete text",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C27-073",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for complete binary.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary is not a supported message type (closes 1003)",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-074",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for incomplete binary.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary is not a supported message type (closes 1003)",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-075",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for close.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "close-handshake tests are the fixture for Close",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C27-076",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for zero-byte completion.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found specifically fixturing zero-byte completion",
+"prior_evidence": []
+},
+{
+"id": "C27-077",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for full-capacity incomplete input.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for full-capacity incomplete input (fragment at exactly maxMessageBytes, not yet fin)",
+"prior_evidence": []
+},
+{
+"id": "C27-078",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a fixture for full-capacity complete input.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for full-capacity complete input (single message exactly at maxMessageBytes)",
+"prior_evidence": []
+},
+{
+"id": "C27-079",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Build a multi-result sequence ending in a complete message.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'many records in one read' is a multi-result sequence ending in a complete message",
+"prior_evidence": [
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C27-080",
+"task_class": "IMPLEMENT",
+"area": "08. Test matrix",
+"req": "Compare all fixture outputs against the decision table.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit comparison of fixture outputs against a published decision table found",
+"prior_evidence": []
+},
+{
+"id": "C27-081",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Connect the interpreter to the actual ReceiveAsync loop.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "_parse is invoked directly from the socket 'data' receive path (integrated, not separate)",
+"prior_evidence": [
+"gateway/ws.js:144-151"
+]
+},
+{
+"id": "C27-082",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Connect continuation decisions to the accumulator.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "CONT case appends to this.frag, connecting continuation decisions to the accumulator",
+"prior_evidence": [
+"gateway/ws.js:191-193"
+]
+},
+{
+"id": "C27-083",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Connect completion decisions to the payload decoder.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "fin=true triggers _message() which performs UTF-8 payload decoding",
+"prior_evidence": [
+"gateway/ws.js:184,194,204-209"
+]
+},
+{
+"id": "C27-084",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Connect close decisions to the disconnect handler.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "_onClose -> emit close -> Connection._onSocketClose disconnect handling",
+"prior_evidence": [
+"gateway/ws.js:198,211-225",
+"gateway/connection.js:312-334"
+]
+},
+{
+"id": "C27-085",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Track received bytes independently from message count.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "stats.rxBytes and stats.rxMessages are separate counters",
+"prior_evidence": [
+"gateway/ws.js:58,146,205"
+]
+},
+{
+"id": "C27-086",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Track invalid-result invariant failures distinctly.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "failure codes categorize errors but no distinct invariant-failure counter/metric found",
+"prior_evidence": [
+"gateway/ws.js:123-127"
+]
+},
+{
+"id": "C27-087",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and diagnostics",
+"req": "Include connection identity in safe interpreter diagnostics.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "log calls include conn: this.id for safe correlation",
+"prior_evidence": [
+"gateway/connection.js:263,315"
+]
+},
+{
+"id": "C27-088",
+"task_class": "TEST",
+"area": "09. Integration and diagnostics",
+"req": "Test nonzero buffer offsets end to end when supported.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'byte-at-a-time delivery (split header + split body)' exercises nonzero offset handling end to end",
+"prior_evidence": [
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C27-089",
+"task_class": "TEST",
+"area": "09. Integration and diagnostics",
+"req": "Test real messages in addition to synthetic fixtures.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "gateway tests run against Node's real (undici) WebSocket client; browser test uses Chromium's, not only synthetic fixtures",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C27-090",
+"task_class": "DOCUMENT",
+"area": "09. Integration and diagnostics",
+"req": "Record any fixture behavior not observable through the selected runtime.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "binary-unsupported behavior noted in prose; no consolidated 'not observable' record found",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the result decision table.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "decision logic in prose, not published as an explicit table",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish Count and offset invariants.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'oversize...decided from headers before buffering' documents Count/offset invariants",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish completion and reset rules.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "completion/fragmentation behavior documented generally; explicit reset rules not spelled out",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-094",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish Close handling rules.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'Close: peer close is echoed with the same code; our close waits up to 3 s...' documents Close handling rules",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link the full synthetic fixture matrix.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "EVIDENCE_INDEX links the full ws-conformance + codec fixture matrix",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C27-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link real receive-loop integration tests.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "e2e and browser tests link real receive-loop integration coverage",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C27-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link stale-byte and message-boundary tests.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'data after our close is ignored' and 'truncated record distinguished from clean EOF' cover stale-byte/boundary tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C27-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document unsupported message categories.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "'binary closes 1003' documents the unsupported message category",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C27-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved managed-API behavior.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'managed-API behavior' is a .NET CLR concept with no meaning for the Node runtime (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C27-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve interpretation only when all delivered bytes and message boundaries match expectations.",
+"ram_overlay": "Distinguish count, message completion, type, cancellation, and close. Keep byte accounting separate from logical message accounting and retire unused receive capacity safely.",
+"challenge": "Exercise zero-length completed messages, multi-read messages, close results, and cancelled receive tasks.",
+"ref_work": [
+"R10",
+"R11"
+],
+"prior_status": "PASS",
+"prior_note": "95/95 suite passing incl. codec byte-parity vectors and ws-conformance boundary tests",
+"prior_evidence": [
+"e/_runs/full-suite.tap",
+"tests/protocol/codec.test.js",
+"tests/gateway/ws-conformance.test.js"
+]
+}
+]
+}

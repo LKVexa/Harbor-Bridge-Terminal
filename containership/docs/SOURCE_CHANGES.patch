@@ -1,0 +1,1401 @@
+--- UC-2.1.3/ship/unikernel/__init__.py
++++ UC-2.2.0/ship/unikernel/__init__.py
+@@ -39,7 +39,7 @@
+ 
+ from __future__ import annotations
+ 
+-UC_RELEASE = "UC-2.1.3"
++UC_RELEASE = "UC-2.2.0"
+ UC_NAME = "Unikernel Containership"
+ DF_RELEASE_EXPECTED = "DF-PA21.2-1.0.0"
+ STUDIO_VERSION_EXPECTED = "2.0.0"
+--- UC-2.1.3/ship/unikernel/berth.py
++++ UC-2.2.0/ship/unikernel/berth.py
+@@ -49,6 +49,7 @@
+ from . import engines as E
+ from . import tif_fabric as TF
+ from . import hullmount as HM
++from . import safety as SAFE
+ 
+ BERTH_NAME_RE = __import__("re").compile(r"^[A-Za-z][A-Za-z0-9_.-]{0,63}$")
+ 
+@@ -92,7 +93,7 @@
+     led = json.load(open(lp, encoding="utf-8"))
+     for r in led["records"]:
+         if r["path"] == path:
+-            return os.path.join(berth_dir(berth), NODE_CONTAINER[r["node"]], "cargo", stored_path_of(r))
++            return SAFE.contained_path(berth_dir(berth), NODE_CONTAINER[r["node"]] + "/cargo/" + stored_path_of(r))
+     return None
+ SOURCE_SKIP_DIRS = {"__pycache__", ".git", ".build", "_runs", "_engines", "_studio", "_scratch", ".DS_Store"}
+ SOURCE_SKIP_SUFFIX = (".pyc",)
+@@ -117,7 +118,7 @@
+ LAUNCHER_CMD = """@echo off
+ REM {title} -- delegates to the ship (uc.py {cmd}).
+ setlocal
+-set HERE=%~dp0
++set "HERE=%~dp0"
+ if "%PYTHON%"=="" set PYTHON=python
+ "%PYTHON%" -B "%HERE%{up_win}\\uc.py" {cmd} %*
+ endlocal
+@@ -133,15 +134,12 @@
+ 
+ 
+ def berth_dir(name: str) -> str:
+-    return os.path.join(berths_dir(), name)
++    SAFE.validate_name(name)
++    return SAFE.contained_path(E.ship_root(), "berths/" + name)
+ 
+ 
+ def _write(path: str, text: str, mode: Optional[int] = None) -> None:
+-    os.makedirs(os.path.dirname(path), exist_ok=True)
+-    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+-        fh.write(text)
+-    if mode is not None:
+-        os.chmod(path, mode)
++    SAFE.atomic_write(path, text, mode=mode)
+ 
+ 
+ def _write_json(path: str, obj: Any) -> None:
+@@ -166,30 +164,48 @@
+     src = os.path.abspath(os.path.expanduser(source))
+     if os.path.isfile(src) and zipfile.is_zipfile(src):
+         td = tempfile.mkdtemp(prefix="uc-ingest-")
+-        with zipfile.ZipFile(src) as z:
+-            z.extractall(td)
+-        top = [d for d in os.listdir(td)]
+-        root = os.path.join(td, top[0]) if len(top) == 1 and os.path.isdir(os.path.join(td, top[0])) else td
+-        rec = {"kind": "zip", "path": src, "sha256": M.sha256_file(src), "bytes": os.path.getsize(src),
+-               "archive_root": ("one top-level directory " + top[0]) if root != td else "files at archive root"}
+-        return root, rec, td
++        try:
++            with zipfile.ZipFile(src) as z:
++                mapping, prefix = SAFE.stage_zip(z, td)
++            rec = {"kind": "zip", "path": src, "sha256": M.sha256_file(src), "bytes": os.path.getsize(src),
++                   "archive_root": ("one top-level directory " + prefix) if prefix else "files at archive root",
++                   "_archive_files": mapping}
++            return td, rec, td
++        except BaseException:
++            shutil.rmtree(td, ignore_errors=True)
++            raise
+     if os.path.isdir(src):
+-        digest, n = M.dir_digest(src)
+-        return src, {"kind": "directory", "path": src, "tree_sha256": digest, "files": n}, None
++        scripts = list_scripts(src)  # validate/bound before hashing or reading large inputs
++        h = hashlib.sha256()
++        for rel in scripts:
++            h.update(f"{M.sha256_file(SAFE.contained_path(src, rel))}  {rel}\n".encode("utf-8"))
++        return src, {"kind": "directory", "path": src, "tree_sha256": h.hexdigest(), "files": len(scripts),
++                     "digest_scope": "eligible cargo only; SOURCE_SKIP_DIRS/SOURCE_SKIP_SUFFIX excluded"}, None
+     raise Refusal(f"no such project source: {src}", {"source": source})
+ 
+ 
+ def list_scripts(root: str) -> List[str]:
++    SAFE.reject_link(root)
+     out = []
++    total = 0
+     for dp, dns, fns in os.walk(root):
+         dns[:] = sorted(d for d in dns if d not in SOURCE_SKIP_DIRS)
++        for dn in dns:
++            SAFE.reject_link(os.path.join(dp, dn))
+         for fn in sorted(fns):
+             if fn.endswith(SOURCE_SKIP_SUFFIX) or fn in SOURCE_SKIP_DIRS:
+                 continue
+             p = os.path.join(dp, fn)
+-            if os.path.islink(p) or not os.path.isfile(p):
+-                continue
+-            out.append(os.path.relpath(p, root).replace(os.sep, "/"))
++            SAFE.reject_link(p)
++            if not os.path.isfile(p):
++                raise Refusal("non-regular source file", {"path": p})
++            rel = os.path.relpath(p, root).replace(os.sep, "/")
++            SAFE.relative_path(rel)
++            size = os.path.getsize(p)
++            total += size
++            if size > SAFE.DEFAULT_LIMITS.member_bytes or total > SAFE.DEFAULT_LIMITS.total_bytes or len(out) >= SAFE.DEFAULT_LIMITS.entries:
++                raise Refusal("source exceeds cargo size/count budget", {"path": rel})
++            out.append(rel)
+     return sorted(out)
+ 
+ 
+@@ -279,8 +295,8 @@
+             "_words": words}
+ 
+ 
+-def load(source: str, name: str, kind: str = "subsystem", *, notes: Optional[str] = None,
+-         replace: bool = False, on_event=None) -> Dict[str, Any]:
++def _load_uncommitted(source: str, name: str, kind: str, dest: str, *, notes: Optional[str] = None,
++                      on_event=None) -> Dict[str, Any]:
+     """Break a project into scripts, sort each into a node, and give the
+     project its own blank scaffold holding the sorted cargo."""
+     if not BERTH_NAME_RE.match(name or ""):
+@@ -288,17 +304,14 @@
+                       {"name": name})
+     if kind not in BERTH_KINDS:
+         raise Refusal(f"kind must be one of {BERTH_KINDS}", {"kind": kind})
+-    dest = berth_dir(name)
+-    if os.path.isdir(dest):
+-        if not replace:
+-            raise Refusal(f"berth {name!r} already exists; unload it or pass replace", {"berth": dest})
+-        shutil.rmtree(dest)
+     emit = on_event or (lambda ev: None)
+     root, source_rec, td = ingest(source)
+-    b = E.bind()
+-    W = b["witness"]
++    archive_files = source_rec.pop("_archive_files", None)
+     try:
+-        scripts = list_scripts(root)
++        b = E.bind()
++        W = b["witness"]
++        scripts = (sorted(p for p in archive_files if not any(x in SOURCE_SKIP_DIRS for x in p.split("/"))
++                          and not p.endswith(SOURCE_SKIP_SUFFIX)) if archive_files is not None else list_scripts(root))
+         if not scripts:
+             raise Refusal("the project holds no scripts to sort", {"source": source})
+         emit({"phase": "sort", "scripts": len(scripts)})
+@@ -307,18 +320,27 @@
+                                      for n in NODE_IDS}
+         os.makedirs(dest)
+         seen_lower: Dict[str, str] = {}
++        stored_seen: set[str] = set()
+         aliases: List[dict] = []
+         for rel in scripts:
+-            with open(os.path.join(root, rel), "rb") as fh:
+-                data = fh.read()
++            source_path = archive_files[rel] if archive_files is not None else SAFE.contained_path(root, rel)
++            with open(source_path, "rb") as fh:
++                data = fh.read(SAFE.DEFAULT_LIMITS.member_bytes + 1)
++            if len(data) > SAFE.DEFAULT_LIMITS.member_bytes:
++                raise Refusal("source file grew beyond the cargo budget", {"path": rel})
+             rec = sorter.sort_script(rel, data)
+             # portable storage: alias a path that cannot exist on every host (see STORED_PATH_BUDGET)
+             reasons = []
+-            low = rel.lower()
+-            if low in seen_lower:
+-                reasons.append(f"differs only by case from {seen_lower[low]!r} (one file on a case-insensitive filesystem)")
+-            else:
+-                seen_lower[low] = rel
++            for i in range(1, len(rel.split("/")) + 1):
++                prefix = "/".join(rel.split("/")[:i])
++                low = SAFE.portable_key(prefix)
++                if low in seen_lower and seen_lower[low] != prefix:
++                    reasons.append("case/Unicode-normalization collision in source path")
++                seen_lower.setdefault(low, prefix)
++            if SAFE.windows_unsafe(rel):
++                reasons.append("Windows-reserved name or non-portable component")
++            if SAFE.portable_key(rel) == "cargo_manifest.json" or SAFE.portable_key(rel.split("/")[0]) == ALIAS_DIR:
++                reasons.append("reserved cargo metadata or alias namespace")
+             delivered = f"{PACKAGE_DIR}/berths/{name}/{NODE_CONTAINER[rec['node']]}/cargo/{rel}"
+             if len(delivered) > DELIVERED_PATH_BUDGET:
+                 reasons.append(f"the delivered path would be {len(delivered)} characters, over the "
+@@ -328,6 +350,13 @@
+                 rec["stored_as"] = stored_alias(rel)
+                 rec["stored_reason"] = "; ".join(reasons)
+                 aliases.append({"path": rel, "stored_as": rec["stored_as"], "why": rec["stored_reason"], "node": rec["node"]})
++            stored = stored_path_of(rec)
++            if len(f"{PACKAGE_DIR}/berths/{name}/{NODE_CONTAINER[rec['node']]}/cargo/{stored}") > DELIVERED_PATH_BUDGET:
++                raise Refusal("even an aliased path exceeds the portable budget; use a shorter berth name", {"name": name, "path": rel})
++            storage_key = SAFE.portable_key(NODE_CONTAINER[rec["node"]] + "/" + stored)
++            if storage_key in stored_seen:
++                raise Refusal("cargo alias/storage collision", {"path": rel})
++            stored_seen.add(storage_key)
+             ledger.append(rec)
+             pn = per_node[rec["node"]]
+             pn["count"] += 1
+@@ -472,7 +501,7 @@
+             hull_cargo = [{k: m.get(k) for k in ("name", "prefix", "version", "listed", "complete", "picture", "picture_node",
+                                                    "pubkey", "pubkey_sha256", "entry", "image", "state", "devices", "built_by", "digests")}
+                           | {"files": [{"path": f["path"], "slot": f.get("slot"), "rule": f.get("rule")} for f in m["files"]]}
+-                          for m in HM.detect(name)]
++                          for m in HM.detect(name, ledger={"records": ledger}, root=dest)]
+         except Exception as exc:  # noqa: BLE001
+             hull_cargo = [{"error": f"{type(exc).__name__}: {exc}"}]
+         berth_rec = {
+@@ -499,9 +528,8 @@
+         }
+         _write_json(os.path.join(dest, "BERTH.json"), berth_rec)
+         _write(os.path.join(dest, "README.md"), berth_readme(berth_rec, per_node, cseal, bseal))
+-        sums = M.write_sums(dest, name="SHA256SUMS.txt", extra=())
+-        berth_rec["sums_sha256"] = sums
+-        _write_json(os.path.join(dest, "BERTH.json"), berth_rec)
++        # Do not embed the checksum of a file which also hashes this JSON (a self-reference).
++        # The external bill of lading records the current checksum-file digest instead.
+         M.write_sums(dest, name="SHA256SUMS.txt", extra=())
+         return berth_rec
+     finally:
+@@ -509,12 +537,81 @@
+             shutil.rmtree(td, ignore_errors=True)
+ 
+ 
++@SAFE.serialized
++def load(source: str, name: str, kind: str = "subsystem", *, notes: Optional[str] = None,
++         replace: bool = False, on_event=None) -> Dict[str, Any]:
++    """Validate/build in staging, then swap; retain the previous berth as a backup.
++
++    Ordinary exceptions restore the old berth. A process/host crash can leave a
++    journal in _runs/transactions; doctor reports it. Registry + seals + hull are
++    not a single crash-atomic transaction (see SECURITY.md).
++    """
++    import uuid
++    SAFE.validate_name(name)
++    if kind not in BERTH_KINDS:
++        raise Refusal("invalid berth kind", {"kind": kind})
++    dest = berth_dir(name)
++    os.makedirs(berths_dir(), exist_ok=True)
++    for existing in os.listdir(berths_dir()):
++        if SAFE.portable_key(existing) == SAFE.portable_key(name) and existing != name:
++            raise Refusal("berth name collides on a case-insensitive filesystem", {"existing": existing, "name": name})
++    exists = os.path.exists(dest)
++    if exists and (not replace or not os.path.isdir(dest)):
++        raise Refusal("berth already exists; use --replace for a staged replacement", {"berth": name})
++    txid = uuid.uuid4().hex
++    txroot = SAFE.contained_path(E.ship_root(), "_runs/transactions/" + txid)
++    candidate = os.path.join(txroot, "candidate")
++    journal = os.path.join(txroot, "journal.json")
++    backup = SAFE.contained_path(E.ship_root(), f"_runs/backups/load_{name}_{txid}") if exists else None
++    state = {"schema": "UC/TRANSACTION/1", "operation": "load", "berth": name, "phase": "PREPARING",
++             "candidate": candidate, "destination": dest, "backup": backup}
++    SAFE.atomic_json(journal, state)
++    moved_old = committed = completed = rollback_failed = False
++    try:
++        rec = _load_uncommitted(source, name, kind, candidate, notes=notes, on_event=on_event)
++        check = M.check_sums(candidate)
++        if not check["pass"]:
++            raise ShipError("staged berth does not pass its own checksum gate", check)
++        state["phase"] = "STAGED"
++        SAFE.atomic_json(journal, state)
++        if exists:
++            os.makedirs(os.path.dirname(backup), exist_ok=True)
++            os.replace(dest, backup)
++            moved_old = True
++            state["phase"] = "BACKED_UP"
++            SAFE.atomic_json(journal, state)
++        os.replace(candidate, dest)
++        committed = True
++        state["phase"] = "COMMITTED"
++        SAFE.atomic_json(journal, state)
++        if backup:
++            rec["replacement_backup"] = backup
++        completed = True
++        return rec
++    except BaseException:
++        if moved_old and not committed:
++            try:
++                os.replace(backup, dest)
++            except OSError:
++                rollback_failed = True
++                raise
++        raise
++    finally:
++        # Keep evidence if the swap committed but final journaling failed, or rollback failed.
++        if completed or (not committed and not rollback_failed):
++            shutil.rmtree(txroot, ignore_errors=True)
++
++
++@SAFE.serialized
+ def unload(name: str) -> Dict[str, Any]:
++    import uuid
+     d = berth_dir(name)
+     if not os.path.isdir(d):
+         raise Refusal(f"no berth {name!r}", {"berth": d})
+-    shutil.rmtree(d)
+-    return {"unloaded": name, "path": d}
++    backup = SAFE.contained_path(E.ship_root(), f"_runs/backups/unload_{name}_{uuid.uuid4().hex}")
++    os.makedirs(os.path.dirname(backup), exist_ok=True)
++    os.replace(d, backup)
++    return {"unloaded": name, "path": d, "backup": backup, "recoverable": True}
+ 
+ 
+ # --------------------------------------------------------------------------
+--- UC-2.1.3/ship/unikernel/cli.py
++++ UC-2.2.0/ship/unikernel/cli.py
+@@ -46,20 +46,20 @@
+ from unikernel import berth as BT  # noqa: E402
+ from unikernel import registry as R  # noqa: E402
+ from unikernel import sorter  # noqa: E402
++from unikernel import safety as SAFE
+ 
+ EXIT_OK, EXIT_FAIL, EXIT_REJECTED, EXIT_BLOCKED = 0, 1, 2, 3
+ 
+ 
+ def _utc() -> str:
+-    return _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
++    return _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+ 
+ 
+ def _emit(obj: Any, code: int = EXIT_OK, out: Optional[str] = None) -> int:
+     text = json.dumps(obj, indent=2, sort_keys=True, default=str)
+     if out:
+         os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+-        with open(out, "w", encoding="utf-8") as fh:
+-            fh.write(text + "\n")
++        SAFE.atomic_write(out, text + "\n")
+     print(text)
+     return code
+ 
+@@ -244,7 +244,9 @@
+                 except Exception as exc:  # noqa: BLE001
+                     out["hull_mounts"] = {"ok": False, "error": _err(exc)}
+         out["reseal"] = _reseal(f"load {a.name}", enabled=not a.no_reseal)
+-        return _emit(out, out=a.out)
++        complete = all(out.get(k, {}).get("ok", True) for k in ("studio_face", "hull_mounts"))
++        out["post_load_ok"] = bool(complete)
++        return _emit(out, EXIT_OK if complete else EXIT_FAIL, out=a.out)
+     except Refusal as exc:
+         return _emit({"refused": True, **exc.as_dict()}, EXIT_BLOCKED)
+     except ShipError as exc:
+@@ -253,6 +255,8 @@
+ 
+ def cmd_unload(a) -> int:
+     try:
++        if not os.path.isdir(BT.berth_dir(a.name)):
++            raise Refusal("no such berth; no mount was changed", {"berth": a.name})
+         um = None
+         try:
+             from unikernel import hullmount as HM
+@@ -329,6 +333,15 @@
+     if H.limits():
+         print(f"   host limits on this machine: {', '.join(sorted(H.limits()))} -- gates that need what is missing are SKIPPED with the reason "
+               f"(README_START_HERE.md > On Windows)", flush=True)
++    def skipped_any(value):
++        if isinstance(value, dict):
++            return value.get("status") == "SKIPPED" or any(skipped_any(v) for v in value.values())
++        return isinstance(value, list) and any(skipped_any(v) for v in value)
++    if res["verdict"] != "PASS":
++        return EXIT_FAIL
++    if a.require_complete and skipped_any(res):
++        print("== INCOMPLETE: --require-complete refuses skipped gates", flush=True)
++        return EXIT_BLOCKED
+     return EXIT_OK if res["verdict"] == "PASS" else EXIT_FAIL
+ 
+ 
+@@ -336,6 +349,10 @@
+     d = BT.berth_dir(a.name)
+     if not os.path.isdir(d):
+         return _emit({"refused": True, "reason": f"no berth {a.name!r}"}, EXIT_BLOCKED)
++    from unikernel import ucmanifest as M
++    integrity = M.check_sums(d)
++    if not integrity["pass"]:
++        return _emit({"refused": True, "reason": "berth integrity check failed before execution", "integrity": integrity}, EXIT_BLOCKED)
+     try:
+         b = E.bind()
+     except ShipError as exc:
+@@ -353,6 +370,10 @@
+     if not v.ok:
+         return _emit({"rejected": True, "diagnostics": [x.as_dict() for x in v.diagnostics]}, EXIT_REJECTED)
+     programs = tuple(p.strip() for p in a.programs.split(",")) if a.programs else ("replica", "pipeline", "bsp")
++    seal = json.load(open(os.path.join(d, "BERTH_SEAL.json" if a.bundle == "BERTH" else "CARGO_SEAL.json"), encoding="utf-8"))
++    reference = b["witness"].reference_witness_words(b["witness"].words_of(prog))
++    if prog.seal() != seal.get("seal") or reference != seal.get("reference_witness") or len(prog.rows) != seal.get("rows"):
++        return _emit({"refused": True, "reason": "bundle differs from its pinned seal/reference/row count"}, EXIT_BLOCKED)
+     stamp = _utc()
+     out = a.out or os.path.join(E.runs_dir(), f"RUN_{stamp}_{a.name}_{a.bundle}.json")
+     from unikernel import host as H
+@@ -368,7 +389,7 @@
+     seal = json.load(open(os.path.join(d, "BERTH_SEAL.json" if a.bundle == "BERTH" else "CARGO_SEAL.json"), encoding="utf-8"))
+     res["pinned_reference_witness"] = seal["reference_witness"]
+     res["matches_pinned"] = (res["programs"].get("replica", {}).get("reference_witness", seal["reference_witness"]) == seal["reference_witness"])
+-    code = EXIT_OK if res["verdict"] == FR.TOKEN_AGREE else EXIT_FAIL
++    code = EXIT_OK if res["verdict"] == FR.TOKEN_AGREE and res["matches_pinned"] else EXIT_FAIL
+     return _emit(res, code, out=out)
+ 
+ 
+@@ -466,13 +487,16 @@
+     if slot not in SLOTS or slot == "DF_Fabric":
+         return _emit({"rejected": True, "reason": f"slot must be one of {[s for s in SLOTS if s != 'DF_Fabric']}"}, EXIT_REJECTED)
+     nid = next(n for n, c in NODE_CONTAINER.items() if c == slot)
+-    p = os.path.join(d, slot, "cargo", a.cargo)
+-    if not os.path.isfile(p):
+-        alt = BT.cargo_disk_path(a.name, a.cargo)         # an aliased file answers to its original path
+-        if alt and os.path.isfile(alt) and os.path.dirname(os.path.dirname(os.path.relpath(alt, d))) == slot:
+-            p = alt
+-    if not os.path.isfile(p):
+-        return _emit({"rejected": True, "reason": f"no cargo {a.cargo!r} in {a.name}/{slot}"}, EXIT_REJECTED)
++    SAFE.relative_path(a.cargo)
++    from unikernel import ucmanifest as M
++    ledger = json.load(open(os.path.join(d, "SORT_LEDGER.json"), encoding="utf-8"))
++    choices = [r for r in ledger["records"] if r.get("node") == nid and a.cargo in (r.get("path"), BT.stored_path_of(r))]
++    if len(choices) != 1:
++        return _emit({"rejected": True, "reason": "cargo must identify exactly one ledger entry in the requested slot"}, EXIT_REJECTED)
++    cargo = choices[0]
++    p = SAFE.contained_path(d, slot + "/cargo/" + BT.stored_path_of(cargo))
++    if not os.path.isfile(p) or M.sha256_file(p) != cargo["sha256"] or os.path.getsize(p) != cargo["bytes"]:
++        return _emit({"refused": True, "reason": "cargo is missing or differs from its registered bytes"}, EXIT_BLOCKED)
+     try:
+         b = E.bind()
+     except ShipError as exc:
+@@ -486,9 +510,11 @@
+             if prog is None or not b["lang"].verify(prog).ok:
+                 return _emit({"rejected": True, "reason": "bundle did not parse/verify"}, EXIT_REJECTED)
+             r = ad.submit(prog)
+-            return _emit({"schema": "UC/SLOT_RUN/1", "berth": a.name, "slot": slot, "cargo": a.cargo, "kind": "row_sequence_witness", "result": r})
++            return _emit({"schema": "UC/SLOT_RUN/1", "berth": a.name, "slot": slot, "cargo": a.cargo, "kind": "row_sequence_witness", "result": r},
++                         EXIT_OK if r.get("halted") and r.get("native_witness") == r.get("reference_witness") else EXIT_FAIL)
+         r = ad.run_native(p, max_steps=a.max_steps)
+-        return _emit({"schema": "UC/SLOT_RUN/1", "berth": a.name, "slot": slot, "cargo": a.cargo, "kind": "native_guest_program", "result": r})
++        return _emit({"schema": "UC/SLOT_RUN/1", "berth": a.name, "slot": slot, "cargo": a.cargo, "kind": "native_guest_program", "result": r},
++                     EXIT_OK if r.get("halted") else EXIT_FAIL)
+     except b["dfabric"].AdapterRefusal as exc:
+         return _emit({"blocked": True, "berth": a.name, "slot": slot, "cargo": a.cargo, **exc.as_dict()}, EXIT_BLOCKED)
+ 
+@@ -496,7 +522,8 @@
+ def cmd_studio_register(a) -> int:
+     from unikernel import studio_face
+     try:
+-        return _emit(studio_face.register(a.name, rebuild=True))
++        result = studio_face.register(a.name, rebuild=True)
++        return _emit(result, EXIT_OK if result.get("ok") else EXIT_FAIL)
+     except (ShipError, Refusal) as exc:
+         return _emit({"blocked": True, **exc.as_dict()}, EXIT_BLOCKED)
+ 
+@@ -504,11 +531,23 @@
+ def cmd_studio_test(a) -> int:
+     from unikernel import studio_face
+     r = studio_face.test_all()
+-    return _emit(r, EXIT_OK if not r.get("skipped") else EXIT_BLOCKED)
++    return _emit(r, EXIT_BLOCKED if r.get("skipped") else EXIT_OK if r.get("ok") else EXIT_FAIL)
++
++
++def cmd_doctor(a) -> int:
++    from unikernel import diagnostics
++    rec = diagnostics.doctor()
++    return _emit(rec, EXIT_OK if rec["preflight_ok"] else EXIT_BLOCKED, out=a.out)
++
++
++def cmd_self_test(a) -> int:
++    import subprocess
++    return subprocess.call([sys.executable, "-X", "utf8", "-B", "-m", "unittest", "discover", "-s", os.path.join(SHIP, "tests"), "-v"], cwd=SHIP)
+ 
+ 
+ def main(argv=None) -> int:
+     ap = argparse.ArgumentParser(prog="uc", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
++    ap.add_argument("--version", action="version", version=UC_RELEASE)
+     sp = ap.add_subparsers(dest="cmd", required=True)
+     p = sp.add_parser("status"); p.add_argument("--out"); p.set_defaults(fn=cmd_status)
+     p = sp.add_parser("build"); p.add_argument("--pa21", help="PA21 delivery root for the hull's ledger bridge (default hold/PA21_LEDGER_EXCERPT)")
+@@ -521,7 +560,7 @@
+     p = sp.add_parser("seal"); p.add_argument("--reason"); p.add_argument("--out"); p.set_defaults(fn=cmd_seal)
+     p = sp.add_parser("berths"); p.add_argument("--out"); p.set_defaults(fn=cmd_berths)
+     p = sp.add_parser("sort"); p.add_argument("files", nargs="+"); p.set_defaults(fn=cmd_sort)
+-    p = sp.add_parser("verify"); p.add_argument("berth", nargs="?"); p.add_argument("--quick", action="store_true"); p.add_argument("--no-hull", action="store_true"); p.add_argument("--out"); p.set_defaults(fn=cmd_verify)
++    p = sp.add_parser("verify"); p.add_argument("berth", nargs="?"); p.add_argument("--quick", action="store_true"); p.add_argument("--no-hull", action="store_true"); p.add_argument("--require-complete", action="store_true", help="fail when any ship or nested berth gate is skipped"); p.add_argument("--out"); p.set_defaults(fn=cmd_verify)
+     p = sp.add_parser("run"); p.add_argument("name"); p.add_argument("--sealed", action="store_true", help="run the sealed bundles' programs (replica/pipeline/bsp) instead of ticking the .tif fabric")
+     p.add_argument("--ticks", type=int, help="fabric ticks to run (default 1)"); p.add_argument("--interval", type=float, help="seconds between ticks")
+     p.add_argument("--no-view", action="store_true", help="do not render the PNG views after the tick")
+@@ -540,8 +579,47 @@
+     p = sp.add_parser("slot-run"); p.add_argument("name"); p.add_argument("slot"); p.add_argument("cargo"); p.add_argument("--max-steps", type=int); p.set_defaults(fn=cmd_slot_run)
+     p = sp.add_parser("studio-register"); p.add_argument("name"); p.set_defaults(fn=cmd_studio_register)
+     p = sp.add_parser("studio-test"); p.set_defaults(fn=cmd_studio_test)
++    p = sp.add_parser("doctor", help="offline preflight and explicit capability boundaries")
++    p.add_argument("--out"); p.set_defaults(fn=cmd_doctor)
++    p = sp.add_parser("self-test", help="run the ship-layer regression suite")
++    p.set_defaults(fn=cmd_self_test)
+     a = ap.parse_args(argv)
+-    return a.fn(a)
++    try:
++        for key in ("name", "berth"):
++            value = getattr(a, key, None)
++            if value is not None:
++                SAFE.validate_name(value)
++        if getattr(a, "ticks", None) is not None:
++            SAFE.finite_number(a.ticks, 1, 10000, "ticks")
++        if getattr(a, "interval", None) is not None:
++            SAFE.finite_number(a.interval, 0, 86400, "interval")
++        if getattr(a, "scale", None) is not None:
++            SAFE.finite_number(a.scale, 1, 64, "scale")
++        if getattr(a, "max_steps", None) is not None:
++            SAFE.finite_number(a.max_steps, 1, 10000000, "max_steps")
++        if getattr(a, "programs", None) is not None:
++            programs = a.programs.split(",")
++            if not programs or any(p.strip() not in ("replica", "pipeline", "bsp") for p in programs):
++                raise Refusal("programs must be a comma-separated subset of replica,pipeline,bsp")
++        if a.cmd == "self-test":
++            return a.fn(a)  # the tests acquire independent locks; do not lock their parent
++        with SAFE.ship_lock(E.ship_root()):
++            return a.fn(a)
++    except Refusal as exc:
++        return _emit({"refused": True, **exc.as_dict()}, EXIT_BLOCKED)
++    except ShipError as exc:
++        return _emit({"failed": True, **exc.as_dict()}, EXIT_FAIL)
++    except KeyboardInterrupt:
++        return _emit({"interrupted": True, "reason": "operator interrupted the command"}, 130)
++    except Exception as exc:
++        # Preserve a traceback locally, but make expected console failures actionable.
++        import traceback
++        path = os.path.join(E.runs_dir(), f"ERROR_{_utc()}.log")
++        try:
++            SAFE.atomic_write(path, traceback.format_exc())
++        except OSError:
++            path = None
++        return _emit({"failed": True, "error": _err(exc), "diagnostic": path}, EXIT_FAIL)
+ 
+ 
+ if __name__ == "__main__":
+--- /dev/null
++++ UC-2.2.0/ship/unikernel/diagnostics.py
+@@ -0,0 +1,47 @@
++"""Offline local preflight; never equates test success with production isolation."""
++from __future__ import annotations
++import ast
++import importlib.util
++import json
++import os
++import sys
++from pathlib import Path
++from . import UC_RELEASE, engines as E, host as H, safety as S, ucmanifest as M
++
++def doctor():
++    root = Path(E.ship_root())
++    errors = []
++    for p in sorted((root / "ship").rglob("*.py")):
++        try:
++            ast.parse(p.read_text(encoding="utf-8-sig"), filename=str(p.relative_to(root)))
++        except (SyntaxError, UnicodeError) as exc:
++            errors.append({"path": str(p.relative_to(root)), "error": str(exc)})
++    pending = []
++    txroot = root / "_runs" / "transactions"
++    if txroot.exists():
++        for p in sorted(txroot.glob("*/journal.json")):
++            try:
++                pending.append(json.loads(p.read_text(encoding="utf-8")))
++            except (OSError, ValueError) as exc:
++                pending.append({"journal": str(p), "error": str(exc)})
++    integrity = {}
++    for label, fn in (("checksums", lambda: M.check_sums(str(root))),
++                      ("inventory", lambda: M.check_manifest_inventory(str(root), json.loads((root / "MANIFEST.json").read_text())))):
++        try:
++            integrity[label] = fn()
++        except Exception as exc:
++            integrity[label] = {"pass": False, "error": str(exc)}
++    hold = E.hold_state()
++    pillow = importlib.util.find_spec("PIL") is not None
++    python_ok = sys.version_info >= (3, 10)
++    return {"schema": "UC/DOCTOR/1", "uc_release": UC_RELEASE, "host": H.facts(),
++            "python_minimum": "3.10", "python_ok": python_ok, "pillow_present": pillow,
++            "source_parse_errors": errors, "hold": hold, "integrity": integrity,
++            "pending_transactions": pending, "host_limits": H.limits(),
++            "preflight_ok": python_ok and pillow and hold["pass"] and not errors and not pending
++                and all(v.get("pass") for v in integrity.values()),
++            "isolation": {"hypervisor_boundary": False, "os_enforced_network_deny": False,
++                          "multi_tenant_ready": False, "bootable_unikernel_image": False,
++                          "distributed_consensus": False, "external_release_authentication": False},
++            "limits": {"archive": vars(S.DEFAULT_LIMITS), "ship_tiff_bytes": 8388608, "ship_tiff_pages": 512},
++            "note": "Preflight success checks local prerequisites and integrity only; build and verify remain necessary. See SECURITY.md."}
+--- UC-2.1.3/ship/unikernel/engines.py
++++ UC-2.2.0/ship/unikernel/engines.py
+@@ -28,8 +28,9 @@
+ import zipfile
+ from typing import Any, Dict, List, Optional
+ 
+-from . import ShipError, NODE_IDS, NODE_CONTAINER, FABRIC_CONTAINER, SLOTS
++from . import ShipError, Refusal, NODE_IDS, NODE_CONTAINER, FABRIC_CONTAINER, SLOTS
+ from . import ucmanifest as M
++from . import safety as SAFE
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ SHIP = os.path.abspath(os.path.join(HERE, "..", ".."))
+@@ -84,7 +85,7 @@
+ 
+ def _sh(cmd: List[str], cwd: str, timeout: int = 3600) -> Dict[str, Any]:
+     t0 = time.perf_counter()
+-    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
++    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
+     return {"argv": cmd, "returncode": p.returncode, "seconds": round(time.perf_counter() - t0, 3),
+             "stdout": p.stdout, "stderr": p.stderr}
+ 
+@@ -104,8 +105,8 @@
+             rec["sha256"] = M.sha256_file(zp)
+             pinned = (pins.get("zips") or {}).get(f"{slot}.zip")
+             rec["pinned"] = pinned
+-            rec["match"] = (pinned == rec["sha256"]) if pinned else None
+-            if pinned and not rec["match"]:
++            rec["match"] = bool(pinned and pinned == rec["sha256"])
++            if not rec["match"]:
+                 out["pass"] = False
+         else:
+             out["pass"] = False
+@@ -115,6 +116,10 @@
+ 
+ def extract_hold(force: bool = False) -> Dict[str, Any]:
+     """Extract every hold zip into _engines/<slot>/ (idempotent by digest)."""
++    trust = hold_state()
++    if not trust["pass"]:
++        raise Refusal("hold archives are missing or do not match all five required pins", trust)
++    SAFE.contained_path(ship_root(), "_engines")
+     os.makedirs(engines_dir(), exist_ok=True)
+     marker = os.path.join(engines_dir(), "EXTRACTED.json")
+     prev = json.load(open(marker, encoding="utf-8")) if os.path.isfile(marker) else {}
+@@ -136,6 +141,7 @@
+             skipped: List[Dict[str, str]] = []
+             collisions: List[str] = []
+             with zipfile.ZipFile(zp) as z:
++                SAFE.inspect_zip(z)
+                 names = z.namelist()
+                 top = sorted({n.split("/")[0] for n in names if n.strip()})
+                 if top != [slot]:
+@@ -152,6 +158,8 @@
+                     lower_seen.setdefault(lo, n)
+                 for zi in z.infolist():
+                     try:
++                        target_name = zi.filename.rstrip("/")
++                        SAFE.contained_path(engines_dir(), target_name)
+                         z.extract(zi, engines_dir())
+                     except OSError as exc:
+                         skipped.append({"name": zi.filename, "error": f"{type(exc).__name__}: {exc}"[:200]})
+@@ -181,15 +189,14 @@
+             refused = {x["name"][len(top_prefix):] for x in (prev_limits.get("skipped_by_host") or []) if x["name"].startswith(top_prefix)}
+             colliding = {x[len(top_prefix):].lower() for x in (prev_limits.get("case_collisions_in_zip") or [])}
+             fs_ci = bool(prev_limits.get("filesystem_case_insensitive"))
+-            unexplained = [f for f in chk["bad"] + chk["missing"] + chk["unbound"]
++            unexplained = list(chk.get("errors", [])) + [f for f in chk["bad"] + chk["missing"] + chk["unbound"]
+                            if not (f in refused or (fs_ci and f.lower() in colliding))]
+             rec["own_sums"]["host_limited"] = not unexplained
+             rec["own_sums"]["unexplained"] = unexplained[:5]
+             if unexplained:
+                 raise ShipError(f"{slot} does not verify after extraction", rec["own_sums"])
+         out["containers"][slot] = rec
+-    with open(marker, "w", encoding="utf-8") as fh:
+-        json.dump(out["containers"], fh, indent=1, sort_keys=True)
++    SAFE.atomic_json(marker, out["containers"])
+     return out
+ 
+ 
+--- UC-2.1.3/ship/unikernel/gates.py
++++ UC-2.2.0/ship/unikernel/gates.py
+@@ -106,7 +106,7 @@
+ 
+ def _sh(cmd: List[str], cwd: str, timeout: int = 3600, env=None) -> dict:
+     t0 = time.perf_counter()
+-    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout, env=env)
++    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout, env=env)
+     return {"argv": cmd, "returncode": p.returncode, "seconds": round(time.perf_counter() - t0, 3), "stdout": p.stdout, "stderr": p.stderr}
+ 
+ 
+@@ -587,9 +587,9 @@
+         ok = st["pass"] and os.path.isfile(sums) and M.sha256_file(sums) == pins.get("df_sha256sums_sha256")
+         # and the DF_SHA256SUMS.txt lines match the zips
+         r = M.check_sums(os.path.join(ship, "hold"), "DF_SHA256SUMS.txt") if os.path.isfile(sums) else {"pass": False}
+-        return {"_status": "PASS" if ok and not r.get("bad") and not r.get("missing") else "FAIL",
++        return {"_status": "PASS" if ok and not r.get("bad") and not r.get("missing") and not r.get("errors") else "FAIL",
+                 "containers": {k: {"match": v.get("match")} for k, v in st["containers"].items()},
+-                "df_sha256sums_ok": not r.get("bad") and not r.get("missing")}
++                "df_sha256sums_ok": not r.get("bad") and not r.get("missing") and not r.get("errors")}
+     B.gate("U0.4", "hold/ holds the five DF containers byte-identical to the pinned digests (and DF_SHA256SUMS.txt binds them)", u04)
+ 
+     def u05():
+--- UC-2.1.3/ship/unikernel/hullmount.py
++++ UC-2.2.0/ship/unikernel/hullmount.py
+@@ -32,6 +32,7 @@
+ 
+ from . import UC_RELEASE, NODE_IDS, NODE_CONTAINER, ShipError, Refusal
+ from . import engines as E
++from . import safety as SAFE
+ from . import ucmanifest as M
+ 
+ MOUNTS_SCHEMA = "UC/HULL_MOUNTS/1"
+@@ -54,15 +55,15 @@
+     return json.load(open(p, encoding="utf-8"))
+ 
+ 
+-def _cargo_path(berth: str, rec: Dict[str, Any]) -> str:
+-    return os.path.join(_berth_dir(berth), NODE_CONTAINER[rec["node"]], "cargo", rec.get("stored_as") or rec["path"])
++def _cargo_path(berth: str, rec: Dict[str, Any], root: Optional[str] = None) -> str:
++    return SAFE.contained_path(root or _berth_dir(berth), NODE_CONTAINER[rec["node"]] + "/cargo/" + (rec.get("stored_as") or rec["path"]))
+ 
+ 
+ # --------------------------------------------------------------------------
+ # detection (from the sort ledger alone)
+ # --------------------------------------------------------------------------
+ 
+-def detect(berth: str, ledger: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
++def detect(berth: str, ledger: Optional[Dict[str, Any]] = None, root: Optional[str] = None) -> List[Dict[str, Any]]:
+     """Every studio container carried in the berth's cargo: prefix, name, the files the seal lists
+     (each with the slot it was sorted to), the pubkey and the picture, if any."""
+     ledger = ledger or _ledger(berth)
+@@ -76,14 +77,14 @@
+         if not seal_rec:
+             continue
+         try:
+-            man = json.load(open(_cargo_path(berth, rec), encoding="utf-8"))
++            man = json.load(open(_cargo_path(berth, rec, root), encoding="utf-8"))
+         except Exception:  # noqa: BLE001
+             continue
+         if not isinstance(man, dict) or man.get("format") != CONTAINER_FORMAT or not man.get("name"):
+             continue
+         listed = []
+         try:
+-            for line in open(_cargo_path(berth, seal_rec), encoding="utf-8"):
++            for line in open(_cargo_path(berth, seal_rec, root), encoding="utf-8"):
+                 line = line.rstrip("\n")
+                 if not line.strip() or "  " not in line:
+                     continue
+@@ -131,7 +132,9 @@
+         if not f.get("present"):
+             raise ShipError("the container is incomplete in the berth", {"missing": f["path"], "container": mount["name"]})
+         src = _cargo_path(berth, recs[mount["prefix"] + f["path"]])
+-        dst = os.path.join(dest, f["path"].replace("/", os.sep))
++        dst = SAFE.contained_path(dest, f["path"])
++        if M.sha256_file(src) != recs[mount["prefix"] + f["path"]]["sha256"]:
++            raise Refusal("cargo changed since its sort ledger was sealed", {"path": f["path"]})
+         os.makedirs(os.path.dirname(dst), exist_ok=True)
+         shutil.copyfile(src, dst)
+         copied += 1
+@@ -149,16 +152,15 @@
+     if os.path.isfile(p):
+         try:
+             return json.load(open(p, encoding="utf-8"))
+-        except Exception:  # noqa: BLE001
+-            pass
++        except (ValueError, OSError) as exc:
++            raise Refusal("mount registry cannot be read; refusing to discard ownership state", {"path": p, "error": str(exc)}) from exc
+     return {"schema": MOUNTS_SCHEMA, "uc_release": UC_RELEASE, "mounts": {}}
+ 
+ 
+ def write_registry(reg: Dict[str, Any]) -> None:
+     os.makedirs(os.path.dirname(registry_path()), exist_ok=True)
+     reg["written_utc"] = utcnow()
+-    with open(registry_path(), "w", encoding="utf-8", newline="\n") as fh:
+-        fh.write(json.dumps(reg, indent=2, sort_keys=True) + "\n")
++    SAFE.atomic_json(registry_path(), reg)
+ 
+ 
+ def mounts_of(berth: str) -> List[str]:
+@@ -181,14 +183,14 @@
+     out: Dict[str, Any] = {"berth": berth, "mounts": [], "found": len(found)}
+     existing = {c.get("name"): c for c in (s.list_containers().get("containers") or [])}
+     for mnt in found:
+-        name = mnt["name"]
++        name = SAFE.validate_name(mnt["name"])
+         rec: Dict[str, Any] = {"container": name, "prefix": mnt["prefix"], "files": mnt["listed"], "complete": mnt["complete"]}
+         if not mnt["complete"]:
+             rec.update({"mounted": False, "reason": "the container is incomplete in the berth (a listed file is missing or differs from its seal)"})
+             out["mounts"].append(rec)
+             continue
+         owner = (reg["mounts"].get(name) or {}).get("berth")
+-        if owner and owner != berth and name in existing:
++        if owner != berth and name in existing:
+             rec.update({"mounted": False, "reason": f"a container named {name!r} is already mounted by berth {owner!r}"})
+             out["mounts"].append(rec)
+             continue
+--- UC-2.1.3/ship/unikernel/registry.py
++++ UC-2.2.0/ship/unikernel/registry.py
+@@ -10,6 +10,7 @@
+ from . import UC_RELEASE, NODE_IDS, NODE_CONTAINER, SLOTS
+ from . import ucmanifest as M
+ from . import engines as E
++from . import safety as SAFE
+ 
+ SCHEMA = "UC/BILL_OF_LADING/1"
+ 
+@@ -24,7 +25,8 @@
+     berths: List[dict] = []
+     if os.path.isdir(bdir):
+         for name in sorted(os.listdir(bdir)):
+-            d = os.path.join(bdir, name)
++            SAFE.validate_name(name)
++            d = SAFE.contained_path(E.ship_root(), "berths/" + name)
+             bj = os.path.join(d, "BERTH.json")
+             if not os.path.isdir(d) or not os.path.isfile(bj):
+                 continue
+@@ -70,11 +72,8 @@
+             return old
+     reg["written_utc"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+     os.makedirs(os.path.dirname(p), exist_ok=True)
+-    with open(p, "w", encoding="utf-8", newline="\n") as fh:
+-        json.dump(reg, fh, indent=2, sort_keys=True, ensure_ascii=False)
+-        fh.write("\n")
+-    with open(os.path.join(os.path.dirname(p), "BILL_OF_LADING.md"), "w", encoding="utf-8", newline="\n") as fh:
+-        fh.write(as_md(reg))
++    SAFE.atomic_json(p, reg)
++    SAFE.atomic_write(os.path.join(os.path.dirname(p), "BILL_OF_LADING.md"), as_md(reg))
+     return reg
+ 
+ 
+--- /dev/null
++++ UC-2.2.0/ship/unikernel/safety.py
+@@ -0,0 +1,260 @@
++"""Local-operator safety primitives. These are NOT an OS sandbox.
++
++Archive limits apply before decompression. Logical ZIP names are retained in a
++map while bytes are staged under opaque names, so NTFS cannot silently merge
++case-colliding cargo. Cooperating CLI/API writers use an OS-released file lock.
++"""
++from __future__ import annotations
++
++import contextlib
++import functools
++import json
++import math
++import ntpath
++import os
++import re
++import stat
++import tempfile
++import threading
++import unicodedata
++import zipfile
++from dataclasses import dataclass
++from pathlib import Path
++from typing import Any, Iterator
++
++from . import Refusal
++
++NAME_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{0,63}\Z", re.ASCII)
++RESERVED = {"CON", "PRN", "AUX", "NUL", "CLOCK$", "CONIN$", "CONOUT$"} | {
++    f"{prefix}{n}" for prefix in ("COM", "LPT") for n in "123456789¹²³"
++}
++
++
++def portable_key(value: str) -> str:
++    return unicodedata.normalize("NFC", value).casefold()
++
++
++def windows_unsafe(value: str) -> bool:
++    return any(not p or p[-1:] in (" ", ".") or p.split(".")[0].upper() in RESERVED
++               or any(ord(c) < 32 or c in '<>:"\\|?*' for c in p)
++               for p in value.split("/"))
++
++
++def validate_name(name: str) -> str:
++    if not isinstance(name, str) or not NAME_RE.fullmatch(name) or windows_unsafe(name):
++        raise Refusal("invalid berth/container name: use 1-64 ASCII letters, digits, dot, dash or underscore; "
++                      "start with a letter; no Windows device names or trailing dots", {"name": name})
++    return name
++
++
++def relative_path(value: str) -> str:
++    if not isinstance(value, str) or not value or len(value) > 4096:
++        raise Refusal("empty or overlong relative path", {"path": value})
++    if ntpath.splitdrive(value)[0] or value.startswith(("/", "\\")) or "\\" in value:
++        raise Refusal("absolute, drive-qualified or backslash path refused", {"path": value})
++    if any(p in ("", ".", "..") for p in value.split("/")) or any(ord(c) < 32 or ord(c) == 127 for c in value):
++        raise Refusal("non-canonical or control-character path refused", {"path": value})
++    return value
++
++
++def reject_link(path: str) -> None:
++    if not os.path.lexists(path):
++        return
++    info = os.lstat(path)
++    if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & 0x400:
++        raise Refusal("symlink or reparse point refused", {"path": path})
++
++
++def contained_path(root: str, relative: str) -> str:
++    relative_path(relative)
++    root = os.path.abspath(root)
++    reject_link(root)
++    dest = os.path.abspath(os.path.join(root, *relative.split("/")))
++    try:
++        if os.path.commonpath((os.path.realpath(root), os.path.realpath(dest))) != os.path.realpath(root):
++            raise Refusal("path escapes its permitted root", {"path": relative})
++    except ValueError as exc:
++        raise Refusal("path is on another drive", {"path": relative}) from exc
++    cur = root
++    for part in relative.split("/"):
++        cur = os.path.join(cur, part)
++        reject_link(cur)
++    return dest
++
++
++def atomic_write(path: str, data: bytes | str, mode: int | None = None) -> None:
++    """Same-directory replace with data fsync; no claim of multi-file atomicity."""
++    path = os.path.abspath(path)
++    parent = os.path.dirname(path)
++    os.makedirs(parent, exist_ok=True)
++    reject_link(path)
++    reject_link(parent)
++    if isinstance(data, str):
++        data = data.encode("utf-8")
++    fd, tmp = tempfile.mkstemp(prefix=".uc-tmp-", dir=parent)
++    try:
++        with os.fdopen(fd, "wb") as fh:
++            fh.write(data)
++            fh.flush()
++            os.fsync(fh.fileno())
++        if mode is not None:
++            os.chmod(tmp, mode)
++        elif os.path.isfile(path):
++            os.chmod(tmp, stat.S_IMODE(os.stat(path).st_mode))
++        os.replace(tmp, path)
++        if os.name != "nt":
++            dfd = os.open(parent, os.O_RDONLY)
++            try:
++                os.fsync(dfd)
++            finally:
++                os.close(dfd)
++    finally:
++        if os.path.exists(tmp):
++            os.unlink(tmp)
++
++
++def atomic_json(path: str, obj: Any) -> None:
++    atomic_write(path, json.dumps(obj, indent=2, sort_keys=True, ensure_ascii=False, default=str) + "\n")
++
++
++@dataclass(frozen=True)
++class ArchiveLimits:
++    entries: int = 50000
++    member_bytes: int = 64 * 1024 * 1024
++    total_bytes: int = 1024 * 1024 * 1024
++    ratio: int = 1000
++
++
++DEFAULT_LIMITS = ArchiveLimits()
++
++
++def inspect_zip(z: zipfile.ZipFile, limits: ArchiveLimits = DEFAULT_LIMITS) -> list[zipfile.ZipInfo]:
++    infos = z.infolist()
++    if len(infos) > limits.entries:
++        raise Refusal("archive has too many entries", {"limit": limits.entries})
++    total = 0
++    seen: set[str] = set()
++    files: set[str] = set()
++    dirs: set[str] = set()
++    for info in infos:
++        raw = info.orig_filename
++        if raw != info.filename:
++            raise Refusal("archive filename was truncated by ZIP parser", {"path": raw})
++        name = raw[:-1] if info.is_dir() else raw
++        relative_path(name)
++        if name in seen:
++            raise Refusal("duplicate ZIP member", {"path": name})
++        seen.add(name)
++        kind = stat.S_IFMT(info.external_attr >> 16)
++        if kind not in (0, stat.S_IFREG, stat.S_IFDIR) or (kind == stat.S_IFDIR and not info.is_dir()):
++            raise Refusal("archive link or special file refused", {"path": name})
++        if info.flag_bits & 1:
++            raise Refusal("encrypted ZIP members are unsupported", {"path": name})
++        total += info.file_size
++        if info.file_size > limits.member_bytes or total > limits.total_bytes:
++            raise Refusal("archive exceeds expanded-size budget", {"path": name, "total_bytes": total})
++        if info.file_size > 1024 * 1024 and info.file_size > max(1, info.compress_size) * limits.ratio:
++            raise Refusal("archive compression ratio exceeds budget", {"path": name, "ratio_limit": limits.ratio})
++        (dirs if info.is_dir() else files).add(name)
++        dirs.update("/".join(name.split("/")[:i]) for i in range(1, len(name.split("/"))))
++    if files & dirs:
++        raise Refusal("ZIP file/directory name conflict", {"paths": sorted(files & dirs)[:10]})
++    return infos
++
++
++def stage_zip(z: zipfile.ZipFile, dest: str, limits: ArchiveLimits = DEFAULT_LIMITS) -> tuple[dict[str, str], str | None]:
++    infos = inspect_zip(z, limits)
++    members = [i for i in infos if not i.is_dir()]
++    first = {i.filename.split("/")[0] for i in members}
++    prefix = next(iter(first)) if len(first) == 1 and all("/" in i.filename for i in members) else None
++    mapping: dict[str, str] = {}
++    os.makedirs(dest, exist_ok=True)
++    total = 0
++    for index, info in enumerate(members):
++        logical = info.filename[len(prefix) + 1:] if prefix else info.filename
++        path = os.path.join(dest, f"{index:08x}.blob")
++        count = 0
++        with z.open(info) as src, open(path, "xb") as dst:
++            while True:
++                chunk = src.read(1024 * 1024)
++                if not chunk:
++                    break
++                count += len(chunk)
++                total += len(chunk)
++                if count > limits.member_bytes or total > limits.total_bytes:
++                    raise Refusal("expanded ZIP stream exceeds budget", {"path": logical})
++                dst.write(chunk)
++        if count != info.file_size:
++            raise Refusal("ZIP expanded size mismatch", {"path": logical})
++        mapping[logical] = path
++    return mapping, prefix
++
++
++_MUTEX = threading.RLock()
++_LOCAL = threading.local()
++
++
++@contextlib.contextmanager
++def ship_lock(root: str) -> Iterator[None]:
++    """Serialize cooperating operations. Lock survives as a file, never as a stale lock."""
++    if not _MUTEX.acquire(blocking=False):
++        raise Refusal("ship is busy in another thread")
++    root = os.path.realpath(root)
++    held = getattr(_LOCAL, "held", {})
++    if root in held:
++        try:
++            yield
++        finally:
++            _MUTEX.release()
++        return
++    fh = None
++    locked = False
++    try:
++        path = contained_path(root, "_runs/ship.lock")
++        os.makedirs(os.path.dirname(path), exist_ok=True)
++        flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
++        fd = os.open(path, flags, 0o600)
++        fh = os.fdopen(fd, "r+b", buffering=0)
++        if os.fstat(fd).st_size == 0:
++            fh.write(b"0")
++        fh.seek(0)
++        try:
++            if os.name == "nt":
++                import msvcrt
++                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
++            else:
++                import fcntl
++                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except OSError as exc:
++            raise Refusal("ship is busy in another process; retry after its operation finishes") from exc
++        locked = True
++        _LOCAL.held = {**held, root: True}
++        yield
++    finally:
++        _LOCAL.held = held
++        if fh is not None:
++            if locked:
++                fh.seek(0)
++                if os.name == "nt":
++                    import msvcrt
++                    msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
++                else:
++                    import fcntl
++                    fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
++            fh.close()
++        _MUTEX.release()
++
++
++def serialized(fn):
++    @functools.wraps(fn)
++    def wrapped(*args, **kwargs):
++        from . import engines as E
++        with ship_lock(E.ship_root()):
++            return fn(*args, **kwargs)
++    return wrapped
++
++
++def finite_number(value: float, low: float, high: float, label: str) -> float:
++    if not math.isfinite(value) or not low <= value <= high:
++        raise Refusal(f"{label} must be finite and between {low} and {high}", {label: value})
++    return value
+--- UC-2.1.3/ship/unikernel/tif_fabric.py
++++ UC-2.2.0/ship/unikernel/tif_fabric.py
+@@ -59,6 +59,7 @@
+ 
+ from . import UC_RELEASE, NODE_IDS, NODE_CONTAINER, FABRIC_CONTAINER, SLOTS, ShipError, Refusal
+ from . import engines as E
++from . import safety as SAFE
+ from . import ucmanifest as M
+ 
+ FABRIC_SCHEMA = "UC/FABRIC/1"          # fabric/FABRIC.json (sealed with the berth)
+@@ -483,7 +484,55 @@
+     return dst
+ 
+ 
++MAX_TIF_BYTES = 8 * 1024 * 1024
++MAX_TIF_PAGES = 512
++
++
++def _validate_tif(path: str, *, appending: bool = False) -> None:
++    """Bound ship-managed TIFF input before raster/history decoding.
++
++    This does not patch the independently delivered hull codec. It is a local
++    corruption/resource guard, not a substitute for a decoder sandbox.
++    """
++    from PIL import Image
++    SAFE.reject_link(path)
++    if os.path.getsize(path) > MAX_TIF_BYTES:
++        raise Refusal("fabric TIFF exceeds the 8 MiB ship input limit", {"path": path})
++    ftif = codec()
++    with Image.open(path) as img:
++        if img.format != "TIFF":
++            raise Refusal("fabric image is not TIFF")
++        # Iterate with a bound rather than calling n_frames on an unbounded history.
++        for page in range(MAX_TIF_PAGES + 1):
++            try:
++                img.seek(page)
++            except EOFError:
++                return
++            if page >= MAX_TIF_PAGES - (1 if appending else 0):
++                raise Refusal("fabric history is full; checkpoint/export before resetting", {"limit": MAX_TIF_PAGES})
++            if img.size != (32, 16):
++                raise Refusal("unsupported ship TIFF geometry; expected 32 by 16 pixels", {"size": img.size})
++            raw = img.tag_v2.get(ftif.T_STATE) or img.tag_v2.get(270)
++            if not isinstance(raw, str) or len(raw) > 16384:
++                raise Refusal("missing or oversized fabric sidecar")
++            car = json.loads(raw)
++            if car.get("kind") != ftif.TIF_MAGIC or car.get("grid") != {"tile_w": 16, "tile_h": 8, "rows": 2, "cols": 2, "shard_bytes": 512}:
++                raise Refusal("unsupported fabric sidecar schema or geometry")
++            sizes = car.get("shard_len")
++            if not isinstance(sizes, list) or len(sizes) != 4 or any(type(x) is not int or not 0 <= x <= 512 for x in sizes):
++                raise Refusal("invalid fabric shard lengths")
++            scalars = car.get("scalar_slots")
++            if not isinstance(scalars, dict) or set(scalars) != {"0", "1", "6", "7"}:
++                raise Refusal("invalid fabric scalar slots")
++            if any(not isinstance(v, str) or len(v) > 8192 for v in scalars.values()):
++                raise Refusal("oversized scalar slot")
++            for key in ("version", "monotonic", "clock", "tick"):
++                if type(car.get(key)) is not int or not 0 <= car[key] < 2 ** 64:
++                    raise Refusal("invalid fabric integer", {"field": key})
++
++
+ def _read(path: str) -> Dict[str, Any]:
++    _validate_tif(path)
+     ftif = codec()
+     r = ftif.read_tif(path)
+     d = decode_blob(r["blob"])
+@@ -493,13 +542,33 @@
+ 
+ def _write_next(path: str, blob: bytes, tick: int) -> Dict[str, Any]:
+     ftif = codec()
++    import tempfile
++    if os.path.isfile(path):
++        _validate_tif(path, appending=True)
+     hist = ftif.load_frames(path) if os.path.isfile(path) else []
+-    return ftif.write_tif(blob, path, cols=2, tick=tick, history=hist)
++    fd, temp = tempfile.mkstemp(prefix=".uc-tif-", suffix=".tif", dir=os.path.dirname(path))
++    os.close(fd)
++    try:
++        result = ftif.write_tif(blob, temp, cols=2, tick=tick, history=hist)
++        _validate_tif(temp)
++        with open(temp, "rb") as fh:
++            os.fsync(fh.fileno())
++        os.replace(temp, path)
++        result["path"] = path
++        return result
++    finally:
++        if os.path.exists(temp):
++            os.unlink(temp)
++        for frame in hist:
++            frame.close()
+ 
+ 
+ def paint(path: str, tile: int, word: int, value: int, tick_keep: bool = True) -> Dict[str, Any]:
+     """Paint one 8-byte cell of a guest tile in a fabric image, in place, keeping the history
+     (the studio's verifier does the same to prove the image is the live state)."""
++    if type(tile) is not int or not 0 <= tile < 4 or type(word) is not int or not 0 <= word < 64:
++        raise Refusal("paint requires tile 0..3 and word 0..63")
++    _validate_tif(path, appending=True)
+     ftif = codec()
+     r = ftif.read_tif(path)
+     parts = ftif.parse_blob(r["blob"])
+@@ -512,8 +581,7 @@
+     struct.pack_into("<Q", buf, 8 * word, int(value) & MASK64)
+     slots[i] = bytes(buf)
+     parts["slots"] = slots
+-    hist = ftif.load_frames(path)
+-    ftif.write_tif(ftif.build_blob(parts), path, cols=2, tick=r["tick"] if tick_keep else r["tick"], history=hist)
++    _write_next(path, ftif.build_blob(parts), r["tick"])
+     return {"path": path, "tile": tile, "word": word, "value": int(value) & MASK64}
+ 
+ 
+@@ -529,9 +597,13 @@
+     if prog is None:
+         raise ShipError("BERTH.pal did not parse", {"diagnostics": [x.as_dict() for x in diags]})
+     seal = json.load(open(os.path.join(d, "BERTH_SEAL.json"), encoding="utf-8"))
+-    return W.words_of(prog), seal
+-
+-
++    words = W.words_of(prog)
++    if not lang.verify(prog).ok or prog.seal() != seal.get("seal") or W.reference_witness_words(words) != seal.get("reference_witness"):
++        raise Refusal("BERTH.pal seal/reference mismatch")
++    return words, seal
++
++
++@SAFE.serialized
+ def tick(berth: str, *, profile: str = "single_process_deterministic", base: Optional[str] = None,
+          face: bool = True, view: bool = True, log_dir: Optional[str] = None, mounts: bool = True) -> Dict[str, Any]:
+     """One tick of the berth's fabric: every container's picture in, executed, picture out."""
+@@ -545,6 +617,10 @@
+     d = _berth_dir(berth)
+     if not os.path.isdir(d):
+         raise Refusal(f"no berth {berth!r}", {"berth": d})
++    from . import ucmanifest as M
++    integrity = M.check_sums(d)
++    if not integrity["pass"]:
++        raise Refusal("berth checksum verification failed before fabric execution", integrity)
+     sealed_words, bseal = _sealed_words(berth)
+     t_start = time.perf_counter()
+     # make sure the live images exist (from genesis) -- never re-init an existing one
+@@ -564,6 +640,7 @@
+         if not os.path.isfile(lp):
+             rec["containers"][slot] = {"ticked": False, "reason": "no live image (no genesis)"}
+             continue
++        _validate_tif(lp, appending=True)
+         img = _read(lp)
+         st = img["state"]
+         words = img["words"]
+@@ -731,9 +808,14 @@
+     # and every declaration intact; TICK_DISAGREEMENT: every picture ticked but the engines disagree or a declaration was
+     # not intact (with a single engine bound nobody can out-vote it, so the intact check is what reports a painted
+     # declaration); TICK_INCOMPLETE otherwise
+-    complete = len(ticked) == len(SLOTS) and (face_ok or not face or face_rec.get("reason"))
+-    rec["verdict"] = ("TICK_OK" if complete and unanimous and all_intact
+-                      else "TICK_DISAGREEMENT" if len(ticked) == len(SLOTS) and (not unanimous or not all_intact) else "TICK_INCOMPLETE")
++    complete = len(ticked) == len(SLOTS) and (face_ok or not face)
++    native_ok = all(bool(by_node[n].get("differential_agreement")) and bool(by_node[n].get("halted")) for n in run.node_ids)
++    mount_results = [v for k, v in mounts.items() if k != "error" and isinstance(v, dict)]
++    mounts_ok = "error" not in mounts and all(v.get("ticked") and v.get("ok") for v in mount_results)
++    rec["summary"].update({"native_ok": native_ok, "mounts_ok": mounts_ok})
++    rec["verdict"] = ("TICK_OK" if complete and unanimous and all_intact and native_ok and replay_ok and mounts_ok
++                      else "TICK_DISAGREEMENT" if complete and (not unanimous or not all_intact or not native_ok or not replay_ok)
++                      else "TICK_INCOMPLETE")
+     # the berth-level log
+     os.makedirs(berth_state_dir(berth, base), exist_ok=True)
+     with open(os.path.join(berth_state_dir(berth, base), "TICKS.jsonl"), "a", encoding="utf-8") as fh:
+--- UC-2.1.3/ship/unikernel/ucmanifest.py
++++ UC-2.2.0/ship/unikernel/ucmanifest.py
+@@ -8,6 +8,9 @@
+ import fnmatch
+ import hashlib
+ import os
++import re
++from . import safety as SAFE
++from . import Refusal
+ from typing import Dict, Iterable, List, Tuple
+ 
+ INVENTORY_EXCLUSIONS = ("__pycache__", "*.pyc", "_engines", "_studio", "_runs", "_scratch",
+@@ -67,10 +70,15 @@
+         reld = os.path.relpath(dp, root).replace(os.sep, "/")
+         reld = "" if reld == "." else reld + "/"
+         dns[:] = sorted(d for d in dns if not is_excluded(reld + d, exclusions))
++        for d in dns:
++            SAFE.reject_link(os.path.join(dp, d))
+         for fn in sorted(fns):
+             rel = os.path.relpath(os.path.join(dp, fn), root).replace(os.sep, "/")
+             if is_excluded(rel, exclusions) or rel in exclude_top:
+                 continue
++            resolved = SAFE.contained_path(root, rel)
++            if not os.path.isfile(resolved):
++                raise Refusal("non-regular inventory file", {"path": rel})
+             out.append(rel)
+     return sorted(out)
+ 
+@@ -87,8 +95,7 @@
+             rels.append(e)
+     rels = sorted(set(rels) - {name})
+     text = "\n".join(f"{sha256_file(os.path.join(root, r))}  {r}" for r in rels) + "\n"
+-    with open(os.path.join(root, name), "w", encoding="utf-8", newline="\n") as fh:
+-        fh.write(text)
++    SAFE.atomic_write(SAFE.contained_path(root, name), text)
+     return sha256_bytes(text.encode("utf-8"))
+ 
+ 
+@@ -115,50 +122,87 @@
+     man["file_count"] = len(inv)
+     man["total_bytes"] = sum(int(f["bytes"]) for f in inv)
+     blist = list(berths)
+-    if blist:
+-        man["berths"] = [{"berth": b["berth"], "kind": b.get("kind"), "scripts": b.get("scripts"), "sums_sha256": b.get("sums_sha256")} for b in blist]
++    man["berths"] = [{"berth": b["berth"], "kind": b.get("kind"), "scripts": b.get("scripts"), "sums_sha256": b.get("sums_sha256")} for b in blist]
++    from . import UC_RELEASE
++    man["uc_release"] = UC_RELEASE
+     entry = {"utc": _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"), "reason": reason,
+              "replaced": prev, "file_count": len(inv), "total_bytes": man["total_bytes"]}
+     man.setdefault("seal_lineage", []).append(entry)
+     man["sealed_utc"] = entry["utc"]
+-    with open(mp, "w", encoding="utf-8", newline="\n") as fh:
+-        fh.write(_json.dumps(man, indent=2, sort_keys=True, ensure_ascii=False, default=str) + "\n")
++    SAFE.atomic_json(mp, man)
+     entry["sums_sha256"] = write_sums(root)
+     return entry
+ 
+ 
+ def check_sums(root: str, name: str = "SHA256SUMS.txt") -> Dict[str, object]:
+-    path = os.path.join(root, name)
+-    ok, bad, missing, bound = 0, [], [], set()
++    path = SAFE.contained_path(root, name)
++    ok, bad, missing, bound, errors = 0, [], [], set(), []
+     with open(path, encoding="utf-8") as fh:
+-        for line in fh:
+-            line = line.rstrip("\n")
+-            if not line.strip():
+-                continue
+-            digest, rel = line[:64], line[66:].strip()
++        for lineno, line in enumerate(fh, 1):
++            line = line.rstrip("\r\n")
++            if not line:
++                continue
++            if not re.fullmatch(r"[0-9a-fA-F]{64}  .+", line):
++                errors.append(f"line {lineno}: malformed checksum record")
++                continue
++            digest, rel = line[:64].lower(), line[66:]
++            try:
++                p = SAFE.contained_path(root, rel)
++            except Refusal as exc:
++                errors.append(f"line {lineno}: {exc}")
++                continue
++            if rel in bound:
++                errors.append(f"line {lineno}: duplicate path {rel}")
++                continue
+             bound.add(rel)
+-            p = os.path.join(root, rel)
+             if not os.path.isfile(p):
+                 missing.append(rel)
+             elif sha256_file(p) == digest:
+                 ok += 1
+             else:
+                 bad.append(rel)
+-    unbound = [r for r in walk(root, exclude_top=(name,)) if r not in bound]
+-    return {"ok": ok, "bad": bad, "missing": missing, "unbound": unbound,
+-            "pass": not bad and not missing and not unbound}
++    try:
++        unbound = [r for r in walk(root, exclude_top=(name,)) if r not in bound]
++    except Refusal as exc:
++        unbound = []
++        errors.append(str(exc))
++    return {"ok": ok, "bad": bad, "missing": missing, "unbound": unbound, "errors": errors,
++            "pass": not bad and not missing and not unbound and not errors}
+ 
+ 
+ def check_manifest_inventory(root: str, manifest: Dict[str, object]) -> Dict[str, object]:
+-    files = {f["path"]: f for f in manifest.get("files", [])}
+-    on_disk = walk(root)
++    files, errors = {}, []
++    for index, f in enumerate(manifest.get("files", [])):
++        if not isinstance(f, dict) or not isinstance(f.get("path"), str):
++            errors.append(f"record {index}: invalid file record")
++            continue
++        rel = f["path"]
++        try:
++            SAFE.contained_path(root, rel)
++        except Refusal as exc:
++            errors.append(f"record {index}: {exc}")
++            continue
++        if rel in files:
++            errors.append(f"duplicate manifest path: {rel}")
++        if type(f.get("bytes")) is not int or f["bytes"] < 0 or not re.fullmatch(r"[0-9a-f]{64}", str(f.get("sha256", ""))):
++            errors.append(f"record {index}: invalid size or digest")
++        files[rel] = f
++    try:
++        on_disk = walk(root)
++    except Refusal as exc:
++        on_disk = []
++        errors.append(str(exc))
+     mismatched = [rel for rel, f in files.items()
+                   if not os.path.isfile(os.path.join(root, rel))
+-                  or os.path.getsize(os.path.join(root, rel)) != f["bytes"]
+-                  or sha256_file(os.path.join(root, rel)) != f["sha256"]]
++                  or os.path.getsize(os.path.join(root, rel)) != f.get("bytes")
++                  or sha256_file(os.path.join(root, rel)) != f.get("sha256")]
+     extra = [r for r in on_disk if r not in files]
++    total_bytes = sum(f["bytes"] for f in files.values() if type(f.get("bytes")) is int)
++    if manifest.get("total_bytes") != total_bytes:
++        errors.append("total_bytes does not equal the inventory total")
+     return {"inventoried": len(files), "on_disk": len(on_disk), "mismatched_or_missing": mismatched,
+-            "extra": extra, "pass": not mismatched and not extra and manifest.get("file_count") == len(files)}
++            "extra": extra, "errors": errors,
++            "pass": not mismatched and not extra and not errors and manifest.get("file_count") == len(files)}
+ 
+ 
+ def dir_digest(root: str, skip: Iterable[str] = ("__pycache__",)) -> Tuple[str, int]:
+@@ -166,12 +210,15 @@
+     n = 0
+     for dp, dns, fns in os.walk(root):
+         dns[:] = sorted(d for d in dns if d not in skip)
++        for d in dns:
++            SAFE.reject_link(os.path.join(dp, d))
+         for fn in sorted(fns):
+             if fn.endswith(".pyc") or fn in skip:
+                 # `skip` names directories AND files to leave out (a pinned digest file
+                 # excludes itself from the digest it states)
+                 continue
+             p = os.path.join(dp, fn)
++            SAFE.reject_link(p)
+             rel = os.path.relpath(p, root).replace(os.sep, "/")
+             h.update(f"{sha256_file(p)}  {rel}\n".encode("utf-8"))
+             n += 1

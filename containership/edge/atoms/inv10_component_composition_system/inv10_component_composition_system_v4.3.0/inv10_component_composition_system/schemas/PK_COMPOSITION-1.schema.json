@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_COMPOSITION/1",
+  "title": "PK_COMPOSITION/1",
+  "description": "A closed composition. Open for additive fields: consumers MUST ignore unknown properties.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["components","order","external_imports","exports","providers","bindings","composition","digest_algorithm","identity_profile","schema","closed"],
+  "properties": {
+    "schema": {"const": "PK_COMPOSITION/1"},
+    "identity_profile": {"const": "PK_COMPOSITION_ID/2"},
+    "digest_algorithm": {"const": "sha256"},
+    "composition": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "closed": {"const": true},
+    "components": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "order": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "external_imports": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "exports": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "providers": {"type": "object", "additionalProperties": {"type": "string"}},
+    "bindings": {"type": "array", "items": {"type": "object", "required": ["consumer","interface"],
+      "properties": {"consumer": {"type":"string"}, "interface": {"type":"string"}, "provider": {"type":"string"}, "external": {"const": true}},
+      "oneOf": [{"required": ["provider"]}, {"required": ["external"]}]}}
+  }
+}

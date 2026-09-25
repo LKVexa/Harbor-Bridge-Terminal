@@ -1,0 +1,100 @@
+{"id": "C10-001", "status": "PASS", "evidence": ["gateway/config.js:41"], "note": "intVar(env,'PORT',10000,1,65535) identifies PORT as the config input"}
+{"id": "C10-002", "status": "PASS", "evidence": ["gateway/config.js:41", "docs/vws200/RECOVERY.md"], "note": "10000 default literal in config.js; matches article fallback"}
+{"id": "C10-003", "status": "BLOCKED", "evidence": ["deploy/render.yaml:11-14"], "note": "Render Blueprint documents PORT injected by platform but is AUTHORED/NOT APPLIED; no live host to verify against"}
+{"id": "C10-004", "status": "PASS", "evidence": ["gateway/config.js:11-18,41"], "note": "intVar returns a validated Number (cfg.port); throws ConfigError otherwise"}
+{"id": "C10-005", "status": "PASS", "evidence": ["gateway/config.js:41"], "note": "range 1..65535 passed to intVar"}
+{"id": "C10-006", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:41"], "note": "range starts at 1 (privileged ports allowed) but no written decision record explaining why"}
+{"id": "C10-007", "status": "PASS", "evidence": ["gateway/config.js:12-14"], "note": "raw===undefined||'' -> default; any other non-matching value throws, so absent vs malformed are distinct paths"}
+{"id": "C10-008", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14", "tests/gateway/config.test.js:10"], "note": "' 80' rejected by regex/tests but no written whitespace-policy statement outside the code+test"}
+{"id": "C10-009", "status": "OPEN", "evidence": [], "note": "no document names who is authorized to set PORT in deployment"}
+{"id": "C10-010", "status": "OPEN", "evidence": [], "note": "no recorded approval/sign-off artifact for the port-resolution contract"}
+{"id": "C10-011", "status": "PASS", "evidence": ["gateway/config.js:37,41"], "note": "load(env=process.env) reads PORT from process.env"}
+{"id": "C10-012", "status": "PASS", "evidence": ["gateway/server.js:317-320"], "note": "load(process.env) called once at startup before createGateway"}
+{"id": "C10-013", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14"], "note": "ConfigError includes the name and constraint but not the raw offending value (avoids echoing it); no separate 'diagnostics only' copy is kept"}
+{"id": "C10-014", "status": "PASS", "evidence": ["gateway/config.js"], "note": "grep shows PORT read only once in gateway/config.js; no other module reads a differently-named port var"}
+{"id": "C10-015", "status": "PASS", "evidence": ["gateway/config.js:41-42"], "note": "port (listener) and host are separate fields; no other internal port constant found"}
+{"id": "C10-016", "status": "PASS", "evidence": ["gateway/server.js:316-329"], "note": "unattended: load() throws/exits on bad input, no interactive prompt exists anywhere in the codebase"}
+{"id": "C10-017", "status": "PASS", "evidence": ["gateway/config.js", "gateway/server.js"], "note": "no CLI argument parser (no yargs/minimist/process.argv use) exists; env is the only input path"}
+{"id": "C10-018", "status": "OPEN", "evidence": [], "note": "no explicit documented 'development override' mechanism for PORT beyond setting the env var directly"}
+{"id": "C10-019", "status": "PASS", "evidence": ["gateway/server.js:33,320"], "note": "cfg is built once and passed into createGateway/registry/workers; workers never re-read PORT (workers don't need it)"}
+{"id": "C10-020", "status": "NOT_APPLICABLE", "evidence": [], "note": "only one source (PORT env var) is supported; no precedence to document among multiple inputs"}
+{"id": "C10-021", "status": "PASS", "evidence": ["gateway/config.js:15"], "note": "Number(raw) after regex validates decimal integer"}
+{"id": "C10-022", "status": "PASS", "evidence": ["gateway/config.js:14", "tests/gateway/config.test.js:10"], "note": "'80x' rejected by regex, test asserts throw"}
+{"id": "C10-023", "status": "PASS", "evidence": ["gateway/config.js:14", "tests/gateway/config.test.js:10"], "note": "'80x' mixed form rejected, same regex/test"}
+{"id": "C10-024", "status": "PASS", "evidence": ["gateway/config.js:14", "tests/gateway/config.test.js:10"], "note": "'1e3' rejected by regex/test"}
+{"id": "C10-025", "status": "PASS", "evidence": ["gateway/config.js:14", "tests/gateway/config.test.js:10"], "note": "'-1' rejected, test asserts throw"}
+{"id": "C10-026", "status": "PASS", "evidence": ["gateway/config.js:41", "tests/gateway/config.test.js:10"], "note": "0 is below lo=1, rejected; test includes '0'"}
+{"id": "C10-027", "status": "PASS", "evidence": ["gateway/config.js:16", "tests/gateway/config.test.js:10"], "note": "v<lo||v>hi throws; '65536' tested"}
+{"id": "C10-028", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14"], "note": "regex caps at 10 digits ([0-9]{0,9} after first) bounding Number() overflow, but no explicit overflow test beyond in-range max"}
+{"id": "C10-029", "status": "PASS", "evidence": ["gateway/config.js:14", "tests/gateway/config.test.js:10"], "note": "regex requires exact decimal match, so leading/trailing whitespace is rejected (' 80' tested)"}
+{"id": "C10-030", "status": "PASS", "evidence": ["gateway/config.js:14,16"], "note": "ConfigError thrown before Object.freeze/return, well before server.listen/Prefixes-equivalent"}
+{"id": "C10-031", "status": "PASS", "evidence": ["gateway/config.js:12-13"], "note": "default (10000) returned only when raw is undefined or ''"}
+{"id": "C10-032", "status": "PASS", "evidence": ["gateway/config.js:13"], "note": "'' explicitly treated as absent (raw==='' -> default)"}
+{"id": "C10-033", "status": "PASS", "evidence": ["tests/gateway/config.test.js:8-11"], "note": "test covers PORT absent -> 10000 (via `base` with no PORT key)"}
+{"id": "C10-034", "status": "PASS", "evidence": ["gateway/config.js:12-14", "tests/gateway/config.test.js:10"], "note": "malformed values throw ConfigError, never silently fall back to 10000"}
+{"id": "C10-035", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:41"], "note": "fallback applies at load() time (startup), but no dedicated doc line states 'fallback selection occurs at startup'"}
+{"id": "C10-036", "status": "PASS", "evidence": ["gateway/config.js:41"], "note": "single literal '10000' default in config.js only"}
+{"id": "C10-037", "status": "PASS", "evidence": ["tests/gateway/config.test.js:6-11"], "note": "tests use a fixed `base` object (not process.env) so they never depend on the developer's real PORT"}
+{"id": "C10-038", "status": "PASS", "evidence": ["tests/gateway/config.test.js:9"], "note": "load(base) with no PORT key === startup with PORT entirely absent, asserted 10000"}
+{"id": "C10-039", "status": "IN_PROGRESS", "evidence": ["deploy/render.yaml:11-14", "gateway/config.js:41"], "note": "render.yaml relies on platform-injected PORT (no fallback needed there); no cross-check that 10000 matches any specific deployment target since Render was never applied"}
+{"id": "C10-040", "status": "OPEN", "evidence": [], "note": "no operator runbook section for changing the PORT fallback value"}
+{"id": "C10-041", "status": "PASS", "evidence": ["gateway/config.js:11-18"], "note": "intVar() is a small isolated pure function"}
+{"id": "C10-042", "status": "PASS", "evidence": ["gateway/config.js:15-17"], "note": "returns Number v, not a string prefix"}
+{"id": "C10-043", "status": "PASS", "evidence": ["gateway/config.js"], "note": "intVar/load contain no listener/server creation; that happens in gateway/server.js listen()"}
+{"id": "C10-044", "status": "PASS", "evidence": ["gateway/config.js"], "note": "config.js has no network calls; pure parsing/validation module"}
+{"id": "C10-045", "status": "PASS", "evidence": ["gateway/config.js:14"], "note": "explicit regex test + throw, not a bare parseInt/try-catch around NaN"}
+{"id": "C10-046", "status": "PASS", "evidence": ["gateway/config.js:9,14,16"], "note": "ConfigError is a stable named error class for all invalid input"}
+{"id": "C10-047", "status": "PASS", "evidence": ["gateway/config.js", "gateway/log.js"], "note": "intVar only reads the named var; logger also strips secret-like fields, so no unrelated env vars are logged"}
+{"id": "C10-048", "status": "PASS", "evidence": ["gateway/config.js:11-18"], "note": "intVar is a pure function of (env,name,def,lo,hi); same input always yields same output"}
+{"id": "C10-049", "status": "IN_PROGRESS", "evidence": ["tests/gateway/config.test.js"], "note": "test calls load(base) twice in one assertion (line 9) implying determinism, but no test loops N times explicitly checking repeated-call consistency"}
+{"id": "C10-050", "status": "PASS", "evidence": ["gateway/config.js:11-18"], "note": "intVar reads only its args and env; mutates nothing outside its return value; cfg is frozen"}
+{"id": "C10-051", "status": "PASS", "evidence": ["gateway/server.js:281"], "note": "server.listen(cfg.port, cfg.host, ...) passes the validated port through"}
+{"id": "C10-052", "status": "PASS", "evidence": ["gateway/server.js:281"], "note": "cfg.port passed unchanged into http server.listen; no transformation"}
+{"id": "C10-053", "status": "PASS", "evidence": ["gateway/server.js:124-135,281"], "note": "the same `server` (bound to cfg.port) serves /health"}
+{"id": "C10-054", "status": "PASS", "evidence": ["gateway/server.js:196-257,281"], "note": "the same http server handles the 'upgrade' event for /ws/terminal on cfg.port"}
+{"id": "C10-055", "status": "PASS", "evidence": ["gateway/server.js:281,278"], "note": "gateway.listening log line includes port: server.address().port; ram.plan log line precedes it"}
+{"id": "C10-056", "status": "PASS", "evidence": ["deploy/Dockerfile", "deploy/render.yaml:13"], "note": "Docker/Render docs describe PORT as platform-injected, consistent with gateway/config.js's env-only contract"}
+{"id": "C10-057", "status": "PASS", "evidence": ["deploy/render.yaml:11-19"], "note": "Blueprint envVars do not set PORT explicitly, leaving it to the platform injection noted in the comment, so it cannot conflict with the resolver"}
+{"id": "C10-058", "status": "PASS", "evidence": ["tests/gateway/config.test.js:9"], "note": "load({...base, PORT:'8080'}).port === 8080 verified"}
+{"id": "C10-059", "status": "BLOCKED", "evidence": [], "note": "no public edge / Render deployment available to test a nondefault port through it"}
+{"id": "C10-060", "status": "PASS", "evidence": ["deploy/render.yaml:1-3"], "note": "render.yaml notes the Blueprint is AUTHORED, NOT APPLIED (no account/service created) as the hosting restriction"}
+{"id": "C10-061", "status": "PASS", "evidence": ["gateway/config.js:41", "tests/gateway/config.test.js:9"], "note": "lo=1 not directly asserted by name but range enforced; '0' (below lo) tested as rejected, implying 1 is the boundary"}
+{"id": "C10-062", "status": "PASS", "evidence": ["tests/gateway/config.test.js:9"], "note": "PORT:'65535' asserted to load with port 65535"}
+{"id": "C10-063", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "'0' included in the rejected-values list (below range)"}
+{"id": "C10-064", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "'65536' included in the rejected-values list (above range)"}
+{"id": "C10-065", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14"], "note": "regex caps digit count structurally, but no explicit test with an extremely long numeric string is present"}
+{"id": "C10-066", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "'080' (leading zero) is in the rejected list; regex requires 0 or [1-9]... so leading zeros are refused"}
+{"id": "C10-067", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "' 80' (surrounding whitespace) is in the rejected list"}
+{"id": "C10-068", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14"], "note": "regex would reject embedded whitespace structurally but no dedicated test case for embedded (mid-string) whitespace exists"}
+{"id": "C10-069", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14"], "note": "regex has no multiline flag so a newline-containing value would fail ^...$ anchors, but no explicit newline test case exists"}
+{"id": "C10-070", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "'80x', '0x50', '\uff110'-style non-numeric variants ('\uff18\uff10' full-width digits) are in the rejected list"}
+{"id": "C10-071", "status": "PASS", "evidence": ["gateway/config.js:319", "tests/chaos/lifecycle.test.js:13"], "note": "process.exit(78) on ConfigError in the require.main block; test confirms 'malformed PORT refuses to start (78)'"}
+{"id": "C10-072", "status": "PASS", "evidence": ["gateway/config.js:319", "gateway/server.js:281"], "note": "load() throws before createGateway/listen() ever runs, so server.listen is never reached with invalid input"}
+{"id": "C10-073", "status": "PASS", "evidence": ["gateway/server.js:317-320"], "note": "process exits before gw.listen()/registry.ready is ever set, so /health can never report ok"}
+{"id": "C10-074", "status": "PASS", "evidence": ["gateway/config.js:14,16"], "note": "ConfigError messages are prefixed with the variable name, e.g. '${name} must be a decimal integer'"}
+{"id": "C10-075", "status": "PASS", "evidence": ["gateway/config.js:319", "gateway/server.js:319"], "note": "stderr write logs only e.message (built from the fixed template + name), not an unbounded echo of the raw hostile string"}
+{"id": "C10-076", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:319", "gateway/server.js:328"], "note": "ConfigError(exit 78) vs listen EADDRINUSE-type errors (exit 1) are different codes/paths, but no explicit named 'validation vs bind failure' doc section"}
+{"id": "C10-077", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:13"], "note": "'malformed PORT refuses to start (78)' tested via the normal entry point"}
+{"id": "C10-078", "status": "PASS", "evidence": ["gateway/config.js:319"], "note": "process.exit(e instanceof ConfigError ? 78 : 1) preserves distinct exit codes"}
+{"id": "C10-079", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:13"], "note": "no explicit test restarts with a corrected PORT after a failed start to confirm recovery"}
+{"id": "C10-080", "status": "OPEN", "evidence": [], "note": "no operator remediation doc section for malformed PORT beyond the error message itself"}
+{"id": "C10-081", "status": "PASS", "evidence": ["gateway/server.js:278,281"], "note": "'ram.plan' and 'gateway.listening' log lines record the resolved port at startup"}
+{"id": "C10-082", "status": "OPEN", "evidence": [], "note": "startup log records the port value but not whether it came from env or the 10000 fallback"}
+{"id": "C10-083", "status": "BLOCKED", "evidence": [], "note": "no deployment smoke-test evidence exists (Render never applied); only local tests run"}
+{"id": "C10-084", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:281"], "note": "server.address().port is logged, matching the actual bound listener, but no separate operational comparison step is recorded"}
+{"id": "C10-085", "status": "OPEN", "evidence": [], "note": "no code-review record for conflicting port constants; grep shows PORT used only in config.js"}
+{"id": "C10-086", "status": "BLOCKED", "evidence": [], "note": "no evidence of testing configuration persistence across consecutive real deployments (Render never applied)"}
+{"id": "C10-087", "status": "PASS", "evidence": ["docs/OPERATIONS.md:27", "gateway/config.js:41"], "note": "docs/OPERATIONS.md documents PORT sizing note and the resolver default 10000 matches"}
+{"id": "C10-088", "status": "OPEN", "evidence": [], "note": "no named owner/CODEOWNERS record for port-contract changes"}
+{"id": "C10-089", "status": "OPEN", "evidence": [], "note": "no dated verification record for the fallback value beyond the RAMWS.md 2026-09-21 owner approval, which does not itself name PORT specifically"}
+{"id": "C10-090", "status": "OPEN", "evidence": [], "note": "no regression-test policy document for future resolver changes, only the existing test file itself"}
+{"id": "C10-091", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:14"], "note": "grammar is implicit in the regex/tests, not published as prose (e.g. in docs/OPERATIONS.md)"}
+{"id": "C10-092", "status": "PASS", "evidence": ["tests/gateway/config.test.js:8-11"], "note": "the published test names/asserts double as the record of missing/malformed behavior"}
+{"id": "C10-093", "status": "PASS", "evidence": ["docs/OPERATIONS.md:27", "tests/gateway/config.test.js:9"], "note": "10000 fallback documented in OPERATIONS.md and evidenced by the passing test"}
+{"id": "C10-094", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "boundary-value assertions ('0','65536') are in this same test and pass in e/full-suite.tap"}
+{"id": "C10-095", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "hostile/non-numeric inputs ('80x','0x50','\u3000\uff18\uff10') rejected in the same passing test"}
+{"id": "C10-096", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js:47-54"], "note": "e2e test exercises the gateway over an actual bound port end to end (health/config/ws routes)"}
+{"id": "C10-097", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:13"], "note": "container/process startup failure on malformed PORT (exit 78) is a named, passing test"}
+{"id": "C10-098", "status": "PASS", "evidence": ["gateway/config.js:41,281"], "note": "cfg.port is the sole interface between load() and server.listen(cfg.port,...) \u2014 a plain field, self-documenting"}
+{"id": "C10-099", "status": "PASS", "evidence": ["docs/RAMWS.md", "deploy/render.yaml:1"], "note": "docs/RAMWS.md 'Not done / not claimed' + render.yaml's 'AUTHORED, NOT APPLIED' record that real-host PORT injection is unverified"}
+{"id": "C10-100", "status": "IN_PROGRESS", "evidence": ["tests/gateway/config.test.js", "e/full-suite.tap"], "note": "all applicable local cases pass in the suite, but hosting-specific cases (C10-003,059,083,086) remain unverified, so full sign-off is not evidenced"}

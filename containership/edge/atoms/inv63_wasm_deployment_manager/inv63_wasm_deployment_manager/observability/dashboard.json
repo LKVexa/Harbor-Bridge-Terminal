@@ -1,0 +1,38 @@
+{
+  "schema": "INV63_DASHBOARD/1",
+  "title": "INV-63 Wasm deployment manager",
+  "panels": [
+    {
+      "title": "Request rate by op/outcome",
+      "query": "sum by(op,outcome)(rate(inv63_requests_total[5m]))"
+    },
+    {
+      "title": "Errors by code",
+      "query": "sum by(code)(rate(inv63_errors_total[5m]))"
+    },
+    {
+      "title": "p50/p95/p99 latency",
+      "query": "histogram_quantile(0.99, sum by(le,op)(rate(inv63_request_latency_ms_bucket[5m])))"
+    },
+    {
+      "title": "Actions (start/stop)",
+      "query": "sum by(kind)(rate(inv63_actions_total[5m]))"
+    },
+    {
+      "title": "Control plane up",
+      "query": "inv63_control_plane_up"
+    },
+    {
+      "title": "Stalled workloads",
+      "query": "inv63_stalled_workloads"
+    },
+    {
+      "title": "Alert class mix",
+      "query": "sum by(cls)(rate(inv63_alerts_total[15m]))"
+    },
+    {
+      "title": "Rollbacks",
+      "query": "sum by(kind)(increase(inv63_rollbacks_total[1h]))"
+    }
+  ]
+}

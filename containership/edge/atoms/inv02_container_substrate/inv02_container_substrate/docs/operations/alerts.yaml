@@ -1,0 +1,37 @@
+# MC50 — Prometheus alert rules for INV-02.
+groups:
+  - name: inv02
+    rules:
+      - alert: Inv02CorruptContent
+        expr: inv02_store_corrupt_blobs > 0
+        for: 1m
+        labels: { severity: critical }
+        annotations: { runbook: "docs/operations/OPERATIONS.md#6-incident-runbooks-mc56", summary: "Content store has corrupt blobs" }
+      - alert: Inv02PullErrorRatio
+        expr: sum(rate(inv02_pulls_total{result!="ok"}[5m])) / clamp_min(sum(rate(inv02_pulls_total[5m])), 1e-9) > 0.05
+        for: 10m
+        labels: { severity: warning }
+      - alert: Inv02IntegrityFailures
+        expr: rate(inv02_pulls_total{result="integrity"}[5m]) > 0
+        for: 5m
+        labels: { severity: critical }
+        annotations: { summary: "Registry served bytes that failed digest verification (possible compromise)" }
+      - alert: Inv02StoreNearCapacity
+        expr: inv02_store_bytes / inv02_store_capacity_bytes > 0.85
+        for: 30m
+        labels: { severity: warning }
+      - alert: Inv02LoadShedding
+        expr: rate(inv02_admission_shed_total[5m]) > 0
+        for: 5m
+        labels: { severity: warning }
+      - alert: Inv02CircuitOpen
+        expr: max(inv02_circuit_open) > 0
+        for: 10m
+        labels: { severity: warning }
+      - alert: Inv02SigningKeyExpiring
+        expr: min(inv02_signing_key_expiry_seconds) < 30 * 86400
+        labels: { severity: warning }
+      - alert: Inv02NotReady
+        expr: up{job="inv02"} == 0 or inv02_ready == 0
+        for: 5m
+        labels: { severity: critical }

@@ -1,0 +1,34 @@
+# INV-71 alert rules (PROPOSED; Prometheus rule format; owners UNASSIGNED)
+groups:
+- name: inv71-zero-budget
+  rules:
+  - alert: HeavyboxTeardownVerificationFailed
+    expr: increase(heavybox_teardown_failures_total[5m]) > 0
+    labels: {severity: SEV1, owner: UNASSIGNED, runbook: "docs/OPERATIONS.md#4-incidents-c097"}
+    annotations: {summary: "Teardown could not be verified; session quarantined (zero-budget invariant)"}
+  - alert: HeavyboxArtifactVerificationFailed
+    expr: increase(heavybox_rejections_total{reason=~"ARTIFACT\\..*"}[5m]) > 0
+    labels: {severity: SEV1, owner: UNASSIGNED, runbook: "docs/OPERATIONS.md#4-incidents-c097"}
+  - alert: HeavyboxReplayOrRevokedCredential
+    expr: increase(heavybox_rejections_total{reason=~"AUTHN\\.(REPLAYED|REVOKED)"}[5m]) > 0
+    labels: {severity: SEV2, owner: UNASSIGNED, runbook: "docs/OPERATIONS.md#4-incidents-c097"}
+  - alert: HeavyboxEgressBlockedRangeResolution
+    expr: increase(heavybox_egress_denied_total{reason="POLICY.EGRESS_DENIED"}[10m]) > 50
+    labels: {severity: SEV2, owner: UNASSIGNED, runbook: "docs/SECURITY_DESIGN.md#8-egress-destination-enforcement-inv71-x007"}
+  - alert: HeavyboxAuditSinkUnavailable
+    expr: increase(heavybox_rejections_total{reason="AUDIT.SINK_UNAVAILABLE"}[5m]) > 0
+    labels: {severity: SEV2, owner: UNASSIGNED, runbook: "docs/OPERATIONS.md#3-runbooks-c096"}
+- name: inv71-slo
+  rules:
+  - alert: HeavyboxCreateLatencyFastBurn
+    expr: histogram_quantile(0.99, sum by (le) (rate(heavybox_operation_seconds_bucket{operation="session.create"}[1h]))) > 0.25
+    for: 5m
+    labels: {severity: SEV2, owner: UNASSIGNED, runbook: "docs/OPERATIONS.md#1-slos-and-support-c091"}
+  - alert: HeavyboxAdmissionRejectionsHigh
+    expr: sum(rate(heavybox_rejections_total{reason="CAPACITY.ADMISSION_REJECTED"}[10m])) > 1
+    for: 10m
+    labels: {severity: SEV3, owner: UNASSIGNED, runbook: "docs/OPERATIONS.md#3-runbooks-c096"}
+  - alert: HeavyboxTrustDependencyDown
+    expr: min by (dependency) (heavybox_dependency_up{dependency=~"identity|attestation|policy|keys|time|artifact_verify|audit_sink|dns_resolver"}) == 0
+    for: 1m
+    labels: {severity: SEV2, owner: UNASSIGNED, runbook: "docs/ARCHITECTURE.md#4-behavior-with-intermittent-or-absent-network-c018"}

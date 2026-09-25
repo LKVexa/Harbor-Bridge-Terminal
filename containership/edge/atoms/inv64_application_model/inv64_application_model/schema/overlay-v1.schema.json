@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv64:overlay:v1",
+  "title": "PK_APP_OVERLAY/1",
+  "type": "object",
+  "required": [
+    "format",
+    "id",
+    "version",
+    "scope",
+    "base_digest",
+    "author",
+    "approval"
+  ],
+  "properties": {
+    "format": {
+      "const": "PK_APP_OVERLAY/1"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "tenant",
+        "environment"
+      ],
+      "properties": {
+        "tenant": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+        },
+        "environment": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+        },
+        "site": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,127})$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "base_digest": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "approver"
+      ]
+    },
+    "set": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "value"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^(components|providers|traits)\\[[A-Za-z0-9._@-]{1,260}\\]\\.properties(\\.[A-Za-z0-9_-]{1,64}){1,16}$"
+          },
+          "value": {}
+        }
+      }
+    },
+    "unset": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

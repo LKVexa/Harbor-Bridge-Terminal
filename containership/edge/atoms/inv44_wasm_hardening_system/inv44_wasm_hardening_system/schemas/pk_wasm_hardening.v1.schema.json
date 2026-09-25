@@ -1,0 +1,165 @@
+{
+  "$defs": {
+    "error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "WH-[A-Z-]+",
+          "type": "string"
+        },
+        "detail": {
+          "type": "object"
+        },
+        "message": {
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "success",
+            "degraded",
+            "retryable_failure",
+            "terminal_failure"
+          ]
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "outcome",
+        "retryable",
+        "message",
+        "detail"
+      ],
+      "type": "object"
+    },
+    "feature": {
+      "enum": [
+        "guard_pages",
+        "cfi",
+        "bounds_checks",
+        "stack_limits",
+        "fuel_metering",
+        "output_verification"
+      ]
+    },
+    "hex64": {
+      "pattern": "[0-9a-f]{64}",
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "[^\\x00-\\x1f\\x7f]+",
+      "type": "string"
+    },
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "$ref": "#/$defs/label"
+        },
+        "created_at": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "parent_digest": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/label"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "author",
+        "version",
+        "created_at",
+        "reason"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:pk:PK_WASM_HARDENING:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Hardening configuration request/result for INV-44. Major version changes on any removed/renamed field or code; additive optional fields bump minor.",
+  "properties": {
+    "active_features": {
+      "items": {
+        "$ref": "#/$defs/feature"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "approved_toolchains": {
+      "items": {
+        "pattern": "[^@#]+@[^@#]+#[0-9a-f]{64}",
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "default_fuel": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "engine": {
+      "$ref": "#/$defs/label"
+    },
+    "environment": {
+      "enum": [
+        "cloud",
+        "datacenter",
+        "near-edge",
+        "far-edge",
+        "test"
+      ]
+    },
+    "interface": {
+      "const": "PK_WASM_HARDENING/1"
+    },
+    "memory_page_ceiling": {
+      "maximum": 65536,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "required_features": {
+      "items": {
+        "$ref": "#/$defs/feature"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "tenant": {
+      "$ref": "#/$defs/label"
+    }
+  },
+  "required": [
+    "interface",
+    "engine",
+    "tenant",
+    "environment",
+    "required_features",
+    "active_features",
+    "memory_page_ceiling",
+    "default_fuel",
+    "approved_toolchains",
+    "provenance"
+  ],
+  "title": "PK_WASM_HARDENING/1",
+  "type": "object",
+  "x-version": "1.0.0"
+}

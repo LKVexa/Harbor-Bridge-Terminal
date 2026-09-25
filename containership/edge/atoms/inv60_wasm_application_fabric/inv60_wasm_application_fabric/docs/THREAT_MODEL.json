@@ -1,0 +1,395 @@
+{
+ "schema": "inv60.threat-model/1",
+ "version": "1.0.0",
+ "method": "STRIDE per data flow; likelihood/impact L/M/H; release-blocking = impact H with no verified control",
+ "assets": [
+  "artifacts/code",
+  "identities/keys",
+  "tenant data",
+  "policy",
+  "configuration",
+  "control state",
+  "audit records",
+  "availability",
+  "provenance"
+ ],
+ "trust_boundaries": [
+  "client/operator -> control plane",
+  "control plane -> NATS",
+  "NATS -> wasmCloud host",
+  "host -> wasm guest",
+  "guest -> capability provider",
+  "control plane -> identity/policy/secret services",
+  "control plane -> telemetry export"
+ ],
+ "attackers": [
+  "unauthenticated remote",
+  "authenticated tenant",
+  "compromised workload/provider",
+  "compromised host",
+  "malicious insider/operator",
+  "compromised CI/signing",
+  "network attacker"
+ ],
+ "threats": [
+  {
+   "id": "T01",
+   "flow": "deployer -> fabric (push/start)",
+   "stride": "Tampering",
+   "asset": "artifacts",
+   "attacker": "malicious insider / compromised CI",
+   "threat": "tag substitution runs an unsigned artifact",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "digest-addressed refs only (schema rejects tags)",
+    "signature+provenance admission",
+    "start requires admitted ref"
+   ],
+   "verification": [
+    "test_security.Adversarial.test_T01_tag_substitution_refused_by_schema",
+    "test_security.ArtifactSigning.test_start_bypass_impossible"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T02",
+   "flow": "registry storage",
+   "stride": "Tampering",
+   "asset": "artifacts",
+   "attacker": "compromised storage",
+   "threat": "bytes swapped after verification (TOCTOU)",
+   "likelihood": "L",
+   "impact": "H",
+   "controls": [
+    "runtime re-hashes at instantiate",
+    "verified bytes object is what is stored"
+   ],
+   "verification": [
+    "test_security.ArtifactSigning.test_registry_swap_after_verification_detected"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T03",
+   "flow": "signer -> fabric",
+   "stride": "Spoofing",
+   "asset": "provenance",
+   "attacker": "stolen/revoked signing key",
+   "threat": "artifact signed by revoked or out-of-scope signer",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "signer revocation list",
+    "per-signer subject globs",
+    "min SLSA level + builder allow-list",
+    "trust-root age limit"
+   ],
+   "verification": [
+    "test_security.ArtifactSigning.test_revoked_signer",
+    "test_security.ArtifactSigning.test_wrong_subject_scope",
+    "test_security.ArtifactSigning.test_stale_trust_root"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T04",
+   "flow": "workload -> provider (call)",
+   "stride": "Elevation of privilege",
+   "asset": "tenant data",
+   "attacker": "authenticated tenant",
+   "threat": "cross-tenant invocation / forged link",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "capability grants bound to grantee, tenant, ops, expiry",
+    "default deny"
+   ],
+   "verification": [
+    "test_security.Authorization.test_cross_tenant_invocation",
+    "test_security.Authorization.test_operation_not_in_grant"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T05",
+   "flow": "any principal -> fabric",
+   "stride": "Spoofing",
+   "asset": "identities",
+   "attacker": "network attacker",
+   "threat": "replayed or spoofed credential",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "Ed25519 holder-signed tokens",
+    "nonce replay cache",
+    "session binding",
+    "audience/issuer checks"
+   ],
+   "verification": [
+    "test_security.Authentication.test_replay",
+    "test_security.Authentication.test_spoofed_signature",
+    "test_security.Authentication.test_session_binding"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T06",
+   "flow": "host enrolment",
+   "stride": "Spoofing",
+   "asset": "membership",
+   "attacker": "malicious host",
+   "threat": "cloned or unattested host joins lattice",
+   "likelihood": "L",
+   "impact": "H",
+   "controls": [
+    "one-time enrolment codes",
+    "attestation bound to key",
+    "clone key/endpoint detection"
+   ],
+   "verification": [
+    "test_security.Authentication.test_host_requires_attestation",
+    "test_security.Authentication.test_cloned_key_rejected",
+    "test_security.Authentication.test_clone_from_unexpected_endpoint"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T07",
+   "flow": "operator/client -> fabric",
+   "stride": "Tampering",
+   "asset": "control state",
+   "attacker": "authenticated caller",
+   "threat": "injection via identifiers",
+   "likelihood": "M",
+   "impact": "M",
+   "controls": [
+    "identifier validation",
+    "schema patterns"
+   ],
+   "verification": [
+    "test_security.Adversarial.test_T07_injection_in_names",
+    "test_fuzz.Fuzz.test_wire_decode"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T08",
+   "flow": "controller <-> controller",
+   "stride": "Tampering",
+   "asset": "placement authority",
+   "attacker": "partition",
+   "threat": "split-brain: two controllers grant conflicting authority",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "quorum lease",
+    "fencing epochs",
+    "isolated mode refuses new authority"
+   ],
+   "verification": [
+    "test_resilience.Membership.test_minority_partition_cannot_grant_authority",
+    "test_resilience.Membership.test_failover_without_quorum_refused"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T09",
+   "flow": "client -> fabric",
+   "stride": "Denial of service",
+   "asset": "availability",
+   "attacker": "any caller",
+   "threat": "oversized payloads, request floods",
+   "likelihood": "H",
+   "impact": "M",
+   "controls": [
+    "size limits before parse",
+    "token buckets",
+    "in-flight caps",
+    "circuit breakers"
+   ],
+   "verification": [
+    "test_security.Adversarial.test_T09_oversized_payload",
+    "test_semantics.ResourceLimits.test_token_bucket_burst_and_refill"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T10",
+   "flow": "host -> fabric (membership)",
+   "stride": "Elevation of privilege",
+   "asset": "membership",
+   "attacker": "compromised host",
+   "threat": "host enrols or impersonates another host",
+   "likelihood": "L",
+   "impact": "H",
+   "controls": [
+    "hosts may only enrol themselves"
+   ],
+   "verification": [
+    "test_security.Adversarial.test_T10_host_cannot_enrol_other_host"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T11",
+   "flow": "fabric -> telemetry",
+   "stride": "Information disclosure",
+   "asset": "tenant data, secrets",
+   "attacker": "observer of telemetry",
+   "threat": "telemetry exfiltration of identities/secrets",
+   "likelihood": "M",
+   "impact": "M",
+   "controls": [
+    "label allow-list",
+    "redaction",
+    "bounded diagnostics"
+   ],
+   "verification": [
+    "test_security.Adversarial.test_T11_telemetry_exfiltration_blocked"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T12",
+   "flow": "fabric -> caller (errors)",
+   "stride": "Information disclosure",
+   "asset": "secrets",
+   "attacker": "any caller",
+   "threat": "secret leakage via error messages",
+   "likelihood": "M",
+   "impact": "M",
+   "controls": [
+    "redaction",
+    "size bounds"
+   ],
+   "verification": [
+    "test_security.Adversarial.test_T12_error_does_not_leak_secret",
+    "test_semantics.ResultModel.test_size_bound_and_redaction"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T13",
+   "flow": "fabric audit",
+   "stride": "Repudiation",
+   "asset": "audit records",
+   "attacker": "insider",
+   "threat": "audit log modified/truncated",
+   "likelihood": "L",
+   "impact": "H",
+   "controls": [
+    "hash chain + HMAC",
+    "external head anchor"
+   ],
+   "verification": [
+    "test_resilience.Ledger.test_detects_modification_deletion_reorder_truncation"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T14",
+   "flow": "wasm guest -> host",
+   "stride": "Elevation of privilege",
+   "asset": "host",
+   "attacker": "malicious component",
+   "threat": "sandbox escape via ambient imports / runaway execution",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "import-free instantiation",
+    "memory ceiling",
+    "wall-clock kill"
+   ],
+   "verification": [
+    "test_config_observability.WasmExecution.test_sandbox_refusals",
+    "test_config_observability.WasmExecution.test_timeout_kills_runaway"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T15",
+   "flow": "identity/policy services",
+   "stride": "Denial of service",
+   "asset": "availability",
+   "attacker": "dependency outage",
+   "threat": "fail-open during identity/policy outage",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "fail closed with UNAVAILABLE"
+   ],
+   "verification": [
+    "test_security.Authentication.test_dependency_unavailable_fails_closed",
+    "test_security.Authorization.test_policy_engine_unavailable_fails_closed"
+   ],
+   "residual": "low with controls verified locally",
+   "release_blocking": false
+  },
+  {
+   "id": "T16",
+   "flow": "NATS transport",
+   "stride": "Information disclosure",
+   "asset": "tenant data",
+   "attacker": "network attacker",
+   "threat": "plaintext lattice traffic",
+   "likelihood": "M",
+   "impact": "H",
+   "controls": [
+    "config requires tls:// and require_tls (overlays cannot weaken)"
+   ],
+   "verification": [
+    "test_config_observability.Overlays.test_lower_trust_cannot_weaken"
+   ],
+   "residual": "reference-grade; transport-level control not present",
+   "release_blocking": false
+  }
+ ],
+ "residual_risks": [
+  {
+   "id": "RR1",
+   "risk": "pure-Python Ed25519 is not constant time (timing side channel)",
+   "owner": "UNASSIGNED",
+   "expiry": "2026-12-31",
+   "status": "proposed"
+  },
+  {
+   "id": "RR2",
+   "risk": "no transport encryption in the reference tier (T16 relies on the real NATS/TLS layer)",
+   "owner": "UNASSIGNED",
+   "expiry": "2026-12-31",
+   "status": "proposed"
+  },
+  {
+   "id": "RR3",
+   "risk": "no hardware attestation; reference quote only",
+   "owner": "UNASSIGNED",
+   "expiry": "2026-12-31",
+   "status": "proposed"
+  }
+ ],
+ "review": {
+  "cadence_days": 90,
+  "triggers": [
+   "architecture change",
+   "interface change",
+   "trust boundary change"
+  ],
+  "last_review": null,
+  "approver": null
+ }
+}

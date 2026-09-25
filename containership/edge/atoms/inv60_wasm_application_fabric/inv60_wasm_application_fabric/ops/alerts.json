@@ -1,0 +1,60 @@
+{
+ "version": "inv60-alerts/1.0.0",
+ "alerts": [
+  {
+   "name": "Inv60DigestRefusals",
+   "expr": "increase(inv60_operations_total{code=\"DIGEST_MISMATCH\"}[5m]) > 0",
+   "severity": "SEV1",
+   "slo": "artifact integrity",
+   "runbook": "docs/runbooks/INCIDENT.md#integrity"
+  },
+  {
+   "name": "Inv60SignatureRefusals",
+   "expr": "increase(inv60_operations_total{code=\"SIGNATURE_INVALID\"}[15m]) > 3",
+   "severity": "SEV2",
+   "runbook": "docs/runbooks/INCIDENT.md#integrity"
+  },
+  {
+   "name": "Inv60FailoverBurst",
+   "expr": "increase(inv60_failovers_total[10m]) > 5",
+   "severity": "SEV2",
+   "slo": "failover",
+   "runbook": "docs/runbooks/DAY2.md#host-loss"
+  },
+  {
+   "name": "Inv60RoutingP99Burn",
+   "expr": "histogram_quantile(0.99, rate(inv60_call_seconds_bucket[5m])) > 0.003",
+   "severity": "SEV3",
+   "slo": "routing overhead",
+   "runbook": "docs/runbooks/DAY2.md#latency",
+   "burn_rate": {
+    "fast": "14.4x/1h",
+    "slow": "6x/6h"
+   }
+  },
+  {
+   "name": "Inv60AuthDenialsSpike",
+   "expr": "increase(inv60_operations_total{code=\"UNAUTHENTICATED\"}[5m]) > 50",
+   "severity": "SEV2",
+   "runbook": "docs/runbooks/INCIDENT.md#auth"
+  },
+  {
+   "name": "Inv60NoHosts",
+   "expr": "inv60_hosts == 0",
+   "severity": "SEV1",
+   "runbook": "docs/runbooks/DAY2.md#host-loss"
+  },
+  {
+   "name": "Inv60InstancesZero",
+   "expr": "inv60_instances == 0",
+   "severity": "SEV2",
+   "runbook": "docs/runbooks/DAY2.md"
+  },
+  {
+   "name": "Inv60OperationLatency",
+   "expr": "histogram_quantile(0.95, rate(inv60_operation_seconds_bucket[5m])) > 0.25",
+   "severity": "SEV3",
+   "runbook": "docs/runbooks/DAY2.md#latency"
+  }
+ ]
+}

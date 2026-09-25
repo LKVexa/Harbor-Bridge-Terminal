@@ -1,0 +1,100 @@
+{"id": "C15-001", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs", "gateway/server.js:129"], "note": "GET /health path defined and implemented"}
+{"id": "C15-002", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs"], "note": "200 {status:ok} recorded as success example"}
+{"id": "C15-003", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs", "gateway/server.js:132-133"], "note": "healthy = listening and not draining"}
+{"id": "C15-004", "status": "PASS", "evidence": ["gateway/server.js:130-134"], "note": "ready&&!draining readiness vs bare process existence"}
+{"id": "C15-005", "status": "PASS", "evidence": ["gateway/server.js:131"], "note": "comment: minimal, constant work, no dependency checks"}
+{"id": "C15-006", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs", "gateway/server.js:134"], "note": "JSON body {status}"}
+{"id": "C15-007", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:132"], "note": "GET/HEAD enforced in code but not documented as a decision"}
+{"id": "C15-008", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js"], "note": "tested <250ms but no documented response-time budget decision"}
+{"id": "C15-009", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs", "gateway/server.js:131"], "note": "unauthenticated by design"}
+{"id": "C15-010", "status": "OPEN", "evidence": [], "note": "no formal approval record of the health contract found"}
+{"id": "C15-011", "status": "PASS", "evidence": ["gateway/server.js:124-135"], "note": "matched inside ordinary http.createServer handler"}
+{"id": "C15-012", "status": "PASS", "evidence": ["gateway/server.js:124-135", "gateway/ws.js"], "note": "health handling separate from WS receive loop in ws.js"}
+{"id": "C15-013", "status": "PASS", "evidence": ["gateway/server.js:196"], "note": "upgrade handler only matches /ws/terminal, never /health"}
+{"id": "C15-014", "status": "OPEN", "evidence": [], "note": "trailing-slash behavior for /health/ undefined and untested"}
+{"id": "C15-015", "status": "IN_PROGRESS", "evidence": ["gateway/log.js:16"], "note": "safePath strips query implicitly; no explicit design decision documented"}
+{"id": "C15-016", "status": "PASS", "evidence": ["gateway/server.js:132", "tests/gateway/e2e.test.js"], "note": "405 with Allow header, tested"}
+{"id": "C15-017", "status": "OPEN", "evidence": [], "note": "behavior for health-like unknown path (e.g. /healthz) undocumented"}
+{"id": "C15-018", "status": "PASS", "evidence": ["gateway/server.js:124"], "note": "single listener covers all paths incl. /health"}
+{"id": "C15-019", "status": "PASS", "evidence": ["gateway/server.js:129", "deploy/render.yaml:12"], "note": "app path /health matches Blueprint healthCheckPath"}
+{"id": "C15-020", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "route matching tested via fetch, independent of deploy config"}
+{"id": "C15-021", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "200 on ok condition"}
+{"id": "C15-022", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "503 on not-ready/draining"}
+{"id": "C15-023", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "tiny fixed JSON body"}
+{"id": "C15-024", "status": "PASS", "evidence": ["gateway/server.js:103-105"], "note": "Content-Type application/json set via json() helper"}
+{"id": "C15-025", "status": "OPEN", "evidence": [], "note": "no record file confirming only intended bytes are written"}
+{"id": "C15-026", "status": "PASS", "evidence": ["gateway/server.js:106"], "note": "res.end(text) closes response"}
+{"id": "C15-027", "status": "PASS", "evidence": ["gateway/server.js:126"], "note": "res.on('error',()=>{}) handles client disconnect during write"}
+{"id": "C15-028", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "body carries only status, no credentials/env"}
+{"id": "C15-029", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "no internal network details in body"}
+{"id": "C15-030", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "tested via fetch() as a simple HTTP client"}
+{"id": "C15-031", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "'starting' status distinct from 'ok'/'draining'"}
+{"id": "C15-032", "status": "PASS", "evidence": ["gateway/server.js:281"], "note": "registry.ready=true set only after server.listen callback"}
+{"id": "C15-033", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "workers are spawned per-session on demand; no global worker-infra gate (D-001 profile)"}
+{"id": "C15-034", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "no required datastore; RD-01 makes any snapshot setting a startup error (exit 78), not optional"}
+{"id": "C15-035", "status": "PASS", "evidence": ["gateway/server.js:281"], "note": "ready flips true only post-listen"}
+{"id": "C15-036", "status": "PASS", "evidence": ["gateway/server.js:290"], "note": "draining=true immediately makes /health 503"}
+{"id": "C15-037", "status": "OPEN", "evidence": [], "note": "readiness during a listener-wide fault (e.g. uncaught error) undefined"}
+{"id": "C15-038", "status": "OPEN", "evidence": [], "note": "no degraded-but-healthy state designed; readiness is binary"}
+{"id": "C15-039", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "Node single-threaded event loop; no thread-safety mechanism needed (D-001)"}
+{"id": "C15-040", "status": "IN_PROGRESS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs"], "note": "ok/draining/starting mentioned briefly, no full state-transition doc"}
+{"id": "C15-041", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "health fetched before any client connects"}
+{"id": "C15-042", "status": "OPEN", "evidence": [], "note": "health-with-idle-client not distinctly tested"}
+{"id": "C15-043", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "health tested while large inbound messages arrive"}
+{"id": "C15-044", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "health tested while bulk output streams (300000 lines)"}
+{"id": "C15-045", "status": "OPEN", "evidence": [], "note": "health during a connection burst not tested"}
+{"id": "C15-046", "status": "OPEN", "evidence": [], "note": "health when worker capacity is reached not tested"}
+{"id": "C15-047", "status": "PASS", "evidence": ["gateway/server.js:132-133"], "note": "single O(1) flag check, no dependency calls"}
+{"id": "C15-048", "status": "PASS", "evidence": ["gateway/server.js:132-133"], "note": "no external/dependency call exists to block on"}
+{"id": "C15-049", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "latency measured across 25 samples, worst asserted <250ms"}
+{"id": "C15-050", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js"], "note": "load level embedded in test code, not published as a formal record"}
+{"id": "C15-051", "status": "OPEN", "evidence": [], "note": "mandatory-initialization-failure health behavior not tested"}
+{"id": "C15-052", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "malformed PORT refuses to start (exit 78)"}
+{"id": "C15-053", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "no required datastore exists to outage-test"}
+{"id": "C15-054", "status": "OPEN", "evidence": [], "note": "health during worker admission exhaustion not jointly tested"}
+{"id": "C15-055", "status": "OPEN", "evidence": [], "note": "health after unexpected worker failure not jointly tested"}
+{"id": "C15-056", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "health flips to 503 once shutdown flag (draining) is set"}
+{"id": "C15-057", "status": "OPEN", "evidence": [], "note": "handler's own response-write exception path not tested"}
+{"id": "C15-058", "status": "OPEN", "evidence": [], "note": "malformed HTTP requests to /health not specifically tested"}
+{"id": "C15-059", "status": "OPEN", "evidence": [], "note": "repeated-request resource growth not tested"}
+{"id": "C15-060", "status": "OPEN", "evidence": [], "note": "no dedicated test confirms failure never silently becomes 200"}
+{"id": "C15-061", "status": "PASS", "evidence": ["deploy/render.yaml:12"], "note": "healthCheckPath: /health matches implemented path"}
+{"id": "C15-062", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "Render never authorized; platform semantics unverified"}
+{"id": "C15-063", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "platform timing/failure thresholds unverified, no Render access"}
+{"id": "C15-064", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "Docker/Render deploy authored but never built or run"}
+{"id": "C15-065", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "no isolated failure build was deployed"}
+{"id": "C15-066", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "no platform to observe failure behavior on"}
+{"id": "C15-067", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "no public edge / WAN available"}
+{"id": "C15-068", "status": "OPEN", "evidence": [], "note": "no record links startup timestamp to health availability"}
+{"id": "C15-069", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "only the loopback/dev environment was exercised"}
+{"id": "C15-070", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "'Not run' table documents Docker/Render limits explicitly"}
+{"id": "C15-071", "status": "PASS", "evidence": ["gateway/server.js:131"], "note": "comment states endpoint is intentionally unauthenticated"}
+{"id": "C15-072", "status": "PASS", "evidence": ["gateway/server.js:95-101"], "note": "plain GET, no custom request headers requiring CORS preflight"}
+{"id": "C15-073", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "response limited to {status}"}
+{"id": "C15-074", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "session counts only appear on /live, not /health"}
+{"id": "C15-075", "status": "PASS", "evidence": ["gateway/server.js:134"], "note": "no database is used; no such fields possible"}
+{"id": "C15-076", "status": "PASS", "evidence": ["gateway/log.js:16", "gateway/server.js:129"], "note": "safePath strips query before path match; query cannot alter policy"}
+{"id": "C15-077", "status": "PASS", "evidence": ["gateway/server.js:102"], "note": "/live is the separate, more detailed diagnostics path"}
+{"id": "C15-078", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "'health / live / config expose no secrets' test covers unauthorized variations"}
+{"id": "C15-079", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js"], "note": "no dedicated review/test of response headers for leakage"}
+{"id": "C15-080", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs"], "note": "documents unauthenticated public exposure"}
+{"id": "C15-081", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:281"], "note": "gateway.listening logs startup generally, not a health-handler-specific init record"}
+{"id": "C15-082", "status": "OPEN", "evidence": ["gateway/server.js:96"], "note": "counters.healthProbes is a single aggregate, not split healthy/unhealthy"}
+{"id": "C15-083", "status": "OPEN", "evidence": [], "note": "no per-response duration metric implemented"}
+{"id": "C15-084", "status": "OPEN", "evidence": [], "note": "no separate write-failure counter implemented"}
+{"id": "C15-085", "status": "PASS", "evidence": ["gateway/server.js:95-101"], "note": "no log call per probe; only a counter increments"}
+{"id": "C15-086", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:134"], "note": "only draining/starting string distinguishes unhealthy state, minimal detail"}
+{"id": "C15-087", "status": "OPEN", "evidence": [], "note": "no correlation of unhealthy periods with deployment revisions implemented"}
+{"id": "C15-088", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs"], "note": "GET /health -> 200 example documents manual reproduction"}
+{"id": "C15-089", "status": "OPEN", "evidence": [], "note": "docs do not distinguish unreachable vs unhealthy service states"}
+{"id": "C15-090", "status": "OPEN", "evidence": [], "note": "no documented ownership for health policy changes"}
+{"id": "C15-091", "status": "PASS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs"], "note": "health response contract published"}
+{"id": "C15-092", "status": "IN_PROGRESS", "evidence": ["docs/vws200/OPERATIONS.md#health-and-logs"], "note": "readiness states named briefly but no full published state model"}
+{"id": "C15-093", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "ordinary HTTP route tests linked via EVIDENCE_INDEX/e2e.test.js"}
+{"id": "C15-094", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "health-under-load test present (<250ms while streaming)"}
+{"id": "C15-095", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "shutdown-state health test present (503 while draining)"}
+{"id": "C15-096", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "no platform deployment-health observations exist to link"}
+{"id": "C15-097", "status": "PASS", "evidence": ["deploy/render.yaml:12"], "note": "exact configured healthCheckPath: /health"}
+{"id": "C15-098", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "never deployed; no dated platform-behavior evidence"}
+{"id": "C15-099", "status": "OPEN", "evidence": [], "note": "unresolved health semantics not compiled into a list"}
+{"id": "C15-100", "status": "OPEN", "evidence": [], "note": "no record of formal approval matching observed behavior to contract"}

@@ -1,0 +1,225 @@
+{
+ "$id": "inv53.wire/1/request",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "put"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue",
+     "message"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "receive"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "ack"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue",
+     "id",
+     "lease"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "nack"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue",
+     "id",
+     "lease"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "extend"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue",
+     "id",
+     "lease",
+     "extension"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "redrive"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue",
+     "id"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "health"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue"
+    ]
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "op": {
+      "const": "explain"
+     }
+    }
+   },
+   "then": {
+    "required": [
+     "v",
+     "op",
+     "tenant",
+     "queue",
+     "id"
+    ]
+   }
+  }
+ ],
+ "properties": {
+  "auth": {
+   "description": "Authentication block {kid, principal, ts, nonce, mac}.",
+   "type": "object"
+  },
+  "extension": {
+   "description": "Visibility extension in seconds.",
+   "type": "number"
+  },
+  "id": {
+   "description": "Message id.",
+   "type": "string"
+  },
+  "lease": {
+   "description": "Opaque lease fencing token.",
+   "type": "string"
+  },
+  "message": {
+   "description": "Message; must carry a string 'id'.",
+   "type": "object"
+  },
+  "now": {
+   "description": "Deprecated since 5.1.0: accepted for compatibility and ignored; the broker's clock times leases.",
+   "type": "number"
+  },
+  "op": {
+   "description": "Operation.",
+   "enum": [
+    "put",
+    "receive",
+    "ack",
+    "nack",
+    "extend",
+    "redrive",
+    "health",
+    "explain"
+   ],
+   "type": "string"
+  },
+  "queue": {
+   "description": "Queue name inside the tenant.",
+   "type": "string"
+  },
+  "reason": {
+   "description": "nack only: reason code.",
+   "type": "string"
+  },
+  "request_id": {
+   "description": "Caller-chosen idempotency / correlation id.",
+   "type": "string"
+  },
+  "requeue": {
+   "description": "nack only: requeue (default) or dead-letter.",
+   "type": "boolean"
+  },
+  "tenant": {
+   "description": "Tenant namespace (isolation boundary).",
+   "type": "string"
+  },
+  "traceparent": {
+   "description": "W3C trace context.",
+   "type": "string"
+  },
+  "v": {
+   "description": "Protocol version; must be one of SUPPORTED.",
+   "enum": [
+    "inv53.wire/1"
+   ],
+   "type": "string"
+  }
+ },
+ "type": "object"
+}

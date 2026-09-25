@@ -1,0 +1,1706 @@
+{
+"component": "C04",
+"items": [
+{
+"id": "C04-001",
+"task_class": "SPECIFY",
+"area": "01. Session architecture scope",
+"req": "Define what the application calls a session.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "session = one connection = one supervised worker; state machine documented",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:5-9"
+]
+},
+{
+"id": "C04-002",
+"task_class": "IMPLEMENT",
+"area": "01. Session architecture scope",
+"req": "Distinguish a logical session from a WebSocket connection.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "sid/epoch distinct from ws connection id; connection.id vs this.sid",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:23-27"
+]
+},
+{
+"id": "C04-003",
+"task_class": "IMPLEMENT",
+"area": "01. Session architecture scope",
+"req": "Inventory connection-local state.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "retention table lists connection-local buffers (assembly, send queue, ack bookkeeping)",
+"prior_evidence": [
+"docs/RECOVERY.md#retention",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C04-004",
+"task_class": "IMPLEMENT",
+"area": "01. Session architecture scope",
+"req": "Inventory session state needed after reconnection.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only VFS/cwd/aliases/vars inventoried for optional snapshot; no full post-reconnect state inventory since reconnect=new session (D-004)",
+"prior_evidence": [
+"docs/RECOVERY.md#quiescent-snapshots"
+]
+},
+{
+"id": "C04-005",
+"task_class": "IMPLEMENT",
+"area": "01. Session architecture scope",
+"req": "Inventory state that must be shared across instances.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "single-instance profile; no shared-across-instance state exists (D-004)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C04-006",
+"task_class": "SPECIFY",
+"area": "01. Session architecture scope",
+"req": "Identify features that do not require retained session state.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "open barrier / stateless health-config routes implied but not explicitly enumerated as 'no retained state' features",
+"prior_evidence": [
+"docs/PROTOCOL.md#terminal-api"
+]
+},
+{
+"id": "C04-007",
+"task_class": "SPECIFY",
+"area": "01. Session architecture scope",
+"req": "Define whether multiple connections may share one logical session.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'One session per connection'; second session.open -> BAD_MESSAGE, so no sharing allowed",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:167"
+]
+},
+{
+"id": "C04-008",
+"task_class": "DOCUMENT",
+"area": "01. Session architecture scope",
+"req": "Record the intended session recovery guarantee.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "recovery guarantee recorded: reconnect = new session, no replay, snapshots optional/off",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-009",
+"task_class": "IMPLEMENT",
+"area": "01. Session architecture scope",
+"req": "Map session ownership to application components.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "topology maps gateway vs worker roles but not an explicit ownership-per-component map for session state",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#4-topology"
+]
+},
+{
+"id": "C04-010",
+"task_class": "IMPLEMENT",
+"area": "01. Session architecture scope",
+"req": "Approve the statelessness boundary.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit sign-off record approving a statelessness boundary distinct from D-004 decision text",
+"prior_evidence": []
+},
+{
+"id": "C04-011",
+"task_class": "SPECIFY",
+"area": "02. Session identity",
+"req": "Define a session identifier format.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "sid = 144 random bits, epoch = 1, opaque base64url; format defined",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-012",
+"task_class": "SPECIFY",
+"area": "02. Session identity",
+"req": "Define who creates session identifiers.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "gateway (server side, on 'opened') creates sid via crypto.randomBytes",
+"prior_evidence": [
+"gateway/connection.js:214"
+]
+},
+{
+"id": "C04-013",
+"task_class": "IMPLEMENT",
+"area": "02. Session identity",
+"req": "Bind session lookup to the authenticated identity.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "session lookup bound to the connection's authenticated principal; sid must match this connection's own value",
+"prior_evidence": [
+"gateway/connection.js:124-128",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-014",
+"task_class": "IMPLEMENT",
+"area": "02. Session identity",
+"req": "Avoid treating an arbitrary client identifier as proof of ownership.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'session ids authorize nothing': foreign/unknown sid -> identical FORBIDDEN",
+"prior_evidence": [
+"gateway/connection.js:124-125",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-015",
+"task_class": "SPECIFY",
+"area": "02. Session identity",
+"req": "Define how identifiers are conveyed during reconnection.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "stream resume disabled; reconnect never conveys an old sid, it opens a brand-new session (D-004)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-016",
+"task_class": "IMPLEMENT",
+"area": "02. Session identity",
+"req": "Prevent identifiers from exposing confidential information.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "sid is opaque crypto.randomBytes(18) base64url, not derived from confidential data",
+"prior_evidence": [
+"gateway/connection.js:214"
+]
+},
+{
+"id": "C04-017",
+"task_class": "SPECIFY",
+"area": "02. Session identity",
+"req": "Define identifier lifetime and expiry handling.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "epoch fencing documented but explicit sid lifetime/expiry policy (vs connection lifetime) not separately stated",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-018",
+"task_class": "SPECIFY",
+"area": "02. Session identity",
+"req": "Define behavior for unknown session identifiers.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "unknown sid -> FORBIDDEN, indistinguishable from foreign sid",
+"prior_evidence": [
+"gateway/connection.js:125",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-019",
+"task_class": "SPECIFY",
+"area": "02. Session identity",
+"req": "Define behavior for malformed session identifiers.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "malformed sid rejected by codec validation before reaching connection logic; BAD_MESSAGE/FORBIDDEN paths",
+"prior_evidence": [
+"gateway/connection.js:125",
+"protocol/codec.js"
+]
+},
+{
+"id": "C04-020",
+"task_class": "DOCUMENT",
+"area": "02. Session identity",
+"req": "Document how session identifiers differ from connection identifiers.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "sid vs conn.id distinguishable in code and docs but no single passage documents the difference explicitly",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-021",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify authentication context as retained or reconstructed.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "auth context noted as re-authenticated on reconnect (reconstructed) but not framed as an explicit classification entry",
+"prior_evidence": [
+"docs/RECOVERY.md#retention",
+"docs/SECURITY.md"
+]
+},
+{
+"id": "C04-022",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify subscription preferences as retained or reconstructed.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no subscription-preference concept exists in this terminal protocol; not classified anywhere",
+"prior_evidence": []
+},
+{
+"id": "C04-023",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify in-progress message assembly as connection-local.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "fragment/frame assembly buffers are per-connection, not persisted or shared (connection-local by construction)",
+"prior_evidence": [
+"gateway/ws.js",
+"protocol/bridge.js"
+]
+},
+{
+"id": "C04-024",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify pending outbound messages according to recovery requirements.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "pending outbound bytes tracked per-connection (outBytesBySeq); recovery classifies them as lost on reconnect (new session)",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control",
+"gateway/connection.js:239"
+]
+},
+{
+"id": "C04-025",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify diagnostic correlation identifiers.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "rid used for diagnostics/correlation but no explicit classification statement in docs",
+"prior_evidence": [
+"gateway/connection.js:16,159"
+]
+},
+{
+"id": "C04-026",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify any user-interface resume information.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no UI resume-information concept found; not classified",
+"prior_evidence": []
+},
+{
+"id": "C04-027",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify temporary caches and their invalidation rules.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ticket store is a temporary cache with TTL/consume, but no doc classification of caches generally",
+"prior_evidence": [
+"gateway/tickets.js"
+]
+},
+{
+"id": "C04-028",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Classify data that must never be stored as session state.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "secrets/tokens explicitly excluded from snapshots and logs ('never saved: sockets, promises... tokens')",
+"prior_evidence": [
+"docs/SECURITY.md#controls",
+"docs/RECOVERY.md#quiescent-snapshots"
+]
+},
+{
+"id": "C04-029",
+"task_class": "IMPLEMENT",
+"area": "03. State classification",
+"req": "Assign a retention rule to each retained field.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "retention table gives lifetimes per data category but not a per-field rule for every retained field",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-030",
+"task_class": "DOCUMENT",
+"area": "03. State classification",
+"req": "Record the authoritative owner of every state category.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "retention table gives 'where' per category which implies an owner, but not explicitly labeled 'authoritative owner'",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-031",
+"task_class": "IMPLEMENT",
+"area": "04. Instance-independent behavior",
+"req": "Remove reliance on process identity for session authorization.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "authorization keyed to per-connection sid match, not to any process identity value",
+"prior_evidence": [
+"gateway/connection.js:124-128"
+]
+},
+{
+"id": "C04-032",
+"task_class": "IMPLEMENT",
+"area": "04. Instance-independent behavior",
+"req": "Remove reliance on one worker's memory for durable session lookup.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "single-instance profile; worker memory is the only lookup source by design, durable cross-instance lookup out of scope (D-004)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C04-033",
+"task_class": "SPECIFY",
+"area": "04. Instance-independent behavior",
+"req": "Define how any instance reconstructs a logical session.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no reconstruction-by-any-instance mechanism exists; single instance only, C05 shared store NOT_APPLICABLE",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-034",
+"task_class": "REVIEW",
+"area": "04. Instance-independent behavior",
+"req": "Confirm required configuration is consistent across instances.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no multi-instance deployment exists to confirm config consistency across instances",
+"prior_evidence": []
+},
+{
+"id": "C04-035",
+"task_class": "REVIEW",
+"area": "04. Instance-independent behavior",
+"req": "Confirm retained state has a shared or reconstructible source.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no shared/reconstructible source exists or was tested; single-instance only",
+"prior_evidence": []
+},
+{
+"id": "C04-036",
+"task_class": "IMPLEMENT",
+"area": "04. Instance-independent behavior",
+"req": "Avoid assuming connection history influences new instance selection.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "reconnect always obtains a fresh ticket / new session; no sticky routing assumption coded",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-037",
+"task_class": "TEST",
+"area": "04. Instance-independent behavior",
+"req": "Test a new connection against an instance without prior session memory.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no second gateway instance exists in this environment; not tested",
+"prior_evidence": []
+},
+{
+"id": "C04-038",
+"task_class": "TEST",
+"area": "04. Instance-independent behavior",
+"req": "Test state reconstruction after complete process replacement.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tests process replacement of the WORKER (same gateway instance), not a full gateway instance replacement",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#quiescent-snapshot"
+]
+},
+{
+"id": "C04-039",
+"task_class": "DOCUMENT",
+"area": "04. Instance-independent behavior",
+"req": "Document features that cannot yet operate across instances.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "documents that multi-instance continuity (shared store, leases, fencing) cannot yet operate",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-040",
+"task_class": "IMPLEMENT",
+"area": "04. Instance-independent behavior",
+"req": "Gate multi-instance deployment on unresolved session dependencies.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "D-004 gates multi-instance profile selection on C05/I039 being NOT_APPLICABLE i.e. unresolved dependencies block that profile [downgraded: cited evidence path n",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C04-041",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define session creation behavior.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "session.open creation flow defined: capacity reserve, spawn worker, OPENING state",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:166-195"
+]
+},
+{
+"id": "C04-042",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define session activation behavior.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'opened' record activates session, sends session.opened before output (open barrier)",
+"prior_evidence": [
+"gateway/connection.js:212-226"
+]
+},
+{
+"id": "C04-043",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define behavior while a session has no active connection.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no-active-connection persistence is out of scope; reconnect always creates a new session (D-004)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C04-044",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define session expiry behavior.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_IDLE_MS idle expiry -> end('expired',1000)",
+"prior_evidence": [
+"docs/RECOVERY.md#liveness-i036",
+"gateway/connection.js:47-50"
+]
+},
+{
+"id": "C04-045",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define explicit session termination behavior.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "session.close -> end('logout'/'closed',1000); exit command tested",
+"prior_evidence": [
+"gateway/connection.js:146",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C04-046",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define credential revocation effects on active sessions.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "revocation sweep ends live sessions within 30s, tested",
+"prior_evidence": [
+"gateway/connection.js:48-49",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-047",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define reconnection after expiry.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "reconnection after expiry = brand-new session with fresh ticket",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-048",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define cleanup of abandoned session metadata.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "snapshot TTL default 7d; abandoned metadata cleanup via TTL",
+"prior_evidence": [
+"gateway/snapshot-store.js",
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-049",
+"task_class": "SPECIFY",
+"area": "05. Session lifecycle",
+"req": "Define behavior after partial session initialization.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "workerReadyMs timeout / _workerFailed handles partial init, single exit path",
+"prior_evidence": [
+"gateway/connection.js:193,254-259"
+]
+},
+{
+"id": "C04-050",
+"task_class": "DOCUMENT",
+"area": "05. Session lifecycle",
+"req": "Document legal state transitions for the session lifecycle.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "state diagram given but not a full legal-transition table for every session lifecycle case",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-051",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Decide whether simultaneous connections are allowed for one session.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'One session per connection'; second session.open on same conn rejected (single connection = single session decision)",
+"prior_evidence": [
+"gateway/connection.js:167"
+]
+},
+{
+"id": "C04-052",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Define behavior for competing updates from different instances.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no cross-instance updates possible; single instance (D-004)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004"
+]
+},
+{
+"id": "C04-053",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Define how duplicate reconnect attempts are reconciled.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "duplicate reconnects resolved: old connection loses, new session always created, old socket closed independently",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-054",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Define how stale connection ownership is detected.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "gen counter fences stale connection callbacks; old ownership detected via generation check",
+"prior_evidence": [
+"gateway/connection.js:19-9 header comment",
+"gateway/connection.js:329"
+]
+},
+{
+"id": "C04-055",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Define whether message ordering is per connection or per session.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "input seq strictly per-connection (prev+1); output seq per-connection contiguous \u2014 ordering is per connection/session, documented",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-056",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Define conflict handling for subscription changes.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no subscription concept exists in this protocol",
+"prior_evidence": []
+},
+{
+"id": "C04-057",
+"task_class": "SPECIFY",
+"area": "06. Concurrent session activity",
+"req": "Define how session termination affects other active connections.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "_finalExit is the single idempotent exit path; termination closes worker/socket, no other connections share the session",
+"prior_evidence": [
+"gateway/connection.js:274-283"
+]
+},
+{
+"id": "C04-058",
+"task_class": "TEST",
+"area": "06. Concurrent session activity",
+"req": "Test two instances updating the same session metadata.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no two-instance test exists (single-instance profile only)",
+"prior_evidence": []
+},
+{
+"id": "C04-059",
+"task_class": "TEST",
+"area": "06. Concurrent session activity",
+"req": "Test reconnection while the previous connection is still detectable.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'quiescent snapshot... running command is not resumed' tests reconnection while prior connection state detectable",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C04-060",
+"task_class": "DOCUMENT",
+"area": "06. Concurrent session activity",
+"req": "Record the chosen conflict-resolution policy.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "conflict policy recorded: one session per connection, second open rejected, reconnect = new session",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-061",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Define what successful session resumption restores.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "defines what snapshot restore restores: VFS tree, cwd, aliases, shell vars, optional history",
+"prior_evidence": [
+"docs/RECOVERY.md#quiescent-snapshots"
+]
+},
+{
+"id": "C04-062",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Define what resumption intentionally does not restore.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'Never saved: sockets, promises, the running command, the input line, service environment, tokens'",
+"prior_evidence": [
+"docs/RECOVERY.md#quiescent-snapshots"
+]
+},
+{
+"id": "C04-063",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Define handling of work interrupted before completion.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "worker refuses snapshot while a command runs; client reports unacked inputs as outcome UNKNOWN",
+"prior_evidence": [
+"docs/RECOVERY.md#quiescent-snapshots",
+"docs/PROTOCOL.md#errors"
+]
+},
+{
+"id": "C04-064",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Define whether clients must resend interrupted requests.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'Raw keystrokes and command text are never replayed'; client resends nothing",
+"prior_evidence": [
+"docs/PROTOCOL.md#reconnect-i037 / errors"
+]
+},
+{
+"id": "C04-065",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Decide whether duplicate request detection is required.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "rid replay window of 512 decided as required (duplicate detection is required for input records)",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-066",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Define how the client learns that state cannot be resumed.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "client marks unacked inputs OUTCOME_UNKNOWN; terminal prints reconnect/new-session fact",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors",
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-067",
+"task_class": "SPECIFY",
+"area": "07. Recovery semantics",
+"req": "Define a clean-start fallback requiring explicit application policy.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "clean-start fallback (new session, no resume) is the explicit application policy chosen (D-004)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#reconnect-i037"
+]
+},
+{
+"id": "C04-068",
+"task_class": "TEST",
+"area": "07. Recovery semantics",
+"req": "Test resumption on a different instance.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no second-instance resumption test exists; single-instance only",
+"prior_evidence": []
+},
+{
+"id": "C04-069",
+"task_class": "TEST",
+"area": "07. Recovery semantics",
+"req": "Test resumption after the old instance becomes unavailable.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tests resumption after the WORKER process is replaced, but not after a whole gateway instance is gone",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#quiescent-snapshot"
+]
+},
+{
+"id": "C04-070",
+"task_class": "IMPLEMENT",
+"area": "07. Recovery semantics",
+"req": "Preserve evidence for the implemented recovery guarantee.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "evidence preserved for the recovery guarantee implemented (new-session, no resume)",
+"prior_evidence": [
+"e/I054",
+"docs/RECOVERY.md#failure-experiments-run-i054",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C04-071",
+"task_class": "IMPLEMENT",
+"area": "08. State protection",
+"req": "Limit session access to the appropriate authenticated principal.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "session only reachable by the connection that owns it (its authenticated principal)",
+"prior_evidence": [
+"gateway/connection.js:124-128",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-072",
+"task_class": "IMPLEMENT",
+"area": "08. State protection",
+"req": "Minimize retained session information.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "snapshots exclude tokens/env; per-session memory bound documented in RESOURCE_MODEL",
+"prior_evidence": [
+"docs/RECOVERY.md#quiescent-snapshots",
+"docs/SECURITY.md#controls"
+]
+},
+{
+"id": "C04-073",
+"task_class": "IMPLEMENT",
+"area": "08. State protection",
+"req": "Exclude raw credentials from ordinary session diagnostics.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "logs never contain tokens/cookies; principals file stores only tokenSha256, never raw credential",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs",
+"gateway/log.js"
+]
+},
+{
+"id": "C04-074",
+"task_class": "SPECIFY",
+"area": "08. State protection",
+"req": "Define retention for sensitive session fields.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "sensitive field retention defined: snapshot deny pattern TOKEN/SECRET/KEY/VWS_/VEC1_, TTL 7d",
+"prior_evidence": [
+"docs/RECOVERY.md#retention",
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C04-075",
+"task_class": "SPECIFY",
+"area": "08. State protection",
+"req": "Define deletion behavior on session termination.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "exit path releases in-memory state via registry.release; explicit deletion of on-disk snapshot on termination not shown",
+"prior_evidence": [
+"gateway/connection.js:274-283"
+]
+},
+{
+"id": "C04-076",
+"task_class": "TEST",
+"area": "08. State protection",
+"req": "Test unauthorized access to another user's session identifier.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'session ids authorize nothing: another connection cannot address a live sid'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-077",
+"task_class": "TEST",
+"area": "08. State protection",
+"req": "Test expired session reuse.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'revoked token cannot reconnect' test covers expired/revoked session reuse",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-078",
+"task_class": "TEST",
+"area": "08. State protection",
+"req": "Test malformed state returned from the storage boundary.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "snapshot integrity/tamper rejection tested (I054) but no dedicated malformed-state-from-storage-boundary test named",
+"prior_evidence": [
+"gateway/snapshot-store.js"
+]
+},
+{
+"id": "C04-079",
+"task_class": "REVIEW",
+"area": "08. State protection",
+"req": "Ensure diagnostic identifiers do not grant session access.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "rid is a correlation id (crypto.randomBytes) used only for message matching, never a session grant",
+"prior_evidence": [
+"gateway/connection.js:16,84-91"
+]
+},
+{
+"id": "C04-080",
+"task_class": "DOCUMENT",
+"area": "08. State protection",
+"req": "Document responsibilities for protecting shared state.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "trust boundaries documented but no explicit 'shared state responsibilities' section (no shared state exists under D-004)",
+"prior_evidence": [
+"docs/SECURITY.md#assets-and-trust-boundaries"
+]
+},
+{
+"id": "C04-081",
+"task_class": "IMPLEMENT",
+"area": "09. Validation across instances",
+"req": "Run an identical session scenario on two independent instances.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no two independent instances were run; single-instance environment only",
+"prior_evidence": []
+},
+{
+"id": "C04-082",
+"task_class": "IMPLEMENT",
+"area": "09. Validation across instances",
+"req": "Connect initially to the first instance.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "cannot connect to a 'first instance' - no multi-instance deployment exists",
+"prior_evidence": []
+},
+{
+"id": "C04-083",
+"task_class": "IMPLEMENT",
+"area": "09. Validation across instances",
+"req": "Reconnect the same logical session to the second instance.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "cannot reconnect to a 'second instance' - none exists",
+"prior_evidence": []
+},
+{
+"id": "C04-084",
+"task_class": "VERIFY",
+"area": "09. Validation across instances",
+"req": "Verify reconstructed fields against the agreed session contract.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no cross-instance reconstructed-field verification performed",
+"prior_evidence": []
+},
+{
+"id": "C04-085",
+"task_class": "VERIFY",
+"area": "09. Validation across instances",
+"req": "Verify connection-local buffers are not treated as durable state.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "connection-local buffers documented as lost on instance replacement, but not verified via a dedicated cross-instance test",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-086",
+"task_class": "TEST",
+"area": "09. Validation across instances",
+"req": "Test instance replacement during an active session update.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no instance replacement mid-update test; single-instance only",
+"prior_evidence": []
+},
+{
+"id": "C04-087",
+"task_class": "TEST",
+"area": "09. Validation across instances",
+"req": "Test recovery with missing optional session metadata.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'restore validates... any failure starts clean' covers missing/invalid snapshot metadata, but not framed as multi-instance test",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#quiescent-snapshot"
+]
+},
+{
+"id": "C04-088",
+"task_class": "TEST",
+"area": "09. Validation across instances",
+"req": "Test recovery when shared state is unavailable.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'any failure starts clean and says so' covers unavailable snapshot store, but store failure explicitly listed as 'Not run' in I054",
+"prior_evidence": [
+"docs/RECOVERY.md#quiescent-snapshots"
+]
+},
+{
+"id": "C04-089",
+"task_class": "MEASURE",
+"area": "09. Validation across instances",
+"req": "Measure the latency of session reconstruction.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no session-reconstruction latency measurement exists (reconnect timing not in bench.json)",
+"prior_evidence": []
+},
+{
+"id": "C04-090",
+"task_class": "DOCUMENT",
+"area": "09. Validation across instances",
+"req": "Record every unmet multi-instance acceptance criterion.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "unmet multi-instance items recorded: 'Not run: store failure, multi-instance replacement...' and C05/I039 NOT_APPLICABLE",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why",
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Publish the state classification table.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "a retention table exists but not a dedicated 'state classification table' as such",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Publish the session identifier contract.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "sid format (144 random bits, epoch) and behavior published",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Publish the session lifecycle model.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "CONNECTING->AUTHENTICATED->OPENING->ACTIVE->DRAINING->CLOSED published",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-094",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Publish the concurrent-update policy.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "per-connection ordering rule published, but no dedicated cross-instance concurrent-update policy (none needed under D-004, yet no explicit doc statement)",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-095",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Publish the recovery and duplicate-handling decisions.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "recovery and duplicate-handling (rid window) decisions published",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect-i037",
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C04-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and documentation",
+"req": "Link the two-instance recovery test.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no two-instance recovery test exists to link",
+"prior_evidence": []
+},
+{
+"id": "C04-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and documentation",
+"req": "Link unauthorized session-access tests.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "unauthorized session-access tests linked ('session ids authorize nothing...')",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C04-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Document dependencies on the conditional shared datastore.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "dependency on conditional shared datastore documented as NOT_APPLICABLE until multi-instance profile chosen",
+"prior_evidence": [
+"docs/ARCHITECTURE.md D-004",
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C04-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and documentation",
+"req": "Document conditions under which single-instance operation is sufficient.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "single-instance is the only supported profile currently; VWS_MAX_SESSIONS/single process documents when it suffices",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#3-profiles",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C04-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and documentation",
+"req": "Approve statelessness only against demonstrated behavior.",
+"ram_overlay": "Separate per-connection statefulness from stateless reconnection. The default volatile profile does not recover a session on another instance; retain the source stateless option as re-authentication plus reconstruction, not shared process memory.",
+"challenge": "Reconnect to a different instance and demonstrate explicit reset or the separately selected recovery mechanism.",
+"ref_work": [
+"R02",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no approval record exists; statelessness across instances was never demonstrated (single-instance only)",
+"prior_evidence": []
+}
+]
+}

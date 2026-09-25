@@ -1,0 +1,213 @@
+{
+ "$id": "urn:pk:inv28:PK_TOOLCHAIN_POLICY-1",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "environments": {
+   "additionalProperties": {
+    "additionalProperties": false,
+    "properties": {
+     "accept_conditional_review": {
+      "type": "boolean"
+     },
+     "advisory_block_severity": {
+      "enum": [
+       "none",
+       "low",
+       "medium",
+       "high",
+       "critical"
+      ]
+     },
+     "allow_deprecated": {
+      "type": "boolean"
+     },
+     "allowed_catalog_status": {
+      "items": {
+       "enum": [
+        "supported",
+        "example",
+        "unregistered"
+       ]
+      },
+      "minItems": 1,
+      "type": "array"
+     },
+     "min_maturity": {
+      "enum": [
+       "experimental",
+       "beta",
+       "mature"
+      ]
+     },
+     "min_response_sla_hours": {
+      "minimum": 0,
+      "type": "integer"
+     },
+     "production": {
+      "type": "boolean"
+     },
+     "require_advisory_feed": {
+      "type": "boolean"
+     },
+     "require_certification": {
+      "type": "boolean"
+     },
+     "require_integrity": {
+      "type": "boolean"
+     },
+     "require_review": {
+      "type": "boolean"
+     },
+     "require_security_contact": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "accept_conditional_review",
+     "advisory_block_severity",
+     "allow_deprecated",
+     "allowed_catalog_status",
+     "min_maturity",
+     "min_response_sla_hours",
+     "production",
+     "require_advisory_feed",
+     "require_certification",
+     "require_integrity",
+     "require_review",
+     "require_security_contact"
+    ],
+    "type": "object"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "policy_id": {
+   "maxLength": 512,
+   "minLength": 1,
+   "type": "string"
+  },
+  "revision": {
+   "minimum": 1,
+   "type": "integer"
+  },
+  "schema": {
+   "const": "PK_TOOLCHAIN_POLICY/1"
+  },
+  "sites": {
+   "additionalProperties": {
+    "additionalProperties": false,
+    "properties": {
+     "allow_toolchains": {
+      "items": {
+       "maxLength": 512,
+       "minLength": 1,
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "deny_toolchains": {
+      "items": {
+       "maxLength": 512,
+       "minLength": 1,
+       "type": "string"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "allow_toolchains",
+     "deny_toolchains"
+    ],
+    "type": "object"
+   },
+   "type": "object"
+  },
+  "waivers": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "approver": {
+      "type": "string"
+     },
+     "codes": {
+      "items": {
+       "enum": [
+        "TC_MATURITY_BELOW_POLICY",
+        "TC_REVIEW_STALE",
+        "TC_ADVISORY_OPEN",
+        "TC_SECURITY_RESPONSE_INADEQUATE"
+       ]
+      },
+      "minItems": 1,
+      "type": "array"
+     },
+     "environments": {
+      "items": {
+       "maxLength": 64,
+       "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+       "type": "string"
+      },
+      "maxItems": 64,
+      "type": "array",
+      "uniqueItems": true
+     },
+     "expires": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "type": "string"
+     },
+     "id": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+     },
+     "owner": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+     },
+     "reason": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "proposed",
+       "approved",
+       "revoked"
+      ]
+     },
+     "toolchain_ref": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "approver",
+     "codes",
+     "environments",
+     "expires",
+     "id",
+     "owner",
+     "reason",
+     "status",
+     "toolchain_ref"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  }
+ },
+ "required": [
+  "environments",
+  "policy_id",
+  "revision",
+  "schema",
+  "sites",
+  "waivers"
+ ],
+ "title": "INV-28 selection policy",
+ "type": "object"
+}

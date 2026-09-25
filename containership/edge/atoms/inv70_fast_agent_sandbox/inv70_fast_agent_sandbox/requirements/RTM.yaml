@@ -1,0 +1,1316 @@
+element: INV-70
+version: 4.3.0
+rows:
+- id: INV-70-C001
+  dimension: Architecture & Scope
+  requirement: Define the exact production responsibility of Fast agent sandbox.
+  status: PRESENT
+  implementation:
+  - contract.py responsibility
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Production responsibility is explicitly stated.
+  source: carried from 4.2.0 audit
+- id: INV-70-C002
+  dimension: Architecture & Scope
+  requirement: Document what Fast agent sandbox owns and explicitly does not own.
+  status: PRESENT
+  implementation:
+  - contract.py owns/not_owns
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Ownership and exclusions are explicit.
+  source: carried from 4.2.0 audit
+- id: INV-70-C003
+  dimension: Architecture & Scope
+  requirement: Identify upstream, downstream, and peer dependencies of Fast agent sandbox.
+  status: PRESENT
+  implementation:
+  - contract.py dependencies
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Upstream, peer, and downstream dependencies are listed.
+  source: carried from 4.2.0 audit
+- id: INV-70-C004
+  dimension: Architecture & Scope
+  requirement: Define the authoritative source of truth used by Fast agent sandbox.
+  status: PRESENT
+  implementation:
+  - contract.py source_of_truth
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Fuel/memory counters are named as authoritative runtime state.
+  source: carried from 4.2.0 audit
+- id: INV-70-C005
+  dimension: Architecture & Scope
+  requirement: Document assumptions Fast agent sandbox makes about nodes, runtimes, networks, storage, and control
+    planes.
+  status: PARTIAL
+  implementation:
+  - contract.py assumptions
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Assumptions exist but are generic and do not fully cover runtime, storage, network, node, and control-plane
+    failure assumptions.
+  source: carried from 4.2.0 audit
+- id: INV-70-C006
+  dimension: Architecture & Scope
+  requirement: Define tenant, environment, site, and workload boundaries relevant to Fast agent sandbox.
+  status: PRESENT
+  implementation:
+  - contract.py boundaries
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Tenant, environment, site, and workload boundaries are defined contractually.
+  source: carried from 4.2.0 audit
+- id: INV-70-C007
+  dimension: Architecture & Scope
+  requirement: Separate mandatory Fast agent sandbox capabilities from optional optimizations.
+  status: PRESENT
+  implementation:
+  - contract.py mandatory/optional
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Mandatory and optional capabilities are separated.
+  source: carried from 4.2.0 audit
+- id: INV-70-C008
+  dimension: Architecture & Scope
+  requirement: Document unsupported deployment patterns and non-goals for Fast agent sandbox.
+  status: PRESENT
+  implementation:
+  - contract.py non_goals
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Unsupported/native-code, network-by-default, and persistence patterns are declared.
+  source: carried from 4.2.0 audit
+- id: INV-70-C009
+  dimension: Architecture & Scope
+  requirement: Assign an accountable owner and escalation path for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - OWNERS.md
+  tests:
+  - tests/test_governance.py::Docs
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Accountable owner named. On-call alias, security reviewer and reliability reviewer are UNASSIGNED
+    placeholders - the owner must name them.
+  source: 4.3.0 remediation
+- id: INV-70-C010
+  dimension: Architecture & Scope
+  requirement: Approve an architecture decision record for Fast agent sandbox, its technologies (Per-operation Wasm
+    sandbox), and its function (Stateless calculations, transforms, and tools).
+  status: PARTIAL
+  implementation:
+  - docs/adr/ADR-0001-execution-technology.md
+  tests:
+  - tests/test_governance.py::Docs
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ADR drafted with options, decision and consequences; status PROPOSED until the owner and security
+    reviewer sign the approval block.
+  source: 4.3.0 remediation
+- id: INV-70-C011
+  dimension: Requirements & Semantics
+  requirement: "Translate the source function of Fast agent sandbox \u2014 Stateless calculations, transforms, and\
+    \ tools \u2014 into testable SHALL-level requirements."
+  status: PARTIAL
+  implementation:
+  - contract.py mandatory; RUNTIME_SPEC.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Runtime obligations are testable in places, but there is no complete SHALL-level requirements specification
+    covering the source function.
+  source: carried from 4.2.0 audit
+- id: INV-70-C012
+  dimension: Requirements & Semantics
+  requirement: Define functional requirements for Fast agent sandbox across cloud, datacenter, near-edge, and far-edge
+    contexts where applicable.
+  status: VERIFIED
+  implementation:
+  - docs/DEPLOYMENT_MATRIX.md
+  - config.py::ENVIRONMENTS
+  tests:
+  - tests/test_config.py::Overlays.test_every_environment_resolves
+  - tests/test_integration.py::DevAndEdgeTiers
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C013
+  dimension: Requirements & Semantics
+  requirement: Define non-functional requirements for latency, availability, durability, consistency, isolation,
+    or determinism as applicable.
+  status: PARTIAL
+  implementation:
+  - contract.py slos
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Termination/containment/startup SLOs exist, but availability, isolation, determinism, and other
+    applicable NFRs are not fully specified.
+  source: carried from 4.2.0 audit
+- id: INV-70-C014
+  dimension: Requirements & Semantics
+  requirement: Define success, partial success, degraded operation, retryable failure, and terminal failure semantics
+    for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py result/trap shape
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Success and terminal traps are defined; partial success, degraded, retryable, and terminal classes
+    are not formally modeled.
+  source: carried from 4.2.0 audit
+- id: INV-70-C015
+  dimension: Requirements & Semantics
+  requirement: Define lifecycle states and legal state transitions managed or exposed by Fast agent sandbox.
+  status: VERIFIED
+  implementation:
+  - semantics.py::Lifecycle
+  - RUNTIME_SPEC.md#lifecycle
+  tests:
+  - tests/test_semantics.py::LifecycleTests
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C016
+  dimension: Requirements & Semantics
+  requirement: Define versioning and backward-compatibility requirements for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - VERSION; CHANGELOG.md; RUNTIME_SPEC.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Version is explicit and 4.2.0 preserves result shape, but there is no supported backward-compatibility/deprecation
+    policy.
+  source: carried from 4.2.0 audit
+- id: INV-70-C017
+  dimension: Requirements & Semantics
+  requirement: Define capacity ceilings, quotas, and fairness semantics relevant to Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py bounded limits
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Per-run fuel/stack/value/memory/program limits exist; tenant quotas and fairness are absent.
+  source: carried from 4.2.0 audit
+- id: INV-70-C018
+  dimension: Requirements & Semantics
+  requirement: Define behavior when network connectivity is intermittent or absent.
+  status: PARTIAL
+  implementation:
+  - contract.py non_goals; SECURITY.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Core guest has no network authority, but behavior for unavailable/intermittent network-dependent
+    host capabilities is not defined.
+  source: carried from 4.2.0 audit
+- id: INV-70-C019
+  dimension: Requirements & Semantics
+  requirement: Define precedence rules when Fast agent sandbox requirements conflict with security, residency, SLO,
+    or cost constraints.
+  status: VERIFIED
+  implementation:
+  - semantics.py::resolve_conflict
+  - docs/PRECEDENCE.md
+  - service.py (capability intersection, fuel tightening)
+  tests:
+  - tests/test_semantics.py::Precedence
+  - tests/test_integration.py::ProdPath.test_capability_requires_token_grant
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C020
+  dimension: Requirements & Semantics
+  requirement: Maintain a requirements traceability matrix from each Fast agent sandbox requirement to implementation
+    and verification evidence.
+  status: VERIFIED
+  implementation:
+  - requirements/RTM.yaml
+  - tools/remediation_status.py
+  tests:
+  - tests/test_governance.py::RTM
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C021
+  dimension: Interfaces & Integration
+  requirement: Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary
+    exposed by Fast agent sandbox.
+  status: PRESENT
+  implementation:
+  - contract.py interfaces
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: run/result/hostcall boundaries are enumerated.
+  source: carried from 4.2.0 audit
+- id: INV-70-C022
+  dimension: Interfaces & Integration
+  requirement: Use versioned typed schemas for all externally visible Fast agent sandbox contracts.
+  status: PARTIAL
+  implementation:
+  - contract.py interface names
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Interfaces carry /1 names, but there are no WIT/JSON Schema/IDL artifacts or schema validators.
+  source: carried from 4.2.0 audit
+- id: INV-70-C023
+  dimension: Interfaces & Integration
+  requirement: Define authentication requirements at each Fast agent sandbox boundary.
+  status: VERIFIED
+  implementation:
+  - security.py::Authenticator
+  - docs/INTERFACES.md#authentication
+  tests:
+  - tests/test_security.py::AuthTests
+  - tests/test_integration.py::ProdPath.test_unauthenticated_rejected_before_execution
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: 'Residual: HMAC key-id verifier; ADR-0001 records the move to asymmetric keys via the Verifier
+    seam.'
+  source: 4.3.0 remediation
+- id: INV-70-C024
+  dimension: Interfaces & Integration
+  requirement: Define authorization and explicit capability requirements at each Fast agent sandbox boundary.
+  status: PARTIAL
+  implementation:
+  - runtime.py capability gate
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Host calls enforce explicit capabilities, but authorization is not defined for every external boundary
+    and is not identity-bound.
+  source: carried from 4.2.0 audit
+- id: INV-70-C025
+  dimension: Interfaces & Integration
+  requirement: Define timeout, cancellation, retry, idempotency, and backpressure semantics for Fast agent sandbox.
+  status: VERIFIED
+  implementation:
+  - resilience.py::Deadline/CancelToken/IdempotencyCache
+  - executor.py::ProcessExecutor
+  - docs/INTERFACES.md#timeouts
+  tests:
+  - tests/test_resilience.py
+  - tests/test_integration.py::Faults.test_wall_clock_preemption
+  - tests/test_integration.py::ProdPath.test_idempotency
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C026
+  dimension: Interfaces & Integration
+  requirement: Define structured failure codes and machine-readable error details for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py trap strings
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Failures are machine-readable at the top level but lack stable enumerated error codes and structured
+    details.
+  source: carried from 4.2.0 audit
+- id: INV-70-C027
+  dimension: Interfaces & Integration
+  requirement: Define compatibility behavior when peers use different supported versions.
+  status: VERIFIED
+  implementation:
+  - semantics.py::negotiate/downgrade_result
+  tests:
+  - tests/test_semantics.py::Versions
+  - tests/test_integration.py::ProdPath.test_ok_v2_and_v1
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C028
+  dimension: Interfaces & Integration
+  requirement: Document payload, concurrency, queue, connection, or resource limits at Fast agent sandbox interfaces.
+  status: PARTIAL
+  implementation:
+  - runtime.py limits; RUNTIME_SPEC.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Guest execution limits are documented; concurrency, queue, connection, and embedding limits are
+    not.
+  source: carried from 4.2.0 audit
+- id: INV-70-C029
+  dimension: Interfaces & Integration
+  requirement: Provide reference examples and conformance fixtures for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - tests/test_runtime.py; RUNTIME_SPEC.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Reference examples/tests exist, but no portable conformance fixture set for external implementations.
+  source: carried from 4.2.0 audit
+- id: INV-70-C030
+  dimension: Interfaces & Integration
+  requirement: Create automated integration tests proving Fast agent sandbox interoperates with adjacent architectural
+    layers.
+  status: PARTIAL
+  implementation:
+  - tests/test_integration.py
+  tests:
+  - tests/test_integration.py
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: All adjacent seams (caller tokens, host pipe, observability, control plane) are exercised in-process;
+    the real INV-69 / GAP-09 / INV-71 components are not in this repository.
+  source: 4.3.0 remediation
+- id: INV-70-C031
+  dimension: Implementation & Configuration
+  requirement: 'Select and pin approved implementations, versions, or specifications for Fast agent sandbox: Per-operation
+    Wasm sandbox.'
+  status: BLOCKED
+  implementation:
+  - executor.py::WasmBackend
+  - requirements/wasm.lock
+  - docs/WASM_RUNTIME.md
+  - tests/test_wasm.py
+  tests:
+  - tests/test_wasm.py
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Engine seam, exact pin, fail-closed behaviour and malicious-module tests are in place; the pinned
+    wasmtime wheel could not be installed in the remediation environment, so 5 engine tests SKIP (and FAIL under
+    INV70_REQUIRE_WASM=1). Wheel hash in wasm.lock is UNSET.
+  source: 4.3.0 remediation
+- id: INV-70-C032
+  dimension: Implementation & Configuration
+  requirement: Separate immutable artifacts from mutable configuration and state for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py stateless execution
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Runtime state is per-run and ephemeral, but immutable artifact vs mutable configuration/state packaging
+    is not formally defined.
+  source: carried from 4.2.0 audit
+- id: INV-70-C033
+  dimension: Implementation & Configuration
+  requirement: Define declarative configuration and secure defaults for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py defaults
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Secure code defaults exist, but there is no declarative configuration schema/file.
+  source: carried from 4.2.0 audit
+- id: INV-70-C034
+  dimension: Implementation & Configuration
+  requirement: Validate configuration before activation and fail closed on security-critical errors.
+  status: PARTIAL
+  implementation:
+  - runtime.py configuration validation
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Runtime limit/capability parameters are validated; no deployment configuration activation pipeline
+    exists.
+  source: carried from 4.2.0 audit
+- id: INV-70-C035
+  dimension: Implementation & Configuration
+  requirement: Support site- and environment-specific configuration without rebuilding immutable artifacts.
+  status: VERIFIED
+  implementation:
+  - config.py::resolve
+  - docs/CONFIGURATION.md
+  tests:
+  - tests/test_config.py::Overlays
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C036
+  dimension: Implementation & Configuration
+  requirement: Record configuration provenance, version, author, and activation time.
+  status: VERIFIED
+  implementation:
+  - config.py::ConfigStore._record
+  tests:
+  - tests/test_config.py::Activation.test_provenance_and_atomicity
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C037
+  dimension: Implementation & Configuration
+  requirement: Apply atomic or transactional configuration updates where partial application is unsafe.
+  status: VERIFIED
+  implementation:
+  - config.py::ConfigStore.activate/rollback
+  tests:
+  - tests/test_config.py::Activation
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C038
+  dimension: Implementation & Configuration
+  requirement: Define automatic and operator-driven rollback for failed Fast agent sandbox changes.
+  status: PARTIAL
+  implementation:
+  - README.md day-0/day-1/day-2
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Rollback is discussed at a high level; no executable automatic/operator rollback control exists.
+  source: carried from 4.2.0 audit
+- id: INV-70-C039
+  dimension: Implementation & Configuration
+  requirement: Keep credentials and secret material out of ordinary Fast agent sandbox configuration and diagnostics.
+  status: PARTIAL
+  implementation:
+  - SECURITY.md; runtime.py host error redaction
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: No ordinary secret store is present and host exception messages are redacted, but no formal secret/config/diagnostic
+    handling policy exists.
+  source: carried from 4.2.0 audit
+- id: INV-70-C040
+  dimension: Implementation & Configuration
+  requirement: Provide a deterministic bootstrap path from an empty node/environment to healthy Fast agent sandbox
+    operation.
+  status: PARTIAL
+  implementation:
+  - README.md bootstrap commands
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Bootstrap commands are documented, but package metadata and the required pk_core dependency are
+    not bundled/pinned, so empty-node bootstrap is not reproducible.
+  source: carried from 4.2.0 audit
+- id: INV-70-C041
+  dimension: Security, Trust & Isolation
+  requirement: Threat-model Fast agent sandbox against malicious tenants, compromised workloads, hostile inputs,
+    supply-chain compromise, and control-plane abuse.
+  status: PARTIAL
+  implementation:
+  - contract.py threats; SECURITY.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Threats and residual limitations are documented, but malicious-tenant, supply-chain, control-plane
+    abuse, replay/spoofing, and side-channel analysis is incomplete.
+  source: carried from 4.2.0 audit
+- id: INV-70-C042
+  dimension: Security, Trust & Isolation
+  requirement: Apply least privilege to every identity and capability used by Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py capset enforcement
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Capabilities are deny-by-default, but identities/roles/service accounts and least-privilege deployment
+    permissions are not modeled.
+  source: carried from 4.2.0 audit
+- id: INV-70-C043
+  dimension: Security, Trust & Isolation
+  requirement: Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Fast agent sandbox
+    permits.
+  status: PRESENT
+  implementation:
+  - runtime.py; SECURITY.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Guest bytecode has no ambient filesystem/network/device/kernel/secret primitive; host authority
+    requires an explicit granted callback.
+  source: carried from 4.2.0 audit
+- id: INV-70-C044
+  dimension: Security, Trust & Isolation
+  requirement: Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.
+  status: PARTIAL
+  implementation:
+  - security.py::make_attestation/verify_attestation
+  tests:
+  - tests/test_security.py::AttestationTests
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Verification mechanism for all four roles is implemented and tested; there is no live node/peer/control-plane
+    handshake in this repository to wire it into.
+  source: 4.3.0 remediation
+- id: INV-70-C045
+  dimension: Security, Trust & Isolation
+  requirement: Verify signatures, digests, provenance, and approved versions for executable or policy artifacts
+    consumed by Fast agent sandbox.
+  status: VERIFIED
+  implementation:
+  - security.py::verify_artifact
+  - service.py (wasm path)
+  tests:
+  - tests/test_security.py::ArtifactTests
+  - tests/test_integration.py::WasmProfile
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C046
+  dimension: Security, Trust & Isolation
+  requirement: Enforce tenant/workload isolation across Fast agent sandbox execution, memory, state, network, and
+    device boundaries as applicable.
+  status: PARTIAL
+  implementation:
+  - runtime.py clean per-run stack
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Runs start with fresh guest state; tenant/workload identity binding and process-level memory/network/device
+    isolation are not implemented.
+  source: carried from 4.2.0 audit
+- id: INV-70-C047
+  dimension: Security, Trust & Isolation
+  requirement: Encrypt sensitive Fast agent sandbox data in transit and at rest with managed key rotation.
+  status: NOT_APPLICABLE
+  implementation:
+  - contract.py non_goals
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Core runtime owns neither persistent storage nor network transport; encryption belongs to embedding
+    boundaries. This N/A must be revisited if either is added.
+  source: carried from 4.2.0 audit
+- id: INV-70-C048
+  dimension: Security, Trust & Isolation
+  requirement: Define safe behavior when identity, attestation, policy, key, or time services are unavailable.
+  status: VERIFIED
+  implementation:
+  - security.py::TrustStore.available/Clock.healthy
+  - resilience.py::derive_mode
+  tests:
+  - tests/test_security.py::AuthTests.test_c048_fail_closed
+  - tests/test_integration.py::Faults.test_trust_time_audit_outage_halts_then_recovers
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C049
+  dimension: Security, Trust & Isolation
+  requirement: Emit tamper-evident audit events for security-sensitive Fast agent sandbox operations.
+  status: VERIFIED
+  implementation:
+  - security.py::AuditLog
+  tests:
+  - tests/test_security.py::AuditTests
+  - tests/test_integration.py::Faults.test_audit_sink_failure_is_fail_closed
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C050
+  dimension: Security, Trust & Isolation
+  requirement: Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels,
+    and resource exhaustion.
+  status: PARTIAL
+  implementation:
+  - tests/test_runtime.py
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Resource exhaustion, capability denial, malformed input, object-magic-method execution, and host-error
+    leakage are tested; replay, spoofing, side-channel, supply-chain, and broader escape campaigns are absent.
+  source: carried from 4.2.0 audit
+- id: INV-70-C051
+  dimension: Resilience & Failure Handling
+  requirement: Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures
+    affecting Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - contract.py failure_modes
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Guest runtime failures are enumerated, but process/VM/node/site/network/provider/dependency/control-plane
+    failure matrices are absent.
+  source: carried from 4.2.0 audit
+- id: INV-70-C052
+  dimension: Resilience & Failure Handling
+  requirement: Define automated health and stall detection thresholds for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py fuel
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Fuel deterministically bounds guest instruction stalls, but no component health/readiness/stall
+    detector or thresholds exist for host callbacks/processes.
+  source: carried from 4.2.0 audit
+- id: INV-70-C053
+  dimension: Resilience & Failure Handling
+  requirement: Implement bounded retry with backoff and jitter only where operations are safe to retry.
+  status: VERIFIED
+  implementation:
+  - resilience.py::RetryPolicy
+  tests:
+  - tests/test_resilience.py::Retry
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Retry is a caller-side policy by design; the sandbox never retries a guest internally.
+  source: 4.3.0 remediation
+- id: INV-70-C054
+  dimension: Resilience & Failure Handling
+  requirement: Implement admission control, load shedding, or circuit breaking to prevent Fast agent sandbox failure
+    cascades.
+  status: VERIFIED
+  implementation:
+  - resilience.py::Admission/CircuitBreaker
+  tests:
+  - tests/test_resilience.py::AdmissionBreaker
+  - tests/test_integration.py::Faults.test_worker_crash_opens_breaker_then_recovers
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C055
+  dimension: Resilience & Failure Handling
+  requirement: Define failover behavior without violating isolation, residency, or consistency requirements.
+  status: PARTIAL
+  implementation:
+  - resilience.py::select_failover
+  tests:
+  - tests/test_resilience.py::Failover
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Failover selection policy is implemented and tested; there is no multi-site deployment to exercise
+    it end to end.
+  source: 4.3.0 remediation
+- id: INV-70-C056
+  dimension: Resilience & Failure Handling
+  requirement: Provide degraded operation when noncritical dependencies are unavailable.
+  status: VERIFIED
+  implementation:
+  - resilience.py::Mode/DEGRADED_RULES
+  - service.py::mode
+  - RUNBOOK.md#degraded-modes
+  tests:
+  - tests/test_resilience.py::Degraded
+  - tests/test_integration.py::Faults
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C057
+  dimension: Resilience & Failure Handling
+  requirement: Define crash-consistency, restart, resume, or replay semantics for mutable Fast agent sandbox state.
+  status: PRESENT
+  implementation:
+  - contract.py non_goals; runtime.py local state
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Core runtime has no persistent mutable state and starts each run from clean state; there is nothing
+    to replay/resume internally.
+  source: carried from 4.2.0 audit
+- id: INV-70-C058
+  dimension: Resilience & Failure Handling
+  requirement: Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where
+    relevant.
+  status: VERIFIED
+  implementation:
+  - resilience.py::IdempotencyCache/FencedLease
+  tests:
+  - tests/test_resilience.py::Idempotency
+  - tests/test_resilience.py::Fencing
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C059
+  dimension: Resilience & Failure Handling
+  requirement: Provide quarantine, freeze, disable, or isolation controls for unsafe Fast agent sandbox behavior.
+  status: PARTIAL
+  implementation:
+  - README.md emergency disable description
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Registry removal is described as an emergency disable concept; no first-class quarantine/freeze/disable
+    control is implemented.
+  source: carried from 4.2.0 audit
+- id: INV-70-C060
+  dimension: Resilience & Failure Handling
+  requirement: Run fault-injection tests proving Fast agent sandbox recovery against documented objectives.
+  status: PARTIAL
+  implementation:
+  - tests/test_integration.py::Faults
+  tests:
+  - tests/test_integration.py::Faults
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Eight in-process fault-injection scenarios with recovery assertions; certification in a staging
+    environment is still required.
+  source: 4.3.0 remediation
+- id: INV-70-C061
+  dimension: Performance & Resource Efficiency
+  requirement: Establish reproducible baselines for Fast agent sandbox latency, throughput, startup, CPU, memory,
+    storage, network, and power overhead.
+  status: VERIFIED
+  implementation:
+  - tools/bench.py
+  - perf/baseline.json
+  tests:
+  - tests/test_governance.py::Perf
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Baseline is for one machine class (recorded in the file).
+  source: 4.3.0 remediation
+- id: INV-70-C062
+  dimension: Performance & Resource Efficiency
+  requirement: Define p50, p95, p99, and worst-case performance thresholds for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - contract.py startup p99 SLO
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: One p99 startup target is declared, but p50/p95/p99/worst-case thresholds across key metrics are
+    absent and the target is unmeasured.
+  source: carried from 4.2.0 audit
+- id: INV-70-C063
+  dimension: Performance & Resource Efficiency
+  requirement: Measure Fast agent sandbox under steady load, burst load, overload, scale-out, scale-in, and recovery.
+  status: PARTIAL
+  implementation:
+  - tools/bench.py::bench_service/bench_burst
+  tests:
+  - perf/baseline.json
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Steady, burst, overload and recovery measured; multi-node scale not measurable here.
+  source: 4.3.0 remediation
+- id: INV-70-C064
+  dimension: Performance & Resource Efficiency
+  requirement: Measure per-workload and per-tenant overhead introduced by Fast agent sandbox.
+  status: VERIFIED
+  implementation:
+  - tools/bench.py::bench_tenants
+  tests:
+  - perf/baseline.json
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C065
+  dimension: Performance & Resource Efficiency
+  requirement: Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated
+    state in Fast agent sandbox.
+  status: VERIFIED
+  implementation:
+  - docs/PERFORMANCE.md#overhead-analysis
+  tests:
+  - perf/baseline.json
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C066
+  dimension: Performance & Resource Efficiency
+  requirement: Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations
+    where semantics permit.
+  status: VERIFIED
+  implementation:
+  - executor.py::ProcessExecutor(warm)
+  - docs/PERFORMANCE.md#optimizations
+  tests:
+  - perf/baseline.json#warm_vs_cold
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C067
+  dimension: Performance & Resource Efficiency
+  requirement: Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.
+  status: PRESENT
+  implementation:
+  - runtime.py; RUNTIME_SPEC.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Fuel, stack, scalar, logical-memory, and program-length growth are bounded.
+  source: carried from 4.2.0 audit
+- id: INV-70-C068
+  dimension: Performance & Resource Efficiency
+  requirement: Measure power and thermal impact on constrained edge nodes where relevant.
+  status: BLOCKED
+  implementation:
+  - docs/PERFORMANCE.md#edge-power
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Needs physical edge hardware with power instrumentation; procedure is written, no measurements
+    exist.
+  source: 4.3.0 remediation
+- id: INV-70-C069
+  dimension: Performance & Resource Efficiency
+  requirement: Define capacity models and saturation signals that predict when Fast agent sandbox needs more resources.
+  status: PARTIAL
+  implementation:
+  - runtime.py hard limits
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Hard limits provide local saturation boundaries, but there is no capacity model or operational
+    saturation signal.
+  source: carried from 4.2.0 audit
+- id: INV-70-C070
+  dimension: Performance & Resource Efficiency
+  requirement: Block releases that regress approved Fast agent sandbox startup, density, throughput, or tail-latency
+    thresholds.
+  status: VERIFIED
+  implementation:
+  - tools/bench.py::gate
+  - .github/workflows/ci.yml
+  tests:
+  - tests/test_governance.py::Perf
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C071
+  dimension: Observability & Explainability
+  requirement: Expose Fast agent sandbox health, readiness, version, configuration, dependency status, and active
+    capability set.
+  status: PARTIAL
+  implementation:
+  - __init__.py VERSION exposure
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Version is exposed; no health/readiness/config/dependency-status/active-capability status endpoint
+    or view.
+  source: carried from 4.2.0 audit
+- id: INV-70-C072
+  dimension: Observability & Explainability
+  requirement: Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.
+  status: VERIFIED
+  implementation:
+  - telemetry.py::Metrics
+  tests:
+  - tests/test_telemetry.py::MetricsTests
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C073
+  dimension: Observability & Explainability
+  requirement: Emit structured logs with stable node, tenant, workload, component, and operation identifiers.
+  status: VERIFIED
+  implementation:
+  - telemetry.py::StructuredLog
+  tests:
+  - tests/test_telemetry.py::LogTests
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C074
+  dimension: Observability & Explainability
+  requirement: Propagate trace context across all relevant Fast agent sandbox boundaries.
+  status: VERIFIED
+  implementation:
+  - telemetry.py::TraceContext
+  tests:
+  - tests/test_telemetry.py::TraceTests
+  - tests/test_integration.py::Observability.test_trace_propagates
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C075
+  dimension: Observability & Explainability
+  requirement: Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.
+  status: VERIFIED
+  implementation:
+  - telemetry.py::DiagnosticChannel
+  tests:
+  - tests/test_telemetry.py::DiagTests
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C076
+  dimension: Observability & Explainability
+  requirement: Record the reason for every automated decision made by Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - runtime.py deterministic trap reasons
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Termination/refusal reasons are returned, but no general decision record links every automated
+    decision to inputs/policy.
+  source: carried from 4.2.0 audit
+- id: INV-70-C077
+  dimension: Observability & Explainability
+  requirement: Provide an operator-readable explain view linking decisions to input state, policies, topology, and
+    constraints.
+  status: VERIFIED
+  implementation:
+  - service.py::Sandbox.explain
+  tests:
+  - tests/test_integration.py::Observability
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C078
+  dimension: Observability & Explainability
+  requirement: Correlate Fast agent sandbox events with application release lineage and the live infrastructure
+    graph.
+  status: PARTIAL
+  implementation:
+  - service.py::RELEASE_LINEAGE
+  tests:
+  - tests/test_integration.py::Observability
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Every run links to release version, source revision and config digest; no live infrastructure graph
+    exists to correlate against.
+  source: 4.3.0 remediation
+- id: INV-70-C079
+  dimension: Observability & Explainability
+  requirement: Define telemetry retention, sampling, privacy, and export policy.
+  status: PARTIAL
+  implementation:
+  - telemetry.py::TELEMETRY_POLICY/redact
+  tests:
+  - tests/test_telemetry.py
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Policy as code with in-process redaction, sampling and bounds; retention-day enforcement belongs
+    to the collector (GAP-09).
+  source: 4.3.0 remediation
+- id: INV-70-C080
+  dimension: Observability & Explainability
+  requirement: Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency
+    failure, attack, and software defect.
+  status: PARTIAL
+  implementation:
+  - ops/alerts.yaml
+  - ops/dashboard.json
+  - service.py::REASON_CODES
+  tests:
+  - tests/test_governance.py::Ops
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Alert rules, dashboard and diagnostic classes are shipped as code; not deployed to a monitoring
+    stack.
+  source: 4.3.0 remediation
+- id: INV-70-C081
+  dimension: Testing & Certification
+  requirement: Create unit tests for deterministic Fast agent sandbox logic and state transitions.
+  status: PRESENT
+  implementation:
+  - tests/test_runtime.py
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Dependency-free unit tests cover deterministic opcode/resource/capability behavior.
+  source: carried from 4.2.0 audit
+- id: INV-70-C082
+  dimension: Testing & Certification
+  requirement: Create contract tests for every public Fast agent sandbox interface.
+  status: PARTIAL
+  implementation:
+  - tests/test_runtime.py; tests/test_component.py
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Runtime interface behavior is tested; framework contract tests depend on external pk_core and are
+    skipped when absent.
+  source: carried from 4.2.0 audit
+- id: INV-70-C083
+  dimension: Testing & Certification
+  requirement: Create integration tests with every supported adjacent layer and execution tier.
+  status: PARTIAL
+  implementation:
+  - tests/test_integration.py
+  tests:
+  - tests/test_integration.py
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: dev / prod / edge tiers certified in-process; real multi-layer environment not available.
+  source: 4.3.0 remediation
+- id: INV-70-C084
+  dimension: Testing & Certification
+  requirement: Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers,
+    and protocol versions relevant to Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - docs/COMPATIBILITY.md
+  - .github/workflows/ci.yml
+  tests:
+  - tests/test_semantics.py::Versions
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Matrix defined; only CPython 3.11 / Linux x86_64 was actually exercised.
+  source: 4.3.0 remediation
+- id: INV-70-C085
+  dimension: Testing & Certification
+  requirement: Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Fast
+    agent sandbox.
+  status: VERIFIED
+  implementation:
+  - tests/test_fuzz.py
+  tests:
+  - tests/test_fuzz.py
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C086
+  dimension: Testing & Certification
+  requirement: Create concurrency and race-condition tests for shared/distributed Fast agent sandbox state.
+  status: NOT_APPLICABLE
+  implementation:
+  - runtime.py per-call local state
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Core VM has no shared/distributed mutable runtime state. Reassess if shared caches/registries are
+    introduced.
+  source: carried from 4.2.0 audit
+- id: INV-70-C087
+  dimension: Testing & Certification
+  requirement: Create security tests derived directly from the Fast agent sandbox threat model.
+  status: PARTIAL
+  implementation:
+  - tests/test_runtime.py; SECURITY.md
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Several threat-derived tests exist, but the full threat model categories are not covered.
+  source: carried from 4.2.0 audit
+- id: INV-70-C088
+  dimension: Testing & Certification
+  requirement: Create benchmark, soak, burst, and fleet-scale tests appropriate to Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - tools/bench.py
+  tests:
+  - perf/baseline.json
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Benchmark and burst done locally; soak and fleet-scale not run.
+  source: 4.3.0 remediation
+- id: INV-70-C089
+  dimension: Testing & Certification
+  requirement: Create disaster, partition, reconnect, and degraded-control-plane tests.
+  status: PARTIAL
+  implementation:
+  - tests/test_integration.py::Faults
+  tests:
+  - tests/test_integration.py::Faults
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Trust/time/audit outage, control-plane partition, drain and reconnect simulated in-process; no
+    real network partition test.
+  source: 4.3.0 remediation
+- id: INV-70-C090
+  dimension: Testing & Certification
+  requirement: Require machine-readable acceptance evidence before certifying a Fast agent sandbox release for production.
+  status: VERIFIED
+  implementation:
+  - tools/release_evidence.py
+  - RELEASE_EVIDENCE.json
+  tests:
+  - tests/test_governance.py::Evidence
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C091
+  dimension: Operations, Release & Governance
+  requirement: Define production SLOs, error budgets, and support commitments for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - contract.py slos
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Three SLOs/error-budget statements exist, but support commitments and measured evidence are absent.
+  source: carried from 4.2.0 audit
+- id: INV-70-C092
+  dimension: Operations, Release & Governance
+  requirement: Define canary, staged rollout, rollback, and emergency-disable procedures for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - README.md operations section
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Rollback/emergency-disable concepts exist; no canary/staged rollout specification or executable
+    rollback procedure.
+  source: carried from 4.2.0 audit
+- id: INV-70-C093
+  dimension: Operations, Release & Governance
+  requirement: Maintain a supported-version compatibility matrix for Fast agent sandbox and adjacent dependencies.
+  status: VERIFIED
+  implementation:
+  - semantics.py::SUPPORTED_PEER_RELEASES/check_peer_release
+  - docs/COMPATIBILITY.md
+  tests:
+  - tests/test_semantics.py::Versions.test_peer_window
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C094
+  dimension: Operations, Release & Governance
+  requirement: Define patching, vulnerability response, and end-of-life SLAs for Fast agent sandbox.
+  status: PARTIAL
+  implementation:
+  - ops/VULNERABILITY_AND_EOL.md
+  tests:
+  - tests/test_governance.py::Docs
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Policy written; owner adoption and a scanner feed are pending.
+  source: 4.3.0 remediation
+- id: INV-70-C095
+  dimension: Operations, Release & Governance
+  requirement: Provide backup, restore, migration, or reconstruction procedures for Fast agent sandbox state where
+    applicable.
+  status: NOT_APPLICABLE
+  implementation:
+  - contract.py non_goals
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Core runtime persists no state, so backup/restore/migration is not applicable internally; deployment
+    evidence/config still needs external reconstruction procedures.
+  source: carried from 4.2.0 audit
+- id: INV-70-C096
+  dimension: Operations, Release & Governance
+  requirement: Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.
+  status: PARTIAL
+  implementation:
+  - README.md day-0/day-1/day-2
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Lifecycle guidance exists but is not an operator-grade runbook with prerequisites, commands, expected
+    outputs, rollback, and escalation.
+  source: carried from 4.2.0 audit
+- id: INV-70-C097
+  dimension: Operations, Release & Governance
+  requirement: Define incident severity, paging, escalation, containment, and recovery procedures.
+  status: PARTIAL
+  implementation:
+  - RUNBOOK.md
+  tests:
+  - tests/test_governance.py::Docs
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Severity, containment and recovery defined; paging target is UNASSIGNED.
+  source: 4.3.0 remediation
+- id: INV-70-C098
+  dimension: Operations, Release & Governance
+  requirement: Perform recurring access, policy, dependency, configuration, and architecture reviews.
+  status: PARTIAL
+  implementation:
+  - ops/REVIEWS.md
+  tests:
+  - tests/test_governance.py::Docs
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: Review schedule defined; no review has been held yet.
+  source: 4.3.0 remediation
+- id: INV-70-C099
+  dimension: Operations, Release & Governance
+  requirement: Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.
+  status: VERIFIED
+  implementation:
+  - EXCEPTIONS.yaml
+  tests:
+  - tests/test_governance.py::Exceptions
+  evidence:
+  - RELEASE_EVIDENCE.json
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: ''
+  source: 4.3.0 remediation
+- id: INV-70-C100
+  dimension: Operations, Release & Governance
+  requirement: Require a formal production exit gate confirming architecture, requirements, interfaces, implementation,
+    security, resilience, performance, observability, testing, rollback, and ownership readiness.
+  status: PARTIAL
+  implementation:
+  - README.md pk_core gate commands
+  tests: []
+  evidence: []
+  owner: David Paul Russell (accountable owner, OWNERS.md)
+  remaining_gap: A gate command is referenced, but there is no local gate policy/result/evidence and pk_core is
+    absent, so formal exit readiness cannot be verified.
+  source: carried from 4.2.0 audit

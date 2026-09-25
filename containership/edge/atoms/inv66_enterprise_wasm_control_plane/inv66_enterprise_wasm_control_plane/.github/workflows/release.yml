@@ -1,0 +1,20 @@
+# Release (MC-061): clean pinned build -> SBOM/provenance -> signed manifest -> exit gate.
+# Production promotion requires the protected 'release' environment (reviewers = release manager + security owner).
+name: inv66-release
+on:
+  push: {tags: ["v*"]}
+permissions: {contents: read, id-token: write}
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv66_enterprise_wasm_control_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -c inv66_enterprise_wasm_control_plane/constraints.txt cryptography jsonschema
+      - run: python inv66_enterprise_wasm_control_plane/tools/ci.py --out ci_report.json
+      - run: python inv66_enterprise_wasm_control_plane/tools/release.py build --signing-key-ref env:INV66_RELEASE_KEY
+        env: {INV66_RELEASE_KEY: "${{ secrets.INV66_RELEASE_KEY }}"}
+      - run: python inv66_enterprise_wasm_control_plane/tools/release.py gate   # exits non-zero unless GO

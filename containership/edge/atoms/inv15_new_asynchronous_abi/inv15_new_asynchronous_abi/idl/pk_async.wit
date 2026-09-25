@@ -1,0 +1,92 @@
+// INV-15 canonical interface definition. NORMATIVE. Frozen at 1.1.
+// Discriminants are given explicitly in "// = N" annotations and are permanent.
+// Generated bindings: tools/bindgen.py -> _generated_bindings.py (never hand-edited).
+package pk:async@1.1.0;
+
+interface types {
+  /// Opaque handle. Binary layout is normative in handles.py (30 bytes, +16 if authenticated).
+  record subtask-handle {
+    epoch: u32,
+    slot: u32,
+    generation: u32,
+    token: list<u8>,
+  }
+
+  enum error-code {
+    not-ready,              // = 1
+    foreign-handle,         // = 2
+    handle-consumed,        // = 3
+    budget-exhausted,       // = 4
+    wait-timeout,           // = 5
+    call-timeout,           // = 6
+    deadline-exceeded,      // = 7
+    cancelled,              // = 8
+    trapped,                // = 9
+    host-failure,           // = 10
+    unsupported-version,    // = 11
+    wait-set-too-large,     // = 12
+    draining,               // = 13
+    disabled,               // = 14
+    invalidated,            // = 15
+    rng-unavailable,        // = 16
+    malformed,              // = 17
+    memory-exhausted,       // = 18
+    duplicate-publication,  // = 19
+    invalid-argument,       // = 20
+    handle-space-exhausted, // = 21
+    replayed,               // = 22
+    unsupported-feature,    // = 23
+  }
+
+  record error-envelope {
+    code: error-code,
+    retryable: bool,
+    detail: string,
+  }
+
+  enum cancel-reason {
+    unspecified,       // = 0
+    caller-requested,  // = 1
+    caller-gone,       // = 2
+    deadline,          // = 3
+    call-timeout,      // = 4
+    parent-cancelled,  // = 5
+    drain,             // = 6
+    teardown,          // = 7
+    host-shutdown,     // = 8
+    policy,            // = 9
+    emergency-disable, // = 10
+    other,             // = 254
+  }
+
+  enum cancel-ack {
+    propagated,              // = 1
+    completed-before-cancel, // = 2
+    already-terminal,        // = 3
+    unable-to-cancel,        // = 4
+  }
+
+  variant call-result {
+    value(list<u8>),          // tag = 0
+    subtask(subtask-handle),  // tag = 1
+    error(error-envelope),    // tag = 2
+  }
+}
+
+/// PK_ASYNC_CALL/1
+interface call {
+  use types.{call-result};
+  call: func(args: list<u8>, deadline-ns: option<u64>) -> call-result;
+}
+
+/// PK_WAITABLE_SET/1 : canonical set (sorted, unique); max cardinality = instance budget
+interface waitable-set {
+  use types.{subtask-handle, error-envelope};
+  wait: func(handles: list<subtask-handle>) -> result<list<subtask-handle>, error-envelope>;
+}
+
+/// PK_SUBTASK_CANCEL/1 : idempotent; cancelling a retired handle returns already-terminal
+interface subtask-cancel {
+  use types.{subtask-handle, cancel-reason, cancel-ack, error-envelope};
+  cancel: func(handle: subtask-handle, reason: cancel-reason) -> result<cancel-ack, error-envelope>;
+}

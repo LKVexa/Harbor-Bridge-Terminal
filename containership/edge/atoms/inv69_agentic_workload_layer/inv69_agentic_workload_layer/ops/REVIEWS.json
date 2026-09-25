@@ -1,0 +1,121 @@
+{
+  "schema": "PK_REVIEWS/1",
+  "component": "INV-69",
+  "reviews": [
+    {
+      "id": "R-ACCESS",
+      "type": "access/ownership",
+      "cadence_days": 90,
+      "owner": "inv69-service-owner",
+      "participants": [
+        "inv69-service-owner",
+        "inv69-security-owner"
+      ],
+      "evidence": [
+        "ops/OWNERS.json",
+        "tools/governance_check.py output",
+        ".github/CODEOWNERS"
+      ],
+      "pass": "every required role held by a named person; SoD holds",
+      "remediation_sla_days": 14,
+      "last": null,
+      "next_due": "2026-12-21"
+    },
+    {
+      "id": "R-POLICY",
+      "type": "security policy",
+      "cadence_days": 90,
+      "owner": "inv69-security-owner",
+      "participants": [
+        "inv69-security-owner",
+        "pk-architecture-board"
+      ],
+      "evidence": [
+        "precedence.PRECEDENCE_POLICY",
+        "artifacts trust policy",
+        "ops/SPEC.md"
+      ],
+      "pass": "no unreviewed policy change",
+      "remediation_sla_days": 14,
+      "last": null,
+      "next_due": "2026-12-21"
+    },
+    {
+      "id": "R-DEPS",
+      "type": "dependency/vulnerability",
+      "cadence_days": 30,
+      "owner": "inv69-service-owner",
+      "participants": [
+        "inv69-service-owner"
+      ],
+      "evidence": [
+        "tools/deps_check.py",
+        "requirements.lock",
+        "evidence/SBOM.json"
+      ],
+      "pass": "no runtime third-party import; lock matches approved",
+      "remediation_sla_days": 7,
+      "last": "2026-09-22",
+      "next_due": "2026-10-22"
+    },
+    {
+      "id": "R-CONFIG",
+      "type": "configuration/defaults drift",
+      "cadence_days": 90,
+      "owner": "inv69-security-owner",
+      "participants": [
+        "inv69-security-owner"
+      ],
+      "evidence": [
+        "config.SECURE_DEFAULTS",
+        "ops/SPEC.md --check",
+        "ConfigStore provenance export"
+      ],
+      "pass": "defaults unchanged or reviewed",
+      "remediation_sla_days": 14,
+      "last": null,
+      "next_due": "2026-12-21"
+    },
+    {
+      "id": "R-ARCH",
+      "type": "architecture/ADR",
+      "cadence_days": 180,
+      "owner": "pk-architecture-board",
+      "participants": [
+        "pk-architecture-board",
+        "inv69-service-owner"
+      ],
+      "evidence": [
+        "docs/ADR-*.md",
+        "ops/COMPATIBILITY_MATRIX.json"
+      ],
+      "pass": "ADRs current; matrix matches tests",
+      "remediation_sla_days": 30,
+      "last": null,
+      "next_due": "2027-03-21"
+    }
+  ],
+  "out_of_cycle_triggers": [
+    "major release",
+    "new trust boundary",
+    "new deployment profile",
+    "critical vulnerability",
+    "SEV1/SEV2 incident"
+  ],
+  "retention": "review records kept 7 years with the release evidence they cover",
+  "findings_register": [
+    {
+      "id": "F-2026-001",
+      "review": "R-DEPS",
+      "found": "2026-09-22",
+      "severity": "high",
+      "summary": "pk_core unpinned and absent",
+      "owner": "inv69-service-owner",
+      "due": "2026-10-22",
+      "status": "open",
+      "links": [
+        "W-001"
+      ]
+    }
+  ]
+}

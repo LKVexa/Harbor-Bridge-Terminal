@@ -1,0 +1,14 @@
+{
+  "format": "PK_APP_FUZZ_REGRESSIONS/1",
+  "cases": [
+    {"id": "R001-deep-nesting-recursionerror", "raw_generator": "deep-list", "depth": 100000,
+     "found": "4.3.0 pass (tools/fuzz.py op 3); 4.2.0 raised RecursionError (not a ValueError) from json.loads", "fixed_by": "manifest._raw_depth_exceeds / MAX_DEPTH"},
+    {"id": "R002-deep-extension-object", "raw_generator": "deep-list", "depth": 65,
+     "found": "boundary: depth 65 > MAX_DEPTH 64 must be a raw refusal", "fixed_by": "manifest.ManifestDepthError"},
+    {"id": "R003-inline-aws-key-in-extension", "obj": {"schema": "app/v1", "components": [{"name": "a", "env": "AKIAFUZZPROBE0000001"}]},
+     "found": "4.2.0 accepted and hashed credential material in extension fields", "fixed_by": "redaction.find_secrets via validate_issues"},
+    {"id": "R005-embedded-aws-key-echoed-in-duplicate-name", "obj": {"schema": "app/v1", "components": [{"name": "c0AKIAFUZZPROBE0000001"}, {"name": "c0AKIAFUZZPROBE0000001"}]},
+     "found": "tools/fuzz.py seed 64 case 1304 (4.3.0 development): \\b-anchored AWS pattern missed an embedded key and the duplicate-name message echoed it", "fixed_by": "redaction aws pattern without leading \\b; manifest._show redacts credential-like values in messages"},
+    {"id": "R004-nan", "raw": "{\"schema\":\"app/v1\",\"x\":NaN}", "found": "regression guard for 4.2.0 finite-number rule", "fixed_by": "4.2.0 parse_constant"}
+  ]
+}

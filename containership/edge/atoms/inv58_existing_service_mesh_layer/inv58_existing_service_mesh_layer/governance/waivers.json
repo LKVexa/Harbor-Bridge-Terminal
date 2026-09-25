@@ -1,0 +1,21 @@
+{
+  "schema": "PK_MESH_WAIVERS/1",
+  "rules": [
+    "An active waiver MUST name a human owner, rationale, risk, compensating controls, created and expiry dates (<= 180 days).",
+    "The release gate rejects active waivers that are expired, ownerless, or owned by UNASSIGNED.",
+    "Technical-debt and deprecation entries MUST name an owning role and a target version or review date."
+  ],
+  "waivers": [],
+  "technical_debt": [
+    {"id": "TD-01", "title": "Copy-on-write route registry is O(n) per write", "owner_role": "Component owner", "target": "4.4.0 review",
+     "detail": "Kept deliberately: copy-on-write is a hardened 4.2.0 invariant. See docs/PERFORMANCE.md OPT-1."},
+    {"id": "TD-02", "title": "HMAC (shared-key) artifact signatures and operator tokens", "owner_role": "Security architecture reviewer", "target": "4.4.0",
+     "detail": "Replace with asymmetric verification once a KMS / Sigstore decision exists (RR-02, RR-03)."},
+    {"id": "TD-03", "title": "Idempotency cache not included in snapshots", "owner_role": "Component owner", "target": "4.4.0 review",
+     "detail": "Fencing prevents stale re-execution across restart; exact replay response is not preserved (RR-08)."}
+  ],
+  "deprecations": [
+    {"id": "DEP-01", "title": "Loose SPIFFE path characters", "since": "4.3.0", "owner_role": "Component owner",
+     "detail": "Path segments outside [A-Za-z0-9._-], uppercase scheme and empty query/fragment are now refused (SPIFFE ID spec). Peers emitting such IDs must be fixed; no compatibility shim is provided."}
+  ]
+}

@@ -1,0 +1,1712 @@
+{
+"component": "C23",
+"items": [
+{
+"id": "C23-001",
+"task_class": "IMPLEMENT",
+"area": "01. Managed framing scope",
+"req": "Assign wire-level frame processing to the selected .NET implementation.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no .NET implementation; Node gateway/ws.js hand-rolls framing instead",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-002",
+"task_class": "IMPLEMENT",
+"area": "01. Managed framing scope",
+"req": "Distinguish wire frames from complete application messages.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "_parse handles wire frames; _message()/fin logic assembles complete application messages",
+"prior_evidence": [
+"gateway/ws.js:151-209"
+]
+},
+{
+"id": "C23-003",
+"task_class": "SPECIFY",
+"area": "01. Managed framing scope",
+"req": "Identify text messages supported by the application.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'Text messages only' explicitly identified as the supported application message type",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-004",
+"task_class": "SPECIFY",
+"area": "01. Managed framing scope",
+"req": "Identify binary messages supported by the application.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "binary explicitly decided unsupported: 'binary closes 1003'",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-005",
+"task_class": "SPECIFY",
+"area": "01. Managed framing scope",
+"req": "Identify close handling required by the application.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "close handshake (echo code, 3s wait, then TCP drop) described",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-006",
+"task_class": "SPECIFY",
+"area": "01. Managed framing scope",
+"req": "Identify keep-alive behavior requiring runtime verification.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeat row plus Q03 flags runtime keep-alive as needing verification",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"docs/BASELINE.md#claim-ledger-delta"
+]
+},
+{
+"id": "C23-007",
+"task_class": "DOCUMENT",
+"area": "01. Managed framing scope",
+"req": "Record the article's continuation-frame description.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found of the original series article's continuation-frame description",
+"prior_evidence": []
+},
+{
+"id": "C23-008",
+"task_class": "DOCUMENT",
+"area": "01. Managed framing scope",
+"req": "Record the article's masking requirements for compatibility testing.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found of the article's masking requirements captured for compatibility testing",
+"prior_evidence": []
+},
+{
+"id": "C23-009",
+"task_class": "IMPLEMENT",
+"area": "01. Managed framing scope",
+"req": "Avoid adding a second frame parser to the managed baseline.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no managed baseline exists to add a second frame parser to",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-010",
+"task_class": "IMPLEMENT",
+"area": "01. Managed framing scope",
+"req": "Approve the boundary between protocol handling and application logic.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "ws.js (wire) vs connection.js (application logic) boundary documented",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:1-15"
+]
+},
+{
+"id": "C23-011",
+"task_class": "DOCUMENT",
+"area": "02. Runtime interface",
+"req": "Record which frame details the managed receive API exposes.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no managed receive API (ClientWebSocket) exists in the Node gateway",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-012",
+"task_class": "DOCUMENT",
+"area": "02. Runtime interface",
+"req": "Record which control behavior remains internal to the runtime.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no .NET runtime-internal control behavior applies",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-013",
+"task_class": "VERIFY",
+"area": "02. Runtime interface",
+"req": "Verify the selected ReceiveAsync result type.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: ReceiveAsync result type is a .NET ClientWebSocket concept",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-014",
+"task_class": "VERIFY",
+"area": "02. Runtime interface",
+"req": "Verify the selected SendAsync message-type argument.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: SendAsync message-type argument is .NET-specific",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-015",
+"task_class": "VERIFY",
+"area": "02. Runtime interface",
+"req": "Verify the close-status information available to the application.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: item is scoped to the managed-runtime close-status API",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-016",
+"task_class": "VERIFY",
+"area": "02. Runtime interface",
+"req": "Verify how the runtime reports protocol violations.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: refers to .NET runtime exception reporting (WebSocketException)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-017",
+"task_class": "VERIFY",
+"area": "02. Runtime interface",
+"req": "Verify how the runtime reports an interrupted message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: refers to .NET runtime reporting of interrupted messages",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-018",
+"task_class": "DOCUMENT",
+"area": "02. Runtime interface",
+"req": "Document runtime-dependent behavior as tested rather than assumed.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'what ran, what it proves, what did not run' distinguishes tested from assumed behavior",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C23-019",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime interface",
+"req": "Build a small managed-frame interoperability probe.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "raw-socket peer test is the runtime-neutral analog of an interop probe against the hand-rolled framer",
+"prior_evidence": [
+"docs/VALIDATION.md#interoperability",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-020",
+"task_class": "DOCUMENT",
+"area": "02. Runtime interface",
+"req": "Record the exact runtime used by that probe.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'Linux 6.18.44 x86_64, ... Node v22.22.2, ... Chromium 1194 via Playwright 1.56' records the exact runtime",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C23-021",
+"task_class": "IMPLEMENT",
+"area": "03. Text handling",
+"req": "Accept an application text message through the managed receive path.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "OP.TEXT branch accepts application text messages",
+"prior_evidence": [
+"gateway/ws.js:180-184"
+]
+},
+{
+"id": "C23-022",
+"task_class": "IMPLEMENT",
+"area": "03. Text handling",
+"req": "Preserve text bytes until the message is complete.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "frag.chunks accumulate bytes across CONT frames until fin",
+"prior_evidence": [
+"gateway/ws.js:185-194"
+]
+},
+{
+"id": "C23-023",
+"task_class": "IMPLEMENT",
+"area": "03. Text handling",
+"req": "Decode text through the completed-payload decoder.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "_message() decodes strict UTF-8 only once the whole payload is assembled",
+"prior_evidence": [
+"gateway/ws.js:204-208"
+]
+},
+{
+"id": "C23-024",
+"task_class": "TEST",
+"area": "03. Text handling",
+"req": "Test an empty text message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found specifically for an empty text message",
+"prior_evidence": []
+},
+{
+"id": "C23-025",
+"task_class": "TEST",
+"area": "03. Text handling",
+"req": "Test ASCII text.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "vertical-slice and command tests exchange ordinary ASCII JSON text messages throughout",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C23-026",
+"task_class": "TEST",
+"area": "03. Text handling",
+"req": "Test multi-byte UTF-8 text.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'split UTF-8 character across fragments is reassembled'; browser test types non-ASCII",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C23-027",
+"task_class": "TEST",
+"area": "03. Text handling",
+"req": "Test text larger than the receive buffer.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "oversize-rejection (>cap) tested; a valid large message spanning multiple reads under the cap is not distinctly tested",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-028",
+"task_class": "TEST",
+"area": "03. Text handling",
+"req": "Test text delivered through multiple receive completions.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'ping...interleaved inside a fragmented text message that still assembles' exercises multi-chunk delivery",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-029",
+"task_class": "IMPLEMENT",
+"area": "03. Text handling",
+"req": "Reject application text exceeding the approved message limit.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes check closes 1009 before buffering the offending fragment",
+"prior_evidence": [
+"gateway/ws.js:170"
+]
+},
+{
+"id": "C23-030",
+"task_class": "IMPLEMENT",
+"area": "03. Text handling",
+"req": "Keep text message handling separate from binary interpretation.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "OP.BIN immediately closes 1003, kept fully separate from the TEXT branch",
+"prior_evidence": [
+"gateway/ws.js:181-183"
+]
+},
+{
+"id": "C23-031",
+"task_class": "SPECIFY",
+"area": "04. Binary handling",
+"req": "Decide whether binary application messages are supported.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "decided: binary application messages are not supported (close 1003)",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-032",
+"task_class": "IMPLEMENT",
+"area": "04. Binary handling",
+"req": "Preserve binary bytes without implicit text conversion.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary messages are unsupported by design; connection closes before any bytes are handled as data",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-033",
+"task_class": "IMPLEMENT",
+"area": "04. Binary handling",
+"req": "Route completed binary messages to the approved application handler.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no binary application handler exists; binary opcode closes the connection",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-034",
+"task_class": "TEST",
+"area": "04. Binary handling",
+"req": "Test a binary payload containing zero bytes.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary WS messages unsupported by design",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-035",
+"task_class": "TEST",
+"area": "04. Binary handling",
+"req": "Test a binary payload containing all byte-value ranges.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary WS messages unsupported by design",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-036",
+"task_class": "TEST",
+"area": "04. Binary handling",
+"req": "Test an empty binary message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary WS messages unsupported by design",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-037",
+"task_class": "TEST",
+"area": "04. Binary handling",
+"req": "Test binary data larger than the receive buffer.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary WS messages unsupported by design",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-038",
+"task_class": "TEST",
+"area": "04. Binary handling",
+"req": "Test several consecutive binary messages.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary WS messages unsupported by design",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-039",
+"task_class": "IMPLEMENT",
+"area": "04. Binary handling",
+"req": "Reject unsupported binary traffic according to the application policy.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'binary message -> 1003' implements and tests rejection of binary traffic",
+"prior_evidence": [
+"gateway/ws.js:183",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-040",
+"task_class": "DOCUMENT",
+"area": "04. Binary handling",
+"req": "Document binary payload limits and ownership.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "documents binary rejection (close 1003) as the payload policy; ownership is unsupported by design",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-041",
+"task_class": "IMPLEMENT",
+"area": "05. Continuation and completion",
+"req": "Interpret completion through the managed API's EndOfMessage result.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "fin bit (runtime-neutral analog of EndOfMessage) triggers _message() only on completion",
+"prior_evidence": [
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C23-042",
+"task_class": "IMPLEMENT",
+"area": "05. Continuation and completion",
+"req": "Preserve accumulation across incomplete receive results.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "frag.chunks/bytes persist across successive incomplete CONT frames",
+"prior_evidence": [
+"gateway/ws.js:186,193"
+]
+},
+{
+"id": "C23-043",
+"task_class": "IMPLEMENT",
+"area": "05. Continuation and completion",
+"req": "Avoid assuming one receive completion equals one wire frame.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "_parse loops over the accumulated buffer, handling any number of frames per socket 'data' event",
+"prior_evidence": [
+"gateway/ws.js:151-152"
+]
+},
+{
+"id": "C23-044",
+"task_class": "IMPLEMENT",
+"area": "05. Continuation and completion",
+"req": "Avoid assuming buffer size determines the peer's wire fragmentation policy.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "parser reassembles from arbitrary TCP chunk boundaries; no fixed per-frame buffer-size assumption",
+"prior_evidence": [
+"gateway/ws.js:151-202"
+]
+},
+{
+"id": "C23-045",
+"task_class": "TEST",
+"area": "05. Continuation and completion",
+"req": "Test a fragmented text message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "fragmented text/ping-interleaved tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-046",
+"task_class": "TEST",
+"area": "05. Continuation and completion",
+"req": "Test a fragmented binary message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary messages unsupported, so no fragmented-binary case exists",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-047",
+"task_class": "TEST",
+"area": "05. Continuation and completion",
+"req": "Test different fragment sizes for the same logical payload.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "a couple of split points exercised (split UTF-8, ping-interleaved); not a systematic fragment-size matrix",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-048",
+"task_class": "TEST",
+"area": "05. Continuation and completion",
+"req": "Test a message ending exactly at a buffer boundary.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for a message ending exactly at a buffer/chunk boundary",
+"prior_evidence": []
+},
+{
+"id": "C23-049",
+"task_class": "TEST",
+"area": "05. Continuation and completion",
+"req": "Test a partial message interrupted by disconnect.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "abrupt TCP loss is tested generally; not specifically mid-fragment-assembly disconnect",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-050",
+"task_class": "DOCUMENT",
+"area": "05. Continuation and completion",
+"req": "Record whether application delivery occurs exactly once per completed message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "rid replay window: 'a duplicated input executed once' documents exactly-once application delivery",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C23-051",
+"task_class": "IMPLEMENT",
+"area": "06. Close behavior",
+"req": "Detect the managed Close message type.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "OP.CLOSE routed to _onClose()",
+"prior_evidence": [
+"gateway/ws.js:198,211-225"
+]
+},
+{
+"id": "C23-052",
+"task_class": "IMPLEMENT",
+"area": "06. Close behavior",
+"req": "Keep close control data out of application message decoding.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "CLOSE handled in its own switch case, never passed through _message()'s text decode path",
+"prior_evidence": [
+"gateway/ws.js:180-198"
+]
+},
+{
+"id": "C23-053",
+"task_class": "IMPLEMENT",
+"area": "06. Close behavior",
+"req": "Preserve allowed close-status information for lifecycle handling.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'close' event carries {code,reason,clean,initiator} for lifecycle handling",
+"prior_evidence": [
+"gateway/ws.js:139,219-224"
+]
+},
+{
+"id": "C23-054",
+"task_class": "IMPLEMENT",
+"area": "06. Close behavior",
+"req": "Coordinate the closing handshake with the socket owner.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "close()/_onClose() coordinate the handshake; connection.js has a single idempotent exit path",
+"prior_evidence": [
+"gateway/ws.js:104-120",
+"gateway/connection.js"
+]
+},
+{
+"id": "C23-055",
+"task_class": "IMPLEMENT",
+"area": "06. Close behavior",
+"req": "Stop ordinary message admission when closure begins.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'state===CLOSING && op!==OP.CLOSE: continue' ignores further data once closure begins",
+"prior_evidence": [
+"gateway/ws.js:179"
+]
+},
+{
+"id": "C23-056",
+"task_class": "TEST",
+"area": "06. Close behavior",
+"req": "Test peer-initiated normal closure.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'peer close is echoed with the same code'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-057",
+"task_class": "TEST",
+"area": "06. Close behavior",
+"req": "Test local normal closure.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'exit command...close...single exit' covers local normal closure",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C23-058",
+"task_class": "TEST",
+"area": "06. Close behavior",
+"req": "Test close during an incomplete application message.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for close arriving during an incomplete/partially-fragmented application message",
+"prior_evidence": []
+},
+{
+"id": "C23-059",
+"task_class": "TEST",
+"area": "06. Close behavior",
+"req": "Test close while an outbound message is pending.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'peer that stops reading its TCP socket' covers pending-output backpressure, not close specifically mid-pending-send",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-060",
+"task_class": "DOCUMENT",
+"area": "06. Close behavior",
+"req": "Record the actual runtime behavior for malformed close input.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'invalid close code -> 1002; 1-byte close payload -> 1002' records actual behavior for malformed close input",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-061",
+"task_class": "VERIFY",
+"area": "07. Keep-alive behavior",
+"req": "VERIFY how the selected runtime emits and responds to keep-alive traffic.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'application heartbeat: a peer that never answers is closed 1008 within interval+window'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-062",
+"task_class": "IMPLEMENT",
+"area": "07. Keep-alive behavior",
+"req": "Distinguish protocol control traffic from application text heartbeats.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "WS-level ping/pong (ws.js) is distinct from app-level heartbeat.ping/pong (connection.js)",
+"prior_evidence": [
+"gateway/ws.js:196-197",
+"gateway/connection.js:148"
+]
+},
+{
+"id": "C23-063",
+"task_class": "TEST",
+"area": "07. Keep-alive behavior",
+"req": "Test control traffic during an otherwise idle connection.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'ping is answered with an identical pong' on an otherwise idle connection",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-064",
+"task_class": "TEST",
+"area": "07. Keep-alive behavior",
+"req": "Test control traffic while a large message is transferring.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'ping...interleaved inside a fragmented text message that still assembles'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-065",
+"task_class": "DOCUMENT",
+"area": "07. Keep-alive behavior",
+"req": "Record whether control frames are visible to application ReceiveAsync.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: item names the .NET ReceiveAsync application API specifically",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-066",
+"task_class": "IMPLEMENT",
+"area": "07. Keep-alive behavior",
+"req": "Avoid inventing a Ping message type unsupported by the chosen API.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "OP.PING/PONG (9/10) are standard RFC 6455 opcodes, not an invented type",
+"prior_evidence": [
+"gateway/ws.js:17"
+]
+},
+{
+"id": "C23-067",
+"task_class": "VERIFY",
+"area": "07. Keep-alive behavior",
+"req": "Verify peer response behavior using an appropriate protocol test client.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "ping/pong test uses the raw-socket protocol test peer",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-068",
+"task_class": "DOCUMENT",
+"area": "07. Keep-alive behavior",
+"req": "Record any timeout configuration separate from the keep-alive interval.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_HEARTBEAT_MS vs VWS_HEARTBEAT_WINDOW_MS vs VWS_IDLE_MS are separately configured",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C23-069",
+"task_class": "TEST",
+"area": "07. Keep-alive behavior",
+"req": "Test a peer that stops responding.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'application heartbeat: a peer that never answers is closed 1008...'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-070",
+"task_class": "DOCUMENT",
+"area": "07. Keep-alive behavior",
+"req": "Document observed behavior without assuming the article's exact timeout mechanism.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "Q03 '.NET keep-alive... UNVERIFIED \u2014 not runnable here...Inactive under D-001' avoids assuming the article's mechanism",
+"prior_evidence": [
+"docs/BASELINE.md#claim-ledger-delta"
+]
+},
+{
+"id": "C23-071",
+"task_class": "VERIFY",
+"area": "08. Masking and violations",
+"req": "VERIFY managed client masking with a suitable interoperability test.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "Chromium and undici clients (which mask per spec) interoperate successfully with the gateway",
+"prior_evidence": [
+"docs/VALIDATION.md#interoperability",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C23-072",
+"task_class": "VERIFY",
+"area": "08. Masking and violations",
+"req": "VERIFY managed server output using a suitable test harness.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "raw-socket peer correctly parses the gateway's (unmasked, per spec) server output frames",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-073",
+"task_class": "TEST",
+"area": "08. Masking and violations",
+"req": "Test an unmasked client frame in an isolated protocol-negative test.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'unmasked client frame -> 1002'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-074",
+"task_class": "TEST",
+"area": "08. Masking and violations",
+"req": "Test malformed frame input through a specialized test client.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "raw-socket test peer sends malformed frames (reserved bit, bad length, bad close code, etc.)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-075",
+"task_class": "TEST",
+"area": "08. Masking and violations",
+"req": "Test invalid continuation sequencing where the harness supports it.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'continuation without start -> 1002; new text inside a fragmented message -> 1002'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-076",
+"task_class": "TEST",
+"area": "08. Masking and violations",
+"req": "Test an unsupported opcode where the harness supports it.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'unknown opcode -> 1002'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C23-077",
+"task_class": "REVIEW",
+"area": "08. Masking and violations",
+"req": "Confirm violations do not deliver corrupted data to application handlers.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_fail() clears buf/frag before/instead of any 'text' emission on every violation path [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/ws.js:123-129"
+]
+},
+{
+"id": "C23-078",
+"task_class": "REVIEW",
+"area": "08. Masking and violations",
+"req": "Confirm protocol failures release connection-local resources.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "_destroy() releases buffers/timers/socket; 'abrupt TCP loss releases the connection, no orphan process'",
+"prior_evidence": [
+"gateway/ws.js:131-140",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-079",
+"task_class": "IMPLEMENT",
+"area": "08. Masking and violations",
+"req": "Avoid implementing raw masking manually in the managed path.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "D-001: no managed baseline exists; the zero-dependency Node candidate necessarily hand-implements masking/unmasking itself",
+"prior_evidence": [
+"gateway/ws.js:1-13",
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C23-080",
+"task_class": "DOCUMENT",
+"area": "08. Masking and violations",
+"req": "Record tests not executable with the available client tooling.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "records untestable items: Docker, Render/WAN, Electron, PowerShell/.NET, independent review",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C23-081",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and load",
+"req": "Exchange alternating text and binary messages when both are supported.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary not supported, so alternating text/binary exchange is not applicable",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C23-082",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and load",
+"req": "Exchange simultaneous inbound and outbound application traffic.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "vertical-slice input/output and slow-consumer tests exercise simultaneous in/out traffic",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-083",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and load",
+"req": "Run protocol-negative tests without affecting unrelated clients.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "multi-tenant isolation tested for resource/CPU faults; not explicitly for WS protocol-negative frame violations",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-084",
+"task_class": "TEST",
+"area": "09. Integration and load",
+"req": "Test repeated connect-message-close cycles.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for repeated connect-message-close cycles specifically",
+"prior_evidence": []
+},
+{
+"id": "C23-085",
+"task_class": "MEASURE",
+"area": "09. Integration and load",
+"req": "Measure managed framing overhead at the representative message rate.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "measured framing/throughput data file per rubric rule 4",
+"prior_evidence": [
+"e/I053/bench.json"
+]
+},
+{
+"id": "C23-086",
+"task_class": "VERIFY",
+"area": "09. Integration and load",
+"req": "Verify large-message handling respects the chosen memory budget.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "per-session memory bound documented; 'memory stays bounded' under slow-consumer load test",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C23-087",
+"task_class": "REVIEW",
+"area": "09. Integration and load",
+"req": "Confirm health requests remain responsive during framing tests.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'health stays responsive (< 250 ms) while a session streams bulk output and large inbound messages arrive'",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C23-088",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and load",
+"req": "Correlate protocol errors with the affected connection only.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "error logs carry conn id; ws.js failure paths destroy only the offending connection's socket",
+"prior_evidence": [
+"gateway/log.js",
+"gateway/connection.js"
+]
+},
+{
+"id": "C23-089",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and load",
+"req": "Avoid retaining complete payloads in routine diagnostics.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "field allowlist excludes keys matching payload|data from routine log records",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C23-090",
+"task_class": "IMPLEMENT",
+"area": "09. Integration and load",
+"req": "Preserve representative successful and failing interoperability traces.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "raw TAP log (95/95) and browser-test screenshots preserve success/failure interoperability traces",
+"prior_evidence": [
+"e/_runs/full-suite.tap",
+"e/I055"
+]
+},
+{
+"id": "C23-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the supported application message types.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "text-only WS messages and the bridge record types are published",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport",
+"docs/PROTOCOL.md#local-bridge"
+]
+},
+{
+"id": "C23-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the managed-versus-application responsibility boundary.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "gateway/ws.js (wire) vs gateway/connection.js (application) boundary is documented",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C23-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link text and binary integrity tests.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "validation table links ws-conformance.test.js and codec.test.js for text integrity; binary is N/A (unsupported)",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C23-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link fragmentation and completion tests.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "ws-conformance.test.js row covers fragmentation/completion, linked in the validation table",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C23-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link close lifecycle tests.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "ws-conformance.test.js and e2e.test.js rows cover close lifecycle",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C23-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link observed keep-alive behavior.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "Liveness (I036) section and heartbeat rule document observed keep-alive behavior",
+"prior_evidence": [
+"docs/RECOVERY.md",
+"docs/PROTOCOL.md#state-machine"
+]
+},
+{
+"id": "C23-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link masking and protocol-negative tests when executable.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "ws-conformance protocol-negative tests linked in both validation and security control tables",
+"prior_evidence": [
+"docs/VALIDATION.md",
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C23-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document gaps in protocol test coverage.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "table explicitly records coverage gaps (Docker, WAN, Electron, PowerShell/.NET, independent review)",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C23-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record the tested runtime and client tools.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "'Linux 6.18.44 x86_64, ... Node v22.22.2, ... Chromium 1194 via Playwright 1.56'",
+"prior_evidence": [
+"docs/VALIDATION.md"
+]
+},
+{
+"id": "C23-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve framing integration only against demonstrated interoperability.",
+"ram_overlay": "Delegate wire framing to the selected supported WebSocket stack. Bound aggregate messages and preserve control-frame handling instead of treating arbitrary network chunks as complete commands.",
+"challenge": "Run fragmentation, control-interleaving, invalid-type, and close tests using a protocol-capable harness.",
+"ref_work": [
+"R10",
+"R13"
+],
+"prior_status": "PASS",
+"prior_note": "GO/CONDITIONAL/NO-GO gates require demonstrated interoperability evidence before approval",
+"prior_evidence": [
+"docs/RELEASE.md#gate-decision"
+]
+}
+]
+}

@@ -1,0 +1,29 @@
+# Mirrors resilience.RetryPolicy / CircuitBreaker defaults so sidecar and library agree (C053, C054).
+apiVersion: dapr.io/v1alpha1
+kind: Resiliency
+metadata:
+  name: inv52-pubsub
+  namespace: inv52
+spec:
+  policies:
+    timeouts:
+      publish: 5s
+    retries:
+      publishRetry:
+        policy: exponential
+        initialInterval: 50ms
+        maxInterval: 2s
+        maxRetries: 3
+    circuitBreakers:
+      brokerCB:
+        maxRequests: 1
+        interval: 0s
+        timeout: 30s
+        trip: consecutiveFailures >= 5
+  targets:
+    components:
+      order-events:
+        outbound:
+          timeout: publish
+          retry: publishRetry
+          circuitBreaker: brokerCB

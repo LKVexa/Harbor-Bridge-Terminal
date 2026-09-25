@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PK_MICROVM_CONFIG/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "revision",
+    "author",
+    "environment",
+    "site",
+    "boot_budget_ms",
+    "permitted_devices",
+    "max_instances",
+    "max_instances_per_tenant",
+    "admission_queue_depth",
+    "per_tenant_queue_depth",
+    "datapath_policy",
+    "degraded_policy"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_MICROVM_CONFIG/1"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "activated_at": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "environment": {
+      "enum": [
+        "cloud",
+        "datacenter",
+        "near-edge",
+        "far-edge"
+      ]
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "boot_budget_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 125
+    },
+    "permitted_devices": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "virtio-net",
+          "virtio-block",
+          "virtio-vsock",
+          "serial",
+          "rtc"
+        ]
+      },
+      "uniqueItems": true,
+      "maxItems": 5
+    },
+    "max_instances": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "max_instances_per_tenant": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "admission_queue_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "per_tenant_queue_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "datapath_policy": {
+      "enum": [
+        "require",
+        "prefer",
+        "disabled"
+      ]
+    },
+    "degraded_policy": {
+      "enum": [
+        "fail_closed",
+        "serve_existing"
+      ]
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{"id": "C23-001", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: no .NET implementation; Node gateway/ws.js hand-rolls framing instead"}
+{"id": "C23-002", "status": "PASS", "evidence": ["gateway/ws.js:151-209"], "note": "_parse handles wire frames; _message()/fin logic assembles complete application messages"}
+{"id": "C23-003", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#transport"], "note": "'Text messages only' explicitly identified as the supported application message type"}
+{"id": "C23-004", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#transport"], "note": "binary explicitly decided unsupported: 'binary closes 1003'"}
+{"id": "C23-005", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#transport"], "note": "close handshake (echo code, 3s wait, then TCP drop) described"}
+{"id": "C23-006", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#state-machine", "docs/BASELINE.md#claim-ledger-delta"], "note": "heartbeat row plus Q03 flags runtime keep-alive as needing verification"}
+{"id": "C23-007", "status": "OPEN", "evidence": [], "note": "no record found of the original series article's continuation-frame description"}
+{"id": "C23-008", "status": "OPEN", "evidence": [], "note": "no record found of the article's masking requirements captured for compatibility testing"}
+{"id": "C23-009", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: no managed baseline exists to add a second frame parser to"}
+{"id": "C23-010", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#state-machine", "gateway/connection.js:1-15"], "note": "ws.js (wire) vs connection.js (application logic) boundary documented"}
+{"id": "C23-011", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: no managed receive API (ClientWebSocket) exists in the Node gateway"}
+{"id": "C23-012", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: no .NET runtime-internal control behavior applies"}
+{"id": "C23-013", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: ReceiveAsync result type is a .NET ClientWebSocket concept"}
+{"id": "C23-014", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: SendAsync message-type argument is .NET-specific"}
+{"id": "C23-015", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: item is scoped to the managed-runtime close-status API"}
+{"id": "C23-016", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: refers to .NET runtime exception reporting (WebSocketException)"}
+{"id": "C23-017", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: refers to .NET runtime reporting of interrupted messages"}
+{"id": "C23-018", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "'what ran, what it proves, what did not run' distinguishes tested from assumed behavior"}
+{"id": "C23-019", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md#interoperability", "tests/gateway/ws-conformance.test.js"], "note": "raw-socket peer test is the runtime-neutral analog of an interop probe against the hand-rolled framer"}
+{"id": "C23-020", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "'Linux 6.18.44 x86_64, ... Node v22.22.2, ... Chromium 1194 via Playwright 1.56' records the exact runtime"}
+{"id": "C23-021", "status": "PASS", "evidence": ["gateway/ws.js:180-184"], "note": "OP.TEXT branch accepts application text messages"}
+{"id": "C23-022", "status": "PASS", "evidence": ["gateway/ws.js:185-194"], "note": "frag.chunks accumulate bytes across CONT frames until fin"}
+{"id": "C23-023", "status": "PASS", "evidence": ["gateway/ws.js:204-208"], "note": "_message() decodes strict UTF-8 only once the whole payload is assembled"}
+{"id": "C23-024", "status": "OPEN", "evidence": [], "note": "no test found specifically for an empty text message"}
+{"id": "C23-025", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "vertical-slice and command tests exchange ordinary ASCII JSON text messages throughout"}
+{"id": "C23-026", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/ui/browser.test.js"], "note": "'split UTF-8 character across fragments is reassembled'; browser test types non-ASCII"}
+{"id": "C23-027", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "oversize-rejection (>cap) tested; a valid large message spanning multiple reads under the cap is not distinctly tested"}
+{"id": "C23-028", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'ping...interleaved inside a fragmented text message that still assembles' exercises multi-chunk delivery"}
+{"id": "C23-029", "status": "PASS", "evidence": ["gateway/ws.js:170"], "note": "maxMessageBytes check closes 1009 before buffering the offending fragment"}
+{"id": "C23-030", "status": "PASS", "evidence": ["gateway/ws.js:181-183"], "note": "OP.BIN immediately closes 1003, kept fully separate from the TEXT branch"}
+{"id": "C23-031", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#two-message-classes", "gateway/ws.js:294"], "note": "v2 supports binary as the data plane (kind=input/output); no longer unsupported as in v1"}
+{"id": "C23-032", "status": "PASS", "evidence": ["gateway/ws.js:294", "protocol/codec.js"], "note": "binary bytes preserved as raw Buffer via 'binary' event, no text conversion; codec decodeData is view-only"}
+{"id": "C23-033", "status": "PASS", "evidence": ["gateway/connection.js", "protocol/codec.js"], "note": "completed binary messages routed to connection.js data handler via decodeData(kind,seq)"}
+{"id": "C23-034", "status": "PASS", "evidence": ["tests/ram/v2-e2e.test.js:62"], "note": "'zero-length payload...are rejected' test covers empty binary payload"}
+{"id": "C23-035", "status": "IN_PROGRESS", "evidence": ["protocol/codec.js", "tests/protocol/codec.test.js:21"], "note": "uint48 boundary header round-trip tested; no explicit full-byte-value-range payload content test found"}
+{"id": "C23-036", "status": "PASS", "evidence": ["tests/ram/v2-e2e.test.js:62"], "note": "zero-length binary payload explicitly rejected and tested"}
+{"id": "C23-037", "status": "IN_PROGRESS", "evidence": ["tests/ram/v2-e2e.test.js:62", "docs/PROTOCOL_V2.md"], "note": "oversize input rejected and 8192B accepted in one msg tested; output cap 16384B not separately load-tested"}
+{"id": "C23-038", "status": "PASS", "evidence": ["tests/ram/v2-e2e.test.js", "tests/ram/descriptor.test.js"], "note": "vertical-slice sends many consecutive binary input/output messages with contiguous seq"}
+{"id": "C23-039", "status": "PASS", "evidence": ["tests/ram/v2-e2e.test.js:62", "protocol/codec.js"], "note": "unknown kind/wrong seq/oversize binary rejected per policy (application error, not silently accepted)"}
+{"id": "C23-040", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#two-message-classes"], "note": "input<=8192/output<=16384 caps and ownership (lease-based, no sid) documented"}
+{"id": "C23-041", "status": "PASS", "evidence": ["gateway/ws.js:184,194"], "note": "fin bit (runtime-neutral analog of EndOfMessage) triggers _message() only on completion"}
+{"id": "C23-042", "status": "PASS", "evidence": ["gateway/ws.js:186,193"], "note": "frag.chunks/bytes persist across successive incomplete CONT frames"}
+{"id": "C23-043", "status": "PASS", "evidence": ["gateway/ws.js:151-152"], "note": "_parse loops over the accumulated buffer, handling any number of frames per socket 'data' event"}
+{"id": "C23-044", "status": "PASS", "evidence": ["gateway/ws.js:151-202"], "note": "parser reassembles from arbitrary TCP chunk boundaries; no fixed per-frame buffer-size assumption"}
+{"id": "C23-045", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "fragmented text/ping-interleaved tests"}
+{"id": "C23-046", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "protocol/codec.js"], "note": "binary is supported; frame-level fragmentation of binary messages covered by ws-conformance fragment/reassembly tests (opcode-agnostic)"}
+{"id": "C23-047", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "a couple of split points exercised (split UTF-8, ping-interleaved); not a systematic fragment-size matrix"}
+{"id": "C23-048", "status": "OPEN", "evidence": [], "note": "no test found for a message ending exactly at a buffer/chunk boundary"}
+{"id": "C23-049", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/chaos/lifecycle.test.js"], "note": "abrupt TCP loss is tested generally; not specifically mid-fragment-assembly disconnect"}
+{"id": "C23-050", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#state-machine"], "note": "rid replay window: 'a duplicated input executed once' documents exactly-once application delivery"}
+{"id": "C23-051", "status": "PASS", "evidence": ["gateway/ws.js:198,211-225"], "note": "OP.CLOSE routed to _onClose()"}
+{"id": "C23-052", "status": "PASS", "evidence": ["gateway/ws.js:180-198"], "note": "CLOSE handled in its own switch case, never passed through _message()'s text decode path"}
+{"id": "C23-053", "status": "PASS", "evidence": ["gateway/ws.js:139,219-224"], "note": "'close' event carries {code,reason,clean,initiator} for lifecycle handling"}
+{"id": "C23-054", "status": "PASS", "evidence": ["gateway/ws.js:104-120", "gateway/connection.js"], "note": "close()/_onClose() coordinate the handshake; connection.js has a single idempotent exit path"}
+{"id": "C23-055", "status": "PASS", "evidence": ["gateway/ws.js:179"], "note": "'state===CLOSING && op!==OP.CLOSE: continue' ignores further data once closure begins"}
+{"id": "C23-056", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'peer close is echoed with the same code'"}
+{"id": "C23-057", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "'exit command...close...single exit' covers local normal closure"}
+{"id": "C23-058", "status": "OPEN", "evidence": [], "note": "no test found for close arriving during an incomplete/partially-fragmented application message"}
+{"id": "C23-059", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "'peer that stops reading its TCP socket' covers pending-output backpressure, not close specifically mid-pending-send"}
+{"id": "C23-060", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "docs/vws200/PROTOCOL.md#transport"], "note": "'invalid close code -> 1002; 1-byte close payload -> 1002' records actual behavior for malformed close input"}
+{"id": "C23-061", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "'application heartbeat: a peer that never answers is closed 1008 within interval+window'"}
+{"id": "C23-062", "status": "PASS", "evidence": ["gateway/ws.js:196-197", "gateway/connection.js:148"], "note": "WS-level ping/pong (ws.js) is distinct from app-level heartbeat.ping/pong (connection.js)"}
+{"id": "C23-063", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'ping is answered with an identical pong' on an otherwise idle connection"}
+{"id": "C23-064", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'ping...interleaved inside a fragmented text message that still assembles'"}
+{"id": "C23-065", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "D-001: item names the .NET ReceiveAsync application API specifically"}
+{"id": "C23-066", "status": "PASS", "evidence": ["gateway/ws.js:17"], "note": "OP.PING/PONG (9/10) are standard RFC 6455 opcodes, not an invented type"}
+{"id": "C23-067", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "ping/pong test uses the raw-socket protocol test peer"}
+{"id": "C23-068", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "VWS_HEARTBEAT_MS vs VWS_HEARTBEAT_WINDOW_MS vs VWS_IDLE_MS are separately configured"}
+{"id": "C23-069", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "'application heartbeat: a peer that never answers is closed 1008...'"}
+{"id": "C23-070", "status": "PASS", "evidence": ["docs/BASELINE.md#claim-ledger-delta"], "note": "Q03 '.NET keep-alive... UNVERIFIED \u2014 not runnable here...Inactive under D-001' avoids assuming the article's mechanism"}
+{"id": "C23-071", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md#interoperability", "tests/ui/browser.test.js"], "note": "Chromium and undici clients (which mask per spec) interoperate successfully with the gateway"}
+{"id": "C23-072", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "raw-socket peer correctly parses the gateway's (unmasked, per spec) server output frames"}
+{"id": "C23-073", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'unmasked client frame -> 1002'"}
+{"id": "C23-074", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "raw-socket test peer sends malformed frames (reserved bit, bad length, bad close code, etc.)"}
+{"id": "C23-075", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'continuation without start -> 1002; new text inside a fragmented message -> 1002'"}
+{"id": "C23-076", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "'unknown opcode -> 1002'"}
+{"id": "C23-077", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:123-129"], "note": "_fail() clears buf/frag before/instead of any 'text' emission on every violation path [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C23-078", "status": "PASS", "evidence": ["gateway/ws.js:131-140", "tests/chaos/lifecycle.test.js"], "note": "_destroy() releases buffers/timers/socket; 'abrupt TCP loss releases the connection, no orphan process'"}
+{"id": "C23-079", "status": "NOT_APPLICABLE", "evidence": ["gateway/ws.js:1-13", "docs/vws200/ARCHITECTURE.md"], "note": "D-001: no managed baseline exists; the zero-dependency Node candidate necessarily hand-implements masking/unmasking itself"}
+{"id": "C23-080", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md#not-run-and-why"], "note": "records untestable items: Docker, Render/WAN, Electron, PowerShell/.NET, independent review"}
+{"id": "C23-081", "status": "PASS", "evidence": ["tests/ram/v2-e2e.test.js", "docs/PROTOCOL_V2.md#two-message-classes"], "note": "v2 vertical slice alternates text control (hello/session.open) and binary input/output messages"}
+{"id": "C23-082", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js", "tests/chaos/lifecycle.test.js"], "note": "vertical-slice input/output and slow-consumer tests exercise simultaneous in/out traffic"}
+{"id": "C23-083", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "multi-tenant isolation tested for resource/CPU faults; not explicitly for WS protocol-negative frame violations"}
+{"id": "C23-084", "status": "OPEN", "evidence": [], "note": "no test found for repeated connect-message-close cycles specifically"}
+{"id": "C23-085", "status": "PASS", "evidence": ["e/I053/bench.json"], "note": "measured framing/throughput data file per rubric rule 4"}
+{"id": "C23-086", "status": "PASS", "evidence": ["docs/RESOURCE_MODEL.md", "tests/chaos/lifecycle.test.js"], "note": "per-session memory bound documented; 'memory stays bounded' under slow-consumer load test"}
+{"id": "C23-087", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "'health stays responsive (< 250 ms) while a session streams bulk output and large inbound messages arrive'"}
+{"id": "C23-088", "status": "PASS", "evidence": ["gateway/log.js", "gateway/connection.js"], "note": "error logs carry conn id; ws.js failure paths destroy only the offending connection's socket"}
+{"id": "C23-089", "status": "PASS", "evidence": ["gateway/log.js:10"], "note": "field allowlist excludes keys matching payload|data from routine log records"}
+{"id": "C23-090", "status": "PASS", "evidence": ["e/full-suite.tap", "tests/ui/browser.test.js"], "note": "raw TAP log now 125/125 (was 95/95 under v1); browser-test traces preserve success/failure interop"}
+{"id": "C23-091", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#transport", "docs/vws200/PROTOCOL.md#local-bridge"], "note": "text-only WS messages and the bridge record types are published"}
+{"id": "C23-092", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#state-machine"], "note": "gateway/ws.js (wire) vs gateway/connection.js (application) boundary is documented"}
+{"id": "C23-093", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/protocol/codec.test.js", "tests/ram/v2-e2e.test.js"], "note": "text integrity via ws-conformance/codec; binary integrity via codec uint48 round-trip and v2-e2e data discipline tests"}
+{"id": "C23-094", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "ws-conformance.test.js row covers fragmentation/completion, linked in the validation table"}
+{"id": "C23-095", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "ws-conformance.test.js and e2e.test.js rows cover close lifecycle"}
+{"id": "C23-096", "status": "PASS", "evidence": ["docs/RECOVERY.md", "docs/vws200/PROTOCOL.md#state-machine"], "note": "Liveness (I036) section and heartbeat rule document observed keep-alive behavior"}
+{"id": "C23-097", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md", "docs/SECURITY.md#controls-and-where-they-are-proved"], "note": "ws-conformance protocol-negative tests linked in both validation and security control tables"}
+{"id": "C23-098", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md#not-run-and-why"], "note": "table explicitly records coverage gaps (Docker, WAN, Electron, PowerShell/.NET, independent review)"}
+{"id": "C23-099", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "'Linux 6.18.44 x86_64, ... Node v22.22.2, ... Chromium 1194 via Playwright 1.56'"}
+{"id": "C23-100", "status": "PASS", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "GO/CONDITIONAL/NO-GO gates require demonstrated interoperability evidence before approval"}

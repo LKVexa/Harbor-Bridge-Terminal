@@ -1,0 +1,458 @@
+{
+ "schema": "PK_DYN_REQUIREMENTS/1",
+ "version": "1.0.0",
+ "status": "DRAFT - approver UNASSIGNED",
+ "change_control": "Any text/field change of an existing requirement bumps its per-requirement version and the set version (minor for additions, major for removals/semantic changes); ids are never reused. rtm.check_change_control() enforces this against the recorded baseline_digest.",
+ "requirements": [
+  {
+   "id": "REQ-INV08-001",
+   "version": 1,
+   "kind": "functional",
+   "title": "Pool construction",
+   "text": "The Pool SHALL reject construction unless 0 <= min_nodes <= max_nodes and per_node >= 1 and lease_ttl >= 1 are ints (bool rejected), raising ValueError.",
+   "inputs": [
+    "min_nodes",
+    "max_nodes",
+    "per_node",
+    "lease_ttl"
+   ],
+   "preconditions": "none",
+   "postconditions": "pool exists with validated bounds or no object is created",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.__post_init__"
+   ],
+   "controls": [
+    "INV-08-C011",
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req001_constructor_bounds"
+   ]
+  },
+  {
+   "id": "REQ-INV08-002",
+   "version": 1,
+   "kind": "functional",
+   "title": "Hard upper bound",
+   "text": "After every tick the Pool SHALL contain at most max_nodes nodes, for any finite non-negative demand including arbitrarily large integers.",
+   "inputs": [
+    "now",
+    "demand"
+   ],
+   "preconditions": "valid pool",
+   "postconditions": "len(nodes) <= max_nodes",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011",
+    "INV-08-C013"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req002_upper_bound"
+   ]
+  },
+  {
+   "id": "REQ-INV08-003",
+   "version": 1,
+   "kind": "functional",
+   "title": "Demand-following target",
+   "text": "Tick SHALL compute target = max(min_nodes, min(max_nodes, ceil(demand/per_node))) and, absent busy surplus, SHALL resize the pool to exactly target.",
+   "inputs": [
+    "demand"
+   ],
+   "preconditions": "valid pool",
+   "postconditions": "size == target when busy nodes <= target",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req003_target_formula"
+   ]
+  },
+  {
+   "id": "REQ-INV08-004",
+   "version": 1,
+   "kind": "functional",
+   "title": "Busy node safety",
+   "text": "Tick SHALL NOT reclaim a node whose busy flag is true, regardless of lease expiry or surplus.",
+   "inputs": [
+    "nodes[*].busy"
+   ],
+   "preconditions": "node busy before tick",
+   "postconditions": "busy node still present after tick",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011",
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req004_busy_never_reclaimed"
+   ]
+  },
+  {
+   "id": "REQ-INV08-005",
+   "version": 1,
+   "kind": "functional",
+   "title": "Busy lease renewal",
+   "text": "Tick SHALL renew the lease of every busy node to now + lease_ttl and report it in renewed.",
+   "inputs": [
+    "now"
+   ],
+   "preconditions": "node busy",
+   "postconditions": "expires == now + lease_ttl; id in renewed",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req005_busy_renewed"
+   ]
+  },
+  {
+   "id": "REQ-INV08-006",
+   "version": 1,
+   "kind": "functional",
+   "title": "Idle reclamation",
+   "text": "Tick SHALL reclaim an idle node whose lease expired (expires <= now) or that is surplus to target, and report it in reclaimed.",
+   "inputs": [
+    "now",
+    "demand"
+   ],
+   "preconditions": "idle node",
+   "postconditions": "node absent; id in reclaimed",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011",
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req006_idle_reclaim"
+   ]
+  },
+  {
+   "id": "REQ-INV08-007",
+   "version": 1,
+   "kind": "functional",
+   "title": "Lease on admission",
+   "text": "Every node added by tick SHALL be admitted with a lease expiring at now + lease_ttl and busy false.",
+   "inputs": [
+    "now"
+   ],
+   "preconditions": "size < target",
+   "postconditions": "new node state == {expires: now+ttl, busy: false}",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011",
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req007_admission_lease"
+   ]
+  },
+  {
+   "id": "REQ-INV08-008",
+   "version": 1,
+   "kind": "semantics",
+   "title": "Transactional tick",
+   "text": "A tick that raises SHALL leave nodes, node_hours and the time watermark unchanged (no partial mutation).",
+   "inputs": [
+    "now",
+    "demand",
+    "elapsed_hours"
+   ],
+   "preconditions": "invalid input or state",
+   "postconditions": "snapshot before == snapshot after",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C014"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req008_transactional"
+   ]
+  },
+  {
+   "id": "REQ-INV08-009",
+   "version": 1,
+   "kind": "semantics",
+   "title": "Input rejection",
+   "text": "Tick SHALL reject NaN/Inf, booleans, negative demand, negative elapsed_hours and a regressing now with ValueError (terminal, non-retryable for the same input).",
+   "inputs": [
+    "now",
+    "demand",
+    "elapsed_hours"
+   ],
+   "preconditions": "none",
+   "postconditions": "ValueError raised",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C014"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req009_input_rejection"
+   ]
+  },
+  {
+   "id": "REQ-INV08-010",
+   "version": 1,
+   "kind": "semantics",
+   "title": "Restored-state validation",
+   "text": "Tick SHALL raise PoolInvariantError when externally modified state has more than max_nodes nodes or malformed node records.",
+   "inputs": [
+    "nodes"
+   ],
+   "preconditions": "state tampered",
+   "postconditions": "PoolInvariantError; no mutation",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool._validate_state"
+   ],
+   "controls": [
+    "INV-08-C014",
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req010_restored_state"
+   ]
+  },
+  {
+   "id": "REQ-INV08-011",
+   "version": 1,
+   "kind": "functional",
+   "title": "Node-hour accounting",
+   "text": "Tick SHALL add len(nodes_before_tick) * elapsed_hours to node_hours.",
+   "inputs": [
+    "elapsed_hours"
+   ],
+   "preconditions": "valid pool",
+   "postconditions": "node_hours increases by pre-tick size * elapsed_hours",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C011"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req011_accounting"
+   ]
+  },
+  {
+   "id": "REQ-INV08-012",
+   "version": 1,
+   "kind": "functional",
+   "title": "Collision-free identifiers",
+   "text": "Tick SHALL never assign a node id already present in the pool, including after restore of arbitrary ids.",
+   "inputs": [
+    "nodes"
+   ],
+   "preconditions": "restored ids",
+   "postconditions": "new ids unique",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool._next_node_id"
+   ],
+   "controls": [
+    "INV-08-C011",
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req012_unique_ids"
+   ]
+  },
+  {
+   "id": "REQ-INV08-013",
+   "version": 1,
+   "kind": "state",
+   "title": "Node lifecycle",
+   "text": "A node SHALL move only through ABSENT -> LEASED_IDLE (admission) <-> LEASED_BUSY (set_busy) and LEASED_IDLE -> ABSENT (reclaim); LEASED_BUSY -> ABSENT is illegal.",
+   "inputs": [
+    "set_busy",
+    "tick"
+   ],
+   "preconditions": "node exists",
+   "postconditions": "only legal transitions observed",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool"
+   ],
+   "controls": [
+    "INV-08-C015"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req013_lifecycle"
+   ]
+  },
+  {
+   "id": "REQ-INV08-014",
+   "version": 1,
+   "kind": "nonfunctional",
+   "title": "Determinism",
+   "text": "Given identical constructor arguments and an identical sequence of (now, demand, elapsed_hours, set_busy) calls, the Pool SHALL produce identical TickResults and state.",
+   "inputs": [
+    "call sequence"
+   ],
+   "preconditions": "none",
+   "postconditions": "byte-identical canonical results",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C013"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req014_determinism"
+   ]
+  },
+  {
+   "id": "REQ-INV08-015",
+   "version": 1,
+   "kind": "nonfunctional",
+   "title": "Bounded work",
+   "text": "Tick SHALL complete in O(max_nodes + len(nodes)) work independent of the magnitude of demand.",
+   "inputs": [
+    "demand"
+   ],
+   "preconditions": "none",
+   "postconditions": "tick with demand 10**100 completes like demand max_nodes*per_node",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "model.py::Pool.tick"
+   ],
+   "controls": [
+    "INV-08-C013"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req015_bounded_work"
+   ]
+  },
+  {
+   "id": "REQ-INV08-016",
+   "version": 1,
+   "kind": "nonfunctional",
+   "title": "Multi-context applicability",
+   "text": "The same Pool semantics SHALL apply in cloud, datacenter, near-edge and far-edge placements; placement differences SHALL be expressed only in topology (component 09), never in pool logic.",
+   "inputs": [
+    "topology"
+   ],
+   "preconditions": "none",
+   "postconditions": "validator accepts all tiers; model has no tier input",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "production/topology.json"
+   ],
+   "controls": [
+    "INV-08-C012"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req016_contexts"
+   ]
+  },
+  {
+   "id": "REQ-INV08-017",
+   "version": 1,
+   "kind": "semantics",
+   "title": "Outcome semantics",
+   "text": "Overlay results SHALL use core.Outcome: SUCCESS, PARTIAL, DEGRADED, RETRYABLE_FAILURE, TERMINAL_FAILURE, OPERATOR_REQUIRED, BLOCKED; unknown codes SHALL degrade to OPERATOR_REQUIRED.",
+   "inputs": [
+    "result code"
+   ],
+   "preconditions": "none",
+   "postconditions": "parse_outcome total",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "production/core.py::Outcome"
+   ],
+   "controls": [
+    "INV-08-C014"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req017_outcomes"
+   ]
+  },
+  {
+   "id": "REQ-INV08-018",
+   "version": 1,
+   "kind": "nonfunctional",
+   "title": "Concurrency",
+   "text": "Pool SHALL be treated as single-writer; concurrent callers SHALL use a lock-protected wrapper (component 58).",
+   "inputs": [
+    "threads"
+   ],
+   "preconditions": "none",
+   "postconditions": "no lost updates under LockedPool",
+   "design": [
+    "production/docs/11_requirements.md"
+   ],
+   "code": [
+    "production/concurrency.py::LockedPool"
+   ],
+   "controls": [
+    "INV-08-C013"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.RequirementBehaviourTest.test_req018_single_writer"
+   ]
+  }
+ ],
+ "baseline_digest": "sha256:fb9241d914452abf249ea17b914a63ee3d3fdb700cde27b53d5cd574be262981"
+}

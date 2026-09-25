@@ -1,0 +1,73 @@
+{
+ "component": 14,
+ "title": "Lifecycle state machine",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "the canonical node/workload lifecycle states",
+   "state": "IMPLEMENTED",
+   "spec": "production/lifecycle.py::LIFECYCLE_SPEC",
+   "modules": [
+    "production/lifecycle.py::STATES"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_canonical_states"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "allowed and forbidden state transitions",
+   "state": "IMPLEMENTED",
+   "spec": "production/lifecycle.py::TRANSITIONS",
+   "modules": [
+    "production/lifecycle.py::Lifecycle.transition"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_allowed_and_forbidden",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_exhaustive_transition_table"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "entry/exit guards and idempotent transition semantics",
+   "state": "IMPLEMENTED",
+   "spec": "production/lifecycle.py::__doc__",
+   "modules": [
+    "production/lifecycle.py::Lifecycle._guard",
+    "production/lifecycle.py::Lifecycle.transition"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_guards_and_idempotency"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "timeout/abandonment/orphan recovery transitions",
+   "state": "IMPLEMENTED",
+   "spec": "production/lifecycle.py::DEFAULT_TIMEOUTS",
+   "modules": [
+    "production/lifecycle.py::Lifecycle.sweep"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_timeouts_and_orphan_recovery"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "state persistence and replay after restart",
+   "state": "IMPLEMENTED",
+   "spec": "production/lifecycle.py::__doc__",
+   "modules": [
+    "production/lifecycle.py::Lifecycle._apply",
+    "production/lifecycle.py::Lifecycle._replay"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_persistence_replay",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_torn_write_and_corruption",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestLifecycle.test_property_random_walk_replay_equivalence"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Journal is a local hash-chained JSONL file; it is not yet wired into model.Pool (Pool has no lifecycle hooks). Heartbeats are volatile by design."
+}

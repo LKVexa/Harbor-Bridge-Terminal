@@ -1,0 +1,133 @@
+{
+ "schema": "PK_SNAPSHOT_OWNERS/1",
+ "component": "INV-26 MicroVM snapshotting",
+ "note": "Roles are defined as durable team aliases; people are not assigned. Only the repository owner can name them. tools/governance_check.py fails the production gate while any required role is null.",
+ "repository_owner": "David Paul Russell (LinearFinance.org Research Division) -- owner of the codebase; not yet confirmed in any role below",
+ "required_roles": [
+  "accountable_owner",
+  "service_owner",
+  "engineering_owner",
+  "security_owner",
+  "sre_oncall",
+  "delegate"
+ ],
+ "roles": [
+  {
+   "role": "accountable_owner",
+   "alias": "inv26-accountable",
+   "assignee": null,
+   "duties": "final accountability; approves ADRs, waivers, releases"
+  },
+  {
+   "role": "service_owner",
+   "alias": "inv26-service",
+   "assignee": null,
+   "duties": "runs INV-26; owns SLOs and runbooks"
+  },
+  {
+   "role": "engineering_owner",
+   "alias": "inv26-eng",
+   "assignee": null,
+   "duties": "code review, releases, defect triage"
+  },
+  {
+   "role": "security_owner",
+   "alias": "inv26-security",
+   "assignee": null,
+   "duties": "threat model, trust roots, KMS policy, vulnerability response"
+  },
+  {
+   "role": "sre_oncall",
+   "alias": "inv26-oncall",
+   "assignee": null,
+   "duties": "paging, first response, emergency disable"
+  },
+  {
+   "role": "delegate",
+   "alias": "inv26-backup",
+   "assignee": null,
+   "duties": "backup for every role above"
+  }
+ ],
+ "authorities": {
+  "code_review": [
+   "engineering_owner"
+  ],
+  "release_approval": [
+   "accountable_owner",
+   "service_owner"
+  ],
+  "vulnerability_triage": [
+   "security_owner"
+  ],
+  "production_config_change": [
+   "service_owner"
+  ],
+  "emergency_disable": [
+   "sre_oncall",
+   "service_owner",
+   "security_owner"
+  ],
+  "breakglass_approval": [
+   "security_owner"
+  ],
+  "waiver_approval": [
+   "accountable_owner"
+  ]
+ },
+ "escalation": [
+  {
+   "trigger": "data-isolation violation (cross-tenant restore succeeded or suspected)",
+   "severity": "SEV1-security",
+   "page": "inv26-security + inv26-oncall",
+   "ack_minutes": 5
+  },
+  {
+   "trigger": "snapshot corruption / integrity alert",
+   "severity": "SEV1-security",
+   "page": "inv26-security",
+   "ack_minutes": 15
+  },
+  {
+   "trigger": "KMS or signature failure",
+   "severity": "SEV2",
+   "page": "inv26-oncall",
+   "ack_minutes": 15
+  },
+  {
+   "trigger": "fleet-wide restore latency regression",
+   "severity": "SEV2",
+   "page": "inv26-oncall",
+   "ack_minutes": 30
+  },
+  {
+   "trigger": "hypervisor incompatibility after upgrade",
+   "severity": "SEV3",
+   "page": "inv26-eng",
+   "ack_minutes": 60
+  }
+ ],
+ "on_call": {
+  "route": null,
+  "rotation": null,
+  "paging_tool": null,
+  "after_hours": null
+ },
+ "support_boundary": {
+  "in_scope": [
+   "capture/restore",
+   "tenant/device binding",
+   "entropy reseed",
+   "envelope encryption of blobs",
+   "restore grants",
+   "metadata store"
+  ],
+  "out_of_scope": [
+   "microVM lifecycle (INV-24)",
+   "device definitions (INV-25)",
+   "blob storage service",
+   "placement",
+   "guest application state"
+  ]
+ }
+}

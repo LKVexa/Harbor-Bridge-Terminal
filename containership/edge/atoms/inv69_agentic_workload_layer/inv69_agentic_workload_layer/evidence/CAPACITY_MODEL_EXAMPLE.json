@@ -1,0 +1,55 @@
+{
+  "schema": "PK_CAPACITY_MODEL/1.0.0",
+  "benchmark_fingerprint": {
+    "python": "3.11.15",
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "system": "Linux",
+    "release": "6.18.44-fc-v37",
+    "cpu_count": 2,
+    "optimized_mode": false,
+    "version": "4.3.0",
+    "code_digest": "5f1fd74d02bb675d7e3f8ac2e5a78bbedfbe24106ca7f2339da9e2910b772c4c"
+  },
+  "inputs": {
+    "cores": 4.0,
+    "mem_mb": 2048.0,
+    "mix": {
+      "readonly": 0.8,
+      "side_effect": 0.15,
+      "high_risk": 0.05
+    },
+    "tool_ms": {
+      "readonly": 20.0,
+      "side_effect": 150.0,
+      "high_risk": 900.0
+    },
+    "quotas": {
+      "authz_rps": 500.0,
+      "sandbox_heavy_concurrency": 16.0
+    }
+  },
+  "derived": {
+    "governance_cpu_us_per_step": 332.26,
+    "mean_tool_s": 0.0835,
+    "cpu_bound_steps_per_s": 8427.1,
+    "limits": {
+      "memory": 27588,
+      "cpu": 703,
+      "quota:sandbox_heavy": 320,
+      "quota:authz_rps": 41
+    },
+    "binding_limit": "quota:authz_rps"
+  },
+  "recommendation": {
+    "concurrency.max_active": 41,
+    "concurrency.max_waiting": 82,
+    "max_sustainable_steps_per_s": 491.0
+  },
+  "saturation_signals": [
+    "admission.oldest_wait_s >= health.queue_age_warning_s (HLT-QUEUE-WARN)",
+    "admission.shed increasing (A-SATURATION)",
+    "invoke_latency_s p95 > 2x baseline",
+    "process CPU > 70% of cores"
+  ]
+}

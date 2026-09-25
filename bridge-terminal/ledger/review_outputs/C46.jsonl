@@ -1,0 +1,100 @@
+{"id": "C46-001", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference", "gateway/config.js:41-98"], "note": "OPERATIONS.md table lists every VWS_/PORT/DF_ROOT/PYTHON var; matches config.js load()"}
+{"id": "C46-002", "status": "PASS", "evidence": ["gateway/config.js:41"], "note": "port: intVar(env,'PORT',10000,1,65535)"}
+{"id": "C46-003", "status": "PASS", "evidence": ["gateway/config.js:100-103"], "note": "mandatory checked via thrown ConfigError (principalsFile, dfRoot); rest optional with defaults"}
+{"id": "C46-004", "status": "PASS", "evidence": ["gateway/config.js:92-98,115-118"], "note": "publicConfig() is an explicit allowlist excluding principalsFile/tokens"}
+{"id": "C46-005", "status": "PASS", "evidence": ["gateway/config.js:11-18"], "note": "intVar enforces decimal integer + lo/hi range = bytes/ms units per name"}
+{"id": "C46-006", "status": "PASS", "evidence": ["gateway/config.js:100,109"], "note": "auth in ['static-file','none-loopback-dev']; workerBackend in ['thread','process']"}
+{"id": "C46-007", "status": "PASS", "evidence": ["gateway/config.js:41-98", "docs/OPERATIONS.md#configuration"], "note": "defaults listed in OPERATIONS.md table match config.js literals"}
+{"id": "C46-008", "status": "OPEN", "evidence": [], "note": "no per-setting ownership/owner metadata found in code or docs"}
+{"id": "C46-009", "status": "PASS", "evidence": ["gateway/config.js:100-103"], "note": "only principalsFile (for static-file auth) and dfRoot (for fabric) are conditionally mandatory; no invented extras"}
+{"id": "C46-010", "status": "IN_PROGRESS", "evidence": ["config/limits.json"], "note": "config/limits.json documents numeric limits but is not consumed as a schema by config.js load(); no formal schema approval record found"}
+{"id": "C46-011", "status": "PASS", "evidence": ["gateway/config.js:37"], "note": "function load(env = process.env)"}
+{"id": "C46-012", "status": "PASS", "evidence": ["deploy/Dockerfile"], "note": "Dockerfile has no local .env/profile loading; env supplied by platform"}
+{"id": "C46-013", "status": "OPEN", "evidence": [], "note": "no local-override precedence rule documented (no dotenv support seen at all)"}
+{"id": "C46-014", "status": "PASS", "evidence": ["gateway/server.js:319-320"], "note": "load(process.env) called once at process start before createGateway"}
+{"id": "C46-015", "status": "PASS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "principals file can be edited live (auth.js reload), documented separately from startup-only settings"}
+{"id": "C46-016", "status": "PASS", "evidence": ["gateway/config.js:111"], "note": "return Object.freeze(cfg)"}
+{"id": "C46-017", "status": "IN_PROGRESS", "evidence": ["worker/host.js", "gateway/connection.js"], "note": "workers receive derived fields (heap bytes etc.) via ctor args from cfg, not re-reading env, but no single shared frozen sub-object is documented as passed verbatim"}
+{"id": "C46-018", "status": "PASS", "evidence": ["gateway/log.js:6-11"], "note": "logger only ever logs explicit fields object, never process.env, and drops token/secret/cookie-like keys"}
+{"id": "C46-019", "status": "PASS", "evidence": ["tests/gateway/config.test.js:8-9"], "note": "'PORT: absent -> 10000' with base={VWS_PRINCIPALS_FILE} only = mandatory-only startup"}
+{"id": "C46-020", "status": "PASS", "evidence": ["gateway/config.js:1-6"], "note": "header comment: 'validated, deterministic, from the environment only'"}
+{"id": "C46-021", "status": "PASS", "evidence": ["gateway/config.js:41", "tests/gateway/config.test.js:8-11"], "note": "test: 'PORT: absent -> 10000; valid kept; malformed or out-of-range PRESENT value is an error'"}
+{"id": "C46-022", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:52-55"], "note": "envelopeBytes/inputBytes/outputChunkBytes are hardcoded constants (not env-configurable/validated); only sendQueueBytes is validated via intVar"}
+{"id": "C46-023", "status": "PASS", "evidence": ["gateway/config.js:50,69,72", "tests/gateway/config.test.js:21"], "note": "maxSessions/maxOutstandingMessages validated; test 'VWS_MAX_SESSIONS: 0 -> ConfigError'"}
+{"id": "C46-024", "status": "PASS", "evidence": ["gateway/config.js:77-78,110", "tests/gateway/config.test.js:22"], "note": "heartbeatMs/heartbeatWindowMs validated and cross-checked; test 'HEARTBEAT_WINDOW_MS must not exceed HEARTBEAT_MS'"}
+{"id": "C46-025", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "no datastore/endpoint URI setting exists under LOCAL_VOLATILE (no shared datastore)"}
+{"id": "C46-026", "status": "PASS", "evidence": ["gateway/config.js:26-35", "tests/gateway/config.test.js:17-19"], "note": "originList() strict bare-origin validation, tested"}
+{"id": "C46-027", "status": "PASS", "evidence": ["gateway/config.js:100-102", "tests/gateway/config.test.js:12-15"], "note": "auth enum + principalsFile dependency validated and tested"}
+{"id": "C46-028", "status": "PASS", "evidence": ["gateway/config.js:100,109"], "note": "unknown auth/workerBackend values throw ConfigError"}
+{"id": "C46-029", "status": "PASS", "evidence": ["gateway/config.js:101"], "note": "ConfigError('VWS_PRINCIPALS_FILE is required with VWS_AUTH=static-file (create one with tools/mkprincipal.js)')"}
+{"id": "C46-030", "status": "PASS", "evidence": ["gateway/config.js:11-18", "tests/gateway/config.test.js:10"], "note": "intVar throws on malformed PRESENT values rather than defaulting"}
+{"id": "C46-031", "status": "IN_PROGRESS", "evidence": ["gateway/config.js", "docs/OPERATIONS.md#configuration"], "note": "defaults listed with brief inline comments for some (workerHeapBytes, overhead) but not a rationale for every default"}
+{"id": "C46-032", "status": "PASS", "evidence": ["docs/OPERATIONS.md#sizing"], "note": "'re-measure s on the target image (e/R28/result.json shows the development host numbers)' distinguishes measured example from deployment default"}
+{"id": "C46-033", "status": "PASS", "evidence": ["gateway/config.js:13,21"], "note": "raw===undefined||raw==='' -> default; else validated, never defaulted on a bad present value"}
+{"id": "C46-034", "status": "PASS", "evidence": ["gateway/config.js:41-98"], "note": "no secret-valued setting has a non-empty default; principalsFile/tokens require explicit config"}
+{"id": "C46-035", "status": "PASS", "evidence": ["gateway/config.js:102", "gateway/config.js:47"], "note": "VWS_AUTH default is 'static-file' (safe), not none-loopback-dev; loopback-dev needs explicit host+auth combo"}
+{"id": "C46-036", "status": "PASS", "evidence": ["tests/gateway/config.test.js:8-9"], "note": "load(base) with only mandatory var set exercises all-optional-omitted path"}
+{"id": "C46-037", "status": "OPEN", "evidence": ["gateway/config.js:13"], "note": "empty-string env value falls to default per code, but no dedicated test asserts VAR=\"\" behavior"}
+{"id": "C46-038", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "PORT malformed while default(10000) exists still throws, not silently defaulted"}
+{"id": "C46-039", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:278"], "note": "'ram.plan' log records L/F/G/H/s/sessionCap/backend/heapCap, but does not enumerate which individual settings used their default vs explicit value"}
+{"id": "C46-040", "status": "PASS", "evidence": ["config/limits.json"], "note": "resource-limit numbers centralized in a reviewable file distinct from code"}
+{"id": "C46-041", "status": "PASS", "evidence": ["docs/SECURITY.md"], "note": "principals file (bearer credential) identified as the authentication credential"}
+{"id": "C46-042", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "LOCAL_VOLATILE has no session storage backend, so no such credential exists"}
+{"id": "C46-043", "status": "PASS", "evidence": ["docs/SECURITY.md"], "note": "no other external-service credential exists (fabric uses local DF_ROOT paths, not a credentialed service)"}
+{"id": "C46-044", "status": "PASS", "evidence": ["gateway/config.js:48"], "note": "principalsFile path supplied via env var, file content read at startup, not embedded in code"}
+{"id": "C46-045", "status": "PASS", "evidence": ["gateway/config.js:115-118", "tests/gateway/config.test.js:25-28"], "note": "publicConfig() allowlist keys verified to exclude principalsFile/secret-bearing fields"}
+{"id": "C46-046", "status": "NOT_APPLICABLE", "evidence": [], "note": "no credential-bearing URIs exist in this configuration surface (no DB/connection-string settings)"}
+{"id": "C46-047", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "workers receive session-scoped descriptors/buffers, not the principals file or bearer tokens"}
+{"id": "C46-048", "status": "OPEN", "evidence": [], "note": "no documented rotation policy for the principals file/credential at startup"}
+{"id": "C46-049", "status": "PASS", "evidence": ["gateway/config.js:101", "gateway/server.js:319"], "note": "missing principalsFile -> ConfigError -> exit 78 at startup"}
+{"id": "C46-050", "status": "PASS", "evidence": ["tests/gateway/config.test.js:30-35"], "note": "logger test injects token/cookie/authorization/ticket/secretKey fields and asserts they are dropped"}
+{"id": "C46-051", "status": "PASS", "evidence": ["gateway/config.js:111", "gateway/server.js:319-320"], "note": "Object.freeze(cfg) built once before createGateway/workers spawn"}
+{"id": "C46-052", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "connection/worker constructors take specific fields (cfg, account, principal), not the whole raw env"}
+{"id": "C46-053", "status": "PASS", "evidence": ["gateway/config.js:111"], "note": "Object.freeze prevents mutation of the shared cfg object"}
+{"id": "C46-054", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "per-connection state (sid, epoch, seq) lives on the Connection instance, separate from the frozen cfg"}
+{"id": "C46-055", "status": "OPEN", "evidence": [], "note": "no configuration revision identifier (hash/version) is included in cfg or logs"}
+{"id": "C46-056", "status": "NOT_APPLICABLE", "evidence": [], "note": "no PowerShell runspace concept in this Node candidate (RD-03)"}
+{"id": "C46-057", "status": "NOT_APPLICABLE", "evidence": ["gateway/config.js:37"], "note": "configuration is startup-only; there is no reload path to spawn a worker under"}
+{"id": "C46-058", "status": "NOT_APPLICABLE", "evidence": ["gateway/config.js:37"], "note": "no live-reload mechanism exists to accept or reject incompatible changes"}
+{"id": "C46-059", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics"], "note": "a config change requires a restart; restart semantics (session.reset, drain) documented"}
+{"id": "C46-060", "status": "PASS", "evidence": ["gateway/config.js:37"], "note": "load() is called once per process; no reload code path exists, so live-reload checks are correctly N/A by design"}
+{"id": "C46-061", "status": "PASS", "evidence": ["deploy/render.yaml"], "note": "render.yaml envVars map to the same VWS_/PORT names load() reads"}
+{"id": "C46-062", "status": "PASS", "evidence": ["deploy/render.yaml", "gateway/config.js:41-98"], "note": "variable names in render.yaml match config.js env keys exactly"}
+{"id": "C46-063", "status": "PASS", "evidence": ["deploy/Dockerfile"], "note": "Dockerfile ARG/ENV build-time values are distinct from runtime env vars read by config.js"}
+{"id": "C46-064", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "Render/Docker not run (RD-03/D-001); deploy/* authored, never executed"}
+{"id": "C46-065", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "hosted deployment not exercised"}
+{"id": "C46-066", "status": "BLOCKED", "evidence": [], "note": "no hosted environment available to verify target service endpoints"}
+{"id": "C46-067", "status": "IN_PROGRESS", "evidence": ["deploy/render.yaml"], "note": "single render.yaml reviewed by eye, no automated duplicate-key/conflict check tool used"}
+{"id": "C46-068", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:278"], "note": "'ram.plan' log records effective plan values at startup but is not archived as a per-release artifact"}
+{"id": "C46-069", "status": "IN_PROGRESS", "evidence": [], "note": "no documented change-review process for config.js/config/limits.json beyond ordinary code review"}
+{"id": "C46-070", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md"], "note": "no explicit rollback-of-config section found in current OPERATIONS.md (unlike vws200 historical doc)"}
+{"id": "C46-071", "status": "PASS", "evidence": ["gateway/config.js:41", "tests/gateway/config.test.js:8"], "note": "missing PORT -> default 10000, tested"}
+{"id": "C46-072", "status": "PASS", "evidence": ["tests/gateway/config.test.js:10"], "note": "malformed PORT values throw ConfigError, tested with 9 bad inputs"}
+{"id": "C46-073", "status": "PASS", "evidence": ["tests/gateway/config.test.js:15"], "note": "missing VWS_PRINCIPALS_FILE with static-file auth throws"}
+{"id": "C46-074", "status": "PASS", "evidence": ["tests/gateway/config.test.js:22"], "note": "invalid heartbeat window/duration relationship throws"}
+{"id": "C46-075", "status": "IN_PROGRESS", "evidence": ["gateway/config.js:50-51"], "note": "maxSessions/maxSessionsPerPrincipal have hi bounds (256) but no test exercises an excessive-but-in-range value causing a startup memory-plan refusal"}
+{"id": "C46-076", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md"], "note": "no datastore endpoint setting exists"}
+{"id": "C46-077", "status": "NOT_APPLICABLE", "evidence": ["gateway/config.js:26-28"], "note": "empty VWS_ALLOWED_ORIGINS is a valid, accepted (permissive) state, not an error case in this design"}
+{"id": "C46-078", "status": "PASS", "evidence": ["tests/gateway/config.test.js:14"], "note": "VWS_AUTH=oidc (unsupported) throws"}
+{"id": "C46-079", "status": "PASS", "evidence": ["gateway/server.js:319"], "note": "ConfigError -> process.stderr + exit(78) before listen(), so /health never reports ready"}
+{"id": "C46-080", "status": "IN_PROGRESS", "evidence": ["tests/gateway/config.test.js"], "note": "tests show a corrected value loads successfully, but no test performs a fail-then-retry startup sequence"}
+{"id": "C46-081", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:278"], "note": "'ram.plan' log emits plan values but not an application/schema version string"}
+{"id": "C46-082", "status": "PASS", "evidence": ["gateway/server.js:278", "gateway/config.js:115-118"], "note": "ram.plan log and publicConfig() both emit only non-secret effective values"}
+{"id": "C46-083", "status": "PASS", "evidence": ["gateway/config.js:101"], "note": "ConfigError messages name the exact env var, e.g. 'VWS_PRINCIPALS_FILE is required...'"}
+{"id": "C46-084", "status": "PASS", "evidence": ["gateway/log.js:6"], "note": "clean(): .slice(0, 300) bounds any logged string value"}
+{"id": "C46-085", "status": "PASS", "evidence": ["gateway/server.js:319", "gateway/log.js"], "note": "startup failure path writes only e.message to stderr, not a full exception/env dump"}
+{"id": "C46-086", "status": "OPEN", "evidence": [], "note": "no configuration revision/version tracking found"}
+{"id": "C46-087", "status": "PASS", "evidence": ["docs/OPERATIONS.md#run-it-locally-loopback"], "note": "minimal loopback-dev run documented"}
+{"id": "C46-088", "status": "PASS", "evidence": ["deploy/render.yaml", "docs/OPERATIONS.md"], "note": "render.yaml lists required vars without embedding secret values"}
+{"id": "C46-089", "status": "OPEN", "evidence": [], "note": "no named owner/reviewer role for schema changes"}
+{"id": "C46-090", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md"], "note": "restart/epoch compatibility is documented generally but no explicit old-vs-new config-revision compatibility record exists"}
+{"id": "C46-091", "status": "PASS", "evidence": ["config/limits.json", "docs/OPERATIONS.md#configuration"], "note": "schema/limits published in both a data file and operator docs"}
+{"id": "C46-092", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration"], "note": "table format implicitly separates required vs defaulted vs secret vars (principalsFile marked required)"}
+{"id": "C46-093", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration", "config/limits.json"], "note": "defaults and units (Bytes/Ms suffixes) published in the table"}
+{"id": "C46-094", "status": "PASS", "evidence": ["tests/gateway/config.test.js"], "note": "all missing/malformed/boundary tests are in this one linked file"}
+{"id": "C46-095", "status": "OPEN", "evidence": [], "note": "no test verifying identical configuration is distributed to multiple worker instances"}
+{"id": "C46-096", "status": "BLOCKED", "evidence": [], "note": "no hosted injection evidence available (not run)"}
+{"id": "C46-097", "status": "PASS", "evidence": ["tests/gateway/config.test.js:30-35"], "note": "secret-redaction logger test present and linked"}
+{"id": "C46-098", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#restart-semantics"], "note": "restart behavior documented; explicit config-change/rollback procedure not spelled out in current doc"}
+{"id": "C46-099", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done-not-claimed", "docs/OPERATIONS.md"], "note": "Render/Docker/platform injection explicitly listed as NOT_RUN / unresolved"}
+{"id": "C46-100", "status": "PASS", "evidence": ["gateway/server.js:319-320", "tests/gateway/config.test.js"], "note": "process only starts after load() validates env; tested extensively"}

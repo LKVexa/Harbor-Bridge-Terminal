@@ -1,0 +1,100 @@
+{"id": "C41-001", "status": "PASS", "evidence": ["client/ws-adapter.js:1-11", "gateway/config.js:117"], "note": "WEB adapter reconnects; publicConfig.capabilities.resume=false is the only client category built"}
+{"id": "C41-002", "status": "PASS", "evidence": ["client/ws-adapter.js:143"], "note": "retryable = not a policy close code (1002/1003/1007/1008/1009) and attempt<maxAttempts"}
+{"id": "C41-003", "status": "PASS", "evidence": ["client/ws-adapter.js:143,161"], "note": "1002/1003/1007/1008/1009 and 401/403 excluded from retry"}
+{"id": "C41-004", "status": "PASS", "evidence": ["client/ws-adapter.js:198-199"], "note": "close(): tab.closing=true, timer cleared, suppresses reconnect"}
+{"id": "C41-005", "status": "PASS", "evidence": ["client/ws-adapter.js:26,29"], "note": "maxAttempts=8 default, cap 30000ms in backoffMs"}
+{"id": "C41-006", "status": "PASS", "evidence": ["client/ws-adapter.js:151,159,160-161,113"], "note": "state emits: reconnecting/active/auth-required/draining/error"}
+{"id": "C41-007", "status": "PASS", "evidence": ["client/ws-adapter.js:10-11,133-137"], "note": "header docs distinguish transport reconnect (new socket) from session resumption (never resumed)"}
+{"id": "C41-008", "status": "NOT_APPLICABLE", "evidence": ["gateway/config.js:117", "docs/PROTOCOL_V2.md:18"], "note": "capabilities.resume=false; no offline queue, nothing replayed by design"}
+{"id": "C41-009", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "multi-instance continuity (DISTRIBUTED_VOLATILE) not implemented"}
+{"id": "C41-010", "status": "PASS", "evidence": ["docs/RAMWS.md#decisions", "client/ws-adapter.js:10-11"], "note": "RD-01/RD-05 approved 2026-09-21; fresh-session reconnect model"}
+{"id": "C41-011", "status": "PASS", "evidence": ["client/ws-adapter.js:26,29"], "note": "base=500ms default"}
+{"id": "C41-012", "status": "PASS", "evidence": ["client/ws-adapter.js:29"], "note": "cap=30000ms default"}
+{"id": "C41-013", "status": "PASS", "evidence": ["client/ws-adapter.js:26"], "note": "base*2^attempt growth"}
+{"id": "C41-014", "status": "PASS", "evidence": ["client/ws-adapter.js:26"], "note": "full jitter: uniform(0, cap)"}
+{"id": "C41-015", "status": "PASS", "evidence": ["client/ws-adapter.js:29,162"], "note": "maxAttempts=8 bounded policy, not unbounded"}
+{"id": "C41-016", "status": "PASS", "evidence": ["client/ws-adapter.js:105"], "note": "tab.attempt=0 reset on session.opened"}
+{"id": "C41-017", "status": "OPEN", "evidence": [], "note": "no minimum-stable-duration concept found; not defined"}
+{"id": "C41-018", "status": "PASS", "evidence": ["client/ws-adapter.js:26"], "note": "Math.pow bounded by Math.min(cap,...) before use, no overflow at attempt<=8"}
+{"id": "C41-019", "status": "PASS", "evidence": ["client/ws-adapter.js:26", "tests/ui/client-units.test.js"], "note": "full-jitter backoff test: 'stays within [0, min(30s,...)) and uses supplied randomness'"}
+{"id": "C41-020", "status": "PASS", "evidence": ["config/limits.json"], "note": "backoff values documented as configuration data"}
+{"id": "C41-021", "status": "PASS", "evidence": ["client/ws-adapter.js:143-145,152-166"], "note": "scheduleReconnect() retries eligible failures"}
+{"id": "C41-022", "status": "OPEN", "evidence": [], "note": "no explicit DNS/name-resolution failure handling distinct from generic ws.onerror"}
+{"id": "C41-023", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js:143", "gateway/server.js:215"], "note": "503/draining is retryable client-side but no explicit distinct handling from generic onerror"}
+{"id": "C41-024", "status": "PASS", "evidence": ["client/ws-adapter.js:161"], "note": "401 -> auth-required, no retry"}
+{"id": "C41-025", "status": "PASS", "evidence": ["client/ws-adapter.js:161"], "note": "403 -> auth-required, no retry"}
+{"id": "C41-026", "status": "OPEN", "evidence": [], "note": "no explicit subprotocol-mismatch handling on client; server refuses at handshake (tests/gateway/ws-conformance.test.js) but client-side category not separately defined"}
+{"id": "C41-027", "status": "OPEN", "evidence": [], "note": "malformed endpoint configuration (bad base URL) not specifically handled/classified"}
+{"id": "C41-028", "status": "BLOCKED", "evidence": ["docs/SECURITY.md#residual-risks"], "note": "TLS/certificate validation is edge/host-level, not exercised (needs real TLS edge)"}
+{"id": "C41-029", "status": "PASS", "evidence": ["client/ws-adapter.js:161"], "note": "401/403 -> auth-required state + exit, not retried"}
+{"id": "C41-030", "status": "PASS", "evidence": ["client/ws-adapter.js:118,161"], "note": "state 'error'/'auth-required' carries safe code/message only"}
+{"id": "C41-031", "status": "PASS", "evidence": ["client/ws-adapter.js:149"], "note": "scheduleReconnect: 'if (tab.timer) return;' exactly one timer/attempt"}
+{"id": "C41-032", "status": "PASS", "evidence": ["client/ws-adapter.js:69,73,153"], "note": "fenced by tab.conn!==rec so stale socket events are ignored"}
+{"id": "C41-033", "status": "PASS", "evidence": ["client/ws-adapter.js:58"], "note": "new WebSocketImpl(...) created fresh each connect()"}
+{"id": "C41-034", "status": "PASS", "evidence": ["client/ws-adapter.js:51-54"], "note": "wsUrl() built from current config each attempt"}
+{"id": "C41-035", "status": "PASS", "evidence": ["client/ws-adapter.js:156"], "note": "ticket() re-authenticates with fresh token before every reconnect"}
+{"id": "C41-036", "status": "PASS", "evidence": ["client/ws-adapter.js:58"], "note": "subprotocol [C.PROTOCOL] passed to WebSocket ctor"}
+{"id": "C41-037", "status": "NOT_APPLICABLE", "evidence": [], "note": "browser WebSocket API has no client keep-alive knob to configure pre-connect"}
+{"id": "C41-038", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js:56-124"], "note": "no explicit connect-attempt timeout in client; relies on server handshakeTimeoutMs/openTimeoutMs server-side, not bounded client-side"}
+{"id": "C41-039", "status": "PASS", "evidence": ["client/ws-adapter.js:66-71"], "note": "onclose fenced and cleans ackTimer; barrier.drop on open failure"}
+{"id": "C41-040", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js:152-153"], "note": "tab.timer cleared at fire, but attempt completion (success/fail) recorded inside the async callback, not before scheduling begins"}
+{"id": "C41-041", "status": "PASS", "evidence": ["client/ws-adapter.js:152"], "note": "setTimeout used for retry scheduling"}
+{"id": "C41-042", "status": "PASS", "evidence": ["client/ws-adapter.js:151-165"], "note": "async, non-blocking; state events emitted while waiting"}
+{"id": "C41-043", "status": "PASS", "evidence": ["client/ws-adapter.js:26,150"], "note": "backoffMs applies uniform random jitter"}
+{"id": "C41-044", "status": "PASS", "evidence": ["client/ws-adapter.js:26"], "note": "Math.min(cap,...) caps delay"}
+{"id": "C41-045", "status": "PASS", "evidence": ["client/ws-adapter.js:199"], "note": "close(): clearTimeout(tab.timer)"}
+{"id": "C41-046", "status": "NOT_APPLICABLE", "evidence": [], "note": "browser tab teardown is handled by the browser/OS, not app code"}
+{"id": "C41-047", "status": "PASS", "evidence": ["client/ws-adapter.js:149"], "note": "guard \"if (tab.timer) return\" prevents duplicate timers"}
+{"id": "C41-048", "status": "PASS", "evidence": ["tests/ui/client-units.test.js"], "note": "'full-jitter backoff stays within [0, min(30s, 0.5s*2^attempt)) and uses the supplied randomness' \u2014 injectable rnd param"}
+{"id": "C41-049", "status": "PASS", "evidence": ["tests/ui/client-units.test.js", "client/ws-adapter.js:26"], "note": "test covers boundary attempts; Math.pow bounded by Math.min before overflow risk"}
+{"id": "C41-050", "status": "OPEN", "evidence": [], "note": "no artifact records actual scheduled delay sequences from a run"}
+{"id": "C41-051", "status": "PASS", "evidence": ["client/ws-adapter.js:156"], "note": "ticket() obtains fresh token/ticket per reconnect, independent of prior socket"}
+{"id": "C41-052", "status": "NOT_APPLICABLE", "evidence": ["docs/PROTOCOL_V2.md:18"], "note": "no logical session state is reconstructed; reconnect is a new session by design"}
+{"id": "C41-053", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "multi-instance (DISTRIBUTED_VOLATILE) not implemented"}
+{"id": "C41-054", "status": "NOT_APPLICABLE", "evidence": ["docs/PROTOCOL_V2.md"], "note": "no subscription concept in this protocol"}
+{"id": "C41-055", "status": "PASS", "evidence": ["client/ws-adapter.js:94,134", "docs/PROTOCOL_V2.md:18"], "note": "tab.previous {sid, epoch, pendingInputs} is the resume marker; server never revives it"}
+{"id": "C41-056", "status": "PASS", "evidence": ["gateway/tickets.js", "tests/security/authz.test.js"], "note": "ticket: single use, origin-bound, expires (test 'ticket: issued only ... single use; origin-bound; expires')"}
+{"id": "C41-057", "status": "PASS", "evidence": ["client/ws-adapter.js:64,103-106"], "note": "ws.onopen is transport connect; session.opened (rid match) is session restoration/creation, separate events"}
+{"id": "C41-058", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md:18", "client/ws-adapter.js:97-102"], "note": "session.reset before session.opened; client prints SESSION_RESET with reason/outcome"}
+{"id": "C41-059", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "no other instance to test against; multi-instance not implemented"}
+{"id": "C41-060", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done-not-claimed", "client/ws-adapter.js:10-11"], "note": "documents raw keystrokes/terminal commands are never replayed"}
+{"id": "C41-061", "status": "PASS", "evidence": ["client/ws-adapter.js:133"], "note": "unknown = inSeq - executedSeq computed on disconnect"}
+{"id": "C41-062", "status": "PASS", "evidence": ["client/ws-adapter.js:141,158"], "note": "client explicitly does NOT retry interrupted input; reports UNKNOWN, prints 'not resumed'"}
+{"id": "C41-063", "status": "NOT_APPLICABLE", "evidence": ["docs/PROTOCOL_V2.md:18"], "note": "replay is not enabled at all, so duplicate-detection before replay is moot"}
+{"id": "C41-064", "status": "NOT_APPLICABLE", "evidence": ["docs/PROTOCOL_V2.md:18"], "note": "no replay, so no replay/new-message ordering to define"}
+{"id": "C41-065", "status": "NOT_APPLICABLE", "evidence": [], "note": "no offline message queue exists (client sends only while ws.readyState===1)"}
+{"id": "C41-066", "status": "NOT_APPLICABLE", "evidence": [], "note": "no offline queue; sendInput silently requires open connection (input-dropped state)"}
+{"id": "C41-067", "status": "PASS", "evidence": ["client/ws-adapter.js:141,158", "docs/RAMWS.md"], "note": "documented OUTCOME_UNKNOWN, not exactly-once; no delivery guarantee claimed"}
+{"id": "C41-068", "status": "OPEN", "evidence": [], "note": "no test isolates disconnect strictly before local send completes"}
+{"id": "C41-069", "status": "IN_PROGRESS", "evidence": ["tests/ram/v2-e2e.test.js"], "note": "'credits: server never sends beyond granted window' partially covers send-before-ack, but not an explicit disconnect-after-send-before-response scenario"}
+{"id": "C41-070", "status": "PASS", "evidence": ["gateway/config.js:117"], "note": "capabilities.resume:false marks replay N/A explicitly in public config"}
+{"id": "C41-071", "status": "IN_PROGRESS", "evidence": ["e/R28/result.json"], "note": "R28 measures backend perf, not simultaneous multi-client reconnect storm after deploy"}
+{"id": "C41-072", "status": "PASS", "evidence": ["tests/ui/client-units.test.js"], "note": "'stays within [0, min(30s, 0.5s*2^attempt)) and uses the supplied randomness'"}
+{"id": "C41-073", "status": "OPEN", "evidence": [], "note": "no measurement of reconnect-storm load vs admission capacity"}
+{"id": "C41-074", "status": "OPEN", "evidence": [], "note": "no dedicated repeated-brief-failure test found"}
+{"id": "C41-075", "status": "OPEN", "evidence": [], "note": "no test asserting backoff resets after a stable connection"}
+{"id": "C41-076", "status": "OPEN", "evidence": [], "note": "no long-outage (exhausting maxAttempts) test found"}
+{"id": "C41-077", "status": "IN_PROGRESS", "evidence": ["tests/security/authz.test.js"], "note": "'revocation ends a live session; revoked token cannot reconnect' covers revoke, not rotate-then-succeed"}
+{"id": "C41-078", "status": "OPEN", "evidence": [], "note": "no slow-server-startup reconnect test found"}
+{"id": "C41-079", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "'web client in Chromium: sign-in -> terminal -> commands -> fabric run -> reconnect as NEW session'"}
+{"id": "C41-080", "status": "OPEN", "evidence": [], "note": "no measurement of resource impact of retry behavior recorded"}
+{"id": "C41-081", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js:151,159"], "note": "'reconnecting' and 'active' states emitted, but no single UI evidence distinguishing them was opened (client-only library, no UI file in scope)"}
+{"id": "C41-082", "status": "PASS", "evidence": ["client/ws-adapter.js:151"], "note": "'reconnecting in Ns (attempt N)' detail, no restored claim"}
+{"id": "C41-083", "status": "PASS", "evidence": ["client/ws-adapter.js:161"], "note": "'auth-required' state distinct from 'reconnecting'"}
+{"id": "C41-084", "status": "PASS", "evidence": ["client/ws-adapter.js:197-202"], "note": "close(sessionId) sets closing=true, clears timer, sends session.close"}
+{"id": "C41-085", "status": "PASS", "evidence": ["client/ws-adapter.js:118,151,161"], "note": "state/error events carry code/message/detail text, not raw tokens/credentials"}
+{"id": "C41-086", "status": "PASS", "evidence": ["client/ws-adapter.js:151"], "note": "delayMs and attempt number included in reconnecting state event"}
+{"id": "C41-087", "status": "OPEN", "evidence": [], "note": "no tracking of total time-to-recovery found"}
+{"id": "C41-088", "status": "NOT_APPLICABLE", "evidence": ["docs/PROTOCOL_V2.md:18"], "note": "no session restoration exists to fail separately from transport"}
+{"id": "C41-089", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics"], "note": "'Reconnecting clients get session.reset ... nothing is replayed. Draining works as before: admission off, service.draining, workers stopped...'"}
+{"id": "C41-090", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "browser E2E reconnect scenario is a reproducible troubleshooting case"}
+{"id": "C41-091", "status": "PASS", "evidence": ["docs/vws200/RECOVERY.md:17"], "note": "client policy (base/cap/jitter/maxAttempts) documented; historical doc, values match current code"}
+{"id": "C41-092", "status": "PASS", "evidence": ["client/ws-adapter.js:143", "docs/OPERATIONS.md#restart-semantics"], "note": "retryable close-code list is in code and restart semantics documented"}
+{"id": "C41-093", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md:14-18"], "note": "session.open/session.reset/session.opened state transitions documented"}
+{"id": "C41-094", "status": "OPEN", "evidence": [], "note": "no explicit doc link enumerating single-attempt/timer-cancellation tests by id"}
+{"id": "C41-095", "status": "OPEN", "evidence": [], "note": "no multi-client reconnect distribution test exists to link"}
+{"id": "C41-096", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "cross-instance restoration not implemented, nothing to link"}
+{"id": "C41-097", "status": "NOT_APPLICABLE", "evidence": ["docs/PROTOCOL_V2.md:18"], "note": "no interrupted-message recovery feature exists"}
+{"id": "C41-098", "status": "PASS", "evidence": ["client/ws-adapter.js:197-202", "docs/vws200/RECOVERY.md:17"], "note": "'cancelled by explicit close' documented and implemented"}
+{"id": "C41-099", "status": "PASS", "evidence": ["client/ws-adapter.js:141,158", "docs/RAMWS.md#not-done-not-claimed"], "note": "UNKNOWN outcome for pending inputs documented as an unresolved guarantee, not silently claimed"}
+{"id": "C41-100", "status": "PASS", "evidence": ["docs/RAMWS.md#decisions", "tests/ui/client-units.test.js"], "note": "RD-01/RD-05 approved by owner; bounded backoff (maxAttempts=8, cap 30s) tested"}

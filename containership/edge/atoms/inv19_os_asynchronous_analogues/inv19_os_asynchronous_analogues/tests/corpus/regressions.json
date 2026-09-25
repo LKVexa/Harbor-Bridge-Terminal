@@ -1,0 +1,51 @@
+[
+ {
+  "id": "R1",
+  "target": "translate",
+  "backend": "io_uring",
+  "input": -4096,
+  "expect": "UNKNOWN_HOST_ERROR",
+  "note": "large negative CQE result outside errno range"
+ },
+ {
+  "id": "R2",
+  "target": "translate",
+  "backend": "epoll",
+  "input": 0,
+  "expect": "UNKNOWN_HOST_ERROR",
+  "note": "errno 0 must never translate to success"
+ },
+ {
+  "id": "R3",
+  "target": "config",
+  "input": {
+   "ring.sq_entries": 512,
+   "ring.cq_entries": 256
+  },
+  "note": "cq < sq"
+ },
+ {
+  "id": "R4",
+  "target": "config",
+  "input": {
+   "quota.per_workload_descriptors": 2048
+  },
+  "note": "workload > tenant quota"
+ },
+ {
+  "id": "R5",
+  "target": "config",
+  "input": {
+   "ring.sq_entries": Infinity
+  },
+  "note": "found by test_config_fuzz seed 13: int(inf) raised OverflowError instead of ConfigError"
+ },
+ {
+  "id": "R6",
+  "target": "config",
+  "input": {
+   "retry.max_attempts": 1.5
+  },
+  "note": "non-integral float was silently truncated to 1"
+ }
+]

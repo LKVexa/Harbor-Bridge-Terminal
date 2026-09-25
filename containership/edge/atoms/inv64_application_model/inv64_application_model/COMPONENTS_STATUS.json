@@ -1,0 +1,792 @@
+{
+ "format": "PK_APP_COMPONENTS_STATUS/1",
+ "release": "4.3.0",
+ "counts": {
+  "BLOCKED_EXTERNAL": 2,
+  "GOVERNANCE_PENDING": 7,
+  "IMPLEMENTED_LOCAL": 26,
+  "PARTIAL": 5
+ },
+ "components": [
+  {
+   "id": "MC-01",
+   "title": "Restore and govern the original `MASTER.md` master-prompt/workflow source corpus",
+   "severity": "High",
+   "traceability": "source provenance / claimed source set",
+   "status": "PARTIAL",
+   "artifacts": [
+    "source/INV64_v4.2.0_MISSING_COMPONENTS_CHECKLIST.md",
+    "provenance/master-source.json",
+    "source/items.json",
+    "tools/source_integrity.py"
+   ],
+   "tests": [
+    "tests/test_v43.py::RepositoryControlsTest.test_source_integrity_passes_and_detects_mutation",
+    "evidence/SOURCE_CHECK.json"
+   ],
+   "blockers": [
+    "MASTER.md (series v4.0.0 source corpus) not supplied — recorded BLOCKED_EXTERNAL in provenance/master-source.json",
+    "change-control approver role (architecture-review-board) unassigned"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-02",
+   "title": "Provide a resolvable/bundled `pk_core` dependency and runnable full conformance environment",
+   "severity": "Critical",
+   "traceability": "C030, C040, C082, C090, C100",
+   "status": "BLOCKED_EXTERNAL",
+   "artifacts": [
+    "tools/preflight.py",
+    "tools/bootstrap.sh",
+    "tools/bootstrap.ps1",
+    "compatibility.json",
+    "DEPENDENCIES.md",
+    "tests/run_all.py"
+   ],
+   "tests": [
+    "evidence/PREFLIGHT.json",
+    "evidence/TESTS.json"
+   ],
+   "blockers": [
+    "pk_core source, version and digest not supplied: no pin, test_component fails/skips by design",
+    "python -m pk_core list/run/gate cannot be executed"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-03",
+   "title": "Add installable package and dependency metadata",
+   "severity": "High",
+   "traceability": "C031, C040, C093",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "pyproject.toml",
+    "constraints-certification.txt",
+    "tools/build_check.py"
+   ],
+   "tests": [
+    "evidence/BUILD.json",
+    "tests/test_v43.py::RepositoryControlsTest.test_version_single_source"
+   ],
+   "blockers": [
+    "build isolation not exercised (no package index in the build session; tools/build_check.py uses it when present)",
+    "license metadata pending owner decision (MC-38)"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-04",
+   "title": "Assign accountable ownership, escalation path, and approved ADR",
+   "severity": "High",
+   "traceability": "C009-C010",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "ops/owners.json",
+    "ops/OWNERS.md",
+    "ops/decisions.json",
+    "ops/ADR-0001-application-model.md",
+    "tools/governance_check.py"
+   ],
+   "tests": [
+    "evidence/GOVERNANCE.json"
+   ],
+   "blockers": [
+    "all six accountable roles have assignee=null",
+    "ADR-0001 status=proposed, no approvers"
+   ],
+   "items": 17
+  },
+  {
+   "id": "MC-05",
+   "title": "Complete SHALL-level semantic specification",
+   "severity": "High",
+   "traceability": "C011-C019",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "SPECIFICATION.md",
+    "errors.py",
+    "activation.py",
+    "semantics.py",
+    "explain.py"
+   ],
+   "tests": [
+    "tests/test_v43.py::ErrorContractTest",
+    "tests/test_v43.py::OverlayActivationTest.test_lifecycle_table_has_no_path_out_of_rejected",
+    "tests/test_v43.py::SemanticsTest",
+    "tests/test_v43.py::ExplainTest"
+   ],
+   "blockers": [
+    "normative specification not yet approved by architecture-review-board"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-06",
+   "title": "Formalize typed contracts for validation/canonical responses and WIT/RPC/control-plane bindings",
+   "severity": "High",
+   "traceability": "C021-C022, C026-C028",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "INTERFACES.md",
+    "errors.py",
+    "schema/error-v1.schema.json",
+    "schema/submit-request-v1.schema.json",
+    "schema/submit-response-v1.schema.json",
+    "schema/status-v1.schema.json",
+    "wit/inv64-app-model.wit"
+   ],
+   "tests": [
+    "tests/test_v43.py::ErrorContractTest",
+    "tests/test_v43.py::ServiceTest.test_rejections_are_typed"
+   ],
+   "blockers": [
+    "WIT world is contract-only (no Wasm build); cross-language fixtures N/A until a second implementation exists",
+    "contract docs/fixture regeneration not yet observed on a CI runner"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-07",
+   "title": "Define and enforce authentication at every submit/control-plane/provider boundary",
+   "severity": "Critical",
+   "traceability": "C023, C044",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "auth.py",
+    "SECURITY_ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::AuthnTest",
+    "tests/test_v43.py::ServiceTest"
+   ],
+   "blockers": [
+    "production issuers, trust roots, mTLS certificates and break-glass identities not provisioned"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-08",
+   "title": "Implement authorization and explicit least-privilege capability model",
+   "severity": "Critical",
+   "traceability": "C024, C042-C043",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "authz.py",
+    "schema/authz-policy-v1.schema.json",
+    "SECURITY_ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::AuthzTest"
+   ],
+   "blockers": [
+    "pk_core authority review impossible (pk_core absent)",
+    "production policy content and least-privilege review evidence absent"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-09",
+   "title": "Specify timeout, cancellation, retry, idempotency, backpressure, and peer-version negotiation semantics",
+   "severity": "High",
+   "traceability": "C025, C027, C053",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "semantics.py",
+    "INTERFACES.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::SemanticsTest",
+    "evidence/STRESS.json"
+   ],
+   "blockers": [
+    "client guidance published but not yet exercised by a real client"
+   ],
+   "items": 20
+  },
+  {
+   "id": "MC-10",
+   "title": "Build adjacent-layer integration harnesses for INV-10, INV-63, INV-65, and INV-66",
+   "severity": "Critical",
+   "traceability": "C030, C083",
+   "status": "BLOCKED_EXTERNAL",
+   "artifacts": [
+    "adjacent.py",
+    "tools/integration.py"
+   ],
+   "tests": [
+    "evidence/INTEGRATION.json",
+    "evidence/INTEGRATION_REAL.json"
+   ],
+   "blockers": [
+    "real INV-10/INV-63/INV-65/INV-66 implementations not in the archive; only the emulated profile runs"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-11",
+   "title": "Pin the exact approved OAM specification/implementation version",
+   "severity": "High",
+   "traceability": "C031, C093",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "oam_profile.py",
+    "OAM_PROFILE.md",
+    "provenance/oam-baseline.json",
+    "compatibility.json"
+   ],
+   "tests": [
+    "tests/test_v43.py::AdjacentOamRolloutTest.test_oam_round_trip_and_unsupported"
+   ],
+   "blockers": [
+    "baseline selection needs ADR-0001 approval"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-12",
+   "title": "Implement site/environment overlays and configuration provenance",
+   "severity": "High",
+   "traceability": "C035-C036",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "overlay.py",
+    "schema/overlay-v1.schema.json",
+    "CONFIGURATION.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::OverlayActivationTest"
+   ],
+   "blockers": [
+    "no network API for overlay submission in this package; author authorization is a caller hook"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-13",
+   "title": "Add atomic configuration activation and tested automatic/operator rollback",
+   "severity": "High",
+   "traceability": "C037-C038, C092",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "activation.py",
+    "CONFIGURATION.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::OverlayActivationTest",
+    "evidence/FAULTS.json",
+    "evidence/ROLLBACK_DRILL.json"
+   ],
+   "blockers": [
+    "release-drill on production mechanism not performed (only CI drill)"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-14",
+   "title": "Enforce secret-material exclusion and diagnostic redaction",
+   "severity": "Critical",
+   "traceability": "C039, C075",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "redaction.py",
+    "manifest.py",
+    "tools/secret_scan.py",
+    "ops/secret_scan_allowlist.json",
+    "SECURITY_ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::SecretsTest",
+    "evidence/SECRET_SCAN.json",
+    "evidence/FUZZ.json"
+   ],
+   "blockers": [
+    "allowlist entries need owner review",
+    "secret-leak remediation procedure owner unassigned"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-15",
+   "title": "Implement artifact signature, digest, provenance, and approved-version verification pipeline",
+   "severity": "Critical",
+   "traceability": "C045",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "trust.py",
+    "provenance.py",
+    "SECURITY_ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::TrustTest",
+    "tests/test_v43.py::BackupReleaseTest"
+   ],
+   "blockers": [
+    "no managed signer / trust anchors provisioned; policy root keys not issued"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-16",
+   "title": "Enforce tenant/workload isolation at integration/runtime boundaries",
+   "severity": "Critical",
+   "traceability": "C046",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tenancy.py",
+    "SECURITY_ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::TenancyTest",
+    "evidence/STRESS.json"
+   ],
+   "blockers": [
+    "isolation profile is logical only (REG-005)"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-17",
+   "title": "Implement transport/storage encryption, managed key rotation, and trust-service outage behavior",
+   "severity": "Critical",
+   "traceability": "C047-C048",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "crypto_policy.py",
+    "SECURITY_ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_v43.py::CryptoTest"
+   ],
+   "blockers": [
+    "KMS/HSM key provider and certificates not provisioned",
+    "sealed storage available but not enabled by default (no secret-class data persisted)"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-18",
+   "title": "Add tamper-evident security audit event emitter/ledger",
+   "severity": "Critical",
+   "traceability": "C049, C090",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "audit.py",
+    "schema/audit-v1.schema.json"
+   ],
+   "tests": [
+    "tests/test_v43.py::AuditTest",
+    "evidence/AUDIT_VERIFY.json",
+    "evidence/FAULTS.json"
+   ],
+   "blockers": [
+    "external WORM anchor store and retention owner not provisioned"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-19",
+   "title": "Add fuzzing, property-based, parser-differential, and adversarial resource-exhaustion suites",
+   "severity": "High",
+   "traceability": "C050, C085, C087",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tools/fuzz.py",
+    "tests/fixtures/fuzz_regressions.json"
+   ],
+   "tests": [
+    "evidence/FUZZ.json"
+   ],
+   "blockers": [
+    "scheduled long campaign defined in CI but not yet run on a runner; no coverage-guided engine (stdlib-only)"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-20",
+   "title": "Define complete failure model and prove recovery with fault injection",
+   "severity": "High",
+   "traceability": "C051-C060",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "FMEA.md",
+    "tools/faults.py"
+   ],
+   "tests": [
+    "evidence/FAULTS.json"
+   ],
+   "blockers": [
+    "recovery objectives need owner approval"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-21",
+   "title": "Establish reproducible performance, resource, and power baselines",
+   "severity": "High",
+   "traceability": "C061-C064, C068",
+   "status": "PARTIAL",
+   "artifacts": [
+    "bench/perf.py",
+    "BENCHMARKS.md"
+   ],
+   "tests": [
+    "evidence/PERF.json"
+   ],
+   "blockers": [
+    "reference benchmark environment not designated",
+    "edge power/thermal not measured (needs device + approval)"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-22",
+   "title": "Analyze serialization/copy/hop costs, define capacity model, saturation signals, and performance-regression gate",
+   "severity": "High",
+   "traceability": "C065-C070",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "bench/perf.py",
+    "BENCHMARKS.md"
+   ],
+   "tests": [
+    "evidence/PERF_GATE.json"
+   ],
+   "blockers": [
+    "approved baseline on the reference environment does not exist yet"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-23",
+   "title": "Expose health, readiness, version, configuration, dependency, and capability status",
+   "severity": "High",
+   "traceability": "C071",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py",
+    "schema/status-v1.schema.json"
+   ],
+   "tests": [
+    "tests/test_v43.py::ServiceTest.test_status_readiness"
+   ],
+   "blockers": [
+    "no HTTP probe endpoint (library API only); orchestration wiring is the host's"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-24",
+   "title": "Implement metrics, structured logs, trace propagation, and safe diagnostics",
+   "severity": "High",
+   "traceability": "C072-C075",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_v43.py::TelemetryTest",
+    "tests/test_v43.py::ServiceTest.test_telemetry_logs_and_explain_are_safe"
+   ],
+   "blockers": [
+    "no exporter (OTel/Prometheus endpoint) bundled; exposition text only"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-25",
+   "title": "Add decision explainability and release-lineage/infrastructure-graph correlation",
+   "severity": "Medium",
+   "traceability": "C076-C078",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "explain.py",
+    "schema/decision-v1.schema.json"
+   ],
+   "tests": [
+    "tests/test_v43.py::ExplainTest"
+   ],
+   "blockers": [
+    "no live infrastructure-graph source; graph_state reported 'unknown'"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-26",
+   "title": "Define telemetry retention/sampling/privacy/export policy, dashboards, and differentiated alerts",
+   "severity": "Medium",
+   "traceability": "C079-C080",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "TELEMETRY_POLICY.md",
+    "ops/alerts.json",
+    "dashboards/inv64-overview.json"
+   ],
+   "tests": [
+    "evidence/GOVERNANCE.json"
+   ],
+   "blockers": [
+    "alert routing never tested end-to-end to a real pager",
+    "privacy/residency review of telemetry providers not done"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-27",
+   "title": "Create cross-platform/runtime/provider/protocol compatibility matrix and tests",
+   "severity": "High",
+   "traceability": "C084",
+   "status": "PARTIAL",
+   "artifacts": [
+    "compatibility.json",
+    "COMPATIBILITY.md",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [
+    "evidence/PREFLIGHT.json"
+   ],
+   "blockers": [
+    "only linux-x86_64 / CPython 3.11 executed in this pass; other matrix rows defined, not run"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-28",
+   "title": "Add concurrency/race, soak/burst/fleet-scale, and disaster/partition/reconnect suites",
+   "severity": "High",
+   "traceability": "C086, C088-C089",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tools/stress.py"
+   ],
+   "tests": [
+    "evidence/STRESS.json"
+   ],
+   "blockers": [
+    "extended soak/fleet profile scheduled but not run"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-29",
+   "title": "Create local machine-readable acceptance evidence and formal production exit-gate artifact",
+   "severity": "Critical",
+   "traceability": "C090, C100",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "release_gate.py",
+    "ops/GATE_POLICY.json"
+   ],
+   "tests": [
+    "tests/test_v43.py::RepositoryControlsTest.test_gate_is_deterministic_and_fails_closed",
+    "evidence/EXIT_GATE.json"
+   ],
+   "blockers": [
+    "gate artifact signed only by ephemeral key; current verdict NO_GO"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-30",
+   "title": "Maintain supported-version compatibility matrix",
+   "severity": "High",
+   "traceability": "C093",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "compatibility.json",
+    "COMPATIBILITY.md",
+    "tools/governance_check.py"
+   ],
+   "tests": [
+    "evidence/GOVERNANCE.json"
+   ],
+   "blockers": [
+    "matrix rows beyond linux-x86_64/py3.11 lack run evidence (MC-27)"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-31",
+   "title": "Define vulnerability response, patching, and end-of-life SLAs",
+   "severity": "High",
+   "traceability": "C094",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "SECURITY_RESPONSE.md",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "blockers": [
+    "reporting channel and security contact unassigned",
+    "no tabletop/emergency-patch drill",
+    "advisory scan needs index access (CI step defined)"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-32",
+   "title": "Define backup, restore, migration, and reconstruction applicability/procedures",
+   "severity": "Medium",
+   "traceability": "C095",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "BACKUP_RESTORE.md",
+    "ops/state_inventory.json",
+    "tools/backup_restore.py"
+   ],
+   "tests": [
+    "tests/test_v43.py::BackupReleaseTest"
+   ],
+   "blockers": [
+    "RPO/RTO targets need owner approval"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-33",
+   "title": "Create complete day-0, day-1, and day-2 operator runbooks",
+   "severity": "Medium",
+   "traceability": "C096",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "ops/RUNBOOK.md",
+    "tools/bootstrap.sh",
+    "tools/bootstrap.ps1"
+   ],
+   "tests": [],
+   "blockers": [
+    "runbooks not yet executed by an operator in a drill"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-34",
+   "title": "Define incident severity, paging, escalation, containment, and recovery procedures",
+   "severity": "High",
+   "traceability": "C097",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "ops/INCIDENT_RESPONSE.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "roles unassigned; paging paths and tabletop exercises not performed"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-35",
+   "title": "Establish recurring access, policy, dependency, configuration, and architecture reviews",
+   "severity": "Medium",
+   "traceability": "C098",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "ops/REVIEWS.json",
+    "tools/review_collect.py",
+    "tools/governance_check.py"
+   ],
+   "tests": [
+    "evidence/GOVERNANCE.json"
+   ],
+   "blockers": [
+    "no review performed yet (first due 2026-10-22)"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-36",
+   "title": "Create exception/waiver/technical-debt/deprecation register",
+   "severity": "Medium",
+   "traceability": "C099",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "ops/REGISTER.json",
+    "tools/governance_check.py",
+    "release_gate.py"
+   ],
+   "tests": [
+    "tests/test_v43.py::RepositoryControlsTest.test_gate_is_deterministic_and_fails_closed"
+   ],
+   "blockers": [
+    "register entries have owner_role but no named owner"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-37",
+   "title": "Add CI workflow for standalone, integration, security, compatibility, performance, and release gates",
+   "severity": "High",
+   "traceability": "C070, C081-C090, C100",
+   "status": "PARTIAL",
+   "artifacts": [
+    ".github/workflows/ci.yml",
+    "tools/run_evidence.py"
+   ],
+   "tests": [
+    "evidence/"
+   ],
+   "blockers": [
+    "workflow never executed on a CI runner; branch protection is a repository setting"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-38",
+   "title": "Add explicit distribution license, NOTICE, and SPDX metadata",
+   "severity": "Medium",
+   "traceability": "release/supply-chain hygiene",
+   "status": "GOVERNANCE_PENDING",
+   "artifacts": [
+    "LICENSING.md",
+    "NOTICE",
+    "THIRD-PARTY-NOTICES.md",
+    "pyproject.toml"
+   ],
+   "tests": [
+    "evidence/BUILD.json"
+   ],
+   "blockers": [
+    "distribution license not chosen by the owner"
+   ],
+   "items": 18
+  },
+  {
+   "id": "MC-39",
+   "title": "Generate SBOM, checksums, signatures, and release provenance artifacts",
+   "severity": "High",
+   "traceability": "C045, C090, supply-chain hygiene",
+   "status": "PARTIAL",
+   "artifacts": [
+    "tools/release.py",
+    "provenance.py"
+   ],
+   "tests": [
+    "tests/test_v43.py::BackupReleaseTest",
+    "evidence/RELEASE_VERIFY.json"
+   ],
+   "blockers": [
+    "release signed with an ephemeral key; managed signer required (REG-003)"
+   ],
+   "items": 19
+  },
+  {
+   "id": "MC-40",
+   "title": "Define canary/staged rollout and perform tested rollback drill",
+   "severity": "High",
+   "traceability": "C092",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "rollout.py",
+    "ops/ROLLOUT_POLICY.json"
+   ],
+   "tests": [
+    "tests/test_v43.py::AdjacentOamRolloutTest",
+    "evidence/ROLLBACK_DRILL.json"
+   ],
+   "blockers": [
+    "no production fleet drill"
+   ],
+   "items": 19
+  }
+ ]
+}

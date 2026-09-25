@@ -1,0 +1,381 @@
+{
+  "schema": "INV13_COMPONENT_STATUS/1",
+  "release": "4.3.0",
+  "components": {
+    "MC-001": {
+      "priority": "P0",
+      "status": "PARTIAL",
+      "evidence": [
+        "wit/inv13-system-interface.wit",
+        "WIT.lock",
+        "APPROVED_SURFACE.json",
+        "host/wit_surface.py",
+        "tests/test_wit_wasm.py::WitSurface"
+      ],
+      "gaps": "No wit-bindgen generated bindings, canonical-ABI validation, cross-language conformance or generated docs (toolchain absent); security approval of the world set pending named reviewers.",
+      "evidenced_items": 10,
+      "partial_items": 8
+    },
+    "MC-002": {
+      "priority": "P0",
+      "status": "PARTIAL",
+      "evidence": [
+        "host/runtime_adapter.py",
+        "host/adapter_v8.mjs",
+        "host/wasm_loader.py",
+        "tests/test_wit_wasm.py::V8Adapter"
+      ],
+      "gaps": "Engine is V8 via Node for core Wasm only (process-per-run, wall-time limit, no fuel/memory caps inside the engine); Component-model binaries refused; no Wasmtime binding, canonical ABI, multi-runtime tests; fs/net/http providers not yet bound into the engine import table.",
+      "evidenced_items": 8,
+      "partial_items": 9
+    },
+    "MC-003": {
+      "priority": "P0",
+      "status": "IMPLEMENTED (POSIX host provider)",
+      "evidence": [
+        "host/fs.py",
+        "tests/test_fs_descriptor.py",
+        "docs/adr/ADR-003-filesystem-strategy.md"
+      ],
+      "gaps": "Windows handle-relative implementation absent (fails closed); FIFO/device special-file policy only via O_NOFOLLOW + type checks on read; independent static review pending.",
+      "evidenced_items": 17,
+      "partial_items": 6
+    },
+    "MC-004": {
+      "priority": "P0",
+      "status": "IMPLEMENTED (reference table; INV-42 service external)",
+      "evidence": [
+        "host/descriptors.py",
+        "tests/test_authz.py::Descriptors",
+        "tests/test_adversarial.py::Races"
+      ],
+      "gaps": "No expiry, persistence, reconciliation, serialization/migration; authoritative INV-42 service must implement the DescriptorTable interface.",
+      "evidenced_items": 13,
+      "partial_items": 4
+    },
+    "MC-005": {
+      "priority": "P0",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/policy.py",
+        "tests/test_authz.py::Policy",
+        "tests/test_adversarial.py::Fuzz.test_policy_property_no_undeclared_authority"
+      ],
+      "gaps": "No policy simulation/dry-run tooling, no decision caching, policy bundles unsigned, independent tenant-isolation review pending.",
+      "evidenced_items": 16,
+      "partial_items": 3
+    },
+    "MC-006": {
+      "priority": "P0",
+      "status": "PARTIAL (reference HMAC identity; PKI/attestation external)",
+      "evidence": [
+        "host/identity.py",
+        "tests/test_authz.py::Identity"
+      ],
+      "gaps": "Shared-key HMAC is not production identity; no X.509/SPIFFE, key custody, revocation lists, channel binding or real TEE verifier. Fuzzing found and fixed a token-malleability defect (non-canonical base64).",
+      "evidenced_items": 7,
+      "partial_items": 7
+    },
+    "MC-007": {
+      "priority": "P0",
+      "status": "IMPLEMENTED (host provider); engine binding open",
+      "evidence": [
+        "host/net.py",
+        "tests/test_net_http.py::Sockets"
+      ],
+      "gaps": "Accepted-socket inheritance, proxy semantics, UDP data path, race tests and platform matrix not done; not bound into guest ABI yet.",
+      "evidenced_items": 13,
+      "partial_items": 5
+    },
+    "MC-008": {
+      "priority": "P0",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/stdio_env.py",
+        "tests/test_providers.py::EnvStdio"
+      ],
+      "gaps": "Locale/timezone, cwd semantics, fd inheritance for spawned engine only partly (clean env passed to node), secret rotation.",
+      "evidenced_items": 13,
+      "partial_items": 5
+    },
+    "MC-009": {
+      "priority": "P0",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/clocks.py",
+        "tests/test_providers.py::Clocks"
+      ],
+      "gaps": "No timer/sleep API, no trusted-time dependency handling, side-channel review needs a human reviewer.",
+      "evidenced_items": 12,
+      "partial_items": 4
+    },
+    "MC-010": {
+      "priority": "P0",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/randomness.py",
+        "tests/test_providers.py::Randomness"
+      ],
+      "gaps": "FIPS mode and fork/snapshot reseed semantics are delegated to the OS; no dependency review sign-off.",
+      "evidenced_items": 13,
+      "partial_items": 3
+    },
+    "MC-011": {
+      "priority": "P0",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/resources.py",
+        "tests/test_errors_resources.py::ResourceTableTest",
+        "tests/test_adversarial.py::Races.test_resource_table_concurrent_push_drop"
+      ],
+      "gaps": "12-bit generation counter wraps after 4095 reuses of one slot (documented residual risk T-10).",
+      "evidenced_items": 19,
+      "partial_items": 4
+    },
+    "MC-012": {
+      "priority": "P0",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/errors.py",
+        "tests/test_errors_resources.py::ErrorTaxonomy",
+        "docs/adr/ADR-004-error-model.md"
+      ],
+      "gaps": "Localization boundary not addressed; security review pending.",
+      "evidenced_items": 16,
+      "partial_items": 6
+    },
+    "MC-013": {
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence": [
+        "host/aio.py",
+        "tests/test_providers.py::Async"
+      ],
+      "gaps": "asyncio reference only; not wired to engine pollables/futures; no fairness, partial-I/O or load tests.",
+      "evidenced_items": 7,
+      "partial_items": 5
+    },
+    "MC-014": {
+      "priority": "P1",
+      "status": "IMPLEMENTED (single node)",
+      "evidence": [
+        "host/config.py",
+        "tests/test_ops.py::Config",
+        "tests/test_adversarial.py::Races.test_concurrent_config_writers_single_winner"
+      ],
+      "gaps": "No distributed consistency / multi-node activation, approval gates, impact analysis or schema migration.",
+      "evidenced_items": 13,
+      "partial_items": 3
+    },
+    "MC-015": {
+      "priority": "P1",
+      "status": "PARTIAL (durable local sink; WORM/KMS external)",
+      "evidence": [
+        "host/audit_sink.py",
+        "tests/test_ops.py::Audit",
+        "docs/adr/ADR-005-audit-and-export.md"
+      ],
+      "gaps": "No remote/WORM transport, checkpoint key rotation/custody, tenant-separated streams, access monitoring.",
+      "evidenced_items": 11,
+      "partial_items": 6
+    },
+    "MC-016": {
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence": [
+        "host/telemetry.py",
+        "tests/test_ops.py::Telemetry",
+        "tests/test_integration.py"
+      ],
+      "gaps": "No OTLP exporter, secure transport, dashboards, alert rules or runbook links (needs the org's observability stack).",
+      "evidenced_items": 9,
+      "partial_items": 4
+    },
+    "MC-017": {
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence": [
+        "host/quotas.py",
+        "tests/test_ops.py::Quotas",
+        "tests/test_integration.py::test_quota_quarantine_revocation"
+      ],
+      "gaps": "No priority classes, soft limits/burst, dynamic updates, memory-pressure limits inside the engine, operator overrides.",
+      "evidenced_items": 9,
+      "partial_items": 4
+    },
+    "MC-018": {
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence": [
+        "host/http_out.py",
+        "tests/test_net_http.py::Http"
+      ],
+      "gaps": "No connection pooling, proxy semantics, retry policy, HTTP/2 controls; not bound to guest ABI.",
+      "evidenced_items": 15,
+      "partial_items": 4
+    },
+    "MC-019": {
+      "priority": "P1",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/compat.py",
+        "COMPAT_MATRIX.json",
+        "tests/test_wit_wasm.py::Negotiation"
+      ],
+      "gaps": "No rolling-upgrade/state-compat scenarios, generated-binding matrix.",
+      "evidenced_items": 13,
+      "partial_items": 3
+    },
+    "MC-020": {
+      "priority": "P1",
+      "status": "PARTIAL (1 of 16 declared cells executed)",
+      "evidence": [
+        "ci/matrix.yml",
+        "COMPAT_MATRIX.json",
+        "evidence/"
+      ],
+      "gaps": "Only linux/x86_64/Python 3.11/Node 22 executed; Windows fs provider absent; ARM64/macOS unrun.",
+      "evidenced_items": 1,
+      "partial_items": 4
+    },
+    "MC-021": {
+      "priority": "P1",
+      "status": "IMPLEMENTED (stdlib seeded fuzzing)",
+      "evidence": [
+        "tests/test_adversarial.py::Fuzz"
+      ],
+      "gaps": "No coverage-guided fuzzer (Atheris/libFuzzer), sanitizers, corpus minimisation or long campaigns.",
+      "evidenced_items": 7,
+      "partial_items": 6
+    },
+    "MC-022": {
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence": [
+        "tests/test_adversarial.py::Races",
+        "tests/test_fs_descriptor.py::*test_symlink_swap_race"
+      ],
+      "gaps": "No race detectors/sanitizers (pure Python), deterministic scheduler, identity-rotation or audit-chain race suites.",
+      "evidenced_items": 6,
+      "partial_items": 4
+    },
+    "MC-023": {
+      "priority": "P1",
+      "status": "IMPLEMENTED (in-process)",
+      "evidence": [
+        "tests/test_adversarial.py::Faults",
+        "tests/test_ops.py::Config.test_crash_between_steps_leaves_old_config"
+      ],
+      "gaps": "No network partition, split-brain or memory-pressure chaos; no alert validation.",
+      "evidenced_items": 11,
+      "partial_items": 5
+    },
+    "MC-024": {
+      "priority": "P1",
+      "status": "IMPLEMENTED \u2014 with finding B-01 (resolve SLO missed)",
+      "evidence": [
+        "tools/bench.py",
+        "BENCH_BASELINE.json",
+        "evidence/bench.json"
+      ],
+      "gaps": "Lexical resolve p99 \u2248 61 \u00b5s vs the contract's 1 \u00b5s target (see AUDIT_REPORT B-01); single-host, short soak; no cross-platform baselines.",
+      "evidenced_items": 9,
+      "partial_items": 6
+    },
+    "MC-025": {
+      "priority": "P1",
+      "status": "PARTIAL",
+      "evidence": [
+        "tools/build.py",
+        "SBOM.cdx.json",
+        "PROVENANCE.intoto.json",
+        "MANIFEST.sha256"
+      ],
+      "gaps": "Artifacts unsigned (no KMS), no vulnerability/secret scanning service, pk_core version unpinned.",
+      "evidenced_items": 6,
+      "partial_items": 4
+    },
+    "MC-026": {
+      "priority": "P1",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "pyproject.toml",
+        "tools/build_backend.py",
+        "tools/build.py",
+        "evidence/gate.json (wheel install)"
+      ],
+      "gaps": "No signature verification on install, uninstall/upgrade tests.",
+      "evidenced_items": 11,
+      "partial_items": 4
+    },
+    "MC-027": {
+      "priority": "P1",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "host/control.py",
+        "tests/test_ops.py::Controls",
+        "tests/test_integration.py::test_quota_quarantine_revocation"
+      ],
+      "gaps": "No two-person rule, partition behaviour or alerting; artifact (binary) rollback relies on release tooling.",
+      "evidenced_items": 11,
+      "partial_items": 4
+    },
+    "MC-028": {
+      "priority": "P1",
+      "status": "OPEN (template only)",
+      "evidence": [
+        "OWNERSHIP.md",
+        "EXCEPTIONS.json"
+      ],
+      "gaps": "Named owners, on-call, escalation, reviews and drills must be supplied by the organisation.",
+      "evidenced_items": 0,
+      "partial_items": 4
+    },
+    "MC-029": {
+      "priority": "P2",
+      "status": "PARTIAL (enforced in code; legal sign-off open)",
+      "evidence": [
+        "PRIVACY_POLICY.md",
+        "host/telemetry.py::PrivacyFilter",
+        "tests/test_ops.py"
+      ],
+      "gaps": "Retention/deletion enforcement, regional routing, access logging are policy text only.",
+      "evidenced_items": 9,
+      "partial_items": 3
+    },
+    "MC-030": {
+      "priority": "P2",
+      "status": "PARTIAL",
+      "evidence": [
+        "EDGE_CHARACTERIZATION.md",
+        "evidence/bench.json"
+      ],
+      "gaps": "Power/thermal/battery measurements need physical edge hardware.",
+      "evidenced_items": 2,
+      "partial_items": 5
+    },
+    "MC-031": {
+      "priority": "P2",
+      "status": "IMPLEMENTED (unsigned)",
+      "evidence": [
+        "tools/gate.py",
+        "TRACEABILITY.json",
+        "evidence/EVIDENCE_MANIFEST.json"
+      ],
+      "gaps": "Manifest not signed; human approval step pending.",
+      "evidenced_items": 11,
+      "partial_items": 5
+    },
+    "MC-032": {
+      "priority": "P2",
+      "status": "PARTIAL (drafted; approvals pending)",
+      "evidence": [
+        "docs/adr/",
+        "THREAT_MODEL.md"
+      ],
+      "gaps": "No ADRs for network/HTTP, identity, async/resource; ADR approval by named deciders pending.",
+      "evidenced_items": 12,
+      "partial_items": 6
+    }
+  }
+}

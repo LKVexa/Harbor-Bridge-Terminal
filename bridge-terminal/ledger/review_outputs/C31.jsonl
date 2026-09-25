@@ -1,0 +1,100 @@
+{"id": "C31-001", "status": "PASS", "evidence": ["gateway/ws.js:119-134"], "note": "sendText: Buffer.from(text,'utf8'); sendBinary: array of Buffer/view parts"}
+{"id": "C31-002", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "WebSocketMessageType is .NET ClientWebSocket; ws.js hardcodes opcode per call site"}
+{"id": "C31-003", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No SendAsync endOfMessage param; writer always emits one complete frame (FIN set) per call"}
+{"id": "C31-004", "status": "PASS", "evidence": ["gateway/ws.js:9-11"], "note": "Doc comment: one send path (_write->socket.write) per connection"}
+{"id": "C31-005", "status": "PASS", "evidence": ["gateway/ws.js:102-116"], "note": "lease.retain() at write start, lease.release() in write callback (settle)"}
+{"id": "C31-006", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No CancellationToken input; abort is via terminate()/socket.destroy(), not a per-send cancel token"}
+{"id": "C31-007", "status": "PASS", "evidence": ["gateway/ws.js:109"], "note": "settle(null)->onDone(null) on successful socket.write callback"}
+{"id": "C31-008", "status": "PASS", "evidence": ["gateway/ws.js:103,109"], "note": "onDone(new Error) when destroyed; settle(err)->onDone(err) on write callback error"}
+{"id": "C31-009", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#acknowledgement-levels"], "note": "ACK_ACCEPTED/EXECUTED/CONSUMED distinguished from local socket completion; 'None is a durable commit'"}
+{"id": "C31-010", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:1-176"], "note": "Contract implemented and documented in code comments; no separate sign-off/approval record found"}
+{"id": "C31-011", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No .NET SendAsync overload; Node socket.write is used directly"}
+{"id": "C31-012", "status": "NOT_APPLICABLE", "evidence": ["RD-03"], "note": "No pwsh/PowerShell runtime in this candidate"}
+{"id": "C31-013", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No ArraySegment; ws.js uses Buffer/subarray views instead"}
+{"id": "C31-014", "status": "PASS", "evidence": ["gateway/ws.js:125,133"], "note": "_write(OP.TEXT,...) / _write(OP.BIN,...) pass opcode explicitly per call site"}
+{"id": "C31-015", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No endOfMessage flag; frame head always sets FIN (0x80) for these single-frame writes"}
+{"id": "C31-016", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No CancellationToken parameter passed to socket.write"}
+{"id": "C31-017", "status": "PASS", "evidence": ["gateway/ws.js:102-116"], "note": "Completion observed via socket.write callback (settle), which is the task bridge used here"}
+{"id": "C31-018", "status": "PASS", "evidence": ["gateway/ws.js:103,109"], "note": "Underlying write error passed to onDone(err) unmodified"}
+{"id": "C31-019", "status": "PASS", "evidence": ["gateway/ws.js:108-109"], "note": "lease.retain() before write, release only in callback; buffer/parts not mutated meanwhile"}
+{"id": "C31-020", "status": "OPEN", "evidence": [], "note": "No minimal send-compatibility startup probe for the writer found"}
+{"id": "C31-021", "status": "PASS", "evidence": ["gateway/ws.js:120,129"], "note": "sendText/sendBinary check this.state !== 'OPEN' before admitting"}
+{"id": "C31-022", "status": "PASS", "evidence": ["gateway/ws.js:120,129,147-148"], "note": "state machine (OPEN/CLOSING/CLOSED) blocks sends once shutdown/closure begins"}
+{"id": "C31-023", "status": "PASS", "evidence": ["gateway/ws.js:102-134"], "note": "All outbound paths funnel through the single _write method"}
+{"id": "C31-024", "status": "PASS", "evidence": ["protocol/envelope.schema.json", "protocol/codec.js"], "note": "codec validates message shape/type (15 kit shapes) before any send is attempted"}
+{"id": "C31-025", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#two-message-classes"], "note": "65536-byte control cap, 8192/16384 data caps enforced by codec before writer invocation"}
+{"id": "C31-026", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md#two-message-classes"], "note": "Zero-length data messages explicitly refused; empty TEXT control messages have no documented policy"}
+{"id": "C31-027", "status": "PASS", "evidence": ["gateway/connection.js:106-109"], "note": "lease stays attached to the pendingOut item after admission until send completes"}
+{"id": "C31-028", "status": "PASS", "evidence": ["gateway/ws.js:117,123,131", "gateway/connection.js:98-101"], "note": "_budget() false -> congested flag; producer paused via _flow() until 'drain'"}
+{"id": "C31-029", "status": "PASS", "evidence": "tests/security/authz.test.js", "note": "data messages carry no sid, bound to the authenticated connection; 'session ids authorize nothing'"}
+{"id": "C31-030", "status": "PASS", "evidence": ["gateway/ws.js:123,131"], "note": "stats.txMessages++ only after the budget check passes, so rejected sends are not counted"}
+{"id": "C31-031", "status": "PASS", "evidence": ["gateway/ws.js:98-116"], "note": "_write is invoked once per logical message; no partial-write entry point exists"}
+{"id": "C31-032", "status": "PASS", "evidence": ["gateway/ws.js:95"], "note": "head[0] = 0x80|op always sets FIN for these writer calls"}
+{"id": "C31-033", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "Manual outbound fragmentation is not implemented/claimed"}
+{"id": "C31-034", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "No manual outbound fragmentation feature exists to preserve type across"}
+{"id": "C31-035", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "No manual outbound fragmentation feature exists"}
+{"id": "C31-036", "status": "PASS", "evidence": "tests/gateway/e2e.test.js", "note": "vertical slice hello->open->opened->output->input->output->close exercises complete text control messages"}
+{"id": "C31-037", "status": "PASS", "evidence": "tests/ram/v2-e2e.test.js", "note": "binary input/output vertical slice and binary data discipline tests exercise complete binary messages"}
+{"id": "C31-038", "status": "IN_PROGRESS", "evidence": "tests/ram/v2-e2e.test.js", "note": "zero-length binary payload explicitly rejected/tested; an empty TEXT control message case is not separately named"}
+{"id": "C31-039", "status": "PASS", "evidence": "tests/gateway/ws-conformance.test.js", "note": "'declared 64-bit length over the cap' and 8192-byte single-message input test cover large complete messages"}
+{"id": "C31-040", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "Absence of manual fragmentation is documented in 'Not done / not claimed', not marked item-by-item as N/A"}
+{"id": "C31-041", "status": "OPEN", "evidence": [], "note": "No distinct log/telemetry event fires specifically at send admission time"}
+{"id": "C31-042", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": ".NET SendAsync begin event has no analog; Node socket.write is synchronous call + async callback"}
+{"id": "C31-043", "status": "OPEN", "evidence": [], "note": "No distinct log line for write-callback completion beyond aggregate stats/telemetry"}
+{"id": "C31-044", "status": "PASS", "evidence": ["gateway/ws.js:109"], "note": "lease.release() happens only inside settle(), i.e. after the write is permitted to complete"}
+{"id": "C31-045", "status": "PASS", "evidence": ["gateway/ws.js:109"], "note": "onDone(null) notifies the caller of success"}
+{"id": "C31-046", "status": "PASS", "evidence": ["gateway/ws.js:109"], "note": "onDone(err) notifies the caller of failure"}
+{"id": "C31-047", "status": "PASS", "evidence": ["gateway/ws.js:81-84"], "note": "socket 'error'/'close' handlers call _destroy->socket.destroy(), which settles pending write callbacks with an error even after peer disconnect"}
+{"id": "C31-048", "status": "PASS", "evidence": ["gateway/ws.js:109"], "note": "onDone is only invoked from settle(), which only runs from the socket.write callback"}
+{"id": "C31-049", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#acknowledgement-levels"], "note": "'None is a durable commit' explicitly separates local completion from remote application processing"}
+{"id": "C31-050", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#acknowledgement-levels"], "note": "Acknowledgement levels table documents caller-visible completion semantics"}
+{"id": "C31-051", "status": "PASS", "evidence": ["gateway/connection.js:78-93"], "note": "_flush drains pendingOut sequentially, gated by _canSend, one item admitted per iteration"}
+{"id": "C31-052", "status": "PASS", "evidence": ["gateway/ws.js:79", "gateway/ws.js:102-116"], "note": "socket 'data' receive handler and _write send path are independent code paths"}
+{"id": "C31-053", "status": "PASS", "evidence": "tests/gateway/e2e.test.js", "note": "'health stays responsive while a session streams bulk output and large inbound messages arrive'"}
+{"id": "C31-054", "status": "OPEN", "evidence": [], "note": "No test named for two application producers racing to send on one socket (only one producer, the worker, exists per connection)"}
+{"id": "C31-055", "status": "PASS", "evidence": "tests/fabric/fabric-ws.test.js", "note": "'four nodes reach ... over the socket' exercises concurrent sends across distinct connections"}
+{"id": "C31-056", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'slow consumer (no credit): worker paused ... a fast tenant unaffected'"}
+{"id": "C31-057", "status": "PASS", "evidence": ["gateway/ws.js:137-152,248"], "note": "close() is idempotent (closeSent flag) and CLOSING state blocks further app frames in _frame()"}
+{"id": "C31-058", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'real process: SIGTERM drains within budget, notifies the client, exits 0'"}
+{"id": "C31-059", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:78-93"], "note": "_flush advances pendingOut once ws.sendBinary() has queued the write, not after its socket-level completion callback; no dedicated test found"}
+{"id": "C31-060", "status": "OPEN", "evidence": [], "note": "No logging of concurrent-send invariant violations found; design prevents the case structurally instead"}
+{"id": "C31-061", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'abrupt TCP loss: worker is stopped, session released, no orphan process'"}
+{"id": "C31-062", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "No local per-send cancellation token exists to test (see C31-006)"}
+{"id": "C31-063", "status": "PASS", "evidence": "tests/gateway/ws-conformance.test.js", "note": "'data after our close is ignored'"}
+{"id": "C31-064", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:103"], "note": "_write checks this.destroyed/socket.destroyed and returns false; no test specifically named for this path"}
+{"id": "C31-065", "status": "PASS", "evidence": ["protocol/codec.js", "protocol/envelope.schema.json"], "note": "envelope/data validation happens before any writer call is made"}
+{"id": "C31-066", "status": "OPEN", "evidence": [], "note": "No allocation-failure-before-send test found"}
+{"id": "C31-067", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'worker killed (-9) -> exactly one session.exit{worker_failure}'"}
+{"id": "C31-068", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#acknowledgement-levels"], "note": "'a lost connection between accepted and executed is exactly the OUTCOME_UNKNOWN case the client reports'"}
+{"id": "C31-069", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#session-open-and-epochs"], "note": "'The server never revives it ... nothing is replayed' on session.reset"}
+{"id": "C31-070", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:160-166"], "note": "_releasePart/_dropReceiveState/lease.release patterns release resources broadly; not verified path-by-path for every failure test"}
+{"id": "C31-071", "status": "PASS", "evidence": "tests/protocol/codec.test.js", "note": "strict text/JSON round-trip vectors compared against expected values"}
+{"id": "C31-072", "status": "PASS", "evidence": "tests/protocol/codec.test.js", "note": "'binary data frames: header round-trip for every uint48 boundary'"}
+{"id": "C31-073", "status": "OPEN", "evidence": [], "note": "No test specifically named for a short message immediately following a long one"}
+{"id": "C31-074", "status": "IN_PROGRESS", "evidence": "tests/security/authz.test.js", "note": "'replayed rid' / duplicate-rid tests cover distinct identifiers but not exactly 'back-to-back distinct-id messages'"}
+{"id": "C31-075", "status": "PASS", "evidence": "tests/gateway/ws-conformance.test.js", "note": "'split UTF-8 character across fragments is reassembled before strict decoding'"}
+{"id": "C31-076", "status": "PASS", "evidence": ["gateway/ws.js:229-231"], "note": "in-place path uses chunk.subarray(off,off+len): a view over part of a larger buffer, unmasked without copy"}
+{"id": "C31-077", "status": "PASS", "evidence": ["gateway/ws.js:104-105"], "note": "head length computed from exact summed part lengths n; no padding written"}
+{"id": "C31-078", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#ordering-and-single-exit"], "note": "'Output seq is contiguous from 1'"}
+{"id": "C31-079", "status": "IN_PROGRESS", "evidence": "tests/ui/browser.test.js", "note": "real Chromium client exercises full sessions; explicit message-boundary assertions at the peer are not itemized"}
+{"id": "C31-080", "status": "IN_PROGRESS", "evidence": "tests/vectors/ramws/cases.json", "note": "codec/protocol fixture vectors exist; not specifically writer send/receive fixtures"}
+{"id": "C31-081", "status": "PASS", "evidence": ["gateway/ws.js:124,132"], "note": "stats.txMessages++ on each accepted send"}
+{"id": "C31-082", "status": "PASS", "evidence": ["gateway/ws.js:106"], "note": "stats.txBytes += total; traffic.add('tx_wire', total) tracked separately from encode-stage bytes"}
+{"id": "C31-083", "status": "OPEN", "evidence": [], "note": "No per-send duration measurement found in ws.js or connection.js"}
+{"id": "C31-084", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "/live exposes memoryRefusals/workerHeapCapHits/undeliveredOutputBytes counters, but not a send-failure-by-category breakdown"}
+{"id": "C31-085", "status": "PASS", "evidence": ["gateway/connection.js:334-338"], "note": "telemetry() exposes pendingOutMessages, outstandingMessages, inflightBytes"}
+{"id": "C31-086", "status": "PASS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "'/live (unauthenticated, no payloads or identities)'; logger drops secret-like fields (tests/gateway/config.test.js)"}
+{"id": "C31-087", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'peer that stops reading its TCP socket: gateway send queue stays within budget and the connection is contained'"}
+{"id": "C31-088", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#main-result"], "note": "W2 bulk throughput measured: '7.9-8.3 MiB/s -> 30.3-32.3 MiB/s'"}
+{"id": "C31-089", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#preregistered-cpu-and-fidelity-experiment-kit-r28"], "note": "host spec, warm-up/run counts, arm config recorded in e/R28/experiment.frozen.json"}
+{"id": "C31-090", "status": "OPEN", "evidence": ["docs/OPERATIONS.md"], "note": "OPERATIONS.md documents telemetry fields but no dedicated send-failure troubleshooting procedure"}
+{"id": "C31-091", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#two-message-classes", "gateway/ws.js:1-176"], "note": "writer input/completion contract documented in PROTOCOL_V2.md and ws.js header comments"}
+{"id": "C31-092", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#frame-parser-guarantees"], "note": "message/fragment boundary rules published"}
+{"id": "C31-093", "status": "PASS", "evidence": ["gateway/connection.js:1-14", "docs/PROTOCOL_V2.md"], "note": "serialization and queue handoff documented in connection.js header and PROTOCOL_V2.md"}
+{"id": "C31-094", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "tests/protocol/codec.test.js and tests/ram/v2-e2e.test.js (ordering/exact-byte) are indexed and listed as passing"}
+{"id": "C31-095", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "tests/gateway/e2e.test.js and tests/chaos/lifecycle.test.js concurrency cases are indexed"}
+{"id": "C31-096", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "tests/chaos/lifecycle.test.js disconnect/signal tests are indexed"}
+{"id": "C31-097", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md", "docs/EXPERIMENT.md"], "note": "slow-consumer test and W1-W3 measurements are indexed/recorded"}
+{"id": "C31-098", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#session-open-and-epochs"], "note": "session.reset semantics document that interrupted sends are never auto-replayed"}
+{"id": "C31-099", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "'Not done / not claimed' section records unresolved/omitted scope"}
+{"id": "C31-100", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:1-176"], "note": "Behavior matches the contract but no explicit written approval/sign-off record exists beyond the code and docs themselves"}

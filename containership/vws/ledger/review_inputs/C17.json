@@ -1,0 +1,1673 @@
+{
+"component": "C17",
+"items": [
+{
+"id": "C17-001",
+"task_class": "SPECIFY",
+"area": "01. Subprotocol requirements",
+"req": "Decide whether the application needs a WebSocket subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "RFC6455, subprotocol hermit.vws.v1 required; PROTOCOL constant in server.js",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport",
+"gateway/server.js:23"
+]
+},
+{
+"id": "C17-002",
+"task_class": "SPECIFY",
+"area": "01. Subprotocol requirements",
+"req": "Define the application behavior associated with each supported subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Only one supported protocol; its behavior is the whole state machine, not enumerated per-protocol since there's just one",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C17-003",
+"task_class": "SPECIFY",
+"area": "01. Subprotocol requirements",
+"req": "Define whether a no-subprotocol connection is permitted.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade requires offered list include protocol; no-subprotocol request -> 400 (null test)",
+"prior_evidence": [
+"gateway/ws.js:31-32",
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-004",
+"task_class": "DOCUMENT",
+"area": "01. Subprotocol requirements",
+"req": "Record the article's null-argument option as a compatibility item to test.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No document references an external article's null-argument option as a compatibility item",
+"prior_evidence": []
+},
+{
+"id": "C17-005",
+"task_class": "SPECIFY",
+"area": "01. Subprotocol requirements",
+"req": "Identify clients that request a specific subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Offered protocol list is parsed from header, but no doc identifies specific real clients requesting a specific subprotocol",
+"prior_evidence": [
+"gateway/ws.js:31"
+]
+},
+{
+"id": "C17-006",
+"task_class": "SPECIFY",
+"area": "01. Subprotocol requirements",
+"req": "Identify clients that request none.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Null-offer case is tested, but no doc identifies which real clients send none",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-007",
+"task_class": "IMPLEMENT",
+"area": "01. Subprotocol requirements",
+"req": "Distinguish subprotocol negotiation from message encoding selection.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Subprotocol string negotiated in HTTP headers (ws.js); envelope encoding is separate (protocol/codec.js v field)",
+"prior_evidence": [
+"gateway/ws.js:22-34",
+"protocol/codec.js"
+]
+},
+{
+"id": "C17-008",
+"task_class": "IMPLEMENT",
+"area": "01. Subprotocol requirements",
+"req": "Distinguish subprotocol negotiation from authentication.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade (subprotocol) runs independent of identity.authenticate/ticket checks elsewhere in server.js",
+"prior_evidence": [
+"gateway/ws.js:22-34",
+"gateway/server.js:163"
+]
+},
+{
+"id": "C17-009",
+"task_class": "SPECIFY",
+"area": "01. Subprotocol requirements",
+"req": "Define compatibility expectations across application versions.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'v is const 1... a new negotiated contract' states forward-compat intent but no full cross-version matrix",
+"prior_evidence": [
+"docs/PROTOCOL.md#Compatibility"
+]
+},
+{
+"id": "C17-010",
+"task_class": "IMPLEMENT",
+"area": "01. Subprotocol requirements",
+"req": "Approve the subprotocol decision table.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of an approved subprotocol decision table",
+"prior_evidence": []
+},
+{
+"id": "C17-011",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define the server's supported subprotocol list.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL = 'hermit.vws.v1' is the server's supported (single) subprotocol",
+"prior_evidence": [
+"gateway/server.js:23"
+]
+},
+{
+"id": "C17-012",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define the order of server preference if multiple values are supported.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Only one supported value exists, so no preference-order logic is implemented or needed; not documented as a deliberate decision",
+"prior_evidence": [
+"gateway/ws.js:31-32"
+]
+},
+{
+"id": "C17-013",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define where the supported list is configured.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Defined as a source constant, not runtime configuration",
+"prior_evidence": [
+"gateway/server.js:23"
+]
+},
+{
+"id": "C17-014",
+"task_class": "REVIEW",
+"area": "02. Configuration",
+"req": "Validate configured values against the approved syntax.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No configured (env/file) subprotocol list exists to validate; value is a hardcoded constant",
+"prior_evidence": []
+},
+{
+"id": "C17-015",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Reject duplicate configured values according to the chosen policy.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No configuration mechanism or dedup logic exists for subprotocol values",
+"prior_evidence": [
+"gateway/config.js"
+]
+},
+{
+"id": "C17-016",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define case-sensitivity handling after checking the protocol requirements.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No case-sensitivity design note; offered.includes() is case-sensitive exact match by default, undocumented",
+"prior_evidence": []
+},
+{
+"id": "C17-017",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Keep secrets out of subprotocol names.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Subprotocol is a fixed non-secret literal; no credential material embedded",
+"prior_evidence": [
+"gateway/server.js:23",
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-018",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Reject values used as an undocumented credential transport.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Only exact-match single value accepted; no explicit rejection logic exists for a subprotocol used as credential transport since no such usage is possible",
+"prior_evidence": [
+"gateway/ws.js:31-32"
+]
+},
+{
+"id": "C17-019",
+"task_class": "SPECIFY",
+"area": "02. Configuration",
+"req": "Define a stable default for clients requesting no subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "No-subprotocol request always rejected (400) - stable, deterministic default",
+"prior_evidence": [
+"gateway/ws.js:31-32",
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-020",
+"task_class": "IMPLEMENT",
+"area": "02. Configuration",
+"req": "Version configuration changes affecting client compatibility.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No versioning record of subprotocol-affecting config changes",
+"prior_evidence": []
+},
+{
+"id": "C17-021",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Read requested subprotocol information through the managed request context.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade reads req.headers['sec-websocket-protocol'] via the managed request object",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-022",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Distinguish no requested value from an unsupported requested value.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Empty/missing header parses to [] (no value) vs a listed-but-unsupported value; both currently rejected the same way (400), not distinguished in the response",
+"prior_evidence": [
+"gateway/ws.js:31"
+]
+},
+{
+"id": "C17-023",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Handle one requested subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Single requested protocol handled: matches -> 101 with Sec-WebSocket-Protocol echoed",
+"prior_evidence": [
+"gateway/ws.js:31-32",
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C17-024",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Handle several requested subprotocols.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "offered list splits on comma so multiple values parse, but no test sends >1 value",
+"prior_evidence": [
+"gateway/ws.js:31"
+]
+},
+{
+"id": "C17-025",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Handle duplicate requested values.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test/code specifically for duplicate requested subprotocol values",
+"prior_evidence": []
+},
+{
+"id": "C17-026",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Handle malformed requested values.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Malformed header falls back to empty/filtered list and is rejected (400), but no dedicated malformed-value test",
+"prior_evidence": [
+"gateway/ws.js:31"
+]
+},
+{
+"id": "C17-027",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Bound application processing of an excessive requested list.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No bound on requested-list length/size found in gateway/ws.js",
+"prior_evidence": []
+},
+{
+"id": "C17-028",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Avoid choosing a value based solely on list position without a defined policy.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "offered.includes(protocol) checks exact membership, not list position",
+"prior_evidence": [
+"gateway/ws.js:32"
+]
+},
+{
+"id": "C17-029",
+"task_class": "IMPLEMENT",
+"area": "03. Client request inspection",
+"req": "Preserve only necessary negotiation metadata.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade returns only {ok,key} or {ok,status,reason}; no extra negotiation metadata retained",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-030",
+"task_class": "TEST",
+"area": "03. Client request inspection",
+"req": "Test request inspection with the intended clients.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Tested against undici WS client and Chromium, but not against 'intended clients' plural/named explicitly",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C17-031",
+"task_class": "SPECIFY",
+"area": "04. Selection logic",
+"req": "Select only a value supported by the application.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Only the exact configured protocol string can be selected",
+"prior_evidence": [
+"gateway/ws.js:32"
+]
+},
+{
+"id": "C17-032",
+"task_class": "SPECIFY",
+"area": "04. Selection logic",
+"req": "Define behavior when a requested value matches exactly.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Exact match -> 101 with matching Sec-WebSocket-Protocol header",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C17-033",
+"task_class": "SPECIFY",
+"area": "04. Selection logic",
+"req": "Define behavior when several requested values are acceptable.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Only one value is ever supported, so 'several acceptable' case is moot/untested",
+"prior_evidence": []
+},
+{
+"id": "C17-034",
+"task_class": "SPECIFY",
+"area": "04. Selection logic",
+"req": "Define behavior when no requested value is acceptable.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "No acceptable value -> 400 refusal without upgrade",
+"prior_evidence": [
+"gateway/ws.js:32",
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-035",
+"task_class": "SPECIFY",
+"area": "04. Selection logic",
+"req": "Define behavior when no subprotocol was requested.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Empty offered list -> includes() false -> 400 (no subprotocol requested is rejected since one is required)",
+"prior_evidence": [
+"gateway/ws.js:31-32",
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-036",
+"task_class": "IMPLEMENT",
+"area": "04. Selection logic",
+"req": "Avoid silently changing application semantics after selection.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade always echoes the fixed PROTOCOL constant; nothing changes post-selection",
+"prior_evidence": [
+"gateway/ws.js:229-231"
+]
+},
+{
+"id": "C17-037",
+"task_class": "IMPLEMENT",
+"area": "04. Selection logic",
+"req": "Keep selection deterministic for the same inputs.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Pure function of headers + fixed protocol constant; deterministic",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-038",
+"task_class": "IMPLEMENT",
+"area": "04. Selection logic",
+"req": "Return selection as a clear success or rejection result.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade returns {ok:true,key} or {ok:false,status,reason} - explicit result object",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-039",
+"task_class": "IMPLEMENT",
+"area": "04. Selection logic",
+"req": "Keep selection free of listener side effects.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade has no side effects (no I/O, no state mutation)",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-040",
+"task_class": "IMPLEMENT",
+"area": "04. Selection logic",
+"req": "Unit-test the selection decision table.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No unit test file found exercising checkUpgrade's decision table directly/in isolation",
+"prior_evidence": []
+},
+{
+"id": "C17-041",
+"task_class": "TEST",
+"area": "05. Null behavior",
+"req": "Test the selected API's null argument from PowerShell.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No PowerShell client exists in this candidate (Node gateway replaces PowerShell/.NET, decision D-001)",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C17-042",
+"task_class": "TEST",
+"area": "05. Null behavior",
+"req": "Test any NullString conversion explicitly before using it.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET NullString has no analog in the Node implementation",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C17-043",
+"task_class": "VERIFY",
+"area": "05. Null behavior",
+"req": "Verify the resulting response does not claim an unselected subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade always sets Sec-WebSocket-Protocol to the one negotiated constant; not applicable to claim an unselected value since only one exists",
+"prior_evidence": [
+"gateway/ws.js:229-231",
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C17-044",
+"task_class": "TEST",
+"area": "05. Null behavior",
+"req": "Test a client that requested no subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Client with protocol:null tested -> 400",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-045",
+"task_class": "TEST",
+"area": "05. Null behavior",
+"req": "Test a client requesting a protocol when server policy permits none.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Server always requires the subprotocol (no 'permits none' policy exists), so this case is structurally always-reject; no dedicated test for a server configured ",
+"prior_evidence": []
+},
+{
+"id": "C17-046",
+"task_class": "DOCUMENT",
+"area": "05. Null behavior",
+"req": "Record observed client acceptance or rejection in that case.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of observed client acceptance/rejection behavior for the no-subprotocol case",
+"prior_evidence": []
+},
+{
+"id": "C17-047",
+"task_class": "IMPLEMENT",
+"area": "05. Null behavior",
+"req": "Avoid treating an empty string as null without testing its API behavior.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "offered list built via .filter(Boolean), so an empty string is excluded, not conflated with a real value, by construction",
+"prior_evidence": [
+"gateway/ws.js:31"
+]
+},
+{
+"id": "C17-048",
+"task_class": "DOCUMENT",
+"area": "05. Null behavior",
+"req": "Document the exact representation used for no-subprotocol acceptance.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Behavior (400 refusal) is implemented but not documented as 'the exact representation used for no-subprotocol acceptance' since none is ever accepted",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-049",
+"task_class": "IMPLEMENT",
+"area": "05. Null behavior",
+"req": "Include the null behavior test in runtime upgrades.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No CI/runtime-upgrade pipeline found that specifically includes this null-behavior test as a gate",
+"prior_evidence": []
+},
+{
+"id": "C17-050",
+"task_class": "IMPLEMENT",
+"area": "05. Null behavior",
+"req": "Resolve unsupported null behavior before deployment.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Behavior is resolved by rejecting all no-subprotocol connections; no explicit pre-deployment sign-off record found",
+"prior_evidence": []
+},
+{
+"id": "C17-051",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Run selection before AcceptWebSocketAsync.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No AcceptWebSocketAsync exists; Node gateway uses checkUpgrade then acceptUpgrade (gateway/ws.js), functionally analogous but not that .NET API",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C17-052",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Pass the selected value through the intended overload.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "acceptUpgrade(socket, up.key, PROTOCOL, extra) passes the selected value through the accept call",
+"prior_evidence": [
+"gateway/server.js:180"
+]
+},
+{
+"id": "C17-053",
+"task_class": "VERIFY",
+"area": "06. Upgrade integration",
+"req": "Verify the actual negotiated value on the resulting connection.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "assert.match(ok.headers, /Sec-WebSocket-Protocol: hermit\\.vws\\.v1/i) verifies negotiated value on the real connection",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:11"
+]
+},
+{
+"id": "C17-054",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Preserve the negotiated value in the connection handoff.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "hello payload echoes protocol:'hermit.vws.v1' into the application-level handshake too",
+"prior_evidence": [
+"gateway/connection.js:42"
+]
+},
+{
+"id": "C17-055",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Route application processing according to the agreed protocol contract.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Post-upgrade processing (state machine) assumes the single agreed protocol throughout connection.js",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C17-056",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Reject connections when required negotiation fails.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Failed negotiation -> connection refused (400), no upgrade performed",
+"prior_evidence": [
+"gateway/ws.js:32",
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-057",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Avoid upgrading before checking required protocol compatibility.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "checkUpgrade (incl. subprotocol) runs and is checked before acceptUpgrade is called",
+"prior_evidence": [
+"gateway/server.js:163",
+"gateway/server.js:180"
+]
+},
+{
+"id": "C17-058",
+"task_class": "TEST",
+"area": "06. Upgrade integration",
+"req": "Test failure when an unsupported value is passed deliberately.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "rawConnect with protocol:'other.v1' -> 400 explicitly tested",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-059",
+"task_class": "IMPLEMENT",
+"area": "06. Upgrade integration",
+"req": "Clean up resources after a negotiation-related upgrade failure.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Failed upgrades return a plain HTTP response and do not open a socket/worker, but no dedicated resource-cleanup test for this path was found",
+"prior_evidence": [
+"gateway/server.js"
+]
+},
+{
+"id": "C17-060",
+"task_class": "DOCUMENT",
+"area": "06. Upgrade integration",
+"req": "Record safe negotiation outcomes in connection diagnostics.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No connection-diagnostics record found that logs successful negotiation outcomes specifically",
+"prior_evidence": []
+},
+{
+"id": "C17-061",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test every supported protocol with a compatible client.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "The one supported protocol is exercised end-to-end by the full gateway test suite",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C17-062",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test every supported protocol with a native PowerShell client.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No native PowerShell client exists in this candidate (D-001)",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C17-063",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test browser clients that are in scope.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Chromium browser client tested: sign-in -> terminal -> commands -> reconnect",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C17-064",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test a client requesting an older supported protocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "Only one protocol version exists; no test for an 'older supported protocol' since there is no version history",
+"prior_evidence": []
+},
+{
+"id": "C17-065",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test a client requesting an unknown future protocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Unknown 'other.v1' protocol request tested -> refused (400)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-066",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test a client requesting no subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "protocol:null tested -> refused (400)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-067",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test multiple requested values in different orders.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found sending multiple requested subprotocol values in varying order",
+"prior_evidence": []
+},
+{
+"id": "C17-068",
+"task_class": "TEST",
+"area": "07. Compatibility matrix",
+"req": "Test a server configuration with no explicit subprotocol requirement.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Server always requires the subprotocol; there is no 'no requirement' configuration mode to test",
+"prior_evidence": []
+},
+{
+"id": "C17-069",
+"task_class": "DOCUMENT",
+"area": "07. Compatibility matrix",
+"req": "Record expected and observed outcomes for every matrix row.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Docstring/tap names record 3 rows (ok, wrong protocol, null); not a full matrix table with expected/observed columns",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:10-12"
+]
+},
+{
+"id": "C17-070",
+"task_class": "SPECIFY",
+"area": "07. Compatibility matrix",
+"req": "Define unsupported clients as gaps rather than silently accepting them.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Unsupported clients are refused (400) by code, but no doc explicitly frames this as a documented 'gap' policy",
+"prior_evidence": [
+"gateway/ws.js:32"
+]
+},
+{
+"id": "C17-071",
+"task_class": "IMPLEMENT",
+"area": "08. Security and robustness",
+"req": "Keep origin verification independent of selected subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Origin check (checkWsOrigin) and subprotocol check (checkUpgrade) are separate, independent functions",
+"prior_evidence": [
+"gateway/origin.js",
+"gateway/server.js:163"
+]
+},
+{
+"id": "C17-072",
+"task_class": "IMPLEMENT",
+"area": "08. Security and robustness",
+"req": "Keep credential verification independent of selected subprotocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Credential verification (identity/ticket) is a separate code path from subprotocol negotiation in server.js",
+"prior_evidence": [
+"gateway/auth.js",
+"gateway/server.js"
+]
+},
+{
+"id": "C17-073",
+"task_class": "IMPLEMENT",
+"area": "08. Security and robustness",
+"req": "Do not treat a protocol label as proof of client identity.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Subprotocol is a fixed literal, never used as an identity signal; identity comes from bearer/ticket only",
+"prior_evidence": [
+"gateway/server.js:163",
+"docs/SECURITY.md#Forged Origin"
+]
+},
+{
+"id": "C17-074",
+"task_class": "IMPLEMENT",
+"area": "08. Security and robustness",
+"req": "Limit diagnostic length for untrusted requested values.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "checkUpgrade returns only a short {status,reason} code, not the raw value, limiting diagnostic length implicitly; no explicit length cap on the parsed header it",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-075",
+"task_class": "IMPLEMENT",
+"area": "08. Security and robustness",
+"req": "Avoid reflecting malformed values into public error bodies.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "400 responses carry only fixed reason codes (e.g. 'subprotocol'), never the raw requested header value",
+"prior_evidence": [
+"gateway/ws.js:22-34"
+]
+},
+{
+"id": "C17-076",
+"task_class": "TEST",
+"area": "08. Security and robustness",
+"req": "Test an unusually long requested value.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found sending an unusually long Sec-WebSocket-Protocol value",
+"prior_evidence": []
+},
+{
+"id": "C17-077",
+"task_class": "TEST",
+"area": "08. Security and robustness",
+"req": "Test unexpected separators in the requested list.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for unexpected separators (e.g. semicolons, tabs) in the requested subprotocol list",
+"prior_evidence": []
+},
+{
+"id": "C17-078",
+"task_class": "TEST",
+"area": "08. Security and robustness",
+"req": "Test malformed input without allocating a permanent worker.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Rejection happens before acceptUpgrade/worker allocation by construction, but no dedicated test proves no worker was allocated on malformed input",
+"prior_evidence": [
+"gateway/ws.js:22-34",
+"gateway/server.js:163"
+]
+},
+{
+"id": "C17-079",
+"task_class": "REVIEW",
+"area": "08. Security and robustness",
+"req": "Review whether protocol selection changes authorization scope.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No document or review record found addressing whether protocol selection changes authorization scope",
+"prior_evidence": []
+},
+{
+"id": "C17-080",
+"task_class": "DOCUMENT",
+"area": "08. Security and robustness",
+"req": "Document any protocol-specific access rules separately.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "SECURITY.md documents access rules generally, but nothing protocol-specific since only one protocol exists",
+"prior_evidence": [
+"docs/SECURITY.md"
+]
+},
+{
+"id": "C17-081",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track accepted subprotocol distribution when useful.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No metric/log found tracking accepted-subprotocol distribution (moot with a single supported value, but not implemented)",
+"prior_evidence": []
+},
+{
+"id": "C17-082",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Track unsupported-protocol rejections separately from authentication failures.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Subprotocol rejection (400, reason:'subprotocol') is a distinct HTTP status/reason from auth failures (401/403), but no explicit metrics separation confirmed",
+"prior_evidence": [
+"gateway/ws.js:32",
+"gateway/server.js"
+]
+},
+{
+"id": "C17-083",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Record the server configuration revision used for negotiation.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of the config revision used for negotiation (value is a hardcoded constant, not versioned config)",
+"prior_evidence": []
+},
+{
+"id": "C17-084",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Provide a procedure for diagnosing client-version mismatch.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OPERATIONS.md gives general maintainer notes but no specific client-version-mismatch diagnostic procedure",
+"prior_evidence": [
+"docs/OPERATIONS.md#Maintainer notes"
+]
+},
+{
+"id": "C17-085",
+"task_class": "SPECIFY",
+"area": "09. Operations",
+"req": "Define how an old protocol is deprecated.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No design note on how an old protocol would be deprecated",
+"prior_evidence": []
+},
+{
+"id": "C17-086",
+"task_class": "SPECIFY",
+"area": "09. Operations",
+"req": "Define how clients are informed of a compatibility change.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'A binary profile, resume, or extra capabilities require a new negotiated contract' states intent, but no client-notification mechanism is defined",
+"prior_evidence": [
+"docs/PROTOCOL.md#Compatibility"
+]
+},
+{
+"id": "C17-087",
+"task_class": "TEST",
+"area": "09. Operations",
+"req": "Test deployment with both old and new supported clients.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No test deploys/tests both an old and a new supported client simultaneously (only one protocol version exists)",
+"prior_evidence": []
+},
+{
+"id": "C17-088",
+"task_class": "IMPLEMENT",
+"area": "09. Operations",
+"req": "Preserve a compatible configuration for rollback planning.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OPERATIONS.md covers general rollback/migration, but not a preserved compatible-config artifact specific to subprotocol",
+"prior_evidence": [
+"docs/OPERATIONS.md#Rollback and migration"
+]
+},
+{
+"id": "C17-089",
+"task_class": "DOCUMENT",
+"area": "09. Operations",
+"req": "Record the owner approving protocol changes.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No record naming an owner who approved the protocol/subprotocol decision",
+"prior_evidence": []
+},
+{
+"id": "C17-090",
+"task_class": "REVIEW",
+"area": "09. Operations",
+"req": "Review configured protocols for unused entries.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No review record of configured protocols for unused entries (only one hardcoded value exists)",
+"prior_evidence": []
+},
+{
+"id": "C17-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the subprotocol decision table.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "PROTOCOL.md states the required subprotocol, but no separate formal 'decision table' document was found",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C17-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish supported application semantics per protocol.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md documents the full state machine/semantics associated with hermit.vws.v1",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C17-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish no-subprotocol behavior.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No-subprotocol behavior (refused, 400) is implemented and demonstrated by a named test [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/ws.js:31-32",
+"tests/gateway/ws-conformance.test.js:12"
+]
+},
+{
+"id": "C17-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link null and overload compatibility tests.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No NOT_APPLICABLE null/overload compatibility tests exist to link (D-001, no .NET overloads)",
+"prior_evidence": []
+},
+{
+"id": "C17-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link the supported-client negotiation matrix.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Relevant negotiation tests exist and are named in EVIDENCE_INDEX.md, but no doc explicitly links them as a 'supported-client negotiation matrix'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C17-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link malformed and unsupported input tests.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "EVIDENCE_INDEX.md/PROTOCOL.md reference the wrong-subprotocol/null test by name",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:12",
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C17-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document the negotiated-value handoff.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "hello payload and PROTOCOL.md document how the negotiated value flows into the app-level handshake",
+"prior_evidence": [
+"gateway/connection.js:42",
+"docs/PROTOCOL.md#State machine"
+]
+},
+{
+"id": "C17-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document version transition expectations.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "States 'v is const 1' and that new capabilities need a new contract, but does not fully document version-transition expectations for subprotocol itself",
+"prior_evidence": [
+"docs/PROTOCOL.md#Compatibility"
+]
+},
+{
+"id": "C17-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved compatibility questions.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "No document lists unresolved subprotocol compatibility questions",
+"prior_evidence": []
+},
+{
+"id": "C17-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve configuration only after the intended clients negotiate correctly.",
+"ram_overlay": "Negotiate a versioned application subprotocol and precompute its small dispatch table. Keep the public wire contract separate from internal memory descriptors.",
+"challenge": "Reject unsupported versions; prove an unrecognized opcode or schema cannot resolve to a privileged operation.",
+"ref_work": [
+"R13",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Negotiation tests pass and are part of the release gate, but no explicit sign-off statement tied specifically to subprotocol negotiation was found",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"docs/RELEASE.md#Gate decision"
+]
+}
+]
+}

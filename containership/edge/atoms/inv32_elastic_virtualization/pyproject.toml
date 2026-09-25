@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools==79.0.1", "wheel==0.42.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv32-elastic-virtualization"
+dynamic = ["version"]
+description = "INV-32 elastic virtualization control plane (memory/vCPU adjustment inside a hard host reserve)"
+readme = "inv32_elastic_virtualization/README.md"
+requires-python = ">=3.10,<3.14"
+# License: UNDECIDED -- owner must choose (BLOCKED WS20).  No runtime dependencies (stdlib only).
+dependencies = []
+
+[project.optional-dependencies]
+inventory = ["pk_core>=1.0,<2.0"]   # BLOCKED: no released artifact/hash supplied
+test = []                            # stdlib unittest only; test deps can never leak into runtime
+
+[project.scripts]
+inv32-bootstrap = "inv32_elastic_virtualization.bootstrap:main"
+inv32-bench = "inv32_elastic_virtualization.bench:main"
+inv32-release = "inv32_elastic_virtualization.release:main"
+inv32-conformance = "inv32_elastic_virtualization.conformance_check:main"
+
+[tool.setuptools]
+packages = ["inv32_elastic_virtualization", "inv32_elastic_virtualization.adapters"]
+
+[tool.setuptools.package-data]
+inv32_elastic_virtualization = ["VERSION", "*.json", "*.md", "schemas/*.json", "conformance/*.json",
+                                "conformance/*.md", "docs/*.md", "docs/adr/*.md", "ops/*"]
+
+[tool.setuptools.dynamic]
+version = { file = "inv32_elastic_virtualization/VERSION" }
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+extend-exclude = ["inv32_elastic_virtualization/tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "UP", "I"]
+ignore = ["S101", "S311", "UP035", "E731", "B010", "I001"]
+
+[tool.ruff.lint.per-file-ignores]
+"inv32_elastic_virtualization/bench.py" = ["B023"]          # lambdas are invoked immediately inside the loop
+"inv32_elastic_virtualization/errors.py" = ["E501"]         # one-line error table
+"inv32_elastic_virtualization/contract.py" = ["E501"]       # v4.2.0 prose strings, unchanged
+"inv32_elastic_virtualization/__init__.py" = ["E402"]       # version guard precedes imports by design
+"inv32_elastic_virtualization/authz.py" = ["S105"]          # token *prefix*, not a secret
+"inv32_elastic_virtualization/release.py" = ["S603", "S607"] # fixed argv git rev-parse, no shell
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+check_untyped_defs = false
+warn_unused_ignores = true
+exclude = ["tests/"]
+
+[tool.coverage.run]
+branch = true
+source = ["inv32_elastic_virtualization"]
+omit = ["*/tests/*", "*/adapters/hyperflux.py"]
+
+[tool.coverage.report]
+fail_under = 85

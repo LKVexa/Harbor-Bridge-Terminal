@@ -1,0 +1,1685 @@
+{
+"component": "C41",
+"items": [
+{
+"id": "C41-001",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define which client categories require automatic reconnection.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Only WEB profile reconnects; IPC/LOCAL has no network transport to lose",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#3-profiles",
+"client/ws-adapter.js:1-8"
+]
+},
+{
+"id": "C41-002",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define failure conditions eligible for retry.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "retryable = not a policy close code and under maxAttempts",
+"prior_evidence": [
+"client/ws-adapter.js:118"
+]
+},
+{
+"id": "C41-003",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define failure conditions that require user or operator intervention.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "1002/1003/1007/1008/1009 and 401/403 excluded from retry",
+"prior_evidence": [
+"client/ws-adapter.js:118,136"
+]
+},
+{
+"id": "C41-004",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define whether normal deliberate user closure suppresses reconnect.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "close(): tab.closing=true and timer cleared, suppresses reconnect",
+"prior_evidence": [
+"client/ws-adapter.js:176-178"
+]
+},
+{
+"id": "C41-005",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define the maximum intended retry duration or attempt policy.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "maxAttempts default 8, enforced in scheduleReconnect/onDisconnected",
+"prior_evidence": [
+"client/ws-adapter.js:23"
+]
+},
+{
+"id": "C41-006",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define user-visible connection states.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "reconnecting/active/draining/error/auth-required/input-dropped states emitted",
+"prior_evidence": [
+"client/ws-adapter.js:126,134,136,89,95,145"
+]
+},
+{
+"id": "C41-007",
+"task_class": "IMPLEMENT",
+"area": "01. Reconnection requirements",
+"req": "Distinguish reconnecting transport from resuming an application session.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "comment + reconnect message state explicitly: new session, not resumed",
+"prior_evidence": [
+"client/ws-adapter.js:6-7,133"
+]
+},
+{
+"id": "C41-008",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Define whether offline message queuing is in scope.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "resume=false; no offline queue is an explicit decision",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-009",
+"task_class": "SPECIFY",
+"area": "01. Reconnection requirements",
+"req": "Identify state needed to reconnect to another instance.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "single-instance profile; cross-instance reconnect state N/A",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-010",
+"task_class": "IMPLEMENT",
+"area": "01. Reconnection requirements",
+"req": "Approve the reconnection state model.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "owner-approved decision row with date",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-011",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Choose an initial retry delay.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "base default 500ms",
+"prior_evidence": [
+"client/ws-adapter.js:20,23"
+]
+},
+{
+"id": "C41-012",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Choose a maximum retry delay.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "cap default 30000ms",
+"prior_evidence": [
+"client/ws-adapter.js:20"
+]
+},
+{
+"id": "C41-013",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Choose the backoff growth rule.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "base*2^attempt exponential growth",
+"prior_evidence": [
+"client/ws-adapter.js:20"
+]
+},
+{
+"id": "C41-014",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Choose the jitter strategy.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "full jitter: uniform(0,cap)",
+"prior_evidence": [
+"client/ws-adapter.js:19-20"
+]
+},
+{
+"id": "C41-015",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Define a maximum retry-attempt policy or an intentional unbounded-session policy.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "maxAttempts=8, bounded not unbounded",
+"prior_evidence": [
+"client/ws-adapter.js:23"
+]
+},
+{
+"id": "C41-016",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Define when the backoff counter resets.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "tab.attempt=0 on session.opened (successful connect)",
+"prior_evidence": [
+"client/ws-adapter.js:76"
+]
+},
+{
+"id": "C41-017",
+"task_class": "SPECIFY",
+"area": "02. Backoff policy",
+"req": "Define whether a very short successful connection counts as stable.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "any successful open resets counter immediately; no minimum-stable-duration rule defined",
+"prior_evidence": []
+},
+{
+"id": "C41-018",
+"task_class": "IMPLEMENT",
+"area": "02. Backoff policy",
+"req": "Bound arithmetic used to calculate long retry sequences.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Math.min(cap, base*2^attempt) bounds the arithmetic; maxAttempts limits exponent",
+"prior_evidence": [
+"client/ws-adapter.js:20"
+]
+},
+{
+"id": "C41-019",
+"task_class": "IMPLEMENT",
+"area": "02. Backoff policy",
+"req": "Avoid synchronized deterministic retries across clients.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Math.random() jitter; test verifies supplied randomness is used",
+"prior_evidence": [
+"client/ws-adapter.js:20",
+"tests/ui/client-units.test.js:8-10"
+]
+},
+{
+"id": "C41-020",
+"task_class": "DOCUMENT",
+"area": "02. Backoff policy",
+"req": "Document the selected policy as application configuration rather than an article constant.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "reconnect policy recorded as data in limits.json, not a hardcoded literal",
+"prior_evidence": [
+"config/limits.json:11"
+]
+},
+{
+"id": "C41-021",
+"task_class": "IMPLEMENT",
+"area": "03. Failure classification",
+"req": "Retry eligible temporary connection failures.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "retryable temporary failures trigger scheduleReconnect",
+"prior_evidence": [
+"client/ws-adapter.js:118-120"
+]
+},
+{
+"id": "C41-022",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for name-resolution failure.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit design note distinguishing DNS/name-resolution failure; browser WS API surfaces it as a generic error",
+"prior_evidence": []
+},
+{
+"id": "C41-023",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for service unavailability.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "draining 503 causes connect failure -> retried, but no named design statement for 'service unavailable'",
+"prior_evidence": [
+"client/ws-adapter.js:118",
+"gateway/server.js:120"
+]
+},
+{
+"id": "C41-024",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for authentication rejection.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "401 -> auth-required state, retries stopped",
+"prior_evidence": [
+"client/ws-adapter.js:136"
+]
+},
+{
+"id": "C41-025",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for authorization rejection.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "403 handled identically to 401",
+"prior_evidence": [
+"client/ws-adapter.js:136"
+]
+},
+{
+"id": "C41-026",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for incompatible subprotocol selection.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no client-side handling distinguishing subprotocol mismatch from other connect failures",
+"prior_evidence": []
+},
+{
+"id": "C41-027",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for malformed endpoint configuration.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "wsUrl() derives from server-provided config.json; no malformed-endpoint client behavior defined",
+"prior_evidence": []
+},
+{
+"id": "C41-028",
+"task_class": "SPECIFY",
+"area": "03. Failure classification",
+"req": "Define behavior for certificate validation failure.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "BLOCKED",
+"prior_note": "TLS edge not exercised in this environment",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run",
+"docs/SECURITY.md#residual-risks item 5"
+]
+},
+{
+"id": "C41-029",
+"task_class": "IMPLEMENT",
+"area": "03. Failure classification",
+"req": "Avoid automatically retrying permanently invalid settings without intervention.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "auth failures stop automatic retry, require sign-in",
+"prior_evidence": [
+"client/ws-adapter.js:136"
+]
+},
+{
+"id": "C41-030",
+"task_class": "IMPLEMENT",
+"area": "03. Failure classification",
+"req": "Preserve a safe failure category for the user interface.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "state.emit carries code/detail, no raw credentials",
+"prior_evidence": [
+"client/ws-adapter.js:95,126,136"
+]
+},
+{
+"id": "C41-031",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Allow only one active connection attempt per logical client.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'if (tab.timer) return' plus one conn per tab record",
+"prior_evidence": [
+"client/ws-adapter.js:124"
+]
+},
+{
+"id": "C41-032",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Cancel an obsolete attempt before replacing it.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "generation fencing (tab.conn !== rec) and timer clear on close",
+"prior_evidence": [
+"client/ws-adapter.js:62,66,178"
+]
+},
+{
+"id": "C41-033",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Create a fresh client socket when required by the runtime lifecycle.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "new o.WebSocketImpl(...) each connect() call",
+"prior_evidence": [
+"client/ws-adapter.js:52"
+]
+},
+{
+"id": "C41-034",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Supply the current endpoint configuration.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "wsUrl() built from fetched /config.json each session",
+"prior_evidence": [
+"client/ws-adapter.js:45-48"
+]
+},
+{
+"id": "C41-035",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Supply currently valid credentials through the approved mechanism.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "ticket() fetched fresh before every connect attempt",
+"prior_evidence": [
+"client/ws-adapter.js:37-43,131"
+]
+},
+{
+"id": "C41-036",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Supply the intended subprotocol configuration.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "subprotocol [C.PROTOCOL] passed to WebSocket constructor",
+"prior_evidence": [
+"client/ws-adapter.js:52"
+]
+},
+{
+"id": "C41-037",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Apply client keep-alive configuration before connecting where required.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "browser WebSocket API has no pre-connect keep-alive option; heartbeat is a post-connect app-level exchange",
+"prior_evidence": [
+"client/ws-adapter.js:88"
+]
+},
+{
+"id": "C41-038",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Bound connection-attempt waiting according to the approved policy.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no explicit connect-attempt timeout found; relies on onerror/onclose only",
+"prior_evidence": [
+"client/ws-adapter.js:50-101"
+]
+},
+{
+"id": "C41-039",
+"task_class": "IMPLEMENT",
+"area": "04. Connection-attempt control",
+"req": "Dispose failed attempt resources.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "ackTimer cleared on close; barrier.drop(tab.id) on failed open",
+"prior_evidence": [
+"client/ws-adapter.js:60,163"
+]
+},
+{
+"id": "C41-040",
+"task_class": "DOCUMENT",
+"area": "04. Connection-attempt control",
+"req": "Record attempt completion before scheduling another attempt.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tab.attempt incremented and state emitted before scheduling the timer [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"client/ws-adapter.js:125-126"
+]
+},
+{
+"id": "C41-041",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Schedule retries through the selected client timing mechanism.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "setTimeout used for scheduling",
+"prior_evidence": [
+"client/ws-adapter.js:127"
+]
+},
+{
+"id": "C41-042",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Keep the interface responsive while waiting for retry.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "async non-blocking timer callback; UI remains responsive",
+"prior_evidence": [
+"client/ws-adapter.js:127-140"
+]
+},
+{
+"id": "C41-043",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Add the selected random jitter to eligible delays.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "backoffMs applies random jitter to each scheduled delay",
+"prior_evidence": [
+"client/ws-adapter.js:20,125"
+]
+},
+{
+"id": "C41-044",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Cap delays at the approved maximum.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Math.min(cap,...) caps every delay",
+"prior_evidence": [
+"client/ws-adapter.js:20"
+]
+},
+{
+"id": "C41-045",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Cancel the timer when the user disconnects intentionally.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "clearTimeout(tab.timer) in close()",
+"prior_evidence": [
+"client/ws-adapter.js:178"
+]
+},
+{
+"id": "C41-046",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Cancel the timer when the application exits.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "browser tab/page unload naturally kills JS timers; no separate app-exit hook exists or is needed",
+"prior_evidence": [
+"client/ws-adapter.js"
+]
+},
+{
+"id": "C41-047",
+"task_class": "IMPLEMENT",
+"area": "05. Timer implementation",
+"req": "Avoid retaining multiple retry timers for one client.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'if (tab.timer) return' guarantees at most one timer per tab",
+"prior_evidence": [
+"client/ws-adapter.js:124"
+]
+},
+{
+"id": "C41-048",
+"task_class": "TEST",
+"area": "05. Timer implementation",
+"req": "Test backoff timing with a controllable clock or test harness.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "backoffMs tested with injected random function across attempts 0..11",
+"prior_evidence": [
+"tests/ui/client-units.test.js:8-10"
+]
+},
+{
+"id": "C41-049",
+"task_class": "TEST",
+"area": "05. Timer implementation",
+"req": "Test arithmetic after many failed attempts.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "loop covers attempts beyond maxAttempts, cap behavior verified",
+"prior_evidence": [
+"tests/ui/client-units.test.js:8-10"
+]
+},
+{
+"id": "C41-050",
+"task_class": "DOCUMENT",
+"area": "05. Timer implementation",
+"req": "Record actual scheduled delays in synthetic test evidence.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no e/ evidence file recording actual scheduled delay values from a synthetic run",
+"prior_evidence": []
+},
+{
+"id": "C41-051",
+"task_class": "IMPLEMENT",
+"area": "06. Session restoration",
+"req": "Authenticate the new connection independently of the old one.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "await ticket() re-authenticates independently on every reconnect",
+"prior_evidence": [
+"client/ws-adapter.js:131"
+]
+},
+{
+"id": "C41-052",
+"task_class": "IMPLEMENT",
+"area": "06. Session restoration",
+"req": "Reconstruct required logical session state.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "resume=false: no logical session state is reconstructed by design",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-053",
+"task_class": "IMPLEMENT",
+"area": "06. Session restoration",
+"req": "Support reconnection to a different server instance.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "single-instance profile; cross-instance reconnection not applicable",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-054",
+"task_class": "IMPLEMENT",
+"area": "06. Session restoration",
+"req": "Re-establish subscriptions required by the application.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "protocol has no subscription concept to re-establish",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C41-055",
+"task_class": "SPECIFY",
+"area": "06. Session restoration",
+"req": "Define whether any client cursor or resume marker is needed.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "publicConfig capabilities.resume:false is the explicit answer: no cursor/marker",
+"prior_evidence": [
+"gateway/config.js:94"
+]
+},
+{
+"id": "C41-056",
+"task_class": "IMPLEMENT",
+"area": "06. Session restoration",
+"req": "Reject unauthorized or expired session resumption.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "single-use, TTL-bound, origin-bound tickets reject reuse",
+"prior_evidence": [
+"gateway/tickets.js",
+"tests/security/authz.test.js ticket single-use/expiry"
+]
+},
+{
+"id": "C41-057",
+"task_class": "IMPLEMENT",
+"area": "06. Session restoration",
+"req": "Distinguish successful transport connection from successful session restoration.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "ws.onopen does not resolve; only session.opened resolves the connect promise",
+"prior_evidence": [
+"client/ws-adapter.js:57,74-77"
+]
+},
+{
+"id": "C41-058",
+"task_class": "SPECIFY",
+"area": "06. Session restoration",
+"req": "Define behavior when restoration is impossible.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "documented: reconnect always opens a new session, terminal states this to the user",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-059",
+"task_class": "TEST",
+"area": "06. Session restoration",
+"req": "Test restoration after the old instance disappears.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "single-instance profile; 'old instance disappears' cross-instance scenario is N/A",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-060",
+"task_class": "DOCUMENT",
+"area": "06. Session restoration",
+"req": "Document which state is intentionally not restored.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'Raw keystrokes and command text are never replayed' documents non-restored state",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-061",
+"task_class": "SPECIFY",
+"area": "07. Message recovery",
+"req": "Identify messages potentially interrupted by disconnect.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "rec.pending.size counts unacknowledged input messages at disconnect",
+"prior_evidence": [
+"client/ws-adapter.js:109"
+]
+},
+{
+"id": "C41-062",
+"task_class": "SPECIFY",
+"area": "07. Message recovery",
+"req": "Define whether clients retry interrupted application requests.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "explicit note: 'Nothing will be re-sent automatically'",
+"prior_evidence": [
+"client/ws-adapter.js:116"
+]
+},
+{
+"id": "C41-063",
+"task_class": "SPECIFY",
+"area": "07. Message recovery",
+"req": "Define duplicate-detection requirements before enabling replay.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "replay is not implemented (resume=false); duplicate-detection design N/A",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-064",
+"task_class": "SPECIFY",
+"area": "07. Message recovery",
+"req": "Define ordering for replayed and newly created messages.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no replay feature; ordering-of-replay design N/A",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-065",
+"task_class": "IMPLEMENT",
+"area": "07. Message recovery",
+"req": "Bound any offline message queue if selected.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no offline queue was selected; input is dropped with an explicit notice instead",
+"prior_evidence": [
+"client/ws-adapter.js:145"
+]
+},
+{
+"id": "C41-066",
+"task_class": "SPECIFY",
+"area": "07. Message recovery",
+"req": "Define behavior when that queue reaches capacity.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no queue exists, so a capacity-behavior design is N/A",
+"prior_evidence": [
+"client/ws-adapter.js:145"
+]
+},
+{
+"id": "C41-067",
+"task_class": "IMPLEMENT",
+"area": "07. Message recovery",
+"req": "Avoid claiming exactly-once delivery without an implemented application mechanism.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "explicit OUTCOME UNKNOWN language; exactly-once delivery is never claimed",
+"prior_evidence": [
+"client/ws-adapter.js:116",
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-068",
+"task_class": "TEST",
+"area": "07. Message recovery",
+"req": "Test disconnect before local send completion.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found isolating disconnect before the local send call completes",
+"prior_evidence": []
+},
+{
+"id": "C41-069",
+"task_class": "TEST",
+"area": "07. Message recovery",
+"req": "Test disconnect after local send completion but before application response.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated test for disconnect after send but before ack/response",
+"prior_evidence": []
+},
+{
+"id": "C41-070",
+"task_class": "IMPLEMENT",
+"area": "07. Message recovery",
+"req": "Mark replay features N/A when the application does not support them.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "publicConfig capabilities.resume:false marks replay N/A to clients",
+"prior_evidence": [
+"gateway/config.js:94"
+]
+},
+{
+"id": "C41-071",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Simulate many clients reconnecting after one deployment.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3 measures 8 concurrent session opens, not a post-deployment mass-reconnect simulation",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured",
+"e/I053/bench.json"
+]
+},
+{
+"id": "C41-072",
+"task_class": "VERIFY",
+"area": "08. Load and stability",
+"req": "Verify retry timing is distributed by the jitter policy.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "jitter bounds proven for one client; no multi-client distribution measurement",
+"prior_evidence": [
+"tests/ui/client-units.test.js:8-10"
+]
+},
+{
+"id": "C41-073",
+"task_class": "MEASURE",
+"area": "08. Load and stability",
+"req": "Measure reconnect load against server admission capacity.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no measurement of reconnect-storm load against admission capacity found",
+"prior_evidence": []
+},
+{
+"id": "C41-074",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Test repeated brief connection failures.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test for repeated brief connection failures from the client side",
+"prior_evidence": []
+},
+{
+"id": "C41-075",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Test a stable connection that resets backoff under the chosen rule.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test asserting attempt counter reset after a stable connection",
+"prior_evidence": []
+},
+{
+"id": "C41-076",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Test a long service outage.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no long-outage test; maxAttempts=8 gives up but scenario untested",
+"prior_evidence": []
+},
+{
+"id": "C41-077",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Test recovery after credentials rotate.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "covers revocation, not recovery after a credential rotation reissue",
+"prior_evidence": [
+"tests/security/authz.test.js revocation ends a live session"
+]
+},
+{
+"id": "C41-078",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Test a slow server startup.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no slow-server-startup test found",
+"prior_evidence": []
+},
+{
+"id": "C41-079",
+"task_class": "TEST",
+"area": "08. Load and stability",
+"req": "Test the client while its network is unavailable.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'transport loss -> fresh-ticket reconnect as NEW session' exercised in real Chromium",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C41-080",
+"task_class": "DOCUMENT",
+"area": "08. Load and stability",
+"req": "Record the server and client resource impact of retry behavior.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "docs/RESOURCE_MODEL.md has no measurement of retry-storm resource impact",
+"prior_evidence": []
+},
+{
+"id": "C41-081",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Show connecting and connected states distinctly.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "reconnecting/active states shown; first-attempt 'connecting' state is not emitted separately",
+"prior_evidence": [
+"client/ws-adapter.js:126,134"
+]
+},
+{
+"id": "C41-082",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Show reconnecting without implying the session is already restored.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'reconnecting in Ns' then explicit 'this is a NEW session' on success",
+"prior_evidence": [
+"client/ws-adapter.js:126,133"
+]
+},
+{
+"id": "C41-083",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Show permanent configuration or credential failures distinctly.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'auth-required' is a distinct state from 'reconnecting'",
+"prior_evidence": [
+"client/ws-adapter.js:136"
+]
+},
+{
+"id": "C41-084",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Provide an intentional disconnect action that cancels retries.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "close(sessionId) cancels timer and ends the session",
+"prior_evidence": [
+"client/ws-adapter.js:176-181"
+]
+},
+{
+"id": "C41-085",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Avoid exposing raw endpoint credentials in messages.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "state/detail strings never include tokens",
+"prior_evidence": [
+"client/ws-adapter.js:95,126,136",
+"docs/SECURITY.md#controls"
+]
+},
+{
+"id": "C41-086",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Track attempts and delay values in safe diagnostics.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "state.emit includes delayMs and attempt count via detail text",
+"prior_evidence": [
+"client/ws-adapter.js:126"
+]
+},
+{
+"id": "C41-087",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Track final recovery duration.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no metric tracking total time-to-recovery across the retry sequence",
+"prior_evidence": []
+},
+{
+"id": "C41-088",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Track session-restoration failures separately from transport failures.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "session restoration is not a feature (resume=false), so no separate failure category is needed",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-089",
+"task_class": "DOCUMENT",
+"area": "09. User experience and diagnostics",
+"req": "Document user-visible behavior during redeployment.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "service.draining message to client is documented user-visible redeploy behavior",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown"
+]
+},
+{
+"id": "C41-090",
+"task_class": "IMPLEMENT",
+"area": "09. User experience and diagnostics",
+"req": "Provide a reproducible reconnect troubleshooting scenario.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "Playwright scenario simulating transport loss and reconnect is a reproducible troubleshooting scenario",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C41-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the backoff and jitter configuration.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "backoff/jitter policy published in both machine-readable and doc form",
+"prior_evidence": [
+"config/limits.json:11",
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish retryable and nonretryable failure decisions.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "retryable vs non-retryable close codes and auth failures published",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish transport and session state transitions.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "transport/session transitions documented across PROTOCOL and RECOVERY",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link single-attempt and timer-cancellation tests.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no test specifically exercises single-attempt enforcement or timer cancellation as named scenarios",
+"prior_evidence": []
+},
+{
+"id": "C41-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link multi-client reconnect distribution tests.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "OPEN",
+"prior_note": "no multi-client reconnect distribution test exists to link",
+"prior_evidence": []
+},
+{
+"id": "C41-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link cross-instance session restoration tests.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "single-instance profile; cross-instance test N/A",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link interrupted-message recovery tests when applicable.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no replay feature implemented, so no applicable test to link",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C41-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document deliberate disconnect behavior.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "'cancelled by explicit close' documents deliberate-disconnect behavior",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect"
+]
+},
+{
+"id": "C41-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved delivery guarantees.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "OUTCOME UNKNOWN for unacked input is a recorded unresolved delivery guarantee",
+"prior_evidence": [
+"docs/RECOVERY.md#reconnect",
+"client/ws-adapter.js:116"
+]
+},
+{
+"id": "C41-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve reconnection only after retries remain bounded controlled and recoverable.",
+"ram_overlay": "Use bounded backoff with jitter and re-authenticate on reconnect. Resume only with a valid principal/epoch/replay window; do not replay terminal commands automatically after an ambiguous failure.",
+"challenge": "Reconnect across process restart and instance changes; surface SESSION_RESET or OUTCOME_UNKNOWN as appropriate.",
+"ref_work": [
+"R26",
+"R30"
+],
+"prior_status": "PASS",
+"prior_note": "owner-approved bounded policy (max 8 attempts, capped delay) backed by passing tests",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004",
+"tests/ui/client-units.test.js"
+]
+}
+]
+}

@@ -1,0 +1,2700 @@
+{
+  "schema": "INV63_AUDIT/2",
+  "element": "INV-63",
+  "name": "Wasm deployment manager",
+  "version": "4.3.0",
+  "audit_date": "2026-09-23",
+  "source_digest": "sha256:6b3e4bc5b4fe30185b2143ebeff419c22c5f743e68ab277d6d2bbdd05851dc4f",
+  "method": "executable: audit.py (tests + refs + approvals); no status is asserted by hand",
+  "test_summary": {
+    "total": 110,
+    "passed": 107,
+    "failed": 0,
+    "skipped": 3
+  },
+  "summary": {
+    "SATISFIED": 72,
+    "PARTIAL": 28,
+    "MISSING": 0
+  },
+  "requirements": [
+    {
+      "check_id": "INV-63-C001",
+      "ordinal": 1,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the exact production responsibility of Wasm deployment manager.",
+      "shall": "The manager SHALL own desired-state storage, diff computation, spread, convergence and bounded rollouts only.",
+      "status": "SATISFIED",
+      "implementation": [
+        "contract.py::build",
+        "service.py::DeploymentService"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C002",
+      "ordinal": 2,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document what Wasm deployment manager owns and explicitly does not own.",
+      "shall": "The manager SHALL NOT define manifests, run components, sign artifacts or provision hosts.",
+      "status": "SATISFIED",
+      "implementation": [
+        "contract.py::build"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C003",
+      "ordinal": 3,
+      "dimension": "Architecture & Scope",
+      "requirement": "Identify upstream, downstream, and peer dependencies of Wasm deployment manager.",
+      "shall": "Upstream INV-64, downstream INV-60/INV-66 and peer GAP-08 dependencies SHALL be declared.",
+      "status": "SATISFIED",
+      "implementation": [
+        "contract.py::build",
+        "docs/interfaces/BOUNDARIES.json"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C004",
+      "ordinal": 4,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the authoritative source of truth used by Wasm deployment manager.",
+      "shall": "The journaled desired-state record SHALL be the source of truth; lattice state is observed and corrected.",
+      "status": "SATISFIED",
+      "implementation": [
+        "store.py::Journal",
+        "service.py::_observe"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C005",
+      "ordinal": 5,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document assumptions Wasm deployment manager makes about nodes, runtimes, networks, storage, and control planes.",
+      "shall": "Every node/runtime/network/storage/control-plane assumption SHALL be catalogued and, where feasible, checked at startup.",
+      "status": "PARTIAL",
+      "implementation": [
+        "preflight.py::run",
+        "service.py::status"
+      ],
+      "design": [
+        "docs/architecture/ASSUMPTIONS.md"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_architecture_docs_carry_governance_header",
+        "test_governance.OwnershipAndDocsTest.test_assumption_catalogue_matches_preflight",
+        "test_governance.OwnershipAndDocsTest.test_every_referenced_artifact_exists",
+        "test_service.HealthTest.test_status_exposes_health_readiness_version_config_deps_caps"
+      ],
+      "tests_passed": 4,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "arch-review",
+          "role": "architecture-approver",
+          "what": "Peer review + approval of docs/architecture/* by architecture, runtime, SRE and security; tabletop of one violated assumption"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C006",
+      "ordinal": 6,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Wasm deployment manager.",
+      "shall": "Tenant, environment, site and workload boundaries SHALL be enforced.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::namespace",
+        "config.py::load_layers"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C007",
+      "ordinal": 7,
+      "dimension": "Architecture & Scope",
+      "requirement": "Separate mandatory Wasm deployment manager capabilities from optional optimizations.",
+      "shall": "Mandatory vs optional behaviour SHALL be declared.",
+      "status": "SATISFIED",
+      "implementation": [
+        "contract.py::build"
+      ],
+      "design": [
+        "README.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C008",
+      "ordinal": 8,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document unsupported deployment patterns and non-goals for Wasm deployment manager.",
+      "shall": "Non-goals SHALL be declared.",
+      "status": "SATISFIED",
+      "implementation": [
+        "contract.py::build"
+      ],
+      "design": [
+        "README.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C009",
+      "ordinal": 9,
+      "dimension": "Architecture & Scope",
+      "requirement": "Assign an accountable owner and escalation path for Wasm deployment manager.",
+      "shall": "An accountable owner, on-call rotation, security contact, release approver and escalation path SHALL be recorded and validated.",
+      "status": "PARTIAL",
+      "implementation": [
+        "OWNERS.yaml",
+        "CODEOWNERS",
+        "gate.py::check_owners"
+      ],
+      "design": [
+        "ops/runbooks/INCIDENT.md"
+      ],
+      "tests": [
+        "test_governance.GateTest.test_unassigned_or_stale_ownership_blocks",
+        "test_governance.OwnershipAndDocsTest.test_owners_manifest_covers_raci_and_escalation"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "owner-assignment",
+          "role": "service-owner",
+          "what": "Named, active owners/on-call/security/release roles in OWNERS.yaml (no UNASSIGNED) and a validated escalation path"
+        },
+        {
+          "key": "arch-review",
+          "role": "architecture-approver",
+          "what": "Peer review + approval of docs/architecture/* by architecture, runtime, SRE and security; tabletop of one violated assumption"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C010",
+      "ordinal": 10,
+      "dimension": "Architecture & Scope",
+      "requirement": "Approve an architecture decision record for Wasm deployment manager, its technologies (Wadm), and its function (Desired-state deployment/reconciliation).",
+      "shall": "An approved ADR SHALL record Wadm selection, role, alternatives, boundaries, data ownership, failure model and acceptance criteria.",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_architecture_docs_carry_governance_header",
+        "test_governance.OwnershipAndDocsTest.test_every_referenced_artifact_exists"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "arch-review",
+          "role": "architecture-approver",
+          "what": "Peer review + approval of docs/architecture/* by architecture, runtime, SRE and security; tabletop of one violated assumption"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C011",
+      "ordinal": 11,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Translate the source function of Wasm deployment manager \u2014 Desired-state deployment/reconciliation \u2014 into testable SHALL-level requirements.",
+      "shall": "Desired-state reconciliation SHALL be specified as testable SHALL requirements (this catalogue).",
+      "status": "SATISFIED",
+      "implementation": [
+        "docs/requirements/REQUIREMENTS.json"
+      ],
+      "design": [
+        "docs/requirements/REQUIREMENTS.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_desired_reconcile_converges_and_rests"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C012",
+      "ordinal": 12,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define functional requirements for Wasm deployment manager across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "shall": "Functional behaviour SHALL be defined per tier: cloud, datacenter, near-edge and far-edge (offline autonomy, constrained limits).",
+      "status": "SATISFIED",
+      "implementation": [
+        "config.py::validate",
+        "deploy/config/site/edge-site-a.json",
+        "service.py::reconcile_ns"
+      ],
+      "design": [
+        "docs/requirements/REQUIREMENTS.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_desired_reconcile_converges_and_rests"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C013",
+      "ordinal": 13,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "shall": "Latency, availability, durability, consistency, isolation and determinism SHALL have numeric NFRs verified by tests/benchmarks.",
+      "status": "PARTIAL",
+      "implementation": [
+        "perf/thresholds.json",
+        "perf/bench.py",
+        "store.py::Journal.append"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "perf-approval",
+          "role": "service-owner",
+          "what": "perf/thresholds.json re-baselined and approved on reference hardware"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C014",
+      "ordinal": 14,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Wasm deployment manager.",
+      "shall": "Every response SHALL carry one of SUCCESS, PARTIAL, DEGRADED, RETRYABLE, TERMINAL with defined semantics.",
+      "status": "SATISFIED",
+      "implementation": [
+        "errors.py::Outcome",
+        "service.py::handle"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_desired_reconcile_converges_and_rests",
+        "test_service.SemanticsTest.test_partial_outcome_when_some_starts_fail",
+        "test_service.SemanticsTest.test_terminal_and_retryable_errors_are_structured"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C015",
+      "ordinal": 15,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Wasm deployment manager.",
+      "shall": "Lifecycle states and legal transitions SHALL be defined and illegal transitions rejected.",
+      "status": "SATISFIED",
+      "implementation": [
+        "lifecycle.py::TRANSITIONS",
+        "lifecycle.py::Lifecycle"
+      ],
+      "design": [
+        "docs/architecture/LIFECYCLE.md"
+      ],
+      "tests": [
+        "test_service.ReviewFixesTest.test_failed_rollback_marks_failed",
+        "test_service.ReviewFixesTest.test_scale_to_zero_reaches_deleted",
+        "test_service.SemanticsTest.test_illegal_transitions_rejected"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C016",
+      "ordinal": 16,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define versioning and backward-compatibility requirements for Wasm deployment manager.",
+      "shall": "Contracts SHALL be semver'd by schema major; minors additive; deprecations dated; the legacy Manager API preserved.",
+      "status": "SATISFIED",
+      "implementation": [
+        "schema.py::SUPPORTED",
+        "schema.py::DEPRECATED"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ],
+      "tests": [
+        "test_contracts.CompatibilityTest.test_legacy_manager_api_unchanged",
+        "test_contracts.CompatibilityTest.test_v1_desired_accepted_when_signing_not_required",
+        "test_contracts.CompatibilityTest.test_version_negotiation"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C017",
+      "ordinal": 17,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Wasm deployment manager.",
+      "shall": "Per-tenant instance quotas, request-rate fairness and global capacity ceilings SHALL be enforced.",
+      "status": "SATISFIED",
+      "implementation": [
+        "resilience.py::Admission",
+        "service.py::op_set_desired"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_tenant_quota_enforced"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C018",
+      "ordinal": 18,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "shall": "With intermittent/absent connectivity the manager SHALL journal intents, report DEGRADED within the autonomy window, fail RETRYABLE beyond it, and resynchronise on reconnect.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::reconcile_ns",
+        "service.py::resync"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_service.ReviewFixesTest.test_tick_resyncs_automatically",
+        "test_service.SemanticsTest.test_offline_beyond_autonomy_window_is_retryable_failure",
+        "test_service.SemanticsTest.test_offline_mode_queues_intent_then_resyncs"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C019",
+      "ordinal": 19,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define precedence rules when Wasm deployment manager requirements conflict with security, residency, SLO, or cost constraints.",
+      "shall": "Conflicts SHALL resolve in precedence security > residency > consistency > SLO > cost.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::PRECEDENCE",
+        "service.py::_eligible"
+      ],
+      "design": [
+        "docs/requirements/PRECEDENCE.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_precedence_residency_over_spread"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C020",
+      "ordinal": 20,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Maintain a requirements traceability matrix from each Wasm deployment manager requirement to implementation and verification evidence.",
+      "shall": "A traceability matrix requirement->design->implementation->test->evidence->owner SHALL be generated per release.",
+      "status": "SATISFIED",
+      "implementation": [
+        "audit.py::write_docs"
+      ],
+      "design": [
+        "docs/requirements/TRACEABILITY.md"
+      ],
+      "tests": [
+        "test_governance.GateTest.test_revision_signoff_required_for_go",
+        "test_governance.OwnershipAndDocsTest.test_every_referenced_artifact_exists"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C021",
+      "ordinal": 21,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Wasm deployment manager.",
+      "shall": "Every exposed boundary SHALL be inventoried with contract, authN, authZ, timeout, limits and owner.",
+      "status": "SATISFIED",
+      "implementation": [
+        "docs/interfaces/BOUNDARIES.json"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ],
+      "tests": [
+        "test_contracts.SchemaTest.test_boundary_inventory_matches_code"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C022",
+      "ordinal": 22,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Use versioned typed schemas for all externally visible Wasm deployment manager contracts.",
+      "shall": "Every external contract SHALL have a versioned JSON schema validated at the boundary.",
+      "status": "SATISFIED",
+      "implementation": [
+        "schema.py::validate",
+        "schemas/"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ],
+      "tests": [
+        "test_contracts.SchemaTest.test_conformance_fixtures",
+        "test_contracts.SchemaTest.test_every_contract_has_a_versioned_schema",
+        "test_service.SemanticsTest.test_terminal_and_retryable_errors_are_structured"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C023",
+      "ordinal": 23,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authentication requirements at each Wasm deployment manager boundary.",
+      "shall": "Every inbound boundary SHALL authenticate callers (signed, expiring, replay-protected tokens).",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::TokenAuthority"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.AuthNTest.test_key_rotation",
+        "test_security.AuthNTest.test_spoofed_expired_and_foreign_tokens_rejected",
+        "test_security.AuthNTest.test_token_replay_detected"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C024",
+      "ordinal": 24,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authorization and explicit capability requirements at each Wasm deployment manager boundary.",
+      "shall": "Every operation SHALL require an explicit capability, scoped to the caller's tenant.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::Authorizer",
+        "security.py::OP_CAPABILITY"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.AuthZTest.test_cross_tenant_access_blocked",
+        "test_security.AuthZTest.test_privilege_escalation_blocked",
+        "test_service.ControlsTest.test_freeze_quarantine_and_emergency_disable"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C025",
+      "ordinal": 25,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Wasm deployment manager.",
+      "shall": "Timeouts, cancellation, retries (idempotent only), idempotency keys and backpressure SHALL be defined and enforced.",
+      "status": "SATISFIED",
+      "implementation": [
+        "resilience.py::Deadline",
+        "resilience.py::RetryPolicy",
+        "service.py::handle"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ],
+      "tests": [
+        "test_platform.ResilienceTest.test_bounded_retry_with_jitter_only_for_retryable_idempotent",
+        "test_service.IdempotencyTest.test_deadline_exceeded",
+        "test_service.IdempotencyTest.test_idempotency_key_replay_and_conflict"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C026",
+      "ordinal": 26,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define structured failure codes and machine-readable error details for Wasm deployment manager.",
+      "shall": "Every failure SHALL be a stable code with retryability and machine-readable details.",
+      "status": "SATISFIED",
+      "implementation": [
+        "errors.py::ErrorCode",
+        "errors.py::DeploymentError"
+      ],
+      "design": [
+        "docs/interfaces/ERROR_CODES.md"
+      ],
+      "tests": [
+        "test_contracts.SchemaTest.test_error_catalog_complete",
+        "test_service.SemanticsTest.test_partial_outcome_when_some_starts_fail",
+        "test_service.SemanticsTest.test_terminal_and_retryable_errors_are_structured"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C027",
+      "ordinal": 27,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "shall": "Peers SHALL negotiate the highest common schema major and fail closed when none exists.",
+      "status": "SATISFIED",
+      "implementation": [
+        "schema.py::negotiate"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ],
+      "tests": [
+        "test_contracts.CompatibilityTest.test_v1_desired_accepted_when_signing_not_required",
+        "test_contracts.CompatibilityTest.test_version_negotiation"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C028",
+      "ordinal": 28,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Wasm deployment manager interfaces.",
+      "shall": "Payload, depth, concurrency, queue, rate and size limits SHALL be documented and enforced.",
+      "status": "SATISFIED",
+      "implementation": [
+        "schema.py::MAX_PAYLOAD_BYTES",
+        "resilience.py::Admission"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ],
+      "tests": [
+        "test_contracts.SchemaTest.test_documented_limits_are_enforced"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C029",
+      "ordinal": 29,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Provide reference examples and conformance fixtures for Wasm deployment manager.",
+      "shall": "Reference examples and digest-bound conformance fixtures SHALL ship with the package.",
+      "status": "SATISFIED",
+      "implementation": [
+        "fixtures/FIXTURES.json",
+        "tools/gen_fixtures.py"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ],
+      "tests": [
+        "test_contracts.SchemaTest.test_conformance_fixtures"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C030",
+      "ordinal": 30,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Create automated integration tests proving Wasm deployment manager interoperates with adjacent architectural layers.",
+      "shall": "Automated tests SHALL prove interoperation with INV-64 (desired input), INV-60 (lattice) and INV-66 (controller).",
+      "status": "PARTIAL",
+      "implementation": [
+        "adapter.py::InMemoryLattice",
+        "adapter.py::WadmAdapter"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_desired_reconcile_converges_and_rests",
+        "test_service.WadmAdapterContractTest.test_wadm_adapter_satisfies_lattice_protocol_with_fake_transport"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "wadm-live",
+          "role": "service-owner",
+          "what": "Integration run of tests against a live pinned Wadm + wasmCloud lattice (WadmAdapter transport), results attached"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C031",
+      "ordinal": 31,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Select and pin approved implementations, versions, or specifications for Wasm deployment manager: Wadm.",
+      "shall": "Wadm and all runtime dependencies SHALL be pinned by version and digest and approved.",
+      "status": "PARTIAL",
+      "implementation": [
+        "pins.json",
+        "requirements.lock"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ],
+      "tests": [
+        "test_contracts.CompatibilityTest.test_wadm_manifest_rendering",
+        "test_service.WadmAdapterContractTest.test_wadm_adapter_satisfies_lattice_protocol_with_fake_transport"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "wadm-pin",
+          "role": "release-approver",
+          "what": "Wadm release + digest selected and recorded in pins.json with approved=true"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C032",
+      "ordinal": 32,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Wasm deployment manager.",
+      "shall": "Immutable package, mutable config and mutable state SHALL be physically separate.",
+      "status": "SATISFIED",
+      "implementation": [
+        "store.py::Journal",
+        "config.py::load_layers"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_environment_and_site_overlays_without_rebuild",
+        "test_service.DurabilityTest.test_crash_replay_restores_desired_lifecycle_controls"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C033",
+      "ordinal": 33,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define declarative configuration and secure defaults for Wasm deployment manager.",
+      "shall": "Configuration SHALL be declarative with secure defaults (prod profile by default).",
+      "status": "SATISFIED",
+      "implementation": [
+        "config.py::SECURE_DEFAULTS"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_secure_defaults_and_fail_closed_validation"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C034",
+      "ordinal": 34,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "shall": "Configuration SHALL be validated before activation and fail closed on security-critical errors.",
+      "status": "SATISFIED",
+      "implementation": [
+        "config.py::validate"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_secrets_rejected_in_config",
+        "test_platform.ConfigTest.test_secure_defaults_and_fail_closed_validation",
+        "test_service.ReviewFixesTest.test_encryption_at_rest_required_by_prod_config"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C035",
+      "ordinal": 35,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "shall": "Site/environment overlays SHALL change behaviour without rebuilding the package.",
+      "status": "SATISFIED",
+      "implementation": [
+        "config.py::load_layers",
+        "deploy/config/"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_environment_and_site_overlays_without_rebuild"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C036",
+      "ordinal": 36,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "shall": "Each activation SHALL record version, digest, author, time, reason and previous digest.",
+      "status": "SATISFIED",
+      "implementation": [
+        "config.py::ConfigStore.activate"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_provenance_atomic_activation_and_rollback"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C037",
+      "ordinal": 37,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "shall": "Configuration activation SHALL be atomic (all-or-nothing).",
+      "status": "SATISFIED",
+      "implementation": [
+        "config.py::ConfigStore.activate"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_provenance_atomic_activation_and_rollback"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C038",
+      "ordinal": 38,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define automatic and operator-driven rollback for failed Wasm deployment manager changes.",
+      "shall": "Failed rollouts SHALL auto-rollback; operators SHALL be able to roll back workloads and configuration.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::_rollback",
+        "service.py::op_rollback",
+        "config.py::ConfigStore.rollback"
+      ],
+      "design": [
+        "ops/runbooks/CANARY_ROLLBACK.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_provenance_atomic_activation_and_rollback",
+        "test_service.ReviewFixesTest.test_failed_rollback_marks_failed",
+        "test_service.ReviewFixesTest.test_operator_rollback_respects_freeze_and_emergency_disable",
+        "test_service.ReviewFixesTest.test_operator_rollback_still_works_after_compaction",
+        "test_service.RolloutTest.test_canary_then_bounded_batches",
+        "test_service.RolloutTest.test_failed_rollout_rolls_back_automatically",
+        "test_service.RolloutTest.test_operator_rollback"
+      ],
+      "tests_passed": 7,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C039",
+      "ordinal": 39,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Keep credentials and secret material out of ordinary Wasm deployment manager configuration and diagnostics.",
+      "shall": "Secrets SHALL appear only as refs (env:/file:) and SHALL be redacted from logs, traces and errors.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::redact",
+        "config.py::_scan_secrets"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_platform.ConfigTest.test_secrets_rejected_in_config",
+        "test_security.SecretsAndCryptoTest.test_redaction",
+        "test_security.SecretsAndCryptoTest.test_secret_refs"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C040",
+      "ordinal": 40,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Wasm deployment manager operation.",
+      "shall": "Bootstrap from an empty node SHALL be deterministic and gated by preflight.",
+      "status": "SATISFIED",
+      "implementation": [
+        "preflight.py::run",
+        "tools/bootstrap.py"
+      ],
+      "design": [
+        "ops/runbooks/DAY0_BOOTSTRAP.md"
+      ],
+      "tests": [
+        "test_governance.BootstrapTest.test_deterministic_bootstrap_and_fail_closed",
+        "test_service.HealthTest.test_status_exposes_health_readiness_version_config_deps_caps"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C041",
+      "ordinal": 41,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Threat-model Wasm deployment manager against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "shall": "A STRIDE threat model SHALL cover tenants, workloads, inputs, supply chain, control plane and insiders, each threat mapped to controls and tests.",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "security-review",
+          "role": "security-contact",
+          "what": "Threat model reviewed and accepted by security"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C042",
+      "ordinal": 42,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Apply least privilege to every identity and capability used by Wasm deployment manager.",
+      "shall": "Each role SHALL hold the minimum capability set; platform principals SHALL NOT mutate tenant workloads.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::ROLES",
+        "security.py::Authorizer"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.AuthZTest.test_privilege_escalation_blocked",
+        "test_security.AuthZTest.test_roles_are_minimal",
+        "test_service.ReviewFixesTest.test_operator_methods_require_platform_operator"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C043",
+      "ordinal": 43,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Wasm deployment manager permits.",
+      "shall": "The service SHALL use only injected handles (adapter, journal dir); no ambient FS/network/device/secret authority.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::DeploymentService.__init__"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C044",
+      "ordinal": 44,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "shall": "Nodes, peers, artifacts, providers and controllers SHALL be authenticated before trust.",
+      "status": "PARTIAL",
+      "implementation": [
+        "security.py::TokenAuthority",
+        "security.py::ArtifactVerifier"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.ArtifactTest.test_unsigned_tampered_untrusted_unapproved_revoked",
+        "test_security.AuthNTest.test_spoofed_expired_and_foreign_tokens_rejected"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "node-attestation",
+          "role": "security-contact",
+          "what": "Node identity/attestation mechanism (e.g. TPM / SPIFFE) selected and integrated at the transport"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C045",
+      "ordinal": 45,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Wasm deployment manager.",
+      "shall": "Artifacts SHALL be verified by digest, Ed25519 signature from a trusted key id, approved version and revocation list before deploy or rollout.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::ArtifactVerifier"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.ArtifactTest.test_unsigned_tampered_untrusted_unapproved_revoked",
+        "test_security.ArtifactTest.test_verifier_unavailable_fails_closed",
+        "test_service.ReviewFixesTest.test_artifact_content_rehashed_when_fetcher_configured",
+        "test_service.RolloutTest.test_rollout_requires_signed_new_version"
+      ],
+      "tests_passed": 4,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C046",
+      "ordinal": 46,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Enforce tenant/workload isolation across Wasm deployment manager execution, memory, state, network, and device boundaries as applicable.",
+      "shall": "Tenant state, identifiers, quotas and placement SHALL be isolated.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::namespace",
+        "security.py::Authorizer"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.AuthZTest.test_cross_tenant_access_blocked",
+        "test_security.AuthZTest.test_tenants_with_same_component_name_do_not_collide",
+        "test_service.ControlsTest.test_host_quarantine_drains_node"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C047",
+      "ordinal": 47,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Encrypt sensitive Wasm deployment manager data in transit and at rest with managed key rotation.",
+      "shall": "Sensitive state SHALL be encrypted at rest (AES-256-GCM) with key ids and rotation; transit SHALL use the transport's TLS/mTLS.",
+      "status": "PARTIAL",
+      "implementation": [
+        "security.py::Sealer",
+        "store.py::Journal"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.AuthNTest.test_key_rotation",
+        "test_security.SecretsAndCryptoTest.test_encrypted_journal_roundtrip",
+        "test_security.SecretsAndCryptoTest.test_encryption_at_rest_and_rotation",
+        "test_service.ReviewFixesTest.test_encryption_at_rest_required_by_prod_config"
+      ],
+      "tests_passed": 4,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "kms",
+          "role": "security-contact",
+          "what": "Data/token keys sourced from a managed KMS with scheduled rotation evidence"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C048",
+      "ordinal": 48,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "shall": "When identity, key, verifier or time services are unavailable the manager SHALL fail closed.",
+      "status": "SATISFIED",
+      "implementation": [
+        "security.py::_require_crypto",
+        "service.py::op_set_desired",
+        "preflight.py::run"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_security.ArtifactTest.test_verifier_unavailable_fails_closed"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C049",
+      "ordinal": 49,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Emit tamper-evident audit events for security-sensitive Wasm deployment manager operations.",
+      "shall": "Security-sensitive operations SHALL emit hash-chained, fsync'd audit records; tampering SHALL be detected at load.",
+      "status": "PARTIAL",
+      "implementation": [
+        "store.py::Journal"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.SecretsAndCryptoTest.test_encryption_at_rest_and_rotation",
+        "test_service.DurabilityTest.test_mid_journal_corruption_refuses_start"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "external-anchor",
+          "role": "security-contact",
+          "what": "Journal head periodically anchored to an external append-only store"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C050",
+      "ordinal": 50,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "shall": "Adversarial tests SHALL cover escalation, injection, replay, spoofing, escape and exhaustion.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_security.py"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_contracts.FuzzTest.test_random_bytes_never_crash_and_always_structured",
+        "test_security.ArtifactTest.test_unsigned_tampered_untrusted_unapproved_revoked",
+        "test_security.AuthNTest.test_spoofed_expired_and_foreign_tokens_rejected",
+        "test_security.AuthNTest.test_token_replay_detected",
+        "test_security.AuthZTest.test_cross_tenant_access_blocked",
+        "test_security.AuthZTest.test_privilege_escalation_blocked",
+        "test_security.InjectionTest.test_injection_and_resource_exhaustion_inputs"
+      ],
+      "tests_passed": 7,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C051",
+      "ordinal": 51,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Wasm deployment manager.",
+      "shall": "Component/process/node/site/network/provider/dependency/control-plane failures SHALL be enumerated with detection and response.",
+      "status": "SATISFIED",
+      "implementation": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C052",
+      "ordinal": 52,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define automated health and stall detection thresholds for Wasm deployment manager.",
+      "shall": "Health and stall thresholds SHALL be defined and detected automatically.",
+      "status": "SATISFIED",
+      "implementation": [
+        "resilience.py::HealthMonitor",
+        "service.py::tick"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_service.HealthTest.test_stall_detection"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C053",
+      "ordinal": 53,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "shall": "Retries SHALL be bounded, jittered and limited to idempotent operations and retryable errors.",
+      "status": "SATISFIED",
+      "implementation": [
+        "resilience.py::RetryPolicy"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_platform.ResilienceTest.test_bounded_retry_with_jitter_only_for_retryable_idempotent",
+        "test_service.IdempotencyTest.test_idempotency_key_replay_and_conflict"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C054",
+      "ordinal": 54,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Wasm deployment manager failure cascades.",
+      "shall": "Admission control, priority shedding and circuit breaking SHALL prevent cascades.",
+      "status": "SATISFIED",
+      "implementation": [
+        "resilience.py::Admission",
+        "resilience.py::CircuitBreaker"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_platform.ResilienceTest.test_admission_shedding_and_quota",
+        "test_platform.ResilienceTest.test_circuit_breaker",
+        "test_platform.ResilienceTest.test_fault_injection_breaker_trips_and_recovers"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C055",
+      "ordinal": 55,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "shall": "Failover SHALL NOT violate isolation, residency or consistency (fenced leader; residency-constrained placement).",
+      "status": "SATISFIED",
+      "implementation": [
+        "store.py::Journal.acquire",
+        "service.py::_eligible"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_precedence_residency_over_spread"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C056",
+      "ordinal": 56,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "shall": "Non-critical dependency loss SHALL degrade (not fail) the service.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::reconcile_ns"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_service.SemanticsTest.test_offline_mode_queues_intent_then_resyncs",
+        "test_service.SemanticsTest.test_partial_outcome_when_some_starts_fail"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C057",
+      "ordinal": 57,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Wasm deployment manager state.",
+      "shall": "State SHALL be crash-consistent; restart SHALL replay the journal and truncate only torn tails.",
+      "status": "SATISFIED",
+      "implementation": [
+        "store.py::Journal._load",
+        "service.py::_recover"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ],
+      "tests": [
+        "test_security.SecretsAndCryptoTest.test_encrypted_journal_roundtrip",
+        "test_service.DurabilityTest.test_backup_and_restore",
+        "test_service.DurabilityTest.test_crash_replay_restores_desired_lifecycle_controls",
+        "test_service.DurabilityTest.test_mid_journal_corruption_refuses_start",
+        "test_service.ReviewFixesTest.test_compaction_preserves_state",
+        "test_service.ReviewFixesTest.test_operator_rollback_still_works_after_compaction"
+      ],
+      "tests_passed": 6,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C058",
+      "ordinal": 58,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "shall": "Stale controllers SHALL be fenced by epoch; concurrent writers SHALL be detected.",
+      "status": "PARTIAL",
+      "implementation": [
+        "store.py::Journal.append"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_platform.ConcurrencyTest.test_concurrent_requests_keep_state_consistent",
+        "test_platform.ConcurrencyTest.test_two_handles_cannot_interleave_journal_writes",
+        "test_service.DurabilityTest.test_stale_controller_is_fenced"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "consensus-lease",
+          "role": "architecture-approver",
+          "what": "Multi-node leader lease backed by a consensus store (file epoch fencing is single-host only)"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C059",
+      "ordinal": 59,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Wasm deployment manager behavior.",
+      "shall": "Operators SHALL be able to freeze, quarantine (workload/tenant/host) and emergency-disable automation.",
+      "status": "SATISFIED",
+      "implementation": [
+        "resilience.py::Controls",
+        "service.py::emergency_disable",
+        "service.py::quarantine_host"
+      ],
+      "design": [
+        "ops/runbooks/INCIDENT.md"
+      ],
+      "tests": [
+        "test_service.ControlsTest.test_freeze_quarantine_and_emergency_disable",
+        "test_service.ControlsTest.test_host_quarantine_drains_node",
+        "test_service.ReviewFixesTest.test_operator_methods_require_platform_operator",
+        "test_service.ReviewFixesTest.test_operator_rollback_respects_freeze_and_emergency_disable"
+      ],
+      "tests_passed": 4,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C060",
+      "ordinal": 60,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Run fault-injection tests proving Wasm deployment manager recovery against documented objectives.",
+      "shall": "Fault-injection tests SHALL prove recovery objectives.",
+      "status": "SATISFIED",
+      "implementation": [
+        "adapter.py::InMemoryLattice"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_platform.ResilienceTest.test_circuit_breaker",
+        "test_platform.ResilienceTest.test_fault_injection_breaker_trips_and_recovers",
+        "test_service.DurabilityTest.test_crash_replay_restores_desired_lifecycle_controls",
+        "test_service.ReviewFixesTest.test_failed_rollback_marks_failed",
+        "test_service.RolloutTest.test_failed_rollout_rolls_back_automatically",
+        "test_service.SemanticsTest.test_partial_outcome_when_some_starts_fail"
+      ],
+      "tests_passed": 6,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C061",
+      "ordinal": 61,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Establish reproducible baselines for Wasm deployment manager latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "shall": "Reproducible baselines SHALL be recorded for latency, throughput, startup, memory and storage.",
+      "status": "PARTIAL",
+      "implementation": [
+        "perf/bench.py",
+        "perf/results.json"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_platform.PerformanceTest.test_diff_p99_under_threshold_1000_instances"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "perf-approval",
+          "role": "service-owner",
+          "what": "perf/thresholds.json re-baselined and approved on reference hardware"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C062",
+      "ordinal": 62,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Wasm deployment manager.",
+      "shall": "p50/p95/p99/max thresholds SHALL be defined.",
+      "status": "PARTIAL",
+      "implementation": [
+        "perf/thresholds.json"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_platform.PerformanceTest.test_diff_p99_under_threshold_1000_instances"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "perf-approval",
+          "role": "service-owner",
+          "what": "perf/thresholds.json re-baselined and approved on reference hardware"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C063",
+      "ordinal": 63,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure Wasm deployment manager under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "shall": "Steady, burst, overload, scale-out, scale-in and recovery SHALL be measured.",
+      "status": "SATISFIED",
+      "implementation": [
+        "perf/bench.py"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_platform.ResilienceTest.test_admission_shedding_and_quota"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C064",
+      "ordinal": 64,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Wasm deployment manager.",
+      "shall": "Per-tenant and per-workload overhead SHALL be measured.",
+      "status": "SATISFIED",
+      "implementation": [
+        "perf/bench.py::per_tenant_overhead"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_platform.PerformanceTest.test_memory_bounded_under_many_decisions",
+        "test_service.SemanticsTest.test_tenant_quota_enforced"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C065",
+      "ordinal": 65,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Wasm deployment manager.",
+      "shall": "Avoidable serialization, copies and duplicated state SHALL be identified.",
+      "status": "SATISFIED",
+      "implementation": [
+        "docs/requirements/PERF_ANALYSIS.md"
+      ],
+      "design": [
+        "docs/requirements/PERF_ANALYSIS.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C066",
+      "ordinal": 66,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "shall": "Safe optimizations SHALL be applied with semantic-equivalence proof.",
+      "status": "SATISFIED",
+      "implementation": [
+        "manager.py::Manager.diff"
+      ],
+      "design": [
+        "docs/requirements/PERF_ANALYSIS.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C067",
+      "ordinal": 67,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "shall": "Memory, queues, buffers, concurrency and fan-out SHALL be bounded.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::Metrics",
+        "resilience.py::Admission",
+        "store.py::Journal.max_bytes"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_cardinality_guard_and_pseudonymous_ids",
+        "test_platform.PerformanceTest.test_memory_bounded_under_many_decisions",
+        "test_platform.ResilienceTest.test_admission_shedding_and_quota",
+        "test_service.ReviewFixesTest.test_compaction_preserves_state"
+      ],
+      "tests_passed": 4,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C068",
+      "ordinal": 68,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "shall": "Power and thermal impact SHALL be measured on constrained edge nodes.",
+      "status": "PARTIAL",
+      "implementation": [
+        "perf/EDGE_POWER_PLAN.md"
+      ],
+      "design": [
+        "perf/EDGE_POWER_PLAN.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "edge-hardware",
+          "role": "sre",
+          "what": "Power/thermal measurements per perf/EDGE_POWER_PLAN.md on constrained edge nodes"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C069",
+      "ordinal": 69,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define capacity models and saturation signals that predict when Wasm deployment manager needs more resources.",
+      "shall": "A capacity model and saturation signals SHALL predict resource needs.",
+      "status": "SATISFIED",
+      "implementation": [
+        "docs/requirements/CAPACITY_MODEL.md",
+        "observability/alerts.json"
+      ],
+      "design": [
+        "docs/requirements/CAPACITY_MODEL.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C070",
+      "ordinal": 70,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Block releases that regress approved Wasm deployment manager startup, density, throughput, or tail-latency thresholds.",
+      "shall": "Releases SHALL be blocked when performance regresses beyond approved thresholds.",
+      "status": "PARTIAL",
+      "implementation": [
+        "perf/bench.py::gate",
+        "gate.py"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_platform.PerformanceTest.test_diff_p99_under_threshold_1000_instances"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "perf-approval",
+          "role": "service-owner",
+          "what": "perf/thresholds.json re-baselined and approved on reference hardware"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C071",
+      "ordinal": 71,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose Wasm deployment manager health, readiness, version, configuration, dependency status, and active capability set.",
+      "shall": "Health, readiness, version, config digest, dependency status and capabilities SHALL be exposed.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::status"
+      ],
+      "design": [
+        "ops/runbooks/DAY2_OPERATIONS.md"
+      ],
+      "tests": [
+        "test_service.HealthTest.test_status_exposes_health_readiness_version_config_deps_caps"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C072",
+      "ordinal": 72,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "shall": "RED/USE metrics SHALL be emitted in Prometheus format.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::Metrics"
+      ],
+      "design": [
+        "observability/dashboard.json"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_red_use_metrics"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C073",
+      "ordinal": 73,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "shall": "Logs SHALL be structured with node, tenant, workload, component, operation and trace ids.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::Logger"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_structured_logs_have_stable_ids_and_no_secrets"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C074",
+      "ordinal": 74,
+      "dimension": "Observability & Explainability",
+      "requirement": "Propagate trace context across all relevant Wasm deployment manager boundaries.",
+      "shall": "W3C trace context SHALL propagate across request, decision and adapter boundaries.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::SpanContext",
+        "observability.py::Tracer"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_trace_context_propagates"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C075",
+      "ordinal": 75,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "shall": "Diagnostics SHALL be cardinality-bounded, redacted and tenant-pseudonymised when exported.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::MAX_LABEL_SETS",
+        "observability.py::tenant_hash",
+        "security.py::redact"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_cardinality_guard_and_pseudonymous_ids",
+        "test_platform.ObservabilityTest.test_structured_logs_have_stable_ids_and_no_secrets",
+        "test_security.SecretsAndCryptoTest.test_redaction"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C076",
+      "ordinal": 76,
+      "dimension": "Observability & Explainability",
+      "requirement": "Record the reason for every automated decision made by Wasm deployment manager.",
+      "shall": "Every automated decision SHALL record its reason, inputs, policies and constraints.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::DecisionLog",
+        "service.py::_decide"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_every_decision_has_reason_and_explain_view"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C077",
+      "ordinal": 77,
+      "dimension": "Observability & Explainability",
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "shall": "An explain view SHALL link decisions to inputs, policies, topology and constraints.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability.py::DecisionLog.explain",
+        "service.py::op_explain"
+      ],
+      "design": [
+        "ops/runbooks/DAY2_OPERATIONS.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_every_decision_has_reason_and_explain_view"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C078",
+      "ordinal": 78,
+      "dimension": "Observability & Explainability",
+      "requirement": "Correlate Wasm deployment manager events with application release lineage and the live infrastructure graph.",
+      "shall": "Decisions SHALL carry release lineage and a topology digest.",
+      "status": "SATISFIED",
+      "implementation": [
+        "service.py::_decide",
+        "observability.py::topology_digest"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_every_decision_has_reason_and_explain_view"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C079",
+      "ordinal": 79,
+      "dimension": "Observability & Explainability",
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "shall": "Telemetry retention, sampling, privacy and export SHALL be defined.",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/requirements/TELEMETRY_POLICY.md",
+        "config.py::SECURE_DEFAULTS"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_cardinality_guard_and_pseudonymous_ids"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "privacy-review",
+          "role": "security-contact",
+          "what": "Telemetry retention/privacy policy approved"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C080",
+      "ordinal": 80,
+      "dimension": "Observability & Explainability",
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "shall": "Dashboards and alerts SHALL distinguish load, degradation, policy rejection, dependency failure, security events and stalls.",
+      "status": "SATISFIED",
+      "implementation": [
+        "observability/alerts.json",
+        "observability/dashboard.json",
+        "observability.py::classify_alert"
+      ],
+      "design": [
+        "observability/alerts.json"
+      ],
+      "tests": [
+        "test_platform.ObservabilityTest.test_alert_classes_and_dashboard_definitions",
+        "test_platform.ObservabilityTest.test_red_use_metrics"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C081",
+      "ordinal": 81,
+      "dimension": "Testing & Certification",
+      "requirement": "Create unit tests for deterministic Wasm deployment manager logic and state transitions.",
+      "shall": "Unit tests SHALL cover core logic.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_manager.py"
+      ],
+      "design": [
+        "README.md"
+      ],
+      "tests": [
+        "test_manager.ManagerTest.test_apply_is_transactional_on_invalid_stop",
+        "test_manager.ManagerTest.test_apply_rejects_unknown_start_host_without_mutation",
+        "test_manager.ManagerTest.test_audit_chain_detects_record_tampering",
+        "test_manager.ManagerTest.test_core_engine_survives_optimized_mode_without_pk_core",
+        "test_manager.ManagerTest.test_deterministic_spread_and_idempotent_reconcile",
+        "test_manager.ManagerTest.test_direct_desired_state_tampering_is_rejected",
+        "test_manager.ManagerTest.test_nonzero_desired_requires_hosts",
+        "test_manager.ManagerTest.test_rollout_respects_bound_and_preserves_unrelated_workloads",
+        "test_manager.ManagerTest.test_runtime_state_sequence_is_normalized_before_counter_use",
+        "test_manager.ManagerTest.test_runtime_state_tampering_is_detected",
+        "test_manager.ManagerTest.test_validation_rejects_ambiguous_or_hostile_inputs",
+        "test_manager.PackageIntegrityTest.test_checklist_shape",
+        "test_manager.PackageIntegrityTest.test_version_triplet",
+        "test_manager.PlacementEquivalenceTest.test_heap_placement_matches_reference"
+      ],
+      "tests_passed": 14,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C082",
+      "ordinal": 82,
+      "dimension": "Testing & Certification",
+      "requirement": "Create contract tests for every public Wasm deployment manager interface.",
+      "shall": "Every public interface SHALL have contract tests.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_contracts.py"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ],
+      "tests": [
+        "test_contracts.SchemaTest.test_boundary_inventory_matches_code",
+        "test_contracts.SchemaTest.test_conformance_fixtures",
+        "test_contracts.SchemaTest.test_documented_limits_are_enforced",
+        "test_contracts.SchemaTest.test_error_catalog_complete",
+        "test_contracts.SchemaTest.test_every_contract_has_a_versioned_schema",
+        "test_service.SemanticsTest.test_desired_reconcile_converges_and_rests",
+        "test_service.SemanticsTest.test_terminal_and_retryable_errors_are_structured"
+      ],
+      "tests_passed": 7,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C083",
+      "ordinal": 83,
+      "dimension": "Testing & Certification",
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "shall": "Integration tests SHALL exercise every adjacent layer and execution tier.",
+      "status": "PARTIAL",
+      "implementation": [
+        "tests/test_service.py"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ],
+      "tests": [
+        "test_service.RolloutTest.test_canary_then_bounded_batches",
+        "test_service.SemanticsTest.test_desired_reconcile_converges_and_rests",
+        "test_service.SemanticsTest.test_partial_outcome_when_some_starts_fail",
+        "test_service.WadmAdapterContractTest.test_wadm_adapter_satisfies_lattice_protocol_with_fake_transport"
+      ],
+      "tests_passed": 4,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "wadm-live",
+          "role": "service-owner",
+          "what": "Integration run of tests against a live pinned Wadm + wasmCloud lattice (WadmAdapter transport), results attached"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C084",
+      "ordinal": 84,
+      "dimension": "Testing & Certification",
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Wasm deployment manager.",
+      "shall": "Compatibility SHALL be tested across CPU architectures, runtimes, providers and protocol versions.",
+      "status": "PARTIAL",
+      "implementation": [
+        "tests/test_contracts.py",
+        ".github/workflows/ci.yml"
+      ],
+      "design": [
+        "governance/COMPATIBILITY_MATRIX.md"
+      ],
+      "tests": [
+        "test_contracts.CompatibilityTest.test_v1_desired_accepted_when_signing_not_required",
+        "test_contracts.CompatibilityTest.test_version_negotiation",
+        "test_contracts.CompatibilityTest.test_wadm_manifest_rendering"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "multi-arch-ci",
+          "role": "sre",
+          "what": "CI matrix green on linux/amd64 and linux/arm64 (and any other supported arch)"
+        },
+        {
+          "key": "wadm-live",
+          "role": "service-owner",
+          "what": "Integration run of tests against a live pinned Wadm + wasmCloud lattice (WadmAdapter transport), results attached"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C085",
+      "ordinal": 85,
+      "dimension": "Testing & Certification",
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Wasm deployment manager.",
+      "shall": "Parsers, schemas and untrusted inputs SHALL be fuzzed.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_contracts.py::FuzzTest"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_contracts.FuzzTest.test_random_bytes_never_crash_and_always_structured",
+        "test_contracts.FuzzTest.test_structured_fuzz_of_desired_schema",
+        "test_security.InjectionTest.test_injection_and_resource_exhaustion_inputs"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C086",
+      "ordinal": 86,
+      "dimension": "Testing & Certification",
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Wasm deployment manager state.",
+      "shall": "Concurrency and race tests SHALL cover shared/distributed state.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_platform.py::ConcurrencyTest"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_platform.ConcurrencyTest.test_concurrent_requests_keep_state_consistent",
+        "test_platform.ConcurrencyTest.test_metrics_thread_safety",
+        "test_platform.ConcurrencyTest.test_two_handles_cannot_interleave_journal_writes",
+        "test_service.DurabilityTest.test_stale_controller_is_fenced",
+        "test_service.IdempotencyTest.test_idempotency_key_replay_and_conflict"
+      ],
+      "tests_passed": 5,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C087",
+      "ordinal": 87,
+      "dimension": "Testing & Certification",
+      "requirement": "Create security tests derived directly from the Wasm deployment manager threat model.",
+      "shall": "Security tests SHALL derive directly from the threat model.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_security.py"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "test_security.ArtifactTest.test_unsigned_tampered_untrusted_unapproved_revoked",
+        "test_security.AuthNTest.test_spoofed_expired_and_foreign_tokens_rejected",
+        "test_security.AuthNTest.test_token_replay_detected",
+        "test_security.AuthZTest.test_cross_tenant_access_blocked",
+        "test_security.AuthZTest.test_privilege_escalation_blocked",
+        "test_security.InjectionTest.test_injection_and_resource_exhaustion_inputs",
+        "test_service.ReviewFixesTest.test_operator_methods_require_platform_operator",
+        "test_service.RolloutTest.test_rollout_requires_signed_new_version"
+      ],
+      "tests_passed": 8,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C088",
+      "ordinal": 88,
+      "dimension": "Testing & Certification",
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Wasm deployment manager.",
+      "shall": "Benchmark, soak, burst and fleet-scale tests SHALL exist.",
+      "status": "PARTIAL",
+      "implementation": [
+        "perf/bench.py"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ],
+      "tests": [
+        "test_platform.PerformanceTest.test_diff_p99_under_threshold_1000_instances"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "fleet-scale",
+          "role": "sre",
+          "what": "Fleet-scale / soak run (>=24h, >=1000 hosts simulated or real) with results"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C089",
+      "ordinal": 89,
+      "dimension": "Testing & Certification",
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "shall": "Disaster, partition, reconnect and degraded-control-plane tests SHALL exist.",
+      "status": "SATISFIED",
+      "implementation": [
+        "tests/test_service.py"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "tests": [
+        "test_platform.ResilienceTest.test_fault_injection_breaker_trips_and_recovers",
+        "test_service.DurabilityTest.test_crash_replay_restores_desired_lifecycle_controls",
+        "test_service.DurabilityTest.test_stale_controller_is_fenced",
+        "test_service.ReviewFixesTest.test_tick_resyncs_automatically",
+        "test_service.RolloutTest.test_failed_rollout_rolls_back_automatically",
+        "test_service.SemanticsTest.test_offline_beyond_autonomy_window_is_retryable_failure",
+        "test_service.SemanticsTest.test_offline_mode_queues_intent_then_resyncs"
+      ],
+      "tests_passed": 7,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C090",
+      "ordinal": 90,
+      "dimension": "Testing & Certification",
+      "requirement": "Require machine-readable acceptance evidence before certifying a Wasm deployment manager release for production.",
+      "shall": "Machine-readable, signed acceptance evidence SHALL be required before production certification.",
+      "status": "PARTIAL",
+      "implementation": [
+        "audit.py",
+        "gate.py"
+      ],
+      "design": [
+        "release/GATE_POLICY.json"
+      ],
+      "tests": [
+        "test_governance.GateTest.test_go_requires_everything_and_is_signed",
+        "test_governance.GateTest.test_missing_pk_core_is_blocked_not_skipped",
+        "test_governance.GateTest.test_revision_signoff_required_for_go",
+        "test_governance.GateTest.test_skipped_or_failed_tests_block",
+        "test_governance.GateTest.test_stale_or_foreign_evidence_rejected",
+        "test_governance.GateTest.test_unsigned_can_never_promote"
+      ],
+      "tests_passed": 6,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "signing-key",
+          "role": "release-approver",
+          "what": "Gate signing key provisioned (INV63_GATE_SIGNING_KEY) and its public key registered"
+        },
+        {
+          "key": "pk_core",
+          "role": "release-approver",
+          "what": "pk_core inventory framework pinned and installed; tests/test_component.py executed (not skipped)"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C091",
+      "ordinal": 91,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define production SLOs, error budgets, and support commitments for Wasm deployment manager.",
+      "shall": "Production SLOs, error budgets and support commitments SHALL be defined.",
+      "status": "PARTIAL",
+      "implementation": [
+        "governance/SLO.md",
+        "contract.py::build"
+      ],
+      "design": [
+        "governance/SLO.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "owner-assignment",
+          "role": "service-owner",
+          "what": "Named, active owners/on-call/security/release roles in OWNERS.yaml (no UNASSIGNED) and a validated escalation path"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C092",
+      "ordinal": 92,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Wasm deployment manager.",
+      "shall": "Canary, staged rollout, rollback and emergency-disable procedures SHALL be defined and exercised.",
+      "status": "PARTIAL",
+      "implementation": [
+        "service.py::op_rollout",
+        "service.py::emergency_disable"
+      ],
+      "design": [
+        "ops/runbooks/CANARY_ROLLBACK.md"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_runbooks_present_and_marked_unexercised",
+        "test_service.ControlsTest.test_freeze_quarantine_and_emergency_disable",
+        "test_service.RolloutTest.test_canary_then_bounded_batches",
+        "test_service.RolloutTest.test_failed_rollout_rolls_back_automatically",
+        "test_service.RolloutTest.test_operator_rollback"
+      ],
+      "tests_passed": 5,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "game-day",
+          "role": "sre",
+          "what": "Game day exercising canary, rollback, emergency disable, backup/restore, incident runbooks with evidence"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C093",
+      "ordinal": 93,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Maintain a supported-version compatibility matrix for Wasm deployment manager and adjacent dependencies.",
+      "shall": "A supported-version compatibility matrix SHALL be maintained.",
+      "status": "SATISFIED",
+      "implementation": [
+        "governance/COMPATIBILITY_MATRIX.md"
+      ],
+      "design": [
+        "governance/COMPATIBILITY_MATRIX.md"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_compatibility_matrix_matches_pins"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C094",
+      "ordinal": 94,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Wasm deployment manager.",
+      "shall": "Patching, vulnerability response and EOL SLAs SHALL be defined.",
+      "status": "PARTIAL",
+      "implementation": [
+        "governance/VULN_AND_EOL_POLICY.md"
+      ],
+      "design": [
+        "governance/VULN_AND_EOL_POLICY.md"
+      ],
+      "tests": [],
+      "tests_passed": 0,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "owner-assignment",
+          "role": "service-owner",
+          "what": "Named, active owners/on-call/security/release roles in OWNERS.yaml (no UNASSIGNED) and a validated escalation path"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C095",
+      "ordinal": 95,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Wasm deployment manager state where applicable.",
+      "shall": "Backup, restore, migration and reconstruction procedures SHALL exist and be tested.",
+      "status": "PARTIAL",
+      "implementation": [
+        "store.py::Journal.backup",
+        "store.py::Journal.restore"
+      ],
+      "design": [
+        "ops/runbooks/BACKUP_RESTORE.md"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_runbooks_present_and_marked_unexercised",
+        "test_service.DurabilityTest.test_backup_and_restore",
+        "test_service.ReviewFixesTest.test_compaction_preserves_state"
+      ],
+      "tests_passed": 3,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "game-day",
+          "role": "sre",
+          "what": "Game day exercising canary, rollback, emergency disable, backup/restore, incident runbooks with evidence"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C096",
+      "ordinal": 96,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "shall": "Day-0/1/2 runbooks SHALL exist.",
+      "status": "PARTIAL",
+      "implementation": [
+        "ops/runbooks/DAY0_BOOTSTRAP.md",
+        "ops/runbooks/DAY1_DEPLOY.md",
+        "ops/runbooks/DAY2_OPERATIONS.md"
+      ],
+      "design": [
+        "ops/runbooks/"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_every_referenced_artifact_exists",
+        "test_governance.OwnershipAndDocsTest.test_runbooks_present_and_marked_unexercised"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "game-day",
+          "role": "sre",
+          "what": "Game day exercising canary, rollback, emergency disable, backup/restore, incident runbooks with evidence"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C097",
+      "ordinal": 97,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "shall": "Incident severity, paging, escalation, containment and recovery SHALL be defined.",
+      "status": "PARTIAL",
+      "implementation": [
+        "ops/runbooks/INCIDENT.md"
+      ],
+      "design": [
+        "ops/runbooks/INCIDENT.md"
+      ],
+      "tests": [
+        "test_governance.OwnershipAndDocsTest.test_every_referenced_artifact_exists",
+        "test_governance.OwnershipAndDocsTest.test_runbooks_present_and_marked_unexercised"
+      ],
+      "tests_passed": 2,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "owner-assignment",
+          "role": "service-owner",
+          "what": "Named, active owners/on-call/security/release roles in OWNERS.yaml (no UNASSIGNED) and a validated escalation path"
+        },
+        {
+          "key": "game-day",
+          "role": "sre",
+          "what": "Game day exercising canary, rollback, emergency disable, backup/restore, incident runbooks with evidence"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C098",
+      "ordinal": 98,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "shall": "Access, policy, dependency, configuration and architecture reviews SHALL recur on a schedule enforced by the gate.",
+      "status": "PARTIAL",
+      "implementation": [
+        "governance/REVIEWS.json",
+        "gate.py::check_reviews"
+      ],
+      "design": [
+        "governance/REVIEWS.json"
+      ],
+      "tests": [
+        "test_governance.GateTest.test_overdue_reviews_block"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "review-records",
+          "role": "service-owner",
+          "what": "Completed recurring review records in governance/REVIEWS.json, none overdue"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C099",
+      "ordinal": 99,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "shall": "Exceptions, waivers, debt and deprecations SHALL be tracked with owners and expiry, and expired waivers SHALL block release.",
+      "status": "SATISFIED",
+      "implementation": [
+        "governance/WAIVERS.json",
+        "gate.py::check_waivers"
+      ],
+      "design": [
+        "governance/WAIVERS.json"
+      ],
+      "tests": [
+        "test_governance.GateTest.test_waivers_expiry_and_conditional_go"
+      ],
+      "tests_passed": 1,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [],
+      "owner": "UNASSIGNED"
+    },
+    {
+      "check_id": "INV-63-C100",
+      "ordinal": 100,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "shall": "A single signed production exit gate SHALL consume all evidence bound to the exact artifact/config/dependencies.",
+      "status": "PARTIAL",
+      "implementation": [
+        "gate.py::evaluate"
+      ],
+      "design": [
+        "release/GATE_POLICY.json"
+      ],
+      "tests": [
+        "test_governance.GateTest.test_go_requires_everything_and_is_signed",
+        "test_governance.GateTest.test_missing_pk_core_is_blocked_not_skipped",
+        "test_governance.GateTest.test_real_repository_is_not_go",
+        "test_governance.GateTest.test_revision_signoff_required_for_go",
+        "test_governance.GateTest.test_skipped_or_failed_tests_block",
+        "test_governance.GateTest.test_stale_or_foreign_evidence_rejected",
+        "test_governance.GateTest.test_unassigned_or_stale_ownership_blocks",
+        "test_governance.GateTest.test_unsigned_can_never_promote",
+        "test_governance.GateTest.test_waivers_expiry_and_conditional_go"
+      ],
+      "tests_passed": 9,
+      "missing_refs": [],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "external_evidence_pending": [
+        {
+          "key": "signing-key",
+          "role": "release-approver",
+          "what": "Gate signing key provisioned (INV63_GATE_SIGNING_KEY) and its public key registered"
+        },
+        {
+          "key": "pk_core",
+          "role": "release-approver",
+          "what": "pk_core inventory framework pinned and installed; tests/test_component.py executed (not skipped)"
+        },
+        {
+          "key": "owner-assignment",
+          "role": "service-owner",
+          "what": "Named, active owners/on-call/security/release roles in OWNERS.yaml (no UNASSIGNED) and a validated escalation path"
+        }
+      ],
+      "owner": "UNASSIGNED"
+    }
+  ]
+}

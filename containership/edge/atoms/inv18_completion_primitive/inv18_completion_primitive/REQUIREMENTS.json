@@ -1,0 +1,1257 @@
+{
+ "schema": "INV18_REQUIREMENTS/1",
+ "version": "4.3.0",
+ "$comment": "Canonical requirements source (C011, C020). 'shall' = normative, implementation-independent requirements with Python realisation noted in 'realised_by'. 'checklist' maps every CHECKLIST.json item to artifacts; tests are linked by 'REQ:' tags in test docstrings and resolved by certify.build_rtm().",
+ "shall": [
+  {
+   "id": "INV18-FR-001",
+   "class": "functional",
+   "text": "The primitive SHALL permit at most one terminal transition (value, error, abandon or cancel) per future.",
+   "realised_by": "future.py::Future._check_writable",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-002",
+   "class": "functional",
+   "text": "The primitive SHALL deliver a terminal outcome to at most one receiver, independently of how the producer resolved.",
+   "realised_by": "future.py::Future.take",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-003",
+   "class": "functional",
+   "text": "A value resolution SHALL be refused with TYPE_MISMATCH unless the value is an instance of the declared value type; bool SHALL NOT satisfy a non-bool type.",
+   "realised_by": "future.py::Future.resolve",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-004",
+   "class": "functional",
+   "text": "An error resolution SHALL carry a non-empty message of at most 4096 characters and SHALL be delivered as the tagged outcome (\"error\", message), not raised.",
+   "realised_by": "future.py::Future.resolve_error",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-005",
+   "class": "functional",
+   "text": "Taking an abandoned future SHALL raise FUTURE_ABANDONED and SHALL consume receiver ownership.",
+   "realised_by": "future.py::Future.take",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-006",
+   "class": "functional",
+   "text": "A resolution attempted after abandonment SHALL be refused with FUTURE_ALREADY_RESOLVED and SHALL NOT change state.",
+   "realised_by": "future.py::Future._check_writable",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-007",
+   "class": "functional",
+   "text": "A second resolution SHALL be refused with FUTURE_ALREADY_RESOLVED and SHALL NOT overwrite the first.",
+   "realised_by": "future.py::Future._check_writable",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-008",
+   "class": "functional",
+   "text": "A second receiver SHALL be refused with FUTURE_ALREADY_TAKEN, including after the governed runtime released the future (within the tombstone window).",
+   "realised_by": "future.py::Future.take; runtime.py::Runtime._auth",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-009",
+   "class": "functional",
+   "text": "Malformed payloads or errors SHALL be refused without changing state; state-machine refusals SHALL take precedence over argument refusals.",
+   "realised_by": "future.py::Future.resolve; errors.py::precedence",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-010",
+   "class": "functional",
+   "text": "Under simultaneous resolution attempts exactly one SHALL succeed.",
+   "realised_by": "future.py::Future (Condition lock)",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-011",
+   "class": "functional",
+   "text": "Under simultaneous receiver attempts exactly one SHALL obtain the outcome.",
+   "realised_by": "future.py::Future.take",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-012",
+   "class": "functional",
+   "text": "A value written by the resolving thread before resolve returns SHALL be visible to the receiving thread that observes it (lock-based happens-before).",
+   "realised_by": "future.py::Future",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-013",
+   "class": "functional",
+   "text": "Receiver cancellation SHALL be terminal; a later resolution SHALL be refused with FUTURE_CANCELLED.",
+   "realised_by": "future.py::Future.cancel",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-014",
+   "class": "functional",
+   "text": "Dropping the last resolver capability of a pending governed future SHALL abandon it.",
+   "realised_by": "runtime.py::Runtime._writer_dropped",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-FR-015",
+   "class": "functional",
+   "text": "Waiting with a caller timeout SHALL NOT change the future's state.",
+   "realised_by": "future.py::Future.wait; runtime.py::Runtime.take_wait",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-001",
+   "class": "security",
+   "text": "A resolver capability SHALL NOT permit take; a receiver capability SHALL NOT permit resolution; an observer SHALL NOT mutate or consume.",
+   "realised_by": "runtime.py::Runtime._auth",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-002",
+   "class": "security",
+   "text": "Cross-tenant access SHALL be refused with PERMISSION_DENIED indistinguishable from a non-existent future.",
+   "realised_by": "runtime.py::Runtime._auth; adapters.py::RemoteEndpoint._owned",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-003",
+   "class": "security",
+   "text": "The wire boundary SHALL authenticate every request before reading or mutating state and SHALL reject missing, malformed, forged, expired, replayed, wrong-issuer and wrong-audience credentials.",
+   "realised_by": "auth.py::Authenticator.verify",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-004",
+   "class": "security",
+   "text": "Secrets and raw payloads SHALL NOT appear in logs, error records, audit events or evidence.",
+   "realised_by": "errors.py::redact; telemetry.py::StructuredLog",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-005",
+   "class": "security",
+   "text": "Core modules SHALL perform no filesystem, network, subprocess or environment access.",
+   "realised_by": "future.py; runtime.py; errors.py; telemetry.py; wire.py",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-006",
+   "class": "security",
+   "text": "Administrative controls SHALL require the runtime's AdminCap and SHALL be audited.",
+   "realised_by": "runtime.py::Runtime._check_admin",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-007",
+   "class": "security",
+   "text": "Security-sensitive events SHALL be recorded in a tamper-evident chain whose verification detects mutation and deletion.",
+   "realised_by": "telemetry.py::AuditChain",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-SEC-008",
+   "class": "security",
+   "text": "Unavailable identity, key or trusted-time services SHALL cause the wire boundary to fail closed.",
+   "realised_by": "auth.py",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-NFR-001",
+   "class": "performance",
+   "text": "Admission SHALL refuse new futures with RESOURCE_EXHAUSTED at the process and tenant hard limits before allocation.",
+   "realised_by": "runtime.py::Runtime.create",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-NFR-002",
+   "class": "performance",
+   "text": "A terminal, consumed future SHALL be released from the registry.",
+   "realised_by": "runtime.py::Runtime._maybe_release",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-NFR-003",
+   "class": "performance",
+   "text": "Measured latency, throughput and memory SHALL stay within conformance/PERFORMANCE_THRESHOLDS.json on the reference environment.",
+   "realised_by": "bench.py",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-NFR-004",
+   "class": "performance",
+   "text": "A release SHALL be blocked when the regression gate detects an unwaived regression against the approved baseline.",
+   "realised_by": "bench.py::compare; certify.py",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-OPS-001",
+   "class": "operational",
+   "text": "Status SHALL expose version, state, readiness, reasons, config revision, contract versions, capabilities, dependencies and limits per PK_FUTURE_STATUS/1.",
+   "realised_by": "status.py::status",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-OPS-002",
+   "class": "operational",
+   "text": "Configuration SHALL be validated as a whole and activation SHALL fail closed and be atomic.",
+   "realised_by": "config.py::ConfigStore",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-OPS-003",
+   "class": "operational",
+   "text": "An operator or failed health check SHALL be able to restore the last-known-good configuration.",
+   "realised_by": "config.py::ConfigStore.rollback",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-OPS-004",
+   "class": "operational",
+   "text": "The component SHALL support drain and freeze quarantine at component and tenant scope.",
+   "realised_by": "runtime.py::Runtime.disable",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-OPS-005",
+   "class": "operational",
+   "text": "Declared metrics SHALL be emitted with bounded label cardinality.",
+   "realised_by": "telemetry.py::Metrics",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-OPS-006",
+   "class": "operational",
+   "text": "Logs SHALL follow PK_FUTURE_LOG/1 with trace and config identifiers and redaction.",
+   "realised_by": "telemetry.py::StructuredLog",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-CMP-001",
+   "class": "compatibility",
+   "text": "Wire documents SHALL be validated strictly against versioned schemas; another major SHALL be refused with INCOMPATIBLE_VERSION.",
+   "realised_by": "wire.py",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-CMP-002",
+   "class": "compatibility",
+   "text": "Unknown error codes from newer peers SHALL map to UNKNOWN preserving the original code.",
+   "realised_by": "errors.py::ErrorRecord.from_dict",
+   "verification": "test"
+  },
+  {
+   "id": "INV18-CMP-003",
+   "class": "compatibility",
+   "text": "The release gate SHALL treat a skipped mandatory test as BLOCKED, never PASS.",
+   "realised_by": "certify.py",
+   "verification": "test"
+  }
+ ],
+ "checklist": [
+  {
+   "id": "INV-18-C001",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define the exact production responsibility of Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "README.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C002",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document what Completion primitive owns and explicitly does not own.",
+   "artifacts": [
+    "contract.py",
+    "README.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C003",
+   "dimension": "Architecture & Scope",
+   "requirement": "Identify upstream, downstream, and peer dependencies of Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "docs/INTERFACES.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C004",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define the authoritative source of truth used by Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "docs/adr/ADR-001-completion-primitive.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C005",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document assumptions Completion primitive makes about nodes, runtimes, networks, storage, and control planes.",
+   "artifacts": [
+    "contract.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C006",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define tenant, environment, site, and workload boundaries relevant to Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C007",
+   "dimension": "Architecture & Scope",
+   "requirement": "Separate mandatory Completion primitive capabilities from optional optimizations.",
+   "artifacts": [
+    "contract.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C008",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document unsupported deployment patterns and non-goals for Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C009",
+   "dimension": "Architecture & Scope",
+   "requirement": "Assign an accountable owner and escalation path for Completion primitive.",
+   "artifacts": [
+    "governance/OWNERS.json",
+    "CODEOWNERS"
+   ],
+   "blockers": [
+    "OWNERS_VACANT"
+   ]
+  },
+  {
+   "id": "INV-18-C010",
+   "dimension": "Architecture & Scope",
+   "requirement": "Approve an architecture decision record for Completion primitive, its technologies (future<T>), and its function (Deferred asynchronous results).",
+   "artifacts": [
+    "docs/adr/ADR-001-completion-primitive.md"
+   ],
+   "blockers": [
+    "ADR_NOT_APPROVED"
+   ]
+  },
+  {
+   "id": "INV-18-C011",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Translate the source function of Completion primitive \u2014 Deferred asynchronous results \u2014 into testable SHALL-level requirements.",
+   "artifacts": [
+    "REQUIREMENTS.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C012",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define functional requirements for Completion primitive across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md",
+    "config/site-far-edge.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C013",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C014",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Completion primitive.",
+   "artifacts": [
+    "errors.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C015",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define lifecycle states and legal state transitions managed or exposed by Completion primitive.",
+   "artifacts": [
+    "future.py",
+    "docs/adr/ADR-001-completion-primitive.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C016",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define versioning and backward-compatibility requirements for Completion primitive.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md",
+    "conformance/API_SNAPSHOT.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C017",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Completion primitive.",
+   "artifacts": [
+    "runtime.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C018",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define behavior when network connectivity is intermittent or absent.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md",
+    "adapters.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C019",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define precedence rules when Completion primitive requirements conflict with security, residency, SLO, or cost constraints.",
+   "artifacts": [
+    "runtime.py",
+    "errors.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C020",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Maintain a requirements traceability matrix from each Completion primitive requirement to implementation and verification evidence.",
+   "artifacts": [
+    "conformance/RTM.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C021",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Completion primitive.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C022",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Use versioned typed schemas for all externally visible Completion primitive contracts.",
+   "artifacts": [
+    "wire.py",
+    "schemas/"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C023",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define authentication requirements at each Completion primitive boundary.",
+   "artifacts": [
+    "docs/INTERFACES.md",
+    "auth.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C024",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define authorization and explicit capability requirements at each Completion primitive boundary.",
+   "artifacts": [
+    "runtime.py",
+    "docs/INTERFACES.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C025",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Completion primitive.",
+   "artifacts": [
+    "future.py",
+    "runtime.py",
+    "adapters.py",
+    "docs/INTERFACES.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C026",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define structured failure codes and machine-readable error details for Completion primitive.",
+   "artifacts": [
+    "errors.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C027",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define compatibility behavior when peers use different supported versions.",
+   "artifacts": [
+    "wire.py",
+    "conformance/COMPAT_MATRIX.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C028",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Document payload, concurrency, queue, connection, or resource limits at Completion primitive interfaces.",
+   "artifacts": [
+    "config.py",
+    "wire.py",
+    "runtime.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C029",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Provide reference examples and conformance fixtures for Completion primitive.",
+   "artifacts": [
+    "fixtures/v1/",
+    "fixtures_runner.py",
+    "examples/producer_consumer.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C030",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Create automated integration tests proving Completion primitive interoperates with adjacent architectural layers.",
+   "artifacts": [
+    "adjacent.py"
+   ],
+   "blockers": [
+    "REAL_TIER_NOT_RUN"
+   ]
+  },
+  {
+   "id": "INV-18-C031",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Select and pin approved implementations, versions, or specifications for Completion primitive: future<T>.",
+   "artifacts": [
+    "pyproject.toml",
+    "requirements.lock.json",
+    "component.py"
+   ],
+   "blockers": [
+    "PK_CORE_MISSING"
+   ]
+  },
+  {
+   "id": "INV-18-C032",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Separate immutable artifacts from mutable configuration and state for Completion primitive.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C033",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Define declarative configuration and secure defaults for Completion primitive.",
+   "artifacts": [
+    "config.py",
+    "config/"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C034",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+   "artifacts": [
+    "config.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C035",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+   "artifacts": [
+    "config.py",
+    "config/"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C036",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Record configuration provenance, version, author, and activation time.",
+   "artifacts": [
+    "config.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C037",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+   "artifacts": [
+    "config.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C038",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Define automatic and operator-driven rollback for failed Completion primitive changes.",
+   "artifacts": [
+    "config.py",
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C039",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Keep credentials and secret material out of ordinary Completion primitive configuration and diagnostics.",
+   "artifacts": [
+    "config.py",
+    "errors.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C040",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Completion primitive operation.",
+   "artifacts": [
+    "bootstrap.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C041",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Threat-model Completion primitive against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+   "artifacts": [
+    "conformance/THREAT_MODEL.json",
+    "docs/SECURITY.md"
+   ],
+   "blockers": [
+    "THREAT_MODEL_NOT_APPROVED"
+   ]
+  },
+  {
+   "id": "INV-18-C042",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Apply least privilege to every identity and capability used by Completion primitive.",
+   "artifacts": [
+    "docs/SECURITY.md",
+    "runtime.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C043",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Completion primitive permits.",
+   "artifacts": [
+    "docs/SECURITY.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C044",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+   "artifacts": [
+    "auth.py",
+    "adapters.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C045",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Completion primitive.",
+   "artifacts": [
+    "SHA256SUMS",
+    "conformance/SBOM.json",
+    "tools/verify.py",
+    "tools_verify.py"
+   ],
+   "blockers": [
+    "UNSIGNED_EVIDENCE"
+   ]
+  },
+  {
+   "id": "INV-18-C046",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Enforce tenant/workload isolation across Completion primitive execution, memory, state, network, and device boundaries as applicable.",
+   "artifacts": [
+    "runtime.py",
+    "adapters.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C047",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Encrypt sensitive Completion primitive data in transit and at rest with managed key rotation.",
+   "artifacts": [
+    "docs/SECURITY.md",
+    "auth.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C048",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+   "artifacts": [
+    "auth.py",
+    "docs/SECURITY.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C049",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Emit tamper-evident audit events for security-sensitive Completion primitive operations.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C050",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+   "artifacts": [
+    "tests/test_security.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C051",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Completion primitive.",
+   "artifacts": [
+    "docs/RESILIENCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C052",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define automated health and stall detection thresholds for Completion primitive.",
+   "artifacts": [
+    "runtime.py",
+    "docs/RESILIENCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C053",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+   "artifacts": [
+    "retry.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C054",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Completion primitive failure cascades.",
+   "artifacts": [
+    "runtime.py",
+    "retry.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C055",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+   "artifacts": [
+    "adapters.py",
+    "docs/RESILIENCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C056",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+   "artifacts": [
+    "runtime.py",
+    "docs/RESILIENCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C057",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Completion primitive state.",
+   "artifacts": [
+    "docs/RESILIENCE.md",
+    "adapters.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C058",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+   "artifacts": [
+    "adapters.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C059",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Completion primitive behavior.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C060",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Run fault-injection tests proving Completion primitive recovery against documented objectives.",
+   "artifacts": [
+    "fault.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C061",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Establish reproducible baselines for Completion primitive latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+   "artifacts": [
+    "bench.py",
+    "conformance/BENCH_BASELINE.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C062",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Completion primitive.",
+   "artifacts": [
+    "conformance/PERFORMANCE_THRESHOLDS.json"
+   ],
+   "blockers": [
+    "THRESHOLDS_PROPOSED"
+   ]
+  },
+  {
+   "id": "INV-18-C063",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure Completion primitive under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "blockers": [
+    "DEBT-PERF-01"
+   ]
+  },
+  {
+   "id": "INV-18-C064",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure per-workload and per-tenant overhead introduced by Completion primitive.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C065",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Completion primitive.",
+   "artifacts": [
+    "bench.py",
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C066",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+   "artifacts": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C067",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+   "artifacts": [
+    "runtime.py",
+    "telemetry.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C068",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+   "artifacts": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": [
+    "W-C068"
+   ]
+  },
+  {
+   "id": "INV-18-C069",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Define capacity models and saturation signals that predict when Completion primitive needs more resources.",
+   "artifacts": [
+    "docs/PERFORMANCE.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C070",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Block releases that regress approved Completion primitive startup, density, throughput, or tail-latency thresholds.",
+   "artifacts": [
+    "bench.py",
+    "certify.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C071",
+   "dimension": "Observability & Explainability",
+   "requirement": "Expose Completion primitive health, readiness, version, configuration, dependency status, and active capability set.",
+   "artifacts": [
+    "status.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C072",
+   "dimension": "Observability & Explainability",
+   "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C073",
+   "dimension": "Observability & Explainability",
+   "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C074",
+   "dimension": "Observability & Explainability",
+   "requirement": "Propagate trace context across all relevant Completion primitive boundaries.",
+   "artifacts": [
+    "telemetry.py",
+    "adjacent.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C075",
+   "dimension": "Observability & Explainability",
+   "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+   "artifacts": [
+    "telemetry.py",
+    "errors.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C076",
+   "dimension": "Observability & Explainability",
+   "requirement": "Record the reason for every automated decision made by Completion primitive.",
+   "artifacts": [
+    "telemetry.py",
+    "runtime.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C077",
+   "dimension": "Observability & Explainability",
+   "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+   "artifacts": [
+    "status.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C078",
+   "dimension": "Observability & Explainability",
+   "requirement": "Correlate Completion primitive events with application release lineage and the live infrastructure graph.",
+   "artifacts": [
+    "status.py",
+    "conformance/LINEAGE.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C079",
+   "dimension": "Observability & Explainability",
+   "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+   "artifacts": [
+    "docs/OBSERVABILITY.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C080",
+   "dimension": "Observability & Explainability",
+   "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+   "artifacts": [
+    "dashboards/",
+    "alerts.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C081",
+   "dimension": "Testing & Certification",
+   "requirement": "Create unit tests for deterministic Completion primitive logic and state transitions.",
+   "artifacts": [
+    "tests/test_future.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C082",
+   "dimension": "Testing & Certification",
+   "requirement": "Create contract tests for every public Completion primitive interface.",
+   "artifacts": [
+    "tests/test_contract.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C083",
+   "dimension": "Testing & Certification",
+   "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+   "artifacts": [
+    "tests/test_integration.py",
+    "tests/test_integration_real.py"
+   ],
+   "blockers": [
+    "REAL_TIER_NOT_RUN"
+   ]
+  },
+  {
+   "id": "INV-18-C084",
+   "dimension": "Testing & Certification",
+   "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Completion primitive.",
+   "artifacts": [
+    "tools/compat_matrix.py",
+    "conformance/COMPAT_RESULTS.json"
+   ],
+   "blockers": [
+    "PLATFORMS_NOT_RUN"
+   ]
+  },
+  {
+   "id": "INV-18-C085",
+   "dimension": "Testing & Certification",
+   "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Completion primitive.",
+   "artifacts": [
+    "tests/test_property.py",
+    "fixtures/fuzz_corpus.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C086",
+   "dimension": "Testing & Certification",
+   "requirement": "Create concurrency and race-condition tests for shared/distributed Completion primitive state.",
+   "artifacts": [
+    "tests/test_future.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C087",
+   "dimension": "Testing & Certification",
+   "requirement": "Create security tests derived directly from the Completion primitive threat model.",
+   "artifacts": [
+    "conformance/THREAT_MODEL.json"
+   ],
+   "blockers": [
+    "THREAT_MODEL_NOT_APPROVED"
+   ]
+  },
+  {
+   "id": "INV-18-C088",
+   "dimension": "Testing & Certification",
+   "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Completion primitive.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C089",
+   "dimension": "Testing & Certification",
+   "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+   "artifacts": [
+    "tests/test_resilience.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C090",
+   "dimension": "Testing & Certification",
+   "requirement": "Require machine-readable acceptance evidence before certifying a Completion primitive release for production.",
+   "artifacts": [
+    "certify.py",
+    "conformance/RELEASE_EVIDENCE.json",
+    "testrunner.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C091",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define production SLOs, error budgets, and support commitments for Completion primitive.",
+   "artifacts": [
+    "docs/OPERATIONS.md",
+    "slo.py"
+   ],
+   "blockers": [
+    "THRESHOLDS_PROPOSED"
+   ]
+  },
+  {
+   "id": "INV-18-C092",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Completion primitive.",
+   "artifacts": [
+    "docs/OPERATIONS.md",
+    "__main__.py"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C093",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Maintain a supported-version compatibility matrix for Completion primitive and adjacent dependencies.",
+   "artifacts": [
+    "conformance/COMPAT_MATRIX.json"
+   ],
+   "blockers": [
+    "PK_CORE_MISSING"
+   ]
+  },
+  {
+   "id": "INV-18-C094",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Completion primitive.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C095",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Provide backup, restore, migration, or reconstruction procedures for Completion primitive state where applicable.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C096",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C097",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "blockers": [
+    "TABLETOP_PENDING"
+   ]
+  },
+  {
+   "id": "INV-18-C098",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+   "artifacts": [
+    "governance/REVIEWS.json"
+   ],
+   "blockers": [
+    "REVIEW_NOT_COUNTERSIGNED"
+   ]
+  },
+  {
+   "id": "INV-18-C099",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+   "artifacts": [
+    "governance/WAIVERS.json"
+   ],
+   "blockers": []
+  },
+  {
+   "id": "INV-18-C100",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+   "artifacts": [
+    "certify.py",
+    "component.py"
+   ],
+   "blockers": []
+  }
+ ]
+}

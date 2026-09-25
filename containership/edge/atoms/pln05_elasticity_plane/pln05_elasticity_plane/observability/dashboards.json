@@ -1,0 +1,122 @@
+{
+ "schema": "PLN05_DASHBOARDS/1",
+ "format": "panel list; queries in Prometheus syntax over the pln05_* exposition",
+ "dashboards": [
+  {
+   "title": "PLN-05 decisions",
+   "panels": [
+    {
+     "title": "Decision rate by outcome",
+     "query": "sum by(outcome)(rate(pln05_decisions[5m]))"
+    },
+    {
+     "title": "Reason codes",
+     "query": "sum by(reason_code)(rate(pln05_decisions[5m]))"
+    },
+    {
+     "title": "Suppressed oscillations",
+     "query": "rate(pln05_suppressed_oscillations[5m])"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 latency & SLO",
+   "panels": [
+    {
+     "title": "p50/p95/p99 decision latency",
+     "query": "histogram_quantile(0.99, rate(pln05_decision_latency_ms_bucket[5m]))"
+    },
+    {
+     "title": "Error budget remaining (99.9%)",
+     "query": "1 - (sum(rate(pln05_errors{reason_code=~\"E_INTERNAL|E_STATE_UNAVAILABLE\"}[30d])) / sum(rate(pln05_decisions[30d]))) / 0.001"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 input quality",
+   "panels": [
+    {
+     "title": "Demand staleness (s)",
+     "query": "max(pln05_demand_staleness_seconds)"
+    },
+    {
+     "title": "Rejected stale samples",
+     "query": "rate(pln05_stale_rejected[5m])"
+    },
+    {
+     "title": "Schema rejections",
+     "query": "sum by(reason_code)(rate(pln05_errors{reason_code=~\"E_SCHEMA.*\"}[5m]))"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 constraints",
+   "panels": [
+    {
+     "title": "Floor/ceiling-constrained decisions",
+     "query": "sum by(reason_code)(rate(pln05_decisions{outcome=\"constrained-hold\"}[5m]))"
+    },
+    {
+     "title": "Degraded no-scale-up",
+     "query": "rate(pln05_decisions{reason_code=\"R_DEGRADED_NO_SCALE_UP\"}[5m])"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 overload & dependencies",
+   "panels": [
+    {
+     "title": "Admission rejections",
+     "query": "rate(pln05_admission_rejected[5m])"
+    },
+    {
+     "title": "Publish failures",
+     "query": "sum by(reason_code)(rate(pln05_publish_failed[5m]))"
+    },
+    {
+     "title": "Breaker state (status API)",
+     "query": "pln05 status dependencies.*"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 ownership",
+   "panels": [
+    {
+     "title": "Lease loss",
+     "query": "rate(pln05_errors{reason_code=\"E_NOT_LEADER\"}[5m])"
+    },
+    {
+     "title": "Fenced publications",
+     "query": "rate(pln05_errors{reason_code=\"E_FENCED\"}[5m])"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 controls & modes",
+   "panels": [
+    {
+     "title": "Mode transitions",
+     "query": "sum by(state)(rate(pln05_mode_transitions[5m]))"
+    },
+    {
+     "title": "Frozen decisions",
+     "query": "rate(pln05_decisions{outcome=\"frozen\"}[5m])"
+    }
+   ]
+  },
+  {
+   "title": "PLN-05 security",
+   "panels": [
+    {
+     "title": "AuthN/AuthZ failures",
+     "query": "sum by(reason_code)(rate(pln05_errors{reason_code=~\"E_AUTH.*\"}[5m]))"
+    },
+    {
+     "title": "Replays",
+     "query": "rate(pln05_errors{reason_code=\"E_AUTHN_REPLAY\"}[5m])"
+    }
+   ]
+  }
+ ]
+}

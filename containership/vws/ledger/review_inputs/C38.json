@@ -1,0 +1,1676 @@
+{
+"component": "C38",
+"items": [
+{
+"id": "C38-001",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Define the connection-stability problem the keep-alive mechanism addresses.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "RECOVERY.md defines three liveness signals (transport ping/pong, application heartbeat, worker ping) addressing connection-stability detection.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-002",
+"task_class": "IMPLEMENT",
+"area": "01. Keep-alive purpose",
+"req": "Distinguish protocol keep-alive traffic from application-level health messages.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Application heartbeat.ping/pong (connection.js) is a distinct message type from RFC6455 transport PING/PONG (ws.js answers PING with PONG only, opcode-level).",
+"prior_evidence": [
+"gateway/connection.js#L148-151,157-163",
+"gateway/ws.js#L196-197"
+]
+},
+{
+"id": "C38-003",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Define whether detecting an unresponsive peer is also required.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "RECOVERY.md's Application row states failure action 'close 1008, session.exit{expired}' \u2014 detecting an unresponsive peer is required.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-004",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Define what a successful heartbeat is intended to demonstrate.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Table states a successful application heartbeat demonstrates the client is answering (peer/app-level reachability), separate from transport and worker signals.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-005",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Define what application responsiveness it does not establish without further checks.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Table distinguishes the three signals but does not explicitly state that a heartbeat answer does NOT prove the shell/worker itself is responsive (that is covere",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-006",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Identify the client and server runtimes in scope.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "D-001 identifies Node.js gateway + browser/native client runtimes in scope, replacing the PowerShell/.NET original.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#Recorded decisions"
+]
+},
+{
+"id": "C38-007",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Identify network paths used in stability tests.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VALIDATION.md records loopback as the tested path and lists Render/WAN/TLS edge as explicitly not run (BLOCKED), so network paths are identified but only loopba",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-008",
+"task_class": "DOCUMENT",
+"area": "01. Keep-alive purpose",
+"req": "Record the article's Ping and Pong description.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No document records the source article's own Ping/Pong description verbatim or paraphrased; only the candidate's own design is documented.",
+"prior_evidence": []
+},
+{
+"id": "C38-009",
+"task_class": "SPECIFY",
+"area": "01. Keep-alive purpose",
+"req": "Identify source claims needing runtime-specific verification.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'PowerShell/.NET gateway, HttpListener matrix' is marked NOT_APPLICABLE (D-001) but no explicit list of which specific source claims needed runtime-specific re-",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-010",
+"task_class": "IMPLEMENT",
+"area": "01. Keep-alive purpose",
+"req": "Approve the keep-alive requirements.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit approval record for the keep-alive requirements was found.",
+"prior_evidence": []
+},
+{
+"id": "C38-011",
+"task_class": "VERIFY",
+"area": "02. Runtime behavior verification",
+"req": "VERIFY the selected .NET implementation's automatic keep-alive behavior.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET/HttpListener automatic keep-alive has no meaning for the hand-written Node gateway (D-001).",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#Recorded decisions D-001"
+]
+},
+{
+"id": "C38-012",
+"task_class": "VERIFY",
+"area": "02. Runtime behavior verification",
+"req": "VERIFY whether it sends Ping requests or another permitted control pattern.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No .NET WebSocket API is used; the Node gateway sends no automatic Ping and answers PING with PONG only (gateway/ws.js#L196-197) \u2014 D-001.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#D-001"
+]
+},
+{
+"id": "C38-013",
+"task_class": "VERIFY",
+"area": "02. Runtime behavior verification",
+"req": "VERIFY whether peer responses are monitored by the selected API configuration.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'Selected API configuration' for peer-response monitoring is a .NET ClientWebSocket concept; Node has no such automatic setting (D-001).",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#D-001"
+]
+},
+{
+"id": "C38-014",
+"task_class": "VERIFY",
+"area": "02. Runtime behavior verification",
+"req": "VERIFY whether a timeout exists separately from the interval.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "heartbeatInterval (20000) and heartbeatWindow (10000) are separate config keys, but item as phrased ('.NET' timeout vs interval) is not directly transferable; k",
+"prior_evidence": [
+"config/limits.json#timeoutsMs"
+]
+},
+{
+"id": "C38-015",
+"task_class": "VERIFY",
+"area": "02. Runtime behavior verification",
+"req": "VERIFY whether control frames are exposed to application receives.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OP.PING/OP.PONG are handled entirely inside ws.js and never emitted as a 'text' event, so control frames are not exposed to application (Connection) receives; o",
+"prior_evidence": [
+"gateway/ws.js#L196-197,204-209"
+]
+},
+{
+"id": "C38-016",
+"task_class": "DOCUMENT",
+"area": "02. Runtime behavior verification",
+"req": "Record the exact runtime and API used.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Node v22.22.2, hand-written gateway/ws.js (no ws library, no .NET) is recorded as the exact runtime/implementation used.",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#D-001",
+"docs/VALIDATION.md#Environment"
+]
+},
+{
+"id": "C38-017",
+"task_class": "MEASURE",
+"area": "02. Runtime behavior verification",
+"req": "Observe behavior with a suitable protocol-aware test setup.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "A raw-socket protocol-aware test peer observes PING/PONG framing behavior directly.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js#ping is answered with an identical pong"
+]
+},
+{
+"id": "C38-018",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior verification",
+"req": "Compare observed behavior with the article's description.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "There is no '.NET article' baseline being compared against a .NET implementation; profile is Node-only (D-001).",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#D-001"
+]
+},
+{
+"id": "C38-019",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior verification",
+"req": "Keep differences in a separate verification note.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "PROTOCOL.md documents the Node-specific framing differences narratively, but no separate 'verification note' artifact isolates differences from a source article",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C38-020",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime behavior verification",
+"req": "Do not claim dead-peer detection until it is demonstrated.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "RECOVERY.md notes dead-peer detection is 'OBSERVED with a catastrophic RegExp' for the worker signal and qualifies the app heartbeat window as 'a starting value",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-021",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Identify the server keep-alive interval configuration owner.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Server keep-alive interval/window (heartbeatInterval, heartbeatWindow) are owned by gateway config (VWS_* env vars validated in gateway/config.js).",
+"prior_evidence": [
+"gateway/config.js",
+"config/limits.json#timeoutsMs"
+]
+},
+{
+"id": "C38-022",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Identify the client keep-alive configuration owner.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Client reconnect/backoff config is in ws-adapter.js, but there is no separate client-side heartbeat INTERVAL config \u2014 the client only replies to server heartbea",
+"prior_evidence": [
+"client/ws-adapter.js"
+]
+},
+{
+"id": "C38-023",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Define which side initiates periodic traffic under the chosen design.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Server initiates periodic application heartbeat.ping; client only responds \u2014 an explicit, one-directional design.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness",
+"gateway/connection.js#L157-163"
+]
+},
+{
+"id": "C38-024",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Define an intentional policy when both sides support keep-alive.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Both server and client MAY ping ('client may ping too') but no explicit policy is documented for what happens when both sides independently heartbeat.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-025",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Define the approved interval selection process.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented process for how the 20s/10s interval/window values were selected beyond being called 'a starting value' in RECOVERY.md.",
+"prior_evidence": []
+},
+{
+"id": "C38-026",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Define any separately supported timeout parameter.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeatWindowMs is a separately configured timeout distinct from heartbeatMs (the interval).",
+"prior_evidence": [
+"config/limits.json#timeoutsMs",
+"gateway/connection.js#L160"
+]
+},
+{
+"id": "C38-027",
+"task_class": "SPECIFY",
+"area": "03. Configuration boundary",
+"req": "Define behavior when keep-alive is disabled intentionally.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No code path or config flag disables heartbeat outright (it always runs via cfg.heartbeatMs in the Connection constructor); intentional-disable behavior is undo",
+"prior_evidence": []
+},
+{
+"id": "C38-028",
+"task_class": "IMPLEMENT",
+"area": "03. Configuration boundary",
+"req": "Keep protocol configuration separate from application message scheduling.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Heartbeat timing comes from cfg (protocol config); application message scheduling (terminal.input/output) is unrelated and separately driven by worker/client ac",
+"prior_evidence": [
+"gateway/config.js",
+"gateway/connection.js#L46,157-163"
+]
+},
+{
+"id": "C38-029",
+"task_class": "REVIEW",
+"area": "03. Configuration boundary",
+"req": "Validate configuration before the connection is accepted.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "config.test.js validates malformed/out-of-range config values are rejected before the server starts listening (startup-time validation, which covers heartbeat-a",
+"prior_evidence": [
+"tests/gateway/config.test.js#PORT"
+]
+},
+{
+"id": "C38-030",
+"task_class": "DOCUMENT",
+"area": "03. Configuration boundary",
+"req": "Document defaults and explicit overrides.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "limits.json documents default values (heartbeatInterval 20000, heartbeatWindow 10000) but there's no doc section distinguishing 'default' vs 'explicit override'",
+"prior_evidence": [
+"config/limits.json#timeoutsMs"
+]
+},
+{
+"id": "C38-031",
+"task_class": "SPECIFY",
+"area": "04. Protocol exchange tests",
+"req": "Establish a connection with the selected keep-alive configuration.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "startGateway({heartbeatMs, heartbeatWindowMs}) establishes a connection under a chosen keep-alive configuration.",
+"prior_evidence": [
+"tests/helpers.js",
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-032",
+"task_class": "MEASURE",
+"area": "04. Protocol exchange tests",
+"req": "Observe an idle connection for the agreed test duration.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Idle 'live' peer is observed for 700ms, receiving >=2 heartbeat.ping messages, within the test's agreed duration.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-033",
+"task_class": "VERIFY",
+"area": "04. Protocol exchange tests",
+"req": "Verify emitted control traffic through the chosen test method.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "live.type('heartbeat.ping').length >= 2 verifies emitted control-equivalent traffic through the WS test client.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-034",
+"task_class": "VERIFY",
+"area": "04. Protocol exchange tests",
+"req": "Verify response payload behavior where a Ping-Pong exchange is observable.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Both application heartbeat.pong and RFC6455 Pong-payload-identity are verified.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat",
+"tests/gateway/ws-conformance.test.js#ping is answered with an identical pong"
+]
+},
+{
+"id": "C38-035",
+"task_class": "TEST",
+"area": "04. Protocol exchange tests",
+"req": "Test the same configuration on the native client.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Tests run against Node's undici WebSocket client as an independent peer, not against a distinct 'native' non-browser production client implementation.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C38-036",
+"task_class": "TEST",
+"area": "04. Protocol exchange tests",
+"req": "Test the same configuration on the intended browser client.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Real Chromium browser test exercises the client under the same protocol/config, including reconnect.",
+"prior_evidence": [
+"tests/ui/browser.test.js#web client in Chromium"
+]
+},
+{
+"id": "C38-037",
+"task_class": "DOCUMENT",
+"area": "04. Protocol exchange tests",
+"req": "Record whether application ReceiveAsync sees only application messages.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Code shows PING/PONG never reach the 'text' event (only application messages do), but no document explicitly records this claim about ReceiveAsync-equivalent be",
+"prior_evidence": [
+"gateway/ws.js#L196-197,204"
+]
+},
+{
+"id": "C38-038",
+"task_class": "VERIFY",
+"area": "04. Protocol exchange tests",
+"req": "Verify control traffic does not become user-visible application text.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Test confirms a PING interleaved in a fragmented text message does not corrupt or surface as user text.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js#ping is answered with an identical pong, interleaved inside a fragmented text message that still assembles"
+]
+},
+{
+"id": "C38-039",
+"task_class": "VERIFY",
+"area": "04. Protocol exchange tests",
+"req": "Verify application message order is unaffected.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Same test shows the fragmented text message 'still assembles', i.e. application message order/integrity is unaffected by interleaved control frames.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js#ping is answered with an identical pong, interleaved..."
+]
+},
+{
+"id": "C38-040",
+"task_class": "IMPLEMENT",
+"area": "04. Protocol exchange tests",
+"req": "Preserve redacted protocol observations.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Logger redacts secret-like fields, strips newlines and drops payload/data fields, applying to any heartbeat-related log lines too.",
+"prior_evidence": [
+"gateway/log.js#L6,10"
+]
+},
+{
+"id": "C38-041",
+"task_class": "TEST",
+"area": "05. Active-traffic interaction",
+"req": "Test keep-alive while receiving a large message.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No test specifically verifies heartbeat continues correctly while the client is receiving a large message.",
+"prior_evidence": []
+},
+{
+"id": "C38-042",
+"task_class": "TEST",
+"area": "05. Active-traffic interaction",
+"req": "Test keep-alive while sending a large message.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No test specifically verifies heartbeat continues correctly while the client is sending a large message.",
+"prior_evidence": []
+},
+{
+"id": "C38-043",
+"task_class": "TEST",
+"area": "05. Active-traffic interaction",
+"req": "Test keep-alive during simultaneous send and receive.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No test verifies heartbeat during simultaneous send+receive.",
+"prior_evidence": []
+},
+{
+"id": "C38-044",
+"task_class": "TEST",
+"area": "05. Active-traffic interaction",
+"req": "Test keep-alive while the application handler is slow.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "The slow-consumer test pauses the worker under backpressure but does not itself assert heartbeat.ping/pong continues to function during that state.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#slow consumer"
+]
+},
+{
+"id": "C38-045",
+"task_class": "TEST",
+"area": "05. Active-traffic interaction",
+"req": "Test keep-alive while outbound queue pressure is high.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Queue-pressure test asserts send-queue/backpressure bounds but does not assert heartbeat traffic specifically under that pressure.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#peer that stops reading its TCP socket"
+]
+},
+{
+"id": "C38-046",
+"task_class": "TEST",
+"area": "05. Active-traffic interaction",
+"req": "Test several connections with different activity levels.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Test uses two connections (dead vs live) with different activity levels, but only two, and does not vary traffic load systematically.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-047",
+"task_class": "MEASURE",
+"area": "05. Active-traffic interaction",
+"req": "Observe whether the configured runtime changes heartbeat timing under traffic.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No observation was found of whether Node's timer/event-loop changes heartbeat timing under load (e.g. timer drift under CPU pressure).",
+"prior_evidence": []
+},
+{
+"id": "C38-048",
+"task_class": "DOCUMENT",
+"area": "05. Active-traffic interaction",
+"req": "Record deviations from nominal timing.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of deviations from nominal heartbeat timing exists in docs/ or e/.",
+"prior_evidence": []
+},
+{
+"id": "C38-049",
+"task_class": "REVIEW",
+"area": "05. Active-traffic interaction",
+"req": "Ensure no helper creates competing application sends unexpectedly.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "_heartbeat() only fires via the dedicated _every(cfg.heartbeatMs,...) timer and is gated by `this.hb` (no send if one is outstanding), so no other code path cre",
+"prior_evidence": [
+"gateway/connection.js#L157-163"
+]
+},
+{
+"id": "C38-050",
+"task_class": "DOCUMENT",
+"area": "05. Active-traffic interaction",
+"req": "Document the tested interaction with the send owner.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No document links the heartbeat/send-owner interaction test to a written record.",
+"prior_evidence": []
+},
+{
+"id": "C38-051",
+"task_class": "TEST",
+"area": "06. Unresponsive-peer tests",
+"req": "Simulate a client that stops reading.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "r.socket.pause() simulates a client that stops reading; gateway send-queue containment is verified.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#peer that stops reading its TCP socket"
+]
+},
+{
+"id": "C38-052",
+"task_class": "TEST",
+"area": "06. Unresponsive-peer tests",
+"req": "Simulate a client that stops sending application data.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "The 'dead' client (pong:false) stops sending expected application responses and is detected within interval+window.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-053",
+"task_class": "TEST",
+"area": "06. Unresponsive-peer tests",
+"req": "Simulate a peer that does not provide the expected control response where feasible.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "A client configured not to answer heartbeat.pong exercises the 'no expected control response' case at the application-message level.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-054",
+"task_class": "TEST",
+"area": "06. Unresponsive-peer tests",
+"req": "Simulate a broken client-side network path.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No test simulates a broken client-side network path (e.g. a proxy dropping packets mid-connection); only TCP destroy() is used.",
+"prior_evidence": []
+},
+{
+"id": "C38-055",
+"task_class": "TEST",
+"area": "06. Unresponsive-peer tests",
+"req": "Simulate a half-open connection using an appropriate test environment.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No test simulates a genuine half-open TCP connection (data flows one way only, no RST) \u2014 socket.destroy() produces a clean local error, not a real half-open sta",
+"prior_evidence": []
+},
+{
+"id": "C38-056",
+"task_class": "MEASURE",
+"area": "06. Unresponsive-peer tests",
+"req": "Observe when the runtime reports connection failure.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeat timeout handler logs 'conn.heartbeat_timeout' and calls end('expired',1008,...) \u2014 the runtime-detected-failure point is explicit.",
+"prior_evidence": [
+"gateway/connection.js#L160"
+]
+},
+{
+"id": "C38-057",
+"task_class": "MEASURE",
+"area": "06. Unresponsive-peer tests",
+"req": "Observe whether ReceiveAsync completes or faults.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "socket 'error'/'close'/'end' handlers explicitly show how the receive path completes (via _destroy) rather than throwing uncaught.",
+"prior_evidence": [
+"gateway/ws.js#L63-65"
+]
+},
+{
+"id": "C38-058",
+"task_class": "MEASURE",
+"area": "06. Unresponsive-peer tests",
+"req": "Observe whether the worker releases resources.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Worker process is confirmed dead (alive(pid)===false) after TCP loss, showing resource release.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#abrupt TCP loss"
+]
+},
+{
+"id": "C38-059",
+"task_class": "IMPLEMENT",
+"area": "06. Unresponsive-peer tests",
+"req": "Distinguish unexecuted simulations from passing tests.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VALIDATION.md's 'Not run' table distinguishes BLOCKED/OPEN from executed tests generally, but no per-simulation ledger explicitly separates 'not executed' from ",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-060",
+"task_class": "DOCUMENT",
+"area": "06. Unresponsive-peer tests",
+"req": "Record actual detection time rather than an assumed value.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Test asserts detection happens within 1500ms wall time (Date.now()-t0 < 1500), an actual measured value rather than an assumed one. [downgraded: RECORD item wit",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-061",
+"task_class": "TEST",
+"area": "07. Network-path tests",
+"req": "Test a direct development connection.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "All tests run over a direct loopback/localhost TCP connection on this host.",
+"prior_evidence": [
+"docs/VALIDATION.md#Environment",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C38-062",
+"task_class": "TEST",
+"area": "07. Network-path tests",
+"req": "Test a connection through the Render public edge.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "'Render deploy, staging rehearsal, TLS edge, real WAN' explicitly BLOCKED \u2014 no account/authorization available.",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-063",
+"task_class": "TEST",
+"area": "07. Network-path tests",
+"req": "Test an intended private-network connection when applicable.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Single-instance WEB profile defines no private-network/internal topology requiring this test (no such path is 'intended').",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#Profiles"
+]
+},
+{
+"id": "C38-064",
+"task_class": "TEST",
+"area": "07. Network-path tests",
+"req": "Test the chosen client network environment.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Chromium (the intended browser client) is tested, on loopback, per VALIDATION.md.",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C38-065",
+"task_class": "VERIFY",
+"area": "07. Network-path tests",
+"req": "VERIFY any platform-documented idle behavior relevant to the service.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Platform (Render) idle-connection behavior cannot be verified without a hosted deployment, which is explicitly not run.",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-066",
+"task_class": "IMPLEMENT",
+"area": "07. Network-path tests",
+"req": "Avoid treating the article's generic timeout range as a platform guarantee.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "RECOVERY.md calls the 10s heartbeat window 'a starting value', explicitly avoiding treating any generic number as a platform guarantee.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-067",
+"task_class": "DOCUMENT",
+"area": "07. Network-path tests",
+"req": "Record network conditions used for each test.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Environment line records host/OS/Node version/Chromium version used for all tests, i.e. the network condition (loopback, single host) is recorded.",
+"prior_evidence": [
+"docs/VALIDATION.md#Environment"
+]
+},
+{
+"id": "C38-068",
+"task_class": "MEASURE",
+"area": "07. Network-path tests",
+"req": "Measure false disconnects during transient delays.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No measurement of false disconnects during transient network delays (e.g. simulated jitter) was found.",
+"prior_evidence": []
+},
+{
+"id": "C38-069",
+"task_class": "SPECIFY",
+"area": "07. Network-path tests",
+"req": "Identify paths where behavior remains unverified.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'Not run' table explicitly identifies Render/WAN/TLS-edge paths as unverified.",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-070",
+"task_class": "SPECIFY",
+"area": "07. Network-path tests",
+"req": "Define the evidence needed before changing heartbeat settings.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No document defines what evidence would be required before changing the 20s/10s heartbeat defaults.",
+"prior_evidence": []
+},
+{
+"id": "C38-071",
+"task_class": "IMPLEMENT",
+"area": "08. Resource and traffic cost",
+"req": "Estimate control-traffic volume for the intended connection count.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Interval (20s ping + 10s window, i.e. one ~100-byte exchange per 20s per idle session) is inferable from config, but no explicit volume estimate for the target ",
+"prior_evidence": [
+"config/limits.json#timeoutsMs"
+]
+},
+{
+"id": "C38-072",
+"task_class": "MEASURE",
+"area": "08. Resource and traffic cost",
+"req": "Measure actual heartbeat traffic where the tool permits it.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No measurement file records actual heartbeat wire-byte traffic.",
+"prior_evidence": []
+},
+{
+"id": "C38-073",
+"task_class": "MEASURE",
+"area": "08. Resource and traffic cost",
+"req": "Measure CPU overhead while connections are otherwise idle.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No measurement isolates CPU overhead specifically from heartbeat traffic while otherwise idle (RESOURCE_MODEL.md's W3 includes an active harness, not idle-only ",
+"prior_evidence": []
+},
+{
+"id": "C38-074",
+"task_class": "MEASURE",
+"area": "08. Resource and traffic cost",
+"req": "Measure worker memory retained during idle stable sessions.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "W3: 'worker RSS 55.1-55.2 MiB each' is measured for concurrently open (idle-capable) sessions.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#Measured"
+]
+},
+{
+"id": "C38-075",
+"task_class": "REVIEW",
+"area": "08. Resource and traffic cost",
+"req": "Check whether application-level heartbeat additions would duplicate protocol work.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Three distinct signals (transport/app/worker) are deliberately separated, implying no duplication by design, but no explicit written check confirms no redundant",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-076",
+"task_class": "IMPLEMENT",
+"area": "08. Resource and traffic cost",
+"req": "Avoid adding polling loops without a demonstrated need.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Only two interval timers exist per connection (heartbeat, idle sweep) plus the worker ping \u2014 no additional ad hoc polling loops are present in the code reviewed",
+"prior_evidence": [
+"gateway/connection.js#L46-50"
+]
+},
+{
+"id": "C38-077",
+"task_class": "SPECIFY",
+"area": "08. Resource and traffic cost",
+"req": "Define acceptable idle traffic overhead.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No document defines an acceptable idle-traffic overhead threshold.",
+"prior_evidence": []
+},
+{
+"id": "C38-078",
+"task_class": "TEST",
+"area": "08. Resource and traffic cost",
+"req": "Test heartbeat behavior near the target connection count.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3 tests 8 concurrent sessions (close to VWS_MAX_SESSIONS=4 default) but does not specifically vary/measure heartbeat behavior at that count.",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#W3"
+]
+},
+{
+"id": "C38-079",
+"task_class": "IMPLEMENT",
+"area": "08. Resource and traffic cost",
+"req": "Compare resource use before and after configuration changes.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No before/after comparison of resource use across a heartbeat configuration change was found.",
+"prior_evidence": []
+},
+{
+"id": "C38-080",
+"task_class": "DOCUMENT",
+"area": "08. Resource and traffic cost",
+"req": "Document the selected stability-cost tradeoff.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "The three-signal design is documented as a decision, but no explicit tradeoff statement (cost vs stability) is written.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-081",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record keep-alive configuration without credentials.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeatInterval/heartbeatWindow values are documented in config without any credential material.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Configuration reference",
+"config/limits.json#timeoutsMs"
+]
+},
+{
+"id": "C38-082",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record observed heartbeat-related failures by safe category.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'conn.heartbeat_timeout' is logged by category (code, not doc), but no aggregated RECORD of observed heartbeat failures by category exists in docs/e.",
+"prior_evidence": [
+"gateway/connection.js#L160"
+]
+},
+{
+"id": "C38-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Distinguish peer nonresponse from application authentication failure.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "UNAUTHORIZED (revoked credential) is a distinct error code/path from heartbeat 'expired' timeout, logged and reported differently.",
+"prior_evidence": [
+"gateway/connection.js#L49",
+"gateway/server.js#L189"
+]
+},
+{
+"id": "C38-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Distinguish connection timeout from deliberate shutdown.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "'expired'/heartbeat timeout reason is distinct from the 'shutdown' reason used by deliberate drain, both logged with different event names/payload reasons.",
+"prior_evidence": [
+"gateway/connection.js#L160",
+"gateway/server.js#L236-239"
+]
+},
+{
+"id": "C38-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate stability failures with client runtime versions.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No correlation of stability failures with client runtime/browser versions is recorded anywhere.",
+"prior_evidence": []
+},
+{
+"id": "C38-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging control payloads when they may contain sensitive application data.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Logger explicitly excludes fields matching /payload|data/i from any logged record, so heartbeat nonce/application payloads are never logged.",
+"prior_evidence": [
+"gateway/log.js#L10"
+]
+},
+{
+"id": "C38-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track unexpected connection termination rates.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "counters object and /live expose sessions/connections counts, but there is no explicit 'unexpected termination rate' metric distinct from normal closes.",
+"prior_evidence": [
+"gateway/server.js#L35,105"
+]
+},
+{
+"id": "C38-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for reproducing an idle-session failure.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "The heartbeat test itself is a reproducible procedure (startGateway with short intervals, a non-answering client), but it is not written up as an operator-facin",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-089",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Document the limits of heartbeat visibility in managed APIs.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No document discusses the limits of heartbeat visibility specific to Node's WebSocket handling (analogous to 'managed API' limits in the original checklist).",
+"prior_evidence": []
+},
+{
+"id": "C38-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Assign ownership for stability configuration changes.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "OPERATIONS.md assigns general maintainer ownership but does not name an explicit owner specifically for stability/heartbeat configuration changes.",
+"prior_evidence": [
+"docs/OPERATIONS.md#Maintainer notes"
+]
+},
+{
+"id": "C38-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the verified keep-alive mechanism.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "RECOVERY.md publishes the verified keep-alive mechanism (three-signal table) with OBSERVED annotations.",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish interval and timeout configuration separately where applicable.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeatInterval and heartbeatWindow are published as separate keys in limits.json.",
+"prior_evidence": [
+"config/limits.json#timeoutsMs"
+]
+},
+{
+"id": "C38-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link idle-session observations.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Idle-session (idle expiry) and heartbeat-timeout observations are both linked to named passing tests.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#no session.open within the open deadline -> ... idle session expires",
+"tests/chaos/lifecycle.test.js#application heartbeat"
+]
+},
+{
+"id": "C38-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link active-traffic interaction tests.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Only partial active-traffic interaction coverage exists (slow-consumer backpressure), not the full matrix (see C38-041..046, mostly OPEN).",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#slow consumer"
+]
+},
+{
+"id": "C38-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link unresponsive-peer tests.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "PASS",
+"prior_note": "Unresponsive-peer scenarios (non-answering client, non-reading TCP peer) are linked to named passing tests.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js#application heartbeat",
+"tests/chaos/lifecycle.test.js#peer that stops reading its TCP socket"
+]
+},
+{
+"id": "C38-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link public-edge stability tests.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No public-edge stability test exists to link (Render edge is BLOCKED \u2014 see C38-062).",
+"prior_evidence": []
+},
+{
+"id": "C38-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record which source claims were confirmed or remain unverified.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VALIDATION.md records broad categories not run, but does not itemize which specific source-article keep-alive claims were confirmed vs left unverified.",
+"prior_evidence": [
+"docs/VALIDATION.md#Not run"
+]
+},
+{
+"id": "C38-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document unsupported peer-detection guarantees.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "RECOVERY.md notes 'a paused worker (backpressure) is not treated as stalled' and browser tab suspension caveats, but does not fully enumerate all unsupported pe",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness"
+]
+},
+{
+"id": "C38-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record measured resource and traffic overhead.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "OPEN",
+"prior_note": "No measured resource/traffic overhead specific to heartbeat cost exists (see C38-072/073).",
+"prior_evidence": []
+},
+{
+"id": "C38-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve keep-alive behavior only to the extent demonstrated by tests.",
+"ram_overlay": "Use the runtime-supported control mechanism for protocol keepalive; use a separately named application heartbeat only when needed. Coalesce timers without claiming a JSON message is a protocol ping.",
+"challenge": "Verify heartbeat behavior under backpressure and a half-open connection with the actual selected runtime.",
+"ref_work": [
+"R17",
+"R26"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Core heartbeat behavior is demonstrated by passing tests, but several required links (traffic cost, public-edge, escalation docs) are missing, so full approval ",
+"prior_evidence": [
+"docs/RECOVERY.md#Liveness",
+"tests/chaos/lifecycle.test.js"
+]
+}
+]
+}

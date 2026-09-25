@@ -1,0 +1,20 @@
+name: inv60-ci
+on: [push, pull_request]
+jobs:
+  gate:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      # tools/ci.py fails (exit 1) on any failure AND on any release-critical skip;
+      # a missing prerequisite is never converted into a pass.
+      - run: python -B inv60_wasm_application_fabric/tools/ci.py --strict
+      - uses: actions/upload-artifact@v4
+        with: { name: "release-evidence-${{ matrix.os }}-${{ matrix.python }}", path: inv60_wasm_application_fabric/release/ }

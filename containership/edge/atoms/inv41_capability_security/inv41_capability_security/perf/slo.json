@@ -1,0 +1,21 @@
+{
+ "schema": "INV41_SLO/1",
+ "status": "PROPOSED — thresholds set by this remediation pass from measurement; require owner approval (BLOCKERS.json B-OWN-01)",
+ "reference_environment": {"implementation": "CPython", "python": "3.11.15", "machine": "x86_64"},
+ "latency_p99_us": {
+  "grant": 150, "bind_holder": 200, "attenuate": 150, "use_allowed": 100, "use_denied": 150,
+  "wrap": 200, "invoke_wrapped": 100, "revoke_1000_descendants": 20000, "authority_create": 400,
+  "attenuate_256ops": 2000
+ },
+ "memory_bytes_max": {"authority_bytes": 4096, "reference_bytes": 2048, "holder_bytes": 2048, "wrapped_reference_bytes": 2048},
+ "selfcheck_ms_max": 250,
+ "throughput_floor_per_s": {"use_allowed": 20000},
+ "regression": {"relative": 0.25, "absolute_us": 2.0},
+ "gating_operations": ["grant", "attenuate", "use_allowed", "use_denied", "invoke_wrapped", "bind_holder"],
+ "advisory_operations": ["authority_create", "grant_256ops", "attenuate_256ops", "wrap", "revoke_1000_descendants"],
+ "complexity": {
+  "grant": "O(|ops|) + one HMAC", "attenuate": "O(|ops|) + one HMAC + O(depth) liveness",
+  "use": "O(depth) liveness + one HMAC verify", "wrap": "O(depth) + HMAC", "revoke": "O(live descendants) (count only)",
+  "bind_holder": "O(entries * (HMAC + depth))"
+ }
+}

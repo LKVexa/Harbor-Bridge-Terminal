@@ -1,0 +1,40 @@
+# INV-14 alert rules (Prometheus rule-file format). Metric names match telemetry.py.
+# Each alert maps to one failure class so on-call can tell them apart (C080).
+groups:
+  - name: inv14-legacy-poll
+    rules:
+      - alert: Inv14CrossOwnerAttempts
+        expr: sum by (tenant) (rate(inv14_polls_total{outcome="refused",reason="foreign_owner"}[5m])) > 0
+        for: 1m
+        labels: {severity: page, class: security}
+        annotations: {summary: "Pollables polled across component boundary", runbook: "docs/RUNBOOK.md#r3-cross-owner-or-identity-refusals"}
+      - alert: Inv14IdentityRefusals
+        expr: sum by (tenant) (rate(inv14_polls_total{outcome="refused",reason="identity"}[5m])) > 0.1
+        for: 5m
+        labels: {severity: page, class: security}
+        annotations: {summary: "Capability tokens failing verification", runbook: "docs/RUNBOOK.md#r3-cross-owner-or-identity-refusals"}
+      - alert: Inv14Saturation
+        expr: sum(rate(inv14_polls_total{outcome="refused",reason="admission"}[5m])) / clamp_min(sum(rate(inv14_polls_total[5m])), 1) > 0.05
+        for: 10m
+        labels: {severity: ticket, class: saturation}
+        annotations: {summary: "Admission shedding above 5%", runbook: "docs/RUNBOOK.md#r4-saturation"}
+      - alert: Inv14InvalidRequests
+        expr: sum by (tenant) (rate(inv14_polls_total{outcome="refused",reason="invalid"}[10m])) > 1
+        for: 10m
+        labels: {severity: ticket, class: caller-defect}
+        annotations: {summary: "Callers sending malformed poll requests", runbook: "docs/RUNBOOK.md#r5-invalid-requests"}
+      - alert: Inv14TimeoutLoad
+        expr: sum(rate(inv14_polls_total{outcome="timeout"}[10m])) / clamp_min(sum(rate(inv14_polls_total{outcome=~"ready|timeout"}[10m])), 1) > 0.9
+        for: 30m
+        labels: {severity: info, class: timeout-load}
+        annotations: {summary: "Most polls time out (idle producers or too-short timeouts)", runbook: "docs/RUNBOOK.md#r6-timeout-load"}
+      - alert: Inv14MigrationRegression
+        expr: sum(rate(inv14_polls_total{outcome="refused",reason="policy"}[15m])) > 0
+        for: 5m
+        labels: {severity: ticket, class: migration}
+        annotations: {summary: "Refused by lifecycle/governance (unregistered, overdue or migrated consumer)", runbook: "docs/RUNBOOK.md#r7-migration-regression"}
+      - alert: Inv14SlowWake
+        expr: histogram_quantile(0.99, sum by (le) (rate(inv14_poll_latency_ms_bucket[10m]))) > 5000
+        for: 15m
+        labels: {severity: ticket, class: software-defect}
+        annotations: {summary: "p99 poll latency above 5 s", runbook: "docs/RUNBOOK.md#r8-software-defect"}

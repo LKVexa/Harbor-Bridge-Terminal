@@ -1,0 +1,499 @@
+{
+ "problems": [],
+ "rows": [
+  {
+   "checklist": [
+    "INV-34-C001",
+    "INV-34-C010"
+   ],
+   "code": [
+    "expansion.py",
+    "production/adapters/cloud_hypervisor.py"
+   ],
+   "id": "INV34-REQ-001",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "The service SHALL only increase a VM's desired vCPU count; any lower target SHALL be refused.",
+   "tests": [
+    "test_expansion.ExpansionControllerTest",
+    "test_production.CloudHypervisorAdapterTest.test_never_sends_shrink",
+    "test_production.ReconcilerTest.test_policy_quota_degraded_and_limits"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C011",
+    "INV-34-C021"
+   ],
+   "code": [
+    "expansion.py",
+    "production/reconciler.py",
+    "production/observation.py"
+   ],
+   "id": "INV34-REQ-002",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "The service SHALL keep desired and observed vCPUs as separate facts and SHALL report convergence only when an independent guest observation equals desired.",
+   "tests": [
+    "test_production.ReconcilerTest.test_accept_present_observe_converge"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C012",
+    "INV-34-C045"
+   ],
+   "code": [
+    "expansion.py",
+    "production/security.py"
+   ],
+   "id": "INV34-REQ-003",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "A target SHALL NOT exceed the VM maximum, the host capacity, or any tenant/site/fleet quota.",
+   "tests": [
+    "test_production.SecurityTest.test_quota_tenant_site_fleet_fairness",
+    "test_production.ReconcilerTest.test_policy_quota_degraded_and_limits"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C050",
+    "INV-34-C052"
+   ],
+   "code": [
+    "production/policy.py"
+   ],
+   "id": "INV34-REQ-004",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Unknown mandatory security, residency or capacity state SHALL fail closed for new expansion.",
+   "tests": [
+    "test_production.ResilienceTelemetryAuditTest.test_precedence"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C025",
+    "INV-34-C061"
+   ],
+   "code": [
+    "production/reconciler.py",
+    "production/store.py"
+   ],
+   "id": "INV34-REQ-005",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "A request_id SHALL be idempotent across process restarts; reuse with different parameters SHALL be rejected.",
+   "tests": [
+    "test_production.ReconcilerTest.test_durable_idempotency_across_restart"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C060",
+    "INV-34-C062"
+   ],
+   "code": [
+    "production/store.py"
+   ],
+   "id": "INV34-REQ-006",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "State writes SHALL be compare-and-swap on a revision and SHALL detect torn or tampered documents.",
+   "tests": [
+    "test_production.StoreTest.test_cas_and_corruption_detection",
+    "test_production.StoreTest.test_multiprocess_cas_no_lost_update"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C063",
+    "INV-34-C064"
+   ],
+   "code": [
+    "production/store.py",
+    "production/adapters/base.py"
+   ],
+   "id": "INV34-REQ-007",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Only the holder of the current lease SHALL issue adapter actions, and every action SHALL carry a monotonic fence token.",
+   "tests": [
+    "test_production.StoreTest.test_lease_exclusive_and_fence_monotonic",
+    "test_production.ReconcilerTest.test_two_replicas_one_lease",
+    "test_production.CloudHypervisorAdapterTest.test_stale_fence_refused_before_side_effect"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C065",
+    "INV-34-C066"
+   ],
+   "code": [
+    "production/reconciler.py"
+   ],
+   "id": "INV34-REQ-008",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "An ambiguous adapter outcome SHALL be resolved by reading live hypervisor state before any retry.",
+   "tests": [
+    "test_production.ReconcilerTest.test_timeout_after_action_no_double_hotadd",
+    "test_production.ReconcilerTest.test_timeout_before_action_reissues_once"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C067"
+   ],
+   "code": [
+    "production/reconciler.py"
+   ],
+   "id": "INV34-REQ-009",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Pending expansions SHALL be reconstructed from the durable journal after a crash.",
+   "tests": [
+    "test_production.ReconcilerTest.test_crash_between_accept_and_reconcile_recovers"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C066"
+   ],
+   "code": [
+    "production/resilience.py"
+   ],
+   "id": "INV34-REQ-010",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Retries SHALL use bounded full-jitter exponential backoff within a retry budget and SHALL terminate.",
+   "tests": [
+    "test_production.ResilienceTelemetryAuditTest.test_backoff_bounded_jitter",
+    "test_production.ReconcilerTest.test_retry_exhaustion_fails_closed"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C068"
+   ],
+   "code": [
+    "production/resilience.py",
+    "production/reconciler.py"
+   ],
+   "id": "INV34-REQ-011",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "An unhealthy mandatory dependency SHALL place the service in degraded mode refusing new expansion while status stays available.",
+   "tests": [
+    "test_production.ReconcilerTest.test_policy_quota_degraded_and_limits"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C046"
+   ],
+   "code": [
+    "production/resilience.py",
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-012",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Overload SHALL be shed with a retryable error rather than queued without bound.",
+   "tests": [
+    "test_production.ApiTest.test_overload_sheds",
+    "test_production.ResilienceTelemetryAuditTest.test_admission"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C051"
+   ],
+   "code": [
+    "production/security.py"
+   ],
+   "id": "INV34-REQ-013",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Every caller, observer and operator SHALL be authenticated; credentials SHALL expire and SHALL NOT be replayable.",
+   "tests": [
+    "test_production.SecurityTest.test_authn_accept_replay_forge_skew"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C052"
+   ],
+   "code": [
+    "production/security.py",
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-014",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Authorization SHALL bind each action to tenant/VM scope with least privilege and SHALL deny cross-tenant access.",
+   "tests": [
+    "test_production.SecurityTest.test_authz_least_privilege_and_cross_tenant",
+    "test_production.ApiTest.test_error_mapping"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C053"
+   ],
+   "code": [
+    "production/observation.py"
+   ],
+   "id": "INV34-REQ-015",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Guest observations SHALL be authenticated, bound to one source per VM, fresh, and sequence-monotonic across restarts.",
+   "tests": [
+    "test_production.ObservationTest.test_verified_and_rejections",
+    "test_production.ReconcilerTest.test_observation_replay_protection_survives_restart"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C011"
+   ],
+   "code": [
+    "expansion.py"
+   ],
+   "id": "INV34-REQ-016",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Observed vCPUs SHALL NOT regress and SHALL NOT exceed desired.",
+   "tests": [
+    "test_production.ReconcilerTest.test_regressive_observation_refused"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C021",
+    "INV-34-C022"
+   ],
+   "code": [
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-017",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "The HTTP boundary SHALL validate every input against the versioned contract before side effects, reject unknown fields, and never return 5xx for hostile payloads.",
+   "tests": [
+    "test_production.ApiTest.test_hostile_payloads_fuzz",
+    "test_production.ApiTest.test_error_mapping"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C016",
+    "INV-34-C023"
+   ],
+   "code": [
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-018",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Unsupported protocol versions SHALL be refused with the supported list; expired deadlines SHALL cause no side effect.",
+   "tests": [
+    "test_production.ApiTest.test_error_mapping"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C033",
+    "INV-34-C034",
+    "INV-34-C035"
+   ],
+   "code": [
+    "production/config.py"
+   ],
+   "id": "INV34-REQ-019",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Configuration SHALL be validated whole, activated atomically, carry provenance, require a distinct approver in production, and be rollback-able.",
+   "tests": [
+    "test_production.ConfigTest.test_activate_provenance_rollback",
+    "test_production.ConfigTest.test_validation_rejects"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C070"
+   ],
+   "code": [
+    "production/reconciler.py",
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-020",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "An operator SHALL be able to freeze expansion per VM; freezing SHALL NOT remove CPUs.",
+   "tests": [
+    "test_production.ApiTest.test_quarantine_explain_health_metrics",
+    "test_production.ReconcilerTest.test_freeze_blocks_new_expansion_keeps_cpus"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C057"
+   ],
+   "code": [
+    "production/audit.py"
+   ],
+   "id": "INV34-REQ-021",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Security-relevant events SHALL be written to a tamper-evident chain whose head can be anchored externally.",
+   "tests": [
+    "test_production.ResilienceTelemetryAuditTest.test_audit_chain_tamper"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C058",
+    "INV-34-C075"
+   ],
+   "code": [
+    "production/telemetry.py"
+   ],
+   "id": "INV34-REQ-022",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Logs and diagnostics SHALL redact secrets and credential-shaped strings; metric labels SHALL be a bounded vocabulary.",
+   "tests": [
+    "test_production.ResilienceTelemetryAuditTest.test_redaction_and_bounded_labels"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C074"
+   ],
+   "code": [
+    "production/telemetry.py",
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-023",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Trace context SHALL propagate (W3C traceparent) from request to journal and adapter call.",
+   "tests": [
+    "test_production.ApiTest.test_full_path_and_trace_propagation",
+    "test_production.ResilienceTelemetryAuditTest.test_traceparent"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C071",
+    "INV-34-C072",
+    "INV-34-C076"
+   ],
+   "code": [
+    "production/service.py"
+   ],
+   "id": "INV34-REQ-024",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "The service SHALL expose liveness, readiness (dependency-aware), version and metrics endpoints and an explain view.",
+   "tests": [
+    "test_production.ApiTest.test_quarantine_explain_health_metrics"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C031",
+    "INV-34-C040"
+   ],
+   "code": [
+    "production/adapters/cloud_hypervisor.py"
+   ],
+   "id": "INV34-REQ-025",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "The Cloud Hypervisor adapter SHALL use only documented vm.info / vm.resize and SHALL map timeouts and 5xx to UNKNOWN.",
+   "tests": [
+    "test_production.CloudHypervisorAdapterTest"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C069"
+   ],
+   "code": [
+    "production/observation.py"
+   ],
+   "id": "INV34-REQ-026",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Stalled and partially stalled convergence SHALL be classified against explicit thresholds; missing observation SHALL be reported as unknown, not as stalled or converged.",
+   "tests": [
+    "test_production.ObservationTest.test_stall_thresholds"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C047"
+   ],
+   "code": [
+    "production/policy.py"
+   ],
+   "id": "INV34-REQ-027",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Conflicting constraints SHALL be resolved by a configured precedence order with a recorded trace.",
+   "tests": [
+    "test_production.ResilienceTelemetryAuditTest.test_precedence"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C096"
+   ],
+   "code": [
+    "production/store.py"
+   ],
+   "id": "INV34-REQ-028",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Backups SHALL be digest-verified and restored state SHALL be marked for reconciliation before use.",
+   "tests": [
+    "test_production.StoreTest.test_backup_restore_marks_needs_reconcile"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C062"
+   ],
+   "code": [
+    "production/reconciler.py"
+   ],
+   "id": "INV34-REQ-029",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Concurrent duplicate submissions SHALL commit at most one operation.",
+   "tests": [
+    "test_production.ReconcilerTest.test_concurrent_submits_single_commit"
+   ]
+  },
+  {
+   "checklist": [
+    "INV-34-C081",
+    "INV-34-C085"
+   ],
+   "code": [
+    "production/reconciler.py"
+   ],
+   "id": "INV34-REQ-030",
+   "operations_evidence": "NOT_AVAILABLE (no deployment)",
+   "release_evidence": "governance/CI_RESULT.json (local)",
+   "shall": "Random interleavings of submit/reconcile/observe with injected faults SHALL preserve observed<=desired<=max and monotonic presentation.",
+   "tests": [
+    "test_production.ReconcilerTest.test_property_random_sequences_invariants"
+   ]
+  }
+ ],
+ "schema": "INV34_RTM/1"
+}

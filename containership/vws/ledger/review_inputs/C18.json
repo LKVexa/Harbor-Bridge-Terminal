@@ -1,0 +1,1565 @@
+{
+"component": "C18",
+"items": [
+{
+"id": "C18-001",
+"task_class": "SPECIFY",
+"area": "01. Origin-policy scope",
+"req": "Identify the browser clients that will connect to the service.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Browser client identified as trust boundary; ws-adapter.js is the browser client",
+"prior_evidence": [
+"docs/SECURITY.md#assets-and-trust-boundaries",
+"client/ws-adapter.js"
+]
+},
+{
+"id": "C18-002",
+"task_class": "SPECIFY",
+"area": "01. Origin-policy scope",
+"req": "Identify native clients that may omit browser-origin metadata.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_ALLOW_NO_ORIGIN comment: native clients (header auth only)",
+"prior_evidence": [
+"gateway/config.js:44",
+"gateway/origin.js:24"
+]
+},
+{
+"id": "C18-003",
+"task_class": "SPECIFY",
+"area": "01. Origin-policy scope",
+"req": "Define which application routes require origin evaluation.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "checkWsOrigin gates /ws/terminal upgrade; corsHeaders gates /api/ws-ticket",
+"prior_evidence": [
+"gateway/server.js",
+"gateway/origin.js"
+]
+},
+{
+"id": "C18-004",
+"task_class": "IMPLEMENT",
+"area": "01. Origin-policy scope",
+"req": "Distinguish server-side origin decisions from HTTP response-header configuration.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "checkWsOrigin (admission) and corsHeaders (HTTP response headers) are separate functions",
+"prior_evidence": [
+"gateway/origin.js:16-31"
+]
+},
+{
+"id": "C18-005",
+"task_class": "IMPLEMENT",
+"area": "01. Origin-policy scope",
+"req": "Distinguish origin acceptance from user authentication.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'a forged allowed Origin is not identity' - allowed origin still needs credential (401)",
+"prior_evidence": [
+"tests/security/authz.test.js:19"
+]
+},
+{
+"id": "C18-006",
+"task_class": "DOCUMENT",
+"area": "01. Origin-policy scope",
+"req": "Record the article's origin-whitelist requirement.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No document references an external 'article' origin-whitelist requirement",
+"prior_evidence": []
+},
+{
+"id": "C18-007",
+"task_class": "VERIFY",
+"area": "01. Origin-policy scope",
+"req": "VERIFY browser WebSocket origin behavior before adopting the article's CORS explanation.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of verifying browser WS origin behavior against an external CORS article",
+"prior_evidence": []
+},
+{
+"id": "C18-008",
+"task_class": "SPECIFY",
+"area": "01. Origin-policy scope",
+"req": "Define the security outcome expected from origin evaluation.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'Forged Origin' row states expected outcome: exact-match allowlist, no substitution for identity",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C18-009",
+"task_class": "SPECIFY",
+"area": "01. Origin-policy scope",
+"req": "Define the owner of the trusted-origin list.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No document names an owner/role responsible for the trusted-origin list",
+"prior_evidence": []
+},
+{
+"id": "C18-010",
+"task_class": "IMPLEMENT",
+"area": "01. Origin-policy scope",
+"req": "Approve an origin-policy decision table.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "RELEASE.md records a gate decision but no explicit origin-policy decision table approval",
+"prior_evidence": [
+"docs/RELEASE.md#gate-decision"
+]
+},
+{
+"id": "C18-011",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Inventory approved production origins.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VWS_ALLOWED_ORIGINS documented as mechanism; no concrete inventory of actual production origin values",
+"prior_evidence": [
+"docs/OPERATIONS.md:31"
+]
+},
+{
+"id": "C18-012",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Inventory approved development origins separately.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Same single mechanism for all origins; no separate dev-origin inventory",
+"prior_evidence": [
+"docs/OPERATIONS.md:31"
+]
+},
+{
+"id": "C18-013",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Include scheme and port according to the approved origin format.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "originList requires scheme and bare origin (host[:port]) via URL parse",
+"prior_evidence": [
+"gateway/config.js:29-32"
+]
+},
+{
+"id": "C18-014",
+"task_class": "SPECIFY",
+"area": "02. Allowlist configuration",
+"req": "Define how configuration distinguishes environments.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented mechanism distinguishing environments (dev/prod) beyond one env var value",
+"prior_evidence": []
+},
+{
+"id": "C18-015",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Reject malformed configured origins.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Malformed origins throw ConfigError; test covers *, path, bad scheme, wildcard host",
+"prior_evidence": [
+"gateway/config.js:29-32",
+"tests/gateway/config.test.js:19"
+]
+},
+{
+"id": "C18-016",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Reject duplicate entries after approved normalization.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "originList does not dedupe or reject duplicate configured origins",
+"prior_evidence": [
+"gateway/config.js:26-34"
+]
+},
+{
+"id": "C18-017",
+"task_class": "SPECIFY",
+"area": "02. Allowlist configuration",
+"req": "Define whether wildcard entries are prohibited or narrowly supported.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Wildcards/patterns explicitly rejected by regex + error message",
+"prior_evidence": [
+"gateway/config.js:32"
+]
+},
+{
+"id": "C18-018",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Require review before adding a broadly matching entry.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No review gate/process implemented or documented for adding broad-matching entries",
+"prior_evidence": []
+},
+{
+"id": "C18-019",
+"task_class": "IMPLEMENT",
+"area": "02. Allowlist configuration",
+"req": "Keep the allowlist versioned and reviewable.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Allowlist is an env var; no versioning/review record for allowlist changes exists in repo",
+"prior_evidence": [
+"docs/OPERATIONS.md:31"
+]
+},
+{
+"id": "C18-020",
+"task_class": "SPECIFY",
+"area": "02. Allowlist configuration",
+"req": "Define behavior when the allowlist is absent or empty.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Absent -> empty list; same-origin still allowed via origin.js sameOriginOf",
+"prior_evidence": [
+"gateway/config.js:26-27",
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C18-021",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Read Origin from the managed request headers.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "checkWsOrigin reads req.headers.origin",
+"prior_evidence": [
+"gateway/origin.js:23"
+]
+},
+{
+"id": "C18-022",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Distinguish a missing header from an empty value.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "undefined vs allowNoOrigin handled; empty-string origin falls through to allowed() and rejected, but no explicit test found for empty-string case",
+"prior_evidence": [
+"gateway/origin.js:16-25"
+]
+},
+{
+"id": "C18-023",
+"task_class": "SPECIFY",
+"area": "03. Request extraction",
+"req": "Define handling for a literal null-origin value.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "origin==='null' explicitly rejected; test confirms 403",
+"prior_evidence": [
+"gateway/origin.js:17",
+"tests/security/authz.test.js:16"
+]
+},
+{
+"id": "C18-024",
+"task_class": "SPECIFY",
+"area": "03. Request extraction",
+"req": "Define handling for repeated or ambiguous origin values.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No handling/design note for repeated or multi-value Origin headers",
+"prior_evidence": []
+},
+{
+"id": "C18-025",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Bound the length of origin text processed by application code.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "origin.length > 300 rejected before any further processing",
+"prior_evidence": [
+"gateway/origin.js:17"
+]
+},
+{
+"id": "C18-026",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Parse origin data as input rather than executable content.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Origin treated as opaque string for exact array match / URL construction only",
+"prior_evidence": [
+"gateway/origin.js:16-21"
+]
+},
+{
+"id": "C18-027",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Avoid deriving authorization from a substring search alone.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "cfg.origins.includes(origin) is exact match; suffix-domain test rejected (403)",
+"prior_evidence": [
+"gateway/origin.js:18",
+"tests/security/authz.test.js:17"
+]
+},
+{
+"id": "C18-028",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Preserve a safe normalized comparison value.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Configured origins normalized via URL.origin at load time; compared exactly",
+"prior_evidence": [
+"gateway/config.js:31"
+]
+},
+{
+"id": "C18-029",
+"task_class": "IMPLEMENT",
+"area": "03. Request extraction",
+"req": "Avoid logging the entire request header collection.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Logger drops secret-like fields by key pattern rather than dumping full header set",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C18-030",
+"task_class": "TEST",
+"area": "03. Request extraction",
+"req": "Test extraction with intended browser and native clients.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Chromium browser test + header-credential native-client tests both exercise origin extraction",
+"prior_evidence": [
+"tests/ui/browser.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C18-031",
+"task_class": "SPECIFY",
+"area": "04. Comparison rules",
+"req": "Define exact matching behavior for approved origins.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Comment: 'Matching is exact on the serialized origin. No wildcards, suffixes or regexes.'",
+"prior_evidence": [
+"gateway/origin.js:8",
+"gateway/origin.js:18"
+]
+},
+{
+"id": "C18-032",
+"task_class": "SPECIFY",
+"area": "04. Comparison rules",
+"req": "Define normalization of hostname case after verification.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit design/code for hostname case normalization at comparison time",
+"prior_evidence": []
+},
+{
+"id": "C18-033",
+"task_class": "SPECIFY",
+"area": "04. Comparison rules",
+"req": "Define treatment of explicit and implicit ports.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "u.origin includes explicit port; bare origin format enforced (scheme://host[:port])",
+"prior_evidence": [
+"gateway/config.js:31"
+]
+},
+{
+"id": "C18-034",
+"task_class": "SPECIFY",
+"area": "04. Comparison rules",
+"req": "Define treatment of schemes that differ from the approved scheme.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Scheme must be http/https and is part of the exact-match origin string",
+"prior_evidence": [
+"gateway/config.js:30"
+]
+},
+{
+"id": "C18-035",
+"task_class": "IMPLEMENT",
+"area": "04. Comparison rules",
+"req": "Reject unrelated domains with similar suffixes.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'https://term.example.evil.example' origin rejected (403)",
+"prior_evidence": [
+"tests/security/authz.test.js:17"
+]
+},
+{
+"id": "C18-036",
+"task_class": "IMPLEMENT",
+"area": "04. Comparison rules",
+"req": "Reject origins containing an approved hostname only as a substring.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Same evidence: approved hostname as substring of attacker domain is rejected",
+"prior_evidence": [
+"tests/security/authz.test.js:17"
+]
+},
+{
+"id": "C18-037",
+"task_class": "IMPLEMENT",
+"area": "04. Comparison rules",
+"req": "Reject malformed origins according to the parsing policy.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Non-string/oversize/malformed origins rejected at request time and at config load",
+"prior_evidence": [
+"gateway/origin.js:17",
+"gateway/config.js:29-32"
+]
+},
+{
+"id": "C18-038",
+"task_class": "SPECIFY",
+"area": "04. Comparison rules",
+"req": "Define behavior for internationalized hostname forms if needed.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No design note on internationalized hostname (IDN/punycode) handling",
+"prior_evidence": []
+},
+{
+"id": "C18-039",
+"task_class": "IMPLEMENT",
+"area": "04. Comparison rules",
+"req": "Keep matching deterministic for identical inputs.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Pure function over cfg.origins array; same input -> same output",
+"prior_evidence": [
+"gateway/origin.js:16-25"
+]
+},
+{
+"id": "C18-040",
+"task_class": "TEST",
+"area": "04. Comparison rules",
+"req": "Test every matching rule independently of the live listener.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Matching rules exercised only via the live gateway (rawConnect over a real socket), not an isolated unit test of origin.js",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C18-041",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Accept an approved browser origin according to the policy.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Listed origin accepted through to credential stage (401, not 403)",
+"prior_evidence": [
+"gateway/origin.js:22-25",
+"tests/security/authz.test.js:18"
+]
+},
+{
+"id": "C18-042",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Reject an unapproved browser origin before upgrade.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Unlisted origin -> 403 before upgrade",
+"prior_evidence": [
+"gateway/origin.js:22-25",
+"tests/security/authz.test.js:15"
+]
+},
+{
+"id": "C18-043",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Apply the approved policy to missing-origin native clients.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Missing Origin allowed only when VWS_ALLOW_NO_ORIGIN is set (native clients)",
+"prior_evidence": [
+"gateway/origin.js:24",
+"gateway/config.js:44"
+]
+},
+{
+"id": "C18-044",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Apply the approved policy to null-origin clients.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Literal 'null' Origin explicitly rejected (403)",
+"prior_evidence": [
+"gateway/origin.js:17",
+"tests/security/authz.test.js:16"
+]
+},
+{
+"id": "C18-045",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Apply the approved policy to malformed values.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Non-string/oversize origin values rejected (ok:false)",
+"prior_evidence": [
+"gateway/origin.js:17"
+]
+},
+{
+"id": "C18-046",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Return a deliberate rejection rather than an uncaught exception.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "checkWsOrigin/corsHeaders return {ok:false} objects; no uncaught throw observed in tests",
+"prior_evidence": [
+"gateway/origin.js:22-31",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C18-047",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Prevent rejected requests from allocating persistent workers.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Capacity refused/released before a worker is spawned (EVIDENCE_INDEX capacity row); origin rejection precedes worker spawn",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C18-048",
+"task_class": "DOCUMENT",
+"area": "05. Decision outcomes",
+"req": "Record the rejection category without echoing unsafe raw values.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Logger redacts secret-like fields generally, but no specific 'rejection category' record distinct from raw origin was verified",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C18-049",
+"task_class": "IMPLEMENT",
+"area": "05. Decision outcomes",
+"req": "Keep credential checks mandatory where required after origin acceptance.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Allowed origin still requires credential (401) - credential check remains mandatory",
+"prior_evidence": [
+"tests/security/authz.test.js:18-19"
+]
+},
+{
+"id": "C18-050",
+"task_class": "DOCUMENT",
+"area": "05. Decision outcomes",
+"req": "Document exceptions and their architectural rationale.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No document listing exceptions to the origin policy and their rationale",
+"prior_evidence": []
+},
+{
+"id": "C18-051",
+"task_class": "IMPLEMENT",
+"area": "06. Handshake integration",
+"req": "Run origin evaluation before AcceptWebSocketAsync.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "checkUpgrade/origin check occurs before acceptUpgrade in server.js; no dedicated test isolates the ordering itself",
+"prior_evidence": [
+"gateway/server.js:163"
+]
+},
+{
+"id": "C18-052",
+"task_class": "IMPLEMENT",
+"area": "06. Handshake integration",
+"req": "Share the policy result with the upgrade adapter.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Origin decision feeds the same upgrade path (checkUpgrade/acceptUpgrade) in gateway/server.js",
+"prior_evidence": [
+"gateway/server.js"
+]
+},
+{
+"id": "C18-053",
+"task_class": "IMPLEMENT",
+"area": "06. Handshake integration",
+"req": "Prevent another handler from overriding a rejection silently.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit mechanism found preventing a later handler from overriding an origin rejection; single code path suggests it but not directly tested",
+"prior_evidence": []
+},
+{
+"id": "C18-054",
+"task_class": "IMPLEMENT",
+"area": "06. Handshake integration",
+"req": "Keep HTTP CORS response generation in its own component.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders is a separate function/component from checkWsOrigin",
+"prior_evidence": [
+"gateway/origin.js:27-32"
+]
+},
+{
+"id": "C18-055",
+"task_class": "TEST",
+"area": "06. Handshake integration",
+"req": "Test origin rejection through the public WSS endpoint.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "rawConnect against real port with disallowed origin -> 403",
+"prior_evidence": [
+"tests/security/authz.test.js:15"
+]
+},
+{
+"id": "C18-056",
+"task_class": "TEST",
+"area": "06. Handshake integration",
+"req": "Test origin acceptance through the intended browser deployment.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Chromium browser end-to-end test: sign-in -> terminal -> reconnect",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C18-057",
+"task_class": "TEST",
+"area": "06. Handshake integration",
+"req": "Test the approved native-client path.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Header-credential (native) path tested without Origin present",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C18-058",
+"task_class": "IMPLEMENT",
+"area": "06. Handshake integration",
+"req": "Handle client disconnection during policy evaluation.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No test/code found for client disconnect mid-origin-evaluation",
+"prior_evidence": []
+},
+{
+"id": "C18-059",
+"task_class": "VERIFY",
+"area": "06. Handshake integration",
+"req": "Verify rejected responses are completed.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Rejections return concrete HTTP status codes (403/401), confirming responses complete",
+"prior_evidence": [
+"tests/security/authz.test.js:15-18"
+]
+},
+{
+"id": "C18-060",
+"task_class": "REVIEW",
+"area": "06. Handshake integration",
+"req": "Confirm subsequent valid connections still succeed.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Later valid handshake in same suite reaches 101/open successfully",
+"prior_evidence": [
+"tests/security/authz.test.js",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C18-061",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test an attacker-controlled origin resembling an approved domain.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "term.example.evil.example (lookalike) tested and rejected",
+"prior_evidence": [
+"tests/security/authz.test.js:17"
+]
+},
+{
+"id": "C18-062",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test a different scheme on the approved hostname.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No dedicated test found using approved hostname with a different scheme (http vs https)",
+"prior_evidence": []
+},
+{
+"id": "C18-063",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test an unapproved port on the approved hostname.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No dedicated test found using approved hostname with an unapproved port",
+"prior_evidence": []
+},
+{
+"id": "C18-064",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test missing Origin according to the documented policy.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Missing Origin behavior follows allowNoOrigin policy, exercised via header-credential path",
+"prior_evidence": [
+"tests/security/authz.test.js:18",
+"gateway/origin.js:24"
+]
+},
+{
+"id": "C18-065",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test literal null Origin according to the documented policy.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Literal 'null' Origin -> 403",
+"prior_evidence": [
+"tests/security/authz.test.js:16"
+]
+},
+{
+"id": "C18-066",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test an unusually long origin value.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Length cap (300) implemented but no test found sending an over-300-char Origin",
+"prior_evidence": [
+"gateway/origin.js:17"
+]
+},
+{
+"id": "C18-067",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test whitespace and malformed authority values.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for whitespace/malformed authority strings in Origin header",
+"prior_evidence": []
+},
+{
+"id": "C18-068",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test multiple-origin ambiguity using an appropriate test client.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for multiple/duplicate Origin header values",
+"prior_evidence": []
+},
+{
+"id": "C18-069",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test that origin acceptance alone grants no authenticated session.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "'a forged allowed Origin is not identity' - allowed origin without credential still 401",
+"prior_evidence": [
+"tests/security/authz.test.js:19"
+]
+},
+{
+"id": "C18-070",
+"task_class": "TEST",
+"area": "07. Adversarial cases",
+"req": "Test diagnostics for untrusted-origin injection or excessive output.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Log redaction exists generally; no specific test of diagnostics under untrusted-origin injection",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C18-071",
+"task_class": "SPECIFY",
+"area": "08. Configuration changes",
+"req": "Define how origin-list updates reach running services.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Origin list is env-var driven, implying a redeploy/restart to change; not explicitly stated as the update mechanism",
+"prior_evidence": [
+"docs/OPERATIONS.md:31"
+]
+},
+{
+"id": "C18-072",
+"task_class": "SPECIFY",
+"area": "08. Configuration changes",
+"req": "Define whether updates require a deployment.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Env-var config implies deployment/restart required, but not explicitly documented as a decision",
+"prior_evidence": [
+"docs/OPERATIONS.md:31"
+]
+},
+{
+"id": "C18-073",
+"task_class": "SPECIFY",
+"area": "08. Configuration changes",
+"req": "Define behavior for active sessions after an origin is removed.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented behavior for active sessions when their origin is later removed from the allowlist",
+"prior_evidence": []
+},
+{
+"id": "C18-074",
+"task_class": "TEST",
+"area": "08. Configuration changes",
+"req": "Test a newly approved origin before rollout.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No test exercising a newly-added origin against a running instance",
+"prior_evidence": []
+},
+{
+"id": "C18-075",
+"task_class": "TEST",
+"area": "08. Configuration changes",
+"req": "Test a removed origin after rollout.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No test exercising a removed origin against a running instance",
+"prior_evidence": []
+},
+{
+"id": "C18-076",
+"task_class": "IMPLEMENT",
+"area": "08. Configuration changes",
+"req": "Keep development origins out of production by default policy.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No default dev origins are baked in (empty default), but no explicit policy statement separating dev from prod",
+"prior_evidence": [
+"docs/OPERATIONS.md:31"
+]
+},
+{
+"id": "C18-077",
+"task_class": "IMPLEMENT",
+"area": "08. Configuration changes",
+"req": "Require review for temporary exceptions.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No review process implemented/documented for temporary origin exceptions",
+"prior_evidence": []
+},
+{
+"id": "C18-078",
+"task_class": "SPECIFY",
+"area": "08. Configuration changes",
+"req": "Define an expiry or review date for temporary exceptions.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No expiry/review-date mechanism for temporary origin exceptions",
+"prior_evidence": []
+},
+{
+"id": "C18-079",
+"task_class": "DOCUMENT",
+"area": "08. Configuration changes",
+"req": "Record configuration rollback behavior.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of configuration rollback behavior for the origin allowlist specifically",
+"prior_evidence": []
+},
+{
+"id": "C18-080",
+"task_class": "IMPLEMENT",
+"area": "08. Configuration changes",
+"req": "Preserve evidence identifying the policy revision used in tests.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No artifact records which allowlist revision was in effect for a given test run",
+"prior_evidence": []
+},
+{
+"id": "C18-081",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Track accepted and rejected origin decisions.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "Structured logs exist but no evidence of a tracked accepted/rejected origin metric or counter",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C18-082",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Separate missing-origin rejections from explicit unapproved origins.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No evidence rejections are categorized (missing vs unapproved) distinctly in logs/metrics",
+"prior_evidence": []
+},
+{
+"id": "C18-083",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Avoid retaining unnecessary user-identifying metadata.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Logger drops token/cookie/secret/authorization-like fields; minimizes retained identifying metadata",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C18-084",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Rate-limit repetitive rejection diagnostics according to an approved policy.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No rate limiting specific to rejection diagnostics found (rate limit in connection.js is for message traffic, not origin-rejection logging)",
+"prior_evidence": []
+},
+{
+"id": "C18-085",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Correlate origin rejection with the handshake result.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Structured single-line JSON logs exist; explicit correlation of origin rejection with handshake result not directly verified",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C18-086",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Provide a browser-client troubleshooting example.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented browser-client troubleshooting example found",
+"prior_evidence": []
+},
+{
+"id": "C18-087",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Provide a native-client troubleshooting example.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented native-client troubleshooting example found",
+"prior_evidence": []
+},
+{
+"id": "C18-088",
+"task_class": "DOCUMENT",
+"area": "09. Monitoring",
+"req": "Document how to inspect the effective allowlist safely.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "/config.json exposes public config (EVIDENCE_INDEX) but does not list the origin allowlist; no doc on safely inspecting it",
+"prior_evidence": [
+"gateway/server.js"
+]
+},
+{
+"id": "C18-089",
+"task_class": "DOCUMENT",
+"area": "09. Monitoring",
+"req": "Record the limits of origin-based protection.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Residual risks section documents limits/accepted risks of the security controls",
+"prior_evidence": [
+"docs/SECURITY.md#residual-risks"
+]
+},
+{
+"id": "C18-090",
+"task_class": "IMPLEMENT",
+"area": "09. Monitoring",
+"req": "Assign ownership for origin-policy incidents.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No document assigns an owner for origin-policy incident response",
+"prior_evidence": []
+},
+{
+"id": "C18-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the origin decision table.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Forged Origin row published as the decision/control summary",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C18-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish approved normalization and matching rules.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Code comment publishes the matching rule: exact match, no wildcards/suffixes/regexes [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/origin.js:8"
+]
+},
+{
+"id": "C18-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link intended-browser connection tests.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "SECURITY.md cites 'Origin: unlisted...' test name, linking to authz.test.js/browser.test.js",
+"prior_evidence": [
+"docs/SECURITY.md",
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C18-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link native-client applicability tests.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Native (header-credential, no-origin) path is tested but not distinctly linked as a named applicability test in docs",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C18-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link adversarial-origin rejection tests.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "SECURITY.md links 'Origin: unlisted...' adversarial test evidence",
+"prior_evidence": [
+"docs/SECURITY.md#controls-and-where-they-are-proved"
+]
+},
+{
+"id": "C18-096",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document how HTTP CORS differs from this server policy after verification.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Code comments distinguish checkWsOrigin from corsHeaders, but no dedicated doc section explains HTTP CORS vs WS origin policy difference",
+"prior_evidence": [
+"gateway/origin.js:1-9"
+]
+},
+{
+"id": "C18-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record the allowlist configuration revision.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of which allowlist configuration revision/value was used for a given release/test run",
+"prior_evidence": []
+},
+{
+"id": "C18-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved browser or runtime behavior.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No document lists unresolved browser/runtime origin-behavior questions",
+"prior_evidence": []
+},
+{
+"id": "C18-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document the origin-policy exception process.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "No documented process for requesting/approving an origin-policy exception",
+"prior_evidence": []
+},
+{
+"id": "C18-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the evaluator only after expected accept and reject outcomes are demonstrated.",
+"ram_overlay": "Cache normalized approved origins only under a policy-version key. Evaluate origin on the server, and never treat the header alone as user identity.",
+"challenge": "Try disallowed origins, absent-origin policy cases, and forged session identifiers with synthetic identities.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Release gate decision exists and origin tests pass, but no explicit sign-off statement tied to origin accept/reject demonstration",
+"prior_evidence": [
+"docs/RELEASE.md#gate-decision",
+"tests/security/authz.test.js"
+]
+}
+]
+}

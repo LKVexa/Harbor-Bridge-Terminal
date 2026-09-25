@@ -1,0 +1,77 @@
+{
+  "title": "INV-43 transient-execution defense",
+  "schemaVersion": 39,
+  "status": "PARTIAL: definition only, not deployed",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Decisions by verdict",
+      "targets": [
+        {
+          "expr": "sum by (verdict) (rate(inv43_decisions_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Refusals by failure class",
+      "targets": [
+        {
+          "expr": "sum by (failure_class) (rate(inv43_refusals_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Decision latency p50/p99",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(inv43_decision_seconds_bucket[5m])) by (le))"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Nodes with posture",
+      "targets": [
+        {
+          "expr": "inv43_nodes_with_posture"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Quarantined nodes",
+      "targets": [
+        {
+          "expr": "inv43_quarantined_nodes"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "SMT-unsafe nodes",
+      "targets": [
+        {
+          "expr": "inv43_smt_unsafe_nodes"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Mitigation cost % by node",
+      "targets": [
+        {
+          "expr": "inv43_mitigation_cost_percent"
+        }
+      ]
+    }
+  ]
+}

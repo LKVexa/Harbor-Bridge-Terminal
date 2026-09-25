@@ -1,0 +1,25 @@
+# INV-28 release automation (MC-084).  Tag v*.*.* -> full gate -> manifest -> archive -> attach evidence.
+# The job produces a NO_GO bundle unless a human approval file is supplied as a protected secret.
+name: inv28-release
+on:
+  push:
+    tags: ["v*.*.*"]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release            # protected environment: required reviewers = inv28-component-owner
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv28_unikernel_implementations }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: approval file from protected secret (optional)
+        run: echo "${{ secrets.INV28_RELEASE_APPROVAL_JSON }}" > approval.json
+      - name: release gate (GO required)
+        run: python -B -m inv28_unikernel_implementations.tools.release_gate --approval approval.json
+      - name: manifest + archive
+        run: |
+          python -B -m inv28_unikernel_implementations.tools.manifest
+          python -B -m inv28_unikernel_implementations.tools.package_release --out dist/
+      - uses: actions/upload-artifact@v4
+        with: { name: inv28-release, path: dist/ }

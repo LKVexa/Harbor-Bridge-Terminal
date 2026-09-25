@@ -1,0 +1,83 @@
+{
+ "component": 40,
+ "title": "Adversarial/fuzz security suite",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "protocol parser fuzzing",
+   "state": "IMPLEMENTED",
+   "spec": "production/docs/40_adversarial_suite.md",
+   "modules": [
+    "production/tests/test_secobs.py::FuzzParsers"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_canonical_json_roundtrip",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_pool_tick_random_inputs",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_traceparent_fuzz",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_attestation_evidence_mutation_fuzz",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_audit_line_fuzz"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "replay/spoof/injection adversarial cases",
+   "state": "IMPLEMENTED",
+   "spec": "production/docs/40_adversarial_suite.md",
+   "modules": [
+    "production/tests/test_secobs.py::AdversarialReplaySpoof"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialReplaySpoof.test_trustroot_spoof_and_replay",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialReplaySpoof.test_log_and_json_injection",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialReplaySpoof.test_nonce_replay_across_verifiers_is_unknown"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "privilege escalation/authorization bypass tests",
+   "state": "IMPLEMENTED",
+   "spec": "production/docs/40_adversarial_suite.md",
+   "modules": [
+    "production/tests/test_secobs.py::AdversarialAuthz"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialAuthz.test_production_gate_cannot_be_satisfied",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialAuthz.test_tenant_cannot_escalate",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialAuthz.test_explain_role_denied_and_tenant_view_minimal",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialAuthz.test_revoked_key_unusable"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "resource exhaustion and algorithmic complexity tests",
+   "state": "IMPLEMENTED",
+   "spec": "production/docs/40_adversarial_suite.md",
+   "modules": [
+    "production/tests/test_secobs.py::AdversarialExhaustion"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialExhaustion.test_huge_demand_bounded",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialExhaustion.test_parser_inputs_bounded",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialExhaustion.test_metrics_cardinality_bounded",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialExhaustion.test_saturation_trials_bounded"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "side-channel and secret-leakage checks",
+   "state": "PARTIAL",
+   "spec": "production/docs/40_adversarial_suite.md",
+   "modules": [
+    "production/tests/test_secobs.py::AdversarialLeakage"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialLeakage.test_error_to_dict_redacts",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialLeakage.test_redact_nested_and_logger",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialLeakage.test_key_material_never_serialised",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialLeakage.test_constant_time_compare_used"
+   ],
+   "blocker": "statistically valid timing side-channel harness on dedicated hardware; leakage checks implemented, timing only asserted by use of hmac.compare_digest"
+  }
+ ],
+ "notes": "Seeded, deterministic. Found the audit.py UTF-8 defect (see component 39)."
+}

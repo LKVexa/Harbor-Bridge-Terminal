@@ -1,0 +1,50 @@
+EXPLAIN run=demo-1 tenant=acme
+
+Timeline:
+  #  0 run_started        tool=<unavailable> outcome=<unavailable> code=- cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=032dd09cba3d
+  #  1 invocation         tool=search_docs outcome=ran code=- cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=349587bee9ba
+  #  2 invocation         tool=send_email outcome=pending code=AGT-APR-001 cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=71bb75b8fa4e
+        -> Awaiting one-use approval for exact arguments.
+  #  3 approval_recorded  tool=send_email outcome=<unavailable> code=- cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=1b998a599b8a
+  #  4 invocation         tool=send_email outcome=ran code=- cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=80d295bd246b
+  #  5 invocation         tool=run_python outcome=ran code=- cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=37789a9e0a4e
+  #  6 run_ended          tool=<unavailable> outcome=<unavailable> code=- cfg=b3715a662ec8@g0 profile=cloud node=node-0 snap=topo-7 ev=a907b1b37a09
+
+Decisions:
+  [authorization] policy=authz-1 chosen=allow
+      input tool = search_docs
+  [sandbox_selection] policy=<redacted> chosen={'tier': 'fast'}
+      input tool = search_docs
+      input risk = low
+      input required_tier = fast
+      input fast_available = True
+      input generated_code = False
+      input forced_heavy = False
+      ok HARD security: tier >= required by risk class on {'tier': 'fast'}
+      ok soft cost: prefer cheaper tier on {'tier': 'fast'}
+  [authorization] policy=authz-1 chosen=allow
+      input tool = send_email
+  [authorization] policy=authz-1 chosen=allow
+      input tool = send_email
+  [sandbox_selection] policy=<redacted> chosen={'tier': 'fast'}
+      input tool = send_email
+      input risk = low
+      input required_tier = fast
+      input fast_available = True
+      input generated_code = False
+      input forced_heavy = False
+      ok HARD security: tier >= required by risk class on {'tier': 'fast'}
+      ok soft cost: prefer cheaper tier on {'tier': 'fast'}
+  [authorization] policy=authz-1 chosen=allow
+      input tool = run_python
+  [sandbox_selection] policy=<redacted> chosen={'tier': 'heavy'}
+      input tool = run_python
+      input risk = high
+      input required_tier = heavy
+      input fast_available = True
+      input generated_code = False
+      input forced_heavy = False
+      NO HARD security: tier >= required by risk class on {'tier': 'fast'}
+      ok HARD security: tier >= required by risk class on {'tier': 'heavy'}
+      ok soft cost: prefer cheaper tier on {'tier': 'heavy'}
+      rejected {'tier': 'fast'} blocked_by tier >= required by risk class (security)

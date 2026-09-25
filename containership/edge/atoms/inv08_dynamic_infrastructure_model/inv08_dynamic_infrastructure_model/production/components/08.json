@@ -1,0 +1,72 @@
+{
+ "component": 8,
+ "title": "Accountable owner and escalation map",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "a RACI for service/platform/security ownership",
+   "state": "PARTIAL",
+   "spec": "production/docs/08_raci.md; production/ownership.json",
+   "modules": [
+    "production/ownership.json",
+    "production/ownership.py::validate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.OwnershipTest.test_raci_valid"
+   ],
+   "blocker": "named service/platform/security owners (all UNASSIGNED)"
+  },
+  {
+   "name": "primary and secondary operational on-call ownership",
+   "state": "BLOCKED",
+   "spec": "production/ownership.json (oncall roles)",
+   "modules": [
+    "production/ownership.py::blockers"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.OwnershipTest.test_oncall_unassigned_blockers"
+   ],
+   "blocker": "on-call rotation and people"
+  },
+  {
+   "name": "security escalation and incident commander roles",
+   "state": "BLOCKED",
+   "spec": "production/ownership.json (security_chain, incident_commander)",
+   "modules": [
+    "production/ownership.py::validate",
+    "production/ownership.py::blockers"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.OwnershipTest.test_security_and_ic_roles"
+   ],
+   "blocker": "security escalation contacts and incident commanders"
+  },
+  {
+   "name": "vendor/provider escalation contacts and handoff rules",
+   "state": "PARTIAL",
+   "spec": "production/docs/08_raci.md (vendor handoff)",
+   "modules": [
+    "production/ownership.json"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.OwnershipTest.test_vendor_handoff"
+   ],
+   "blocker": "real provider/vendor contacts (no provider integration exists)"
+  },
+  {
+   "name": "ownership metadata that is queryable from deployment/repository tooling",
+   "state": "IMPLEMENTED",
+   "spec": "production/ownership.py (module docstring)",
+   "modules": [
+    "production/ownership.py::query",
+    "production/ownership.py::report",
+    "production/ownership.py::main"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.OwnershipTest.test_queryable_metadata"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Loader reports every UNASSIGNED identity as a blocker; CLI exits 3 until filled."
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_SFI_SUBMIT_REQUEST:1",
+  "title": "Verification (submit) request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "tenant",
+    "workload",
+    "version",
+    "artifact_b64",
+    "signed_statement"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_SFI_SUBMIT_REQUEST/1"
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
+    },
+    "workload": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "artifact_b64": {
+      "type": "string",
+      "maxLength": 22369622,
+      "contentEncoding": "base64"
+    },
+    "signed_statement": {
+      "type": "object",
+      "required": [
+        "statement",
+        "key_id",
+        "signature"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "type": "object"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        }
+      }
+    },
+    "traceparent": {
+      "type": "string",
+      "pattern": "^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$"
+    }
+  }
+}

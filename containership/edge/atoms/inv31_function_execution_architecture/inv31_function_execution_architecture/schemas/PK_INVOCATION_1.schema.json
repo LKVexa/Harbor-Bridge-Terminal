@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:post-kubernetes:PK_INVOCATION:1",
+  "title": "PK_INVOCATION/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "instance",
+    "tenant",
+    "version",
+    "cold",
+    "decision_reason",
+    "invocations_on_instance",
+    "scratch_cleared",
+    "evicted"
+  ],
+  "properties": {
+    "schema": {"const": "PK_INVOCATION/1"},
+    "instance": {"type": "string", "minLength": 1, "maxLength": 256},
+    "tenant": {"type": "string", "minLength": 1, "maxLength": 256},
+    "version": {"type": "string", "minLength": 1, "maxLength": 256},
+    "cold": {"type": "boolean"},
+    "decision_reason": {
+      "enum": [
+        "no_reusable_same_tenant_same_version_instance",
+        "reused_same_tenant_same_version_instance"
+      ]
+    },
+    "invocations_on_instance": {"type": "integer", "minimum": 1},
+    "scratch_cleared": {"const": true},
+    "evicted": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "maxLength": 256},
+      "uniqueItems": true
+    }
+  }
+}

@@ -1,0 +1,489 @@
+{
+  "schema": "PK_COMPATIBILITY/1",
+  "component": "GAP-07",
+  "version": "6.0.0",
+  "envelopes": {
+    "PK_SIGNATURE/1": {
+      "verify": "rejected",
+      "since": "5.0.0"
+    },
+    "PK_SIGNATURE/2": {
+      "verify": "reference-migration-only (signing.verify_legacy_v2_reference, audited, never production)",
+      "sign": "reference TrustStore only",
+      "sunset": "7.0.0"
+    },
+    "PK_SIGNATURE/3": {
+      "verify": "production",
+      "sign": "production"
+    },
+    "PK_PROVENANCE/2": {
+      "verify": "supported (local chain)"
+    },
+    "DSSE v1 / in-toto Statement v1": {
+      "verify": "production"
+    },
+    "SLSA Provenance v1": {
+      "verify": "production (predicate validated)"
+    },
+    "SLSA Provenance v0.2": {
+      "verify": "rejected unless policy explicitly adds predicate type (no validator)"
+    },
+    "CycloneDX": {
+      "versions": [
+        "1.4",
+        "1.5",
+        "1.6"
+      ]
+    },
+    "SPDX": {
+      "versions": [
+        "SPDX-2.3"
+      ]
+    },
+    "PK_CERT/1": {
+      "verify": "production"
+    },
+    "X.509 code-signing": {
+      "verify": "production (EKU codeSigning, one URI SAN)"
+    },
+    "PK_CHECKPOINT/1": {
+      "verify": "production"
+    },
+    "PK_TRUST_GENERATION/1": {},
+    "PK_TRUST_DELTA/1": {},
+    "PK_POLICY_BUNDLE/1": {
+      "adapter_version": 1
+    },
+    "PK_TIME_ATTESTATION/1": {},
+    "PK_ARTIFACT_BUNDLE/1": {},
+    "PK_ADMISSION_DECISION/1": {}
+  },
+  "algorithms": {
+    "ed25519": {
+      "family": "eddsa",
+      "strength_bits": 128,
+      "fips_approved": true,
+      "production": true,
+      "deprecated_after": null,
+      "forbidden": false,
+      "deterministic": true
+    },
+    "ecdsa-p256-sha256": {
+      "family": "ecdsa",
+      "strength_bits": 128,
+      "fips_approved": true,
+      "production": true,
+      "deprecated_after": null,
+      "forbidden": false,
+      "deterministic": false
+    },
+    "ecdsa-p384-sha384": {
+      "family": "ecdsa",
+      "strength_bits": 192,
+      "fips_approved": true,
+      "production": true,
+      "deprecated_after": null,
+      "forbidden": false,
+      "deterministic": false
+    },
+    "rsa-pss-sha256-3072": {
+      "family": "rsa-pss",
+      "strength_bits": 128,
+      "fips_approved": true,
+      "production": true,
+      "deprecated_after": null,
+      "forbidden": false,
+      "deterministic": false
+    },
+    "rsa-pss-sha384-4096": {
+      "family": "rsa-pss",
+      "strength_bits": 152,
+      "fips_approved": true,
+      "production": true,
+      "deprecated_after": null,
+      "forbidden": false,
+      "deterministic": false
+    },
+    "rsa-pss-sha256-2048": {
+      "family": "rsa-pss",
+      "strength_bits": 112,
+      "fips_approved": true,
+      "production": false,
+      "deprecated_after": 1893456000,
+      "forbidden": false,
+      "deterministic": false
+    },
+    "HMAC-SHA256-REF-v2": {
+      "family": "hmac-reference",
+      "strength_bits": 128,
+      "fips_approved": false,
+      "production": false,
+      "deprecated_after": null,
+      "forbidden": false,
+      "deterministic": true
+    },
+    "rsa-pkcs1v15-sha1": {
+      "family": "rsa",
+      "strength_bits": 0,
+      "fips_approved": false,
+      "production": false,
+      "deprecated_after": 0,
+      "forbidden": true,
+      "deterministic": false
+    }
+  },
+  "artifact_kinds": [
+    "attestation",
+    "bundle",
+    "code",
+    "grant",
+    "label",
+    "microvm-image",
+    "oci-image",
+    "oci-index",
+    "policy",
+    "provider-bundle",
+    "sbom",
+    "trust-config",
+    "wasm-component",
+    "wasm-module"
+  ],
+  "oci_media_types": [
+    "application/vnd.docker.distribution.manifest.list.v2+json",
+    "application/vnd.docker.distribution.manifest.v2+json",
+    "application/vnd.oci.image.index.v1+json",
+    "application/vnd.oci.image.manifest.v1+json"
+  ],
+  "wasm": {
+    "core_module": "version 1 layer 0",
+    "component": "layer 1"
+  },
+  "runtimes": {
+    "python": [
+      ">=3.10"
+    ],
+    "cryptography": ">=45,<48",
+    "os": [
+      "linux",
+      "windows",
+      "macos"
+    ],
+    "architectures": [
+      "x86_64",
+      "aarch64"
+    ]
+  },
+  "kms_providers": [
+    "aws-kms",
+    "azure-kv",
+    "gcp-kms",
+    "vault-transit",
+    "pkcs11",
+    "software (dev only)"
+  ],
+  "error_codes": {
+    "VERIFICATION_FAILED": {
+      "class": "generic",
+      "transient": false
+    },
+    "UNSIGNED": {
+      "class": "signature",
+      "transient": false
+    },
+    "SIGNATURE_INVALID": {
+      "class": "signature",
+      "transient": false
+    },
+    "SIGNER_UNTRUSTED": {
+      "class": "trust",
+      "transient": false
+    },
+    "PROVENANCE_INVALID": {
+      "class": "provenance",
+      "transient": false
+    },
+    "ENVELOPE_MALFORMED": {
+      "class": "parse",
+      "transient": false
+    },
+    "ENVELOPE_VERSION_UNSUPPORTED": {
+      "class": "parse",
+      "transient": false
+    },
+    "INPUT_TOO_LARGE": {
+      "class": "parse",
+      "transient": false
+    },
+    "ALG_UNSUPPORTED": {
+      "class": "crypto",
+      "transient": false
+    },
+    "ALG_DOWNGRADE": {
+      "class": "crypto",
+      "transient": false
+    },
+    "ALG_DEPRECATED": {
+      "class": "crypto",
+      "transient": false
+    },
+    "ALG_REFERENCE_ONLY": {
+      "class": "crypto",
+      "transient": false
+    },
+    "KEY_UNAVAILABLE": {
+      "class": "custody",
+      "transient": true
+    },
+    "KEY_DISABLED": {
+      "class": "custody",
+      "transient": false
+    },
+    "KEY_MISMATCH": {
+      "class": "custody",
+      "transient": false
+    },
+    "KEY_POLICY_VIOLATION": {
+      "class": "custody",
+      "transient": false
+    },
+    "KEY_ID_COLLISION": {
+      "class": "custody",
+      "transient": false
+    },
+    "CIRCUIT_OPEN": {
+      "class": "custody",
+      "transient": true
+    },
+    "CHAIN_UNTRUSTED": {
+      "class": "trust",
+      "transient": false
+    },
+    "CERT_EXPIRED": {
+      "class": "trust",
+      "transient": false
+    },
+    "CERT_NOT_YET_VALID": {
+      "class": "trust",
+      "transient": false
+    },
+    "CERT_REVOKED": {
+      "class": "trust",
+      "transient": false
+    },
+    "CERT_USAGE": {
+      "class": "trust",
+      "transient": false
+    },
+    "NAME_CONSTRAINT": {
+      "class": "trust",
+      "transient": false
+    },
+    "PATH_LENGTH": {
+      "class": "trust",
+      "transient": false
+    },
+    "IDENTITY_MISMATCH": {
+      "class": "trust",
+      "transient": false
+    },
+    "TENANT_MISMATCH": {
+      "class": "trust",
+      "transient": false
+    },
+    "TRUST_ROLLBACK": {
+      "class": "trust",
+      "transient": false
+    },
+    "TRUST_STALE": {
+      "class": "trust",
+      "transient": true
+    },
+    "TRUST_CORRUPT": {
+      "class": "trust",
+      "transient": false
+    },
+    "TRUST_SCOPE": {
+      "class": "trust",
+      "transient": false
+    },
+    "TRUST_PARENT_MISMATCH": {
+      "class": "trust",
+      "transient": false
+    },
+    "TRUST_NOT_LOADED": {
+      "class": "trust",
+      "transient": true
+    },
+    "TIME_UNTRUSTED": {
+      "class": "time",
+      "transient": true
+    },
+    "TIME_STALE": {
+      "class": "time",
+      "transient": true
+    },
+    "CLOCK_ROLLBACK": {
+      "class": "time",
+      "transient": false
+    },
+    "CLOCK_JUMP": {
+      "class": "time",
+      "transient": false
+    },
+    "SIGNATURE_EXPIRED": {
+      "class": "time",
+      "transient": false
+    },
+    "SIGNATURE_FUTURE": {
+      "class": "time",
+      "transient": false
+    },
+    "ATTESTATION_INVALID": {
+      "class": "attestation",
+      "transient": false
+    },
+    "ATTESTATION_SUBJECT": {
+      "class": "attestation",
+      "transient": false
+    },
+    "ATTESTATION_PREDICATE": {
+      "class": "attestation",
+      "transient": false
+    },
+    "ATTESTATION_BUILDER": {
+      "class": "attestation",
+      "transient": false
+    },
+    "ATTESTATION_MATERIALS": {
+      "class": "attestation",
+      "transient": false
+    },
+    "ATTESTATION_CONFLICT": {
+      "class": "attestation",
+      "transient": false
+    },
+    "TLOG_REQUIRED": {
+      "class": "transparency",
+      "transient": false
+    },
+    "TLOG_PROOF_INVALID": {
+      "class": "transparency",
+      "transient": false
+    },
+    "TLOG_CHECKPOINT_INVALID": {
+      "class": "transparency",
+      "transient": false
+    },
+    "TLOG_CHECKPOINT_STALE": {
+      "class": "transparency",
+      "transient": true
+    },
+    "TLOG_ROLLBACK": {
+      "class": "transparency",
+      "transient": false
+    },
+    "TLOG_ENTRY_MISMATCH": {
+      "class": "transparency",
+      "transient": false
+    },
+    "TLOG_UNAVAILABLE": {
+      "class": "transparency",
+      "transient": true
+    },
+    "POLICY_DENY": {
+      "class": "policy",
+      "transient": false
+    },
+    "POLICY_NO_MATCH": {
+      "class": "policy",
+      "transient": false
+    },
+    "POLICY_CONFLICT": {
+      "class": "policy",
+      "transient": false
+    },
+    "POLICY_INVALID": {
+      "class": "policy",
+      "transient": false
+    },
+    "POLICY_UNAVAILABLE": {
+      "class": "policy",
+      "transient": true
+    },
+    "THRESHOLD_UNMET": {
+      "class": "policy",
+      "transient": false
+    },
+    "EXCEPTION_INVALID": {
+      "class": "policy",
+      "transient": false
+    },
+    "SBOM_INVALID": {
+      "class": "sbom",
+      "transient": false
+    },
+    "SBOM_POLICY": {
+      "class": "sbom",
+      "transient": false
+    },
+    "REGISTRY_MALFORMED": {
+      "class": "registry",
+      "transient": false
+    },
+    "REGISTRY_DIGEST_MISMATCH": {
+      "class": "registry",
+      "transient": false
+    },
+    "REGISTRY_MEDIA_TYPE": {
+      "class": "registry",
+      "transient": false
+    },
+    "REGISTRY_UNAVAILABLE": {
+      "class": "registry",
+      "transient": true
+    },
+    "MUTABLE_REFERENCE": {
+      "class": "registry",
+      "transient": false
+    },
+    "NOT_READY": {
+      "class": "admission",
+      "transient": true
+    },
+    "OVERLOADED": {
+      "class": "admission",
+      "transient": true
+    },
+    "QUARANTINED": {
+      "class": "admission",
+      "transient": false
+    },
+    "REPLAY": {
+      "class": "admission",
+      "transient": false
+    },
+    "TOCTOU": {
+      "class": "admission",
+      "transient": false
+    },
+    "BREAK_GLASS_INVALID": {
+      "class": "admission",
+      "transient": false
+    },
+    "INTERNAL_ERROR": {
+      "class": "admission",
+      "transient": false
+    },
+    "AUDIT_CHAIN_BROKEN": {
+      "class": "audit",
+      "transient": false
+    },
+    "AUDIT_SPOOL_FULL": {
+      "class": "audit",
+      "transient": true
+    }
+  },
+  "migration": {
+    "5.0.0->6.0.0": "Re-sign artifacts under PK_SIGNATURE/3 using migration tooling; v2 signatures are verifiable only via the audited reference migration verifier and never satisfy production policy. TrustStore(v5) remains importable as reference API."
+  }
+}

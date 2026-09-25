@@ -1,0 +1,73 @@
+# WP #60 distribution/build metadata, #64 static-analysis configuration.
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pln06-data-plane"
+version = "4.3.0"
+description = "PLN-06 data plane: residency-safe admission, transport adapters, and governed bulk movement"
+readme = "README.md"
+requires-python = ">=3.10"
+# license: intentionally unset until the owner selects one (WAIVERS.json W-010); the release gate blocks.
+dependencies = []          # runtime is standard-library only (no lock file needed for runtime)
+classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3 :: Only",
+               "Operating System :: POSIX :: Linux", "Private :: Do Not Upload"]
+
+[project.optional-dependencies]
+certification = ["pk_core"]                    # see WAIVERS.json W-008 (not publicly resolvable)
+dev = ["ruff>=0.5", "mypy>=1.10", "jsonschema>=4.20"]
+
+[tool.setuptools]
+packages = ["pln06_data_plane", "pln06_data_plane.bench", "pln06_data_plane.tools"]
+package-dir = {"pln06_data_plane" = "."}
+include-package-data = true
+
+[tool.setuptools.package-data]
+pln06_data_plane = ["VERSION", "CHECKLIST.json", "TRACEABILITY.json", "WAIVERS.json", "schemas/*.json",
+                    "config/*.json", "config/overlays/*.json", "docs/*.md", "*.md"]
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 140
+target-version = "py310"
+extend-exclude = ["orig_snapshot"]
+
+[tool.ruff.lint]
+# E/F/W correctness, I imports, B bugbear, S bandit-equivalent security rules, C90 complexity,
+# UP pyupgrade, BLE blind-except, PL subset.
+select = ["E", "F", "W", "I", "B", "S", "C90", "UP", "BLE"]
+ignore = [
+  "S101",   # asserts only in tests (tests use unittest asserts; production code has none - checked by gate)
+  "B904",   # raise-from inside except: structured errors carry context in details
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 25          # service.submit is the composed request path; tracked as TD-002 in WAIVERS.json
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B", "BLE", "C90", "E731", "E402", "UP031"]  # tests deliberately exercise hostile input and broad excepts
+"bench/*" = ["S", "C90"]
+"contract.py" = ["E501"]                     # generated prose contract (4.1 source)
+"component.py" = ["E501"]
+"tools/*" = ["S603", "S607"]                  # tools invoke fixed argv subprocesses (python -m ...) only
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = false
+warn_redundant_casts = true
+no_implicit_optional = true
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = ["tests/", "bench/", "orig_snapshot/", "component.py", "contract.py"]
+
+[[tool.mypy.overrides]]
+module = ["pln06_data_plane.data_plane", "pln06_data_plane.security", "pln06_data_plane.config",
+          "pln06_data_plane.precedence", "pln06_data_plane.scheduling"]
+disallow_untyped_defs = true
+
+# ---------------------------------------------------------------- bandit (when installed)
+[tool.bandit]
+exclude_dirs = ["tests", "bench"]
+skips = []

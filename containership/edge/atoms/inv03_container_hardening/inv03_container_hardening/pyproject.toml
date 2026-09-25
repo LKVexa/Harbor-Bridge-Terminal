@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv03-container-hardening"
+version = "4.3.0"
+description = "INV-03 fail-closed container hardening admission policy (Post-Kubernetes series)"
+requires-python = ">=3.10"
+readme = "README.md"
+# The 4.3.0 hardening runtime (hardening/) and policy.py are stdlib-only.
+dependencies = []
+# license: NOT DECLARED - no licence was supplied with the candidate; the owner must choose one (checklist item 70).
+
+[project.optional-dependencies]
+# pk_core is the Post-Kubernetes framework the component/contract modules bind to.
+# It is not published and was not supplied, so it cannot be pinned (item 46, BLOCKED).
+framework = ["pk_core"]
+dev = ["jsonschema==4.26.0", "ruff==0.15.11", "mypy==1.20.2"]
+
+[tool.setuptools]
+package-dir = {"inv03_container_hardening" = "."}
+packages = ["inv03_container_hardening", "inv03_container_hardening.hardening"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["fixtures", "schemas"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "UP"]
+ignore = ["S101", "E501", "UP006", "UP007", "UP035", "UP045"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B017", "E401", "E731", "UP031"]
+"tools/*" = ["S603", "S607"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_unused_ignores = true
+files = ["hardening"]
+follow_imports = "silent"
+cache_dir = "/dev/null"

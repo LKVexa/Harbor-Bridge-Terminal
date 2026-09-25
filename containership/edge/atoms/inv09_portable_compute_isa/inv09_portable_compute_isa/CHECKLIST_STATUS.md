@@ -1,0 +1,2948 @@
+# INV-09 v4.3.0 — Missing-components checklist: execution status
+
+Release digest `sha256:27b78da4ea08062a161e0fcf3883c78d7c3061420aa9e1a779fed293ec8e0e38` · generated 2026-09-22 · production gate **NO_GO**
+
+Legend: `[x]` PASS · `[~]` PARTIAL · `[!]` FAIL · `[ ]` OPEN · `[H]` BLOCKED_HUMAN · `[I]` BLOCKED_INFRA · `[w]` WAIVED
+
+## Totals (2,704 items)
+
+| Status | Items |
+|---|---|
+| PARTIAL | 1437 |
+| PASS | 791 |
+| OPEN | 192 |
+| FAIL | 111 |
+| BLOCKED_HUMAN | 106 |
+| BLOCKED_INFRA | 67 |
+
+## By component
+
+| ID | Component | P | Class | PASS | PARTIAL | FAIL | OPEN | BLOCKED (H/I) |
+|---|---|---|---|---|---|---|---|---|
+| M01 | Raw Wasm binary decoder and structural validator | P0 | CODE | 35 | 12 | 3 | 0 | 1/1 |
+| M02 | Wasm type validator | P0 | CODE | 33 | 14 | 3 | 0 | 1/1 |
+| M03 | Byte-derived feature detector | P0 | CODE | 31 | 15 | 3 | 0 | 1/2 |
+| M04 | Declared-capability source and binding rule | P0 | CODE | 27 | 16 | 2 | 5 | 1/1 |
+| M05 | Specification/version registry | P0 | CODE | 31 | 13 | 2 | 3 | 2/1 |
+| M06 | Engine capability registry | P0 | PART | 15 | 24 | 2 | 0 | 1/10 |
+| M07 | Canonical module digest | P0 | CODE | 33 | 12 | 2 | 3 | 1/1 |
+| M08 | Validation-result attestation | P0 | CODE | 30 | 15 | 2 | 2 | 1/2 |
+| M09 | Validation cache with safe invalidation | P0 | CODE | 31 | 15 | 2 | 2 | 1/1 |
+| M10 | Execution admission gate | P0 | CODE | 30 | 16 | 3 | 1 | 1/1 |
+| M11 | TOCTOU protection | P0 | CODE | 27 | 16 | 2 | 5 | 1/1 |
+| M12 | Structured failure schema | P0 | CODE | 28 | 19 | 2 | 1 | 1/1 |
+| M13 | Parser resource governor | P0 | CODE | 31 | 14 | 3 | 2 | 1/1 |
+| M14 | Fuzzing harness and malformed corpus | P0 | PART | 7 | 38 | 2 | 1 | 1/3 |
+| M15 | Differential validation harness | P0 | PART | 8 | 38 | 2 | 1 | 1/2 |
+| M16 | Determinism specification | P1 | PART | 7 | 37 | 2 | 0 | 2/4 |
+| M17 | Host-import capability contract | P1 | CODE | 27 | 21 | 2 | 0 | 1/1 |
+| M18 | WASI policy adapter | P1 | PART | 12 | 32 | 2 | 4 | 1/1 |
+| M19 | Component Model / WIT validator | P1 | NONE | 0 | 0 | 2 | 49 | 1/0 |
+| M20 | Cross-architecture determinism certification | P1 | NONE | 0 | 0 | 2 | 49 | 1/0 |
+| M21 | Runtime/validator compatibility matrix | P1 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M22 | Profile schema and signed distribution | P1 | CODE | 28 | 19 | 2 | 0 | 2/1 |
+| M23 | Policy-engine integration contract | P1 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M24 | Runtime-hardening handoff contract | P1 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M25 | Artifact provenance integration | P1 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M26 | Tenant isolation model for validation service | P1 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M27 | Security audit event stream | P1 | CODE | 23 | 25 | 2 | 0 | 1/1 |
+| M28 | Side-channel threat assessment | P1 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M29 | Benchmark harness | P2 | CODE | 15 | 32 | 3 | 0 | 1/1 |
+| M30 | Release performance gate | P2 | PART | 5 | 38 | 3 | 4 | 1/1 |
+| M31 | Soak and fleet-scale test suite | P2 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M32 | Fault-injection suite | P2 | CODE | 18 | 30 | 2 | 0 | 1/1 |
+| M33 | Health/readiness endpoint or contract | P2 | CODE | 17 | 31 | 2 | 0 | 1/1 |
+| M34 | Metrics implementation | P2 | CODE | 17 | 31 | 2 | 0 | 1/1 |
+| M35 | Structured logging | P2 | CODE | 18 | 30 | 2 | 0 | 1/1 |
+| M36 | Trace propagation | P2 | CODE | 17 | 31 | 2 | 0 | 1/1 |
+| M37 | Explain view | P2 | CODE | 17 | 31 | 2 | 0 | 1/1 |
+| M38 | Dashboards and alerts | P2 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M39 | Canary/staged rollout controller | P2 | CODE | 17 | 31 | 2 | 0 | 1/1 |
+| M40 | Operational runbooks | P2 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M41 | Vulnerability response and EOL policy | P2 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M42 | Configuration provenance store | P2 | CODE | 22 | 26 | 2 | 0 | 1/1 |
+| M43 | Atomic configuration activation | P2 | CODE | 23 | 25 | 2 | 0 | 1/1 |
+| M44 | Backup/reconstruction procedure | P2 | CODE | 16 | 32 | 2 | 0 | 1/1 |
+| M45 | Package manifest / dependency pinning | P3 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M46 | SBOM and license inventory | P3 | CODE | 14 | 34 | 2 | 0 | 1/1 |
+| M47 | Reproducible build metadata | P3 | PART | 1 | 42 | 2 | 5 | 1/1 |
+| M48 | Requirements traceability matrix | P3 | CODE | 18 | 30 | 2 | 0 | 1/1 |
+| M49 | Architecture Decision Records | P3 | CODE | 14 | 33 | 2 | 0 | 2/1 |
+| M50 | Named ownership and escalation | P3 | HUMAN | 0 | 0 | 2 | 0 | 50/0 |
+| M51 | Exception/waiver register | P3 | CODE | 17 | 30 | 2 | 0 | 2/1 |
+| M52 | Formal production exit gate | P3 | CODE | 20 | 27 | 2 | 0 | 1/2 |
+
+## Production gate controls
+
+| Control | Status | Detail |
+|---|---|---|
+| tests:normal+optimized | PASS | [['Ran 74 tests in 1.028s', 'OK (skipped=2)'], ['Ran 74 tests in 0.973s', 'OK (skipped=2)']] |
+| fuzz:no-crash | PASS | 400000 execs, 0 crashes |
+| differential:no-false-accept | PASS | 400000 compared, 0 false accepts |
+| differential:false-reject-dispositioned | PASS | {'PROPOSAL_GAP': 42} |
+| differential:two-references | FAIL | only one independent reference implementation (M15-007) |
+| perf:M30 | FAIL | [{'actual_bytes': 65408, 'mib_per_s': 1.79, 'p50_ms': 34.76, 'p99_ms': 35.83, 'reps': 5, 'target_bytes': 65536}, {'actual_bytes': 1048491, ' |
+| static:no-high | PASS | 0 high findings |
+| soak:single-process | PASS | 69703 validations |
+| soak:fleet-scale(M31) | BLOCKED | fleet-scale soak not executed |
+| governance:owners(M50) | BLOCKED | OWNERS.yaml |
+
+## M01 — Raw Wasm binary decoder and structural validator [P0]
+
+- `[H]` **M01-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M01-002** PASS — _docs/DESIGN.md#3; prod/decoder.py_
+- `[x]` **M01-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M01-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M01-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M01-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M01-007** PASS — _prod/decoder.py:decode header; tests/test_prod.py:test_header_
+- `[x]` **M01-008** PASS — _prod/decoder.py:Reader._uleb/_sleb; tests/test_prod.py:test_leb128_ — width+unused-bit checks; spec permits non-minimal in-width encodings (tested)
+- `[x]` **M01-009** PASS — _prod/decoder.py; tests/test_prod.py:test_section_rules_
+- `[x]` **M01-010** PASS — _prod/decoder.py cross-section checks; tests/oracle_corpus.py *_oob cases_ — tags refused as UNSUPPORTED_PROPOSAL
+- `[x]` **M01-011** PASS — _prod/decoder.py:Reader.bytes_/count_ — Python ints do not wrap; every length checked against remaining bytes
+- `[x]` **M01-012** PASS — _prod/decoder.py:Reader.count/name; prod/limits.py; tests/test_prod.py:test_vector_bombs_and_limits_
+- `[x]` **M01-013** PASS — _InvalidModule.offset/section; ParsedModule offsets; tests/test_prod.py:test_immutable_parse_and_offsets_
+- `[x]` **M01-014** PASS — _frozen ParsedModule; tests/test_prod.py:test_immutable_parse_and_offsets_
+- `[x]` **M01-015** PASS — _UNKNOWN_SECTION / UNKNOWN_OPCODE / UNSUPPORTED_PROPOSAL paths; tests/test_prod.py:test_negative_typing_
+- `[x]` **M01-016** PASS — _sub-Readers bounded per section; evidence/fuzz_campaign.json (0 crashes)_
+- `[x]` **M01-017** PASS — _frozen dataclasses in prod/decoder.py_
+- `[x]` **M01-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M01-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M01-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M01-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M01-022** PASS — _prod/decoder.py; tests/test_faults.py_
+- `[x]` **M01-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M01-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M01-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M01-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M01-027** PASS — _tests/wasmgen.py:seeds; tests/test_prod.py:test_seed_corpus_valid_
+- `[x]` **M01-028** PASS — _tests/test_prod.py:test_header, test_section_rules_
+- `[x]` **M01-029** PASS — _tests/test_prod.py:test_leb128, test_vector_bombs_and_limits_
+- `[~]` **M01-030** PARTIAL — _prod/fuzz.py; evidence/fuzz_campaign.json_ — structure-aware mutation fuzzing, not coverage-guided; no sanitizer needed for pure Python but no native build exists
+- `[~]` **M01-031** PARTIAL — _evidence/fuzz_campaign.json differential_ — one independent reference (V8); checklist requires two
+- `[~]` **M01-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M01-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M01-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M01-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M01-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M01-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M01-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M01-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M01-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M01-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M01-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M01-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[x]` **M01-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M01-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M01-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M01-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M01-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M01-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M01-050** FAIL — _CHECKLIST_STATUS.json_ — 14 of 49 mandatory items not PASS
+- `[~]` **M01-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M01-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M02 — Wasm type validator [P0]
+
+- `[H]` **M02-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M02-002** PASS — _docs/DESIGN.md#3; prod/typecheck.py_
+- `[x]` **M02-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M02-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M02-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M02-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M02-007** PASS — _prod/typecheck.py:_validate_body (explicit operand + control stacks)_
+- `[x]` **M02-008** PASS — _tests/test_prod.py:test_negative_typing, test_unreachable_polymorphism; tests/oracle_corpus.py_
+- `[x]` **M02-009** PASS — _prod/typecheck.py:_check_const/_module_level; oracle_corpus g_* cases_
+- `[x]` **M02-010** PASS — _oracle_corpus call*/table*/elem* cases_
+- `[x]` **M02-011** PASS — _oracle_corpus mem*/loads_stores/data*; alignment test_ — memory64/multi-memory refused (not enabled)
+- `[x]` **M02-012** PASS — _prod/decoder.py import/export checks; tests/test_prod.py:test_utf8_and_exports_
+- `[~]` **M02-013** PARTIAL — _prod/typecheck.py:_UNSUPPORTED table; prod/registry.py_ — proposal gates are a static table in the validator, not generated from the M05 registry
+- `[x]` **M02-014** PASS — _prod/errors.py:Code; tests/test_prod.py:test_negative_typing_
+- `[x]` **M02-015** PASS — _tests/test_prod.py:test_deep_nesting_is_iterative_and_bounded_
+- `[x]` **M02-016** PASS — _prod/typecheck.py:TypedFacts (frozen)_
+- `[x]` **M02-017** PASS — _frozen dataclasses in prod/typecheck.py_
+- `[x]` **M02-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M02-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M02-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M02-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M02-022** PASS — _prod/typecheck.py; tests/test_faults.py_
+- `[x]` **M02-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M02-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M02-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M02-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M02-027** PARTIAL — _tests/oracle_corpus.py (judged against V8)_ — official WebAssembly spec testsuite (.wast) not imported - no network/wabt
+- `[~]` **M02-028** PARTIAL — _prod/fuzz.py mutation of generated valid bodies_ — offset-exact single-mutation assertions not systematic
+- `[x]` **M02-029** PASS — _oracle_corpus; FeatureTest; SIMD refusal tests_
+- `[~]` **M02-030** PARTIAL — _evidence/fuzz_campaign.json_ — single reference implementation
+- `[x]` **M02-031** PASS — _evidence/tests.json -O run identical_
+- `[~]` **M02-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M02-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M02-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M02-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M02-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M02-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M02-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M02-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M02-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M02-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M02-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M02-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[x]` **M02-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M02-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M02-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M02-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M02-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M02-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M02-050** FAIL — _CHECKLIST_STATUS.json_ — 16 of 49 mandatory items not PASS
+- `[~]` **M02-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M02-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M03 — Byte-derived feature detector [P0]
+
+- `[H]` **M03-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M03-002** PASS — _docs/DESIGN.md#3; prod/typecheck.py_
+- `[x]` **M03-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M03-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M03-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M03-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M03-007** PASS — _prod/registry.py DEFAULT_BUNDLE_DOC.features_
+- `[~]` **M03-008** PARTIAL — _prod/typecheck.py feature evidence points_ — mapping is hand-written; no generated completeness proof
+- `[x]` **M03-009** PASS — _prod/typecheck.py:validate_module - facts from decoder/typechecker only_
+- `[~]` **M03-010** PARTIAL — _docs/DESIGN.md#M03_ — presence == requirement (conservative); no reachability analysis
+- `[~]` **M03-011** PARTIAL — _prod/registry.py_ — no implication/transitive-closure rules defined (none needed for current set)
+- `[x]` **M03-012** PASS — _verdict['used'] sorted; attestation features sorted_
+- `[x]` **M03-013** PASS — _unknown -> UNKNOWN_OPCODE/UNSUPPORTED_PROPOSAL; unregistered -> FEATURE_REFUSED_
+- `[x]` **M03-014** PASS — _TypedFacts.evidence; tests/test_prod.py:test_evidence_offsets_
+- `[x]` **M03-015** PASS — _custom payloads never read; ADR-0003_
+- `[~]` **M03-016** PARTIAL — _tests/test_prod.py:test_default_bundle_and_kernel_consistent_ — no automated branch->feature consistency check
+- `[x]` **M03-017** PASS — _frozen dataclasses in prod/typecheck.py_
+- `[x]` **M03-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M03-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M03-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M03-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M03-022** PASS — _prod/typecheck.py; tests/test_faults.py_
+- `[x]` **M03-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M03-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M03-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M03-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M03-027** PASS — _tests/test_prod.py:test_byte_derived_features_
+- `[~]` **M03-028** PARTIAL — _seeds multi-feature_ — no transitive implications exist to test
+- `[x]` **M03-029** PASS — _tests/test_prod.py:test_binding_manifest (declaration changes, bytes fixed)_
+- `[x]` **M03-030** PASS — _oracle_corpus fc_unknown/unknown_op/typed_select_v128_
+- `[I]` **M03-031** BLOCKED_INFRA — no broad real-world corpus / independent feature tooling available offline
+- `[~]` **M03-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M03-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M03-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M03-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M03-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M03-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M03-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M03-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M03-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M03-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M03-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M03-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[x]` **M03-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M03-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M03-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M03-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M03-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M03-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M03-050** FAIL — _CHECKLIST_STATUS.json_ — 18 of 49 mandatory items not PASS
+- `[~]` **M03-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M03-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M04 — Declared-capability source and binding rule [P0]
+
+- `[H]` **M04-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M04-002** PASS — _docs/DESIGN.md#3; prod/admission.py:CapabilityManifest_
+- `[x]` **M04-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M04-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M04-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M04-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M04-007** PASS — _prod/admission.py:CapabilityManifest (single container; custom sections ignored)_
+- `[x]` **M04-008** PASS — _CapabilityManifest.digest (canonical JSON)_
+- `[~]` **M04-009** PARTIAL — _prod/admission.py_ — bound to module digest; issuer identity / validity window not in manifest
+- `[ ]` **M04-010** OPEN — manifests are not signed; they can only narrow what is accepted (used ⊆ declared) so no escalation, but issuer trust is absent
+- `[ ]` **M04-011** OPEN — issuer authorization model not implemented
+- `[~]` **M04-012** PARTIAL — _tests/test_prod.py:test_binding_manifest (other digest)_ — tenant/validity not modelled
+- `[~]` **M04-013** PARTIAL — _docs/DESIGN.md#M04_
+- `[x]` **M04-014** PASS — _prod/admission.py:_validate_uncached; tests/test_prod.py:test_binding_manifest_
+- `[~]` **M04-015** PARTIAL — _cache key includes manifest digest_ — manifest digest not yet a field of the attestation
+- `[ ]` **M04-016** OPEN
+- `[x]` **M04-017** PASS — _frozen dataclasses in prod/admission.py:CapabilityManifest_
+- `[x]` **M04-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M04-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M04-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M04-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M04-022** PASS — _prod/admission.py:CapabilityManifest; tests/test_faults.py_
+- `[x]` **M04-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M04-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M04-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M04-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M04-027** PARTIAL — _tests/test_prod.py:test_binding_manifest_
+- `[x]` **M04-028** PASS — _tests/test_prod.py:test_binding_manifest (manifest for other digest)_
+- `[x]` **M04-029** PASS — _single-source contract (no precedence) - docs/DESIGN.md#M04_
+- `[ ]` **M04-030** OPEN — no signed declarations yet
+- `[ ]` **M04-031** OPEN
+- `[~]` **M04-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M04-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M04-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M04-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M04-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M04-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M04-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M04-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M04-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M04-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M04-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M04-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M04-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M04-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M04-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M04-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M04-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M04-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M04-050** FAIL — _CHECKLIST_STATUS.json_ — 22 of 49 mandatory items not PASS
+- `[~]` **M04-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M04-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M05 — Specification/version registry [P0]
+
+- `[H]` **M05-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M05-002** PASS — _docs/DESIGN.md#3; prod/registry.py_
+- `[x]` **M05-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M05-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M05-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M05-006** PASS — _prod/limits.py:Limits_
+- `[~]` **M05-007** PARTIAL — _schemas/PK_ISA_POLICY_BUNDLE-1.json_ — no opcode mappings/revision commits in registry
+- `[~]` **M05-008** PARTIAL — _spec_id 'wasm-core-2.0'_ — pinned by label, not by spec commit hash
+- `[x]` **M05-009** PASS — _features vs host contract (M17/M18) are separate artifacts_
+- `[x]` **M05-010** PASS — _prod/registry.py:load_bundle; RegistryTest_
+- `[x]` **M05-011** PASS — _prod/attest.py:sign_bundle/open_signed_bundle; ConfigTest_
+- `[ ]` **M05-012** OPEN — lookup tables hand-maintained
+- `[~]` **M05-013** PARTIAL — _status field standard/phase-4/unsupported_
+- `[x]` **M05-014** PASS — _bundle revision in attestation, cache key, health_
+- `[x]` **M05-015** PASS — _engines.features reference registered IDs_
+- `[H]` **M05-016** BLOCKED_HUMAN
+- `[x]` **M05-017** PASS — _frozen dataclasses in prod/registry.py_
+- `[x]` **M05-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M05-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M05-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M05-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M05-022** PASS — _prod/registry.py; tests/test_faults.py_
+- `[x]` **M05-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M05-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M05-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M05-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M05-027** PASS — _tests/test_prod.py:test_strict_schema_
+- `[ ]` **M05-028** OPEN
+- `[x]` **M05-029** PASS — _prod/config_store.py:reconstruct; ConfigTest_
+- `[x]` **M05-030** PASS — _tests/test_prod.py:test_stale_config_blocks_execution_and_rollback_
+- `[ ]` **M05-031** OPEN
+- `[~]` **M05-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M05-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M05-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M05-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M05-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M05-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M05-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M05-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M05-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M05-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[x]` **M05-042** PASS — _docs/OPERATIONS.md#M42_
+- `[~]` **M05-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M05-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M05-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M05-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M05-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M05-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M05-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M05-050** FAIL — _CHECKLIST_STATUS.json_ — 18 of 49 mandatory items not PASS
+- `[~]` **M05-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M05-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M06 — Engine capability registry [P0]
+
+- `[H]` **M06-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M06-002** PARTIAL — _docs/DESIGN.md#3; prod/registry.py:engines_ — requirements documented at summary level only
+- `[~]` **M06-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M06-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M06-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M06-006** PASS — _prod/limits.py:Limits_
+- `[I]` **M06-007** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[x]` **M06-008** PASS — _engines.features use registry IDs_
+- `[I]` **M06-009** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[I]` **M06-010** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[x]` **M06-011** PASS — _engine status 'revoked' refused; ADM_
+- `[I]` **M06-012** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[x]` **M06-013** PASS — _prod/admission.py engine intersection; tests/test_prod.py:test_profile_refusals_
+- `[x]` **M06-014** PASS — _engine in attestation + cache key_
+- `[I]` **M06-015** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[I]` **M06-016** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[~]` **M06-017** PARTIAL — _frozen dataclasses in prod/registry.py:engines_
+- `[~]` **M06-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M06-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M06-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M06-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M06-022** PARTIAL — _prod/registry.py:engines; tests/test_faults.py_
+- `[x]` **M06-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M06-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M06-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M06-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[I]` **M06-027** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[x]` **M06-028** PASS — _tests/test_prod.py:test_nan_canonicalisation_required, test_profile_refusals_
+- `[I]` **M06-029** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[~]` **M06-030** PARTIAL — _signed bundle tamper test ConfigTest_
+- `[I]` **M06-031** BLOCKED_INFRA — _prod/registry.py (placeholder engine)_ — no certified real engine build to describe
+- `[~]` **M06-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M06-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M06-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M06-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M06-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M06-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M06-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M06-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M06-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M06-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M06-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M06-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M06-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M06-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M06-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M06-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M06-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M06-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M06-050** FAIL — _CHECKLIST_STATUS.json_ — 34 of 49 mandatory items not PASS
+- `[~]` **M06-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M06-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M07 — Canonical module digest [P0]
+
+- `[H]` **M07-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M07-002** PASS — _docs/DESIGN.md#3; prod/digest.py_
+- `[x]` **M07-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M07-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M07-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M07-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M07-007** PASS — _prod/digest.py; ADR-0003_
+- `[x]` **M07-008** PASS — _'sha256:' prefix_
+- `[~]` **M07-009** PARTIAL — _prod/digest.py_ — one-shot hashing (module <= 4 MiB held in memory already)
+- `[x]` **M07-010** PASS — _prod/admission.py:Gate.validate first step_
+- `[x]` **M07-011** PASS — _no filename/path API exists_
+- `[x]` **M07-012** PASS — _prod/digest.py:parse_digest; DigestTest_
+- `[x]` **M07-013** PASS — _verdict size_bytes + digest_
+- `[x]` **M07-014** PASS — _full digests everywhere_
+- `[ ]` **M07-015** OPEN — no dual-hash migration rules
+- `[x]` **M07-016** PASS — _prod/admission.py:Gate.execute_
+- `[x]` **M07-017** PASS — _frozen dataclasses in prod/digest.py_
+- `[x]` **M07-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M07-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M07-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M07-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M07-022** PASS — _prod/digest.py; tests/test_faults.py_
+- `[x]` **M07-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M07-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M07-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M07-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M07-027** PASS — _DigestTest; test_attestation_cannot_be_moved_
+- `[ ]` **M07-028** OPEN — no streaming implementation to compare
+- `[x]` **M07-029** PASS — _DigestTest_
+- `[ ]` **M07-030** OPEN
+- `[x]` **M07-031** PASS — _tests/test_prod.py:test_toctou_
+- `[~]` **M07-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M07-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M07-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M07-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M07-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M07-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M07-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M07-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M07-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M07-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M07-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M07-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M07-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M07-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M07-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M07-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M07-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M07-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M07-050** FAIL — _CHECKLIST_STATUS.json_ — 16 of 49 mandatory items not PASS
+- `[~]` **M07-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M07-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M08 — Validation-result attestation [P0]
+
+- `[H]` **M08-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M08-002** PASS — _docs/DESIGN.md#3; prod/attest.py_
+- `[x]` **M08-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M08-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M08-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M08-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M08-007** PASS — _prod/attest.py:FIELDS; schemas/PK_VALIDATION_ATTESTATION-1.json_
+- `[~]` **M08-008** PARTIAL — _reject verdicts carry M12 failure_ — reject verdicts are not signed
+- `[x]` **M08-009** PASS — _canonical_json + canonical re-check in verify_
+- `[I]` **M08-010** BLOCKED_INFRA — _prod/attest.py:Signer_ — in-memory key; production needs HSM/KMS
+- `[x]` **M08-011** PASS — _ttl, expires_at, skew; test_foreign_key_and_revocation_and_expiry_
+- `[~]` **M08-012** PARTIAL — _engine/profile bound_ — tenant not bound
+- `[~]` **M08-013** PARTIAL — _Verifier trusted map + revoke_ — historical verification of rotated keys not implemented
+- `[x]` **M08-014** PASS — _AuditStream hash chain_
+- `[x]` **M08-015** PASS — _verdict must equal 'accept' in signed payload; tamper test_
+- `[x]` **M08-016** PASS — _schema string versioned independently_
+- `[x]` **M08-017** PASS — _frozen dataclasses in prod/attest.py_
+- `[x]` **M08-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M08-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M08-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M08-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M08-022** PASS — _prod/attest.py; tests/test_faults.py_
+- `[x]` **M08-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M08-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M08-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M08-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M08-027** PASS — _tests/test_prod.py:test_attestation_cannot_be_moved (payload edit)_
+- `[~]` **M08-028** PARTIAL — _tests/test_prod.py:test_foreign_key_and_revocation_and_expiry; tests/test_faults.py:test_verifier_clock_skew_ — wrong-tenant n/a
+- `[ ]` **M08-029** OPEN — single implementation
+- `[x]` **M08-030** PASS — _tests/test_prod.py:test_attestation_cannot_be_moved (malformed)_
+- `[ ]` **M08-031** OPEN
+- `[~]` **M08-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M08-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M08-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M08-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M08-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M08-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M08-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M08-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M08-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M08-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M08-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M08-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M08-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M08-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M08-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M08-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M08-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M08-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M08-050** FAIL — _CHECKLIST_STATUS.json_ — 19 of 49 mandatory items not PASS
+- `[~]` **M08-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M08-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M09 — Validation cache with safe invalidation [P0]
+
+- `[H]` **M09-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M09-002** PASS — _docs/DESIGN.md#3; prod/cache.py_
+- `[x]` **M09-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M09-004** PARTIAL — _prod/cache.py_ — no dedicated JSON schema for this component's interface
+- `[x]` **M09-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M09-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M09-007** PASS — _prod/admission.py cache key_
+- `[x]` **M09-008** PASS — _accept re-signed on each hit; cached record keyed on all inputs_
+- `[x]` **M09-009** PASS — _only deterministic outcomes cached; test_nondeterministic_failures_not_cached_
+- `[x]` **M09-010** PASS — _key is digest + revisions_
+- `[x]` **M09-011** PASS — _HMAC integrity; tests/test_faults.py:test_cache_corruption_cannot_admit_ — in-memory only (no persistent cache)
+- `[~]` **M09-012** PARTIAL — _ADR-0005_ — tenant id not in key (open decision)
+- `[x]` **M09-013** PASS — _revision in key + epoch_
+- `[x]` **M09-014** PASS — _bump_epoch on activation_
+- `[~]` **M09-015** PARTIAL — _capacity bound + LRU_ — no per-tenant occupancy
+- `[~]` **M09-016** PARTIAL — _hits/misses/evictions/integrity_failures attributes_ — not exported as Prometheus series
+- `[x]` **M09-017** PASS — _frozen dataclasses in prod/cache.py_
+- `[x]` **M09-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M09-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[x]` **M09-020** PASS — _docs/DESIGN.md#4; tests/test_prod.py:test_thread_safety_
+- `[~]` **M09-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M09-022** PASS — _prod/cache.py; tests/test_faults.py_
+- `[x]` **M09-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M09-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M09-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M09-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M09-027** PARTIAL — _tests/test_prod.py:test_cache_semantics (profile change)_ — not every input varied individually
+- `[x]` **M09-028** PASS — _tests/test_faults.py:test_cache_corruption_cannot_admit_
+- `[x]` **M09-029** PASS — _tests/test_prod.py:test_thread_safety_
+- `[ ]` **M09-030** OPEN
+- `[ ]` **M09-031** OPEN
+- `[~]` **M09-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M09-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M09-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M09-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M09-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M09-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M09-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M09-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M09-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M09-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M09-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M09-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M09-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M09-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M09-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M09-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M09-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M09-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M09-050** FAIL — _CHECKLIST_STATUS.json_ — 18 of 49 mandatory items not PASS
+- `[~]` **M09-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M09-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M10 — Execution admission gate [P0]
+
+- `[H]` **M10-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M10-002** PASS — _docs/DESIGN.md#3; prod/admission.py:Gate.admit_
+- `[x]` **M10-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M10-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M10-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M10-006** PASS — _prod/limits.py:Limits_
+- `[~]` **M10-007** PARTIAL — _prod/admission.py:Gate.execute_ — in-process choke point; real engine integration absent
+- `[~]` **M10-008** PARTIAL — _prod/admission.py:admit_ — tenant context absent
+- `[x]` **M10-009** PASS — _attest.verify expect bindings_
+- `[x]` **M10-010** PASS — _verification failure -> exception, no ticket_
+- `[x]` **M10-011** PASS — _no bypass API in package_
+- `[x]` **M10-012** PASS — _AdmissionTicket carries immutable bytes_
+- `[x]` **M10-013** PASS — _admission.* / execution.* audit events_
+- `[x]` **M10-014** PASS — _docs/DESIGN.md; tests for cache/revocation/rotation_
+- `[ ]` **M10-015** OPEN — no AOT artifacts
+- `[x]` **M10-016** PASS — _Verifier.revoke + epoch bump; RB-04_
+- `[x]` **M10-017** PASS — _frozen dataclasses in prod/admission.py:Gate.admit_
+- `[x]` **M10-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M10-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M10-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M10-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M10-022** PASS — _prod/admission.py:Gate.admit; tests/test_faults.py_
+- `[x]` **M10-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M10-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M10-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M10-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M10-027** PARTIAL — _tests/test_prod.py:test_toctou (non-ticket refused)_ — real engine entry points absent
+- `[x]` **M10-028** PASS — _tests/test_prod.py:test_attestation_cannot_be_moved_
+- `[~]` **M10-029** PARTIAL — _tests/test_faults.py_
+- `[~]` **M10-030** PARTIAL — _execute(object()) refused_
+- `[~]` **M10-031** PARTIAL — _tests/test_prod.py:test_accept_attest_admit_execute + audit chain_ — no artifact retrieval stage
+- `[~]` **M10-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M10-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M10-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M10-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M10-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M10-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M10-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M10-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M10-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M10-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M10-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M10-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[x]` **M10-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M10-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M10-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M10-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M10-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M10-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M10-050** FAIL — _CHECKLIST_STATUS.json_ — 19 of 49 mandatory items not PASS
+- `[~]` **M10-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M10-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M11 — TOCTOU protection [P0]
+
+- `[H]` **M11-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M11-002** PASS — _docs/DESIGN.md#3; prod/admission.py:Gate.execute_
+- `[x]` **M11-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M11-004** PARTIAL — _prod/admission.py:Gate.execute_ — no dedicated JSON schema for this component's interface
+- `[x]` **M11-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M11-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M11-007** PASS — _bytes snapshot in ticket_
+- `[x]` **M11-008** PASS — _bytes-only API; no paths_
+- `[x]` **M11-009** PASS — _Gate.execute re-hash_
+- `[~]` **M11-010** PARTIAL — no storage layer
+- `[ ]` **M11-011** OPEN — no AOT
+- `[~]` **M11-012** PARTIAL — _no filesystem API_ — n/a until a storage layer exists
+- `[ ]` **M11-013** OPEN
+- `[x]` **M11-014** PASS — _ticket.module_digest_
+- `[x]` **M11-015** PASS — _execution.refused DIGEST_MISMATCH audit event_
+- `[~]` **M11-016** PARTIAL — _docs/THREAT_MODEL.md T-05_
+- `[x]` **M11-017** PASS — _frozen dataclasses in prod/admission.py:Gate.execute_
+- `[x]` **M11-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M11-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M11-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M11-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M11-022** PASS — _prod/admission.py:Gate.execute; tests/test_faults.py_
+- `[x]` **M11-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M11-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M11-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M11-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M11-027** PARTIAL — _tests/test_prod.py:test_toctou (buffer mutation)_ — file race not applicable
+- `[ ]` **M11-028** OPEN
+- `[x]` **M11-029** PASS — _tests/test_prod.py:test_toctou_
+- `[ ]` **M11-030** OPEN
+- `[ ]` **M11-031** OPEN
+- `[~]` **M11-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M11-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M11-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M11-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M11-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M11-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M11-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M11-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M11-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M11-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M11-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M11-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M11-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M11-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M11-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M11-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M11-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M11-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M11-050** FAIL — _CHECKLIST_STATUS.json_ — 22 of 49 mandatory items not PASS
+- `[~]` **M11-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M11-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M12 — Structured failure schema [P0]
+
+- `[H]` **M12-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M12-002** PASS — _docs/DESIGN.md#3; prod/errors.py; schemas/PK_VALIDATION_FAILURE-1.json_
+- `[x]` **M12-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M12-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M12-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M12-006** PASS — _prod/limits.py:Limits_
+- `[~]` **M12-007** PARTIAL — _schemas/PK_VALIDATION_FAILURE-1.json_ — no category/severity/retryable fields
+- `[x]` **M12-008** PASS — _prod/errors.py:Code (stable string values)_
+- `[x]` **M12-009** PASS — _sanitize + bounded detail_
+- `[~]` **M12-010** PARTIAL
+- `[~]` **M12-011** PARTIAL — first failure only (documented)
+- `[x]` **M12-012** PASS — _@boundary; FaultInjectionTest_
+- `[~]` **M12-013** PARTIAL — _DETERMINISTIC_REJECTS_ — no explicit retryable flag
+- `[~]` **M12-014** PARTIAL — _validator.py kernel retained_ — no mapping table ValidationFailed/FeatureRefused -> codes
+- `[x]` **M12-015** PASS — _SchemaConformanceTest_
+- `[x]` **M12-016** PASS — _schemas/_
+- `[x]` **M12-017** PASS — _frozen dataclasses in prod/errors.py; schemas/PK_VALIDATION_FAILURE-1.json_
+- `[x]` **M12-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M12-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M12-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M12-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M12-022** PASS — _prod/errors.py; schemas/PK_VALIDATION_FAILURE-1.json; tests/test_faults.py_
+- `[x]` **M12-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M12-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M12-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M12-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M12-027** PARTIAL — _SchemaConformanceTest_
+- `[x]` **M12-028** PASS — _fuzz + sanitize tests_
+- `[ ]` **M12-029** OPEN
+- `[~]` **M12-030** PARTIAL
+- `[~]` **M12-031** PARTIAL — _explain + schema tests_
+- `[~]` **M12-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M12-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M12-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M12-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M12-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M12-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M12-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M12-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M12-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M12-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M12-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M12-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M12-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M12-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M12-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M12-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M12-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M12-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M12-050** FAIL — _CHECKLIST_STATUS.json_ — 21 of 49 mandatory items not PASS
+- `[~]` **M12-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M12-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M13 — Parser resource governor [P0]
+
+- `[H]` **M13-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M13-002** PASS — _docs/DESIGN.md#3; prod/limits.py_
+- `[x]` **M13-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M13-004** PARTIAL — _prod/limits.py_ — no dedicated JSON schema for this component's interface
+- `[x]` **M13-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M13-006** PASS — _prod/limits.py:Limits_
+- `[~]` **M13-007** PARTIAL — _prod/limits.py:Limits_ — versioned (revision hash) but not signed separately
+- `[x]` **M13-008** PASS — _max_steps, max_control_depth, max_operand_stack_
+- `[x]` **M13-009** PASS — _Reader.count before allocation_
+- `[x]` **M13-010** PASS — _iterative validator_
+- `[~]` **M13-011** PARTIAL — no per-tenant quotas
+- `[x]` **M13-012** PASS — _LIMIT_EXCEEDED detail names dimension_
+- `[x]` **M13-013** PASS — _Governor deadline; test_deadline_mid_validation_
+- `[ ]` **M13-014** OPEN — no service concurrency model
+- `[x]` **M13-015** PASS — _no decompression accepted (n/a)_
+- `[x]` **M13-016** PASS — _limits_revision in attestation + cache key_
+- `[x]` **M13-017** PASS — _frozen dataclasses in prod/limits.py_
+- `[x]` **M13-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M13-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M13-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M13-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M13-022** PASS — _prod/limits.py; tests/test_faults.py_
+- `[x]` **M13-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M13-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M13-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M13-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M13-027** PARTIAL — _tests/test_prod.py:test_vector_bombs_and_limits_ — not every limit has below/above fixtures
+- `[x]` **M13-028** PASS — _tests/test_prod.py:test_leb128_
+- `[x]` **M13-029** PASS — _deep nesting + vector bombs_
+- `[ ]` **M13-030** OPEN
+- `[x]` **M13-031** PASS — _limits revision in cache key_
+- `[~]` **M13-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M13-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M13-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M13-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M13-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M13-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M13-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M13-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M13-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M13-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M13-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M13-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[x]` **M13-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M13-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M13-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M13-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M13-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M13-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M13-050** FAIL — _CHECKLIST_STATUS.json_ — 18 of 49 mandatory items not PASS
+- `[~]` **M13-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M13-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M14 — Fuzzing harness and malformed corpus [P0]
+
+- `[H]` **M14-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M14-002** PARTIAL — _docs/DESIGN.md#3; prod/fuzz.py_ — requirements documented at summary level only
+- `[~]` **M14-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M14-004** PARTIAL — _prod/fuzz.py_ — no dedicated JSON schema for this component's interface
+- `[~]` **M14-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M14-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M14-007** PARTIAL — _prod/fuzz.py (end-to-end target)_ — no per-stage targets
+- `[x]` **M14-008** PASS — _tests/wasmgen.py:seeds + mutators_
+- `[x]` **M14-009** PASS — _fuzz.gen_module typed generator_
+- `[~]` **M14-010** PARTIAL — _crash/nondeterminism/slowest recorded_ — no per-input memory cap
+- `[ ]` **M14-011** OPEN — no minimizer
+- `[I]` **M14-012** BLOCKED_INFRA — spec corpora need network
+- `[~]` **M14-013** PARTIAL — managed runtime; no native component
+- `[~]` **M14-014** PARTIAL — _evidence/coverage.json_
+- `[x]` **M14-015** PASS — _nondeterminism check in oracle_
+- `[x]` **M14-016** PASS — _FuzzSmokeTest in unittest_
+- `[~]` **M14-017** PARTIAL — _frozen dataclasses in prod/fuzz.py_
+- `[~]` **M14-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M14-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M14-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M14-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M14-022** PARTIAL — _prod/fuzz.py; tests/test_faults.py_
+- `[~]` **M14-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M14-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M14-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M14-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M14-027** PARTIAL — _tests/test_faults.py_ — no deliberate infinite-loop mutant
+- `[~]` **M14-028** PARTIAL — _evidence/fuzz_campaign.json_ — campaign measured in minutes, not sustained
+- `[x]` **M14-029** PASS — _FINDINGS.md regressions_
+- `[I]` **M14-030** BLOCKED_INFRA — single architecture
+- `[x]` **M14-031** PASS — _prod/gate.py consumes crash count_
+- `[~]` **M14-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M14-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M14-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M14-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M14-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M14-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M14-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M14-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M14-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M14-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M14-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M14-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M14-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M14-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M14-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M14-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M14-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M14-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M14-050** FAIL — _CHECKLIST_STATUS.json_ — 42 of 49 mandatory items not PASS
+- `[~]` **M14-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M14-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M15 — Differential validation harness [P0]
+
+- `[H]` **M15-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M15-002** PARTIAL — _docs/DESIGN.md#3; prod/differential.py_ — requirements documented at summary level only
+- `[~]` **M15-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M15-004** PARTIAL — _prod/differential.py_ — no dedicated JSON schema for this component's interface
+- `[~]` **M15-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M15-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M15-007** PARTIAL — _prod/differential.py (V8)_ — second reference (wasmtime/wabt) not installable offline
+- `[x]` **M15-008** PASS — _classes FALSE_ACCEPT/PROPOSAL_GAP/LIMIT_GAP/FALSE_REJECT_
+- `[x]` **M15-009** PASS — _PROPOSAL_GAP classification_
+- `[x]` **M15-010** PASS — _accept/reject primary_
+- `[~]` **M15-011** PARTIAL — _reproducers stored by seed_
+- `[~]` **M15-012** PARTIAL — _tests/oracle_corpus.py:KNOWN_DIVERGENCE; DIFFERENTIAL_DISPOSITIONS.md_ — owner/expiry TBD
+- `[~]` **M15-013** PARTIAL — no real-world corpus
+- `[x]` **M15-014** PASS — _fuzz invalid inputs_
+- `[~]` **M15-015** PARTIAL — _node version in SBOM_
+- `[x]` **M15-016** PASS — _FINDINGS.md_
+- `[~]` **M15-017** PARTIAL — _frozen dataclasses in prod/differential.py_
+- `[~]` **M15-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M15-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M15-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M15-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M15-022** PARTIAL — _prod/differential.py; tests/test_faults.py_
+- `[~]` **M15-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M15-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M15-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M15-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M15-027** OPEN
+- `[x]` **M15-028** PASS — _PROPOSAL_GAP tests_
+- `[I]` **M15-029** BLOCKED_INFRA
+- `[~]` **M15-030** PARTIAL — _evidence/fuzz_campaign.json_
+- `[x]` **M15-031** PASS — _DIFFERENTIAL_DISPOSITIONS.md_
+- `[~]` **M15-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M15-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M15-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M15-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M15-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M15-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M15-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M15-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M15-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M15-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M15-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M15-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M15-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M15-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M15-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M15-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M15-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M15-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M15-050** FAIL — _CHECKLIST_STATUS.json_ — 41 of 49 mandatory items not PASS
+- `[~]` **M15-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M15-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M16 — Determinism specification [P1]
+
+- `[H]` **M16-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M16-002** PARTIAL — _docs/DESIGN.md#3; docs/DETERMINISM.md_ — requirements documented at summary level only
+- `[~]` **M16-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M16-004** PARTIAL — _docs/DETERMINISM.md_ — no dedicated JSON schema for this component's interface
+- `[~]` **M16-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M16-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M16-007** PASS — _docs/DETERMINISM.md_
+- `[~]` **M16-008** PARTIAL — _docs/DETERMINISM.md_ — documented only
+- `[x]` **M16-009** PASS — _NaN rule enforced; test_nan_canonicalisation_required_
+- `[x]` **M16-010** PASS — _simd/relaxed refused in deterministic profile_
+- `[x]` **M16-011** PASS — _threads refused_
+- `[x]` **M16-012** PASS — _host contract classes_
+- `[~]` **M16-013** PARTIAL — _docs/DETERMINISM.md_ — documented only
+- `[~]` **M16-014** PARTIAL — _docs/DETERMINISM.md_ — documented only
+- `[~]` **M16-015** PARTIAL — _docs/DETERMINISM.md_ — documented only
+- `[~]` **M16-016** PARTIAL — _docs/DETERMINISM.md_ — documented only
+- `[~]` **M16-017** PARTIAL — _frozen dataclasses in docs/DETERMINISM.md_
+- `[~]` **M16-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M16-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M16-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M16-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M16-022** PARTIAL — _docs/DETERMINISM.md; tests/test_faults.py_
+- `[~]` **M16-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M16-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M16-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M16-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[I]` **M16-027** BLOCKED_INFRA — needs certified engines to execute modules
+- `[I]` **M16-028** BLOCKED_INFRA — needs certified engines to execute modules
+- `[I]` **M16-029** BLOCKED_INFRA — needs certified engines to execute modules
+- `[x]` **M16-030** PASS — _tests/test_prod.py:test_profile_refusals_
+- `[H]` **M16-031** BLOCKED_HUMAN
+- `[~]` **M16-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M16-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M16-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M16-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M16-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M16-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M16-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M16-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M16-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M16-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M16-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M16-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M16-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M16-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M16-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M16-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M16-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M16-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M16-050** FAIL — _CHECKLIST_STATUS.json_ — 42 of 49 mandatory items not PASS
+- `[~]` **M16-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M16-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M17 — Host-import capability contract [P1]
+
+- `[H]` **M17-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M17-002** PASS — _docs/DESIGN.md#3; prod/hostimports.py_
+- `[x]` **M17-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M17-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M17-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M17-006** PASS — _prod/limits.py:Limits_
+- `[x]` **M17-007** PASS — _PK_HOST_IMPORT_CONTRACT/1_
+- `[x]` **M17-008** PASS — _deny-by-default classify_
+- `[~]` **M17-009** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[x]` **M17-010** PASS — _no wildcard default_
+- `[~]` **M17-011** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[~]` **M17-012** PARTIAL — _names + kinds checked_ — function signatures not checked against contract
+- `[~]` **M17-013** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[~]` **M17-014** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[x]` **M17-015** PASS — _profile allowed_import_classes_
+- `[~]` **M17-016** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[x]` **M17-017** PASS — _frozen dataclasses in prod/hostimports.py_
+- `[x]` **M17-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M17-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M17-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M17-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M17-022** PASS — _prod/hostimports.py; tests/test_faults.py_
+- `[x]` **M17-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M17-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M17-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M17-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M17-027** PARTIAL — _HostImportTest_ — signature/handle tests absent
+- `[~]` **M17-028** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[x]` **M17-029** PASS — _tests/test_prod.py:test_profile_refusals_
+- `[~]` **M17-030** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[~]` **M17-031** PARTIAL — _prod/hostimports.py_ — component implemented; this item not individually evidenced
+- `[~]` **M17-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M17-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M17-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M17-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M17-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M17-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M17-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M17-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M17-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M17-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M17-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M17-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M17-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M17-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M17-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M17-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M17-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M17-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M17-050** FAIL — _CHECKLIST_STATUS.json_ — 22 of 49 mandatory items not PASS
+- `[~]` **M17-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M17-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M18 — WASI policy adapter [P1]
+
+- `[H]` **M18-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M18-002** PARTIAL — _docs/DESIGN.md#3; prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — requirements documented at summary level only
+- `[~]` **M18-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M18-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M18-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[x]` **M18-006** PASS — _prod/limits.py:Limits_
+- `[~]` **M18-007** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[x]` **M18-008** PASS — _DEFAULT_CONTRACT_DOC_
+- `[~]` **M18-009** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[~]` **M18-010** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[x]` **M18-011** PASS — _clock/random nondeterministic_
+- `[~]` **M18-012** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[~]` **M18-013** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[~]` **M18-014** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[~]` **M18-015** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[~]` **M18-016** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — documented only
+- `[~]` **M18-017** PARTIAL — _frozen dataclasses in prod/hostimports.py:DEFAULT_CONTRACT_DOC_
+- `[~]` **M18-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[x]` **M18-019** PASS — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M18-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M18-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M18-022** PARTIAL — _prod/hostimports.py:DEFAULT_CONTRACT_DOC; tests/test_faults.py_
+- `[x]` **M18-023** PASS — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M18-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M18-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M18-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M18-027** PARTIAL — _HostImportTest (path_open denied)_
+- `[ ]` **M18-028** OPEN — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — partial component; item not implemented
+- `[ ]` **M18-029** OPEN — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — partial component; item not implemented
+- `[ ]` **M18-030** OPEN — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — partial component; item not implemented
+- `[ ]` **M18-031** OPEN — _prod/hostimports.py:DEFAULT_CONTRACT_DOC_ — partial component; item not implemented
+- `[~]` **M18-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M18-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M18-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M18-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M18-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M18-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M18-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M18-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M18-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M18-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M18-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M18-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M18-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M18-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M18-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M18-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M18-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M18-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M18-050** FAIL — _CHECKLIST_STATUS.json_ — 37 of 49 mandatory items not PASS
+- `[~]` **M18-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M18-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M19 — Component Model / WIT validator [P1]
+
+- `[H]` **M19-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[ ]` **M19-002** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-003** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-004** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-005** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-006** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-007** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-008** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-009** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-010** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-011** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-012** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-013** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-014** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-015** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-016** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-017** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-018** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-019** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-020** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-021** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-022** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-023** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-024** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-025** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-026** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-027** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-028** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-029** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-030** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-031** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented
+- `[ ]` **M19-032** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-033** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-034** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-035** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-036** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-037** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-038** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-039** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-040** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-041** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-042** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-043** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-044** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-045** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-046** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-047** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-048** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[ ]` **M19-049** OPEN — _docs/INTEGRATION.md#M19_ — component not implemented in v4.3.0
+- `[!]` **M19-050** FAIL — _CHECKLIST_STATUS.json_ — 49 of 49 mandatory items not PASS
+- `[ ]` **M19-051** OPEN
+- `[!]` **M19-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M20 — Cross-architecture determinism certification [P1]
+
+- `[H]` **M20-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[ ]` **M20-002** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-003** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-004** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-005** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-006** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-007** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-008** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-009** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-010** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-011** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-012** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-013** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-014** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-015** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-016** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-017** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-018** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-019** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-020** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-021** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-022** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-023** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-024** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-025** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-026** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-027** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-028** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-029** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-030** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-031** OPEN — _docs/DETERMINISM.md_ — component not implemented
+- `[ ]` **M20-032** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-033** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-034** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-035** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-036** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-037** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-038** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-039** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-040** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-041** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-042** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-043** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-044** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-045** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-046** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-047** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-048** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[ ]` **M20-049** OPEN — _docs/DETERMINISM.md_ — component not implemented in v4.3.0
+- `[!]` **M20-050** FAIL — _CHECKLIST_STATUS.json_ — 49 of 49 mandatory items not PASS
+- `[ ]` **M20-051** OPEN
+- `[!]` **M20-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M21 — Runtime/validator compatibility matrix [P1]
+
+- `[H]` **M21-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M21-002** PARTIAL — _docs/DESIGN.md#3; docs/INTEGRATION.md#M21_ — requirements documented at summary level only
+- `[~]` **M21-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M21-004** PARTIAL — _docs/INTEGRATION.md#M21_ — no dedicated JSON schema for this component's interface
+- `[~]` **M21-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M21-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M21-007** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-008** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-009** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-010** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-011** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-012** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-013** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-014** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-015** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-016** PARTIAL — _docs/INTEGRATION.md#M21_ — documented only
+- `[~]` **M21-017** PARTIAL — _frozen dataclasses in docs/INTEGRATION.md#M21_
+- `[~]` **M21-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M21-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M21-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M21-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M21-022** PARTIAL — _docs/INTEGRATION.md#M21; tests/test_faults.py_
+- `[~]` **M21-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M21-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M21-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M21-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M21-027** OPEN — _docs/INTEGRATION.md#M21_ — partial component; item not implemented
+- `[ ]` **M21-028** OPEN — _docs/INTEGRATION.md#M21_ — partial component; item not implemented
+- `[ ]` **M21-029** OPEN — _docs/INTEGRATION.md#M21_ — partial component; item not implemented
+- `[ ]` **M21-030** OPEN — _docs/INTEGRATION.md#M21_ — partial component; item not implemented
+- `[ ]` **M21-031** OPEN — _docs/INTEGRATION.md#M21_ — partial component; item not implemented
+- `[~]` **M21-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M21-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M21-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M21-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M21-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M21-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M21-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M21-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M21-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M21-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M21-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M21-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M21-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M21-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M21-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M21-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M21-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M21-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M21-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M21-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M21-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M22 — Profile schema and signed distribution [P1]
+
+- `[H]` **M22-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M22-002** PASS — _docs/DESIGN.md#3; prod/registry.py; prod/attest.py:sign_bundle_
+- `[x]` **M22-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M22-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[x]` **M22-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M22-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M22-007** PASS — _schemas/PK_ISA_POLICY_BUNDLE-1.json_
+- `[x]` **M22-008** PASS — _canonical_json + Ed25519_
+- `[x]` **M22-009** PASS — _load_bundle referential checks_
+- `[x]` **M22-010** PASS — _epoch monotonic_
+- `[~]` **M22-011** PARTIAL — _prod/registry.py; prod/attest.py:sign_bundle_ — component implemented; this item not individually evidenced
+- `[H]` **M22-012** BLOCKED_HUMAN
+- `[x]` **M22-013** PASS — _activate refuses epoch <= active_
+- `[x]` **M22-014** PASS — _open_signed_bundle_
+- `[x]` **M22-015** PASS — _ConfigStore_
+- `[~]` **M22-016** PARTIAL — _prod/registry.py; prod/attest.py:sign_bundle_ — component implemented; this item not individually evidenced
+- `[x]` **M22-017** PASS — _frozen dataclasses in prod/registry.py; prod/attest.py:sign_bundle_
+- `[x]` **M22-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M22-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M22-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M22-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M22-022** PASS — _prod/registry.py; prod/attest.py:sign_bundle; tests/test_faults.py_
+- `[~]` **M22-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M22-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M22-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M22-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M22-027** PASS — _RegistryTest.test_strict_schema_
+- `[x]` **M22-028** PASS — _ConfigTest tamper_
+- `[~]` **M22-029** PARTIAL — _prod/registry.py; prod/attest.py:sign_bundle_ — component implemented; this item not individually evidenced
+- `[x]` **M22-030** PASS — _ConfigTest (failed activation leaves old config)_
+- `[x]` **M22-031** PASS — _ConfigStore.reconstruct_
+- `[~]` **M22-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M22-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M22-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M22-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M22-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M22-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M22-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M22-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M22-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M22-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[x]` **M22-042** PASS — _docs/OPERATIONS.md#M42_
+- `[~]` **M22-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M22-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M22-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M22-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M22-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M22-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M22-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M22-050** FAIL — _CHECKLIST_STATUS.json_ — 21 of 49 mandatory items not PASS
+- `[~]` **M22-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M22-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M23 — Policy-engine integration contract [P1]
+
+- `[H]` **M23-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M23-002** PARTIAL — _docs/DESIGN.md#3; docs/INTEGRATION.md#M23_ — requirements documented at summary level only
+- `[~]` **M23-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M23-004** PARTIAL — _docs/INTEGRATION.md#M23_ — no dedicated JSON schema for this component's interface
+- `[~]` **M23-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M23-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M23-007** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-008** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-009** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-010** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-011** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-012** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-013** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-014** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-015** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-016** PARTIAL — _docs/INTEGRATION.md#M23_ — documented only
+- `[~]` **M23-017** PARTIAL — _frozen dataclasses in docs/INTEGRATION.md#M23_
+- `[~]` **M23-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M23-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M23-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M23-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M23-022** PARTIAL — _docs/INTEGRATION.md#M23; tests/test_faults.py_
+- `[~]` **M23-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M23-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M23-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M23-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M23-027** OPEN — _docs/INTEGRATION.md#M23_ — partial component; item not implemented
+- `[ ]` **M23-028** OPEN — _docs/INTEGRATION.md#M23_ — partial component; item not implemented
+- `[ ]` **M23-029** OPEN — _docs/INTEGRATION.md#M23_ — partial component; item not implemented
+- `[ ]` **M23-030** OPEN — _docs/INTEGRATION.md#M23_ — partial component; item not implemented
+- `[ ]` **M23-031** OPEN — _docs/INTEGRATION.md#M23_ — partial component; item not implemented
+- `[~]` **M23-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M23-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M23-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M23-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M23-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M23-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M23-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M23-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M23-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M23-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M23-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M23-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M23-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M23-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M23-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M23-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M23-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M23-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M23-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M23-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M23-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M24 — Runtime-hardening handoff contract [P1]
+
+- `[H]` **M24-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M24-002** PARTIAL — _docs/DESIGN.md#3; docs/INTEGRATION.md#M24_ — requirements documented at summary level only
+- `[~]` **M24-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M24-004** PARTIAL — _docs/INTEGRATION.md#M24_ — no dedicated JSON schema for this component's interface
+- `[~]` **M24-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M24-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M24-007** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-008** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-009** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-010** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-011** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-012** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-013** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-014** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-015** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-016** PARTIAL — _docs/INTEGRATION.md#M24_ — documented only
+- `[~]` **M24-017** PARTIAL — _frozen dataclasses in docs/INTEGRATION.md#M24_
+- `[~]` **M24-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M24-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M24-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M24-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M24-022** PARTIAL — _docs/INTEGRATION.md#M24; tests/test_faults.py_
+- `[~]` **M24-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M24-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M24-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M24-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M24-027** OPEN — _docs/INTEGRATION.md#M24_ — partial component; item not implemented
+- `[ ]` **M24-028** OPEN — _docs/INTEGRATION.md#M24_ — partial component; item not implemented
+- `[ ]` **M24-029** OPEN — _docs/INTEGRATION.md#M24_ — partial component; item not implemented
+- `[ ]` **M24-030** OPEN — _docs/INTEGRATION.md#M24_ — partial component; item not implemented
+- `[ ]` **M24-031** OPEN — _docs/INTEGRATION.md#M24_ — partial component; item not implemented
+- `[~]` **M24-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M24-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M24-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M24-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M24-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M24-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M24-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M24-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M24-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M24-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M24-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M24-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M24-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M24-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M24-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M24-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M24-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M24-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M24-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M24-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M24-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M25 — Artifact provenance integration [P1]
+
+- `[H]` **M25-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M25-002** PARTIAL — _docs/DESIGN.md#3; docs/INTEGRATION.md#M25_ — requirements documented at summary level only
+- `[~]` **M25-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M25-004** PARTIAL — _docs/INTEGRATION.md#M25_ — no dedicated JSON schema for this component's interface
+- `[~]` **M25-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M25-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M25-007** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-008** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-009** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-010** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-011** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-012** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-013** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-014** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-015** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-016** PARTIAL — _docs/INTEGRATION.md#M25_ — documented only
+- `[~]` **M25-017** PARTIAL — _frozen dataclasses in docs/INTEGRATION.md#M25_
+- `[~]` **M25-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M25-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M25-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M25-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M25-022** PARTIAL — _docs/INTEGRATION.md#M25; tests/test_faults.py_
+- `[~]` **M25-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M25-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M25-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M25-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M25-027** OPEN — _docs/INTEGRATION.md#M25_ — partial component; item not implemented
+- `[ ]` **M25-028** OPEN — _docs/INTEGRATION.md#M25_ — partial component; item not implemented
+- `[ ]` **M25-029** OPEN — _docs/INTEGRATION.md#M25_ — partial component; item not implemented
+- `[ ]` **M25-030** OPEN — _docs/INTEGRATION.md#M25_ — partial component; item not implemented
+- `[ ]` **M25-031** OPEN — _docs/INTEGRATION.md#M25_ — partial component; item not implemented
+- `[~]` **M25-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M25-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M25-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M25-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M25-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M25-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M25-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M25-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M25-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M25-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M25-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M25-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M25-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M25-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M25-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M25-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M25-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M25-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M25-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M25-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M25-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M26 — Tenant isolation model for validation service [P1]
+
+- `[H]` **M26-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M26-002** PARTIAL — _docs/DESIGN.md#3; docs/INTEGRATION.md#M26_ — requirements documented at summary level only
+- `[~]` **M26-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M26-004** PARTIAL — _docs/INTEGRATION.md#M26_ — no dedicated JSON schema for this component's interface
+- `[~]` **M26-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M26-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M26-007** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-008** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-009** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-010** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-011** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-012** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-013** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-014** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-015** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-016** PARTIAL — _docs/INTEGRATION.md#M26_ — documented only
+- `[~]` **M26-017** PARTIAL — _frozen dataclasses in docs/INTEGRATION.md#M26_
+- `[~]` **M26-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M26-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M26-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M26-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M26-022** PARTIAL — _docs/INTEGRATION.md#M26; tests/test_faults.py_
+- `[~]` **M26-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M26-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M26-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M26-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M26-027** OPEN — _docs/INTEGRATION.md#M26_ — partial component; item not implemented
+- `[ ]` **M26-028** OPEN — _docs/INTEGRATION.md#M26_ — partial component; item not implemented
+- `[ ]` **M26-029** OPEN — _docs/INTEGRATION.md#M26_ — partial component; item not implemented
+- `[ ]` **M26-030** OPEN — _docs/INTEGRATION.md#M26_ — partial component; item not implemented
+- `[ ]` **M26-031** OPEN — _docs/INTEGRATION.md#M26_ — partial component; item not implemented
+- `[~]` **M26-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M26-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M26-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M26-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M26-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M26-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M26-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M26-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M26-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M26-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M26-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M26-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M26-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M26-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M26-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M26-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M26-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M26-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M26-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M26-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M26-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M27 — Security audit event stream [P1]
+
+- `[H]` **M27-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M27-002** PASS — _docs/DESIGN.md#3; prod/telemetry.py:AuditStream_
+- `[x]` **M27-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M27-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[~]` **M27-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M27-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M27-007** PASS — _schemas/PK_AUDIT_EVENT-1.json_
+- `[~]` **M27-008** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[x]` **M27-009** PASS — _hash chain_
+- `[~]` **M27-010** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[x]` **M27-011** PASS — _sanitised fields_
+- `[~]` **M27-012** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[x]` **M27-013** PASS — _tests/test_faults.py:test_audit_sink_failure_propagates_
+- `[~]` **M27-014** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[~]` **M27-015** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[~]` **M27-016** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[x]` **M27-017** PASS — _frozen dataclasses in prod/telemetry.py:AuditStream_
+- `[x]` **M27-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M27-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M27-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M27-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M27-022** PASS — _prod/telemetry.py:AuditStream; tests/test_faults.py_
+- `[~]` **M27-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M27-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M27-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M27-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M27-027** PARTIAL — _SchemaConformanceTest audit events_
+- `[x]` **M27-028** PASS — _tests/test_prod.py:test_health_and_audit_chain_
+- `[x]` **M27-029** PASS — _tests/test_faults.py:test_audit_sink_failure_propagates_
+- `[x]` **M27-030** PASS — _sanitize tests_
+- `[~]` **M27-031** PARTIAL — _prod/telemetry.py:AuditStream_ — component implemented; this item not individually evidenced
+- `[~]` **M27-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M27-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M27-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M27-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M27-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M27-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M27-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M27-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M27-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M27-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M27-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M27-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M27-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M27-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M27-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M27-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M27-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M27-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M27-050** FAIL — _CHECKLIST_STATUS.json_ — 26 of 49 mandatory items not PASS
+- `[~]` **M27-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M27-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M28 — Side-channel threat assessment [P1]
+
+- `[H]` **M28-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M28-002** PARTIAL — _docs/DESIGN.md#3; docs/THREAT_MODEL.md#M28_ — requirements documented at summary level only
+- `[~]` **M28-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M28-004** PARTIAL — _docs/THREAT_MODEL.md#M28_ — no dedicated JSON schema for this component's interface
+- `[~]` **M28-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M28-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M28-007** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-008** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-009** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-010** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-011** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-012** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-013** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-014** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-015** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-016** PARTIAL — _docs/THREAT_MODEL.md#M28_ — documented only
+- `[~]` **M28-017** PARTIAL — _frozen dataclasses in docs/THREAT_MODEL.md#M28_
+- `[~]` **M28-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M28-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M28-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M28-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M28-022** PARTIAL — _docs/THREAT_MODEL.md#M28; tests/test_faults.py_
+- `[~]` **M28-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M28-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M28-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M28-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M28-027** OPEN — _docs/THREAT_MODEL.md#M28_ — partial component; item not implemented
+- `[ ]` **M28-028** OPEN — _docs/THREAT_MODEL.md#M28_ — partial component; item not implemented
+- `[ ]` **M28-029** OPEN — _docs/THREAT_MODEL.md#M28_ — partial component; item not implemented
+- `[ ]` **M28-030** OPEN — _docs/THREAT_MODEL.md#M28_ — partial component; item not implemented
+- `[ ]` **M28-031** OPEN — _docs/THREAT_MODEL.md#M28_ — partial component; item not implemented
+- `[~]` **M28-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M28-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M28-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M28-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M28-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M28-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M28-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M28-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M28-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M28-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M28-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M28-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M28-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M28-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M28-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M28-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M28-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M28-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M28-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M28-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M28-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M29 — Benchmark harness [P2]
+
+- `[H]` **M29-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M29-002** PASS — _docs/DESIGN.md#3; prod/bench.py; evidence/benchmark.json_
+- `[x]` **M29-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M29-004** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M29-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M29-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M29-007** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[x]` **M29-008** PASS — _bench.run sizes 1 KiB..~4 MiB_
+- `[~]` **M29-009** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-010** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-011** PARTIAL — _python/machine recorded_
+- `[~]` **M29-012** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-013** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-014** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[x]` **M29-015** PASS — _evidence/benchmark.json_
+- `[~]` **M29-016** PARTIAL — end-to-end validate only
+- `[x]` **M29-017** PASS — _frozen dataclasses in prod/bench.py; evidence/benchmark.json_
+- `[x]` **M29-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M29-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M29-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M29-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M29-022** PASS — _prod/bench.py; evidence/benchmark.json; tests/test_faults.py_
+- `[~]` **M29-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M29-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M29-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M29-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M29-027** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-028** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-029** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-030** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-031** PARTIAL — _prod/bench.py; evidence/benchmark.json_ — component implemented; this item not individually evidenced
+- `[~]` **M29-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M29-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M29-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M29-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M29-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M29-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M29-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M29-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M29-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M29-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M29-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M29-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[x]` **M29-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M29-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M29-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M29-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M29-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M29-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M29-050** FAIL — _CHECKLIST_STATUS.json_ — 34 of 49 mandatory items not PASS
+- `[~]` **M29-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M29-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M30 — Release performance gate [P2]
+
+- `[H]` **M30-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M30-002** PARTIAL — _docs/DESIGN.md#3; prod/bench.py:gate; evidence/perf_gate.json_ — requirements documented at summary level only
+- `[~]` **M30-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M30-004** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M30-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M30-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M30-007** PASS — _bench.gate slo_p99_ms_
+- `[~]` **M30-008** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[~]` **M30-009** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[~]` **M30-010** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[~]` **M30-011** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[x]` **M30-012** PASS — _exceptions fail the run_
+- `[~]` **M30-013** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[~]` **M30-014** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[~]` **M30-015** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json_ — documented only
+- `[x]` **M30-016** PASS — _prod/gate.py reads perf_gate_
+- `[~]` **M30-017** PARTIAL — _frozen dataclasses in prod/bench.py:gate; evidence/perf_gate.json_
+- `[~]` **M30-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M30-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M30-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M30-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M30-022** PARTIAL — _prod/bench.py:gate; evidence/perf_gate.json; tests/test_faults.py_
+- `[~]` **M30-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M30-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M30-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M30-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M30-027** OPEN — _prod/bench.py:gate; evidence/perf_gate.json_ — partial component; item not implemented
+- `[ ]` **M30-028** OPEN — _prod/bench.py:gate; evidence/perf_gate.json_ — partial component; item not implemented
+- `[ ]` **M30-029** OPEN — _prod/bench.py:gate; evidence/perf_gate.json_ — partial component; item not implemented
+- `[x]` **M30-030** PASS — _prod/gate.py: missing evidence -> BLOCKED_
+- `[ ]` **M30-031** OPEN — _prod/bench.py:gate; evidence/perf_gate.json_ — partial component; item not implemented
+- `[~]` **M30-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M30-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M30-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M30-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M30-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M30-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M30-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M30-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M30-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M30-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M30-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[!]` **M30-043** FAIL — _evidence/perf_gate.json_ — p99 ~2.4 s at 4 MiB vs SLO 20 ms (ADR-0006)
+- `[~]` **M30-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M30-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M30-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M30-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M30-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M30-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M30-050** FAIL — _CHECKLIST_STATUS.json_ — 44 of 49 mandatory items not PASS
+- `[~]` **M30-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M30-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M31 — Soak and fleet-scale test suite [P2]
+
+- `[H]` **M31-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M31-002** PARTIAL — _docs/DESIGN.md#3; tools/evidence.py:step_soak; evidence/soak.json_ — requirements documented at summary level only
+- `[~]` **M31-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M31-004** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M31-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M31-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M31-007** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-008** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-009** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-010** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-011** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-012** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-013** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-014** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-015** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-016** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json_ — documented only
+- `[~]` **M31-017** PARTIAL — _frozen dataclasses in tools/evidence.py:step_soak; evidence/soak.json_
+- `[~]` **M31-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M31-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M31-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M31-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M31-022** PARTIAL — _tools/evidence.py:step_soak; evidence/soak.json; tests/test_faults.py_
+- `[~]` **M31-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M31-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M31-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M31-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M31-027** OPEN — _tools/evidence.py:step_soak; evidence/soak.json_ — partial component; item not implemented
+- `[ ]` **M31-028** OPEN — _tools/evidence.py:step_soak; evidence/soak.json_ — partial component; item not implemented
+- `[ ]` **M31-029** OPEN — _tools/evidence.py:step_soak; evidence/soak.json_ — partial component; item not implemented
+- `[ ]` **M31-030** OPEN — _tools/evidence.py:step_soak; evidence/soak.json_ — partial component; item not implemented
+- `[ ]` **M31-031** OPEN — _tools/evidence.py:step_soak; evidence/soak.json_ — partial component; item not implemented
+- `[~]` **M31-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M31-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M31-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M31-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M31-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M31-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M31-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M31-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M31-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M31-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M31-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M31-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M31-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M31-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M31-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M31-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M31-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M31-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M31-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M31-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M31-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M32 — Fault-injection suite [P2]
+
+- `[H]` **M32-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M32-002** PASS — _docs/DESIGN.md#3; tests/test_faults.py_
+- `[x]` **M32-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M32-004** PARTIAL — _tests/test_faults.py_ — no dedicated JSON schema for this component's interface
+- `[~]` **M32-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M32-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M32-007** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[x]` **M32-008** PASS — _tests/test_faults.py_
+- `[~]` **M32-009** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[~]` **M32-010** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[x]` **M32-011** PASS — _tests/test_faults.py:test_audit_sink_failure_propagates_
+- `[x]` **M32-012** PASS — _tests/test_faults.py:test_verifier_clock_skew_
+- `[~]` **M32-013** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[~]` **M32-014** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[~]` **M32-015** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[~]` **M32-016** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[x]` **M32-017** PASS — _frozen dataclasses in tests/test_faults.py_
+- `[x]` **M32-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M32-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M32-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M32-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M32-022** PASS — _tests/test_faults.py; tests/test_faults.py_
+- `[~]` **M32-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M32-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M32-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M32-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M32-027** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[x]` **M32-028** PASS — _tests/test_faults.py_
+- `[x]` **M32-029** PASS — _tests/test_faults.py:test_cache_corruption_cannot_admit_
+- `[~]` **M32-030** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[~]` **M32-031** PARTIAL — _tests/test_faults.py_ — component implemented; this item not individually evidenced
+- `[~]` **M32-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M32-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M32-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M32-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M32-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M32-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M32-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M32-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M32-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M32-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M32-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M32-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M32-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M32-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M32-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M32-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M32-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M32-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M32-050** FAIL — _CHECKLIST_STATUS.json_ — 31 of 49 mandatory items not PASS
+- `[~]` **M32-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M32-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M33 — Health/readiness endpoint or contract [P2]
+
+- `[H]` **M33-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M33-002** PASS — _docs/DESIGN.md#3; prod/admission.py:Gate.health_
+- `[x]` **M33-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M33-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[~]` **M33-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M33-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M33-007** PARTIAL — single health() method
+- `[x]` **M33-008** PASS — _health returns validator, bundle revision, epoch_
+- `[~]` **M33-009** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-010** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-011** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[x]` **M33-012** PASS — _health reads active bundle_
+- `[~]` **M33-013** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-014** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-015** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-016** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[x]` **M33-017** PASS — _frozen dataclasses in prod/admission.py:Gate.health_
+- `[x]` **M33-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M33-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M33-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M33-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M33-022** PASS — _prod/admission.py:Gate.health; tests/test_faults.py_
+- `[~]` **M33-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M33-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M33-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M33-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M33-027** PARTIAL
+- `[~]` **M33-028** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-029** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-030** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-031** PARTIAL — _prod/admission.py:Gate.health_ — component implemented; this item not individually evidenced
+- `[~]` **M33-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M33-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M33-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M33-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M33-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M33-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M33-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M33-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[x]` **M33-040** PASS — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M33-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M33-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M33-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M33-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M33-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M33-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M33-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M33-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M33-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M33-050** FAIL — _CHECKLIST_STATUS.json_ — 32 of 49 mandatory items not PASS
+- `[~]` **M33-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M33-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M34 — Metrics implementation [P2]
+
+- `[H]` **M34-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M34-002** PASS — _docs/DESIGN.md#3; prod/telemetry.py:Metrics_
+- `[x]` **M34-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M34-004** PARTIAL — _prod/telemetry.py:Metrics_ — no dedicated JSON schema for this component's interface
+- `[~]` **M34-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M34-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M34-007** PASS — _Metrics_
+- `[~]` **M34-008** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-009** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-010** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-011** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-012** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-013** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-014** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-015** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-016** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[x]` **M34-017** PASS — _frozen dataclasses in prod/telemetry.py:Metrics_
+- `[x]` **M34-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M34-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M34-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M34-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M34-022** PASS — _prod/telemetry.py:Metrics; tests/test_faults.py_
+- `[~]` **M34-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M34-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M34-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M34-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M34-027** PASS — _tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M34-028** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-029** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-030** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-031** PARTIAL — _prod/telemetry.py:Metrics_ — component implemented; this item not individually evidenced
+- `[~]` **M34-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M34-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M34-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M34-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M34-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[x]` **M34-037** PASS — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M34-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M34-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M34-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M34-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M34-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M34-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M34-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M34-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M34-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M34-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M34-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M34-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M34-050** FAIL — _CHECKLIST_STATUS.json_ — 32 of 49 mandatory items not PASS
+- `[~]` **M34-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M34-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M35 — Structured logging [P2]
+
+- `[H]` **M35-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M35-002** PASS — _docs/DESIGN.md#3; prod/telemetry.py:JsonFormatter_
+- `[x]` **M35-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M35-004** PARTIAL — _prod/telemetry.py:JsonFormatter_ — no dedicated JSON schema for this component's interface
+- `[~]` **M35-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M35-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M35-007** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-008** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[x]` **M35-009** PASS — _JsonFormatter sanitize_
+- `[~]` **M35-010** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-011** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-012** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-013** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[x]` **M35-014** PASS — _outcome refuse vs error_
+- `[~]` **M35-015** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-016** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[x]` **M35-017** PASS — _frozen dataclasses in prod/telemetry.py:JsonFormatter_
+- `[x]` **M35-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M35-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M35-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M35-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M35-022** PASS — _prod/telemetry.py:JsonFormatter; tests/test_faults.py_
+- `[~]` **M35-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M35-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M35-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M35-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M35-027** PASS — _sanitize tests_
+- `[~]` **M35-028** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-029** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-030** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-031** PARTIAL — _prod/telemetry.py:JsonFormatter_ — component implemented; this item not individually evidenced
+- `[~]` **M35-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M35-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M35-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M35-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M35-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M35-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M35-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M35-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M35-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M35-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M35-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M35-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M35-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M35-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M35-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M35-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M35-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M35-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M35-050** FAIL — _CHECKLIST_STATUS.json_ — 31 of 49 mandatory items not PASS
+- `[~]` **M35-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M35-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M36 — Trace propagation [P2]
+
+- `[H]` **M36-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M36-002** PASS — _docs/DESIGN.md#3; prod/telemetry.py:parse_traceparent_
+- `[x]` **M36-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M36-004** PARTIAL — _prod/telemetry.py:parse_traceparent_ — no dedicated JSON schema for this component's interface
+- `[~]` **M36-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M36-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M36-007** PASS — _W3C traceparent_
+- `[~]` **M36-008** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-009** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[x]` **M36-010** PASS — _malformed -> fresh trace; test_traceparent_
+- `[~]` **M36-011** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-012** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-013** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-014** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-015** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-016** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[x]` **M36-017** PASS — _frozen dataclasses in prod/telemetry.py:parse_traceparent_
+- `[x]` **M36-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M36-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M36-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M36-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M36-022** PASS — _prod/telemetry.py:parse_traceparent; tests/test_faults.py_
+- `[~]` **M36-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M36-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M36-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M36-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M36-027** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[x]` **M36-028** PASS — _tests/test_prod.py:test_traceparent_
+- `[~]` **M36-029** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-030** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-031** PARTIAL — _prod/telemetry.py:parse_traceparent_ — component implemented; this item not individually evidenced
+- `[~]` **M36-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M36-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M36-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M36-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M36-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M36-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[x]` **M36-038** PASS — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M36-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M36-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M36-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M36-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M36-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M36-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M36-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M36-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M36-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M36-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M36-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M36-050** FAIL — _CHECKLIST_STATUS.json_ — 32 of 49 mandatory items not PASS
+- `[~]` **M36-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M36-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M37 — Explain view [P2]
+
+- `[H]` **M37-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M37-002** PASS — _docs/DESIGN.md#3; prod/telemetry.py:explain_
+- `[x]` **M37-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M37-004** PARTIAL — _prod/telemetry.py:explain_ — no dedicated JSON schema for this component's interface
+- `[~]` **M37-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M37-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M37-007** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[x]` **M37-008** PASS — _explain()_
+- `[x]` **M37-009** PASS — _explain reason line_
+- `[~]` **M37-010** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-011** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-012** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-013** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-014** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-015** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[x]` **M37-016** PASS — _REMEDIES never suggest bypass_
+- `[x]` **M37-017** PASS — _frozen dataclasses in prod/telemetry.py:explain_
+- `[x]` **M37-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M37-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M37-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M37-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M37-022** PASS — _prod/telemetry.py:explain; tests/test_faults.py_
+- `[~]` **M37-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M37-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M37-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[x]` **M37-026** PASS — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M37-027** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes_
+- `[~]` **M37-028** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-029** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-030** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-031** PARTIAL — _prod/telemetry.py:explain_ — component implemented; this item not individually evidenced
+- `[~]` **M37-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M37-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M37-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M37-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M37-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M37-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M37-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M37-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M37-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M37-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M37-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M37-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M37-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M37-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M37-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M37-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M37-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M37-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M37-050** FAIL — _CHECKLIST_STATUS.json_ — 32 of 49 mandatory items not PASS
+- `[~]` **M37-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M37-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M38 — Dashboards and alerts [P2]
+
+- `[H]` **M38-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M38-002** PARTIAL — _docs/DESIGN.md#3; ops/alerts.yml; ops/dashboard.json_ — requirements documented at summary level only
+- `[~]` **M38-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M38-004** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M38-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M38-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M38-007** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-008** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-009** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-010** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-011** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-012** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-013** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-014** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-015** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-016** PARTIAL — _ops/alerts.yml; ops/dashboard.json_ — documented only
+- `[~]` **M38-017** PARTIAL — _frozen dataclasses in ops/alerts.yml; ops/dashboard.json_
+- `[~]` **M38-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M38-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M38-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M38-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M38-022** PARTIAL — _ops/alerts.yml; ops/dashboard.json; tests/test_faults.py_
+- `[~]` **M38-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M38-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M38-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M38-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M38-027** OPEN — _ops/alerts.yml; ops/dashboard.json_ — partial component; item not implemented
+- `[ ]` **M38-028** OPEN — _ops/alerts.yml; ops/dashboard.json_ — partial component; item not implemented
+- `[ ]` **M38-029** OPEN — _ops/alerts.yml; ops/dashboard.json_ — partial component; item not implemented
+- `[ ]` **M38-030** OPEN — _ops/alerts.yml; ops/dashboard.json_ — partial component; item not implemented
+- `[ ]` **M38-031** OPEN — _ops/alerts.yml; ops/dashboard.json_ — partial component; item not implemented
+- `[~]` **M38-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M38-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M38-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M38-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M38-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M38-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M38-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M38-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M38-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M38-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M38-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M38-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M38-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M38-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M38-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M38-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M38-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M38-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M38-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M38-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M38-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M39 — Canary/staged rollout controller [P2]
+
+- `[H]` **M39-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M39-002** PASS — _docs/DESIGN.md#3; prod/canary.py_
+- `[x]` **M39-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M39-004** PARTIAL — _prod/canary.py_ — no dedicated JSON schema for this component's interface
+- `[~]` **M39-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M39-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M39-007** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-008** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-009** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[x]` **M39-010** PASS — _canary.compare decision rule_
+- `[~]` **M39-011** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-012** PARTIAL — _rollback-by-roll-forward (RB-05)_
+- `[x]` **M39-013** PASS — _epoch monotonic_
+- `[~]` **M39-014** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[x]` **M39-015** PASS — _per-request snapshot of bundle/contract_
+- `[~]` **M39-016** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[x]` **M39-017** PASS — _frozen dataclasses in prod/canary.py_
+- `[x]` **M39-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M39-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M39-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M39-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M39-022** PASS — _prod/canary.py; tests/test_faults.py_
+- `[~]` **M39-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M39-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M39-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M39-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M39-027** PASS — _tests/test_faults.py:CanaryTest_
+- `[~]` **M39-028** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-029** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-030** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-031** PARTIAL — _prod/canary.py_ — component implemented; this item not individually evidenced
+- `[~]` **M39-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M39-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M39-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M39-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M39-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M39-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M39-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M39-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M39-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M39-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M39-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M39-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M39-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M39-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M39-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M39-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M39-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M39-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M39-050** FAIL — _CHECKLIST_STATUS.json_ — 32 of 49 mandatory items not PASS
+- `[~]` **M39-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M39-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M40 — Operational runbooks [P2]
+
+- `[H]` **M40-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M40-002** PARTIAL — _docs/DESIGN.md#3; docs/OPERATIONS.md#M40_ — requirements documented at summary level only
+- `[~]` **M40-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M40-004** PARTIAL — _docs/OPERATIONS.md#M40_ — no dedicated JSON schema for this component's interface
+- `[~]` **M40-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M40-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M40-007** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-008** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-009** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-010** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-011** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-012** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-013** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-014** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-015** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-016** PARTIAL — _docs/OPERATIONS.md#M40_ — documented only
+- `[~]` **M40-017** PARTIAL — _frozen dataclasses in docs/OPERATIONS.md#M40_
+- `[~]` **M40-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M40-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M40-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M40-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M40-022** PARTIAL — _docs/OPERATIONS.md#M40; tests/test_faults.py_
+- `[~]` **M40-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M40-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M40-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M40-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M40-027** OPEN — _docs/OPERATIONS.md#M40_ — partial component; item not implemented
+- `[ ]` **M40-028** OPEN — _docs/OPERATIONS.md#M40_ — partial component; item not implemented
+- `[ ]` **M40-029** OPEN — _docs/OPERATIONS.md#M40_ — partial component; item not implemented
+- `[ ]` **M40-030** OPEN — _docs/OPERATIONS.md#M40_ — partial component; item not implemented
+- `[ ]` **M40-031** OPEN — _docs/OPERATIONS.md#M40_ — partial component; item not implemented
+- `[~]` **M40-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M40-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M40-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M40-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M40-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M40-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M40-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M40-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M40-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M40-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M40-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M40-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M40-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M40-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M40-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M40-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M40-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M40-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M40-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M40-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M40-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M41 — Vulnerability response and EOL policy [P2]
+
+- `[H]` **M41-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M41-002** PARTIAL — _docs/DESIGN.md#3; docs/OPERATIONS.md#M41_ — requirements documented at summary level only
+- `[~]` **M41-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M41-004** PARTIAL — _docs/OPERATIONS.md#M41_ — no dedicated JSON schema for this component's interface
+- `[~]` **M41-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M41-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M41-007** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-008** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-009** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-010** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-011** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-012** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-013** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-014** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-015** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-016** PARTIAL — _docs/OPERATIONS.md#M41_ — documented only
+- `[~]` **M41-017** PARTIAL — _frozen dataclasses in docs/OPERATIONS.md#M41_
+- `[~]` **M41-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M41-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M41-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M41-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M41-022** PARTIAL — _docs/OPERATIONS.md#M41; tests/test_faults.py_
+- `[~]` **M41-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M41-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M41-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M41-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M41-027** OPEN — _docs/OPERATIONS.md#M41_ — partial component; item not implemented
+- `[ ]` **M41-028** OPEN — _docs/OPERATIONS.md#M41_ — partial component; item not implemented
+- `[ ]` **M41-029** OPEN — _docs/OPERATIONS.md#M41_ — partial component; item not implemented
+- `[ ]` **M41-030** OPEN — _docs/OPERATIONS.md#M41_ — partial component; item not implemented
+- `[ ]` **M41-031** OPEN — _docs/OPERATIONS.md#M41_ — partial component; item not implemented
+- `[~]` **M41-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M41-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M41-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M41-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M41-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M41-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M41-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M41-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M41-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M41-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M41-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M41-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M41-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M41-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M41-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M41-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M41-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M41-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M41-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M41-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M41-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M42 — Configuration provenance store [P2]
+
+- `[H]` **M42-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M42-002** PASS — _docs/DESIGN.md#3; prod/config_store.py_
+- `[x]` **M42-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M42-004** PARTIAL — _prod/config_store.py_ — no dedicated JSON schema for this component's interface
+- `[x]` **M42-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M42-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M42-007** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M42-008** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M42-009** PASS — _open_signed_bundle on activate + reconstruct_
+- `[x]` **M42-010** PASS — _append-only store_
+- `[~]` **M42-011** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M42-012** PASS — _hash-chained records_
+- `[~]` **M42-013** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M42-014** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M42-015** PASS — _reconstruct(epoch)_
+- `[~]` **M42-016** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M42-017** PASS — _frozen dataclasses in prod/config_store.py_
+- `[x]` **M42-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M42-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M42-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M42-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M42-022** PASS — _prod/config_store.py; tests/test_faults.py_
+- `[~]` **M42-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M42-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M42-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M42-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M42-027** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M42-028** PASS — _ConfigTest_
+- `[~]` **M42-029** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M42-030** PASS — _ConfigTest tamper_
+- `[~]` **M42-031** PARTIAL — _prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M42-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M42-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M42-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M42-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M42-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M42-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M42-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M42-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M42-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M42-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[x]` **M42-042** PASS — _docs/OPERATIONS.md#M42_
+- `[~]` **M42-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M42-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M42-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M42-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M42-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M42-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M42-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M42-050** FAIL — _CHECKLIST_STATUS.json_ — 27 of 49 mandatory items not PASS
+- `[~]` **M42-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M42-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M43 — Atomic configuration activation [P2]
+
+- `[H]` **M43-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M43-002** PASS — _docs/DESIGN.md#3; prod/admission.py:Gate.activate; prod/config_store.py_
+- `[x]` **M43-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M43-004** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — no dedicated JSON schema for this component's interface
+- `[x]` **M43-005** PASS — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M43-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M43-007** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M43-008** PASS — _signature -> schema -> epoch -> swap_
+- `[~]` **M43-009** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M43-010** PASS — _single-reference swap under lock_
+- `[x]` **M43-011** PASS — _per-request snapshot_
+- `[~]` **M43-012** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M43-013** PASS — _ConfigTest_
+- `[~]` **M43-014** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M43-015** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M43-016** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M43-017** PASS — _frozen dataclasses in prod/admission.py:Gate.activate; prod/config_store.py_
+- `[x]` **M43-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M43-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[x]` **M43-020** PASS — _docs/DESIGN.md#4; tests/test_prod.py:test_thread_safety_
+- `[~]` **M43-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M43-022** PASS — _prod/admission.py:Gate.activate; prod/config_store.py; tests/test_faults.py_
+- `[~]` **M43-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M43-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M43-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M43-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M43-027** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M43-028** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[x]` **M43-029** PASS — _ConfigTest_
+- `[x]` **M43-030** PASS — _test_stale_config... rollback refused_
+- `[~]` **M43-031** PARTIAL — _prod/admission.py:Gate.activate; prod/config_store.py_ — component implemented; this item not individually evidenced
+- `[~]` **M43-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M43-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M43-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M43-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M43-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M43-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M43-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[x]` **M43-039** PASS — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M43-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M43-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[x]` **M43-042** PASS — _docs/OPERATIONS.md#M42_
+- `[~]` **M43-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M43-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M43-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M43-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M43-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M43-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M43-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M43-050** FAIL — _CHECKLIST_STATUS.json_ — 26 of 49 mandatory items not PASS
+- `[~]` **M43-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M43-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M44 — Backup/reconstruction procedure [P2]
+
+- `[H]` **M44-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M44-002** PASS — _docs/DESIGN.md#3; prod/config_store.py:reconstruct_
+- `[x]` **M44-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M44-004** PARTIAL — _prod/config_store.py:reconstruct_ — no dedicated JSON schema for this component's interface
+- `[~]` **M44-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M44-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M44-007** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-008** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-009** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-010** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-011** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-012** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[x]` **M44-013** PASS — _cache loss only costs performance (cache is derived)_
+- `[~]` **M44-014** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-015** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-016** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[x]` **M44-017** PASS — _frozen dataclasses in prod/config_store.py:reconstruct_
+- `[x]` **M44-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M44-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M44-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M44-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M44-022** PASS — _prod/config_store.py:reconstruct; tests/test_faults.py_
+- `[~]` **M44-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M44-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M44-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M44-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M44-027** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[x]` **M44-028** PASS — _bump_epoch clears cache; tests_
+- `[~]` **M44-029** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-030** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-031** PARTIAL — _prod/config_store.py:reconstruct_ — component implemented; this item not individually evidenced
+- `[~]` **M44-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M44-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M44-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M44-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M44-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M44-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M44-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M44-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M44-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M44-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[x]` **M44-042** PASS — _docs/OPERATIONS.md#M42_
+- `[~]` **M44-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M44-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M44-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M44-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M44-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M44-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M44-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M44-050** FAIL — _CHECKLIST_STATUS.json_ — 33 of 49 mandatory items not PASS
+- `[~]` **M44-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M44-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M45 — Package manifest / dependency pinning [P3]
+
+- `[H]` **M45-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M45-002** PARTIAL — _docs/DESIGN.md#3; pyproject.toml; requirements.lock_ — requirements documented at summary level only
+- `[~]` **M45-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M45-004** PARTIAL — _pyproject.toml; requirements.lock_ — no dedicated JSON schema for this component's interface
+- `[~]` **M45-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M45-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M45-007** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-008** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-009** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-010** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-011** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-012** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-013** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-014** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-015** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-016** PARTIAL — _pyproject.toml; requirements.lock_ — documented only
+- `[~]` **M45-017** PARTIAL — _frozen dataclasses in pyproject.toml; requirements.lock_
+- `[~]` **M45-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M45-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M45-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M45-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M45-022** PARTIAL — _pyproject.toml; requirements.lock; tests/test_faults.py_
+- `[~]` **M45-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M45-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M45-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M45-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M45-027** OPEN — _pyproject.toml; requirements.lock_ — partial component; item not implemented
+- `[ ]` **M45-028** OPEN — _pyproject.toml; requirements.lock_ — partial component; item not implemented
+- `[ ]` **M45-029** OPEN — _pyproject.toml; requirements.lock_ — partial component; item not implemented
+- `[ ]` **M45-030** OPEN — _pyproject.toml; requirements.lock_ — partial component; item not implemented
+- `[ ]` **M45-031** OPEN — _pyproject.toml; requirements.lock_ — partial component; item not implemented
+- `[~]` **M45-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M45-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M45-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M45-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M45-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M45-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M45-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M45-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M45-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M45-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M45-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M45-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M45-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M45-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M45-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M45-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M45-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M45-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M45-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M45-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M45-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M46 — SBOM and license inventory [P3]
+
+- `[H]` **M46-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M46-002** PASS — _docs/DESIGN.md#3; evidence/sbom.cdx.json_
+- `[x]` **M46-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M46-004** PARTIAL — _evidence/sbom.cdx.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M46-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M46-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M46-007** PASS — _CycloneDX 1.5 JSON_
+- `[~]` **M46-008** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-009** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-010** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-011** PARTIAL — _licenses from installed metadata_
+- `[~]` **M46-012** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-013** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-014** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-015** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-016** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[x]` **M46-017** PASS — _frozen dataclasses in evidence/sbom.cdx.json_
+- `[x]` **M46-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M46-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M46-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M46-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M46-022** PASS — _evidence/sbom.cdx.json; tests/test_faults.py_
+- `[~]` **M46-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M46-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M46-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M46-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M46-027** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-028** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-029** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-030** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-031** PARTIAL — _evidence/sbom.cdx.json_ — component implemented; this item not individually evidenced
+- `[~]` **M46-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M46-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M46-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M46-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M46-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M46-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M46-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M46-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M46-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M46-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M46-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M46-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M46-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M46-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M46-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M46-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M46-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M46-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M46-050** FAIL — _CHECKLIST_STATUS.json_ — 35 of 49 mandatory items not PASS
+- `[~]` **M46-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M46-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M47 — Reproducible build metadata [P3]
+
+- `[H]` **M47-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[~]` **M47-002** PARTIAL — _docs/DESIGN.md#3; evidence/build_metadata.json_ — requirements documented at summary level only
+- `[~]` **M47-003** PARTIAL — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M47-004** PARTIAL — _evidence/build_metadata.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M47-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M47-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M47-007** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-008** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-009** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-010** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-011** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-012** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-013** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-014** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-015** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-016** PARTIAL — _evidence/build_metadata.json_ — documented only
+- `[~]` **M47-017** PARTIAL — _frozen dataclasses in evidence/build_metadata.json_
+- `[~]` **M47-018** PARTIAL — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M47-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M47-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M47-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[~]` **M47-022** PARTIAL — _evidence/build_metadata.json; tests/test_faults.py_
+- `[~]` **M47-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M47-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[~]` **M47-025** PARTIAL — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M47-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[ ]` **M47-027** OPEN — _evidence/build_metadata.json_ — partial component; item not implemented
+- `[ ]` **M47-028** OPEN — _evidence/build_metadata.json_ — partial component; item not implemented
+- `[ ]` **M47-029** OPEN — _evidence/build_metadata.json_ — partial component; item not implemented
+- `[ ]` **M47-030** OPEN — _evidence/build_metadata.json_ — partial component; item not implemented
+- `[ ]` **M47-031** OPEN — _evidence/build_metadata.json_ — partial component; item not implemented
+- `[~]` **M47-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[~]` **M47-033** PARTIAL — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[~]` **M47-034** PARTIAL — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[~]` **M47-035** PARTIAL — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M47-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M47-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M47-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M47-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M47-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M47-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M47-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M47-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[~]` **M47-044** PARTIAL — _docs/DESIGN.md; docs/adr/_
+- `[~]` **M47-045** PARTIAL — _README.md; docs/OPERATIONS.md_
+- `[x]` **M47-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[~]` **M47-047** PARTIAL — _evidence/ (bound to release digest)_
+- `[~]` **M47-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M47-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M47-050** FAIL — _CHECKLIST_STATUS.json_ — 48 of 49 mandatory items not PASS
+- `[~]` **M47-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M47-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M48 — Requirements traceability matrix [P3]
+
+- `[H]` **M48-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M48-002** PASS — _docs/DESIGN.md#3; TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M48-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M48-004** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M48-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M48-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M48-007** PARTIAL — _TRACEABILITY.json_ — dimension-level mapping for the 100 base requirements
+- `[~]` **M48-008** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M48-009** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M48-010** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[x]` **M48-011** PASS — _this vocabulary_
+- `[x]` **M48-012** PASS — _status computed per item, not inherited_
+- `[~]` **M48-013** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M48-014** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M48-015** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[x]` **M48-016** PASS — _CHECKLIST_STATUS.json + .md from one dataset_
+- `[x]` **M48-017** PASS — _frozen dataclasses in TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M48-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M48-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M48-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M48-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M48-022** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json; tests/test_faults.py_
+- `[~]` **M48-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M48-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M48-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M48-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M48-027** PASS — _tools/checklist_status.py asserts 2,704 unique IDs and 100 base IDs_
+- `[~]` **M48-028** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M48-029** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M48-030** PARTIAL — _TRACEABILITY.json; CHECKLIST_STATUS.json_ — component implemented; this item not individually evidenced
+- `[x]` **M48-031** PASS — _prod/gate.py consumes status; no override flag_
+- `[~]` **M48-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M48-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M48-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M48-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M48-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M48-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M48-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M48-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M48-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M48-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M48-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M48-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M48-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M48-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M48-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M48-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M48-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M48-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M48-050** FAIL — _CHECKLIST_STATUS.json_ — 31 of 49 mandatory items not PASS
+- `[~]` **M48-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M48-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M49 — Architecture Decision Records [P3]
+
+- `[H]` **M49-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M49-002** PASS — _docs/DESIGN.md#3; docs/adr/_
+- `[x]` **M49-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M49-004** PARTIAL — _docs/adr/_ — no dedicated JSON schema for this component's interface
+- `[~]` **M49-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M49-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M49-007** PASS — _docs/adr/ADR-0001..0006_
+- `[~]` **M49-008** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-009** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-010** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-011** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-012** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[H]` **M49-013** BLOCKED_HUMAN — decision owners TBD
+- `[~]` **M49-014** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-015** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-016** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[x]` **M49-017** PASS — _frozen dataclasses in docs/adr/_
+- `[x]` **M49-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M49-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M49-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M49-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M49-022** PASS — _docs/adr/; tests/test_faults.py_
+- `[~]` **M49-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M49-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M49-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M49-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M49-027** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-028** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-029** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-030** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-031** PARTIAL — _docs/adr/_ — component implemented; this item not individually evidenced
+- `[~]` **M49-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M49-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M49-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M49-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M49-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M49-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M49-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M49-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M49-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M49-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M49-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M49-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M49-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M49-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M49-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M49-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M49-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M49-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M49-050** FAIL — _CHECKLIST_STATUS.json_ — 35 of 49 mandatory items not PASS
+- `[~]` **M49-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M49-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M50 — Named ownership and escalation [P3]
+
+- `[H]` **M50-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[H]` **M50-002** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-003** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-004** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-005** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-006** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-007** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-008** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-009** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-010** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-011** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-012** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-013** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-014** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-015** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-016** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-017** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-018** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-019** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-020** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-021** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-022** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-023** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-024** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-025** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-026** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-027** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-028** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-029** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-030** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-031** BLOCKED_HUMAN — _OWNERS.yaml_ — requires named people/approvals
+- `[H]` **M50-032** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-033** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-034** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-035** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-036** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-037** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-038** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-039** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-040** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-041** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-042** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-043** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-044** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-045** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-046** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-047** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-048** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[H]` **M50-049** BLOCKED_HUMAN — _OWNERS.yaml_ — governance component: requires named people and approvals
+- `[!]` **M50-050** FAIL — _CHECKLIST_STATUS.json_ — 49 of 49 mandatory items not PASS
+- `[H]` **M50-051** BLOCKED_HUMAN
+- `[!]` **M50-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M51 — Exception/waiver register [P3]
+
+- `[H]` **M51-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M51-002** PASS — _docs/DESIGN.md#3; prod/waivers.py; waivers/WAIVERS.json_
+- `[x]` **M51-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[~]` **M51-004** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — no dedicated JSON schema for this component's interface
+- `[~]` **M51-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M51-006** PARTIAL — _prod/limits.py:Limits_
+- `[x]` **M51-007** PASS — _prod/waivers.py schema_
+- `[x]` **M51-008** PASS — _expires required_
+- `[~]` **M51-009** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M51-010** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[H]` **M51-011** BLOCKED_HUMAN
+- `[~]` **M51-012** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M51-013** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[x]` **M51-014** PASS — _prod/gate.py ignores expired waivers_
+- `[~]` **M51-015** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M51-016** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[x]` **M51-017** PASS — _frozen dataclasses in prod/waivers.py; waivers/WAIVERS.json_
+- `[x]` **M51-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M51-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M51-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M51-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M51-022** PASS — _prod/waivers.py; waivers/WAIVERS.json; tests/test_faults.py_
+- `[~]` **M51-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M51-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M51-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M51-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[~]` **M51-027** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M51-028** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M51-029** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[~]` **M51-030** PARTIAL — _prod/waivers.py; waivers/WAIVERS.json_ — component implemented; this item not individually evidenced
+- `[x]` **M51-031** PASS — _NEVER_WAIVABLE prefixes; WaiverTest_
+- `[~]` **M51-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M51-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M51-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M51-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M51-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M51-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M51-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M51-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M51-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M51-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M51-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M51-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M51-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M51-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M51-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M51-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M51-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M51-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M51-050** FAIL — _CHECKLIST_STATUS.json_ — 32 of 49 mandatory items not PASS
+- `[~]` **M51-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M51-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO
+
+## M52 — Formal production exit gate [P3]
+
+- `[H]` **M52-001** BLOCKED_HUMAN — _OWNERS.yaml_ — owner/security reviewer/operator are TBD - must be named by the organisation
+- `[x]` **M52-002** PASS — _docs/DESIGN.md#3; prod/gate.py; evidence/production_gate.json_
+- `[x]` **M52-003** PASS — _docs/DESIGN.md#1; docs/THREAT_MODEL.md_
+- `[x]` **M52-004** PASS — _schemas/; tests/test_prod.py:SchemaConformanceTest_
+- `[~]` **M52-005** PARTIAL — _prod/attest.py:FIELDS; prod/admission.py:Gate.validate (cache key)_
+- `[~]` **M52-006** PARTIAL — _prod/limits.py:Limits_
+- `[~]` **M52-007** PARTIAL — _prod/gate.py policy_ — gate policy not separately signed
+- `[x]` **M52-008** PASS — _prod/gate.py_
+- `[x]` **M52-009** PASS — _stale/missing evidence -> BLOCKED_
+- `[~]` **M52-010** PARTIAL — _prod/gate.py; evidence/production_gate.json_ — component implemented; this item not individually evidenced
+- `[~]` **M52-011** PARTIAL — _prod/gate.py; evidence/production_gate.json_ — component implemented; this item not individually evidenced
+- `[~]` **M52-012** PARTIAL — _prod/gate.py; evidence/production_gate.json_ — component implemented; this item not individually evidenced
+- `[x]` **M52-013** PASS — _waiver evaluation_
+- `[x]` **M52-014** PASS — _evidence/production_gate.json_
+- `[~]` **M52-015** PARTIAL — _bound to release digest_ — result not signed (no release key)
+- `[I]` **M52-016** BLOCKED_INFRA — no delivery system to integrate
+- `[x]` **M52-017** PASS — _frozen dataclasses in prod/gate.py; evidence/production_gate.json_
+- `[x]` **M52-018** PASS — _prod/errors.py:boundary; tests/test_prod.py:test_internal_error_is_refusal_
+- `[~]` **M52-019** PARTIAL — _tests/test_prod.py:test_nondeterministic_failures_not_cached; tests/test_faults.py:test_deadline_mid_validation_
+- `[~]` **M52-020** PARTIAL — _docs/DESIGN.md#4_ — documented; no component-specific race test
+- `[~]` **M52-021** PARTIAL — _docs/THREAT_MODEL.md_ — authored by implementer; independent security review pending (named reviewer TBD)
+- `[x]` **M52-022** PASS — _prod/gate.py; evidence/production_gate.json; tests/test_faults.py_
+- `[~]` **M52-023** PARTIAL — _prod/limits.py; prod/decoder.py:Reader.count_ — Python ints cannot wrap; all sizes checked against remaining bytes before slicing
+- `[~]` **M52-024** PARTIAL — _docs/THREAT_MODEL.md_ — deployment privileges (service identity, fs, keys) not defined - no deployment exists
+- `[x]` **M52-025** PASS — _prod/errors.py:sanitize; evidence/static_scan.json; tests/test_prod.py:test_sanitize_and_bounds_
+- `[~]` **M52-026** PARTIAL — _tests/test_prod.py:test_explain_and_no_raw_bytes; docs/OPERATIONS.md_
+- `[x]` **M52-027** PASS — _tests/test_gate.py_
+- `[x]` **M52-028** PASS — _tests/test_gate.py_
+- `[~]` **M52-029** PARTIAL — _prod/gate.py; evidence/production_gate.json_ — component implemented; this item not individually evidenced
+- `[~]` **M52-030** PARTIAL — _prod/gate.py; evidence/production_gate.json_ — component implemented; this item not individually evidenced
+- `[~]` **M52-031** PARTIAL — _prod/gate.py; evidence/production_gate.json_ — component implemented; this item not individually evidenced
+- `[~]` **M52-032** PARTIAL — _evidence/coverage.json_ — line coverage measured (~94% prod); not every normative branch individually enumerated
+- `[x]` **M52-033** PASS — _tests/test_prod.py:AdmissionTest, SchemaConformanceTest_
+- `[x]` **M52-034** PASS — _FINDINGS.md_ — every defect found in this pass has a named regression test
+- `[x]` **M52-035** PASS — _evidence/tests.json (normal and -O runs)_
+- `[~]` **M52-036** PARTIAL — _evidence/coverage.json_ — measured; manual review of uncovered security branches needs the security reviewer
+- `[~]` **M52-037** PARTIAL — _prod/telemetry.py:Metrics; tests/test_prod.py:test_metrics_cardinality_
+- `[~]` **M52-038** PARTIAL — _verdict trace_id/span_id; prod/telemetry.py_
+- `[~]` **M52-039** PARTIAL — _prod/telemetry.py:AuditStream; tests/test_prod.py:test_health_and_audit_chain_
+- `[~]` **M52-040** PARTIAL — _prod/admission.py:Gate.health_ — readiness covers bundle + self-test, not each dependency
+- `[~]` **M52-041** PARTIAL — _ops/alerts.yml; docs/OPERATIONS.md#M40_ — alerts link runbooks; owners TBD; not deployed
+- `[~]` **M52-042** PARTIAL — _docs/OPERATIONS.md#M42_
+- `[~]` **M52-043** PARTIAL — _evidence/benchmark.json; evidence/soak.json_
+- `[x]` **M52-044** PASS — _docs/DESIGN.md; docs/adr/_
+- `[x]` **M52-045** PASS — _README.md; docs/OPERATIONS.md_
+- `[x]` **M52-046** PASS — _TRACEABILITY.json; CHECKLIST_STATUS.json_
+- `[x]` **M52-047** PASS — _evidence/ (bound to release digest)_
+- `[~]` **M52-048** PARTIAL — _evidence/static_scan.json_ — stdlib AST scan clean; ruff/mypy/bandit/pip-audit unavailable (no PyPI)
+- `[I]` **M52-049** BLOCKED_INFRA — _tools/ci.sh_ — CI script provided; no clean CI runner available in this build
+- `[!]` **M52-050** FAIL — _CHECKLIST_STATUS.json_ — 29 of 49 mandatory items not PASS
+- `[~]` **M52-051** PARTIAL — _evidence/fuzz_campaign.json; docs/THREAT_MODEL.md_ — no known unresolved critical/high finding; independent security review pending
+- `[!]` **M52-052** FAIL — _evidence/production_gate.json_ — M52 verdict NO_GO

@@ -1,0 +1,26 @@
+[Unit]
+Description=INV-61 Distributed WIT RPC node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=inv61
+Group=inv61
+ExecStart=/opt/inv61/current/venv/bin/inv61-node --keyring /etc/inv61/keyring.json --audit-key-file /etc/inv61/audit.key --workdir /var/lib/inv61 --host 0.0.0.0 --port 7461 --tls-cert /etc/inv61/tls/node.pem --tls-key /etc/inv61/tls/node.key --tls-ca /etc/inv61/tls/ca.pem
+KillSignal=SIGTERM
+TimeoutStopSec=20
+Restart=on-failure
+# least privilege (C042/C043)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ReadWritePaths=/var/lib/inv61
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

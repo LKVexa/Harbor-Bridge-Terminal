@@ -1,0 +1,949 @@
+{
+  "schema": "inv02.component-status/1",
+  "version": "5.0.0",
+  "legend": {
+    "implemented": "code + automated tests passing locally",
+    "implemented+runtime-verified": "code + tests, and verified inside a real runc container on this host",
+    "implemented-spec": "emits the correct spec/config; enforcement depends on host facilities not exercised here",
+    "partial": "core implemented and tested; named sub-capabilities remain open",
+    "documented": "delivered as documentation/configuration; needs operational validation",
+    "owner-action": "cannot be closed by engineering; requires an owner decision"
+  },
+  "certification_note": "No checklist box is ticked: the checklist defines 'checked' as implemented, independently verified and evidenced. Every component still needs independent review and its DoD gates (DOD-01..05).",
+  "components": [
+    {
+      "id": "MC01",
+      "name": "OCI Image Specification implementation",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "oci.py",
+      "evidence": [
+        "tests/test_oci.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC02",
+      "name": "OCI Distribution/registry client",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "distribution.py",
+      "evidence": [
+        "tests/test_distribution.py"
+      ],
+      "open_items": [
+        "push/upload side of the Distribution API",
+        "referrers API"
+      ]
+    },
+    {
+      "id": "MC03",
+      "name": "Persistent content-addressable store",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "store.py",
+      "evidence": [
+        "tests/test_store.py",
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC04",
+      "name": "Snapshotter/root filesystem manager",
+      "priority": "P0",
+      "status": "partial",
+      "implementation": "rootfs.py (Snapshotter)",
+      "evidence": [
+        "tests/test_rootfs.py"
+      ],
+      "open_items": [
+        "overlayfs snapshotter (copy-based only today)"
+      ]
+    },
+    {
+      "id": "MC05",
+      "name": "Container runtime integration",
+      "priority": "P0",
+      "status": "implemented+runtime-verified",
+      "implementation": "runtime.py (OCIRuntime, build_spec)",
+      "evidence": [
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": [
+        "crun/runsc/kata not exercised on this host"
+      ]
+    },
+    {
+      "id": "MC06",
+      "name": "Container lifecycle controller",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "runtime.py (LifecycleStore)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": [
+        "reconciliation loop against live runtime state"
+      ]
+    },
+    {
+      "id": "MC07",
+      "name": "Linux namespace manager",
+      "priority": "P0",
+      "status": "implemented+runtime-verified",
+      "implementation": "runtime.py (build_spec namespaces)",
+      "evidence": [
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC08",
+      "name": "cgroups v2 manager",
+      "priority": "P0",
+      "status": "partial",
+      "implementation": "runtime.py (CgroupV2Manager, Resources)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": [
+        "live cgroup v2 host verification (test host is cgroup v1)"
+      ]
+    },
+    {
+      "id": "MC09",
+      "name": "Container rootfs/mount policy",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "rootfs.py (DEFAULT_MOUNTS, validate_bind_mount)",
+      "evidence": [
+        "tests/test_rootfs.py",
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC10",
+      "name": "Container networking integration",
+      "priority": "P0",
+      "status": "partial",
+      "implementation": "runtime.py (network modes none/loopback/netns/host-with-grant)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": [
+        "CNI plugin invocation and IPAM"
+      ]
+    },
+    {
+      "id": "MC11",
+      "name": "Runtime storage/volume integration",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "runtime.py (named volumes, binds)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": [
+        "volume lifecycle/quotas"
+      ]
+    },
+    {
+      "id": "MC12",
+      "name": "Process supervision",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "runtime.py (Supervisor)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC13",
+      "name": "Image unpack/decompression pipeline",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "rootfs.py (apply_layer)",
+      "evidence": [
+        "tests/test_rootfs.py",
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": [
+        "zstd decompression (refused by design; needs external decoder)"
+      ]
+    },
+    {
+      "id": "MC14",
+      "name": "Multi-platform image selection",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "oci.py (select_platform)",
+      "evidence": [
+        "tests/test_oci.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC15",
+      "name": "Container metadata/state database",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "store.py (meta.json), runtime.py (LifecycleStore)",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC16",
+      "name": "Registry authentication provider",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "distribution.py (Bearer/Basic, CredentialProvider)",
+      "evidence": [
+        "tests/test_distribution.py"
+      ],
+      "open_items": [
+        "keychain/credential-helper backed provider"
+      ]
+    },
+    {
+      "id": "MC17",
+      "name": "Transport security policy",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "distribution.py (TLSPolicy)",
+      "evidence": [
+        "tests/test_distribution.py"
+      ],
+      "open_items": [
+        "mTLS client certificates"
+      ]
+    },
+    {
+      "id": "MC18",
+      "name": "Artifact signature verification",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "trust.py (Ed25519, verify_signatures, image_signature_payload)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": [
+        "Sigstore/cosign bundle format interop"
+      ]
+    },
+    {
+      "id": "MC19",
+      "name": "Provenance/attestation verification",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "trust.py (DSSE, in-toto, SLSA)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC20",
+      "name": "SBOM ingestion and binding",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "trust.py (ingest_sbom)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC21",
+      "name": "Vulnerability scanning/admission",
+      "priority": "P0",
+      "status": "partial",
+      "implementation": "trust.py (ScanState, scan_state), policy.py (vulnerabilities rule)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": [
+        "scanner integration (e.g. Trivy/Grype) producing ScanResult"
+      ]
+    },
+    {
+      "id": "MC22",
+      "name": "Seccomp profile enforcement",
+      "priority": "P0",
+      "status": "implemented+runtime-verified",
+      "implementation": "runtime.py (seccomp_profile)",
+      "evidence": [
+        "tests/test_runtime.py",
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC23",
+      "name": "Linux capability policy",
+      "priority": "P0",
+      "status": "implemented+runtime-verified",
+      "implementation": "runtime.py (capability_set)",
+      "evidence": [
+        "tests/test_runtime.py",
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC24",
+      "name": "User-namespace/rootless execution",
+      "priority": "P0",
+      "status": "partial",
+      "implementation": "runtime.py (IDMap, subid_range, userns spec)",
+      "evidence": [
+        "tests/test_runtime.py",
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": [
+        "user-namespace container run skipped on this host (MS_PRIVATE denied)"
+      ]
+    },
+    {
+      "id": "MC25",
+      "name": "MAC integration",
+      "priority": "P0",
+      "status": "implemented-spec",
+      "implementation": "runtime.py (apparmorProfile, selinuxLabel)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": [
+        "ship/load the inv02-default AppArmor profile; SELinux policy module"
+      ]
+    },
+    {
+      "id": "MC26",
+      "name": "No-new-privileges/setuid controls",
+      "priority": "P0",
+      "status": "implemented+runtime-verified",
+      "implementation": "runtime.py (noNewPrivileges); rootfs.py (setuid stripping)",
+      "evidence": [
+        "tests/test_runtime.py",
+        "tests/test_rootfs.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC27",
+      "name": "Device access broker",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "runtime.py (DEFAULT_DEVICE_RULES, device grants)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC28",
+      "name": "Secrets isolation",
+      "priority": "P0",
+      "status": "implemented+runtime-verified",
+      "implementation": "runtime.py (write_secrets, /run/secrets mount, secret-env refusal)",
+      "evidence": [
+        "tests/test_runtime.py",
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": [
+        "tmpfs-backed secrets dir provisioning"
+      ]
+    },
+    {
+      "id": "MC29",
+      "name": "Tenant/workload isolation policy",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "policy.py (rule_tenant_isolation)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC30",
+      "name": "Durable quarantine/admission store",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "store.py (quarantine/release, two-person release)",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC31",
+      "name": "Tamper-evident audit ledger",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "audit.py",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": [
+        "external anchoring of the head hash (remote log/WORM)"
+      ]
+    },
+    {
+      "id": "MC32",
+      "name": "Security policy engine integration",
+      "priority": "P0",
+      "status": "implemented",
+      "implementation": "policy.py (PolicyEngine)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": [
+        "OPA/Rego interop (optional)"
+      ]
+    },
+    {
+      "id": "MC33",
+      "name": "Sandboxed-runtime option",
+      "priority": "P0",
+      "status": "implemented-spec",
+      "implementation": "runtime.py (RUNTIME_CLASSES, SANDBOXED_CLASSES)",
+      "evidence": [
+        "tests/test_runtime.py"
+      ],
+      "open_items": [
+        "runsc/kata execution tests"
+      ]
+    },
+    {
+      "id": "MC34",
+      "name": "Compare-and-swap tag updates",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "store.py (set_tag expected=)",
+      "evidence": [
+        "tests/test_store.py",
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC35",
+      "name": "Distributed locking/lease semantics",
+      "priority": "P1",
+      "status": "partial",
+      "implementation": "store.py (fcntl lock, leases)",
+      "evidence": [
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": [
+        "multi-node distributed lock/lease service"
+      ]
+    },
+    {
+      "id": "MC36",
+      "name": "Resumable blob transfer manager",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "store.py (ingest_*); distribution.py (Range resume)",
+      "evidence": [
+        "tests/test_store.py",
+        "tests/test_distribution.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC37",
+      "name": "Content leases and garbage collection",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "store.py (lease, gc)",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC38",
+      "name": "Corruption repair workflow",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "store.py (fsck, repair)",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC39",
+      "name": "Registry mirror/fallback support",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "distribution.py (mirrors, digest-only)",
+      "evidence": [
+        "tests/test_distribution.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC40",
+      "name": "Disconnected/offline cache mode",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "distribution.py (offline)",
+      "evidence": [
+        "tests/test_distribution.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC41",
+      "name": "Rate limits and quotas",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "resilience.py (TokenBucket, QuotaManager)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC42",
+      "name": "Backpressure/admission control",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "resilience.py (AdmissionController)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC43",
+      "name": "Retry/circuit-breaker library",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "resilience.py (retry, CircuitBreaker)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC44",
+      "name": "Time/deadline abstraction",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "timeutil.py",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC45",
+      "name": "Structured metrics exporter",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "observability.py (Metrics)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": [
+        "wire metrics into every component call site"
+      ]
+    },
+    {
+      "id": "MC46",
+      "name": "Structured logging pipeline",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "observability.py (JsonFormatter, redact)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC47",
+      "name": "Distributed tracing",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "observability.py (Tracer)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": [
+        "OTLP exporter"
+      ]
+    },
+    {
+      "id": "MC48",
+      "name": "Health/readiness endpoints",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "observability.py (Health, serve_http)",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC49",
+      "name": "Decision explain API",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "policy.py (Decision.explain)",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC50",
+      "name": "Dashboards and alerts",
+      "priority": "P1",
+      "status": "documented",
+      "implementation": "docs/operations/OPERATIONS.md \u00a71; docs/operations/alerts.yaml",
+      "evidence": [],
+      "open_items": [
+        "deploy dashboards; validate alerts in a production-like environment"
+      ]
+    },
+    {
+      "id": "MC51",
+      "name": "Capacity/saturation model",
+      "priority": "P1",
+      "status": "documented",
+      "implementation": "docs/operations/OPERATIONS.md \u00a72",
+      "evidence": [
+        "tools/bench.py",
+        "evidence/bench.json"
+      ],
+      "open_items": [
+        "fleet-scale measurements"
+      ]
+    },
+    {
+      "id": "MC52",
+      "name": "Backup/restore/reconstruction procedure",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "store.py (backup/restore); OPERATIONS.md \u00a73",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": [
+        "restore drill on production-size data"
+      ]
+    },
+    {
+      "id": "MC53",
+      "name": "Rolling upgrade and rollback controller",
+      "priority": "P1",
+      "status": "partial",
+      "implementation": "migrations.py (SchemaTooNew); OPERATIONS.md \u00a74",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": [
+        "automated rolling-upgrade controller across nodes"
+      ]
+    },
+    {
+      "id": "MC54",
+      "name": "Configuration system",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "config.py",
+      "evidence": [
+        "tests/test_ops.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC55",
+      "name": "Credential/key rotation workflow",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "trust.py (Keyring.rotate/revoke/expiring); OPERATIONS.md \u00a75",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": [
+        "HSM/KMS signing integration"
+      ]
+    },
+    {
+      "id": "MC56",
+      "name": "Incident runbook and escalation metadata",
+      "priority": "P1",
+      "status": "documented",
+      "implementation": "docs/operations/OPERATIONS.md \u00a76",
+      "evidence": [],
+      "open_items": [
+        "run tabletop exercises (G-05)"
+      ]
+    },
+    {
+      "id": "MC57",
+      "name": "OCI conformance fixtures",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "tests/fixtures.py",
+      "evidence": [
+        "tests/test_oci.py"
+      ],
+      "open_items": [
+        "upstream OCI conformance suite run"
+      ]
+    },
+    {
+      "id": "MC58",
+      "name": "Real registry integration tests",
+      "priority": "P1",
+      "status": "partial",
+      "implementation": "tests/fixtures.py (FakeRegistry over real HTTP)",
+      "evidence": [
+        "tests/test_distribution.py"
+      ],
+      "open_items": [
+        "tests against a real registry (distribution/distribution, Harbor, GHCR)"
+      ]
+    },
+    {
+      "id": "MC59",
+      "name": "Real runtime integration tests",
+      "priority": "P1",
+      "status": "implemented+runtime-verified",
+      "implementation": "tests/integration/test_runc.py",
+      "evidence": [
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": [
+        "crun/runsc/kata"
+      ]
+    },
+    {
+      "id": "MC60",
+      "name": "Namespace/cgroup isolation tests",
+      "priority": "P1",
+      "status": "partial",
+      "implementation": "tests/integration/test_runc.py",
+      "evidence": [
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": [
+        "cgroup v2 limit enforcement test; user-namespace run"
+      ]
+    },
+    {
+      "id": "MC61",
+      "name": "Fuzzing corpus/harnesses",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "tests/test_fuzz_stress.py (FuzzTests)",
+      "evidence": [
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": [
+        "coverage-guided fuzzing campaign"
+      ]
+    },
+    {
+      "id": "MC62",
+      "name": "Adversarial/escape tests",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "tests/test_rootfs.py; tests/integration/test_runc.py",
+      "evidence": [
+        "tests/test_rootfs.py",
+        "tests/integration/test_runc.py"
+      ],
+      "open_items": [
+        "kernel-escape CVE regression corpus"
+      ]
+    },
+    {
+      "id": "MC63",
+      "name": "Race/concurrency stress suite",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "tests/test_fuzz_stress.py (StressTests, multiprocess CAS)",
+      "evidence": [
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC64",
+      "name": "Fault-injection suite",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "tests/test_fuzz_stress.py (FaultInjectionTests)",
+      "evidence": [
+        "tests/test_fuzz_stress.py"
+      ],
+      "open_items": [
+        "network-partition injection at scale"
+      ]
+    },
+    {
+      "id": "MC65",
+      "name": "Performance/soak/fleet benchmarks",
+      "priority": "P1",
+      "status": "partial",
+      "implementation": "tools/bench.py",
+      "evidence": [
+        "tools/bench.py",
+        "evidence/bench.json"
+      ],
+      "open_items": [
+        "fleet benchmarks; 24h soak"
+      ]
+    },
+    {
+      "id": "MC66",
+      "name": "Cross-architecture/kernel/runtime matrix",
+      "priority": "P1",
+      "status": "partial",
+      "implementation": "COMPATIBILITY.md; .github/workflows/ci.yml",
+      "evidence": [],
+      "open_items": [
+        "arm64, cgroup v2, crun/runsc/kata, Python 3.10/3.12/3.13 runs"
+      ]
+    },
+    {
+      "id": "MC67",
+      "name": "Machine-readable release evidence",
+      "priority": "P1",
+      "status": "implemented",
+      "implementation": "tools/release_evidence.py",
+      "evidence": [
+        "evidence/release-evidence.json"
+      ],
+      "open_items": [
+        "signing the evidence bundle (E-08)"
+      ]
+    },
+    {
+      "id": "MC68",
+      "name": "`MASTER.md`",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "MASTER.md",
+      "evidence": [],
+      "open_items": []
+    },
+    {
+      "id": "MC69",
+      "name": "Package/build metadata",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "pyproject.toml; VERSION",
+      "evidence": [],
+      "open_items": []
+    },
+    {
+      "id": "MC70",
+      "name": "Dependency lock/SBOM for the package",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "tools/release_evidence.py (sbom.cdx.json)",
+      "evidence": [
+        "evidence/sbom.cdx.json"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC71",
+      "name": "License/NOTICE files",
+      "priority": "P2",
+      "status": "owner-action",
+      "implementation": "NOTICE; LICENSE-STATUS.md",
+      "evidence": [],
+      "open_items": [
+        "owner must choose and add a LICENSE"
+      ]
+    },
+    {
+      "id": "MC72",
+      "name": "Architecture Decision Record",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "docs/adr/ADR-0001-substrate-architecture.md",
+      "evidence": [],
+      "open_items": [
+        "owner ratification"
+      ]
+    },
+    {
+      "id": "MC73",
+      "name": "Named ownership/escalation metadata",
+      "priority": "P2",
+      "status": "owner-action",
+      "implementation": "OWNERS.yaml",
+      "evidence": [],
+      "open_items": [
+        "owner must name service/security/operational owners"
+      ]
+    },
+    {
+      "id": "MC74",
+      "name": "Compatibility matrix",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "COMPATIBILITY.md",
+      "evidence": [],
+      "open_items": []
+    },
+    {
+      "id": "MC75",
+      "name": "Release automation/CI",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": ".github/workflows/ci.yml",
+      "evidence": [],
+      "open_items": [
+        "enable in a hosted repo; self-hosted runtime runner"
+      ]
+    },
+    {
+      "id": "MC76",
+      "name": "Migration framework",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "migrations.py",
+      "evidence": [
+        "tests/test_store.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC77",
+      "name": "Exception/waiver registry",
+      "priority": "P2",
+      "status": "implemented",
+      "implementation": "policy.py (Waiver, WaiverRegistry); waivers/waivers.json",
+      "evidence": [
+        "tests/test_trust_policy.py"
+      ],
+      "open_items": []
+    },
+    {
+      "id": "MC78",
+      "name": "End-of-life/vulnerability SLA",
+      "priority": "P2",
+      "status": "owner-action",
+      "implementation": "SECURITY.md",
+      "evidence": [],
+      "open_items": [
+        "owner approval of SLA/EOL defaults"
+      ]
+    }
+  ]
+}

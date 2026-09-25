@@ -1,0 +1,73 @@
+{
+ "component": 43,
+ "title": "Failover and leader/fencing design",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "leader election/coordination mechanism",
+   "state": "IMPLEMENTED",
+   "spec": "production/leader.py::module docstring (PK_DYN_LEADER/1)",
+   "modules": [
+    "production/leader.py::LeaderElector"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeader.test_election_and_failover"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "monotonic fencing epochs/tokens",
+   "state": "IMPLEMENTED",
+   "spec": "production/leader.py::FenceGate",
+   "modules": [
+    "production/leader.py::FenceGate",
+    "production/leasestore.py::LeaseStore.issue_epoch"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeader.test_monotonic_fencing_tokens"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "duplicate-controller prevention",
+   "state": "IMPLEMENTED",
+   "spec": "production/leader.py::module docstring",
+   "modules": [
+    "production/leader.py::LeaderElector.try_acquire",
+    "production/controller.py::Controller.reconcile"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeader.test_duplicate_controller_prevented",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_not_leader_takes_no_action"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "split-brain detection and resolution",
+   "state": "PARTIAL",
+   "spec": "production/leader.py::detect_split_brain",
+   "modules": [
+    "production/leader.py::detect_split_brain"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeader.test_split_brain_detection",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_partition_latency_loss"
+   ],
+   "blocker": "replicated consensus lease store; split brain of the store itself cannot arise or be tested with a single-node store"
+  },
+  {
+   "name": "stale writer rejection at durable state/provider boundaries",
+   "state": "IMPLEMENTED",
+   "spec": "production/leader.py::FenceGate",
+   "modules": [
+    "production/leasestore.py::LeaseStore.check_fence",
+    "production/adapters.py::InMemoryProvider._enter"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeader.test_stale_writer_rejected_at_store_and_provider"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Election is over the single-node lease store; failover time bounded by leader ttl."
+}

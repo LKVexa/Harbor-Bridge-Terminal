@@ -1,0 +1,22 @@
+{
+ "schema": "PK_ECP_ROLLOUT/1",
+ "artifact": "by immutable digest only (release/MANIFEST.json + wheel sha256)",
+ "promotion": ["dev", "test", "staging", "canary", "production"],
+ "gate": "tools/release.py gate must return GO before 'canary'; a NO_GO gate may only be bypassed via break_glass",
+ "stages": [
+  {"name": "canary-1", "replicas": 1, "traffic_percent": 1, "soak_minutes": 30},
+  {"name": "canary-10", "traffic_percent": 10, "soak_minutes": 60},
+  {"name": "half", "traffic_percent": 50, "soak_minutes": 120},
+  {"name": "full", "traffic_percent": 100, "soak_minutes": 0}
+ ],
+ "halt_signals": {
+  "p99_admission_latency_ms_gt": 50,
+  "refused_rate_multiplier_gt": 3,
+  "audit_append_failures_gt": 0,
+  "audit_verify_failures_gt": 0,
+  "readyz_not_ready_seconds_gt": 30
+ },
+ "rollback": "redeploy previous artifact digest; config rollback via rollback_config(previous_generation); both journaled",
+ "break_glass": {"approvers_required": 2, "roles": ["security_owner", "service_owner"], "record": "release/reviews.jsonl entry kind=break_glass with ticket and expiry"},
+ "status": "PROPOSED — no orchestrator integration exists in this repository (OPEN_EXTERNAL)"
+}

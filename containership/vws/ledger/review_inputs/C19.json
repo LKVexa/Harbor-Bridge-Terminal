@@ -1,0 +1,1552 @@
+{
+"component": "C19",
+"items": [
+{
+"id": "C19-001",
+"task_class": "SPECIFY",
+"area": "01. Applicability and source verification",
+"req": "Identify ordinary HTTP endpoints that require cross-origin browser access.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "origin.js docstring: HTTP CORS for JSON API (ticket endpoint) only",
+"prior_evidence": [
+"gateway/origin.js#L1-9"
+]
+},
+{
+"id": "C19-002",
+"task_class": "SPECIFY",
+"area": "01. Applicability and source verification",
+"req": "Identify WebSocket endpoints separately from those HTTP endpoints.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "docstring separates checkWsOrigin (WS) from corsHeaders (HTTP)",
+"prior_evidence": [
+"gateway/origin.js#L1-9"
+]
+},
+{
+"id": "C19-003",
+"task_class": "VERIFY",
+"area": "01. Applicability and source verification",
+"req": "VERIFY the article's claim that WebSocket upgrades require CORS response headers.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "BASELINE Q01: OBSERVED in Chromium, WS upgrade carried Origin, no preflight [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C19-004",
+"task_class": "VERIFY",
+"area": "01. Applicability and source verification",
+"req": "VERIFY the article's claim about browser preflight before WebSocket connection.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "BASELINE Q01 records the observed absence of preflight before WS [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C19-005",
+"task_class": "DOCUMENT",
+"area": "01. Applicability and source verification",
+"req": "Document findings without silently rewriting the source-derived component name.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found documenting a preserved/rewritten source component name for this item",
+"prior_evidence": []
+},
+{
+"id": "C19-006",
+"task_class": "IMPLEMENT",
+"area": "01. Applicability and source verification",
+"req": "Keep origin authorization assigned to the server-side allowlist component.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "allowed() checks cfg.origins allowlist server-side; checkWsOrigin reuses it, never substitutes for identity",
+"prior_evidence": [
+"gateway/origin.js#L16-21"
+]
+},
+{
+"id": "C19-007",
+"task_class": "SPECIFY",
+"area": "01. Applicability and source verification",
+"req": "Decide whether this HTTP CORS component is applicable to the actual API.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "only /api/ws-ticket gets corsHeaders; other routes (health/live/config/static/ws) do not",
+"prior_evidence": [
+"gateway/origin.js#L7",
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C19-008",
+"task_class": "DOCUMENT",
+"area": "01. Applicability and source verification",
+"req": "Record the browser clients used to verify HTTP CORS behavior.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "VALIDATION.md: \"Chromium 1194 via Playwright 1.56\" records the browser client used",
+"prior_evidence": [
+"docs/VALIDATION.md#environment"
+]
+},
+{
+"id": "C19-009",
+"task_class": "SPECIFY",
+"area": "01. Applicability and source verification",
+"req": "Define the intended credentialed and noncredentialed HTTP requests.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "code always emits Allow-Credentials:true when origin approved; no separate design doc for noncredentialed case",
+"prior_evidence": [
+"gateway/origin.js#L27-32"
+]
+},
+{
+"id": "C19-010",
+"task_class": "IMPLEMENT",
+"area": "01. Applicability and source verification",
+"req": "Approve the scope before implementing response headers.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no sign-off/approval record found for CORS response-header scope before implementation",
+"prior_evidence": []
+},
+{
+"id": "C19-011",
+"task_class": "SPECIFY",
+"area": "02. Origin response policy",
+"req": "Define the source of approved HTTP origins.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_ALLOWED_ORIGINS parsed to exact bare origins; wildcards/paths rejected (config.test.js)",
+"prior_evidence": [
+"gateway/config.js",
+"tests/gateway/config.test.js#L17-19"
+]
+},
+{
+"id": "C19-012",
+"task_class": "SPECIFY",
+"area": "02. Origin response policy",
+"req": "Define when Access-Control-Allow-Origin is emitted.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders: header emitted only when origin defined and in allowlist",
+"prior_evidence": [
+"gateway/origin.js#L27-32"
+]
+},
+{
+"id": "C19-013",
+"task_class": "SPECIFY",
+"area": "02. Origin response policy",
+"req": "Define how an approved origin is selected for a response.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "allowed(): exact match against cfg.origins, or same-origin static page",
+"prior_evidence": [
+"gateway/origin.js#L16-21"
+]
+},
+{
+"id": "C19-014",
+"task_class": "IMPLEMENT",
+"area": "02. Origin response policy",
+"req": "Reject reflection of arbitrary origins without policy evaluation.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "origin not reflected unless allowlisted; authz.test.js: evil.example -> 403, not reflected",
+"prior_evidence": [
+"gateway/origin.js#L16-21",
+"tests/security/authz.test.js#L27"
+]
+},
+{
+"id": "C19-015",
+"task_class": "SPECIFY",
+"area": "02. Origin response policy",
+"req": "Define behavior when the HTTP request has no Origin header.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "origin===undefined -> ok:true, headers:{} (no CORS headers emitted)",
+"prior_evidence": [
+"gateway/origin.js#L28"
+]
+},
+{
+"id": "C19-016",
+"task_class": "SPECIFY",
+"area": "02. Origin response policy",
+"req": "Define behavior for an unapproved HTTP origin.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "unapproved origin -> {ok:false, Vary:Origin}; server returns 403 {error:\"origin\"}",
+"prior_evidence": [
+"gateway/origin.js#L30",
+"gateway/server.js#L118"
+]
+},
+{
+"id": "C19-017",
+"task_class": "SPECIFY",
+"area": "02. Origin response policy",
+"req": "Define whether any noncredentialed wildcard policy is justified.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit design record on wildcard justification; code never uses \"*\" but rationale is not documented",
+"prior_evidence": []
+},
+{
+"id": "C19-018",
+"task_class": "VERIFY",
+"area": "02. Origin response policy",
+"req": "VERIFY allowed combinations of origin and credential response settings.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only allowed-origin+credentialed and unapproved-origin cases tested; not a full origin x credential matrix",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C19-019",
+"task_class": "IMPLEMENT",
+"area": "02. Origin response policy",
+"req": "Keep production and development origin configurations separate.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "single VWS_ALLOWED_ORIGINS env var; no distinct prod/dev configuration artifacts found",
+"prior_evidence": []
+},
+{
+"id": "C19-020",
+"task_class": "TEST",
+"area": "02. Origin response policy",
+"req": "Test the origin response policy with actual HTTP browser requests.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tested via Node fetch() against the real server, not a real browser (browser.test.js does not exercise ticket CORS)",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C19-021",
+"task_class": "IMPLEMENT",
+"area": "03. Methods policy",
+"req": "Inventory HTTP methods required by each cross-origin route.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only /api/ws-ticket is cross-origin; its methods (POST, OPTIONS) are the only inventory, not written as a table",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C19-022",
+"task_class": "SPECIFY",
+"area": "03. Methods policy",
+"req": "Define the configured Access-Control-Allow-Methods values.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Access-Control-Allow-Methods: 'POST' hardcoded for /api/ws-ticket OPTIONS response",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-023",
+"task_class": "IMPLEMENT",
+"area": "03. Methods policy",
+"req": "Avoid permitting additional methods solely because they appear in article examples.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "methods value is fixed to POST for this route; not copied from an article example set",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-024",
+"task_class": "IMPLEMENT",
+"area": "03. Methods policy",
+"req": "Separate actual endpoint methods from preflight handling.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "server.js: OPTIONS branch handled separately from the POST business-logic branch",
+"prior_evidence": [
+"gateway/server.js#L112-117"
+]
+},
+{
+"id": "C19-025",
+"task_class": "IMPLEMENT",
+"area": "03. Methods policy",
+"req": "Reject requested methods outside the approved route policy.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "non-POST requests to /api/ws-ticket get 405 with Allow header, but this is generic method rejection, not a requested-method preflight check reading Access-Contr",
+"prior_evidence": [
+"gateway/server.js#L117"
+]
+},
+{
+"id": "C19-026",
+"task_class": "TEST",
+"area": "03. Methods policy",
+"req": "Test a permitted cross-origin HTTP method.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js: OPTIONS from allowed origin returns 204 with allow-origin header",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26"
+]
+},
+{
+"id": "C19-027",
+"task_class": "TEST",
+"area": "03. Methods policy",
+"req": "Test a prohibited cross-origin HTTP method.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found sending a prohibited cross-origin method (e.g. DELETE) to verify rejection",
+"prior_evidence": []
+},
+{
+"id": "C19-028",
+"task_class": "TEST",
+"area": "03. Methods policy",
+"req": "Test an unknown requested method.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for an unknown/unsupported HTTP method value",
+"prior_evidence": []
+},
+{
+"id": "C19-029",
+"task_class": "IMPLEMENT",
+"area": "03. Methods policy",
+"req": "Keep method policy synchronized with the request classifier.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "method handling is inline in the route, not via a separate classifier module kept in sync",
+"prior_evidence": [
+"gateway/server.js#L112-117"
+]
+},
+{
+"id": "C19-030",
+"task_class": "DOCUMENT",
+"area": "03. Methods policy",
+"req": "Document which routes do not support cross-origin HTTP calls.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no document found listing which routes do not support cross-origin HTTP calls",
+"prior_evidence": []
+},
+{
+"id": "C19-031",
+"task_class": "IMPLEMENT",
+"area": "04. Headers policy",
+"req": "Inventory request headers genuinely required by browser HTTP clients.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Authorization, Content-Type hardcoded as allowed request headers; no separate written inventory",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-032",
+"task_class": "SPECIFY",
+"area": "04. Headers policy",
+"req": "Define the configured Access-Control-Allow-Headers values.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Access-Control-Allow-Headers: 'Authorization, Content-Type' fixed in OPTIONS response",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-033",
+"task_class": "SPECIFY",
+"area": "04. Headers policy",
+"req": "Identify whether Authorization is required for the HTTP endpoint.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "identity.authenticate(bearerFrom(req)) requires Authorization bearer header when not open/ticket-cookie auth",
+"prior_evidence": [
+"gateway/auth.js",
+"gateway/server.js#L122"
+]
+},
+{
+"id": "C19-034",
+"task_class": "SPECIFY",
+"area": "04. Headers policy",
+"req": "Identify whether Content-Type is required for the HTTP endpoint.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no explicit design statement on whether Content-Type is required by the ticket endpoint (body is ignored per server.js#L121)",
+"prior_evidence": []
+},
+{
+"id": "C19-035",
+"task_class": "IMPLEMENT",
+"area": "04. Headers policy",
+"req": "Reject unnecessary requested headers according to the policy.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no code path found that inspects Access-Control-Request-Headers and rejects unlisted requested headers",
+"prior_evidence": []
+},
+{
+"id": "C19-036",
+"task_class": "SPECIFY",
+"area": "04. Headers policy",
+"req": "Define case handling for requested header names after verification.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no design note on case handling of requested header names",
+"prior_evidence": []
+},
+{
+"id": "C19-037",
+"task_class": "IMPLEMENT",
+"area": "04. Headers policy",
+"req": "Bound processing of excessive requested header lists.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no bound found specifically on the length/count of an incoming requested-headers list",
+"prior_evidence": []
+},
+{
+"id": "C19-038",
+"task_class": "TEST",
+"area": "04. Headers policy",
+"req": "Test a request using approved headers.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js OPTIONS request with an Origin header (approved) gets 204 + allow-origin header",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26"
+]
+},
+{
+"id": "C19-039",
+"task_class": "TEST",
+"area": "04. Headers policy",
+"req": "Test a request requesting an unapproved header.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found requesting an unapproved header via Access-Control-Request-Headers",
+"prior_evidence": []
+},
+{
+"id": "C19-040",
+"task_class": "DOCUMENT",
+"area": "04. Headers policy",
+"req": "Document header-policy changes affecting clients.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no changelog/document entry found for header-policy changes",
+"prior_evidence": []
+},
+{
+"id": "C19-041",
+"task_class": "SPECIFY",
+"area": "05. Credentials policy",
+"req": "Decide whether cross-origin HTTP credentials are supported.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders always sets Access-Control-Allow-Credentials:'true' when origin approved -> credentials are supported",
+"prior_evidence": [
+"gateway/origin.js#L31"
+]
+},
+{
+"id": "C19-042",
+"task_class": "SPECIFY",
+"area": "05. Credentials policy",
+"req": "Define when Access-Control-Allow-Credentials is emitted.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Allow-Credentials emitted together with Allow-Origin, only for an approved origin",
+"prior_evidence": [
+"gateway/origin.js#L27-32"
+]
+},
+{
+"id": "C19-043",
+"task_class": "VERIFY",
+"area": "05. Credentials policy",
+"req": "VERIFY actual browser behavior for credentialed requests.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "authz.test.js checks the response header value only; no real browser fetch(credentials:\"include\") verification",
+"prior_evidence": [
+"tests/security/authz.test.js#L26"
+]
+},
+{
+"id": "C19-044",
+"task_class": "IMPLEMENT",
+"area": "05. Credentials policy",
+"req": "Avoid assuming the response header itself supplies credentials.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "SECURITY.md: credential is a header/HttpOnly cookie, not implied by the CORS response header itself",
+"prior_evidence": [
+"docs/SECURITY.md#L25"
+]
+},
+{
+"id": "C19-045",
+"task_class": "IMPLEMENT",
+"area": "05. Credentials policy",
+"req": "Keep HTTP client credential configuration documented separately.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "SECURITY.md documents the ticket/cookie credential model but not as a document separate from CORS specifically",
+"prior_evidence": [
+"docs/SECURITY.md#L25"
+]
+},
+{
+"id": "C19-046",
+"task_class": "TEST",
+"area": "05. Credentials policy",
+"req": "Test an approved credentialed HTTP request.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "approved-origin OPTIONS+POST issues HttpOnly ticket cookie (server.js Set-Cookie)",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26",
+"gateway/server.js#L127"
+]
+},
+{
+"id": "C19-047",
+"task_class": "TEST",
+"area": "05. Credentials policy",
+"req": "Test an unapproved credentialed HTTP origin.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js: OPTIONS with evil.example origin -> 403 (no ticket/credential issued)",
+"prior_evidence": [
+"tests/security/authz.test.js#L27"
+]
+},
+{
+"id": "C19-048",
+"task_class": "TEST",
+"area": "05. Credentials policy",
+"req": "Test the configured behavior for noncredentialed HTTP requests.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no-Origin request: ok:true, headers:{} \u2014 no credential-related header emitted [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/origin.js#L29"
+]
+},
+{
+"id": "C19-049",
+"task_class": "REVIEW",
+"area": "05. Credentials policy",
+"req": "Review cookie or token assumptions with the authentication component.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "SECURITY.md CSRF row cross-references cookie assumptions but is not a dedicated joint review record",
+"prior_evidence": [
+"docs/SECURITY.md#L25"
+]
+},
+{
+"id": "C19-050",
+"task_class": "DOCUMENT",
+"area": "05. Credentials policy",
+"req": "Record any unresolved credential transport limitations.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found of unresolved credential-transport limitations specific to CORS",
+"prior_evidence": []
+},
+{
+"id": "C19-051",
+"task_class": "SPECIFY",
+"area": "06. Preflight caching",
+"req": "Decide whether preflight caching is needed.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "a fixed 600s Max-Age is implemented but no design note records a deliberate decision that caching is needed",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-052",
+"task_class": "SPECIFY",
+"area": "06. Preflight caching",
+"req": "Define the intended Access-Control-Max-Age configuration.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "Access-Control-Max-Age: '600' fixed in the OPTIONS response for /api/ws-ticket",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-053",
+"task_class": "IMPLEMENT",
+"area": "06. Preflight caching",
+"req": "Treat the article's 20-day example as an unapproved candidate value.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "600s is used, clearly not the article's 20-day figure, but no note recording that the 20-day value was reviewed and rejected",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-054",
+"task_class": "VERIFY",
+"area": "06. Preflight caching",
+"req": "VERIFY browser-specific limits relevant to the intended clients.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record verifying browser-specific Max-Age caps (e.g. Chromium 10 min limit) against the chosen 600s value",
+"prior_evidence": []
+},
+{
+"id": "C19-055",
+"task_class": "IMPLEMENT",
+"area": "06. Preflight caching",
+"req": "Evaluate how cached permissions affect policy changes.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no evaluation found of how a cached preflight interacts with a later policy change",
+"prior_evidence": []
+},
+{
+"id": "C19-056",
+"task_class": "TEST",
+"area": "06. Preflight caching",
+"req": "Test preflight behavior before a policy update.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found exercising preflight behavior before vs after a policy update",
+"prior_evidence": []
+},
+{
+"id": "C19-057",
+"task_class": "TEST",
+"area": "06. Preflight caching",
+"req": "Test behavior after an allowed method is removed.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for behavior after an allowed method is removed",
+"prior_evidence": []
+},
+{
+"id": "C19-058",
+"task_class": "TEST",
+"area": "06. Preflight caching",
+"req": "Test behavior after an origin is removed.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for behavior after an origin is removed from the allowlist",
+"prior_evidence": []
+},
+{
+"id": "C19-059",
+"task_class": "DOCUMENT",
+"area": "06. Preflight caching",
+"req": "Document cache-related delays observed during testing.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no document found recording cache-related delays observed during testing",
+"prior_evidence": []
+},
+{
+"id": "C19-060",
+"task_class": "IMPLEMENT",
+"area": "06. Preflight caching",
+"req": "Approve a value based on tested behavior rather than article copying.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record shows the 600s value was approved from tested behavior rather than copied",
+"prior_evidence": []
+},
+{
+"id": "C19-061",
+"task_class": "IMPLEMENT",
+"area": "07. Header generation",
+"req": "Build response headers from validated policy values.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders builds headers only from cfg.origins (validated at config load) and the checked request origin",
+"prior_evidence": [
+"gateway/origin.js#L27-32"
+]
+},
+{
+"id": "C19-062",
+"task_class": "IMPLEMENT",
+"area": "07. Header generation",
+"req": "Keep header generation separate from route authorization.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "corsHeaders (header generation) is independent of identity.authenticate (route authorization) in server.js",
+"prior_evidence": [
+"gateway/origin.js#L27-32",
+"gateway/server.js#L122-123"
+]
+},
+{
+"id": "C19-063",
+"task_class": "IMPLEMENT",
+"area": "07. Header generation",
+"req": "Avoid adding conflicting duplicate CORS headers.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "a single corsHeaders() call per request; headers merged once via spread, no duplicate CORS header paths",
+"prior_evidence": [
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C19-064",
+"task_class": "IMPLEMENT",
+"area": "07. Header generation",
+"req": "Avoid mixing success and rejection header policies accidentally.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "rejection paths (403/405/401/503/429) each spread the same cors.headers consistently; no mixing with a differing success policy",
+"prior_evidence": [
+"gateway/server.js#L113-125"
+]
+},
+{
+"id": "C19-065",
+"task_class": "SPECIFY",
+"area": "07. Header generation",
+"req": "Define CORS behavior on HTTP error responses.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "error responses (405/401/503/429/403) on the ticket route all include cors.headers",
+"prior_evidence": [
+"gateway/server.js#L117-130"
+]
+},
+{
+"id": "C19-066",
+"task_class": "SPECIFY",
+"area": "07. Header generation",
+"req": "Define CORS behavior on health responses if applicable.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no CORS headers are emitted on /health or /live (no design note confirming this is intentional for health)",
+"prior_evidence": []
+},
+{
+"id": "C19-067",
+"task_class": "REVIEW",
+"area": "07. Header generation",
+"req": "Ensure header writing occurs before the response is finalized.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "json() helper builds full header object and calls writeHead before res.end(), i.e. before finalizing",
+"prior_evidence": [
+"gateway/server.js#L74-78"
+]
+},
+{
+"id": "C19-068",
+"task_class": "IMPLEMENT",
+"area": "07. Header generation",
+"req": "Handle invalid configured header values as configuration failures.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "gateway/config.js validates origins syntax at startup (ConfigError/exit 78) but no evidence this is framed as CORS-header configuration-failure handling specifi",
+"prior_evidence": []
+},
+{
+"id": "C19-069",
+"task_class": "TEST",
+"area": "07. Header generation",
+"req": "Test generated headers using an HTTP inspection client.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js uses fetch() as an HTTP inspection client and asserts exact header values",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C19-070",
+"task_class": "IMPLEMENT",
+"area": "07. Header generation",
+"req": "Preserve examples of approved and rejected responses.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no example artifacts (recorded requests/responses) of approved vs rejected CORS responses found",
+"prior_evidence": []
+},
+{
+"id": "C19-071",
+"task_class": "TEST",
+"area": "08. Browser validation",
+"req": "Test a permitted cross-origin HTTP request in each supported browser.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "permitted cross-origin request tested via Node fetch(), not inside an actual browser",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26"
+]
+},
+{
+"id": "C19-072",
+"task_class": "TEST",
+"area": "08. Browser validation",
+"req": "Test a disallowed cross-origin HTTP request in each supported browser.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "disallowed cross-origin request tested via Node fetch(), not inside an actual browser",
+"prior_evidence": [
+"tests/security/authz.test.js#L27"
+]
+},
+{
+"id": "C19-073",
+"task_class": "TEST",
+"area": "08. Browser validation",
+"req": "Test required credentialed requests in each supported browser.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no credentialed request test found run from within a real browser",
+"prior_evidence": []
+},
+{
+"id": "C19-074",
+"task_class": "TEST",
+"area": "08. Browser validation",
+"req": "Test preflight behavior for an applicable HTTP request.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "preflight OPTIONS tested via Node fetch(), not a browser-issued preflight",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26"
+]
+},
+{
+"id": "C19-075",
+"task_class": "TEST",
+"area": "08. Browser validation",
+"req": "Test an HTTP request that does not require the same preflight path.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found of a simple (non-preflighted) cross-origin HTTP request",
+"prior_evidence": []
+},
+{
+"id": "C19-076",
+"task_class": "TEST",
+"area": "08. Browser validation",
+"req": "Test WebSocket connection separately from HTTP CORS behavior.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "browser.test.js exercises the WS terminal connection in real Chromium, separate from HTTP CORS tests",
+"prior_evidence": [
+"tests/ui/browser.test.js"
+]
+},
+{
+"id": "C19-077",
+"task_class": "DOCUMENT",
+"area": "08. Browser validation",
+"req": "Record browser versions used in validation.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "VALIDATION.md records 'Chromium 1194 via Playwright 1.56'",
+"prior_evidence": [
+"docs/VALIDATION.md#environment"
+]
+},
+{
+"id": "C19-078",
+"task_class": "IMPLEMENT",
+"area": "08. Browser validation",
+"req": "Capture relevant browser diagnostics without exposing credentials.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "browser.test.js captures screenshots (e/I055) and asserts zero console errors, but not specifically for CORS diagnostics",
+"prior_evidence": [
+"e/I055"
+]
+},
+{
+"id": "C19-079",
+"task_class": "IMPLEMENT",
+"area": "08. Browser validation",
+"req": "Avoid inferring browser enforcement solely from server-side response inspection.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no evidence that browser enforcement conclusions avoid relying solely on server-side response inspection for this component",
+"prior_evidence": []
+},
+{
+"id": "C19-080",
+"task_class": "DOCUMENT",
+"area": "08. Browser validation",
+"req": "Record gaps where an intended browser was not tested.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record found of browsers intended but not tested (only Chromium was available in this environment)",
+"prior_evidence": []
+},
+{
+"id": "C19-081",
+"task_class": "REVIEW",
+"area": "09. Operational safety",
+"req": "Review the effective policy for accidental broad origin exposure.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "allowlist is exact-match only (no wildcard/suffix), reducing broad-exposure risk, but no dedicated review record exists",
+"prior_evidence": [
+"gateway/origin.js#L16-21"
+]
+},
+{
+"id": "C19-082",
+"task_class": "REVIEW",
+"area": "09. Operational safety",
+"req": "Review methods for unnecessary permissions.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Allow-Methods is fixed to POST only for the one cross-origin route; no unnecessary methods permitted [downgraded: VERIFY item without a test or measurement cita",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-083",
+"task_class": "REVIEW",
+"area": "09. Operational safety",
+"req": "Review headers for unnecessary permissions.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Allow-Headers fixed to Authorization, Content-Type only [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/server.js#L114"
+]
+},
+{
+"id": "C19-084",
+"task_class": "REVIEW",
+"area": "09. Operational safety",
+"req": "Review credential settings for unintended cross-origin access.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Allow-Credentials is always true when an origin is approved; no separate review record weighing this against a public API",
+"prior_evidence": [
+"gateway/origin.js#L31"
+]
+},
+{
+"id": "C19-085",
+"task_class": "REVIEW",
+"area": "09. Operational safety",
+"req": "Check that application authentication remains enforced.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "identity.authenticate() is still required for the ticket POST even with an approved CORS origin (authz.test.js)",
+"prior_evidence": [
+"gateway/server.js#L122-123",
+"tests/security/authz.test.js#L1-30"
+]
+},
+{
+"id": "C19-086",
+"task_class": "REVIEW",
+"area": "09. Operational safety",
+"req": "Check that server-side origin rules remain enforced where required.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "checkWsOrigin (server-side allowlist) still gates the WS upgrade independent of HTTP CORS [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/origin.js#L22-26",
+"gateway/server.js#L161-162"
+]
+},
+{
+"id": "C19-087",
+"task_class": "SPECIFY",
+"area": "09. Operational safety",
+"req": "Define a process for reviewing temporary development exceptions.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented process for reviewing temporary development-origin exceptions",
+"prior_evidence": []
+},
+{
+"id": "C19-088",
+"task_class": "IMPLEMENT",
+"area": "09. Operational safety",
+"req": "Track policy-related HTTP failures without logging secrets.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ws.rejected logs status/reason without secrets, but no CORS-specific failure counter distinct from general rejection logging",
+"prior_evidence": [
+"gateway/log.js",
+"gateway/server.js#L155"
+]
+},
+{
+"id": "C19-089",
+"task_class": "IMPLEMENT",
+"area": "09. Operational safety",
+"req": "Provide a CORS troubleshooting procedure distinct from handshake diagnosis.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no CORS-specific troubleshooting procedure found distinct from WS handshake diagnosis",
+"prior_evidence": []
+},
+{
+"id": "C19-090",
+"task_class": "DOCUMENT",
+"area": "09. Operational safety",
+"req": "Record the policy owner and change-review procedure.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no record of a named policy owner or change-review procedure for the CORS policy",
+"prior_evidence": []
+},
+{
+"id": "C19-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Publish the verified applicability decision.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ARCHITECTURE.md D-001 records the profile decision; no single published \"applicability\" verdict document for HTTP CORS specifically",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#decisions"
+]
+},
+{
+"id": "C19-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Publish the route-specific HTTP CORS policy.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "the route-specific policy exists in code (origin.js/server.js) but is not published as a standalone policy document/table",
+"prior_evidence": [
+"gateway/origin.js",
+"gateway/server.js#L110-131"
+]
+},
+{
+"id": "C19-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Publish the browser test matrix.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no browser test matrix document found (only Chromium was exercised, and not for this component)",
+"prior_evidence": []
+},
+{
+"id": "C19-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link origin-method-header success and rejection tests.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "authz.test.js links origin allow/deny outcomes with the OPTIONS/ticket flow in one test file",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-27"
+]
+},
+{
+"id": "C19-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link credentialed-request tests when applicable.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "credentialed request (ticket cookie issuance) is exercised alongside the origin-allow OPTIONS case",
+"prior_evidence": [
+"tests/security/authz.test.js#L25-26",
+"gateway/server.js#L127"
+]
+},
+{
+"id": "C19-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Link preflight cache tests when applicable.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "OPEN",
+"prior_note": "no preflight cache-behavior test exists to link (Max-Age is set but untested for caching effects)",
+"prior_evidence": []
+},
+{
+"id": "C19-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Record source claims corrected or left unresolved in a separate verification note.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "PASS",
+"prior_note": "BASELINE.md Q01 records the corrected claim: WS upgrades are not CORS-preflighted",
+"prior_evidence": [
+"docs/BASELINE.md#Q01"
+]
+},
+{
+"id": "C19-098",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Mark inapplicable HTTP features N/A with a rationale.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VALIDATION.md marks PowerShell/.NET HttpListener NOT_APPLICABLE generally, but no item-specific N/A rationale for HTTP CORS sub-features exists",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run-and-why"
+]
+},
+{
+"id": "C19-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Document the boundary with WebSocket origin validation.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "origin.js docstring states the WS vs HTTP CORS boundary in one paragraph; no separate published document",
+"prior_evidence": [
+"gateway/origin.js#L1-9"
+]
+},
+{
+"id": "C19-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and conditional closure",
+"req": "Approve this component only for demonstrated HTTP behavior.",
+"ram_overlay": "Keep HTTP CORS decisions separate from WebSocket authorization. Retain an immutable HTTP-header policy and avoid per-response policy reconstruction.",
+"challenge": "Record separate ordinary HTTP and WebSocket tests; show no reliance on a CORS header as session authorization.",
+"ref_work": [
+"R25"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only the ticket-endpoint HTTP behavior is implemented and partially tested; full approval record not found",
+"prior_evidence": [
+"gateway/server.js#L110-131",
+"tests/security/authz.test.js#L25-27"
+]
+}
+]
+}

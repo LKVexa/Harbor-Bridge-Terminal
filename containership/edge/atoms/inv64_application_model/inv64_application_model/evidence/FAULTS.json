@@ -1,0 +1,128 @@
+{
+  "schema": "PK_APP_FAULTS/1",
+  "rto_objective_s": 1.0,
+  "scenarios": [
+    {
+      "fmea": "FM-ADJ-1",
+      "fault": "INV-63 latency 5s vs 2s deadline",
+      "expected": "deadline.exceeded, providers unbound",
+      "observed": "deadline.exceeded, providers bound=False",
+      "pass": true,
+      "id": "f01_adjacent_latency_exceeds_deadline",
+      "elapsed_s": 0.0004
+    },
+    {
+      "fmea": "FM-ADJ-2",
+      "fault": "INV-66 connection refused",
+      "expected": "admission.overloaded (retryable), nothing deployed",
+      "observed": "admission.overloaded",
+      "pass": true,
+      "id": "f02_adjacent_unavailable",
+      "elapsed_s": 0.0001
+    },
+    {
+      "fmea": "FM-ADJ-3",
+      "fault": "INV-63 malformed response",
+      "expected": "internal, providers unbound",
+      "observed": "internal",
+      "pass": true,
+      "id": "f03_adjacent_malformed",
+      "elapsed_s": 0.0001
+    },
+    {
+      "fmea": "FM-ADJ-4",
+      "fault": "INV-65 advertises unsupported contract v3",
+      "expected": "version.unsupported before any call",
+      "observed": "version.unsupported",
+      "pass": true,
+      "id": "f04_adjacent_version_mismatch",
+      "elapsed_s": 0.0
+    },
+    {
+      "fmea": "FM-CFG-1",
+      "fault": "process kill after PREPARE journaled",
+      "expected": "active=rev-000001",
+      "observed": "active=rev-000001 recovery={'txid': '5cb49002-7c60-4c25-9f8a-41354c1801d4', 'action': 'aborted', 'rev': 'rev-000002'}",
+      "recovery_s": 0.0007,
+      "pass": true,
+      "id": "f05_crash_after_prepare",
+      "elapsed_s": 0.0048
+    },
+    {
+      "fmea": "FM-CFG-2",
+      "fault": "process kill after COMMIT journaled",
+      "expected": "active=rev-000002",
+      "observed": "active=rev-000002 recovery={'txid': 'ff15d253-b3c6-4be3-ac9e-02a4ab286ca4', 'action': 'rolled_forward', 'rev': 'rev-000002'}",
+      "recovery_s": 0.0005,
+      "pass": true,
+      "id": "f06_crash_after_commit",
+      "elapsed_s": 0.0038
+    },
+    {
+      "fmea": "FM-AUD-1",
+      "fault": "audit sink raises OSError",
+      "expected": "bounded buffer, drops counted+chained, critical op refused",
+      "observed": "dropped=2 loss_records=1 critical_refused=True verified=5",
+      "pass": true,
+      "id": "f07_audit_sink_outage",
+      "elapsed_s": 0.0011
+    },
+    {
+      "fmea": "FM-TRUST-1",
+      "fault": "trust source unavailable",
+      "expected": "cached keys verify within TTL; auth.trust_unavailable after",
+      "observed": "within_ttl=True after_ttl=auth.trust_unavailable",
+      "pass": true,
+      "id": "f08_identity_service_outage",
+      "elapsed_s": 0.0002
+    },
+    {
+      "fmea": "FM-TIME-1",
+      "fault": "issuer clock 300s ahead (skew allowance 60s)",
+      "expected": "auth.not_yet_valid",
+      "observed": "auth.not_yet_valid",
+      "pass": true,
+      "id": "f09_clock_skew",
+      "elapsed_s": 0.0001
+    },
+    {
+      "fmea": "FM-POL-1",
+      "fault": "no verified policy / corrupt policy",
+      "expected": "deny (authz.policy_invalid); corrupt policy rejected",
+      "observed": "authz.policy_invalid; PolicyError",
+      "pass": true,
+      "id": "f10_policy_service_outage",
+      "elapsed_s": 0.0
+    },
+    {
+      "fmea": "FM-CFG-3",
+      "fault": "candidate fails health after commit (crash loop)",
+      "expected": "auto rollback + quarantine; retry refused",
+      "observed": "active=rev-000001 retry=activation.quarantined",
+      "pass": true,
+      "id": "f11_crash_loop_quarantine",
+      "elapsed_s": 0.0046
+    },
+    {
+      "fmea": "FM-CFG-4",
+      "fault": "client retries activation after server restart",
+      "expected": "activation.conflict (CAS), single effect",
+      "observed": "activation.conflict",
+      "pass": true,
+      "id": "f12_duplicate_after_restart",
+      "elapsed_s": 0.0021
+    },
+    {
+      "fmea": "FM-CFG-5",
+      "fault": "state snapshot corrupted on disk",
+      "expected": "refuse to start (fail safe); restore from backup (BACKUP_RESTORE.md)",
+      "observed": "JSONDecodeError",
+      "pass": true,
+      "id": "f13_corrupt_state_snapshot",
+      "elapsed_s": 0.002
+    }
+  ],
+  "passed": 13,
+  "total": 13,
+  "result": "PASS"
+}

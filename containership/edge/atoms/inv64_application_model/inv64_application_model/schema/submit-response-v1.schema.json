@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv64:submit-response:v1",
+  "title": "PK_APP_SUBMIT_RESPONSE/1",
+  "type": "object",
+  "required": [
+    "format",
+    "correlation_id",
+    "traceparent",
+    "outcome",
+    "result",
+    "error",
+    "replayed"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "PK_APP_SUBMIT_RESPONSE/1"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "traceparent": {
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "success",
+        "partial_success",
+        "degraded",
+        "retryable_failure",
+        "terminal_failure",
+        "rejected_before_activation"
+      ]
+    },
+    "replayed": {
+      "type": "boolean"
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:inv64:error:v1"
+        }
+      ]
+    },
+    "result": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "valid",
+            "issue_count",
+            "issues",
+            "truncated",
+            "canonical"
+          ],
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "issue_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "path",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "description": "sorted by (path, code)"
+            },
+            "canonical": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "form",
+                    "algorithm",
+                    "digest",
+                    "precondition"
+                  ],
+                  "properties": {
+                    "form": {
+                      "const": "PK_APP_CANONICAL/1"
+                    },
+                    "algorithm": {
+                      "const": "sha256"
+                    },
+                    "digest": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "precondition": {
+                      "const": "validated"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

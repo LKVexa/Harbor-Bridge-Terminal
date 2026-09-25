@@ -1,0 +1,353 @@
+{
+  "schema": "INV52_CONFORMANCE/1",
+  "contract": [
+    "PK_MSG_ENVELOPE/1",
+    "PK_MSG_PUBLISH/1",
+    "PK_MSG_SUBSCRIBE/1"
+  ],
+  "note": "Broker-neutral conformance fixtures. An adapter conforms when it produces the same delivered/error/outcome results.",
+  "cases": [
+    {
+      "id": "CF-01 content route large",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "routes": [
+        {
+          "name": "large",
+          "topic": "orders",
+          "match": [
+            "total",
+            "ge",
+            100
+          ]
+        },
+        {
+          "name": "small",
+          "topic": "orders",
+          "match": [
+            "total",
+            "lt",
+            100
+          ]
+        }
+      ],
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "delivered": 1,
+        "sinks": {
+          "large": 1,
+          "small": 0
+        },
+        "outcome": "success"
+      }
+    },
+    {
+      "id": "CF-02 content route small",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "routes": [
+        {
+          "name": "large",
+          "topic": "orders",
+          "match": [
+            "total",
+            "ge",
+            100
+          ]
+        },
+        {
+          "name": "small",
+          "topic": "orders",
+          "match": [
+            "total",
+            "lt",
+            100
+          ]
+        }
+      ],
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 5
+        }
+      },
+      "expect": {
+        "delivered": 1,
+        "sinks": {
+          "large": 0,
+          "small": 1
+        },
+        "outcome": "success"
+      }
+    },
+    {
+      "id": "CF-03 no route -> dead letter",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "routes": [
+        {
+          "name": "vip",
+          "topic": "orders",
+          "match": [
+            "tier",
+            "eq",
+            "vip"
+          ]
+        }
+      ],
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "delivered": 0,
+        "dead_letter_reason": "no route matched",
+        "outcome": "dead_lettered"
+      }
+    },
+    {
+      "id": "CF-04 topic not allowed",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "mallory",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "mallory",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "error": "PK_MSG_TOPIC_DENIED"
+      }
+    },
+    {
+      "id": "CF-05 fail closed on unknown topic",
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "error": "PK_MSG_TOPIC_DENIED"
+      }
+    },
+    {
+      "id": "CF-06 source spoofing",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "billing",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "error": "PK_MSG_TOPIC_DENIED"
+      }
+    },
+    {
+      "id": "CF-07 missing source",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "x",
+        "type": "t",
+        "time": 0,
+        "data": {}
+      },
+      "expect": {
+        "error": "PK_MSG_ENVELOPE_INVALID"
+      }
+    },
+    {
+      "id": "CF-08 null data",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": null
+      },
+      "expect": {
+        "error": "PK_MSG_ENVELOPE_INVALID"
+      }
+    },
+    {
+      "id": "CF-09 oversize payload",
+      "bus": {
+        "max_payload_bytes": 256
+      },
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "blob": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      },
+      "expect": {
+        "error": "PK_MSG_RESOURCE_LIMIT"
+      }
+    },
+    {
+      "id": "CF-10 bad traceparent",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": "2026-09-22T00:00:00Z",
+        "data": {
+          "total": 250
+        },
+        "traceparent": "nope"
+      },
+      "expect": {
+        "error": "PK_MSG_ENVELOPE_INVALID"
+      }
+    },
+    {
+      "id": "CF-11 numeric time accepted",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "routes": [
+        {
+          "name": "large",
+          "topic": "orders",
+          "match": [
+            "total",
+            "ge",
+            100
+          ]
+        },
+        {
+          "name": "small",
+          "topic": "orders",
+          "match": [
+            "total",
+            "lt",
+            100
+          ]
+        }
+      ],
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": 1790000000,
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "delivered": 1,
+        "outcome": "success"
+      }
+    },
+    {
+      "id": "CF-12 boolean time rejected",
+      "allow": {
+        "orders": [
+          "shop"
+        ]
+      },
+      "app": "shop",
+      "topic": "orders",
+      "message": {
+        "id": "fx-1",
+        "source": "shop",
+        "type": "order.placed",
+        "time": true,
+        "data": {
+          "total": 250
+        }
+      },
+      "expect": {
+        "error": "PK_MSG_ENVELOPE_INVALID"
+      }
+    }
+  ]
+}

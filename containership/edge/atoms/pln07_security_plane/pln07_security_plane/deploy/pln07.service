@@ -1,0 +1,27 @@
+# systemd unit (MC-22). Service host wrapper is deployment-specific; this runs the
+# health self-check on start and refuses to start if the gate evidence is not GO/CONDITIONAL_GO.
+[Unit]
+Description=PLN-07 Security Plane
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pln07
+Group=pln07
+Environment=PLN07_CONFIG=/etc/pln07/config.json
+Environment=PLN07_REVOCATION_LOG=/var/lib/pln07/revocation.log
+ExecStartPre=/usr/bin/python3 -m pln07_security_plane.ci.gate --quick
+ExecStart=/usr/bin/python3 -m pln07_security_plane.deploy.host
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/pln07
+CapabilityBoundingSet=
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

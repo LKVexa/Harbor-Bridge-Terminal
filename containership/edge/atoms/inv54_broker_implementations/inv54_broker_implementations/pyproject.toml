@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv54-broker-implementations"
+version = "4.3.0"
+description = "INV-54 broker implementations: reference fan-out/partitioned-log brokers plus the production layer (security, durability, HA, telemetry, provider adapters)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE-PENDING.md" }
+authors = [{ name = "David Paul Russell", email = "davidpaulrussell@linearfinance.org" }]
+classifiers = ["Programming Language :: Python :: 3", "Private :: Do Not Upload"]
+dependencies = []  # runtime core is stdlib-only by design (components 34/35)
+
+[project.optional-dependencies]
+encryption = ["cryptography==46.0.7"]
+kafka = ["confluent-kafka==2.6.1"]
+rabbitmq = ["pika==1.3.2"]
+sqs = ["boto3==1.35.99"]
+
+[project.scripts]
+inv54-health = "inv54_broker_implementations.cli:main"
+
+[tool.setuptools]
+package-dir = { "inv54_broker_implementations" = "." }
+packages = ["inv54_broker_implementations", "inv54_broker_implementations.adapters"]
+
+[tool.setuptools.package-data]
+inv54_broker_implementations = ["schemas/*.json", "config/*.json", "config/overlays/*.json", "VERSION"]

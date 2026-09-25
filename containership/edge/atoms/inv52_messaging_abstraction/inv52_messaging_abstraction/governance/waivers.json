@@ -1,0 +1,79 @@
+{
+  "schema": "INV52_WAIVERS/1",
+  "policy": "Every waiver needs an owner, risk rating, compensating control and expiry; the gate fails on an expired waiver or an UNASSIGNED waiver owner.",
+  "waivers": [
+    {
+      "id": "W-001",
+      "kind": "exception",
+      "requirement": [
+        "INV-52-C044",
+        "INV-52-C045"
+      ],
+      "risk": "high",
+      "summary": "No signature/attestation verification (Sigstore/cosign, node attestation); only digest+provenance allow-listing.",
+      "compensating": "verify_artifact digest allow-list; platform admission control",
+      "owner": "UNASSIGNED",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "W-002",
+      "kind": "exception",
+      "requirement": [
+        "INV-52-C068"
+      ],
+      "risk": "low",
+      "summary": "Power/thermal not measured.",
+      "compensating": "none; edge certification must measure on hardware",
+      "owner": "UNASSIGNED",
+      "expires": "2027-03-31"
+    },
+    {
+      "id": "W-003",
+      "kind": "technical-debt",
+      "requirement": [
+        "INV-52-C057"
+      ],
+      "risk": "medium",
+      "summary": "In-process dead letters are volatile across restarts.",
+      "compensating": "Outbox for producers; export before planned restart; durable DLQ in INV-53",
+      "owner": "UNASSIGNED",
+      "expires": "2027-03-31"
+    },
+    {
+      "id": "W-004",
+      "kind": "deprecation",
+      "requirement": [
+        "INV-52-C099"
+      ],
+      "risk": "low",
+      "summary": "PubSub(predicate_view='copy') runtime default kept for 4.2.0 compatibility; config default is 'frozen'. Plan: runtime default -> 'frozen' in 5.0.0.",
+      "compensating": "config default frozen",
+      "owner": "UNASSIGNED",
+      "expires": "2027-09-30"
+    },
+    {
+      "id": "W-005",
+      "kind": "deprecation",
+      "requirement": [
+        "INV-52-C099"
+      ],
+      "risk": "low",
+      "summary": "Direct mutation of PubSub.routes/publishers (4.2.0 style) is tolerated with positional route ids; to be removed in 5.0.0.",
+      "compensating": "subscribe()/allow() are the supported APIs",
+      "owner": "UNASSIGNED",
+      "expires": "2027-09-30"
+    },
+    {
+      "id": "W-006",
+      "kind": "technical-debt",
+      "requirement": [
+        "INV-52-C051"
+      ],
+      "risk": "medium",
+      "summary": "A blocking subscriber sink blocks its publisher thread (no internal delivery timeout).",
+      "compensating": "sinks must be non-blocking; GuardedSink breaker after failures",
+      "owner": "UNASSIGNED",
+      "expires": "2027-03-31"
+    }
+  ]
+}

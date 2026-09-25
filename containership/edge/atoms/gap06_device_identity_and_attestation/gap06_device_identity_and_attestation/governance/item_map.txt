@@ -1,0 +1,611 @@
+# ID | status P=partial(implemented+evidence, unreviewed) B=blocked N=not started | evidence (T:Class.test, F:path, E:evidence file) | note
+# A P line whose T: evidence fails or whose F:/E: is missing is automatically downgraded to B by tools/release.py.
+U01|B||HUMAN: no engineering owner, security or operations reviewer can be assigned by the builder
+U02|P|F:docs/MASTER.md;F:docs/THREAT_MODEL.md;F:docs/COMPATIBILITY.md|program-level scope/assumptions; per-component deployment modes not all defined
+U03|P|F:docs/SPEC.md|SHALL statements generated mechanically from checklist items; not yet atomic/reviewed
+U04|P|F:docs/MASTER.md;F:docs/THREAT_MODEL.md|component diagram + trust boundaries; no state diagrams per component
+U05|P|F:schemas/PK_ATTESTATION_1.schema.json;F:docs/ERROR_CATALOG.md;F:docs/MASTER.md|
+U06|P|F:docs/CONFIG.md;T:OpsTest.test_config|
+U07|P|F:docs/THREAT_MODEL.md|draft, unreviewed
+U08|P|T:EndToEndTest.test_no_policy_fails_closed;T:VerifierTest.test_internal_error_never_trusts;T:EndToEndTest.test_unbound_evidence_cannot_quarantine|
+U09|P|E:evidence/fuzz.json;T:AdmissionTest.test_per_principal_global_and_bounded;T:ReplayTest.test_bounded_retention_and_post_prune_replay|idempotency rows are unbounded (evidence/bench.json)
+U10|P|T:ErrorsSchemasTest.test_registry_and_redaction;T:TransportMtlsTest.test_mutual_tls_roundtrip|at-rest encryption not implemented
+U11|P|T:QuoteParserTest.test_truncation_every_offset;T:DurableStoreTest.test_torn_tail_truncated|
+U12|B||INFRA: no production-equivalent dependencies (real TPMs, database, KMS, peers)
+U13|P|T:ConcurrencyTest.test_racing_consumers_one_winner;T:DurableStoreTest.test_torn_tail_truncated;T:OpsTest.test_quarantine_outbox_acks|in-process only
+U14|P|T:OpsTest.test_telemetry;F:docs/OBSERVABILITY.md|no dashboards/alert deployment
+U15|P|F:docs/CAPACITY.md;E:evidence/bench.json|
+U16|P|F:docs/RUNBOOKS.md|never executed in staging
+U17|P|E:evidence/EVIDENCE_MANIFEST.json|no source commit (archive is not a git repo); signing key is ephemeral
+U18|P|F:CHECKLIST_STATUS.md|
+U19|P|F:governance/WAIVERS.json|register exists and is empty; vulnerability review needs an advisory feed
+U20|B||HUMAN: independent code/security/operations review and a formal exit-gate approval cannot be performed by the builder
+01.01|P|F:mc/verifier.py;F:docs/COMPATIBILITY.md|matrix published; every hardware row untested
+01.02|P|T:VerifierTest.test_positive;T:VerifierTest.test_negative_vectors|envelope binds nonce, AK name, PCR selection/digest, clock/reset/restart, firmware; device identity via enrollment
+01.03|P|T:QuoteParserTest.test_trailing_bytes;T:QuoteParserTest.test_bad_magic;T:QuoteParserTest.test_truncation_every_offset;T:QuoteParserTest.test_duplicate_bank_and_illegal_select;E:evidence/fuzz.json|
+01.04|P|T:VerifierTest.test_negative_vectors;T:VerifierTest.test_other_key_and_revoked;T:AlgorithmAgilityTest.test_policy|
+01.05|P|T:VerifierTest.test_negative_vectors;T:VerifierTest.test_required_pcr_missing|
+01.06|P|T:EventLogTest.test_replay_matches_and_divergence;T:EventLogTest.test_malformed_logs|validated log digest retained in claims
+01.07|P|T:VerifierTest.test_ima|ima-ng ASCII only; binary IMA list not parsed
+01.08|P|T:ReplayTest.test_capacity_audience_and_cross_node;T:EndToEndTest.test_other_node_cannot_attest_or_steal|tenant is estate-level for nodes (contract)
+01.09|P|T:ClockTest.test_monotonic_counters;T:VerifierTest.test_counter_rollback_rejected|
+01.10|P|T:TeeAdapterTest.test_cases|generic adapter only; vendor TEE adapters blocked (HW)
+01.11|P|T:VerifierTest.test_relay_channel_binding_and_duplicate_device;T:EnrollmentTest.test_clone_refused_until_revoked_and_replace|no MakeCredential/ActivateCredential or locality (HW)
+01.12|P|F:mc/algorithms.py;T:AlgorithmAgilityTest.test_curve_mismatch_and_ed25519_length|OpenSSL via cryptography; no custom primitives
+01.13|B|T:VerifierTest.test_negative_vectors|HW: negative vectors exist; positive vectors from two hardware families + vTPM do not
+01.14|P|T:VerifierTest.test_negative_vectors;F:docs/ERROR_CATALOG.md|
+01.15|P|T:VerifierTest.test_positive|record carries verifier version, anchor set, policy version, digests, decision, reason, time
+02.01|B|F:docs/RUNBOOKS.md|ORG: governed vendor trust-store import process needs owners/approvers
+02.02|P|T:CertChainTest.test_failures|strict parse via cryptography; duplicate-critical-extension rejection relies on the library
+02.03|P|T:CertChainTest.test_valid;T:CertChainTest.test_pathlen;T:CertChainTest.test_failures|name constraints not evaluated
+02.04|P|T:CertChainTest.test_failures|keyUsage checked; TCG EK SAN/TPM attributes not parsed
+02.05|P|T:EnrollmentTest.test_ceremony_and_single_use_ticket|AK linked by PoP + enrollment; TPM credential activation blocked (HW)
+02.06|P|T:CertChainTest.test_revocation_and_poisoned_crl|CRL only; OCSP not implemented
+02.07|N||revocation cache is in memory
+02.08|P|F:mc/enrollment.py|certificate time taken from TrustedClock in enrollment
+02.09|P|F:mc/certchain.py|serial/fingerprints available; not yet written into the evidence record
+02.10|N||
+02.11|P|T:CertChainTest.test_failures;T:CertChainTest.test_revocation_and_poisoned_crl;T:EnrollmentTest.test_authz_and_untrusted_ek|
+02.12|B||ORG: manufacturer-root provenance needs vendor sources and approvers
+02.13|P|F:docs/COMPATIBILITY.md|
+03.01|P|F:mc/enrollment.py|pending/active/revoked implemented; suspended/recovery-pending not
+03.02|P|T:EnrollmentTest.test_ceremony_and_single_use_ticket;T:EnrollmentTest.test_pop_failure_and_expiry|
+03.03|P|T:EnrollmentTest.test_authz_and_untrusted_ek;T:TransportMtlsTest.test_mutual_tls_roundtrip|enrollment routes not bound to transport yet
+03.04|P|T:EnrollmentTest.test_ceremony_and_single_use_ticket|ticket bound to node, EK fp, AK name, challenge
+03.05|P|T:EnrollmentTest.test_clone_refused_until_revoked_and_replace;T:VerifierTest.test_relay_channel_binding_and_duplicate_device|
+03.06|P|T:EnrollmentTest.test_rotation|no overlap window
+03.07|P|T:EnrollmentTest.test_clone_refused_until_revoked_and_replace|
+03.08|P|T:EndToEndTest.test_revoked_node|suspension not implemented
+03.09|N||
+03.10|P|T:EnrollmentTest.test_pop_failure_and_expiry;T:EnrollmentTest.test_ceremony_and_single_use_ticket|no idempotency key on enrollment
+03.11|P|T:TransportMtlsTest.test_mutual_tls_roundtrip|no private keys transmitted by design
+03.12|P|T:EnrollmentTest.test_pop_failure_and_expiry;T:EnrollmentTest.test_authz_and_untrusted_ek;T:EnrollmentTest.test_clone_refused_until_revoked_and_replace|
+03.13|P|T:AuditTest.test_verify_and_tamper;F:mc/enrollment.py|approver not recorded
+03.14|N||
+04.01|P|F:mc/workload.py|service/container class only
+04.02|P|T:EndToEndTest.test_workload_identity|node verdict → workload token; orchestrator evidence absent
+04.03|P|T:EndToEndTest.test_workload_identity|image digest + node binding; signer/provenance not bound
+04.04|P|T:EndToEndTest.test_workload_identity|short-lived signed token; not SPIFFE SVID
+04.05|N||
+04.06|P|T:EndToEndTest.test_workload_identity|digest allow-list; tag rejection not explicit
+04.07|P|T:EndToEndTest.test_workload_identity|token exp capped at node verdict expiry; no push revocation
+04.08|N||
+04.09|P|T:EndToEndTest.test_workload_identity|
+04.10|N||
+04.11|P|T:EndToEndTest.test_workload_identity|
+04.12|N||
+04.13|N||
+05.01|P|F:schemas/PK_ATTESTATION_1.schema.json;F:schemas/PK_NODE_IDENTITY_1.schema.json;F:schemas/PK_ACCEPTED_MEASUREMENTS_1.schema.json|JSON Schema 2020-12, generated
+05.02|P|T:ErrorsSchemasTest.test_schemas|
+05.03|P|F:docs/ERROR_CATALOG.md;T:ErrorsSchemasTest.test_registry_and_redaction|
+05.04|P|F:mc/schemas.py|schema version yes; tenant/site context only on PK_NODE_IDENTITY
+05.05|P|F:docs/MASTER.md|
+05.06|N||bindings hand-written in mc/schemas.py (JSON Schema generated from them, not the reverse)
+05.07|P|T:ErrorsSchemasTest.test_schemas;E:evidence/fuzz.json|
+05.08|P|F:mc/policy.py;F:mc/audit.py|canonical JSON (sorted keys, compact) for everything signed/hashed
+05.09|P|F:schemas/fixtures/positive_attestation.json;F:schemas/fixtures/negative_cases.json|
+05.10|B||ORG: only one implementation language exists
+05.11|P|T:ErrorsSchemasTest.test_schema_fuzz_never_crashes;E:evidence/fuzz.json|
+05.12|P|F:mc/transport.py|HTTPS/JSON only
+05.13|P|E:evidence/EVIDENCE_MANIFEST.json|schema digests recorded
+06.01|P|T:TransportMtlsTest.test_mutual_tls_roundtrip|
+06.02|P|F:mc/authz.py|
+06.03|P|T:IsolationTest.test_scopes;T:EndToEndTest.test_other_node_cannot_attest_or_steal|
+06.04|P|T:IsolationTest.test_scopes|
+06.05|P|T:TransportMtlsTest.test_mutual_tls_roundtrip|chain+expiry by OpenSSL; client CRL not configured
+06.06|N||
+06.07|P|F:mc/transport.py|TLS>=1.2 floor; cipher policy = OpenSSL default
+06.08|N||no multi-party authorization on revocation/enrollment
+06.09|P|F:mc/transport.py|principal only from peer certificate
+06.10|P|T:AdmissionTest.test_per_principal_global_and_bounded|auth-failure throttling not separate
+06.11|P|T:ErrorsSchemasTest.test_registry_and_redaction;T:OpsTest.test_telemetry|
+06.12|P|T:IsolationTest.test_scopes|not exhaustive endpoint×role×tenant
+06.13|P|T:IsolationTest.test_scopes|denials recorded in memory, not in audit ledger
+06.14|N||
+07.01|P|F:mc/store.py;F:docs/MASTER.md|
+07.02|P|F:docs/adr/ADR-002-persistence-and-replay.md;T:DurableStoreTest.test_restart_preserves_state_and_chain|
+07.03|P|T:ReplayTest.test_restart_does_not_reopen_replay|
+07.04|P|T:EndToEndTest.test_restart_keeps_verdict_and_replay_state|
+07.05|N||
+07.06|N||
+07.07|P|T:DurableStoreTest.test_mid_log_corruption_detected|chain + generation monotonicity; no relational constraints
+07.08|P|T:DurableStoreTest.test_snapshot_backup_restore_floor|
+07.09|P|T:ReplayTest.test_bounded_retention_and_post_prune_replay|WAL never compacted
+07.10|P|T:DurableStoreTest.test_torn_tail_truncated;T:DurableStoreTest.test_transaction_atomic_on_exception|one crash point simulated, not every write boundary
+07.11|P|T:DurableStoreTest.test_snapshot_backup_restore_floor;T:ReplayTest.test_restart_does_not_reopen_replay|
+07.12|N||
+07.13|B||ORG: RPO/RTO targets need an owner
+07.14|P|T:DurableStoreTest.test_mid_log_corruption_detected|corruption raises at open (service cannot start)
+08.01|P|F:mc/replay.py|
+08.02|P|T:ConcurrencyTest.test_racing_consumers_one_winner|in-process CAS on one store
+08.03|P|T:ReplayTest.test_lease_fencing|
+08.04|P|T:ReplayTest.test_lease_fencing|
+08.05|B||INFRA: no multi-replica deployment to define partition behaviour against
+08.06|P|F:mc/replay.py|256-bit CSPRNG; no cross-replica uniqueness check
+08.07|P|T:ReplayTest.test_bounded_retention_and_post_prune_replay|
+08.08|B||INFRA: multi-site
+08.09|P|T:ClockTest.test_unsynced_skew_stale_monotone|
+08.10|P|T:ConcurrencyTest.test_racing_consumers_one_winner|threads, not replicas
+08.11|B||INFRA: chaos needs a replicated deployment
+08.12|N||
+08.13|P|T:PropertyFuzzTest.test_random_mutation_never_trusted;T:ReplayTest.test_capacity_audience_and_cross_node|invariants tested, not formally specified
+08.14|P|F:docs/RUNBOOKS.md|
+09.01|P|F:mc/policy.py|
+09.02|B||INFRA: publication keys must live in managed custody
+09.03|P|T:PolicyTest.test_quorum_and_bad_signatures;T:PolicyTest.test_rollback_env_staging|
+09.04|P|T:PolicyTest.test_quorum_and_bad_signatures|
+09.05|P|T:PolicyTest.test_rollback_env_staging|
+09.06|P|T:PolicyTest.test_rollout_percent|no automatic halt
+09.07|P|F:mc/policy.py|
+09.08|P|F:mc/policy.py|policy_history table
+09.09|P|T:PolicyTest.test_precedence|
+09.10|P|T:PolicyTest.test_quorum_and_bad_signatures;T:PolicyTest.test_rollback_env_staging|
+09.11|N||
+09.12|P|T:PolicyTest.test_quorum_and_bad_signatures;T:PolicyTest.test_rollback_env_staging|
+09.13|N||activation not yet written to the audit ledger
+09.14|N||
+10.01|P|F:docs/adr/ADR-004-time.md|
+10.02|P|T:ClockTest.test_unsynced_skew_stale_monotone|authenticated source not integrated (INFRA)
+10.03|P|F:mc/ops.py;F:mc/clock.py|skew budget configurable; leap/NTP requirements not written
+10.04|P|T:ReplayTest.test_restart_does_not_reopen_replay|
+10.05|P|T:ClockTest.test_monotonic_counters|
+10.06|P|T:ClockTest.test_unsynced_skew_stale_monotone|
+10.07|P|T:ClockTest.test_unsynced_skew_stale_monotone|skew check is symmetric
+10.08|P|F:mc/enrollment.py|
+10.09|P|T:OpsTest.test_offline|
+10.10|P|F:mc/clock.py|FakeMonotonic lives in the library; no build-time exclusion
+10.11|P|T:ClockTest.test_unsynced_skew_stale_monotone|no DST/leap tests
+10.12|N||
+10.13|P|F:docs/RUNBOOKS.md|
+11.01|P|F:mc/ops.py|
+11.02|P|T:EndToEndTest.test_drift_quarantines_and_peers_cordon|reference peers only
+11.03|N||
+11.04|P|T:OpsTest.test_quarantine_outbox_acks|
+11.05|P|T:OpsTest.test_quarantine_outbox_acks|
+11.06|P|T:EndToEndTest.test_revoked_node|
+11.07|P|T:OpsTest.test_quarantine_outbox_acks|
+11.08|P|T:EndToEndTest.test_forged_signature_does_not_quarantine|
+11.09|P|T:EndToEndTest.test_explain_and_audit_chain|acks not audited
+11.10|N||
+11.11|P|T:OpsTest.test_quarantine_outbox_acks|
+11.12|N||
+11.13|P|F:docs/RUNBOOKS.md|
+12.01|P|T:OpsTest.test_scheduler|
+12.02|P|T:OpsTest.test_scheduler|
+12.03|N||
+12.04|P|T:OpsTest.test_scheduler|
+12.05|N||
+12.06|P|T:OpsTest.test_offline|
+12.07|N||
+12.08|P|T:EndToEndTest.test_workload_identity|
+12.09|N||
+12.10|B||SCALE: million-node simulation not run
+12.11|N||
+12.12|N||
+12.13|N||
+13.01|P|F:mc/audit.py|
+13.02|P|F:mc/audit.py|no tenant/site/correlation fields
+13.03|P|T:AuditTest.test_verify_and_tamper|per-event signatures instead of checkpoints
+13.04|B||INFRA: WORM storage
+13.05|P|T:AuditTest.test_verify_and_tamper|detection, not prevention
+13.06|P|T:AuditTest.test_redaction_and_unknown_type|
+13.07|N||
+13.08|P|T:AuditTest.test_verify_and_tamper;T:AuditTest.test_truncation_needs_anchor;T:AuditTest.test_forged_key|
+13.09|N||
+13.10|P|T:AuditTest.test_verify_and_tamper;T:AuditTest.test_truncation_needs_anchor|insertion/reorder covered by seq+prev checks, not separately tested
+13.11|N||
+13.12|N||
+13.13|N||
+14.01|P|F:docs/KEY_INVENTORY.md|
+14.02|P|F:docs/KEY_INVENTORY.md|owners unassigned
+14.03|B||INFRA: no HSM/KMS
+14.04|B||INFRA
+14.05|P|T:KeyStoreTest.test_acl_rotation_destroy_repr|
+14.06|P|T:KeyStoreTest.test_acl_rotation_destroy_repr|
+14.07|P|T:KeyStoreTest.test_acl_rotation_destroy_repr|no propagation
+14.08|P|F:mc/keys.py|best-effort only in CPython
+14.09|N||
+14.10|B||INFRA
+14.11|P|T:KeyStoreTest.test_acl_rotation_destroy_repr|
+14.12|B||INFRA
+14.13|N||
+15.01|P|F:docs/THREAT_MODEL.md|
+15.02|P|F:docs/THREAT_MODEL.md|
+15.03|P|F:docs/THREAT_MODEL.md|
+15.04|P|F:docs/THREAT_MODEL.md|
+15.05|P|F:docs/THREAT_MODEL.md|gap recorded (TH08)
+15.06|P|F:docs/THREAT_MODEL.md;E:evidence/fuzz.json|
+15.07|P|F:docs/THREAT_MODEL.md|
+15.08|B|F:docs/THREAT_MODEL.md|HW: no real TEE adapter to analyse
+15.09|P|F:docs/THREAT_MODEL.md|
+15.10|B||HUMAN: residual-risk owners
+15.11|B||INFRA+HUMAN: no production architecture, no pen-test team
+15.12|P|T:PropertyFuzzTest.test_random_mutation_never_trusted;E:evidence/fuzz.json|
+15.13|P|F:docs/THREAT_MODEL.md|
+15.14|B||HUMAN
+16.01|P|F:mc/store.py|
+16.02|P|T:DurableStoreTest.test_cas_conflict|library API only
+16.03|P|T:EndToEndTest.test_replay_idempotency_and_conflict|attest only; unbounded retention
+16.04|P|T:PolicyTest.test_rollback_env_staging|
+16.05|P|F:mc/service.py;T:DurableStoreTest.test_transaction_atomic_on_exception|audit event written after commit, not in the same transaction
+16.06|N||
+16.07|N||
+16.08|N||
+16.09|P|T:DurableStoreTest.test_cas_conflict;T:ConcurrencyTest.test_parallel_nodes|
+16.10|N||
+16.11|N||
+16.12|P|T:DurableStoreTest.test_snapshot_backup_restore_floor|
+17.01|P|F:mc/ratelimit.py|principal + global only
+17.02|P|T:AdmissionTest.test_per_principal_global_and_bounded|
+17.03|N||
+17.04|N||
+17.05|P|T:AdmissionTest.test_fairness|
+17.06|P|F:mc/schemas.py;F:mc/tpm.py|
+17.07|P|T:ErrorsSchemasTest.test_registry_and_redaction|retry_after hint in context
+17.08|N||
+17.09|P|E:evidence/bench.json|burst only
+17.10|P|T:AdmissionTest.test_fairness|
+17.11|N||
+17.12|P|F:docs/RUNBOOKS.md|
+18.01|P|F:mc/replay.py|
+18.02|P|F:mc/replay.py|
+18.03|P|T:ReplayTest.test_bounded_retention_and_post_prune_replay|
+18.04|P|T:ReplayTest.test_restart_does_not_reopen_replay|
+18.05|P|T:DurableStoreTest.test_snapshot_backup_restore_floor|
+18.06|P|T:ReplayTest.test_capacity_audience_and_cross_node|
+18.07|P|T:ConcurrencyTest.test_racing_consumers_one_winner|
+18.08|N||
+18.09|P|E:evidence/bench.json|minutes, not hours
+18.10|P|T:ReplayTest.test_bounded_retention_and_post_prune_replay;T:ReplayTest.test_restart_does_not_reopen_replay|
+18.11|N||
+18.12|P|F:docs/RUNBOOKS.md|
+19.01|P|T:ErrorsSchemasTest.test_registry_and_redaction|no correlation id in envelope
+19.02|P|F:docs/ERROR_CATALOG.md|
+19.03|P|T:ErrorsSchemasTest.test_registry_and_redaction|
+19.04|P|F:docs/ERROR_CATALOG.md|
+19.05|P|F:mc/errors.py|append-only by policy, not CI-enforced
+19.06|P|F:mc/errors.py|
+19.07|N||
+19.08|P|T:ErrorsSchemasTest.test_registry_and_redaction|not every path
+19.09|P|T:VerifierTest.test_internal_error_never_trusts|
+19.10|P|F:docs/ERROR_CATALOG.md|
+20.01|N||
+20.02|P|T:EndToEndTest.test_replay_idempotency_and_conflict|attest only
+20.03|P|T:EndToEndTest.test_replay_idempotency_and_conflict|
+20.04|N||
+20.05|P|T:OpsTest.test_scheduler|
+20.06|P|T:ReplayTest.test_capacity_audience_and_cross_node|
+20.07|P|T:ConcurrencyTest.test_racing_consumers_one_winner;T:PolicyTest.test_rollback_env_staging|
+20.08|N||
+20.09|N||
+20.10|N||
+20.11|N||
+21.01|P|F:mc/authz.py|
+21.02|P|T:IsolationTest.test_scopes|
+21.03|N||tables not partitioned by tenant/site
+21.04|P|T:ReplayTest.test_capacity_audience_and_cross_node|audience binding; site not bound into challenges
+21.05|N||
+21.06|P|T:PolicyTest.test_rollback_env_staging;T:EndToEndTest.test_workload_identity|
+21.07|N||
+21.08|P|T:IsolationTest.test_scopes|
+21.09|N||
+21.10|N||
+21.11|N||
+22.01|P|F:mc/ops.py|
+22.02|N||
+22.03|P|T:OpsTest.test_offline|one age only
+22.04|N||
+22.05|P|T:OpsTest.test_offline|
+22.06|N||
+22.07|N||
+22.08|P|T:OpsTest.test_offline|
+22.09|N||
+22.10|P|T:OpsTest.test_offline|
+22.11|N||
+22.12|N||
+23.01|P|T:OpsTest.test_health|
+23.02|P|T:OpsTest.test_health|
+23.03|P|T:OpsTest.test_health|
+23.04|N||
+23.05|P|F:mc/ops.py|
+23.06|N||
+23.07|N||
+23.08|N||
+23.09|P|T:OpsTest.test_health|
+23.10|B||INFRA
+24.01|P|F:docs/OBSERVABILITY.md|
+24.02|P|F:docs/OBSERVABILITY.md;F:mc/service.py|
+24.03|P|T:OpsTest.test_telemetry|
+24.04|P|T:OpsTest.test_telemetry|traceparent generation only
+24.05|N||
+24.06|P|T:OpsTest.test_telemetry|
+24.07|P|T:OpsTest.test_telemetry|
+24.08|N||
+24.09|B||INFRA: no dashboard platform
+24.10|P|F:docs/OBSERVABILITY.md|proposed alerts, not deployed
+24.11|P|T:OpsTest.test_telemetry|
+24.12|N||
+25.01|P|F:mc/service.py|keyed by node, not by verdict id
+25.02|P|T:EndToEndTest.test_explain_and_audit_chain|
+25.03|N||
+25.04|P|F:mc/service.py|requires read role
+25.05|N||
+25.06|N||
+25.07|N||
+25.08|P|T:EndToEndTest.test_explain_and_audit_chain|machine-readable only
+25.09|N||
+25.10|P|F:mc/ops.py|pure function
+26.01|P|F:docs/CAPACITY.md|
+26.02|P|T:OpsTest.test_shards|
+26.03|N||
+26.04|N||
+26.05|N||
+26.06|B||INFRA
+26.07|P|F:docs/CAPACITY.md|
+26.08|N||
+26.09|B|E:evidence/bench.json|SCALE: single-process baseline only
+26.10|B||INFRA
+26.11|N||
+26.12|N||
+27.01|B||ORG: RTO/RPO owners
+27.02|P|T:ReplayTest.test_lease_fencing|single-store simulation
+27.03|B||INFRA
+27.04|P|T:DurableStoreTest.test_snapshot_backup_restore_floor|backup digest only; not signed/encrypted
+27.05|P|T:DurableStoreTest.test_snapshot_backup_restore_floor|
+27.06|B||INFRA
+27.07|B||INFRA
+27.08|P|T:DurableStoreTest.test_mid_log_corruption_detected;T:DurableStoreTest.test_snapshot_backup_restore_floor|
+27.09|P|T:EndToEndTest.test_restart_keeps_verdict_and_replay_state|
+27.10|B||HUMAN+INFRA: game days
+27.11|N||
+27.12|P|F:docs/RUNBOOKS.md|
+28.01|P|F:docs/COMPATIBILITY.md|
+28.02|P|F:docs/COMPATIBILITY.md|
+28.03|P|F:docs/COMPATIBILITY.md|
+28.04|P|F:docs/COMPATIBILITY.md|
+28.05|N||
+28.06|B||HW: hardware lab
+28.07|B||HW: no vendor golden fixtures
+28.08|N||
+28.09|P|F:docs/COMPATIBILITY.md|
+28.10|P|F:docs/COMPATIBILITY.md|
+29.01|P|F:mc/integrations.py|
+29.02|P|T:EndToEndTest.test_drift_quarantines_and_peers_cordon|reference peer
+29.03|B||INFRA: GAP-02 not in archive
+29.04|B||INFRA: GAP-07 not in archive
+29.05|P|T:EndToEndTest.test_drift_quarantines_and_peers_cordon|reference peer
+29.06|N||
+29.07|N||
+29.08|P|T:EndToEndTest.test_drift_quarantines_and_peers_cordon|
+29.09|P|T:EndToEndTest.test_drift_quarantines_and_peers_cordon;T:EndToEndTest.test_policy_upgrade_changes_verdict_version|reference peers
+29.10|N||
+29.11|N||
+30.01|P|F:docs/CONFIG.md|
+30.02|P|T:OpsTest.test_config|no cross-field constraints
+30.03|N||
+30.04|P|F:mc/ops.py|no secrets in CONFIG_SCHEMA
+30.05|P|T:OpsTest.test_config|signature verification delegated to caller
+30.06|N||
+30.07|N||
+30.08|N||
+30.09|P|T:OpsTest.test_config|
+30.10|P|T:OpsTest.test_config|
+30.11|P|F:mc/ops.py|_digest
+31.01|P|F:mc/algorithms.py|
+31.02|P|T:AlgorithmAgilityTest.test_policy|
+31.03|P|T:AlgorithmAgilityTest.test_policy|
+31.04|P|F:mc/tpm.py|TPM structures carry alg ids
+31.05|P|T:AlgorithmAgilityTest.test_policy|
+31.06|P|T:AlgorithmAgilityTest.test_curve_mismatch_and_ed25519_length|
+31.07|P|T:AlgorithmAgilityTest.test_policy|
+31.08|N||
+31.09|P|T:AlgorithmAgilityTest.test_curve_mismatch_and_ed25519_length;T:QuoteParserTest.test_signature_parse|
+31.10|N||
+32.01|P|F:docs/COMPATIBILITY.md|
+32.02|P|T:EventLogTest.test_malformed_logs;E:evidence/fuzz.json|
+32.03|P|T:EventLogTest.test_replay_matches_and_divergence|
+32.04|N||
+32.05|N||opaque per-PCR digests only
+32.06|N||
+32.07|P|T:VerifierTest.test_ima|
+32.08|N||
+32.09|N||
+32.10|B||HW: no real event-log corpus
+32.11|P|E:evidence/fuzz.json|
+32.12|P|T:EventLogTest.test_replay_matches_and_divergence|divergent event index only
+33.01|P|T:EnrollmentTest.test_clone_refused_until_revoked_and_replace|
+33.02|P|T:ReplayTest.test_capacity_audience_and_cross_node|
+33.03|P|T:VerifierTest.test_relay_channel_binding_and_duplicate_device|channel binding not wired to TLS exporter
+33.04|P|T:VerifierTest.test_relay_channel_binding_and_duplicate_device|
+33.05|B||HW
+33.06|N||
+33.07|N||
+33.08|B||INFRA: GAP-02
+33.09|B||HW: lab relay
+33.10|B||HW: VM/vTPM clone lab
+33.11|N||
+34.01|P|T:PolicyTest.test_precedence|
+34.02|P|F:mc/policy.py|
+34.03|N||
+34.04|P|T:PolicyTest.test_precedence|
+34.05|P|T:PolicyTest.test_precedence|
+34.06|N||
+34.07|P|T:EndToEndTest.test_drift_quarantines_and_peers_cordon|
+34.08|N||
+34.09|N||
+34.10|N||
+34.11|N||
+35.01|P|F:docs/MASTER.md|marked RECONSTRUCTED
+35.02|P|F:docs/MASTER.md|
+35.03|P|F:docs/MASTER.md;F:CHECKLIST_STATUS.md|
+35.04|P|F:docs/MASTER.md|
+35.05|P|E:evidence/doc_check.json|
+35.06|P|E:evidence/doc_check.json;E:evidence/EVIDENCE_MANIFEST.json|
+35.07|B||HUMAN
+35.08|P|E:evidence/EVIDENCE_MANIFEST.json|
+36.01|P|F:docs/adr/ADR-001-hardware-root-and-quote-format.md;F:docs/adr/ADR-002-persistence-and-replay.md;F:docs/adr/ADR-005-key-custody.md|no HA/transport ADR
+36.02|P|F:docs/adr/ADR-001-hardware-root-and-quote-format.md|
+36.03|P|F:docs/adr/ADR-001-hardware-root-and-quote-format.md|
+36.04|P|F:docs/adr/ADR-002-persistence-and-replay.md|
+36.05|N||
+36.06|N||
+36.07|P|F:docs/adr/ADR-003-policy-publication.md|
+37.01|B|F:governance/OWNERS.json|HUMAN
+37.02|B|F:governance/OWNERS.json|HUMAN
+37.03|B|F:governance/OWNERS.json|HUMAN
+37.04|B|F:governance/OWNERS.json|HUMAN
+37.05|B|F:governance/OWNERS.json|HUMAN
+37.06|N||
+37.07|N||
+38.01|P|F:docs/SPEC.md|mechanical, not atomic
+38.02|N||
+38.03|N||
+38.04|P|F:CHECKLIST_STATUS.md|
+38.05|P|F:CHECKLIST_STATUS.md|
+38.06|P|F:governance/PRODUCTION_GATE.json|
+38.07|P|E:evidence/doc_check.json|duplicate ids + unresolved evidence checked
+38.08|N||
+39.01|P|E:evidence/bench.json|measured, thresholds unapproved
+39.02|N||
+39.03|N||
+39.04|N||
+39.05|N||
+39.06|P|E:evidence/bench.json|
+39.07|N||
+39.08|N||
+39.09|P|E:evidence/bench.json|short soak
+39.10|P|F:docs/CAPACITY.md|
+40.01|P|E:evidence/fuzz.json|certificate parser not fuzzed
+40.02|P|E:evidence/fuzz.json|
+40.03|N||mutation-based only
+40.04|P|T:PropertyFuzzTest.test_random_mutation_never_trusted;T:ConcurrencyTest.test_racing_consumers_one_winner|
+40.05|N||
+40.06|N||
+40.07|P|T:PropertyFuzzTest.test_random_mutation_never_trusted;T:EventLogTest.test_malformed_logs|found defects converted to regression tests (see CHANGELOG)
+40.08|P|E:evidence/fuzz.json|
+40.09|N||
+41.01|P|F:docs/THREAT_MODEL.md|
+41.02|P|T:ConcurrencyTest.test_racing_consumers_one_winner|
+41.03|B||INFRA: production persistence backend
+41.04|B||INFRA
+41.05|N||
+41.06|N||
+41.07|N||
+41.08|P|T:ConcurrencyTest.test_racing_consumers_one_winner;T:ConcurrencyTest.test_parallel_nodes|
+41.09|N||
+42.01|P|F:tools/bench.py|
+42.02|P|E:evidence/bench.json|
+42.03|B||SCALE: multi-hour soak not run
+42.04|P|E:evidence/bench.json|admission burst only
+42.05|N||
+42.06|P|T:AdmissionTest.test_fairness|
+42.07|P|E:evidence/bench.json|
+42.08|N||
+42.09|P|E:evidence/bench.json|
+43.01|N||
+43.02|B||INFRA
+43.03|N||
+43.04|P|T:OpsTest.test_offline|
+43.05|P|T:OpsTest.test_offline|
+43.06|P|T:ReplayTest.test_lease_fencing|
+43.07|N||
+43.08|B||SCALE
+43.09|N||
+44.01|P|E:evidence/EVIDENCE_MANIFEST.json|
+44.02|P|F:CHECKLIST_STATUS.md|
+44.03|P|E:evidence/test_results.json|
+44.04|B|E:evidence/EVIDENCE_MANIFEST.json|INFRA: signed with an ephemeral key; no managed release key
+44.05|B||INFRA: artifact repository
+44.06|P|F:governance/PRODUCTION_GATE.json|
+44.07|P|F:tools/release.py|
+44.08|P|F:governance/WAIVERS.json|
+45.01|P|F:docs/RUNBOOKS.md|
+45.02|N||
+45.03|P|F:docs/RUNBOOKS.md|
+45.04|N||
+45.05|P|T:DurableStoreTest.test_snapshot_backup_restore_floor;T:PolicyTest.test_rollback_env_staging|
+45.06|P|F:docs/RUNBOOKS.md|
+45.07|P|T:PolicyTest.test_quorum_and_bad_signatures|
+45.08|B||INFRA
+45.09|N||
+46.01|P|E:evidence/sbom.cdx.json|
+46.02|P|F:docs/GOVERNANCE.md|proposed SLAs
+46.03|B||INFRA: advisory feed
+46.04|P|F:governance/WAIVERS.json|
+46.05|P|F:docs/GOVERNANCE.md|
+46.06|N||
+46.07|N||
+46.08|N||
+46.09|N||
+47.01|P|F:docs/RUNBOOKS.md|
+47.02|B|F:docs/RUNBOOKS.md|HUMAN: paging targets
+47.03|P|F:docs/RUNBOOKS.md|
+47.04|P|F:docs/RUNBOOKS.md|
+47.05|N||
+47.06|P|F:docs/RUNBOOKS.md|
+47.07|B||HUMAN
+47.08|B||HUMAN
+47.09|N||
+48.01|P|F:docs/GOVERNANCE.md|
+48.02|P|F:docs/GOVERNANCE.md|
+48.03|P|F:docs/GOVERNANCE.md|
+48.04|P|F:docs/GOVERNANCE.md|
+48.05|N||
+48.06|B||HUMAN
+48.07|N||
+48.08|P|F:docs/GOVERNANCE.md|
+49.01|P|F:governance/WAIVERS.json|
+49.02|P|F:tools/release.py|
+49.03|P|F:tools/release.py|
+49.04|N||
+49.05|P|F:tools/release.py|release-time only; no pre-expiry alert
+49.06|N||
+49.07|N||
+49.08|N||
+50.01|P|F:tools/release.py|
+50.02|P|F:governance/PRODUCTION_GATE.json|
+50.03|P|F:governance/PRODUCTION_GATE.json|
+50.04|P|E:evidence/EVIDENCE_MANIFEST.json|
+50.05|B||INFRA: vulnerability scan
+50.06|N||
+50.07|N||
+50.08|B|F:governance/PRODUCTION_GATE.json|HUMAN: approvers
+50.09|N||
+51.01|P|F:pyproject.toml|
+51.02|P|F:requirements.lock|versions pinned; hashes not recorded
+51.03|P|E:evidence/EVIDENCE_MANIFEST.json|no commit
+51.04|N||
+51.05|P|E:evidence/EVIDENCE_MANIFEST.json|
+51.06|P|E:evidence/doc_check.json|
+51.07|N||
+51.08|P|T:CertChainTest.test_test_only_root_refused_by_default|simulator roots (O=GAP06-TEST-ONLY) refused unless allow_test_roots=True
+51.09|P|E:evidence/doc_check.json|LICENSE absent (owner decision)
+51.10|P|E:evidence/doc_check.json|
+52.01|P|E:evidence/sbom.cdx.json|
+52.02|P|E:evidence/EVIDENCE_MANIFEST.json|builder identity is a session, not a build service
+52.03|B||INFRA: managed release keys
+52.04|B||INFRA: advisory database
+52.05|P|E:evidence/sbom.cdx.json|licence fields recorded; policy check not automated
+52.06|B||INFRA: CI
+52.07|N||
+52.08|N||
+52.09|P|E:evidence/EVIDENCE_MANIFEST.json|
+52.10|N||
+53.01|B||ORG: project licence is the owner's decision
+53.02|N||
+53.03|P|E:evidence/sbom.cdx.json|cryptography is Apache-2.0 OR BSD-3-Clause (permissive)
+53.04|P|F:SECURITY.md|reporting channel not designated
+53.05|P|F:SECURITY.md|
+53.06|P|F:SECURITY.md|
+53.07|P|E:evidence/doc_check.json|
+53.08|B||ORG: legal review
+54.01|P|F:docs/RUNBOOKS.md|
+54.02|P|F:docs/RUNBOOKS.md|
+54.03|P|F:docs/RUNBOOKS.md|
+54.04|P|F:docs/RUNBOOKS.md|
+54.05|P|F:docs/RUNBOOKS.md;F:docs/ERROR_CATALOG.md|
+54.06|P|F:docs/RUNBOOKS.md|
+54.07|P|F:docs/RUNBOOKS.md|
+54.08|B||INFRA: game-day evidence
+54.09|N||
+54.10|B||HUMAN

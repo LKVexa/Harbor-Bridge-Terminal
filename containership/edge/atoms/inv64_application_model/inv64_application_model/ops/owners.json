@@ -1,0 +1,27 @@
+{
+  "format": "PK_APP_OWNERS/1",
+  "component": "INV-64 Application model",
+  "resolution": "Roles are the durable identifiers. Each role resolves to a current assignee (person or team handle) recorded here by the owner; the production gate refuses certification while any accountable role has assignee=null. Reviewed on every org change and at least quarterly (ops/REVIEWS.json: access).",
+  "roles": [
+    {"role": "inv64-component-owner", "accountable_for": ["architecture", "releases", "waivers <= High"], "assignee": null, "backup_role": "inv64-backup-owner"},
+    {"role": "inv64-backup-owner", "accountable_for": ["owner absence cover"], "assignee": null, "backup_role": null},
+    {"role": "inv64-security-contact", "accountable_for": ["vulnerability intake", "Critical security waivers (co-approval)", "break-glass review"], "assignee": null, "backup_role": "platform-security-oncall"},
+    {"role": "inv64-sre-oncall", "accountable_for": ["paging", "rollback", "incident command until handoff"], "assignee": null, "backup_role": "platform-sre-oncall"},
+    {"role": "architecture-review-board", "accountable_for": ["ADR approval", "normative source changes", "OAM baseline changes"], "assignee": null, "backup_role": null},
+    {"role": "release-manager", "accountable_for": ["release approval (separation of duties from policy admin)", "signing ceremony"], "assignee": null, "backup_role": null}
+  ],
+  "escalation": [
+    {"severity": "SEV1", "first": "inv64-sre-oncall", "ack_minutes": 5, "then": [["inv64-component-owner", 15], ["inv64-security-contact", 15], ["architecture-review-board", 60]], "after_hours": "page"},
+    {"severity": "SEV2", "first": "inv64-sre-oncall", "ack_minutes": 15, "then": [["inv64-component-owner", 60]], "after_hours": "page"},
+    {"severity": "SEV3", "first": "inv64-component-owner", "ack_minutes": 480, "then": [], "after_hours": "next business day"},
+    {"severity": "SECURITY", "first": "inv64-security-contact", "ack_minutes": 60, "then": [["inv64-component-owner", 120]], "after_hours": "page for Critical/High"}
+  ],
+  "approvals": {
+    "owner": ["minor/patch releases", "Medium waivers", "overlay schema changes"],
+    "security": ["authn/authz/trust/crypto changes", "Critical/High security waivers (with owner)", "break-glass grants"],
+    "architecture": ["ADRs", "normative source (MC-01) changes", "OAM baseline upgrades", "new platform tier"],
+    "release-management": ["production GO", "signing"]
+  },
+  "emergency_delegation": "The owner (or backup) may delegate a role for at most 14 days by adding {role, delegate, expires, approved_by} to temporary_delegations; expired delegations are ignored by tools/governance_check.py.",
+  "temporary_delegations": []
+}

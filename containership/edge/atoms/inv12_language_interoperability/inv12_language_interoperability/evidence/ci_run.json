@@ -1,0 +1,196 @@
+{
+ "pipeline": "inv12-ci/1",
+ "version": "4.3.0",
+ "timestamp": "2026-09-23T01:59:37Z",
+ "quick": false,
+ "results": [
+  {
+   "gate": "syntax",
+   "cmd": "-m compileall -q /home/claude/w/inv12_language_interoperability",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.05,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": "",
+   "required": true
+  },
+  {
+   "gate": "lint-python",
+   "cmd": "ruff check --select E,F,W,B,S --ignore E501,S101,S603,S607,S311,B904 --exclude fixtures .",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.01,
+   "output_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+   "tail": "All checks passed!\n",
+   "required": true
+  },
+  {
+   "gate": "lint-go",
+   "cmd": "go vet .",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.08,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": "",
+   "required": true
+  },
+  {
+   "gate": "lint-go-guest",
+   "cmd": "go vet .",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.09,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": "",
+   "required": true
+  },
+  {
+   "gate": "lint-rust",
+   "cmd": "cargo clippy -q --release --offline -- -D warnings",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.08,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": "",
+   "required": true
+  },
+  {
+   "gate": "lint-js",
+   "cmd": "node --check fixtures/js/inv12.mjs",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.03,
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tail": "",
+   "required": true
+  },
+  {
+   "gate": "corpus-deterministic",
+   "cmd": "tools/gen_corpus.py --check",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.05,
+   "output_sha256": "65df723652020c65acd0e0d140580eac1fd4be579e5fcc6e729ccba1a882b500",
+   "tail": "corpus deterministic: True\n",
+   "required": true
+  },
+  {
+   "gate": "unit",
+   "cmd": "-m unittest inv12_language_interoperability.tests.test_canon",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 23.54,
+   "output_sha256": "d509308bc920724cd987bb16a636d7b2a617a268ef785a14fb917a1420e9e5fb",
+   "tail": "...............................................................\n----------------------------------------------------------------------\nRan 63 tests in 23.460s\n\nOK\n",
+   "required": true
+  },
+  {
+   "gate": "unit-optimized",
+   "cmd": "-O -m unittest inv12_language_interoperability.tests.test_canon",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 24.32,
+   "output_sha256": "6f7fc37ef54d4707f75c25d9cce06476d633a291ab2ae535835770a7eeba009a",
+   "tail": "...............................................................\n----------------------------------------------------------------------\nRan 63 tests in 24.217s\n\nOK\n",
+   "required": true
+  },
+  {
+   "gate": "fuzz-smoke",
+   "cmd": "tools/fuzz.py --iterations 20000 --out /home/claude/w/inv12_language_interoperability/evidence/fuzz.json",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 21.65,
+   "output_sha256": "fc23c458547fe6f846b00699367922914d6f716919a4bc822bf7cf73502c718c",
+   "tail": "\": [\n  {\n   \"target\": \"decode\",\n   \"seed\": 20260922,\n   \"iterations\": 20000,\n   \"corpus\": 208,\n   \"arcs\": 641,\n   \"crashes\": 0,\n   \"crash_samples\": [],\n   \"seconds\": 6.11\n  },\n  {\n   \"target\": \"schema\",\n   \"seed\": 20260922,\n   \"iterations\": 20000,\n   \"corpus\": 130,\n   \"arcs\": 512,\n   \"crashes\": 0,\n   \"crash_samples\": [],\n   \"seconds\": 15.2\n  },\n  {\n   \"target\": \"envelope\",\n   \"seed\": 20260922,\n   \"iterations\": 20000,\n   \"corpus\": 5,\n   \"arcs\": 11,\n   \"crashes\": 0,\n   \"crash_samples\": [],\n   \"seconds\": 0.24\n  }\n ],\n \"replay\": {\n  \"regressions\": 3,\n  \"still_failing\": []\n },\n \"verdict\": \"PASS\"\n}\n",
+   "required": true
+  },
+  {
+   "gate": "fuzz-regressions",
+   "cmd": "tools/fuzz.py --replay",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.06,
+   "output_sha256": "d0405f72224a72e7c05f51f9a2d1820cb831cb457fed5bab8f4de2db980bbd4d",
+   "tail": "{\n \"regressions\": 3,\n \"still_failing\": []\n}\n",
+   "required": true
+  },
+  {
+   "gate": "language-matrix+differential",
+   "cmd": "tools/conformance.py --random 1000 --mutations 5 --out /home/claude/w/inv12_language_interoperability/evidence/conformance.json",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 1.81,
+   "output_sha256": "027581b96e7c82a6cd9006969dbafb1a2c344a6e56c8c5ee987d894f9255f7aa",
+   "tail": "}\n },\n \"pairs\": {\n  \"python->python\": \"50/50\",\n  \"python->go\": \"50/50\",\n  \"python->javascript\": \"50/50\",\n  \"python->rust\": \"50/50\",\n  \"go->python\": \"50/50\",\n  \"go->go\": \"50/50\",\n  \"go->javascript\": \"50/50\",\n  \"go->rust\": \"50/50\",\n  \"javascript->python\": \"50/50\",\n  \"javascript->go\": \"50/50\",\n  \"javascript->javascript\": \"50/50\",\n  \"javascript->rust\": \"50/50\",\n  \"rust->python\": \"50/50\",\n  \"rust->go\": \"50/50\",\n  \"rust->javascript\": \"50/50\",\n  \"rust->rust\": \"50/50\"\n },\n \"differential\": {\n  \"random_values\": 1000,\n  \"mutations\": 5000,\n  \"mutations_rejected_by_all\": 1560,\n  \"divergence_count\": 0\n }\n}\n",
+   "required": true
+  },
+  {
+   "gate": "wasm-guest-integration",
+   "cmd": "tools/wasm_gate.py",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.19,
+   "output_sha256": "696e3c18616ee0082345a23be6b79689323d9adf66d47c971b4988fa2fb12266",
+   "tail": "{\"verdict\": \"PASS\", \"checks\": [[\"lift guest-produced record\", true], [\"post_return reset guest arena\", true], [\"lower into guest via cabi_realloc\", true], [\"allocations accounted\", true], [\"allocations released exactly once\", true], [\"hostile guest pointer refused\", true], [\"hostile/exhausted realloc refused\", true], [\"root beyond memory refused\", true]]}\n",
+   "required": true
+  },
+  {
+   "gate": "coverage",
+   "cmd": "tools/coverage_lite.py --min 90 --out /home/claude/w/inv12_language_interoperability/evidence/coverage.json",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 7.8,
+   "output_sha256": "ad7ef72d351b59c845fea71c45698176ac72123c197f95c238398c3ff25a2958",
+   "tail": "          96.7%  (116/120)\n  generators.py       97.1%  (102/105)\n  layout.py           94.2%  (276/293)\n  limits.py           93.4%  (71/76)\n  memory.py           94.2%  (180/191)\n  negotiation.py      82.1%  (101/123)\n  numeric.py          84.3%  (86/102)\n  observability.py    96.8%  (182/188)\n  provenance.py       85.5%  (71/83)\n  registry.py         92.0%  (92/100)\n  resources.py        95.0%  (151/159)\n  text.py             88.0%  (44/50)\n  trust.py            90.0%  (81/90)\n  types.py            89.7%  (507/565)\n  validate.py         85.0%  (113/133)\n  values.py           94.4%  (17/18)\n",
+   "required": true
+  },
+  {
+   "gate": "bench+slo+dos",
+   "cmd": "tools/bench.py --out /home/claude/w/inv12_language_interoperability/evidence/bench.json",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 13.87,
+   "output_sha256": "941a0d1c4fe91653188259cf6257cd8129950b24b2275c9ea51c9ae3aec166c1",
+   "tail": "{\n \"verdict\": {\n  \"benchmark_regression_gate\": \"PASS\",\n  \"dos_gate\": \"PASS\",\n  \"slo_certification\": \"PROXY_PASS_NATIVE_ONLY\"\n },\n \"slo\": {\n  \"python_reference\": false,\n  \"rust\": true,\n  \"go\": true\n },\n \"python_u32\": {\n  \"n\": 50000,\n  \"p50_ns\": 5879,\n  \"p95_ns\": 8317,\n  \"p99_ns\": 21625,\n  \"allocations\": 1,\n  \"copied_bytes\": 4\n },\n \"native_u32\": {\n  \"rust\": {\n   \"n\": 200000,\n   \"p50_ns\": 103,\n   \"p95_ns\": 132,\n   \"p99_ns\": 160\n  },\n  \"go\": {\n   \"n\": 200000,\n   \"p50_ns\": 189,\n   \"p95_ns\": 286,\n   \"p99_ns\": 409\n  }\n }\n}\n",
+   "required": true
+  },
+  {
+   "gate": "provenance+sbom",
+   "cmd": "tools/release.py --sbom-only",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.12,
+   "output_sha256": "0a46d13eca98b000b99bfff3c8da224bfe781c696192c994b21ce98f46ed4ec1",
+   "tail": "{\"sbom_components\": 64, \"verified_artifacts\": 8}\n",
+   "required": true
+  },
+  {
+   "gate": "pipeline-negative-test",
+   "cmd": "tools/ci.py --negative-test",
+   "exit": 0,
+   "status": "PASS",
+   "seconds": 0.06,
+   "output_sha256": "ed23f412a5683a6fc77c1c04447b7e6f88259eb0a0bc531728eb2b6c490beaaf",
+   "tail": "[FAIL   ] must-fail (0.01s)\n[PASS   ] must-pass (0.01s)\n[BLOCKED] pk_core-conformance\n[BLOCKED] pk_core-gate\nVERDICT: FAIL failed: ['must-fail'] blocked: ['missing-tool', 'pk_core-conformance', 'pk_core-gate']\nnegative pipeline test: PASS\n",
+   "required": true
+  },
+  {
+   "gate": "pk_core-conformance",
+   "status": "BLOCKED",
+   "required": true,
+   "reason": "pk_core parent framework not present in this environment (MC-053)"
+  },
+  {
+   "gate": "pk_core-gate",
+   "status": "BLOCKED",
+   "required": true,
+   "reason": "pk_core parent framework not present in this environment (MC-053)"
+  }
+ ],
+ "failed": [],
+ "blocked": [
+  "pk_core-conformance",
+  "pk_core-gate"
+ ],
+ "verdict": "CONDITIONAL_PASS"
+}

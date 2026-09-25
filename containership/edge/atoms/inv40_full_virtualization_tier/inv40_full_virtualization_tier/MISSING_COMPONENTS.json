@@ -1,0 +1,853 @@
+{
+  "element": "INV-40",
+  "name": "Full virtualization tier",
+  "version": "4.2.0",
+  "audit_date": "2026-09-22",
+  "basis": "Concrete evidence present in this archive after the 4.2.0 hardening pass. External pk_core behavior is not treated as verified because pk_core is not bundled/importable in the audit environment.",
+  "counts": {
+    "present": 9,
+    "partial": 26,
+    "missing": 65
+  },
+  "open_checklist_gaps": 91,
+  "repository_level_missing_components": [
+    {
+      "id": "REPO-001",
+      "status": "missing",
+      "component": "pk_core dependency packaging/pin",
+      "detail": "pk_core is required by component.py/contract.py but is not bundled and there is no requirements/lock/package metadata declaring an installable version."
+    },
+    {
+      "id": "REPO-002",
+      "status": "missing",
+      "component": "MASTER.md source artifact",
+      "detail": "README 4.1.0 claimed MASTER.md was bundled, but the file is absent. 4.2.0 corrects the claim rather than fabricating the missing source."
+    },
+    {
+      "id": "REPO-003",
+      "status": "missing",
+      "component": "production hypervisor/provider adapter",
+      "detail": "No QEMU/KVM/libvirt/cloud provider adapter exists; runtime.py is a deterministic reference model only."
+    },
+    {
+      "id": "REPO-004",
+      "status": "missing",
+      "component": "build/install metadata",
+      "detail": "No pyproject.toml/setup metadata, dependency lock, or reproducible environment definition is present."
+    },
+    {
+      "id": "REPO-005",
+      "status": "missing",
+      "component": "license file",
+      "detail": "No repository license/notice file is present in the supplied archive."
+    },
+    {
+      "id": "REPO-006",
+      "status": "missing",
+      "component": "CI/release workflow",
+      "detail": "No continuous-integration, packaging, signing, release, or automated gate workflow is present."
+    }
+  ],
+  "requirements": [
+    {
+      "check_id": "INV-40-C001",
+      "ordinal": 1,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the exact production responsibility of Full virtualization tier.",
+      "status": "present",
+      "audit_note": "Responsibility is explicitly defined in contract.py and README.md."
+    },
+    {
+      "check_id": "INV-40-C002",
+      "ordinal": 2,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document what Full virtualization tier owns and explicitly does not own.",
+      "status": "present",
+      "audit_note": "Owns/not-owns boundaries are explicit in contract.py and README.md."
+    },
+    {
+      "check_id": "INV-40-C003",
+      "ordinal": 3,
+      "dimension": "Architecture & Scope",
+      "requirement": "Identify upstream, downstream, and peer dependencies of Full virtualization tier.",
+      "status": "present",
+      "audit_note": "Upstream/downstream/peer dependencies are enumerated in contract.py."
+    },
+    {
+      "check_id": "INV-40-C004",
+      "ordinal": 4,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the authoritative source of truth used by Full virtualization tier.",
+      "status": "present",
+      "audit_note": "The hardware virtualization primitive is named as the source of truth."
+    },
+    {
+      "check_id": "INV-40-C005",
+      "ordinal": 5,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document assumptions Full virtualization tier makes about nodes, runtimes, networks, storage, and control planes.",
+      "status": "partial",
+      "audit_note": "Assumptions cover guest trust, boot time, and memory, but not the required network, storage, runtime, node, and control-plane assumptions."
+    },
+    {
+      "check_id": "INV-40-C006",
+      "ordinal": 6,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Full virtualization tier.",
+      "status": "present",
+      "audit_note": "Tenant/environment/site/workload boundaries are defined in contract.py."
+    },
+    {
+      "check_id": "INV-40-C007",
+      "ordinal": 7,
+      "dimension": "Architecture & Scope",
+      "requirement": "Separate mandatory Full virtualization tier capabilities from optional optimizations.",
+      "status": "present",
+      "audit_note": "Mandatory and optional capability lists are separated in contract.py."
+    },
+    {
+      "check_id": "INV-40-C008",
+      "ordinal": 8,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document unsupported deployment patterns and non-goals for Full virtualization tier.",
+      "status": "present",
+      "audit_note": "Unsupported/non-goal behavior is explicitly documented."
+    },
+    {
+      "check_id": "INV-40-C009",
+      "ordinal": 9,
+      "dimension": "Architecture & Scope",
+      "requirement": "Assign an accountable owner and escalation path for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Accountable owner and escalation path."
+    },
+    {
+      "check_id": "INV-40-C010",
+      "ordinal": 10,
+      "dimension": "Architecture & Scope",
+      "requirement": "Approve an architecture decision record for Full virtualization tier, its technologies (EC2/QEMU-style full VMs), and its function (Maximum legacy compatibility/compliance isolation).",
+      "status": "missing",
+      "audit_note": "Approved architecture decision record for EC2/QEMU-style full VMs and the compatibility/isolation rationale."
+    },
+    {
+      "check_id": "INV-40-C011",
+      "ordinal": 11,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Translate the source function of Full virtualization tier \u2014 Maximum legacy compatibility/compliance isolation \u2014 into testable SHALL-level requirements.",
+      "status": "partial",
+      "audit_note": "Mandatory behavior exists as prose, but there is no normative SHALL-level requirements specification with identifiers and acceptance criteria."
+    },
+    {
+      "check_id": "INV-40-C012",
+      "ordinal": 12,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define functional requirements for Full virtualization tier across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "status": "missing",
+      "audit_note": "Cloud/datacenter/near-edge/far-edge functional requirement variants."
+    },
+    {
+      "check_id": "INV-40-C013",
+      "ordinal": 13,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "status": "partial",
+      "audit_note": "Some SLOs and ceilings exist, but availability, durability/consistency where applicable, and comprehensive non-functional thresholds are not defined."
+    },
+    {
+      "check_id": "INV-40-C014",
+      "ordinal": 14,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Runtime returns ok/degraded for boot budget and raises terminal operational errors, but success/partial/retryable/terminal semantics are not comprehensively specified."
+    },
+    {
+      "check_id": "INV-40-C015",
+      "ordinal": 15,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Full virtualization tier.",
+      "status": "present",
+      "audit_note": "runtime.py implements guarded created/running/stopped/destroyed lifecycle transitions with unit tests."
+    },
+    {
+      "check_id": "INV-40-C016",
+      "ordinal": 16,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define versioning and backward-compatibility requirements for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Versioning and backward-compatibility policy for code and wire schemas."
+    },
+    {
+      "check_id": "INV-40-C017",
+      "ordinal": 17,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Per-guest resident memory is capped, but quotas, fleet capacity ceilings, and fairness semantics are absent."
+    },
+    {
+      "check_id": "INV-40-C018",
+      "ordinal": 18,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "status": "missing",
+      "audit_note": "Disconnected/intermittent-network behavior."
+    },
+    {
+      "check_id": "INV-40-C019",
+      "ordinal": 19,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define precedence rules when Full virtualization tier requirements conflict with security, residency, SLO, or cost constraints.",
+      "status": "missing",
+      "audit_note": "Conflict-precedence policy for security, residency, SLO, and cost constraints."
+    },
+    {
+      "check_id": "INV-40-C020",
+      "ordinal": 20,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Maintain a requirements traceability matrix from each Full virtualization tier requirement to implementation and verification evidence.",
+      "status": "missing",
+      "audit_note": "Requirements traceability matrix mapping requirements to implementation and verification evidence."
+    },
+    {
+      "check_id": "INV-40-C021",
+      "ordinal": 21,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Contract lists create/boot/stop/destroy/error logical interfaces, but actual hypervisor, device, event, file, RPC, and control-plane boundaries are not fully enumerated."
+    },
+    {
+      "check_id": "INV-40-C022",
+      "ordinal": 22,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Use versioned typed schemas for all externally visible Full virtualization tier contracts.",
+      "status": "partial",
+      "audit_note": "String schema identifiers exist, but there are no versioned schema definitions or generated/validated typed wire contracts."
+    },
+    {
+      "check_id": "INV-40-C023",
+      "ordinal": 23,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authentication requirements at each Full virtualization tier boundary.",
+      "status": "missing",
+      "audit_note": "Authentication requirements for every boundary."
+    },
+    {
+      "check_id": "INV-40-C024",
+      "ordinal": 24,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authorization and explicit capability requirements at each Full virtualization tier boundary.",
+      "status": "missing",
+      "audit_note": "Authorization/capability model for every boundary."
+    },
+    {
+      "check_id": "INV-40-C025",
+      "ordinal": 25,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Destroy is idempotent and lifecycle errors are bounded, but timeout, cancellation, retry, and backpressure semantics are absent."
+    },
+    {
+      "check_id": "INV-40-C026",
+      "ordinal": 26,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define structured failure codes and machine-readable error details for Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Operational VM failures expose PK_FULL_VM_ERROR/1 codes; validation/configuration failures still use generic Python exceptions and no complete error catalog exists."
+    },
+    {
+      "check_id": "INV-40-C027",
+      "ordinal": 27,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "status": "missing",
+      "audit_note": "Mixed-version compatibility behavior."
+    },
+    {
+      "check_id": "INV-40-C028",
+      "ordinal": 28,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Full virtualization tier interfaces.",
+      "status": "partial",
+      "audit_note": "Boot and resident-memory bounds exist, but payload, queue, concurrency, connection, and broader resource limits are not specified."
+    },
+    {
+      "check_id": "INV-40-C029",
+      "ordinal": 29,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Provide reference examples and conformance fixtures for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Reference examples and conformance fixtures."
+    },
+    {
+      "check_id": "INV-40-C030",
+      "ordinal": 30,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Create automated integration tests proving Full virtualization tier interoperates with adjacent architectural layers.",
+      "status": "missing",
+      "audit_note": "Automated adjacent-layer integration tests."
+    },
+    {
+      "check_id": "INV-40-C031",
+      "ordinal": 31,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Select and pin approved implementations, versions, or specifications for Full virtualization tier: EC2/QEMU-style full VMs.",
+      "status": "missing",
+      "audit_note": "Pinned/approved hypervisor/provider implementations and versions (for example QEMU/KVM/libvirt or cloud API versions)."
+    },
+    {
+      "check_id": "INV-40-C032",
+      "ordinal": 32,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Immutable-artifact versus mutable-config/state separation."
+    },
+    {
+      "check_id": "INV-40-C033",
+      "ordinal": 33,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define declarative configuration and secure defaults for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Declarative configuration schema and secure defaults."
+    },
+    {
+      "check_id": "INV-40-C034",
+      "ordinal": 34,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "status": "partial",
+      "audit_note": "Runtime inputs fail closed, but there is no declarative configuration subsystem to validate before activation."
+    },
+    {
+      "check_id": "INV-40-C035",
+      "ordinal": 35,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "status": "missing",
+      "audit_note": "Site/environment-specific configuration without rebuild."
+    },
+    {
+      "check_id": "INV-40-C036",
+      "ordinal": 36,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "status": "missing",
+      "audit_note": "Configuration provenance/version/author/activation-time recording."
+    },
+    {
+      "check_id": "INV-40-C037",
+      "ordinal": 37,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "status": "missing",
+      "audit_note": "Atomic/transactional configuration update mechanism."
+    },
+    {
+      "check_id": "INV-40-C038",
+      "ordinal": 38,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define automatic and operator-driven rollback for failed Full virtualization tier changes.",
+      "status": "missing",
+      "audit_note": "Automatic and operator-driven configuration rollback."
+    },
+    {
+      "check_id": "INV-40-C039",
+      "ordinal": 39,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Keep credentials and secret material out of ordinary Full virtualization tier configuration and diagnostics.",
+      "status": "partial",
+      "audit_note": "The repository currently contains no embedded credentials, but there is no explicit secret/configuration/diagnostic handling policy or test."
+    },
+    {
+      "check_id": "INV-40-C040",
+      "ordinal": 40,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Full virtualization tier operation.",
+      "status": "missing",
+      "audit_note": "Deterministic bootstrap/install path from an empty environment; pk_core and packaging metadata are not bundled."
+    },
+    {
+      "check_id": "INV-40-C041",
+      "ordinal": 41,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Threat-model Full virtualization tier against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "status": "partial",
+      "audit_note": "contract.py lists four threats, but no complete threat model covers supply chain, control-plane abuse, side channels, identity, network, storage, or host compromise."
+    },
+    {
+      "check_id": "INV-40-C042",
+      "ordinal": 42,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Apply least privilege to every identity and capability used by Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Least-privilege identities/capabilities for the real virtualization implementation."
+    },
+    {
+      "check_id": "INV-40-C043",
+      "ordinal": 43,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Full virtualization tier permits.",
+      "status": "missing",
+      "audit_note": "Ambient filesystem/network/device/kernel/secret authority reduction for the real hypervisor/control-plane integration."
+    },
+    {
+      "check_id": "INV-40-C044",
+      "ordinal": 44,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "status": "missing",
+      "audit_note": "Authentication of nodes, peers, artifacts, providers, and control-plane actors."
+    },
+    {
+      "check_id": "INV-40-C045",
+      "ordinal": 45,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Artifact signature/digest/provenance/version verification."
+    },
+    {
+      "check_id": "INV-40-C046",
+      "ordinal": 46,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Enforce tenant/workload isolation across Full virtualization tier execution, memory, state, network, and device boundaries as applicable.",
+      "status": "partial",
+      "audit_note": "Concrete device-instance exclusivity is now enforced in-process, but execution, memory, network, persistent-state, IOMMU, and hypervisor isolation are not implemented here."
+    },
+    {
+      "check_id": "INV-40-C047",
+      "ordinal": 47,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Encrypt sensitive Full virtualization tier data in transit and at rest with managed key rotation.",
+      "status": "missing",
+      "audit_note": "Managed encryption in transit/at rest and key rotation."
+    },
+    {
+      "check_id": "INV-40-C048",
+      "ordinal": 48,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "status": "missing",
+      "audit_note": "Fail-safe behavior for unavailable identity, attestation, policy, key, or time services."
+    },
+    {
+      "check_id": "INV-40-C049",
+      "ordinal": 49,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Emit tamper-evident audit events for security-sensitive Full virtualization tier operations.",
+      "status": "missing",
+      "audit_note": "Tamper-evident security audit event pipeline."
+    },
+    {
+      "check_id": "INV-40-C050",
+      "ordinal": 50,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "status": "partial",
+      "audit_note": "Tests cover primitive refusal, footprint exhaustion, device-sharing conflict, and a lease race, but not the full adversarial set (escape, injection, replay, spoofing, side channels, etc.)."
+    },
+    {
+      "check_id": "INV-40-C051",
+      "ordinal": 51,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Several failure modes are documented, but process/node/site/network/provider/dependency/control-plane failure modes are not exhaustively modeled."
+    },
+    {
+      "check_id": "INV-40-C052",
+      "ordinal": 52,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define automated health and stall detection thresholds for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Health/stall detectors and thresholds."
+    },
+    {
+      "check_id": "INV-40-C053",
+      "ordinal": 53,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "status": "missing",
+      "audit_note": "Bounded retry with backoff/jitter and retry-safety classification."
+    },
+    {
+      "check_id": "INV-40-C054",
+      "ordinal": 54,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Full virtualization tier failure cascades.",
+      "status": "missing",
+      "audit_note": "Admission control, load shedding, and/or circuit breaking."
+    },
+    {
+      "check_id": "INV-40-C055",
+      "ordinal": 55,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "status": "missing",
+      "audit_note": "Failover behavior preserving isolation, residency, and consistency."
+    },
+    {
+      "check_id": "INV-40-C056",
+      "ordinal": 56,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "status": "missing",
+      "audit_note": "Defined degraded mode for noncritical dependency failures."
+    },
+    {
+      "check_id": "INV-40-C057",
+      "ordinal": 57,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Full virtualization tier state.",
+      "status": "partial",
+      "audit_note": "Stopped guests can restart and destroyed guests cannot, but crash consistency, persisted restart state, replay, and recovery semantics are absent."
+    },
+    {
+      "check_id": "INV-40-C058",
+      "ordinal": 58,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "status": "partial",
+      "audit_note": "The in-process lease registry blocks duplicate device ownership, but there is no distributed lease/fencing protection for split-brain, stale controllers, or duplicate execution."
+    },
+    {
+      "check_id": "INV-40-C059",
+      "ordinal": 59,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Full virtualization tier behavior.",
+      "status": "partial",
+      "audit_note": "destroy() provides a terminal local disable path, but there is no quarantine/freeze/isolate control plane or operator workflow."
+    },
+    {
+      "check_id": "INV-40-C060",
+      "ordinal": 60,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Run fault-injection tests proving Full virtualization tier recovery against documented objectives.",
+      "status": "missing",
+      "audit_note": "Fault-injection recovery tests."
+    },
+    {
+      "check_id": "INV-40-C061",
+      "ordinal": 61,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Establish reproducible baselines for Full virtualization tier latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "status": "missing",
+      "audit_note": "Reproducible performance/resource/power baseline harness and results."
+    },
+    {
+      "check_id": "INV-40-C062",
+      "ordinal": 62,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "p50/p95/p99/worst-case thresholds."
+    },
+    {
+      "check_id": "INV-40-C063",
+      "ordinal": 63,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure Full virtualization tier under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "status": "missing",
+      "audit_note": "Steady/burst/overload/scale-out/scale-in/recovery performance tests."
+    },
+    {
+      "check_id": "INV-40-C064",
+      "ordinal": 64,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Per-workload and per-tenant overhead measurements."
+    },
+    {
+      "check_id": "INV-40-C065",
+      "ordinal": 65,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Documented analysis of avoidable copies/context switches/network hops/duplicated state/images."
+    },
+    {
+      "check_id": "INV-40-C066",
+      "ordinal": 66,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "status": "missing",
+      "audit_note": "Implemented and evidenced locality/caching/zero-copy/batching/kernel-bypass optimizations where applicable."
+    },
+    {
+      "check_id": "INV-40-C067",
+      "ordinal": 67,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "status": "partial",
+      "audit_note": "Resident footprint is bounded per guest and the device set is finite, but queues, concurrency, buffers, and fleet fan-out are not bounded."
+    },
+    {
+      "check_id": "INV-40-C068",
+      "ordinal": 68,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "status": "missing",
+      "audit_note": "Power/thermal measurement for constrained nodes."
+    },
+    {
+      "check_id": "INV-40-C069",
+      "ordinal": 69,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define capacity models and saturation signals that predict when Full virtualization tier needs more resources.",
+      "status": "missing",
+      "audit_note": "Capacity model and saturation signals."
+    },
+    {
+      "check_id": "INV-40-C070",
+      "ordinal": 70,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Block releases that regress approved Full virtualization tier startup, density, throughput, or tail-latency thresholds.",
+      "status": "missing",
+      "audit_note": "Automated performance-regression release gate."
+    },
+    {
+      "check_id": "INV-40-C071",
+      "ordinal": 71,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose Full virtualization tier health, readiness, version, configuration, dependency status, and active capability set.",
+      "status": "missing",
+      "audit_note": "Health/readiness/version/config/dependency/capability endpoint or report."
+    },
+    {
+      "check_id": "INV-40-C072",
+      "ordinal": 72,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "status": "missing",
+      "audit_note": "Runtime structured metrics emission."
+    },
+    {
+      "check_id": "INV-40-C073",
+      "ordinal": 73,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "status": "missing",
+      "audit_note": "Structured logs with stable correlation identifiers."
+    },
+    {
+      "check_id": "INV-40-C074",
+      "ordinal": 74,
+      "dimension": "Observability & Explainability",
+      "requirement": "Propagate trace context across all relevant Full virtualization tier boundaries.",
+      "status": "missing",
+      "audit_note": "Trace-context propagation."
+    },
+    {
+      "check_id": "INV-40-C075",
+      "ordinal": 75,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "status": "missing",
+      "audit_note": "Safe high-cardinality diagnostic interface with privacy controls."
+    },
+    {
+      "check_id": "INV-40-C076",
+      "ordinal": 76,
+      "dimension": "Observability & Explainability",
+      "requirement": "Record the reason for every automated decision made by Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Decision-reason recording for automated decisions."
+    },
+    {
+      "check_id": "INV-40-C077",
+      "ordinal": 77,
+      "dimension": "Observability & Explainability",
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "status": "missing",
+      "audit_note": "Operator explain view linking decisions to inputs/policy/topology/constraints."
+    },
+    {
+      "check_id": "INV-40-C078",
+      "ordinal": 78,
+      "dimension": "Observability & Explainability",
+      "requirement": "Correlate Full virtualization tier events with application release lineage and the live infrastructure graph.",
+      "status": "missing",
+      "audit_note": "Correlation with release lineage and live infrastructure graph."
+    },
+    {
+      "check_id": "INV-40-C079",
+      "ordinal": 79,
+      "dimension": "Observability & Explainability",
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "status": "missing",
+      "audit_note": "Telemetry retention/sampling/privacy/export policy."
+    },
+    {
+      "check_id": "INV-40-C080",
+      "ordinal": 80,
+      "dimension": "Observability & Explainability",
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "status": "missing",
+      "audit_note": "Dashboards and differentiated alerting."
+    },
+    {
+      "check_id": "INV-40-C081",
+      "ordinal": 81,
+      "dimension": "Testing & Certification",
+      "requirement": "Create unit tests for deterministic Full virtualization tier logic and state transitions.",
+      "status": "present",
+      "audit_note": "Deterministic runtime logic and state transitions have standalone unit tests that pass without pk_core."
+    },
+    {
+      "check_id": "INV-40-C082",
+      "ordinal": 82,
+      "dimension": "Testing & Certification",
+      "requirement": "Create contract tests for every public Full virtualization tier interface.",
+      "status": "partial",
+      "audit_note": "Public runtime methods are unit-tested, but there are no schema fixtures/consumer contract tests and pk_core contract tests cannot run without the external dependency."
+    },
+    {
+      "check_id": "INV-40-C083",
+      "ordinal": 83,
+      "dimension": "Testing & Certification",
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "status": "missing",
+      "audit_note": "Integration tests against every supported adjacent layer/tier."
+    },
+    {
+      "check_id": "INV-40-C084",
+      "ordinal": 84,
+      "dimension": "Testing & Certification",
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Compatibility matrix tests across CPU architectures, runtimes, hypervisors, providers, and protocol versions."
+    },
+    {
+      "check_id": "INV-40-C085",
+      "ordinal": 85,
+      "dimension": "Testing & Certification",
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Fuzzing of schemas/protocol/untrusted-input boundaries."
+    },
+    {
+      "check_id": "INV-40-C086",
+      "ordinal": 86,
+      "dimension": "Testing & Certification",
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Full virtualization tier state.",
+      "status": "partial",
+      "audit_note": "There is a concurrent device-lease race test, but no broader race testing across lifecycle, configuration, persistence, or distributed ownership."
+    },
+    {
+      "check_id": "INV-40-C087",
+      "ordinal": 87,
+      "dimension": "Testing & Certification",
+      "requirement": "Create security tests derived directly from the Full virtualization tier threat model.",
+      "status": "partial",
+      "audit_note": "Some tests derive from documented threats (missing primitive/device conflict/resource exhaustion), but the threat model is not fully translated into security tests."
+    },
+    {
+      "check_id": "INV-40-C088",
+      "ordinal": 88,
+      "dimension": "Testing & Certification",
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Benchmark, soak, burst, and fleet-scale tests."
+    },
+    {
+      "check_id": "INV-40-C089",
+      "ordinal": 89,
+      "dimension": "Testing & Certification",
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "status": "missing",
+      "audit_note": "Disaster/partition/reconnect/degraded-control-plane tests."
+    },
+    {
+      "check_id": "INV-40-C090",
+      "ordinal": 90,
+      "dimension": "Testing & Certification",
+      "requirement": "Require machine-readable acceptance evidence before certifying a Full virtualization tier release for production.",
+      "status": "missing",
+      "audit_note": "Machine-readable release acceptance evidence artifact and certification rule."
+    },
+    {
+      "check_id": "INV-40-C091",
+      "ordinal": 91,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define production SLOs, error budgets, and support commitments for Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "Three SLO/error-budget statements exist; support commitments, service windows, and ownership/escalation commitments are absent."
+    },
+    {
+      "check_id": "INV-40-C092",
+      "ordinal": 92,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Full virtualization tier.",
+      "status": "partial",
+      "audit_note": "README mentions rollback and emergency disable, but canary/staged rollout, rollback validation, and executable procedures are absent."
+    },
+    {
+      "check_id": "INV-40-C093",
+      "ordinal": 93,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Maintain a supported-version compatibility matrix for Full virtualization tier and adjacent dependencies.",
+      "status": "missing",
+      "audit_note": "Supported-version compatibility matrix."
+    },
+    {
+      "check_id": "INV-40-C094",
+      "ordinal": 94,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Full virtualization tier.",
+      "status": "missing",
+      "audit_note": "Patching, vulnerability-response, and end-of-life SLAs."
+    },
+    {
+      "check_id": "INV-40-C095",
+      "ordinal": 95,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Full virtualization tier state where applicable.",
+      "status": "missing",
+      "audit_note": "Backup/restore/migration/reconstruction procedures for applicable state."
+    },
+    {
+      "check_id": "INV-40-C096",
+      "ordinal": 96,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "status": "partial",
+      "audit_note": "README contains day-0/day-1/day-2 bullets, but they are not operational runbooks with prerequisites, commands, validation, rollback, and recovery steps."
+    },
+    {
+      "check_id": "INV-40-C097",
+      "ordinal": 97,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "status": "missing",
+      "audit_note": "Incident severity, paging, escalation, containment, and recovery procedures."
+    },
+    {
+      "check_id": "INV-40-C098",
+      "ordinal": 98,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "status": "missing",
+      "audit_note": "Recurring access/policy/dependency/configuration/architecture review process."
+    },
+    {
+      "check_id": "INV-40-C099",
+      "ordinal": 99,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "status": "missing",
+      "audit_note": "Exception/waiver/technical-debt/deprecation register with owners and expiries."
+    },
+    {
+      "check_id": "INV-40-C100",
+      "ordinal": 100,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "status": "missing",
+      "audit_note": "Formal production exit-gate artifact/results. README references pk_core gate, but pk_core and gate evidence are absent from this archive."
+    }
+  ]
+}

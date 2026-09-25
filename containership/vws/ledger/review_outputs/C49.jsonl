@@ -1,0 +1,100 @@
+{"id": "C49-001", "status": "PASS", "evidence": ["gateway/server.js:216,242-248"], "note": "registry.conns is snapshotted in shutdown()'s for-loop as the drain population"}
+{"id": "C49-002", "status": "PASS", "evidence": ["gateway/server.js:237-238"], "note": "close status 1001 'service draining' chosen and coded"}
+{"id": "C49-003", "status": "PASS", "evidence": ["gateway/server.js:238", "tests/chaos/lifecycle.test.js:150"], "note": "1001 (not raw NormalClosure 1000) reviewed, coded and tested"}
+{"id": "C49-004", "status": "PASS", "evidence": ["gateway/connection.js:303-309"], "note": "comment+code: queued output flushed within bounded grace period before close"}
+{"id": "C49-005", "status": "OPEN", "evidence": [], "note": "no explicit decision found on incomplete inbound messages at drain time"}
+{"id": "C49-006", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference", "gateway/server.js:232,235"], "note": "VWS_SHUTDOWN_MS derives per-connection deadlineMs"}
+{"id": "C49-007", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference", "gateway/server.js:232"], "note": "same VWS_SHUTDOWN_MS also bounds the aggregate hard timer"}
+{"id": "C49-008", "status": "PASS", "evidence": ["gateway/server.js:216"], "note": "shutdown(reason) is the single coordinator function that owns the drain sequence"}
+{"id": "C49-009", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:216-242"], "note": "gateway process is implicitly the sole owner (single instance); not explicitly named as such"}
+{"id": "C49-010", "status": "PASS", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21", "gateway/server.js:216-248"], "note": "owner-approved candidate design (RAMWS.md, 2026-09-21) covers this behavior; implementation matches docs/OPERATIONS.md#restart-semantics sequence"}
+{"id": "C49-011", "status": "PASS", "evidence": ["gateway/server.js:39-52,236"], "note": "registry.conns Set is the single approved interface iterated for drain"}
+{"id": "C49-012", "status": "PASS", "evidence": ["gateway/server.js:192-199"], "note": "conn added to registry.conns immediately on accept, before session.open completes (OPENING included)"}
+{"id": "C49-013", "status": "PASS", "evidence": ["gateway/server.js:192-199"], "note": "socket registered right after acceptUpgrade, once Connection object takes ownership"}
+{"id": "C49-014", "status": "PASS", "evidence": ["gateway/server.js:51"], "note": "registry.forget removes from conns; counters.sessions is never decremented, preserving accounting"}
+{"id": "C49-015", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:236"], "note": "for..of over a Set during concurrent worker completion; no dedicated concurrency test found"}
+{"id": "C49-016", "status": "PASS", "evidence": ["gateway/server.js:172,120"], "note": "registry.draining checked first for both WS upgrade and ticket issuance"}
+{"id": "C49-017", "status": "PASS", "evidence": ["gateway/connection.js:22"], "note": "opaque random hex conn.id used as the safe drain-target identifier"}
+{"id": "C49-018", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:33,287"], "note": "this.closing marks 'close requested' per connection but there is no separate inventory-level tracking"}
+{"id": "C49-019", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:51,233"], "note": "registry.forget + onEmpty tracks aggregate completion; no per-target completed list"}
+{"id": "C49-020", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:242-248"], "note": "registry.forget() reconciles conns on close, but no measurement file reconciles the initial drain inventory against final outcomes (e/I049/drain-measure.json does not exist)"}
+{"id": "C49-021", "status": "PASS", "evidence": ["gateway/connection.js:19-51"], "note": "Connection instance is sole owner of its ws for the socket's lifetime"}
+{"id": "C49-022", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:59-70,227"], "note": "no explicit guard stops new _send calls once closing; DRAINING state still allows worker output sends"}
+{"id": "C49-023", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:303-309"], "note": "queued sends flushed with a 2s bounded grace window, not a full policy statement"}
+{"id": "C49-024", "status": "OPEN", "evidence": [], "note": "no named test exercising close-vs-receive-owner interaction found"}
+{"id": "C49-025", "status": "PASS", "evidence": ["gateway/connection.js:287"], "note": "'if (this.closing || this.state===\"CLOSED\") return;' guards against double close"}
+{"id": "C49-026", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "Node's ws is event-driven (no manual ReceiveAsync loop) so a hidden second receive has no .NET-style meaning here"}
+{"id": "C49-027", "status": "PASS", "evidence": ["gateway/server.js:232"], "note": "hard setTimeout(cfg.shutdownMs) is the cancellation/timeout input for the coordinator"}
+{"id": "C49-028", "status": "PASS", "evidence": ["gateway/connection.js:287"], "note": "already-closing state returns immediately, no duplicate close attempted"}
+{"id": "C49-029", "status": "PASS", "evidence": ["gateway/connection.js:313"], "note": "_onSocketClose returns immediately if state is already CLOSED"}
+{"id": "C49-030", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:315"], "note": "conn.closed log records code/clean/initiator, but not a distinct structured 'close attempt result'"}
+{"id": "C49-031", "status": "PASS", "evidence": ["gateway/connection.js:305,308"], "note": "this.ws.close(code, reason) is the single approved managed close call"}
+{"id": "C49-032", "status": "PASS", "evidence": ["gateway/connection.js:238,288,305"], "note": "selected wsCode is threaded through to ws.close"}
+{"id": "C49-033", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:288,305"], "note": "reason string supplied but no explicit length bound seen at the close call site"}
+{"id": "C49-034", "status": "PASS", "evidence": ["gateway/server.js:233", "gateway/connection.js:332-333"], "note": "registry.onEmpty only fires once every conn's actual close event lands (registry.forget), i.e. completion is observed, not assumed"}
+{"id": "C49-035", "status": "PASS", "evidence": ["gateway/connection.js:40,312-334"], "note": "ws.on('close', ...) is the existing receive-ownership path that observes peer closure"}
+{"id": "C49-036", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:315"], "note": "info.clean/info.initiator logged only once the socket's close event actually fires [downgraded: RECORD item without a written record]"}
+{"id": "C49-037", "status": "PASS", "evidence": ["gateway/connection.js:312-334"], "note": "conn is only marked CLOSED on the socket 'close' event, never on local send completion alone"}
+{"id": "C49-038", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:136-150"], "note": "real process SIGTERM test drains an idle cooperative session"}
+{"id": "C49-039", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:22-33"], "note": "'non-cooperative CPU loop' test exercises a busy worker but under supervisor-kill, not a busy peer completing a cooperative close handshake; no dedicated test found"}
+{"id": "C49-040", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:216-242", "tests/chaos/lifecycle.test.js:136-150"], "note": "tests pass against current code; no explicit doc pinning the sequence as frozen"}
+{"id": "C49-041", "status": "PASS", "evidence": ["gateway/connection.js:303-309"], "note": "code comment states accepted output is attempted to be drained within a grace window"}
+{"id": "C49-042", "status": "PASS", "evidence": ["gateway/connection.js:307"], "note": "2000ms bound on the flush-then-close loop"}
+{"id": "C49-043", "status": "PASS", "evidence": ["gateway/connection.js:293"], "note": "worker told 'close' (stop producing) as part of end()"}
+{"id": "C49-044", "status": "PASS", "evidence": ["gateway/connection.js:308"], "note": "socket closed unconditionally once grace period elapses, discarding remaining queue"}
+{"id": "C49-045", "status": "IN_PROGRESS", "evidence": [], "note": "no signal is sent to the client indicating queued output was dropped"}
+{"id": "C49-046", "status": "PASS", "evidence": ["gateway/connection.js:331"], "note": "pendingOut.length=0 and outBytesBySeq.clear() release abandoned payload refs"}
+{"id": "C49-047", "status": "PASS", "evidence": ["gateway/connection.js:104,227"], "note": "_onText no-ops once closing; _output gated to ACTIVE/DRAINING states only"}
+{"id": "C49-048", "status": "PASS", "evidence": ["gateway/connection.js:227,285"], "note": "state machine comment + code allow in-flight worker output to still be sent during DRAINING"}
+{"id": "C49-049", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:243-252"], "note": "worker stall detection exists generally but is not specifically a shutdown-time handler budget"}
+{"id": "C49-050", "status": "OPEN", "evidence": [], "note": "no doc section found describing possible delivery loss during shutdown"}
+{"id": "C49-051", "status": "PASS", "evidence": ["gateway/server.js:245", "gateway/config.js"], "note": "deadlineMs = min(300000, cfg.shutdownMs - 1000) is derived from VWS_SHUTDOWN_MS, reserving 1s for final cleanup"}
+{"id": "C49-052", "status": "PASS", "evidence": ["gateway/connection.js:267-272"], "note": "1.5s worker SIGKILL fallback reserved inside the 20s drain budget"}
+{"id": "C49-053", "status": "PASS", "evidence": ["gateway/server.js:236-239"], "note": "draining messages/close sent to every connection in one loop, not sequential per-connection budgets"}
+{"id": "C49-054", "status": "PASS", "evidence": ["gateway/server.js:232"], "note": "single shared hard timer bounds all simultaneous closes together"}
+{"id": "C49-055", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "'application heartbeat: a peer that never answers is closed 1008 within interval + window'"}
+{"id": "C49-056", "status": "OPEN", "evidence": [], "note": "no test found exercising many simultaneous unresponsive peers"}
+{"id": "C49-057", "status": "PASS", "evidence": ["gateway/server.js:224-232"], "note": "finish(true) force-kills workers and terminates sockets on hard timeout"}
+{"id": "C49-058", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229"], "note": "only an aggregate 'forced' boolean logged, not a per-connection exceeded-budget list"}
+{"id": "C49-059", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "single-client SIGTERM test confirms drain within budget; no measurement under representative concurrency (multiple simultaneous closes) was found (e/I049 missing)"}
+{"id": "C49-060", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "timing is asserted (ms<8000) in one test but not recorded as a written measurement under concurrency"}
+{"id": "C49-061", "status": "OPEN", "evidence": [], "note": "no named race test for peer close before local drain initiation"}
+{"id": "C49-062", "status": "OPEN", "evidence": [], "note": "no named race test for peer close during CloseAsync-equivalent"}
+{"id": "C49-063", "status": "OPEN", "evidence": [], "note": "no named race test for receive failure while close is pending"}
+{"id": "C49-064", "status": "OPEN", "evidence": [], "note": "no named race test for send failure while close is pending"}
+{"id": "C49-065", "status": "OPEN", "evidence": [], "note": "no named race test for worker completion during target enumeration"}
+{"id": "C49-066", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:219"], "note": "shutdownPromise cache guards repeated shutdown() calls in code, but no dedicated test found"}
+{"id": "C49-067", "status": "OPEN", "evidence": [], "note": "no named race test for handoff finishing at the drain boundary"}
+{"id": "C49-068", "status": "OPEN", "evidence": [], "note": "no named race test for registry removal racing close-result recording"}
+{"id": "C49-069", "status": "OPEN", "evidence": [], "note": "no test verifying exactly one final drain outcome per target under race conditions"}
+{"id": "C49-070", "status": "OPEN", "evidence": [], "note": "no race scenarios exist to repeat with several active connections"}
+{"id": "C49-071", "status": "PASS", "evidence": ["gateway/connection.js:329"], "note": "gen++ fences the FrameDecoder/timers so stale inbound-assembly callbacks are inert"}
+{"id": "C49-072", "status": "PASS", "evidence": ["gateway/connection.js:331"], "note": "pendingOut.length=0 releases unsent queued payload references"}
+{"id": "C49-073", "status": "PASS", "evidence": ["gateway/connection.js:329-330"], "note": "gen++ plus _clearTimers stop outstanding fenced callbacks before buffers are dropped"}
+{"id": "C49-074", "status": "PASS", "evidence": ["gateway/connection.js:225,305,308"], "note": "ws.terminate/ws.close invoked by the owning Connection to dispose each finalized socket"}
+{"id": "C49-075", "status": "PASS", "evidence": ["gateway/connection.js:56,304,330"], "note": "_clearTimers clears every setTimeout/setInterval on close"}
+{"id": "C49-076", "status": "PASS", "evidence": ["gateway/connection.js:333", "gateway/server.js:51"], "note": "registry.forget deletes the finalized connection from registry.conns"}
+{"id": "C49-077", "status": "PASS", "evidence": ["gateway/connection.js:282,332"], "note": "registry.release frees reserved capacity in both _finalExit and _onSocketClose"}
+{"id": "C49-078", "status": "PASS", "evidence": ["gateway/connection.js:267-272,260-266"], "note": "worker process (stdin/stdout/stderr, child process) disposed via _killWorker/exit handling"}
+{"id": "C49-079", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:263,315"], "note": "worker.failed vs conn.closed are distinct log events but there's no explicit cleanup-incomplete category"}
+{"id": "C49-080", "status": "OPEN", "evidence": [], "note": "no test found asserting resource/registry counts after the final drain target completes"}
+{"id": "C49-081", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:220,222"], "note": "t0 captured and gateway.draining logged at drain start [downgraded: RECORD item without a written record]"}
+{"id": "C49-082", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:222"], "note": "'connections: registry.conns.size' logged in gateway.draining [downgraded: RECORD item without a written record]"}
+{"id": "C49-083", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229"], "note": "only aggregate forced/drainMs recorded at gateway.stopped, no per-connection cooperative-close count"}
+{"id": "C49-084", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:263"], "note": "worker.failed is logged but not aggregated as a distinct 'close-operation failure' metric at drain end"}
+{"id": "C49-085", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229"], "note": "only the aggregate 'forced' boolean is recorded, not which peers individually timed out"}
+{"id": "C49-086", "status": "OPEN", "evidence": [], "note": "no logging of discarded/unfinished queued work found"}
+{"id": "C49-087", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:228-229"], "note": "gateway.stopped logs drainMs, the aggregate duration [downgraded: RECORD item without a written record]"}
+{"id": "C49-088", "status": "PASS", "evidence": ["docs/OPERATIONS.md#health-and-logs"], "note": "'never contain tokens, cookies, query strings or terminal bytes' applies to all logs including shutdown"}
+{"id": "C49-089", "status": "OPEN", "evidence": [], "note": "no release/version or instance identity field found in drain log lines"}
+{"id": "C49-090", "status": "OPEN", "evidence": [], "note": "no documented reproduction procedure for a slow-drain incident"}
+{"id": "C49-091", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics"], "note": "docs/OPERATIONS.md#restart-semantics publishes the drain sequence (admission off -> service.draining -> workers stopped -> listener closed -> exit 0)"}
+{"id": "C49-092", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:245", "docs/OPERATIONS.md"], "note": "VWS_SHUTDOWN_MS and the internal deadlineMs formula exist in code/config docs, but no document states the per-connection vs aggregate budget split explicitly"}
+{"id": "C49-093", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:303-309"], "note": "disposition rules live only as code comments, not a published doc section"}
+{"id": "C49-094", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js:39-64"], "note": "cooperative (idle) close test is linked; docs/RECOVERY.md no longer exists so re-cited to the current test"}
+{"id": "C49-095", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md#testschaoslifecycletestjs"], "note": "heartbeat-timeout (unresponsive peer) test is listed alongside the drain evidence"}
+{"id": "C49-096", "status": "NOT_APPLICABLE", "evidence": ["D-001"], "note": "CloseAsync ownership compatibility is a .NET ClientWebSocket concept; Node ws has no equivalent test type"}
+{"id": "C49-097", "status": "OPEN", "evidence": [], "note": "no concurrent-drain race tests exist to link (see Race tests section)"}
+{"id": "C49-098", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:242-248"], "note": "registry accounting is asserted (reserved.size===0, conns.size===0) in tests, but no standalone final-accounting evidence document exists"}
+{"id": "C49-099", "status": "OPEN", "evidence": [], "note": "no explicit doc section on unresolved shutdown delivery guarantees found"}
+{"id": "C49-100", "status": "OPEN", "evidence": [], "note": "no explicit approval gate tying draining sign-off to separately accounted acks/timeouts/cleanup"}

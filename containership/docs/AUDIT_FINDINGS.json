@@ -1,0 +1,195 @@
+{
+  "schema": "UC/AUDIT_FINDINGS/1",
+  "from_release": "UC-2.1.3",
+  "to_release": "UC-2.2.0",
+  "severity_scope": "Trusted-operator local development profile; no CVSS score or security certification claimed.",
+  "findings": [
+    {
+      "id": "UC-A01",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "Unscoped berth lifecycle paths",
+      "locations": "ship/unikernel/berth.py; cli.py",
+      "evidence": "Baseline unload with ../outside deleted an isolated sibling directory.",
+      "repair": "Validate names and resolve contained paths before berth operations. Reject links/reparse points and unsafe components.",
+      "validation": "Traversal and reserved-name regression cases.",
+      "residual": "The host filesystem and cooperating operator remain trusted; not race-proof against a privileged concurrent writer."
+    },
+    {
+      "id": "UC-A02",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "Destructive replacement before admission",
+      "locations": "ship/unikernel/berth.py",
+      "evidence": "Baseline replacement with a nonexistent source removed the existing isolated berth.",
+      "repair": "Stage, verify and swap; retain the previous generation; attempt rollback on ordinary pre-commit failure.",
+      "validation": "Missing-source, staged failure, swap failure and journal fault tests.",
+      "residual": "Cross-resource recovery spanning registry, seal, hull and TIFF state remains partial."
+    },
+    {
+      "id": "UC-A03",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "ZIP admission and cross-platform loss hazards",
+      "locations": "ship/unikernel/safety.py; berth.py; engines.py",
+      "evidence": "Archive extraction had no explicit count/expanded-size/ratio policy and no complete duplicate/special-entry admission. Ordinary extractall sanitization is not claimed universally vulnerable to traversal.",
+      "repair": "Preflight canonical members, limits, encryption, links, duplicates and file/directory conflicts; stream flat staged blobs before portable aliasing.",
+      "validation": "Archive rejection suite and actual eight-file ZIP/native integration.",
+      "residual": "Native payloads are still trusted; the input budget is not a global storage or CPU quota."
+    },
+    {
+      "id": "UC-A04",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "Slot-run bypasses ledger identity and failure result",
+      "locations": "ship/unikernel/cli.py",
+      "evidence": "A supplied path could bypass intended cargo lookup; alias/wrong-slot and native failure handling were insufficient.",
+      "repair": "Require a unique ledger entry in the requested slot, contained path, matching size and digest; propagate failed native halts.",
+      "validation": "Original-path and alias resolution, wrong-slot, untracked, modified-byte and failed-result tests.",
+      "residual": "A registered file is not proof its behavior is safe; real guest isolation remains absent."
+    },
+    {
+      "id": "UC-A05",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "Sealed result does not enforce its pinned witness",
+      "locations": "ship/unikernel/cli.py; tif_fabric.py",
+      "evidence": "Sealed success did not consistently require matches_pinned or a valid pre-execution reference contract.",
+      "repair": "Validate parsed program seal, row count and witness before execution; require the pinned match in the final result.",
+      "validation": "Actual successful native run, then deliberately changed reference plus recomputed file sums is refused with exit 3.",
+      "residual": "These checks cover the executed witness program, not arbitrary cargo-language semantics."
+    },
+    {
+      "id": "UC-A06",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "Incomplete pin and checksum admission",
+      "locations": "ship/unikernel/engines.py; ucmanifest.py; gates.py",
+      "evidence": "Missing hold pins and malformed checksum records could be accepted or confused with host limitations.",
+      "repair": "Require all five hold pins, reject malformed/duplicate/escaping checksum records and preserve parser failures as failures.",
+      "validation": "Missing-pin, invalid digest, duplicate, traversal and strict parser tests; full rebuild and native gates.",
+      "residual": "A local hash is not an independently authenticated publisher signature; mutable caches remain a trust boundary."
+    },
+    {
+      "id": "UC-A07",
+      "severity": "HIGH",
+      "status": "PARTIAL",
+      "title": "Hull reassembly paths and mount ownership",
+      "locations": "ship/unikernel/hullmount.py",
+      "evidence": "Reassembly and mount names lacked consistent path confinement and ownership protections; corrupt registry could silently appear empty.",
+      "repair": "Constrain paths/names, verify cargo bytes, reject unowned replacement and unreadable registry; write ownership atomically.",
+      "validation": "Mount ownership and registry corruption regression tests; full hull and face integration.",
+      "residual": "Carried-key enrollment is operator trust, not external release authorization; full transactional mount rollback is not implemented."
+    },
+    {
+      "id": "UC-A08",
+      "severity": "HIGH",
+      "status": "FIXED",
+      "title": "Tick success overstates executed agreement",
+      "locations": "ship/unikernel/tif_fabric.py",
+      "evidence": "Success could overlook required hull/replay/mount/native outcomes.",
+      "repair": "Require participating engine, fabric, requested hull and requested mount execution, pinned agreement and replay success for TICK_OK.",
+      "validation": "Native B10 differential, chained, painted-tick and painted-declaration cases across all six delivered berths.",
+      "residual": "Agreement is local deterministic execution, not fault-independent consensus or workload correctness."
+    },
+    {
+      "id": "UC-A09",
+      "severity": "MEDIUM",
+      "status": "FIXED",
+      "title": "Manifest inventory inconsistencies",
+      "locations": "ship/unikernel/ucmanifest.py",
+      "evidence": "Inventory verification did not comprehensively enforce duplicate entries, counts and aggregate bytes.",
+      "repair": "Validate entry identity, size/hash, file count, total bytes and absence of extra included files; reject included nonregular filesystem objects.",
+      "validation": "Manifest duplicate/count/total/escape and FIFO/link cases.",
+      "residual": "Duplicate-key-safe JSON and complete canonical schema migrations are still roadmap work."
+    },
+    {
+      "id": "UC-A10",
+      "severity": "MEDIUM",
+      "status": "FIXED",
+      "title": "Stale berth inventory after final unload",
+      "locations": "ship/unikernel/ucmanifest.py; registry.py",
+      "evidence": "Empty berth lists could leave old manifest berth metadata in place.",
+      "repair": "Always rewrite berth list, even when empty, and current release identity on reseal.",
+      "validation": "Last-berth reseal regression; final package inventory verification.",
+      "residual": "Historical seal lineage is preserved and intentionally retains older release evidence."
+    },
+    {
+      "id": "UC-A11",
+      "severity": "MEDIUM",
+      "status": "FIXED_FOR_NEW_LOADS",
+      "title": "Checksum self-reference in new berth metadata",
+      "locations": "ship/unikernel/berth.py",
+      "evidence": "BERTH.json attempted to retain a digest of the sums file that subsequently binds BERTH.json.",
+      "repair": "Omit this circular field in newly generated BERTH.json; bind current sums externally in the bill of lading.",
+      "validation": "New-load integration verifies no self-reference and valid berth sums.",
+      "residual": "Historical delivered berth artifacts are retained byte-for-byte, not silently rewritten."
+    },
+    {
+      "id": "UC-A12",
+      "severity": "MEDIUM",
+      "status": "PARTIAL",
+      "title": "Concurrent mutation and truncated writes",
+      "locations": "ship/unikernel/safety.py; registry.py; ucmanifest.py; tif_fabric.py",
+      "evidence": "Independent writers and direct metadata/image replacement risk interleaving or truncating state.",
+      "repair": "Serialize cooperating commands with an OS-released lock and use same-directory fsync/replace for core metadata and ship TIFF updates.",
+      "validation": "Multiprocess lock contention; atomic write failures preserve prior bytes.",
+      "residual": "No all-resource commit protocol or arbitrary host-writer protection; some diagnostic output files remain direct writes."
+    },
+    {
+      "id": "UC-A13",
+      "severity": "MEDIUM",
+      "status": "FIXED",
+      "title": "Invalid numeric inputs and weak CLI error contracts",
+      "locations": "ship/unikernel/cli.py",
+      "evidence": "Negative, enormous or non-finite inputs and inconsistent errors could produce misleading behavior.",
+      "repair": "Bound ticks/scale/interval/steps; restrict program names; emit stable nonzero error categories with diagnostic logs and preserve interrupts.",
+      "validation": "NaN/infinity/zero/range/program/error/interrupt tests and wrapper inspection.",
+      "residual": "No externally versioned management API, full subprocess supervision or universal deadline contract yet."
+    },
+    {
+      "id": "UC-A14",
+      "severity": "MEDIUM",
+      "status": "FIXED",
+      "title": "Windows path and generated-namespace collisions",
+      "locations": "ship/unikernel/berth.py; root CMD launchers",
+      "evidence": "Case/normalization differences, Windows device names, long paths and cargo metadata names could overwrite or obstruct generated content.",
+      "repair": "Preserve logical names in a ledger; alias portable collisions and generated namespaces; quote Windows launch paths and retain exit status.",
+      "validation": "Case-pair, AUX, long-path, CARGO_MANIFEST case-pair and _Alias integration with all original bytes intact; static package path checks.",
+      "residual": "Native Windows and macOS execution has not been observed; runtime toolchains and root path length still matter."
+    },
+    {
+      "id": "UC-A15",
+      "severity": "MEDIUM",
+      "status": "PARTIAL",
+      "title": "Unbounded TIFF history and partial writes",
+      "locations": "ship/unikernel/tif_fabric.py",
+      "evidence": "Append/read operations lacked explicit ship-level byte/page/geometry/sidecar budgets.",
+      "repair": "Enforce 8 MiB, 512 pages, fixed raster and bounded sidecar on ship-managed state; atomically replace files and close frames.",
+      "validation": "Real Pillow codec append/read/limit/error-preservation tests and native B9/B10.",
+      "residual": "Embedded hull decoder entry points, initial allocation, rollover, global disk quotas and multi-picture atomicity remain incomplete."
+    },
+    {
+      "id": "UC-A16",
+      "severity": "MEDIUM",
+      "status": "PARTIAL",
+      "title": "Top-level PASS can hide nested skipped coverage",
+      "locations": "ship/unikernel/cli.py",
+      "evidence": "The inherited ship summary can show no skips while nested berth gates are skipped for absent sample types.",
+      "repair": "Add --require-complete, recursively refusing any SKIPPED gate, with failure taking precedence.",
+      "validation": "Four result-policy tests; actual full verification preserves all nested skip evidence.",
+      "residual": "This is deliberately conservative, not a required/optional/not-applicable production qualification classifier."
+    },
+    {
+      "id": "UC-A17",
+      "severity": "RELEASE_BLOCKER",
+      "status": "OPEN",
+      "title": "Missing real unikernel execution and independent trust boundary",
+      "locations": "Architecture; guest backend; host runtime; release process",
+      "evidence": "No bootable guest, hypervisor isolation, OS-enforced deny-network, multi-tenant identity, external release authentication or multi-host consensus was identified.",
+      "repair": "Document actual capability limits in doctor, SECURITY.md and the 96-item theory-derived roadmap. No simulated completion claims.",
+      "validation": "Local capability report explicitly reports these features false.",
+      "residual": "Requires new guest/build/isolation/lifecycle/security components; UC-2.2.0 remains a trusted local skeleton."
+    }
+  ]
+}

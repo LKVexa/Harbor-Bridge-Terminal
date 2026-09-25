@@ -1,0 +1,23 @@
+# INV-63 ownership manifest (INV-63-C009). Machine-checked by gate.py::check_owners.
+# Every field below must name an ACTIVE team/person before production; UNASSIGNED blocks the gate.
+schema: INV63_OWNERS/1
+review_date: UNASSIGNED          # YYYY-MM-DD of last ownership review (<= 90 days old)
+service_owner: UNASSIGNED
+engineering_owner: UNASSIGNED
+oncall_rotation: UNASSIGNED       # pager rotation id
+security_contact: UNASSIGNED
+release_approver: UNASSIGNED
+architecture_approver: UNASSIGNED
+escalation:
+  sev1: [oncall_rotation, engineering_owner, service_owner]
+  sev2: [oncall_rotation, engineering_owner]
+  sev3: [oncall_rotation]
+  security: [security_contact, oncall_rotation]
+raci:
+  deploy:            {R: oncall_rotation, A: service_owner, C: engineering_owner, I: release_approver}
+  rollback:          {R: oncall_rotation, A: service_owner, C: engineering_owner, I: release_approver}
+  emergency_disable: {R: oncall_rotation, A: service_owner, C: security_contact, I: engineering_owner}
+  schema_change:     {R: engineering_owner, A: architecture_approver, C: service_owner, I: oncall_rotation}
+  wadm_upgrade:      {R: engineering_owner, A: release_approver, C: oncall_rotation, I: service_owner}
+  security_incident: {R: security_contact, A: service_owner, C: oncall_rotation, I: engineering_owner}
+  production_exception: {R: service_owner, A: release_approver, C: security_contact, I: engineering_owner}

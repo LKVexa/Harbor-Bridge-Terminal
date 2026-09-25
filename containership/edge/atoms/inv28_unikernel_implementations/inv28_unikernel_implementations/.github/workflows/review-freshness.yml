@@ -1,0 +1,15 @@
+# Recurring review automation (MC-074): weekly, fails (and notifies) when any review in ops/REVIEWS.json
+# or any toolchain security review is overdue.
+name: inv28-review-freshness
+on:
+  schedule: [{ cron: "0 14 * * 1" }]
+  workflow_dispatch:
+jobs:
+  due:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv28_unikernel_implementations }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python -B -m inv28_unikernel_implementations.tools.review_due --fail-on-overdue

@@ -1,0 +1,109 @@
+{
+  "$defs": {
+    "digest": {
+      "pattern": "sha256:[0-9a-f]{64}",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}",
+      "type": "string"
+    },
+    "instance": {
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "tenant": {
+      "pattern": "[a-z0-9][a-z0-9-]{0,62}",
+      "type": "string"
+    }
+  },
+  "$id": "urn:inv63:PK_DEPLOY_DESIRED/2",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "key_id": {
+          "$ref": "#/$defs/id"
+        },
+        "provenance": {
+          "maxLength": 512,
+          "type": "string"
+        },
+        "signature": {
+          "pattern": "[0-9a-f]{128}",
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest",
+        "signature",
+        "key_id"
+      ],
+      "type": "object"
+    },
+    "component": {
+      "$ref": "#/$defs/id"
+    },
+    "count": {
+      "maximum": 1000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "max_unavailable": {
+      "maximum": 1000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "priority": {
+      "enum": [
+        "critical",
+        "standard",
+        "batch"
+      ]
+    },
+    "residency": {
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "maxItems": 16,
+      "type": "array"
+    },
+    "schema": {
+      "const": "PK_DEPLOY_DESIRED/2"
+    },
+    "spread": {
+      "type": "boolean"
+    },
+    "tenant": {
+      "$ref": "#/$defs/tenant"
+    },
+    "version": {
+      "$ref": "#/$defs/id"
+    }
+  },
+  "required": [
+    "schema",
+    "tenant",
+    "component",
+    "version",
+    "count",
+    "artifact"
+  ],
+  "title": "PK_DEPLOY_DESIRED/2",
+  "type": "object",
+  "x-inv63": {
+    "owner": "INV-63",
+    "stability": "stable"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_SIGNAL_QUERY/1",
+  "title": "Legacy GAP-09 latest-value query response (v4.x)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "signal",
+    "value",
+    "present",
+    "stale",
+    "age"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_SIGNAL_QUERY/1"
+    },
+    "signal": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "present": {
+      "type": "boolean"
+    },
+    "stale": {
+      "type": "boolean"
+    },
+    "age": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "present": {
+            "const": false
+          }
+        },
+        "required": [
+          "present"
+        ]
+      },
+      "then": {
+        "properties": {
+          "value": {
+            "type": "null"
+          },
+          "stale": {
+            "const": true
+          },
+          "age": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "present": {
+            "const": true
+          }
+        },
+        "required": [
+          "present"
+        ]
+      },
+      "then": {
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  ]
+}

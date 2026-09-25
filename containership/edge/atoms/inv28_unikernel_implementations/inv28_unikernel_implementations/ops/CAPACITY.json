@@ -1,0 +1,60 @@
+{
+ "schema": "PK_CAPACITY_MODEL/1",
+ "component": "INV-28",
+ "owner": "inv28-sre-owner",
+ "bounds": {
+  "registry_entries": 1024,
+  "eliminations_reported": 256,
+  "selection_cache_entries": 1024,
+  "token_length": 64,
+  "set_size": 64,
+  "certificates": 10000,
+  "advisories": 50000,
+  "limitations_per_entry": 32,
+  "snapshot_retention": 256,
+  "audit_ledger_in_memory": 100000,
+  "metric_series_per_metric": 200
+ },
+ "cost_model": {
+  "selection": "O(entries x (capabilities + limitations)) CPU; no I/O except the optional GAP-15 source refresh",
+  "memory": "entries x ~2 KiB + cache 1024 x (result ~1-4 KiB)",
+  "note": "measured numbers live in evidence/BENCH_RESULTS.json; thresholds in ops/PERF_THRESHOLDS.json are PROPOSED until approved on reference hardware"
+ },
+ "saturation_thresholds": [
+  {
+   "signal": "registry entries",
+   "warn_at": 820,
+   "limit": 1024,
+   "action": "refuse",
+   "behaviour": "register() -> REG_CAPACITY_EXCEEDED"
+  },
+  {
+   "signal": "selection p99 latency (ms)",
+   "warn_at": 10,
+   "limit": 25,
+   "action": "alert",
+   "behaviour": "INV28SelectionLatencyP99"
+  },
+  {
+   "signal": "metric series per metric",
+   "warn_at": 160,
+   "limit": 200,
+   "action": "alert",
+   "behaviour": "series fold into overflow; INV28MetricSeriesDropped"
+  },
+  {
+   "signal": "audit ledger in-memory entries",
+   "warn_at": 80000,
+   "limit": 100000,
+   "action": "refuse",
+   "behaviour": "OverflowError until rotated (RUNBOOK#audit-rotation)"
+  },
+  {
+   "signal": "certificates",
+   "warn_at": 8000,
+   "limit": 10000,
+   "action": "refuse",
+   "behaviour": "ingest -> REG_CAPACITY_EXCEEDED"
+  }
+ ]
+}

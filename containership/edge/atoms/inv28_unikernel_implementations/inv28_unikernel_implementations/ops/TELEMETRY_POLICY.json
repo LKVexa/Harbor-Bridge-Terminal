@@ -1,0 +1,39 @@
+{
+ "schema": "PK_TELEMETRY_POLICY/1",
+ "component": "INV-28",
+ "owner": "inv28-sre-owner",
+ "policy": {
+  "log_retention_days": 30,
+  "audit_retention_days": 400,
+  "metric_retention_days": 90,
+  "trace_sample_rate": 0.1,
+  "refusal_trace_sample_rate": 1.0,
+  "export_allowed": [
+   "prometheus",
+   "otlp",
+   "jsonl"
+  ],
+  "pseudonymised_fields": [
+   "tenant",
+   "workload_id"
+  ]
+ },
+ "privacy": {
+  "tenant_and_workload_ids": "keyed HMAC pseudonyms in logs; never metric labels",
+  "secrets": "any field whose key matches (secret|token|password|passwd|key|mac|signature|credential) is redacted",
+  "request_payloads": "logged only as digests in the audit ledger payload"
+ },
+ "sampling": {
+  "selections": "trace_sample_rate",
+  "refusals": "refusal_trace_sample_rate (always)"
+ },
+ "export": {
+  "allowed": [
+   "prometheus",
+   "otlp",
+   "jsonl"
+  ],
+  "forbidden": "raw audit ledger outside the tenant's jurisdiction without legal review"
+ },
+ "retention_enforcement": "host-side (log/metric backends); the audit ledger is rotated by the operator per ops/RUNBOOK.md#audit-rotation"
+}

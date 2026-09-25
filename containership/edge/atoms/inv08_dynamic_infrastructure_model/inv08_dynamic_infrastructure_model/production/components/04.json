@@ -1,0 +1,72 @@
+{
+ "component": 4,
+ "title": "Release provenance and artifact signing",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "an SBOM in SPDX or CycloneDX form",
+   "state": "IMPLEMENTED",
+   "spec": "production/provenance.py::sbom (CycloneDX 1.5)",
+   "modules": [
+    "production/provenance.py::sbom",
+    "production/provenance.py::validate_sbom"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ProvenanceTest.test_sbom_cyclonedx"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "SLSA/in-toto style build provenance",
+   "state": "PARTIAL",
+   "spec": "production/provenance.py::statement (in-toto v1 + SLSA v1)",
+   "modules": [
+    "production/provenance.py::statement"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ProvenanceTest.test_in_toto_slsa_statement"
+   ],
+   "blocker": "hosted, isolated, non-falsifiable builder identity (local builder only)"
+  },
+  {
+   "name": "artifact signatures and trusted signer identity",
+   "state": "PARTIAL",
+   "spec": "production/provenance.py::sign_envelope",
+   "modules": [
+    "production/provenance.py::sign_envelope",
+    "production/core.py::TrustRoot"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ProvenanceTest.test_signature_nonproduction_and_policy"
+   ],
+   "blocker": "asymmetric signing key in KMS/HSM and trusted publisher identity (HMAC keys are nonproduction by design)"
+  },
+  {
+   "name": "verification policy and trust-root distribution",
+   "state": "PARTIAL",
+   "spec": "production/provenance.py::VerificationPolicy",
+   "modules": [
+    "production/provenance.py::VerificationPolicy"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ProvenanceTest.test_signature_nonproduction_and_policy",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ProvenanceTest.test_policy_rejects_mismatch_unsigned_untrusted"
+   ],
+   "blocker": "trust-root distribution channel for production verification keys"
+  },
+  {
+   "name": "CI enforcement that rejects unsigned or mismatched release artifacts",
+   "state": "IMPLEMENTED",
+   "spec": "production/ci/release_check.py (module docstring)",
+   "modules": [
+    "production/ci/release_check.py::main",
+    "production/ci/release_check.py::run"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ProvenanceTest.test_ci_release_check"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Release check fails closed by default because no production signature can exist here."
+}

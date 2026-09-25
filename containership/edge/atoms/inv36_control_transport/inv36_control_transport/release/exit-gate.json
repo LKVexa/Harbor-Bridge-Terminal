@@ -1,0 +1,23 @@
+{
+  "schema": "inv36.exit-gate/1",
+  "rule": "Every mandatory item must be PASS with evidence bound to the release source/artifact digests. SKIP/ERROR/OPEN are non-passing unless an approved, unexpired waiver in governance/waivers.json covers the item.",
+  "approvers_required": ["service_owner", "technical_owner", "security_owner", "release_owner"],
+  "items": [
+    {"id": "EG-01", "area": "architecture", "evidence": "docs/ADR-0001.md approved (status Accepted)", "mandatory": true, "state": "OPEN_GOVERNANCE"},
+    {"id": "EG-02", "area": "requirements", "evidence": "requirements/requirements.json approval=approved; traceability --check PASS", "mandatory": true, "state": "OPEN_GOVERNANCE"},
+    {"id": "EG-03", "area": "interfaces", "evidence": "gate G01 PASS; golden fixtures unchanged or version bumped", "mandatory": true, "state": "PASS_LOCAL"},
+    {"id": "EG-04", "area": "implementation", "evidence": "gate G02/G03 PASS", "mandatory": true, "state": "PASS_LOCAL"},
+    {"id": "EG-05", "area": "security", "evidence": "external crypto review of PK_CTRL_HS/1; G04, G08, G12 PASS", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-06", "area": "resilience", "evidence": "DisasterPartitionTest PASS; real VM reboot/migration rows", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-07", "area": "performance", "evidence": "G09 PASS on a certified profile with approved thresholds", "mandatory": true, "state": "OPEN_GOVERNANCE"},
+    {"id": "EG-08", "area": "observability", "evidence": "alerts/dashboards deployed; synthetic alert tests PASS", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-09", "area": "tests", "evidence": "fuzz nightly green 7 days; soak 6 h", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-10", "area": "compatibility", "evidence": "all mandatory compat/matrix.json rows PASS (G11 real vsock end-to-end)", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-11", "area": "rollback", "evidence": "rollback rehearsal in canary", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-12", "area": "operations", "evidence": "runbooks reviewed; on-call trained", "mandatory": true, "state": "OPEN_GOVERNANCE"},
+    {"id": "EG-13", "area": "ownership", "evidence": "governance/owners.json has no UNASSIGNED roles", "mandatory": true, "state": "OPEN_GOVERNANCE"},
+    {"id": "EG-14", "area": "license", "evidence": "LICENSE present; SPDX in metadata", "mandatory": true, "state": "OPEN_GOVERNANCE"},
+    {"id": "EG-15", "area": "sbom_provenance", "evidence": "release verify PASS with managed signing identity", "mandatory": true, "state": "OPEN_EXTERNAL"},
+    {"id": "EG-16", "area": "gate_evidence", "evidence": "audit --certify exit 0 incl. G13 pk_core PASS", "mandatory": true, "state": "OPEN_EXTERNAL"}
+  ]
+}

@@ -1,0 +1,26 @@
+# GAP-03 CI matrix (MC-035) - declared; NOT executed in this archive (no CI runner available: blocked item)
+name: gap03-ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        os: [ubuntu-24.04, ubuntu-24.04-arm, windows-2022, macos-14]
+        optimize: ["", "-O"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python ${{ matrix.optimize }} -B -m unittest discover -s gap03_topology_aware_scheduler/tests -t .
+      - run: python -B -m gap03_topology_aware_scheduler.certification.run_checklist --ci
+  bench-gate:
+    runs-on: [self-hosted, pinned-benchmark]
+    steps:
+      - run: python -B -m gap03_topology_aware_scheduler.benchmarks.harness --gate --out bench.json
+  supply-chain:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: python -B -m gap03_topology_aware_scheduler.certification.run_checklist --release-evidence

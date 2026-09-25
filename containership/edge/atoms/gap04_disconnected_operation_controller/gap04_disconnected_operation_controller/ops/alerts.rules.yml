@@ -1,0 +1,75 @@
+# GAP-04 Prometheus alerting rules (GAP04-C29). Every alert names a runbook section in
+# docs/RUNBOOK.md and a severity from docs/INCIDENT_SEVERITY.md. Classes are kept
+# distinct so ordinary partitioning does not page like an attack or a software fault.
+groups:
+- name: gap04
+  rules:
+  - alert: Gap04PartitionOrdinary
+    expr: gap04_tier == 0 and on() gap04_reachability_state{state="down"} == 1
+    for: 5m
+    labels: {severity: SEV4, class: partition}
+    annotations: {summary: "Site partitioned, full autonomy", runbook: "RUNBOOK.md#rb-01-partition"}
+  - alert: Gap04DegradationProlonged
+    expr: gap04_tier >= 1
+    for: 30m
+    labels: {severity: SEV3, class: prolonged_degradation}
+    annotations: {summary: "Site in sustain/freeze tier for 30m", runbook: "RUNBOOK.md#rb-02-prolonged"}
+  - alert: Gap04LeaseExpiringPartitioned
+    expr: gap04_lease_remaining_seconds < 3600 and on() gap04_reachability_state{state="down"} == 1
+    for: 1m
+    labels: {severity: SEV2, class: lease_expiry}
+    annotations: {summary: "Lease expires within 1h while partitioned", runbook: "RUNBOOK.md#rb-03-lease"}
+  - alert: Gap04LeaseExpired
+    expr: gap04_tier == 3
+    for: 1m
+    labels: {severity: SEV2, class: lease_expiry}
+    annotations: {summary: "Autonomy lease expired; site has no local authority", runbook: "RUNBOOK.md#rb-03-lease"}
+  - alert: Gap04PolicyStale
+    expr: gap04_policy_staleness_seconds > 0.8 * 86400
+    for: 5m
+    labels: {severity: SEV3, class: stale_policy}
+    annotations: {summary: "Cached policy approaching staleness bound", runbook: "RUNBOOK.md#rb-04-policy"}
+  - alert: Gap04JournalPressure
+    expr: gap04_journal_utilization_ratio > 0.8
+    for: 5m
+    labels: {severity: SEV2, class: storage_pressure}
+    annotations: {summary: "Durable journal above 80%", runbook: "RUNBOOK.md#rb-05-storage"}
+  - alert: Gap04StorageFreeze
+    expr: increase(gap04_storage_alarms_total{reason="journal_full"}[5m]) > 0
+    labels: {severity: SEV1, class: storage_pressure}
+    annotations: {summary: "Journal full: emergency freeze engaged", runbook: "RUNBOOK.md#rb-05-storage"}
+  - alert: Gap04ReconcileConflicts
+    expr: increase(gap04_reconcile_conflicts_total[15m]) > 0
+    labels: {severity: SEV3, class: reconciliation_conflict}
+    annotations: {summary: "Reconnect surfaced conflicts", runbook: "RUNBOOK.md#rb-06-reconcile"}
+  - alert: Gap04VerificationAttack
+    expr: sum(increase(gap04_verification_failures_total{code=~"GAP04-E020[0-9]|GAP04-E0210|GAP04-E0220"}[10m])) > 3
+    labels: {severity: SEV1, class: attack}
+    annotations: {summary: "Repeated lease/policy verification failures (possible forgery/replay)", runbook: "RUNBOOK.md#rb-07-security"}
+  - alert: Gap04ClockRollback
+    expr: increase(gap04_verification_failures_total{code="GAP04-E0300"}[10m]) > 0
+    labels: {severity: SEV1, class: attack}
+    annotations: {summary: "Trusted-time failure / rollback detected", runbook: "RUNBOOK.md#rb-07-security"}
+  - alert: Gap04Quarantined
+    expr: gap04_quarantined == 1
+    labels: {severity: SEV2, class: containment}
+    annotations: {summary: "Controller quarantined", runbook: "RUNBOOK.md#rb-08-quarantine"}
+  - alert: Gap04SoftwareFault
+    expr: increase(gap04_denials_total{code=~"GAP04-E0401|GAP04-E0402|GAP04-E0403|GAP04-E0404"}[10m]) > 0
+    labels: {severity: SEV1, class: software_fault}
+    annotations: {summary: "Journal/state integrity failure", runbook: "RUNBOOK.md#rb-09-integrity"}
+  - alert: Gap04LoadShedding
+    expr: rate(gap04_admission_rejections_total[5m]) > 1
+    for: 10m
+    labels: {severity: SEV3, class: overload}
+    annotations: {summary: "Sustained load shedding", runbook: "RUNBOOK.md#rb-10-overload"}
+  - alert: Gap04DecisionLatencySLO
+    expr: histogram_quantile(0.99, sum by (le) (rate(gap04_decision_latency_seconds_bucket[10m]))) > 0.05
+    for: 15m
+    labels: {severity: SEV3, class: slo}
+    annotations: {summary: "p99 decide() latency above 50ms SLO", runbook: "RUNBOOK.md#rb-11-latency"}
+  - alert: Gap04TelemetryMissing
+    expr: absent(gap04_build_info) or absent(gap04_tier)
+    for: 10m
+    labels: {severity: SEV3, class: telemetry}
+    annotations: {summary: "GAP-04 metrics absent: exporter or scrape failure", runbook: "RUNBOOK.md#rb-12-telemetry"}

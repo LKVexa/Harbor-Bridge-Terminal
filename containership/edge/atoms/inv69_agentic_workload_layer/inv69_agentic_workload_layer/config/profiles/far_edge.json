@@ -1,0 +1,53 @@
+{
+  "schema": "PK_AGENT_PROFILE/1",
+  "context": "far_edge",
+  "applicability": "optional",
+  "rationale": "Constrained devices: only read-only low-risk tools; no side-effecting tools unless online; tight budgets.",
+  "mandatory_capabilities": [
+    "allowlist",
+    "step_budget",
+    "cost_budget",
+    "transcript",
+    "approval_gate",
+    "heavy_sandbox"
+  ],
+  "prohibited_capabilities": [
+    "offline_cached_approval",
+    "cross_zone_failover",
+    "fast_sandbox"
+  ],
+  "defaults": {
+    "offline": {
+      "queue_enabled": true,
+      "max_queue": 128
+    },
+    "audit": {
+      "require_remote_anchor": false
+    },
+    "sandbox": {
+      "low_risk_tier": "heavy"
+    },
+    "concurrency": {
+      "max_active": 4,
+      "max_waiting": 8,
+      "reserved_critical": 1
+    },
+    "budgets": {
+      "max_steps": 5,
+      "max_cost": 20,
+      "max_transcript_events": 64
+    }
+  },
+  "environment": {
+    "network": "often absent",
+    "control_plane": "usually unreachable",
+    "storage": "flash, limited",
+    "clock": "RTC, untrusted without sync",
+    "hardware": "constrained CPU/RAM/power",
+    "operator_access": "rare, physical"
+  },
+  "resource_envelope": {
+    "max_active_runs": 4
+  },
+  "security_posture": "every run is heavy-tier; trusted-time loss blocks approval"
+}

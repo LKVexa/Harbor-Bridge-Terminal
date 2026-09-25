@@ -1,0 +1,10 @@
+{"title": "INV-67 controller", "schema": "INV67_DASHBOARD/1",
+ "panels": [
+  {"title": "Leader", "expr": "inv67_leader"},
+  {"title": "Translated / refused", "expr": ["rate(inv67_translated_total[5m])", "sum by (reason)(rate(inv67_refused_total[5m]))"]},
+  {"title": "Reconcile latency p50/p99", "expr": ["histogram_quantile(0.5, rate(inv67_reconcile_seconds_bucket[5m]))", "histogram_quantile(0.99, rate(inv67_reconcile_seconds_bucket[5m]))"]},
+  {"title": "Requeues by reason", "expr": "sum by (reason)(rate(inv67_requeues_total[5m]))"},
+  {"title": "Queue depth", "expr": "inv67_queue_depth"},
+  {"title": "Status writes", "expr": "rate(inv67_status_syncs_total[5m])"},
+  {"title": "Watch relists", "expr": "increase(inv67_watch_relists_total[1h])"},
+  {"title": "Dropped metric series", "expr": "inv67_metrics_dropped_series"}]}

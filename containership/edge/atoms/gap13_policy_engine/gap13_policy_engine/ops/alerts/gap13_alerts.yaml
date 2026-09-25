@@ -1,0 +1,51 @@
+groups:
+- name: gap13-policy-engine
+  rules:
+  - alert: G13PolicyHardStale
+    expr: g13_bundle_age_seconds > 300
+    for: 1m
+    labels: {severity: SEV2}
+    annotations: {summary: "Active policy past hard staleness bound", runbook: "docs/RUNBOOKS.md#stale-policy"}
+  - alert: G13PolicyStaleWarning
+    expr: g13_bundle_age_seconds > 240
+    for: 1m
+    labels: {severity: SEV3}
+    annotations: {summary: "Policy approaching hard expiry", runbook: "docs/RUNBOOKS.md#stale-policy"}
+  - alert: G13StaleRefusals
+    expr: increase(g13_stale_refusals_total[5m]) > 0
+    labels: {severity: SEV2}
+    annotations: {summary: "Requests refused due to stale policy (FAIL_CLOSED)", runbook: "docs/RUNBOOKS.md#stale-policy"}
+  - alert: G13BundleRejections
+    expr: increase(g13_bundle_verifications_total{state!="VERIFIED"}[15m]) > 0
+    labels: {severity: SEV2}
+    annotations: {summary: "Policy bundles failing verification (possible tampering or key issue)", runbook: "docs/RUNBOOKS.md#distribution"}
+  - alert: G13AuthDenialSpike
+    expr: increase(g13_auth_denied_total[5m]) > 20
+    labels: {severity: SEV2}
+    annotations: {summary: "Privileged-operation denials spike (attack indicator)", runbook: "docs/RUNBOOKS.md#incident-response"}
+  - alert: G13DependencyFailure
+    expr: increase(g13_dependency_failures_total[5m]) > 0 or increase(g13_distribution_failures_total[15m]) > 5
+    labels: {severity: SEV3}
+    annotations: {summary: "Verifier/trust source or distribution failing", runbook: "docs/RUNBOOKS.md#distribution"}
+  - alert: G13Overload
+    expr: rate(g13_overload_shed_total[5m]) > 1
+    labels: {severity: SEV3}
+    annotations: {summary: "Admission control shedding load", runbook: "docs/RUNBOOKS.md#incident-response"}
+  - alert: G13LatencySLO
+    expr: histogram_quantile(0.99, rate(g13_evaluate_latency_ms_bucket[5m])) > 2
+    for: 5m
+    labels: {severity: SEV3}
+    annotations: {summary: "p99 evaluation latency above SLO", runbook: "docs/SLO.md"}
+  - alert: G13EmergencyControlActive
+    expr: g13_control_state{state!="NORMAL"} == 1
+    labels: {severity: SEV2}
+    annotations: {summary: "Emergency control active", runbook: "docs/RUNBOOKS.md#emergency-controls"}
+  - alert: G13SoftwareFault
+    expr: increase(g13_errors_total{code=~"G13-E5.."}[5m]) > 0
+    labels: {severity: SEV3}
+    annotations: {summary: "Dependency/software faults", runbook: "docs/RUNBOOKS.md#incident-response"}
+  - alert: G13DefaultDenyAnomaly
+    expr: rate(g13_default_denies_total[15m]) / rate(g13_verdicts_total[15m]) > 0.5
+    for: 15m
+    labels: {severity: SEV3}
+    annotations: {summary: "Default-deny ratio unusually high (policy gap vs normal load)", runbook: "docs/RUNBOOKS.md#incident-response"}

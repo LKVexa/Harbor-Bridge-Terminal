@@ -1,0 +1,330 @@
+{
+ "$id": "urn:pk:inv28:PK_TOOLCHAIN-2",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "abis": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "architectures": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "minItems": 1,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "catalog_status": {
+   "enum": [
+    "supported",
+    "example",
+    "unregistered"
+   ]
+  },
+  "devices": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "eol_date": {
+   "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$",
+   "type": "string"
+  },
+  "features": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "hypervisors": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "integrity": {
+   "oneOf": [
+    {
+     "type": "null"
+    },
+    {
+     "additionalProperties": false,
+     "properties": {
+      "artifact_sha256": {
+       "pattern": "^[0-9a-f]{64}$",
+       "type": "string"
+      },
+      "provenance_uri": {
+       "maxLength": 512,
+       "type": "string"
+      },
+      "sbom_sha256": {
+       "pattern": "^([0-9a-f]{64})?$",
+       "type": "string"
+      },
+      "signer": {
+       "maxLength": 512,
+       "type": "string"
+      },
+      "source_uri": {
+       "maxLength": 512,
+       "minLength": 1,
+       "type": "string"
+      }
+     },
+     "required": [
+      "artifact_sha256",
+      "provenance_uri",
+      "sbom_sha256",
+      "signer",
+      "source_uri"
+     ],
+     "type": "object"
+    }
+   ]
+  },
+  "languages": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "minItems": 1,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "lifecycle": {
+   "enum": [
+    "candidate",
+    "active",
+    "deprecated",
+    "eol",
+    "retired",
+    "quarantined",
+    "disabled"
+   ]
+  },
+  "limitations": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "code": {
+      "maxLength": 64,
+      "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+      "type": "string"
+     },
+     "description": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+     },
+     "excludes_environments": {
+      "items": {
+       "maxLength": 64,
+       "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+       "type": "string"
+      },
+      "maxItems": 64,
+      "type": "array",
+      "uniqueItems": true
+     },
+     "excludes_features": {
+      "items": {
+       "maxLength": 64,
+       "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+       "type": "string"
+      },
+      "maxItems": 64,
+      "type": "array",
+      "uniqueItems": true
+     }
+    },
+    "required": [
+     "code",
+     "description",
+     "excludes_environments",
+     "excludes_features"
+    ],
+    "type": "object"
+   },
+   "maxItems": 32,
+   "type": "array"
+  },
+  "maturity": {
+   "enum": [
+    "experimental",
+    "beta",
+    "mature"
+   ]
+  },
+  "name": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9._\\-]{0,63}$",
+   "type": "string"
+  },
+  "notes": {
+   "maxLength": 512,
+   "type": "string"
+  },
+  "owner": {
+   "maxLength": 512,
+   "minLength": 1,
+   "type": "string"
+  },
+  "providers": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "review": {
+   "oneOf": [
+    {
+     "type": "null"
+    },
+    {
+     "additionalProperties": false,
+     "properties": {
+      "evidence_sha256": {
+       "pattern": "^[0-9a-f]{64}$",
+       "type": "string"
+      },
+      "evidence_uri": {
+       "maxLength": 512,
+       "minLength": 1,
+       "type": "string"
+      },
+      "interval_days": {
+       "maximum": 730,
+       "minimum": 1,
+       "type": "integer"
+      },
+      "result": {
+       "enum": [
+        "approved",
+        "conditional",
+        "rejected"
+       ]
+      },
+      "reviewed_at": {
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+       "type": "string"
+      },
+      "reviewer": {
+       "maxLength": 512,
+       "minLength": 1,
+       "type": "string"
+      }
+     },
+     "required": [
+      "evidence_sha256",
+      "evidence_uri",
+      "interval_days",
+      "result",
+      "reviewed_at",
+      "reviewer"
+     ],
+     "type": "object"
+    }
+   ]
+  },
+  "runtimes": {
+   "items": {
+    "maxLength": 64,
+    "pattern": "^[a-z0-9][a-z0-9._+\\-/]*$",
+    "type": "string"
+   },
+   "maxItems": 64,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "schema": {
+   "const": "PK_TOOLCHAIN/2"
+  },
+  "security": {
+   "additionalProperties": false,
+   "properties": {
+    "advisory_feed": {
+     "maxLength": 512,
+     "type": "string"
+    },
+    "contact_ref": {
+     "maxLength": 512,
+     "type": "string"
+    },
+    "disclosure_policy_ref": {
+     "maxLength": 512,
+     "type": "string"
+    },
+    "response_sla_hours": {
+     "maximum": 8760,
+     "minimum": 0,
+     "type": "integer"
+    }
+   },
+   "required": [
+    "advisory_feed",
+    "contact_ref",
+    "disclosure_policy_ref",
+    "response_sla_hours"
+   ],
+   "type": "object"
+  },
+  "version": {
+   "pattern": "^[0-9A-Za-z][0-9A-Za-z.+\\-_]{0,63}$",
+   "type": "string"
+  }
+ },
+ "required": [
+  "abis",
+  "architectures",
+  "catalog_status",
+  "devices",
+  "eol_date",
+  "features",
+  "hypervisors",
+  "integrity",
+  "languages",
+  "lifecycle",
+  "limitations",
+  "maturity",
+  "name",
+  "notes",
+  "owner",
+  "providers",
+  "review",
+  "runtimes",
+  "schema",
+  "security",
+  "version"
+ ],
+ "title": "INV-28 register entry v2",
+ "type": "object"
+}

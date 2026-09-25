@@ -1,0 +1,11 @@
+{
+  "schema": "GAP02_ALERTS/1",
+  "rules": [
+    {"alert": "Gap02ReportStale", "metric": "gap02_report_age_seconds", "expr": "gap02_report_age_seconds > 60", "for": "2m", "severity": "page", "runbook": "RUNBOOKS.md#gap02-e007"},
+    {"alert": "Gap02ProbeFailing", "metric": "gap02_probe_failures_total", "expr": "increase(gap02_probe_failures_total[15m]) > 3", "for": "0m", "severity": "ticket", "runbook": "RUNBOOKS.md#gap02-e001"},
+    {"alert": "Gap02ProbeTimeouts", "metric": "gap02_probe_failures_total", "expr": "increase(gap02_probe_failures_total{code=\"GAP02-E004\"}[15m]) > 2", "for": "0m", "severity": "ticket", "runbook": "RUNBOOKS.md#gap02-e004"},
+    {"alert": "Gap02CapabilityFlapping", "metric": "gap02_capability_changes_total", "expr": "increase(gap02_capability_changes_total[1h]) > 6", "for": "0m", "severity": "ticket", "runbook": "RUNBOOKS.md#flapping"},
+    {"alert": "Gap02SignatureFailures", "metric": "gap02_probe_failures_total", "expr": "increase(gap02_probe_failures_total{code=\"GAP02-E008\"}[5m]) > 0", "for": "0m", "severity": "page", "runbook": "RUNBOOKS.md#gap02-e008"},
+    {"alert": "Gap02ProbeSlow", "metric": "gap02_probe_latency_seconds", "expr": "gap02_probe_latency_seconds > 2.5", "for": "10m", "severity": "ticket", "runbook": "RUNBOOKS.md#gap02-e004"}
+  ]
+}

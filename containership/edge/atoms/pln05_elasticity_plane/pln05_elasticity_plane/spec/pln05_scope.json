@@ -1,0 +1,63 @@
+{
+ "schema": "PLN05_SCOPE/1",
+ "adr": "docs/adr/ADR-0001-pln05-authoritative-scope.md",
+ "adr_status": "PROPOSED",
+ "element": "PLN-05",
+ "responsibility": "Own capacity targets per workload: convert observed demand into a bounded, hysteretic scale decision including scale-to-zero, and never emit a target outside the declared floor and ceiling.",
+ "matrix": {
+  "demand observation": "OBSERVE",
+  "hysteresis": "OWN",
+  "capacity target calculation": "OWN",
+  "floor/ceiling enforcement": "OWN",
+  "scale-to-zero decision": "OWN",
+  "placement": "OUT_OF_SCOPE",
+  "provisioning": "OUT_OF_SCOPE",
+  "resource reassignment (HyperFlux-style)": "OUT_OF_SCOPE",
+  "snapshot": "OUT_OF_SCOPE",
+  "restore": "OUT_OF_SCOPE",
+  "microfunction lifecycle (Dandelion-style)": "OUT_OF_SCOPE",
+  "failover of controller ownership": "OWN",
+  "execution ownership": "OUT_OF_SCOPE"
+ },
+ "owns": [
+  "Capacity targets per workload",
+  "Scale-up and scale-down hysteresis",
+  "Scale-to-zero and cold-start admission",
+  "Floor and ceiling enforcement",
+  "Oscillation suppression"
+ ],
+ "not_owns": [
+  "Placement of new capacity",
+  "Node provisioning",
+  "Workload isolation",
+  "The demand signal itself",
+  "Cost accounting"
+ ],
+ "non_goals": [
+  "Placing or provisioning capacity",
+  "Deciding node count",
+  "Guaranteeing cold-start latency",
+  "Overriding an externally lowered ceiling"
+ ],
+ "interfaces": {
+  "observe": "PK_DEMAND/1 - demand samples per workload",
+  "target": "PK_CAPACITY_TARGET/1 - emitted capacity target with the reason",
+  "limits": "PK_CAPACITY_LIMITS/1 - declared floor, ceiling, and hysteresis parameters"
+ },
+ "source_precedence": [
+  "ADR (accepted)",
+  "spec.py / spec/*.json",
+  "schemas/*.json",
+  "code",
+  "tests",
+  "README.md",
+  "CHECKLIST.json requirement prose"
+ ],
+ "invariants": [
+  "no ambient filesystem/network/device authority in the decision path",
+  "demand is input, never authority",
+  "only limits.update sets the envelope",
+  "ceiling.lower is monotonic within [floor, active ceiling]",
+  "publication requires a valid lease and carries its epoch as fencing token"
+ ]
+}

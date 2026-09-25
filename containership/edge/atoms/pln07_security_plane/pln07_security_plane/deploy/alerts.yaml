@@ -1,0 +1,29 @@
+# Prometheus alert rules (MC-48)
+groups:
+- name: pln07
+  rules:
+  - alert: PLN07NotReady
+    expr: up{job="pln07"} == 0
+    for: 2m
+    labels: {severity: S1}
+  - alert: PLN07DenySpike
+    expr: sum(rate(pln07_requests_total{outcome!="ok"}[5m])) / sum(rate(pln07_requests_total[5m])) > 0.2
+    for: 10m
+    labels: {severity: S2}
+  - alert: PLN07SignatureFailures
+    expr: sum(rate(pln07_requests_total{outcome="grant.signature"}[5m])) > 0
+    for: 1m
+    labels: {severity: S1}
+    annotations: {summary: "Forged or tampered grants presented - see incident-response.md"}
+  - alert: PLN07Shedding
+    expr: sum(rate(pln07_requests_total{outcome="admission.overloaded"}[5m])) > 0
+    for: 5m
+    labels: {severity: S2}
+  - alert: PLN07TimeUnavailable
+    expr: sum(rate(pln07_requests_total{outcome=~"time\\..*"}[5m])) > 0
+    for: 1m
+    labels: {severity: S1}
+  - alert: PLN07VerifyLatency
+    expr: pln07_verify_latency_ns{quantile="0.99"} > 3e6
+    for: 10m
+    labels: {severity: S3}

@@ -1,0 +1,73 @@
+{
+ "component": 46,
+ "title": "Fault-injection/partition test harness",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "provider fault injection",
+   "state": "IMPLEMENTED",
+   "spec": "production/faults.py::module docstring (PK_DYN_FAULTS/1)",
+   "modules": [
+    "production/faults.py::FaultyProvider",
+    "production/faults.py::FaultPlan"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_provider_fault_injection",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_lost_response_no_duplicate"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "process crash/restart injection",
+   "state": "IMPLEMENTED",
+   "spec": "production/faults.py::crash_at",
+   "modules": [
+    "production/faults.py::Crash",
+    "production/faults.py::crash_at"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_process_crash_restart_injection"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "network partition/latency/loss injection",
+   "state": "IMPLEMENTED",
+   "spec": "production/faults.py::Partition",
+   "modules": [
+    "production/faults.py::Partition"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_partition_latency_loss"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "lease-store/dependency outage injection",
+   "state": "IMPLEMENTED",
+   "spec": "production/faults.py::Partition",
+   "modules": [
+    "production/leasestore.py::LeaseStore.available",
+    "production/faults.py::Partition"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_store_outage_injection"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "RTO/RPO and convergence objective assertions",
+   "state": "PARTIAL",
+   "spec": "production/faults.py::rounds_to_converge",
+   "modules": [
+    "production/faults.py::rounds_to_converge",
+    "production/faults.py::rpo_lost_ops"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_rto_rpo_convergence_objectives"
+   ],
+   "blocker": "approved RTO/RPO targets from an accountable owner (UNASSIGNED); test uses placeholder targets 3 rounds/60s and RPO=0 ops"
+  }
+ ],
+ "notes": "In-process simulation only; no real network or chaos tooling."
+}

@@ -1,0 +1,52 @@
+# INV-45 Prometheus alerting rules (C052, C080). Each alert names its runbook section.
+# Status: authored and syntax-checked only; not yet evaluated against a live Prometheus.
+groups:
+  - name: inv45-security
+    rules:
+      - alert: INV45UnmaskedAccessAttempts
+        expr: rate(sfi_unmasked_accesses_total[5m]) > 0
+        for: 0m
+        labels: {severity: sev2, class: attack}
+        annotations: {summary: "Artifacts with unconfined memory accesses submitted", runbook: "docs/operations/RUNBOOKS.md#incident-response-c097"}
+      - alert: INV45ReplayOrForgery
+        expr: sum(rate(sfi_loads_total{code=~"SFI_REPLAY_DETECTED|SFI_SIGNATURE_INVALID|SFI_DIGEST_MISMATCH"}[5m])) > 0
+        for: 0m
+        labels: {severity: sev1, class: attack}
+        annotations: {summary: "Descriptor replay/forgery or TOCTOU swap detected", runbook: "docs/operations/RUNBOOKS.md#incident-response-c097"}
+      - alert: INV45InternalInvariant
+        expr: sum(rate(sfi_modules_loaded_total{code="SFI_INTERNAL_INVARIANT"}[5m])) + sum(rate(sfi_loads_total{code="SFI_INTERNAL_INVARIANT"}[5m])) > 0
+        for: 0m
+        labels: {severity: sev1, class: defect}
+        annotations: {summary: "Internal invariant failure (fail-closed)", runbook: "docs/operations/RUNBOOKS.md#incident-response-c097"}
+      - alert: INV45AuthnFailuresSpike
+        expr: rate(sfi_authn_failures_total[5m]) > 1
+        for: 5m
+        labels: {severity: sev3, class: attack}
+        annotations: {summary: "Authentication failures above 1/s", runbook: "docs/operations/RUNBOOKS.md#incident-response-c097"}
+  - name: inv45-availability
+    rules:
+      - alert: INV45TrustStale
+        expr: sum(rate(sfi_loads_total{code="SFI_TRUST_STALE"}[5m])) > 0
+        for: 1m
+        labels: {severity: sev2, class: dependency}
+        annotations: {summary: "Trust material stale - control plane partition?", runbook: "docs/operations/FAILURE_MODEL.md#failure-modes"}
+      - alert: INV45DependencyUnavailable
+        expr: sum(rate(sfi_loads_total{code="SFI_DEPENDENCY_UNAVAILABLE"}[5m])) > 0
+        for: 5m
+        labels: {severity: sev2, class: dependency}
+        annotations: {summary: "Engine/key/config dependency unavailable", runbook: "docs/operations/FAILURE_MODEL.md#failure-modes"}
+      - alert: INV45Overloaded
+        expr: sum(rate(sfi_modules_loaded_total{code="SFI_OVERLOADED"}[5m])) > 0
+        for: 5m
+        labels: {severity: sev3, class: load}
+        annotations: {summary: "Admission control shedding - scale out", runbook: "docs/architecture/PERFORMANCE.md#capacity-model-and-saturation-signals-c069"}
+      - alert: INV45VerifyLatency
+        expr: histogram_quantile(0.95, rate(sfi_submit_latency_ms_bucket[10m])) > 2 * 2.0
+        for: 10m
+        labels: {severity: sev3, class: degradation}
+        annotations: {summary: "Verify p95 above 2x baseline", runbook: "docs/operations/FAILURE_MODEL.md#health-and-stall-thresholds-c052"}
+      - alert: INV45Stalled
+        expr: increase(sfi_modules_verified_total[1m]) == 0 and inv45_admission_waiting > 0
+        for: 1m
+        labels: {severity: sev2, class: degradation}
+        annotations: {summary: "Requests waiting with no completions", runbook: "docs/operations/FAILURE_MODEL.md#health-and-stall-thresholds-c052"}

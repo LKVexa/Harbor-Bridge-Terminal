@@ -1,0 +1,84 @@
+{
+  "title": "INV-17 Streaming primitive \u2014 overview",
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "title": "Open streams by state",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (state) (inv17_streams_open)"
+        }
+      ]
+    },
+    {
+      "title": "Throughput (elements/s)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv17_elements_transferred_total[1m])"
+        },
+        {
+          "expr": "rate(inv17_elements_read_total[1m])"
+        }
+      ]
+    },
+    {
+      "title": "Credit stall ratio",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv17_credit_stalls_total[5m]) / clamp_min(rate(inv17_elements_transferred_total[5m]),1)"
+        }
+      ]
+    },
+    {
+      "title": "In-flight elements",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "inv17_elements_buffered"
+        }
+      ]
+    },
+    {
+      "title": "Dropped ends (dependency failure)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (end) (inv17_dropped_end_streams)"
+        }
+      ]
+    },
+    {
+      "title": "Load shed / breaker (overload)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv17_load_shed_total[5m])"
+        },
+        {
+          "expr": "inv17_breaker_open"
+        }
+      ]
+    },
+    {
+      "title": "Emergency controls",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "inv17_disabled"
+        }
+      ]
+    },
+    {
+      "title": "Build lineage",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "inv17_build_info"
+        }
+      ]
+    }
+  ]
+}

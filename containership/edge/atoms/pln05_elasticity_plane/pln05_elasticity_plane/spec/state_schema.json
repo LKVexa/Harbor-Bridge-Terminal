@@ -1,0 +1,89 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:pln05:schema:PLN05_STATE:2",
+ "title": "PLN05_STATE/2 must-persist controller state (envelope: {doc, kid, mac} HMAC-SHA256)",
+ "type": "object",
+ "required": [
+  "schema",
+  "scope",
+  "current",
+  "below",
+  "suppressed",
+  "limits",
+  "controls",
+  "sources",
+  "seen",
+  "epoch"
+ ],
+ "properties": {
+  "schema": {
+   "enum": [
+    "PLN05_STATE/1",
+    "PLN05_STATE/2"
+   ]
+  },
+  "scope": {
+   "type": "string",
+   "pattern": "^[a-z0-9][a-z0-9._-]{0,63}/[a-z0-9][a-z0-9._-]{0,63}/[a-z0-9][a-z0-9._-]{0,63}$"
+  },
+  "current": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "below": {
+   "type": "integer",
+   "minimum": 0,
+   "description": "pending consecutive low-water samples (< grace_samples)"
+  },
+  "suppressed": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "limits": {
+   "type": "object",
+   "description": "floor, ceiling, scale_up_at, scale_down_at, grace_samples, revision, issuer, declared_ceiling"
+  },
+  "controls": {
+   "type": "object",
+   "description": "frozen/quarantined/disabled entries {actor, reason, ticket, at, expires} and quarantined_sources"
+  },
+  "sources": {
+   "type": "object",
+   "description": "source -> last accepted seq"
+  },
+  "seen": {
+   "type": "array",
+   "maxItems": 256,
+   "description": "recent message_ids (idempotency)"
+  },
+  "epoch": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "last_decision_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "last_decision": {
+   "type": [
+    "object",
+    "null"
+   ]
+  },
+  "last_demand_at": {
+   "type": [
+    "number",
+    "null"
+   ]
+  }
+ },
+ "x-reconstructible": [
+  "lease (re-acquired)",
+  "mode (recomputed by tick)",
+  "explain records",
+  "metrics"
+ ],
+ "x-compatibility": "reads /1 (migrated) and /2; refuses newer; writes /2"
+}

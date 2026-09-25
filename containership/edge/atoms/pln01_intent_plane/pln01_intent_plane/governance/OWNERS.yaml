@@ -1,0 +1,23 @@
+# PLN-01 Intent plane - accountable ownership and escalation (MC-001)
+component: PLN-01
+name: Intent plane
+accountable_owner:
+  role: PLN-01 service owner
+  person: David Paul Russell
+  contact: davidpaulrussell@linearfinance.org
+  organisation: LinearFinance.org
+governance_owner: {role: Post-Kubernetes series architecture lead, person: David Paul Russell}
+teams:
+  engineering: {name: Intent plane engineering, status: TO_BE_STAFFED}
+  operations:  {name: Platform SRE, status: TO_BE_STAFFED}
+on_call:
+  primary:   {route: pager/pln01-primary,   hours: 24x7, ack_sla_minutes: 15, status: TO_BE_PROVISIONED}
+  secondary: {route: pager/pln01-secondary, hours: 24x7, ack_sla_minutes: 30, status: TO_BE_PROVISIONED}
+escalation:
+  - {level: 1, when: "alert fires or SEV3+", to: on_call.primary, mode: paging}
+  - {level: 2, when: "no ack in 15 min or SEV2+", to: on_call.secondary, mode: paging}
+  - {level: 3, when: "SEV1, data integrity, or >60 min unresolved SEV2", to: accountable_owner, mode: paging}
+  - {level: security, when: "suspected compromise, secret exposure, forged report, artifact substitution", to: "PLN-07 Security plane owner + accountable_owner", mode: paging}
+  - {level: architecture, when: "contract/interface change, ADR dispute", to: governance_owner, mode: business-hours}
+  - {level: dependency, when: "pk_core, PLN-07, GAP-13, PLN-02, SCH-01, GAP-09 defect", to: "owning team of that element via its OWNERS", mode: business-hours unless SEV1/2}
+review: {cadence: quarterly, next_due: 2026-12-23}

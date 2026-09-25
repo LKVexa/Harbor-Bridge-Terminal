@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "hex64": {
+      "pattern": "[0-9a-f]{64}",
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "[^\\x00-\\x1f\\x7f]+",
+      "type": "string"
+    }
+  },
+  "$id": "urn:pk:PK_WASM_INSTANCE:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Instance request, state snapshot and lifecycle for INV-44. Legal transitions: requested->admitted->running->(trapped|terminated); requested->refused.",
+  "properties": {
+    "consumed": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "deadline_ms": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "error": {
+      "type": "object"
+    },
+    "fuel": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "idempotency_key": {
+      "$ref": "#/$defs/label"
+    },
+    "interface": {
+      "const": "PK_WASM_INSTANCE/1"
+    },
+    "kind": {
+      "enum": [
+        "request",
+        "state",
+        "refusal"
+      ]
+    },
+    "module": {
+      "$ref": "#/$defs/label"
+    },
+    "module_sha256": {
+      "$ref": "#/$defs/hex64"
+    },
+    "pages": {
+      "maximum": 65536,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "remaining_fuel": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "state": {
+      "enum": [
+        "requested",
+        "admitted",
+        "running",
+        "trapped",
+        "terminated",
+        "refused"
+      ]
+    },
+    "tenant": {
+      "$ref": "#/$defs/label"
+    },
+    "trap": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "interface",
+    "kind"
+  ],
+  "title": "PK_WASM_INSTANCE/1",
+  "type": "object",
+  "x-version": "1.0.0"
+}

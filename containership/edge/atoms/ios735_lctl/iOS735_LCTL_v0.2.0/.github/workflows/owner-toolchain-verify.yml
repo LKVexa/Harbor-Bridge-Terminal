@@ -1,0 +1,85 @@
+name: owner-toolchain-verify
+
+# PRIVILEGED full verifier (M03). Never triggered by pull_request / pull_request_target, so
+# code from forks can neither run here nor see the toolchain environment. Runs only on:
+# protected-branch pushes, release tags, and manual dispatch by maintainers. The job is bound
+# to the protected `owner-toolchain` environment (required reviewers + branch rules configured
+# in repository settings by the owner) on a self-hosted runner that already holds the approved
+# LCTL roots. Toolchain identity is enforced by toolchains/LOCK.json before any java -jar.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "verification-only (fail on any diff) or release-generation"
+        required: true
+        default: verification-only
+        type: choice
+        options: [verification-only, release-generation]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owner-toolchain-verify-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  full-verify:
+    runs-on: [self-hosted, lctl-owner-toolchains]
+    environment: owner-toolchain
+    timeout-minutes: 180
+    env:
+      # Paths on the self-hosted runner. Not secrets; the lock is the trust boundary.
+      LCTL161: ${{ vars.LCTL161_ROOT }}
+      LCTL160: ${{ vars.LCTL160_ROOT }}
+      MODE: ${{ inputs.mode || (startsWith(github.ref, 'refs/tags/') && 'release-generation' || 'verification-only') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Offline suite and pre-run gates
+        run: |
+          python -m compileall -q tools tests
+          python -m unittest discover -s tests -v
+          python tools/manifest.py
+          python tools/check_translation.py
+          python tools/check_translation.py --falsify
+      - name: Authenticate toolchains against the lock (no execution)
+        run: python tools/toolchain_trust.py --json toolchain-identity.json
+      - name: Full owner-toolchain verifier
+        run: |
+          set -o pipefail
+          python tools/verify.py --jobs 4 2>&1 | tee verification-transcript.txt
+      - name: Accept evidence (schema + semantic + lock correlation)
+        run: |
+          python tools/check_translation.py
+          python tools/evidence_check.py
+          python tools/schema_check.py
+      - name: Generated-file policy
+        run: |
+          if [ "$MODE" = "verification-only" ]; then
+            git status --porcelain -- canonical evidence/lctl160
+            test -z "$(git status --porcelain -- canonical evidence/lctl160)" || { echo "generated outputs drifted"; exit 1; }
+          fi
+      - name: Retain evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-evidence-${{ github.sha }}-${{ github.run_id }}
+          retention-days: 400
+          path: |
+            evidence/VERIFY.json
+            evidence/lctl160/
+            verification-transcript.txt
+            toolchain-identity.json
+            toolchains/LOCK.json

@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv36-control-transport"
+version = "5.1.0"
+description = "INV-36 authenticated control-frame transport over virtio-vsock"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+# License expression intentionally absent until the repository owner selects a
+# license (MC-22.001).  tools/release.py records NOASSERTION until then.
+dependencies = [
+  "cryptography>=46.0.4,<47",
+]
+classifiers = [
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: POSIX :: Linux",
+  "Private :: Do Not Upload",
+]
+
+[project.optional-dependencies]
+# Certification-only dependency; never required by the transport at runtime (MC-01.003).
+estate = ["pk_core>=4.0.0,<5.0.0"]
+dev = ["ruff", "mypy"]
+
+[project.scripts]
+inv36-audit = "inv36_control_transport.audit:main"
+
+[tool.setuptools]
+packages = ["inv36_control_transport", "inv36_control_transport.tools"]
+package-dir = {inv36_control_transport = ".", "inv36_control_transport.tools" = "tools"}
+include-package-data = true
+
+[tool.setuptools.package-data]
+inv36_control_transport = ["VERSION", "CHECKLIST.json", "py.typed", "schema/*.json", "perf/*.json", "release/*.json", "fixtures/*.json", "fixtures/*/*.json", "fixtures/*/*.hex"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py311"
+extend-exclude = ["dist", "evidence"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S"]
+ignore = ["S101", "S311", "S603", "S607", "B008", "E731"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B"]
+"tools/*" = ["S"]
+"testing.py" = ["S"]
+"_wire.py" = ["E501"]
+"component.py" = ["E402"]
+"contract.py" = ["E501"]
+"tests/test_component.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+exclude = ["dist/", "evidence/", "tests/"]
+
+[[tool.mypy.overrides]]
+# Estate types are resolved at runtime through pkcore_adapter.require(); they cannot be typed statically.
+module = ["inv36_control_transport.contract", "inv36_control_transport.component"]
+ignore_errors = true

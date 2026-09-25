@@ -1,0 +1,19 @@
+# Alert-storm suppression (31.13): during a common-cause outage page once.
+inhibit_rules:
+  # Emergency mode explains downstream symptoms on the same node.
+  - source_matchers: [alertname="Gap01EmergencyMode"]
+    target_matchers: [alertname=~"Gap01CordonAckOverdue|Gap01DrainDeadlineBreached|Gap01RateLimited|Gap01RequestLatencyHigh"]
+    equal: [instance]
+  # Probe down explains everything else on the node.
+  - source_matchers: [alertname="Gap01ProbeDown"]
+    target_matchers: [alertname=~"Gap01.*"]
+    equal: [instance]
+  # Persistence failure causes emergency entry; page on the cause.
+  - source_matchers: [alertname="Gap01PersistenceErrors"]
+    target_matchers: [alertname="Gap01EmergencyMode"]
+    equal: [instance]
+route:
+  group_by: [alertname, cluster]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h

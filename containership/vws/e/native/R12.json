@@ -1,0 +1,41 @@
+{
+ "schema": "RAMWS/TASK_EVIDENCE/1",
+ "task_id": "R12",
+ "title": "Apply byte-aware backpressure and fairness",
+ "status": "PASS",
+ "applicability": "NODE-WEB profile",
+ "applicability_approval": "owner decisions RD-01..RD-05 (2026-09-21)",
+ "selected_profile": "LOCAL_VOLATILE",
+ "source_identity": "ledger/ramws_source.json",
+ "runtime_identity": "Linux 6.18.44 x86_64, 2 vCPU, Node v22.22.2, Chromium 1194; loopback only",
+ "configuration_identity": "gateway/config.js defaults; e/R28/experiment.frozen.json for R28",
+ "predecessor_evidence": [
+  "e/native/R09.json",
+  "e/native/R10.json",
+  "e/native/R11.json"
+ ],
+ "decision_or_code_delta": "gateway/connection.js: Byte credits + pause budget + cooperative yield(); slow consumer and stopped reader bounded; fair to other tenants.",
+ "command": "node --test \"tests/*/*.test.js\" (e/full-suite.tap)",
+ "started_at": "2026-09-21T20:30:00Z",
+ "finished_at": "2026-09-21T22:23:36Z",
+ "expected": "The combined pool, producer, queue, in-flight, IPC, and client backlog stays within its declared limits, with visible failure rather than silent stream corruption.",
+ "observed": "4 linked tests, all ok",
+ "raw_result_paths": [
+  "e/full-suite.tap"
+ ],
+ "memory_scope": "gateway process (+ worker threads) and worker processes",
+ "allocation_change_bytes": null,
+ "cpu_scope": null,
+ "cpu_change_seconds": null,
+ "residency_status": "UNKNOWN",
+ "residual_risks": [
+  "self-reviewed by the implementer; no independent verification"
+ ],
+ "rollback": "delete ram/, gateway/worker-link.js, worker/core.js, worker/thread.js; restore the v1 files from hermit-vws 1.1.0-vws.1 (hashes in ledger/ramws_source.json)",
+ "linked_tests": [
+  "slow consumer (no credit): worker paused, gateway memory bounded by the ledger, a fast tenant unaffected, catch-up is lossless",
+  "peer that stops reading its TCP socket: gateway send queue stays within budget and the connection is contained",
+  "S5: a consumer that never catches up is ended with an explicit quota exit after the pause budget",
+  "credits: the server never sends beyond the granted window; output resumes exactly on credit; violations close 1008"
+ ]
+}

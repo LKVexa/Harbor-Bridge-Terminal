@@ -1,0 +1,39 @@
+name: ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv52_messaging_abstraction}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - name: Unit, integration, adversarial, governance tests
+        run: python -B -m unittest discover -s inv52_messaging_abstraction/tests -p "test_*.py" -v
+      - name: Optimised-mode tests (asserts stripped)
+        run: python -B -O -m unittest discover -s inv52_messaging_abstraction/tests -p "test_*.py"
+  gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv52_messaging_abstraction}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Static analysis
+        run: pip install ruff==0.6.9 && ruff check inv52_messaging_abstraction
+      - name: Deep fuzz
+        env: {INV52_FUZZ_ITERATIONS: "20000"}
+        run: python -B -m unittest discover -s inv52_messaging_abstraction/tests -p "test_adversarial.py"
+      - name: Release gate (fails closed)
+        run: python -B -m inv52_messaging_abstraction gate --out gate.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: certification, path: "inv52_messaging_abstraction/evidence/"}

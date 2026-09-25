@@ -1,0 +1,3563 @@
+{
+ "schema": "INV18_RTM/1",
+ "version": "4.3.0",
+ "summary": {
+  "satisfied": 119,
+  "partial": 13,
+  "blocked": 4
+ },
+ "requirements": 136,
+ "checklist_coverage": 100,
+ "tests_without_requirements": [],
+ "unknown_tags": [],
+ "orphan_modules": [],
+ "rows": [
+  {
+   "id": "INV18-FR-001",
+   "kind": "shall",
+   "text": "The primitive SHALL permit at most one terminal transition (value, error, abandon or cancel) per future.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot",
+    "tests/test_future.py::FutureV43Test::test_resolve_cancel_race_has_one_winner",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences",
+    "tests/test_resilience.py::RetryTest::test_local_transitions_are_not_retryable"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot": "pass",
+    "tests/test_future.py::FutureV43Test::test_resolve_cancel_race_has_one_winner": "pass",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences": "pass",
+    "tests/test_resilience.py::RetryTest::test_local_transitions_are_not_retryable": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-002",
+   "kind": "shall",
+   "text": "The primitive SHALL deliver a terminal outcome to at most one receiver, independently of how the producer resolved.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot": "pass",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-003",
+   "kind": "shall",
+   "text": "A value resolution SHALL be refused with TYPE_MISMATCH unless the value is an instance of the declared value type; bool SHALL NOT satisfy a non-bool type.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureTest::test_bool_is_not_int_payload"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureTest::test_bool_is_not_int_payload": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-004",
+   "kind": "shall",
+   "text": "An error resolution SHALL carry a non-empty message of at most 4096 characters and SHALL be delivered as the tagged outcome (\"error\", message), not raised.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureTest::test_error_is_one_shot",
+    "tests/test_future.py::FutureTest::test_error_must_be_nonempty_string",
+    "tests/test_future.py::FutureV43Test::test_error_message_bounded"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureTest::test_error_is_one_shot": "pass",
+    "tests/test_future.py::FutureTest::test_error_must_be_nonempty_string": "pass",
+    "tests/test_future.py::FutureV43Test::test_error_message_bounded": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-005",
+   "kind": "shall",
+   "text": "Taking an abandoned future SHALL raise FUTURE_ABANDONED and SHALL consume receiver ownership.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_abandonment_is_terminal_for_writer",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_abandonment_is_terminal_for_writer": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-006",
+   "kind": "shall",
+   "text": "A resolution attempted after abandonment SHALL be refused with FUTURE_ALREADY_RESOLVED and SHALL NOT change state.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_abandonment_is_terminal_for_writer"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_abandonment_is_terminal_for_writer": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-007",
+   "kind": "shall",
+   "text": "A second resolution SHALL be refused with FUTURE_ALREADY_RESOLVED and SHALL NOT overwrite the first.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_error_is_one_shot",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot",
+    "tests/test_runtime.py::CapabilityTest::test_second_receiver_after_release_gets_already_taken"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_error_is_one_shot": "pass",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_second_receiver_after_release_gets_already_taken": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-008",
+   "kind": "shall",
+   "text": "A second receiver SHALL be refused with FUTURE_ALREADY_TAKEN, including after the governed runtime released the future (within the tombstone window).",
+   "artifacts": [
+    "future.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_runtime.py::CapabilityTest::test_second_receiver_after_release_gets_already_taken"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_second_receiver_after_release_gets_already_taken": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-FR-009",
+   "kind": "shall",
+   "text": "Malformed payloads or errors SHALL be refused without changing state; state-machine refusals SHALL take precedence over argument refusals.",
+   "artifacts": [
+    "future.py",
+    "errors.py"
+   ],
+   "tests": [
+    "tests/test_contract.py::PublicApiTest::test_invalid_arguments",
+    "tests/test_errors.py::TaxonomyTest::test_precedence_is_deterministic",
+    "tests/test_future.py::FutureTest::test_error_must_be_nonempty_string",
+    "tests/test_future.py::FutureV43Test::test_state_error_precedes_argument_error",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences",
+    "tests/test_runtime.py::CapabilityTest::test_tenant_identifier_validated"
+   ],
+   "test_status": {
+    "tests/test_contract.py::PublicApiTest::test_invalid_arguments": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_precedence_is_deterministic": "pass",
+    "tests/test_future.py::FutureTest::test_error_must_be_nonempty_string": "pass",
+    "tests/test_future.py::FutureV43Test::test_state_error_precedes_argument_error": "pass",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_tenant_identifier_validated": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb",
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961"
+   }
+  },
+  {
+   "id": "INV18-FR-010",
+   "kind": "shall",
+   "text": "Under simultaneous resolution attempts exactly one SHALL succeed.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureTest::test_concurrent_resolution_has_exactly_one_winner",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureTest::test_concurrent_resolution_has_exactly_one_winner": "pass",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-011",
+   "kind": "shall",
+   "text": "Under simultaneous receiver attempts exactly one SHALL obtain the outcome.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureTest::test_concurrent_take_has_exactly_one_winner",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureTest::test_concurrent_take_has_exactly_one_winner": "pass",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-012",
+   "kind": "shall",
+   "text": "A value written by the resolving thread before resolve returns SHALL be visible to the receiving thread that observes it (lock-based happens-before).",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_happens_before_visibility"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_happens_before_visibility": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-013",
+   "kind": "shall",
+   "text": "Receiver cancellation SHALL be terminal; a later resolution SHALL be refused with FUTURE_CANCELLED.",
+   "artifacts": [
+    "future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureV43Test::test_cancel_is_terminal_and_refuses_resolution",
+    "tests/test_runtime.py::CapabilityTest::test_cancel_via_runtime"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureV43Test::test_cancel_is_terminal_and_refuses_resolution": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_cancel_via_runtime": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb"
+   }
+  },
+  {
+   "id": "INV18-FR-014",
+   "kind": "shall",
+   "text": "Dropping the last resolver capability of a pending governed future SHALL abandon it.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_after_resolution_is_harmless"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_after_resolution_is_harmless": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-FR-015",
+   "kind": "shall",
+   "text": "Waiting with a caller timeout SHALL NOT change the future's state.",
+   "artifacts": [
+    "future.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_wait_timeout_does_not_change_state",
+    "tests/test_runtime.py::CapabilityTest::test_take_wait_timeout_leaves_future_intact"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_wait_timeout_does_not_change_state": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_take_wait_timeout_leaves_future_intact": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-SEC-001",
+   "kind": "shall",
+   "text": "A resolver capability SHALL NOT permit take; a receiver capability SHALL NOT permit resolution; an observer SHALL NOT mutate or consume.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-SEC-002",
+   "kind": "shall",
+   "text": "Cross-tenant access SHALL be refused with PERMISSION_DENIED indistinguishable from a non-existent future.",
+   "artifacts": [
+    "runtime.py",
+    "adapters.py"
+   ],
+   "tests": [
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused"
+   ],
+   "test_status": {
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38"
+   }
+  },
+  {
+   "id": "INV18-SEC-003",
+   "kind": "shall",
+   "text": "The wire boundary SHALL authenticate every request before reading or mutating state and SHALL reject missing, malformed, forged, expired, replayed, wrong-issuer and wrong-audience credentials.",
+   "artifacts": [
+    "auth.py"
+   ],
+   "tests": [
+    "tests/test_security.py::AuthnTest::test_credential_negatives",
+    "tests/test_security.py::AuthnTest::test_replay_rejected"
+   ],
+   "test_status": {
+    "tests/test_security.py::AuthnTest::test_credential_negatives": "pass",
+    "tests/test_security.py::AuthnTest::test_replay_rejected": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "auth.py": "b403be72cf58d257f0f18e9d7bd01c5a27abaaf045515d6c35e2249924a7c468"
+   }
+  },
+  {
+   "id": "INV18-SEC-004",
+   "kind": "shall",
+   "text": "Secrets and raw payloads SHALL NOT appear in logs, error records, audit events or evidence.",
+   "artifacts": [
+    "errors.py",
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_config.py::SecretsTest::test_sentinel_secret_not_leaked_by_config_errors",
+    "tests/test_errors.py::TaxonomyTest::test_redaction",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks"
+   ],
+   "test_status": {
+    "tests/test_config.py::SecretsTest::test_sentinel_secret_not_leaked_by_config_errors": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_redaction": "pass",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged": "pass",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961",
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV18-SEC-005",
+   "kind": "shall",
+   "text": "Core modules SHALL perform no filesystem, network, subprocess or environment access.",
+   "artifacts": [
+    "future.py",
+    "runtime.py",
+    "errors.py",
+    "telemetry.py",
+    "wire.py"
+   ],
+   "tests": [
+    "tests/test_security.py::AuthorityTest::test_runtime_sandbox",
+    "tests/test_security.py::AuthorityTest::test_static_authority_inventory"
+   ],
+   "test_status": {
+    "tests/test_security.py::AuthorityTest::test_runtime_sandbox": "pass",
+    "tests/test_security.py::AuthorityTest::test_static_authority_inventory": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961",
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1",
+    "wire.py": "8a9a46a93dbd11afab709748442afda8e51cc6276c5719491d979a2fcb245acd"
+   }
+  },
+  {
+   "id": "INV18-SEC-006",
+   "kind": "shall",
+   "text": "Administrative controls SHALL require the runtime's AdminCap and SHALL be audited.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-SEC-007",
+   "kind": "shall",
+   "text": "Security-sensitive events SHALL be recorded in a tamper-evident chain whose verification detects mutation and deletion.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_security.py::AuditTest::test_mutation_and_deletion_detected"
+   ],
+   "test_status": {
+    "tests/test_security.py::AuditTest::test_mutation_and_deletion_detected": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV18-SEC-008",
+   "kind": "shall",
+   "text": "Unavailable identity, key or trusted-time services SHALL cause the wire boundary to fail closed.",
+   "artifacts": [
+    "auth.py"
+   ],
+   "tests": [
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed",
+    "tests/test_security.py::OutageTest::test_simultaneous_outages_fail_closed"
+   ],
+   "test_status": {
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed": "pass",
+    "tests/test_security.py::OutageTest::test_simultaneous_outages_fail_closed": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "auth.py": "b403be72cf58d257f0f18e9d7bd01c5a27abaaf045515d6c35e2249924a7c468"
+   }
+  },
+  {
+   "id": "INV18-NFR-001",
+   "kind": "shall",
+   "text": "Admission SHALL refuse new futures with RESOURCE_EXHAUSTED at the process and tenant hard limits before allocation.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour"
+   ],
+   "test_status": {
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload": "pass",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary": "pass",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-NFR-002",
+   "kind": "shall",
+   "text": "A terminal, consumed future SHALL be released from the registry.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_payload_released_after_take",
+    "tests/test_runtime.py::LimitsTest::test_release_reclaims_registry"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_payload_released_after_take": "pass",
+    "tests/test_runtime.py::LimitsTest::test_release_reclaims_registry": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-NFR-003",
+   "kind": "shall",
+   "text": "Measured latency, throughput and memory SHALL stay within conformance/PERFORMANCE_THRESHOLDS.json on the reference environment.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::RegressionGateTest::test_thresholds_file_well_formed"
+   ],
+   "test_status": {
+    "tests/test_perf.py::RegressionGateTest::test_thresholds_file_well_formed": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030"
+   }
+  },
+  {
+   "id": "INV18-NFR-004",
+   "kind": "shall",
+   "text": "A release SHALL be blocked when the regression gate detects an unwaived regression against the approved baseline.",
+   "artifacts": [
+    "bench.py",
+    "certify.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::RegressionGateTest::test_injected_regression_is_blocked"
+   ],
+   "test_status": {
+    "tests/test_perf.py::RegressionGateTest::test_injected_regression_is_blocked": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030",
+    "certify.py": "d74e2d055c4f157fd4c23e581a3ee8be18c1a5d2d564b071045fa78c10070d9e"
+   }
+  },
+  {
+   "id": "INV18-OPS-001",
+   "kind": "shall",
+   "text": "Status SHALL expose version, state, readiness, reasons, config revision, contract versions, capabilities, dependencies and limits per PK_FUTURE_STATUS/1.",
+   "artifacts": [
+    "status.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::StatusTest::test_status_schema_and_content",
+    "tests/test_runtime.py::HealthTest::test_states_and_reasons"
+   ],
+   "test_status": {
+    "tests/test_observability.py::StatusTest::test_status_schema_and_content": "pass",
+    "tests/test_runtime.py::HealthTest::test_states_and_reasons": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "status.py": "b99dd63f608e86cdc6753619cfd42aee8637136dd8f2c7ceaa9cdd16d5b3cfcc"
+   }
+  },
+  {
+   "id": "INV18-OPS-002",
+   "kind": "shall",
+   "text": "Configuration SHALL be validated as a whole and activation SHALL fail closed and be atomic.",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "tests/test_config.py::ValidationTest::test_matrix_of_invalid_documents"
+   ],
+   "test_status": {
+    "tests/test_config.py::ValidationTest::test_matrix_of_invalid_documents": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV18-OPS-003",
+   "kind": "shall",
+   "text": "An operator or failed health check SHALL be able to restore the last-known-good configuration.",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "tests/test_config.py::RollbackTest::test_operator_and_automatic_rollback"
+   ],
+   "test_status": {
+    "tests/test_config.py::RollbackTest::test_operator_and_automatic_rollback": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV18-OPS-004",
+   "kind": "shall",
+   "text": "The component SHALL support drain and freeze quarantine at component and tenant scope.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::DisableTest::test_drain_and_freeze",
+    "tests/test_runtime.py::DisableTest::test_freeze_refuses_mutation"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::DisableTest::test_drain_and_freeze": "pass",
+    "tests/test_runtime.py::DisableTest::test_freeze_refuses_mutation": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV18-OPS-005",
+   "kind": "shall",
+   "text": "Declared metrics SHALL be emitted with bounded label cardinality.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::MetricsTest::test_label_cardinality_bounded",
+    "tests/test_runtime.py::MetricsTest::test_metric_contract_under_deterministic_workload"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::MetricsTest::test_label_cardinality_bounded": "pass",
+    "tests/test_runtime.py::MetricsTest::test_metric_contract_under_deterministic_workload": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV18-OPS-006",
+   "kind": "shall",
+   "text": "Logs SHALL follow PK_FUTURE_LOG/1 with trace and config identifiers and redaction.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::LogTest::test_log_schema_and_identifiers"
+   ],
+   "test_status": {
+    "tests/test_observability.py::LogTest::test_log_schema_and_identifiers": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV18-CMP-001",
+   "kind": "shall",
+   "text": "Wire documents SHALL be validated strictly against versioned schemas; another major SHALL be refused with INCOMPATIBLE_VERSION.",
+   "artifacts": [
+    "wire.py"
+   ],
+   "tests": [
+    "tests/test_property.py::FuzzTest::test_decoder_fuzz",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely",
+    "tests/test_wire.py::SchemaTest::test_contract_shapes",
+    "tests/test_wire.py::VersionTest::test_negotiation",
+    "tests/test_wire.py::VersionTest::test_other_major_refused_not_downgraded"
+   ],
+   "test_status": {
+    "tests/test_property.py::FuzzTest::test_decoder_fuzz": "pass",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely": "pass",
+    "tests/test_wire.py::SchemaTest::test_contract_shapes": "pass",
+    "tests/test_wire.py::VersionTest::test_negotiation": "pass",
+    "tests/test_wire.py::VersionTest::test_other_major_refused_not_downgraded": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "wire.py": "8a9a46a93dbd11afab709748442afda8e51cc6276c5719491d979a2fcb245acd"
+   }
+  },
+  {
+   "id": "INV18-CMP-002",
+   "kind": "shall",
+   "text": "Unknown error codes from newer peers SHALL map to UNKNOWN preserving the original code.",
+   "artifacts": [
+    "errors.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::TaxonomyTest::test_unknown_code_forward_compatible"
+   ],
+   "test_status": {
+    "tests/test_errors.py::TaxonomyTest::test_unknown_code_forward_compatible": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961"
+   }
+  },
+  {
+   "id": "INV18-CMP-003",
+   "kind": "shall",
+   "text": "The release gate SHALL treat a skipped mandatory test as BLOCKED, never PASS.",
+   "artifacts": [
+    "certify.py"
+   ],
+   "tests": [
+    "tests/test_release.py::GateTest::test_skipped_mandatory_test_blocks",
+    "tests/test_release.py::RTMTest::test_rtm_detects_gaps"
+   ],
+   "test_status": {
+    "tests/test_release.py::GateTest::test_skipped_mandatory_test_blocks": "pass",
+    "tests/test_release.py::RTMTest::test_rtm_detects_gaps": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "certify.py": "d74e2d055c4f157fd4c23e581a3ee8be18c1a5d2d564b071045fa78c10070d9e"
+   }
+  },
+  {
+   "id": "INV-18-C001",
+   "kind": "checklist",
+   "text": "Define the exact production responsibility of Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "README.md"
+   ],
+   "tests": [
+    "tests/test_integration.py::INV17StreamTest::test_stream_to_completion",
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently"
+   ],
+   "test_status": {
+    "tests/test_integration.py::INV17StreamTest::test_stream_to_completion": "pass",
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "README.md": "4770c46d5f880102965893fe06634e1659865988e3ee58845c9121e3ce46294b"
+   }
+  },
+  {
+   "id": "INV-18-C002",
+   "kind": "checklist",
+   "text": "Document what Completion primitive owns and explicitly does not own.",
+   "artifacts": [
+    "contract.py",
+    "README.md"
+   ],
+   "tests": [
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently"
+   ],
+   "test_status": {
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "README.md": "4770c46d5f880102965893fe06634e1659865988e3ee58845c9121e3ce46294b"
+   }
+  },
+  {
+   "id": "INV-18-C003",
+   "kind": "checklist",
+   "text": "Identify upstream, downstream, and peer dependencies of Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "docs/INTERFACES.md"
+   ],
+   "tests": [
+    "tests/test_integration.py::INV15WaitableSetTest::test_readiness_paths",
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons"
+   ],
+   "test_status": {
+    "tests/test_integration.py::INV15WaitableSetTest::test_readiness_paths": "pass",
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "docs/INTERFACES.md": "71d22d7305bbc54d452860ec7a14a9d77fe99bfca518b9f1bbf00c35b023316a"
+   }
+  },
+  {
+   "id": "INV-18-C004",
+   "kind": "checklist",
+   "text": "Define the authoritative source of truth used by Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "docs/adr/ADR-001-completion-primitive.md"
+   ],
+   "tests": [
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries"
+   ],
+   "test_status": {
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "docs/adr/ADR-001-completion-primitive.md": "c010d71f9f71b4a129a15afda21a55ad8213504885f12d5025e91fbb447e37d6"
+   }
+  },
+  {
+   "id": "INV-18-C005",
+   "kind": "checklist",
+   "text": "Document assumptions Completion primitive makes about nodes, runtimes, networks, storage, and control planes.",
+   "artifacts": [
+    "contract.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_config.py::ApplicabilityTest::test_every_supported_context_runs",
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries"
+   ],
+   "test_status": {
+    "tests/test_config.py::ApplicabilityTest::test_every_supported_context_runs": "pass",
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C006",
+   "kind": "checklist",
+   "text": "Define tenant, environment, site, and workload boundaries relevant to Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries",
+    "tests/test_runtime.py::CapabilityTest::test_tenant_identifier_validated"
+   ],
+   "test_status": {
+    "tests/test_release.py::ContractDocTest::test_dependencies_truth_assumptions_boundaries": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_tenant_identifier_validated": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV-18-C007",
+   "kind": "checklist",
+   "text": "Separate mandatory Completion primitive capabilities from optional optimizations.",
+   "artifacts": [
+    "contract.py"
+   ],
+   "tests": [
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently"
+   ],
+   "test_status": {
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b"
+   }
+  },
+  {
+   "id": "INV-18-C008",
+   "kind": "checklist",
+   "text": "Document unsupported deployment patterns and non-goals for Completion primitive.",
+   "artifacts": [
+    "contract.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently"
+   ],
+   "test_status": {
+    "tests/test_release.py::ContractDocTest::test_scope_documented_consistently": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "contract.py": "3d5ce2fbdf7d72d16b66c28da5b6562933cb493e4ea694a806e1c4e7d2a4e08b",
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C009",
+   "kind": "checklist",
+   "text": "Assign an accountable owner and escalation path for Completion primitive.",
+   "artifacts": [
+    "governance/OWNERS.json",
+    "CODEOWNERS"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_owners_file_complete_or_gate_blocks"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_owners_file_complete_or_gate_blocks": "pass"
+   },
+   "blockers": [
+    "OWNERS_VACANT"
+   ],
+   "status": "partial",
+   "reason": "open blockers: OWNERS_VACANT",
+   "artifact_digests": {
+    "governance/OWNERS.json": "bc72045cd1c240de9438c4780fc3e25ba029cd8aec9c62c62a4cd75367a887c6",
+    "CODEOWNERS": "97d702cfcccf3da13e9582c1d1b7020c453bb602606418d6cd759cf37a653d53"
+   }
+  },
+  {
+   "id": "INV-18-C010",
+   "kind": "checklist",
+   "text": "Approve an architecture decision record for Completion primitive, its technologies (future<T>), and its function (Deferred asynchronous results).",
+   "artifacts": [
+    "docs/adr/ADR-001-completion-primitive.md"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_adr_complete_and_gated"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_adr_complete_and_gated": "pass"
+   },
+   "blockers": [
+    "ADR_NOT_APPROVED"
+   ],
+   "status": "partial",
+   "reason": "open blockers: ADR_NOT_APPROVED",
+   "artifact_digests": {
+    "docs/adr/ADR-001-completion-primitive.md": "c010d71f9f71b4a129a15afda21a55ad8213504885f12d5025e91fbb447e37d6"
+   }
+  },
+  {
+   "id": "INV-18-C011",
+   "kind": "checklist",
+   "text": "Translate the source function of Completion primitive \u2014 Deferred asynchronous results \u2014 into testable SHALL-level requirements.",
+   "artifacts": [
+    "REQUIREMENTS.json"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_requirements_source"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_requirements_source": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "REQUIREMENTS.json": "81470b2ecddb19ce1da11796409f1fda4a71a560ec7645a12215484cc2999168"
+   }
+  },
+  {
+   "id": "INV-18-C012",
+   "kind": "checklist",
+   "text": "Define functional requirements for Completion primitive across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md",
+    "config/site-far-edge.json"
+   ],
+   "tests": [
+    "tests/test_config.py::ApplicabilityTest::test_every_supported_context_runs"
+   ],
+   "test_status": {
+    "tests/test_config.py::ApplicabilityTest::test_every_supported_context_runs": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf",
+    "config/site-far-edge.json": "f4ededceed0ed566ded9e0548ad8be3bedd4734dc121d9fd6757ae228be44be7"
+   }
+  },
+  {
+   "id": "INV-18-C013",
+   "kind": "checklist",
+   "text": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_architecture_table_matches_codes",
+    "tests/test_perf.py::RegressionGateTest::test_thresholds_file_well_formed"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_architecture_table_matches_codes": "pass",
+    "tests/test_perf.py::RegressionGateTest::test_thresholds_file_well_formed": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C014",
+   "kind": "checklist",
+   "text": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Completion primitive.",
+   "artifacts": [
+    "errors.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_architecture_table_matches_codes",
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_outcome_maps_to_one_category",
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_errors.py::TaxonomyTest::test_every_code_has_complete_spec",
+    "tests/test_errors.py::TaxonomyTest::test_precedence_is_deterministic",
+    "tests/test_future.py::FutureV43Test::test_state_error_precedes_argument_error"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_architecture_table_matches_codes": "pass",
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_outcome_maps_to_one_category": "pass",
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_every_code_has_complete_spec": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_precedence_is_deterministic": "pass",
+    "tests/test_future.py::FutureV43Test::test_state_error_precedes_argument_error": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961",
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C015",
+   "kind": "checklist",
+   "text": "Define lifecycle states and legal state transitions managed or exposed by Completion primitive.",
+   "artifacts": [
+    "future.py",
+    "docs/adr/ADR-001-completion-primitive.md"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_abandon_after_resolution_is_noop",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot",
+    "tests/test_future.py::FutureV43Test::test_state_property_and_lifecycle",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_after_resolution_is_harmless"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_abandon_after_resolution_is_noop": "pass",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot": "pass",
+    "tests/test_future.py::FutureV43Test::test_state_property_and_lifecycle": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_after_resolution_is_harmless": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb",
+    "docs/adr/ADR-001-completion-primitive.md": "c010d71f9f71b4a129a15afda21a55ad8213504885f12d5025e91fbb447e37d6"
+   }
+  },
+  {
+   "id": "INV-18-C016",
+   "kind": "checklist",
+   "text": "Define versioning and backward-compatibility requirements for Completion primitive.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md",
+    "conformance/API_SNAPSHOT.json"
+   ],
+   "tests": [
+    "tests/test_contract.py::PublicApiTest::test_package_root_exports",
+    "tests/test_contract.py::PublicApiTest::test_signatures_match_snapshot",
+    "tests/test_errors.py::TaxonomyTest::test_codes_are_stable",
+    "tests/test_observability.py::StatusTest::test_status_compatibility_fields_stable",
+    "tests/test_wire.py::VersionTest::test_api_snapshot_compatibility",
+    "tests/test_wire.py::VersionTest::test_negotiation",
+    "tests/test_wire.py::VersionTest::test_undeclared_break_detected"
+   ],
+   "test_status": {
+    "tests/test_contract.py::PublicApiTest::test_package_root_exports": "pass",
+    "tests/test_contract.py::PublicApiTest::test_signatures_match_snapshot": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_codes_are_stable": "pass",
+    "tests/test_observability.py::StatusTest::test_status_compatibility_fields_stable": "pass",
+    "tests/test_wire.py::VersionTest::test_api_snapshot_compatibility": "pass",
+    "tests/test_wire.py::VersionTest::test_negotiation": "pass",
+    "tests/test_wire.py::VersionTest::test_undeclared_break_detected": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf",
+    "conformance/API_SNAPSHOT.json": "ac03cf3b97c4236a4169ba6320891f11b2e69037d6d37cd4d32be42f84189d15"
+   }
+  },
+  {
+   "id": "INV-18-C017",
+   "kind": "checklist",
+   "text": "Define capacity ceilings, quotas, and fairness semantics relevant to Completion primitive.",
+   "artifacts": [
+    "runtime.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload",
+    "tests/test_perf.py::ResourceBoundTest::test_mixed_workload_no_starvation",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour"
+   ],
+   "test_status": {
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload": "pass",
+    "tests/test_perf.py::ResourceBoundTest::test_mixed_workload_no_starvation": "pass",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary": "pass",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C018",
+   "kind": "checklist",
+   "text": "Define behavior when network connectivity is intermittent or absent.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md",
+    "adapters.py"
+   ],
+   "tests": [
+    "tests/test_resilience.py::DistributedTest::test_partition_and_reconnect",
+    "tests/test_resilience.py::DistributedTest::test_remote_producer_disappears",
+    "tests/test_security.py::AuthorityTest::test_runtime_sandbox"
+   ],
+   "test_status": {
+    "tests/test_resilience.py::DistributedTest::test_partition_and_reconnect": "pass",
+    "tests/test_resilience.py::DistributedTest::test_remote_producer_disappears": "pass",
+    "tests/test_security.py::AuthorityTest::test_runtime_sandbox": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf",
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38"
+   }
+  },
+  {
+   "id": "INV-18-C019",
+   "kind": "checklist",
+   "text": "Define precedence rules when Completion primitive requirements conflict with security, residency, SLO, or cost constraints.",
+   "artifacts": [
+    "runtime.py",
+    "errors.py",
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_errors.py::TaxonomyTest::test_precedence_is_deterministic",
+    "tests/test_runtime.py::PrecedenceTest::test_security_before_capacity_and_reason_codes"
+   ],
+   "test_status": {
+    "tests/test_errors.py::TaxonomyTest::test_precedence_is_deterministic": "pass",
+    "tests/test_runtime.py::PrecedenceTest::test_security_before_capacity_and_reason_codes": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961",
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C020",
+   "kind": "checklist",
+   "text": "Maintain a requirements traceability matrix from each Completion primitive requirement to implementation and verification evidence.",
+   "artifacts": [
+    "conformance/RTM.json"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_requirements_source",
+    "tests/test_release.py::RTMTest::test_complete_rtm_from_passing_results",
+    "tests/test_release.py::RTMTest::test_rtm_detects_gaps"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_requirements_source": "pass",
+    "tests/test_release.py::RTMTest::test_complete_rtm_from_passing_results": "pass",
+    "tests/test_release.py::RTMTest::test_rtm_detects_gaps": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {}
+  },
+  {
+   "id": "INV-18-C021",
+   "kind": "checklist",
+   "text": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Completion primitive.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_wire.py::SchemaTest::test_generated_schema_files_match_source"
+   ],
+   "test_status": {
+    "tests/test_wire.py::SchemaTest::test_generated_schema_files_match_source": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C022",
+   "kind": "checklist",
+   "text": "Use versioned typed schemas for all externally visible Completion primitive contracts.",
+   "artifacts": [
+    "wire.py",
+    "schemas/"
+   ],
+   "tests": [
+    "tests/test_errors.py::TaxonomyTest::test_roundtrip_serialization_and_schema",
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes",
+    "tests/test_wire.py::SchemaTest::test_canonical_encoding",
+    "tests/test_wire.py::SchemaTest::test_contract_shapes",
+    "tests/test_wire.py::SchemaTest::test_generated_schema_files_match_source",
+    "tests/test_wire.py::VersionTest::test_schema_extension_via_ext"
+   ],
+   "test_status": {
+    "tests/test_errors.py::TaxonomyTest::test_roundtrip_serialization_and_schema": "pass",
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes": "pass",
+    "tests/test_wire.py::SchemaTest::test_canonical_encoding": "pass",
+    "tests/test_wire.py::SchemaTest::test_contract_shapes": "pass",
+    "tests/test_wire.py::SchemaTest::test_generated_schema_files_match_source": "pass",
+    "tests/test_wire.py::VersionTest::test_schema_extension_via_ext": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "wire.py": "8a9a46a93dbd11afab709748442afda8e51cc6276c5719491d979a2fcb245acd"
+   }
+  },
+  {
+   "id": "INV-18-C023",
+   "kind": "checklist",
+   "text": "Define authentication requirements at each Completion primitive boundary.",
+   "artifacts": [
+    "docs/INTERFACES.md",
+    "auth.py"
+   ],
+   "tests": [
+    "tests/test_security.py::AuthnTest::test_credential_negatives"
+   ],
+   "test_status": {
+    "tests/test_security.py::AuthnTest::test_credential_negatives": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/INTERFACES.md": "71d22d7305bbc54d452860ec7a14a9d77fe99bfca518b9f1bbf00c35b023316a",
+    "auth.py": "b403be72cf58d257f0f18e9d7bd01c5a27abaaf045515d6c35e2249924a7c468"
+   }
+  },
+  {
+   "id": "INV-18-C024",
+   "kind": "checklist",
+   "text": "Define authorization and explicit capability requirements at each Completion primitive boundary.",
+   "artifacts": [
+    "runtime.py",
+    "docs/INTERFACES.md"
+   ],
+   "tests": [
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated",
+    "tests/test_runtime.py::PrecedenceTest::test_security_before_capacity_and_reason_codes",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated": "pass",
+    "tests/test_runtime.py::PrecedenceTest::test_security_before_capacity_and_reason_codes": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "docs/INTERFACES.md": "71d22d7305bbc54d452860ec7a14a9d77fe99bfca518b9f1bbf00c35b023316a"
+   }
+  },
+  {
+   "id": "INV-18-C025",
+   "kind": "checklist",
+   "text": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Completion primitive.",
+   "artifacts": [
+    "future.py",
+    "runtime.py",
+    "adapters.py",
+    "docs/INTERFACES.md"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_cancel_is_terminal_and_refuses_resolution",
+    "tests/test_future.py::FutureV43Test::test_resolve_cancel_race_has_one_winner",
+    "tests/test_future.py::FutureV43Test::test_wait_timeout_does_not_change_state",
+    "tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent",
+    "tests/test_resilience.py::DistributedTest::test_remote_producer_disappears",
+    "tests/test_resilience.py::RetryTest::test_retry_honours_deadline_and_cancellation",
+    "tests/test_runtime.py::CapabilityTest::test_cancel_via_runtime",
+    "tests/test_runtime.py::CapabilityTest::test_take_wait_timeout_leaves_future_intact"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_cancel_is_terminal_and_refuses_resolution": "pass",
+    "tests/test_future.py::FutureV43Test::test_resolve_cancel_race_has_one_winner": "pass",
+    "tests/test_future.py::FutureV43Test::test_wait_timeout_does_not_change_state": "pass",
+    "tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent": "pass",
+    "tests/test_resilience.py::DistributedTest::test_remote_producer_disappears": "pass",
+    "tests/test_resilience.py::RetryTest::test_retry_honours_deadline_and_cancellation": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_cancel_via_runtime": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_take_wait_timeout_leaves_future_intact": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "future.py": "7fddee048eeb0d26e26a1eb4972fde70004906f7c92e3064cddc6f4b70ab17fb",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38",
+    "docs/INTERFACES.md": "71d22d7305bbc54d452860ec7a14a9d77fe99bfca518b9f1bbf00c35b023316a"
+   }
+  },
+  {
+   "id": "INV-18-C026",
+   "kind": "checklist",
+   "text": "Define structured failure codes and machine-readable error details for Completion primitive.",
+   "artifacts": [
+    "errors.py"
+   ],
+   "tests": [
+    "tests/test_contract.py::PublicApiTest::test_exception_hierarchy",
+    "tests/test_errors.py::TaxonomyTest::test_codes_are_stable",
+    "tests/test_errors.py::TaxonomyTest::test_every_code_has_complete_spec",
+    "tests/test_errors.py::TaxonomyTest::test_exception_mapping",
+    "tests/test_errors.py::TaxonomyTest::test_malformed_records_rejected",
+    "tests/test_errors.py::TaxonomyTest::test_roundtrip_serialization_and_schema",
+    "tests/test_errors.py::TaxonomyTest::test_unknown_code_forward_compatible",
+    "tests/test_future.py::FutureV43Test::test_exceptions_carry_stable_codes",
+    "tests/test_property.py::FuzzTest::test_error_record_fuzz",
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes"
+   ],
+   "test_status": {
+    "tests/test_contract.py::PublicApiTest::test_exception_hierarchy": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_codes_are_stable": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_every_code_has_complete_spec": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_exception_mapping": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_malformed_records_rejected": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_roundtrip_serialization_and_schema": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_unknown_code_forward_compatible": "pass",
+    "tests/test_future.py::FutureV43Test::test_exceptions_carry_stable_codes": "pass",
+    "tests/test_property.py::FuzzTest::test_error_record_fuzz": "pass",
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961"
+   }
+  },
+  {
+   "id": "INV-18-C027",
+   "kind": "checklist",
+   "text": "Define compatibility behavior when peers use different supported versions.",
+   "artifacts": [
+    "wire.py",
+    "conformance/COMPAT_MATRIX.json"
+   ],
+   "tests": [
+    "tests/test_errors.py::TaxonomyTest::test_unknown_code_forward_compatible",
+    "tests/test_wire.py::VersionTest::test_api_snapshot_compatibility",
+    "tests/test_wire.py::VersionTest::test_negotiation",
+    "tests/test_wire.py::VersionTest::test_other_major_refused_not_downgraded",
+    "tests/test_wire.py::VersionTest::test_schema_extension_via_ext"
+   ],
+   "test_status": {
+    "tests/test_errors.py::TaxonomyTest::test_unknown_code_forward_compatible": "pass",
+    "tests/test_wire.py::VersionTest::test_api_snapshot_compatibility": "pass",
+    "tests/test_wire.py::VersionTest::test_negotiation": "pass",
+    "tests/test_wire.py::VersionTest::test_other_major_refused_not_downgraded": "pass",
+    "tests/test_wire.py::VersionTest::test_schema_extension_via_ext": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "wire.py": "8a9a46a93dbd11afab709748442afda8e51cc6276c5719491d979a2fcb245acd",
+    "conformance/COMPAT_MATRIX.json": "a315de48c212a1549e7254b5ad736077dcb174b523b1011163fc3c07b2550735"
+   }
+  },
+  {
+   "id": "INV-18-C028",
+   "kind": "checklist",
+   "text": "Document payload, concurrency, queue, connection, or resource limits at Completion primitive interfaces.",
+   "artifacts": [
+    "config.py",
+    "wire.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_error_message_bounded",
+    "tests/test_property.py::FuzzTest::test_payload_metadata_extremes",
+    "tests/test_resilience.py::DistributedTest::test_endpoint_state_bounded",
+    "tests/test_runtime.py::CapabilityTest::test_tenant_identifier_validated",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary",
+    "tests/test_wire.py::LimitTest::test_identifier_length_limit",
+    "tests/test_wire.py::LimitTest::test_size_checked_before_parse"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_error_message_bounded": "pass",
+    "tests/test_property.py::FuzzTest::test_payload_metadata_extremes": "pass",
+    "tests/test_resilience.py::DistributedTest::test_endpoint_state_bounded": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_tenant_identifier_validated": "pass",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary": "pass",
+    "tests/test_wire.py::LimitTest::test_identifier_length_limit": "pass",
+    "tests/test_wire.py::LimitTest::test_size_checked_before_parse": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6",
+    "wire.py": "8a9a46a93dbd11afab709748442afda8e51cc6276c5719491d979a2fcb245acd",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV-18-C029",
+   "kind": "checklist",
+   "text": "Provide reference examples and conformance fixtures for Completion primitive.",
+   "artifacts": [
+    "fixtures/v1/",
+    "fixtures_runner.py",
+    "examples/producer_consumer.py"
+   ],
+   "tests": [
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes",
+    "tests/test_wire.py::FixtureTest::test_fixtures_are_versioned_and_machine_readable",
+    "tests/test_wire.py::FixtureTest::test_reference_example_runs"
+   ],
+   "test_status": {
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes": "pass",
+    "tests/test_wire.py::FixtureTest::test_fixtures_are_versioned_and_machine_readable": "pass",
+    "tests/test_wire.py::FixtureTest::test_reference_example_runs": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "fixtures_runner.py": "759212b8f096bea75e3ec69372b494aaf467fab86e08a9091a39142341e3f81f",
+    "examples/producer_consumer.py": "4a9669b9e7da394e1cba3e58c528617a6d446c4c56c2bef885fe3acf25d3d44e"
+   }
+  },
+  {
+   "id": "INV-18-C030",
+   "kind": "checklist",
+   "text": "Create automated integration tests proving Completion primitive interoperates with adjacent architectural layers.",
+   "artifacts": [
+    "adjacent.py"
+   ],
+   "tests": [
+    "tests/test_integration.py::INV12CodecTest::test_lower_lift_paths",
+    "tests/test_integration.py::INV15WaitableSetTest::test_readiness_paths",
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace",
+    "tests/test_integration.py::INV17StreamTest::test_stream_to_completion",
+    "tests/test_integration.py::INV20HttpTest::test_trailer_paths",
+    "tests/test_integration.py::TierMatrixTest::test_local_and_wire_tier_identical_semantics",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv12_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv15_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv16_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv17_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv20_real"
+   ],
+   "test_status": {
+    "tests/test_integration.py::INV12CodecTest::test_lower_lift_paths": "pass",
+    "tests/test_integration.py::INV15WaitableSetTest::test_readiness_paths": "pass",
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace": "pass",
+    "tests/test_integration.py::INV17StreamTest::test_stream_to_completion": "pass",
+    "tests/test_integration.py::INV20HttpTest::test_trailer_paths": "pass",
+    "tests/test_integration.py::TierMatrixTest::test_local_and_wire_tier_identical_semantics": "pass",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv12_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv15_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv16_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv17_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv20_real": "skip"
+   },
+   "blockers": [
+    "REAL_TIER_NOT_RUN"
+   ],
+   "status": "blocked",
+   "reason": "mandatory linked test skipped",
+   "artifact_digests": {
+    "adjacent.py": "39cbd7e39e12ced0e6c38b677cf65f9f70bf77c0b80b8b00e970fcc0a7f76ecd"
+   }
+  },
+  {
+   "id": "INV-18-C031",
+   "kind": "checklist",
+   "text": "Select and pin approved implementations, versions, or specifications for Completion primitive: future<T>.",
+   "artifacts": [
+    "pyproject.toml",
+    "requirements.lock.json",
+    "component.py"
+   ],
+   "tests": [
+    "tests/test_component.py::ConformanceTest::test_all_100_requirements_answered",
+    "tests/test_component.py::ConformanceTest::test_checks_survive_optimised_mode",
+    "tests/test_component.py::ConformanceTest::test_version",
+    "tests/test_contract.py::PublicApiTest::test_pk_core_integration_is_lazy",
+    "tests/test_release.py::BootstrapTest::test_clean_readonly_bootstrap_idempotent",
+    "tests/test_release.py::ComponentPinTest::test_pk_core_integration_declared",
+    "tests/test_release.py::IntegrityTest::test_sbom_and_lock",
+    "tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core"
+   ],
+   "test_status": {
+    "tests/test_component.py::ConformanceTest::test_all_100_requirements_answered": "skip",
+    "tests/test_component.py::ConformanceTest::test_checks_survive_optimised_mode": "skip",
+    "tests/test_component.py::ConformanceTest::test_version": "skip",
+    "tests/test_contract.py::PublicApiTest::test_pk_core_integration_is_lazy": "pass",
+    "tests/test_release.py::BootstrapTest::test_clean_readonly_bootstrap_idempotent": "pass",
+    "tests/test_release.py::ComponentPinTest::test_pk_core_integration_declared": "pass",
+    "tests/test_release.py::IntegrityTest::test_sbom_and_lock": "pass",
+    "tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core": "pass"
+   },
+   "blockers": [
+    "PK_CORE_MISSING"
+   ],
+   "status": "blocked",
+   "reason": "mandatory linked test skipped",
+   "artifact_digests": {
+    "pyproject.toml": "2660def898db9830fb993de6effed55aa573874f5d1b4032b0206e9c9ee2fee3",
+    "requirements.lock.json": "d981bb3974a0d0d011d001cb79ae946ee7ed1de2467d8514f4379da8420c7090",
+    "component.py": "7ba42e78889bd90f1b6e65e601fff86775eb4578e2fd0f29dc095199f6099205"
+   }
+  },
+  {
+   "id": "INV-18-C032",
+   "kind": "checklist",
+   "text": "Separate immutable artifacts from mutable configuration and state for Completion primitive.",
+   "artifacts": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests/test_config.py::LayeringTest::test_same_artifact_many_environments",
+    "tests/test_release.py::BootstrapTest::test_clean_readonly_bootstrap_idempotent"
+   ],
+   "test_status": {
+    "tests/test_config.py::LayeringTest::test_same_artifact_many_environments": "pass",
+    "tests/test_release.py::BootstrapTest::test_clean_readonly_bootstrap_idempotent": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/ARCHITECTURE.md": "d7f4c9c6db3dd352bca38d6512df67011d801f1a3d9dae17d33b16fd83725ddf"
+   }
+  },
+  {
+   "id": "INV-18-C033",
+   "kind": "checklist",
+   "text": "Define declarative configuration and secure defaults for Completion primitive.",
+   "artifacts": [
+    "config.py",
+    "config/"
+   ],
+   "tests": [
+    "tests/test_config.py::ValidationTest::test_defaults_are_valid_and_secure",
+    "tests/test_config.py::ValidationTest::test_every_shipped_config_layer_valid",
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected"
+   ],
+   "test_status": {
+    "tests/test_config.py::ValidationTest::test_defaults_are_valid_and_secure": "pass",
+    "tests/test_config.py::ValidationTest::test_every_shipped_config_layer_valid": "pass",
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV-18-C034",
+   "kind": "checklist",
+   "text": "Validate configuration before activation and fail closed on security-critical errors.",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "tests/test_config.py::ValidationTest::test_fail_closed_no_partial_activation",
+    "tests/test_config.py::ValidationTest::test_fuzz_malformed_configs_never_crash_or_activate",
+    "tests/test_config.py::ValidationTest::test_matrix_of_invalid_documents",
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected"
+   ],
+   "test_status": {
+    "tests/test_config.py::ValidationTest::test_fail_closed_no_partial_activation": "pass",
+    "tests/test_config.py::ValidationTest::test_fuzz_malformed_configs_never_crash_or_activate": "pass",
+    "tests/test_config.py::ValidationTest::test_matrix_of_invalid_documents": "pass",
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV-18-C035",
+   "kind": "checklist",
+   "text": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+   "artifacts": [
+    "config.py",
+    "config/"
+   ],
+   "tests": [
+    "tests/test_config.py::LayeringTest::test_deterministic_layering",
+    "tests/test_config.py::LayeringTest::test_env_injection_allowlisted",
+    "tests/test_config.py::LayeringTest::test_same_artifact_many_environments",
+    "tests/test_config.py::ValidationTest::test_every_shipped_config_layer_valid"
+   ],
+   "test_status": {
+    "tests/test_config.py::LayeringTest::test_deterministic_layering": "pass",
+    "tests/test_config.py::LayeringTest::test_env_injection_allowlisted": "pass",
+    "tests/test_config.py::LayeringTest::test_same_artifact_many_environments": "pass",
+    "tests/test_config.py::ValidationTest::test_every_shipped_config_layer_valid": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV-18-C036",
+   "kind": "checklist",
+   "text": "Record configuration provenance, version, author, and activation time.",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "tests/test_config.py::ProvenanceTest::test_revision_records"
+   ],
+   "test_status": {
+    "tests/test_config.py::ProvenanceTest::test_revision_records": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV-18-C037",
+   "kind": "checklist",
+   "text": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "tests/test_config.py::AtomicityTest::test_concurrent_readers_never_see_mixed_state",
+    "tests/test_config.py::AtomicityTest::test_crash_between_stage_and_commit",
+    "tests/test_config.py::ValidationTest::test_fail_closed_no_partial_activation"
+   ],
+   "test_status": {
+    "tests/test_config.py::AtomicityTest::test_concurrent_readers_never_see_mixed_state": "pass",
+    "tests/test_config.py::AtomicityTest::test_crash_between_stage_and_commit": "pass",
+    "tests/test_config.py::ValidationTest::test_fail_closed_no_partial_activation": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6"
+   }
+  },
+  {
+   "id": "INV-18-C038",
+   "kind": "checklist",
+   "text": "Define automatic and operator-driven rollback for failed Completion primitive changes.",
+   "artifacts": [
+    "config.py",
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests/test_config.py::RollbackTest::test_operator_and_automatic_rollback",
+    "tests/test_config.py::RollbackTest::test_rollback_with_inflight_futures",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute"
+   ],
+   "test_status": {
+    "tests/test_config.py::RollbackTest::test_operator_and_automatic_rollback": "pass",
+    "tests/test_config.py::RollbackTest::test_rollback_with_inflight_futures": "pass",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6",
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68"
+   }
+  },
+  {
+   "id": "INV-18-C039",
+   "kind": "checklist",
+   "text": "Keep credentials and secret material out of ordinary Completion primitive configuration and diagnostics.",
+   "artifacts": [
+    "config.py",
+    "errors.py"
+   ],
+   "tests": [
+    "tests/test_config.py::LayeringTest::test_env_injection_allowlisted",
+    "tests/test_config.py::SecretsTest::test_no_plaintext_secrets_in_repository_configs",
+    "tests/test_config.py::SecretsTest::test_sentinel_secret_not_leaked_by_config_errors",
+    "tests/test_config.py::ValidationTest::test_defaults_are_valid_and_secure",
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected",
+    "tests/test_errors.py::TaxonomyTest::test_redaction",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks"
+   ],
+   "test_status": {
+    "tests/test_config.py::LayeringTest::test_env_injection_allowlisted": "pass",
+    "tests/test_config.py::SecretsTest::test_no_plaintext_secrets_in_repository_configs": "pass",
+    "tests/test_config.py::SecretsTest::test_sentinel_secret_not_leaked_by_config_errors": "pass",
+    "tests/test_config.py::ValidationTest::test_defaults_are_valid_and_secure": "pass",
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_redaction": "pass",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged": "pass",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "config.py": "19876be20b84309edf10846d7f69dcf9b97b3da437275218166e2e6aef96e5b6",
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961"
+   }
+  },
+  {
+   "id": "INV-18-C040",
+   "kind": "checklist",
+   "text": "Provide a deterministic bootstrap path from an empty node/environment to healthy Completion primitive operation.",
+   "artifacts": [
+    "bootstrap.py"
+   ],
+   "tests": [
+    "tests/test_contract.py::InstalledCopyTest::test_contract_against_installed_copy",
+    "tests/test_release.py::BootstrapTest::test_clean_readonly_bootstrap_idempotent"
+   ],
+   "test_status": {
+    "tests/test_contract.py::InstalledCopyTest::test_contract_against_installed_copy": "pass",
+    "tests/test_release.py::BootstrapTest::test_clean_readonly_bootstrap_idempotent": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bootstrap.py": "1101c680f24ae52319057295c08b72ee2a3055e3a2b3881439a1ec140a974ee8"
+   }
+  },
+  {
+   "id": "INV-18-C041",
+   "kind": "checklist",
+   "text": "Threat-model Completion primitive against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+   "artifacts": [
+    "conformance/THREAT_MODEL.json",
+    "docs/SECURITY.md"
+   ],
+   "tests": [
+    "tests/test_security.py::ThreatModelTest::test_threat_model_structure_and_traceability"
+   ],
+   "test_status": {
+    "tests/test_security.py::ThreatModelTest::test_threat_model_structure_and_traceability": "pass"
+   },
+   "blockers": [
+    "THREAT_MODEL_NOT_APPROVED"
+   ],
+   "status": "partial",
+   "reason": "open blockers: THREAT_MODEL_NOT_APPROVED",
+   "artifact_digests": {
+    "conformance/THREAT_MODEL.json": "f097283c83fc7c056ff20b56123b4cdf75cd666ef01444d7d68960c656b1eeb1",
+    "docs/SECURITY.md": "2c7fe508e85ece3656111cf723dcac21d319114fdfa1c855187121b38d6c4732"
+   }
+  },
+  {
+   "id": "INV-18-C042",
+   "kind": "checklist",
+   "text": "Apply least privilege to every identity and capability used by Completion primitive.",
+   "artifacts": [
+    "docs/SECURITY.md",
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated",
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused",
+    "tests/test_security.py::AuthorityTest::test_static_authority_inventory",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated": "pass",
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused": "pass",
+    "tests/test_security.py::AuthorityTest::test_static_authority_inventory": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/SECURITY.md": "2c7fe508e85ece3656111cf723dcac21d319114fdfa1c855187121b38d6c4732",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV-18-C043",
+   "kind": "checklist",
+   "text": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Completion primitive permits.",
+   "artifacts": [
+    "docs/SECURITY.md"
+   ],
+   "tests": [
+    "tests/test_config.py::ValidationTest::test_defaults_are_valid_and_secure",
+    "tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core",
+    "tests/test_security.py::AuthorityTest::test_runtime_sandbox",
+    "tests/test_security.py::AuthorityTest::test_static_authority_inventory"
+   ],
+   "test_status": {
+    "tests/test_config.py::ValidationTest::test_defaults_are_valid_and_secure": "pass",
+    "tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core": "pass",
+    "tests/test_security.py::AuthorityTest::test_runtime_sandbox": "pass",
+    "tests/test_security.py::AuthorityTest::test_static_authority_inventory": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/SECURITY.md": "2c7fe508e85ece3656111cf723dcac21d319114fdfa1c855187121b38d6c4732"
+   }
+  },
+  {
+   "id": "INV-18-C044",
+   "kind": "checklist",
+   "text": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+   "artifacts": [
+    "auth.py",
+    "adapters.py"
+   ],
+   "tests": [
+    "tests/test_security.py::AuthnTest::test_credential_negatives",
+    "tests/test_security.py::AuthnTest::test_key_rotation_overlap_and_revocation",
+    "tests/test_security.py::AuthnTest::test_replay_rejected",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused"
+   ],
+   "test_status": {
+    "tests/test_security.py::AuthnTest::test_credential_negatives": "pass",
+    "tests/test_security.py::AuthnTest::test_key_rotation_overlap_and_revocation": "pass",
+    "tests/test_security.py::AuthnTest::test_replay_rejected": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "auth.py": "b403be72cf58d257f0f18e9d7bd01c5a27abaaf045515d6c35e2249924a7c468",
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38"
+   }
+  },
+  {
+   "id": "INV-18-C045",
+   "kind": "checklist",
+   "text": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Completion primitive.",
+   "artifacts": [
+    "SHA256SUMS",
+    "conformance/SBOM.json",
+    "tools/verify.py",
+    "tools_verify.py"
+   ],
+   "tests": [
+    "tests/test_release.py::GateTest::test_evidence_record_complete_and_sealed",
+    "tests/test_release.py::IntegrityTest::test_sbom_and_lock",
+    "tests/test_release.py::IntegrityTest::test_tampered_artifact_detected",
+    "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected"
+   ],
+   "test_status": {
+    "tests/test_release.py::GateTest::test_evidence_record_complete_and_sealed": "pass",
+    "tests/test_release.py::IntegrityTest::test_sbom_and_lock": "pass",
+    "tests/test_release.py::IntegrityTest::test_tampered_artifact_detected": "pass",
+    "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected": "pass"
+   },
+   "blockers": [
+    "UNSIGNED_EVIDENCE"
+   ],
+   "status": "partial",
+   "reason": "open blockers: UNSIGNED_EVIDENCE",
+   "artifact_digests": {
+    "SHA256SUMS": "21a99bf49b82c6ed56cf82abeafb59d5e52300f45f9c52026111b57f2deca528",
+    "conformance/SBOM.json": "d7a7549ec50cb77c399efe2e7edf285d4bb45e6274e7727deab305533ac740d1",
+    "tools/verify.py": "aeddf3492651a6fc6a2a19212cd605ab45f3a9134daff3b22067a8a97ba4615f",
+    "tools_verify.py": "24a9a27e5fad9c8140eb76c41c5b09f9137360ae0c847cb7883bc488b66f94d8"
+   }
+  },
+  {
+   "id": "INV-18-C046",
+   "kind": "checklist",
+   "text": "Enforce tenant/workload isolation across Completion primitive execution, memory, state, network, and device boundaries as applicable.",
+   "artifacts": [
+    "runtime.py",
+    "adapters.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::DisableTest::test_tenant_scope",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused",
+    "tests/test_security.py::IsolationTest::test_enumeration_indistinguishable",
+    "tests/test_security.py::IsolationTest::test_identifier_collision_and_state_separation"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::DisableTest::test_tenant_scope": "pass",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused": "pass",
+    "tests/test_security.py::IsolationTest::test_enumeration_indistinguishable": "pass",
+    "tests/test_security.py::IsolationTest::test_identifier_collision_and_state_separation": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38"
+   }
+  },
+  {
+   "id": "INV-18-C047",
+   "kind": "checklist",
+   "text": "Encrypt sensitive Completion primitive data in transit and at rest with managed key rotation.",
+   "artifacts": [
+    "docs/SECURITY.md",
+    "auth.py"
+   ],
+   "tests": [
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected",
+    "tests/test_security.py::AuthnTest::test_key_rotation_overlap_and_revocation"
+   ],
+   "test_status": {
+    "tests/test_config.py::ValidationTest::test_security_combinations_rejected": "pass",
+    "tests/test_security.py::AuthnTest::test_key_rotation_overlap_and_revocation": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/SECURITY.md": "2c7fe508e85ece3656111cf723dcac21d319114fdfa1c855187121b38d6c4732",
+    "auth.py": "b403be72cf58d257f0f18e9d7bd01c5a27abaaf045515d6c35e2249924a7c468"
+   }
+  },
+  {
+   "id": "INV-18-C048",
+   "kind": "checklist",
+   "text": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+   "artifacts": [
+    "auth.py",
+    "docs/SECURITY.md"
+   ],
+   "tests": [
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed",
+    "tests/test_security.py::OutageTest::test_simultaneous_outages_fail_closed"
+   ],
+   "test_status": {
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed": "pass",
+    "tests/test_security.py::OutageTest::test_simultaneous_outages_fail_closed": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "auth.py": "b403be72cf58d257f0f18e9d7bd01c5a27abaaf045515d6c35e2249924a7c468",
+    "docs/SECURITY.md": "2c7fe508e85ece3656111cf723dcac21d319114fdfa1c855187121b38d6c4732"
+   }
+  },
+  {
+   "id": "INV-18-C049",
+   "kind": "checklist",
+   "text": "Emit tamper-evident audit events for security-sensitive Completion primitive operations.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_security.py::AuditTest::test_mutation_and_deletion_detected"
+   ],
+   "test_status": {
+    "tests/test_security.py::AuditTest::test_mutation_and_deletion_detected": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV-18-C050",
+   "kind": "checklist",
+   "text": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+   "artifacts": [
+    "tests/test_security.py"
+   ],
+   "tests": [
+    "tests/test_property.py::FuzzTest::test_decoder_fuzz",
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused",
+    "tests/test_security.py::AuthnTest::test_credential_negatives",
+    "tests/test_security.py::AuthnTest::test_replay_rejected",
+    "tests/test_security.py::CapabilityAttackTest::test_constant_time_compare_used",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely",
+    "tests/test_security.py::IsolationTest::test_enumeration_indistinguishable",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks"
+   ],
+   "test_status": {
+    "tests/test_property.py::FuzzTest::test_decoder_fuzz": "pass",
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused": "pass",
+    "tests/test_security.py::AuthnTest::test_credential_negatives": "pass",
+    "tests/test_security.py::AuthnTest::test_replay_rejected": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_constant_time_compare_used": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_kind_upgrade_refused": "pass",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded": "pass",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely": "pass",
+    "tests/test_security.py::IsolationTest::test_enumeration_indistinguishable": "pass",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "tests/test_security.py": "73c21ff1d9f40bc3f54c05df44777c39f52c8b4784826c877dd13c378d3aa027"
+   }
+  },
+  {
+   "id": "INV-18-C051",
+   "kind": "checklist",
+   "text": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Completion primitive.",
+   "artifacts": [
+    "docs/RESILIENCE.md"
+   ],
+   "tests": [
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace",
+    "tests/test_resilience.py::FaultTest::test_fault_suite",
+    "tests/test_resilience.py::RestartTest::test_process_termination_and_restart",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons",
+    "tests/test_runtime.py::ClockTest::test_clock_anomaly_affects_only_telemetry"
+   ],
+   "test_status": {
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace": "pass",
+    "tests/test_resilience.py::FaultTest::test_fault_suite": "pass",
+    "tests/test_resilience.py::RestartTest::test_process_termination_and_restart": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_writer_drop_abandons": "pass",
+    "tests/test_runtime.py::ClockTest::test_clock_anomaly_affects_only_telemetry": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/RESILIENCE.md": "5d62d90af59bc721692868b713c6cfae58ed3639e52af09e352580b041a1ca7c"
+   }
+  },
+  {
+   "id": "INV-18-C052",
+   "kind": "checklist",
+   "text": "Define automated health and stall detection thresholds for Completion primitive.",
+   "artifacts": [
+    "runtime.py",
+    "docs/RESILIENCE.md"
+   ],
+   "tests": [
+    "tests/test_observability.py::ExplainTest::test_operator_can_diagnose_predefined_incidents",
+    "tests/test_runtime.py::ClockTest::test_clock_anomaly_affects_only_telemetry",
+    "tests/test_runtime.py::HealthTest::test_single_slow_producer_does_not_degrade",
+    "tests/test_runtime.py::HealthTest::test_states_and_reasons"
+   ],
+   "test_status": {
+    "tests/test_observability.py::ExplainTest::test_operator_can_diagnose_predefined_incidents": "pass",
+    "tests/test_runtime.py::ClockTest::test_clock_anomaly_affects_only_telemetry": "pass",
+    "tests/test_runtime.py::HealthTest::test_single_slow_producer_does_not_degrade": "pass",
+    "tests/test_runtime.py::HealthTest::test_states_and_reasons": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "docs/RESILIENCE.md": "5d62d90af59bc721692868b713c6cfae58ed3639e52af09e352580b041a1ca7c"
+   }
+  },
+  {
+   "id": "INV-18-C053",
+   "kind": "checklist",
+   "text": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+   "artifacts": [
+    "retry.py"
+   ],
+   "tests": [
+    "tests/test_resilience.py::RetryTest::test_bounded_retries_with_jitter",
+    "tests/test_resilience.py::RetryTest::test_local_transitions_are_not_retryable",
+    "tests/test_resilience.py::RetryTest::test_permanent_failure_does_not_retry_forever",
+    "tests/test_resilience.py::RetryTest::test_retry_honours_deadline_and_cancellation"
+   ],
+   "test_status": {
+    "tests/test_resilience.py::RetryTest::test_bounded_retries_with_jitter": "pass",
+    "tests/test_resilience.py::RetryTest::test_local_transitions_are_not_retryable": "pass",
+    "tests/test_resilience.py::RetryTest::test_permanent_failure_does_not_retry_forever": "pass",
+    "tests/test_resilience.py::RetryTest::test_retry_honours_deadline_and_cancellation": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "retry.py": "648649a8f23eb6c711e4bb81fd0ceca0ab892bfec9bcd2817971cf82447aa5ff"
+   }
+  },
+  {
+   "id": "INV-18-C054",
+   "kind": "checklist",
+   "text": "Implement admission control, load shedding, or circuit breaking to prevent Completion primitive failure cascades.",
+   "artifacts": [
+    "runtime.py",
+    "retry.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload",
+    "tests/test_resilience.py::CircuitTest::test_terminal_errors_do_not_trip_breaker",
+    "tests/test_resilience.py::CircuitTest::test_transitions_with_hysteresis",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded"
+   ],
+   "test_status": {
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload": "pass",
+    "tests/test_resilience.py::CircuitTest::test_terminal_errors_do_not_trip_breaker": "pass",
+    "tests/test_resilience.py::CircuitTest::test_transitions_with_hysteresis": "pass",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary": "pass",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "retry.py": "648649a8f23eb6c711e4bb81fd0ceca0ab892bfec9bcd2817971cf82447aa5ff"
+   }
+  },
+  {
+   "id": "INV-18-C055",
+   "kind": "checklist",
+   "text": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+   "artifacts": [
+    "adapters.py",
+    "docs/RESILIENCE.md"
+   ],
+   "tests": [
+    "tests/test_resilience.py::DistributedTest::test_stale_owner_fenced"
+   ],
+   "test_status": {
+    "tests/test_resilience.py::DistributedTest::test_stale_owner_fenced": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38",
+    "docs/RESILIENCE.md": "5d62d90af59bc721692868b713c6cfae58ed3639e52af09e352580b041a1ca7c"
+   }
+  },
+  {
+   "id": "INV-18-C056",
+   "kind": "checklist",
+   "text": "Provide degraded operation when noncritical dependencies are unavailable.",
+   "artifacts": [
+    "runtime.py",
+    "docs/RESILIENCE.md"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_observer_exception_never_breaks_transition",
+    "tests/test_resilience.py::DegradedTest::test_each_noncritical_dependency_disabled",
+    "tests/test_resilience.py::FaultTest::test_fault_suite",
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_observer_exception_never_breaks_transition": "pass",
+    "tests/test_resilience.py::DegradedTest::test_each_noncritical_dependency_disabled": "pass",
+    "tests/test_resilience.py::FaultTest::test_fault_suite": "pass",
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "docs/RESILIENCE.md": "5d62d90af59bc721692868b713c6cfae58ed3639e52af09e352580b041a1ca7c"
+   }
+  },
+  {
+   "id": "INV-18-C057",
+   "kind": "checklist",
+   "text": "Define crash-consistency, restart, resume, or replay semantics for mutable Completion primitive state.",
+   "artifacts": [
+    "docs/RESILIENCE.md",
+    "adapters.py"
+   ],
+   "tests": [
+    "tests/test_resilience.py::RestartTest::test_crash_at_transition_boundary",
+    "tests/test_resilience.py::RestartTest::test_process_termination_and_restart"
+   ],
+   "test_status": {
+    "tests/test_resilience.py::RestartTest::test_crash_at_transition_boundary": "pass",
+    "tests/test_resilience.py::RestartTest::test_process_termination_and_restart": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/RESILIENCE.md": "5d62d90af59bc721692868b713c6cfae58ed3639e52af09e352580b041a1ca7c",
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38"
+   }
+  },
+  {
+   "id": "INV-18-C058",
+   "kind": "checklist",
+   "text": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+   "artifacts": [
+    "adapters.py"
+   ],
+   "tests": [
+    "tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent",
+    "tests/test_resilience.py::DistributedTest::test_simultaneous_owners_single_winner",
+    "tests/test_resilience.py::DistributedTest::test_stale_owner_fenced"
+   ],
+   "test_status": {
+    "tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent": "pass",
+    "tests/test_resilience.py::DistributedTest::test_simultaneous_owners_single_winner": "pass",
+    "tests/test_resilience.py::DistributedTest::test_stale_owner_fenced": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "adapters.py": "9dbc3218a65bc35d7a69d795c49a5ec3623fe0a4d706de538c397fc69999fc38"
+   }
+  },
+  {
+   "id": "INV-18-C059",
+   "kind": "checklist",
+   "text": "Provide quarantine, freeze, disable, or isolation controls for unsafe Completion primitive behavior.",
+   "artifacts": [
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute",
+    "tests/test_runtime.py::DisableTest::test_disable_under_load",
+    "tests/test_runtime.py::DisableTest::test_drain_and_freeze",
+    "tests/test_runtime.py::DisableTest::test_freeze_refuses_mutation",
+    "tests/test_runtime.py::DisableTest::test_tenant_scope",
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused"
+   ],
+   "test_status": {
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute": "pass",
+    "tests/test_runtime.py::DisableTest::test_disable_under_load": "pass",
+    "tests/test_runtime.py::DisableTest::test_drain_and_freeze": "pass",
+    "tests/test_runtime.py::DisableTest::test_freeze_refuses_mutation": "pass",
+    "tests/test_runtime.py::DisableTest::test_tenant_scope": "pass",
+    "tests/test_runtime.py::DisableTest::test_unauthorized_disable_refused": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV-18-C060",
+   "kind": "checklist",
+   "text": "Run fault-injection tests proving Completion primitive recovery against documented objectives.",
+   "artifacts": [
+    "fault.py"
+   ],
+   "tests": [
+    "tests/test_config.py::AtomicityTest::test_crash_between_stage_and_commit",
+    "tests/test_resilience.py::FaultTest::test_fault_suite",
+    "tests/test_resilience.py::FaultTest::test_invariant_checker_detects_violation",
+    "tests/test_resilience.py::RestartTest::test_crash_at_transition_boundary"
+   ],
+   "test_status": {
+    "tests/test_config.py::AtomicityTest::test_crash_between_stage_and_commit": "pass",
+    "tests/test_resilience.py::FaultTest::test_fault_suite": "pass",
+    "tests/test_resilience.py::FaultTest::test_invariant_checker_detects_violation": "pass",
+    "tests/test_resilience.py::RestartTest::test_crash_at_transition_boundary": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "fault.py": "6e9e9449c664cb5f77597f8abda90b2c68de969d942df7013deaa04d7b53c5a4"
+   }
+  },
+  {
+   "id": "INV-18-C061",
+   "kind": "checklist",
+   "text": "Establish reproducible baselines for Completion primitive latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+   "artifacts": [
+    "bench.py",
+    "conformance/BENCH_BASELINE.json"
+   ],
+   "tests": [
+    "tests/test_perf.py::HarnessTest::test_contention_correctness",
+    "tests/test_perf.py::HarnessTest::test_micro_benchmarks_reproducible_with_metadata"
+   ],
+   "test_status": {
+    "tests/test_perf.py::HarnessTest::test_contention_correctness": "pass",
+    "tests/test_perf.py::HarnessTest::test_micro_benchmarks_reproducible_with_metadata": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030",
+    "conformance/BENCH_BASELINE.json": "9d10a94a78d5b7b235413b955f4e79bf75dc3eae9f3bfc449319a5b2a5ada595"
+   }
+  },
+  {
+   "id": "INV-18-C062",
+   "kind": "checklist",
+   "text": "Define p50, p95, p99, and worst-case performance thresholds for Completion primitive.",
+   "artifacts": [
+    "conformance/PERFORMANCE_THRESHOLDS.json"
+   ],
+   "tests": [
+    "tests/test_perf.py::HarnessTest::test_micro_benchmarks_reproducible_with_metadata",
+    "tests/test_perf.py::RegressionGateTest::test_thresholds_file_well_formed"
+   ],
+   "test_status": {
+    "tests/test_perf.py::HarnessTest::test_micro_benchmarks_reproducible_with_metadata": "pass",
+    "tests/test_perf.py::RegressionGateTest::test_thresholds_file_well_formed": "pass"
+   },
+   "blockers": [
+    "THRESHOLDS_PROPOSED"
+   ],
+   "status": "partial",
+   "reason": "open blockers: THRESHOLDS_PROPOSED",
+   "artifact_digests": {
+    "conformance/PERFORMANCE_THRESHOLDS.json": "220544a1a42f4a062e4c217a9741cb8287ff2b02270ff31d463c16bc59ea08b8"
+   }
+  },
+  {
+   "id": "INV-18-C063",
+   "kind": "checklist",
+   "text": "Measure Completion primitive under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::ResourceBoundTest::test_mixed_workload_no_starvation"
+   ],
+   "test_status": {
+    "tests/test_perf.py::ResourceBoundTest::test_mixed_workload_no_starvation": "pass"
+   },
+   "blockers": [
+    "DEBT-PERF-01"
+   ],
+   "status": "partial",
+   "reason": "open blockers: DEBT-PERF-01",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030"
+   }
+  },
+  {
+   "id": "INV-18-C064",
+   "kind": "checklist",
+   "text": "Measure per-workload and per-tenant overhead introduced by Completion primitive.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::CapacityTest::test_capacity_model_predicts_memory",
+    "tests/test_perf.py::HarnessTest::test_scaling_is_not_superlinear",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour"
+   ],
+   "test_status": {
+    "tests/test_perf.py::CapacityTest::test_capacity_model_predicts_memory": "pass",
+    "tests/test_perf.py::HarnessTest::test_scaling_is_not_superlinear": "pass",
+    "tests/test_runtime.py::LimitsTest::test_tenant_quota_isolates_noisy_neighbour": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030"
+   }
+  },
+  {
+   "id": "INV-18-C065",
+   "kind": "checklist",
+   "text": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Completion primitive.",
+   "artifacts": [
+    "bench.py",
+    "docs/PERFORMANCE.md"
+   ],
+   "tests": [
+    "tests/test_perf.py::HarnessTest::test_profile_zero_copy_and_hops"
+   ],
+   "test_status": {
+    "tests/test_perf.py::HarnessTest::test_profile_zero_copy_and_hops": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030",
+    "docs/PERFORMANCE.md": "53bd738f67c09a7b92cfc2404dbd2c7633b6cad5a09cb1e5ed241547e234f799"
+   }
+  },
+  {
+   "id": "INV-18-C066",
+   "kind": "checklist",
+   "text": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+   "artifacts": [
+    "docs/PERFORMANCE.md"
+   ],
+   "tests": [
+    "tests/test_perf.py::HarnessTest::test_profile_zero_copy_and_hops"
+   ],
+   "test_status": {
+    "tests/test_perf.py::HarnessTest::test_profile_zero_copy_and_hops": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/PERFORMANCE.md": "53bd738f67c09a7b92cfc2404dbd2c7633b6cad5a09cb1e5ed241547e234f799"
+   }
+  },
+  {
+   "id": "INV-18-C067",
+   "kind": "checklist",
+   "text": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+   "artifacts": [
+    "runtime.py",
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureV43Test::test_payload_released_after_take",
+    "tests/test_perf.py::HarnessTest::test_soak_short",
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload",
+    "tests/test_resilience.py::DistributedTest::test_endpoint_state_bounded",
+    "tests/test_runtime.py::LimitsTest::test_bounded_rings",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary",
+    "tests/test_runtime.py::LimitsTest::test_release_reclaims_registry",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded",
+    "tests/test_wire.py::LimitTest::test_size_checked_before_parse"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureV43Test::test_payload_released_after_take": "pass",
+    "tests/test_perf.py::HarnessTest::test_soak_short": "pass",
+    "tests/test_perf.py::ResourceBoundTest::test_bounded_memory_under_overload": "pass",
+    "tests/test_resilience.py::DistributedTest::test_endpoint_state_bounded": "pass",
+    "tests/test_runtime.py::LimitsTest::test_bounded_rings": "pass",
+    "tests/test_runtime.py::LimitsTest::test_process_limit_boundary": "pass",
+    "tests/test_runtime.py::LimitsTest::test_release_reclaims_registry": "pass",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded": "pass",
+    "tests/test_wire.py::LimitTest::test_size_checked_before_parse": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4",
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV-18-C068",
+   "kind": "checklist",
+   "text": "Measure power and thermal impact on constrained edge nodes where relevant.",
+   "artifacts": [
+    "docs/PERFORMANCE.md"
+   ],
+   "tests": [
+    "tests/test_perf.py::PowerTest::test_power_applicability_decision_recorded"
+   ],
+   "test_status": {
+    "tests/test_perf.py::PowerTest::test_power_applicability_decision_recorded": "pass"
+   },
+   "blockers": [
+    "W-C068"
+   ],
+   "status": "partial",
+   "reason": "open blockers: W-C068",
+   "artifact_digests": {
+    "docs/PERFORMANCE.md": "53bd738f67c09a7b92cfc2404dbd2c7633b6cad5a09cb1e5ed241547e234f799"
+   }
+  },
+  {
+   "id": "INV-18-C069",
+   "kind": "checklist",
+   "text": "Define capacity models and saturation signals that predict when Completion primitive needs more resources.",
+   "artifacts": [
+    "docs/PERFORMANCE.md"
+   ],
+   "tests": [
+    "tests/test_perf.py::CapacityTest::test_capacity_model_fields",
+    "tests/test_perf.py::CapacityTest::test_capacity_model_predicts_memory",
+    "tests/test_perf.py::HarnessTest::test_scaling_is_not_superlinear"
+   ],
+   "test_status": {
+    "tests/test_perf.py::CapacityTest::test_capacity_model_fields": "pass",
+    "tests/test_perf.py::CapacityTest::test_capacity_model_predicts_memory": "pass",
+    "tests/test_perf.py::HarnessTest::test_scaling_is_not_superlinear": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/PERFORMANCE.md": "53bd738f67c09a7b92cfc2404dbd2c7633b6cad5a09cb1e5ed241547e234f799"
+   }
+  },
+  {
+   "id": "INV-18-C070",
+   "kind": "checklist",
+   "text": "Block releases that regress approved Completion primitive startup, density, throughput, or tail-latency thresholds.",
+   "artifacts": [
+    "bench.py",
+    "certify.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::RegressionGateTest::test_injected_regression_is_blocked",
+    "tests/test_release.py::GateTest::test_failures_and_regressions_block"
+   ],
+   "test_status": {
+    "tests/test_perf.py::RegressionGateTest::test_injected_regression_is_blocked": "pass",
+    "tests/test_release.py::GateTest::test_failures_and_regressions_block": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030",
+    "certify.py": "d74e2d055c4f157fd4c23e581a3ee8be18c1a5d2d564b071045fa78c10070d9e"
+   }
+  },
+  {
+   "id": "INV-18-C071",
+   "kind": "checklist",
+   "text": "Expose Completion primitive health, readiness, version, configuration, dependency status, and active capability set.",
+   "artifacts": [
+    "status.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::StatusTest::test_status_compatibility_fields_stable",
+    "tests/test_observability.py::StatusTest::test_status_schema_and_content",
+    "tests/test_runtime.py::HealthTest::test_states_and_reasons"
+   ],
+   "test_status": {
+    "tests/test_observability.py::StatusTest::test_status_compatibility_fields_stable": "pass",
+    "tests/test_observability.py::StatusTest::test_status_schema_and_content": "pass",
+    "tests/test_runtime.py::HealthTest::test_states_and_reasons": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "status.py": "b99dd63f608e86cdc6753619cfd42aee8637136dd8f2c7ceaa9cdd16d5b3cfcc"
+   }
+  },
+  {
+   "id": "INV-18-C072",
+   "kind": "checklist",
+   "text": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_runtime.py::MetricsTest::test_label_cardinality_bounded",
+    "tests/test_runtime.py::MetricsTest::test_metric_contract_under_deterministic_workload"
+   ],
+   "test_status": {
+    "tests/test_runtime.py::MetricsTest::test_label_cardinality_bounded": "pass",
+    "tests/test_runtime.py::MetricsTest::test_metric_contract_under_deterministic_workload": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV-18-C073",
+   "kind": "checklist",
+   "text": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+   "artifacts": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::LogTest::test_log_schema_and_identifiers",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged",
+    "tests/test_observability.py::LogTest::test_rate_limit_and_severity"
+   ],
+   "test_status": {
+    "tests/test_observability.py::LogTest::test_log_schema_and_identifiers": "pass",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged": "pass",
+    "tests/test_observability.py::LogTest::test_rate_limit_and_severity": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1"
+   }
+  },
+  {
+   "id": "INV-18-C074",
+   "kind": "checklist",
+   "text": "Propagate trace context across all relevant Completion primitive boundaries.",
+   "artifacts": [
+    "telemetry.py",
+    "adjacent.py"
+   ],
+   "tests": [
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace",
+    "tests/test_integration.py::INV16AsyncTest::test_trace_continuity",
+    "tests/test_integration.py::INV20HttpTest::test_trailer_paths",
+    "tests/test_observability.py::TraceTest::test_trace_continuity_across_wire",
+    "tests/test_observability.py::TraceTest::test_untrusted_trace_context"
+   ],
+   "test_status": {
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace": "pass",
+    "tests/test_integration.py::INV16AsyncTest::test_trace_continuity": "pass",
+    "tests/test_integration.py::INV20HttpTest::test_trailer_paths": "pass",
+    "tests/test_observability.py::TraceTest::test_trace_continuity_across_wire": "pass",
+    "tests/test_observability.py::TraceTest::test_untrusted_trace_context": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1",
+    "adjacent.py": "39cbd7e39e12ced0e6c38b677cf65f9f70bf77c0b80b8b00e970fcc0a7f76ecd"
+   }
+  },
+  {
+   "id": "INV-18-C075",
+   "kind": "checklist",
+   "text": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+   "artifacts": [
+    "telemetry.py",
+    "errors.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::TaxonomyTest::test_redaction",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged",
+    "tests/test_observability.py::LogTest::test_rate_limit_and_severity",
+    "tests/test_runtime.py::LimitsTest::test_bounded_rings",
+    "tests/test_runtime.py::MetricsTest::test_label_cardinality_bounded",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks"
+   ],
+   "test_status": {
+    "tests/test_errors.py::TaxonomyTest::test_redaction": "pass",
+    "tests/test_observability.py::LogTest::test_payloads_not_logged": "pass",
+    "tests/test_observability.py::LogTest::test_rate_limit_and_severity": "pass",
+    "tests/test_runtime.py::LimitsTest::test_bounded_rings": "pass",
+    "tests/test_runtime.py::MetricsTest::test_label_cardinality_bounded": "pass",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1",
+    "errors.py": "12a51547e9b5ffd15fb5d7795f6cd9ebec2122099dfc189a3c8cfa856534d961"
+   }
+  },
+  {
+   "id": "INV-18-C076",
+   "kind": "checklist",
+   "text": "Record the reason for every automated decision made by Completion primitive.",
+   "artifacts": [
+    "telemetry.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::DecisionTest::test_decision_records_complete",
+    "tests/test_runtime.py::PrecedenceTest::test_every_rejection_branch_has_a_decision",
+    "tests/test_runtime.py::PrecedenceTest::test_security_before_capacity_and_reason_codes"
+   ],
+   "test_status": {
+    "tests/test_observability.py::DecisionTest::test_decision_records_complete": "pass",
+    "tests/test_runtime.py::PrecedenceTest::test_every_rejection_branch_has_a_decision": "pass",
+    "tests/test_runtime.py::PrecedenceTest::test_security_before_capacity_and_reason_codes": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "telemetry.py": "ed786ec887e8c63442ab01f0d2ad6efd45d4c963d586cd7c19ca42f9fcb17bb1",
+    "runtime.py": "eb6696468b072b7f8feea5ce756aec82b254366313630a6505b8be5607c49de4"
+   }
+  },
+  {
+   "id": "INV-18-C077",
+   "kind": "checklist",
+   "text": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+   "artifacts": [
+    "status.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::ExplainTest::test_operator_can_diagnose_predefined_incidents"
+   ],
+   "test_status": {
+    "tests/test_observability.py::ExplainTest::test_operator_can_diagnose_predefined_incidents": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "status.py": "b99dd63f608e86cdc6753619cfd42aee8637136dd8f2c7ceaa9cdd16d5b3cfcc"
+   }
+  },
+  {
+   "id": "INV-18-C078",
+   "kind": "checklist",
+   "text": "Correlate Completion primitive events with application release lineage and the live infrastructure graph.",
+   "artifacts": [
+    "status.py",
+    "conformance/LINEAGE.json"
+   ],
+   "tests": [
+    "tests/test_observability.py::LineageTest::test_event_to_release_chain",
+    "tests/test_release.py::GateTest::test_evidence_record_complete_and_sealed"
+   ],
+   "test_status": {
+    "tests/test_observability.py::LineageTest::test_event_to_release_chain": "pass",
+    "tests/test_release.py::GateTest::test_evidence_record_complete_and_sealed": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "status.py": "b99dd63f608e86cdc6753619cfd42aee8637136dd8f2c7ceaa9cdd16d5b3cfcc"
+   }
+  },
+  {
+   "id": "INV-18-C079",
+   "kind": "checklist",
+   "text": "Define telemetry retention, sampling, privacy, and export policy.",
+   "artifacts": [
+    "docs/OBSERVABILITY.md"
+   ],
+   "tests": [
+    "tests/test_observability.py::LogTest::test_rate_limit_and_severity",
+    "tests/test_observability.py::TelemetryPolicyTest::test_policy_maps_to_configuration"
+   ],
+   "test_status": {
+    "tests/test_observability.py::LogTest::test_rate_limit_and_severity": "pass",
+    "tests/test_observability.py::TelemetryPolicyTest::test_policy_maps_to_configuration": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/OBSERVABILITY.md": "f16aeafc5bc7ea4e47ff76bfaf3073fcfb4c8e35dbdd81a2382d6b81e5073510"
+   }
+  },
+  {
+   "id": "INV-18-C080",
+   "kind": "checklist",
+   "text": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+   "artifacts": [
+    "dashboards/",
+    "alerts.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::AlertTest::test_alerts_distinguish_conditions",
+    "tests/test_observability.py::AlertTest::test_every_alert_has_severity_and_runbook"
+   ],
+   "test_status": {
+    "tests/test_observability.py::AlertTest::test_alerts_distinguish_conditions": "pass",
+    "tests/test_observability.py::AlertTest::test_every_alert_has_severity_and_runbook": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "alerts.py": "d7c1fb416518b9e1f0db9f46fa03d68d37039cc51cfb0ecb3f75901a0fb5e6d5"
+   }
+  },
+  {
+   "id": "INV-18-C081",
+   "kind": "checklist",
+   "text": "Create unit tests for deterministic Completion primitive logic and state transitions.",
+   "artifacts": [
+    "tests/test_future.py"
+   ],
+   "tests": [
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination",
+    "tests/test_future.py::FutureTest::test_abandon_after_resolution_is_noop",
+    "tests/test_future.py::FutureTest::test_abandonment_is_terminal_for_writer",
+    "tests/test_future.py::FutureTest::test_bool_is_not_int_payload",
+    "tests/test_future.py::FutureTest::test_error_is_one_shot",
+    "tests/test_future.py::FutureTest::test_error_must_be_nonempty_string",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot",
+    "tests/test_future.py::FutureV43Test::test_observer_exception_never_breaks_transition",
+    "tests/test_future.py::FutureV43Test::test_state_property_and_lifecycle",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences"
+   ],
+   "test_status": {
+    "tests/test_errors.py::OutcomeMatrixTest::test_every_state_operation_combination": "pass",
+    "tests/test_future.py::FutureTest::test_abandon_after_resolution_is_noop": "pass",
+    "tests/test_future.py::FutureTest::test_abandonment_is_terminal_for_writer": "pass",
+    "tests/test_future.py::FutureTest::test_bool_is_not_int_payload": "pass",
+    "tests/test_future.py::FutureTest::test_error_is_one_shot": "pass",
+    "tests/test_future.py::FutureTest::test_error_must_be_nonempty_string": "pass",
+    "tests/test_future.py::FutureTest::test_success_is_one_shot": "pass",
+    "tests/test_future.py::FutureV43Test::test_observer_exception_never_breaks_transition": "pass",
+    "tests/test_future.py::FutureV43Test::test_state_property_and_lifecycle": "pass",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "tests/test_future.py": "a639dad78bfdb07a041604a3849e210a7cc7a660a721cfa26b64a17040a926ce"
+   }
+  },
+  {
+   "id": "INV-18-C082",
+   "kind": "checklist",
+   "text": "Create contract tests for every public Completion primitive interface.",
+   "artifacts": [
+    "tests/test_contract.py"
+   ],
+   "tests": [
+    "tests/test_contract.py::InstalledCopyTest::test_contract_against_installed_copy",
+    "tests/test_contract.py::PublicApiTest::test_exception_hierarchy",
+    "tests/test_contract.py::PublicApiTest::test_invalid_arguments",
+    "tests/test_contract.py::PublicApiTest::test_package_root_exports",
+    "tests/test_contract.py::PublicApiTest::test_pk_core_integration_is_lazy",
+    "tests/test_contract.py::PublicApiTest::test_signatures_match_snapshot",
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated",
+    "tests/test_runtime.py::CapabilityTest::test_second_receiver_after_release_gets_already_taken",
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes"
+   ],
+   "test_status": {
+    "tests/test_contract.py::InstalledCopyTest::test_contract_against_installed_copy": "pass",
+    "tests/test_contract.py::PublicApiTest::test_exception_hierarchy": "pass",
+    "tests/test_contract.py::PublicApiTest::test_invalid_arguments": "pass",
+    "tests/test_contract.py::PublicApiTest::test_package_root_exports": "pass",
+    "tests/test_contract.py::PublicApiTest::test_pk_core_integration_is_lazy": "pass",
+    "tests/test_contract.py::PublicApiTest::test_signatures_match_snapshot": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_capability_kinds_are_separated": "pass",
+    "tests/test_runtime.py::CapabilityTest::test_second_receiver_after_release_gets_already_taken": "pass",
+    "tests/test_wire.py::FixtureTest::test_every_fixture_passes": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "tests/test_contract.py": "b31af30823cc0f912479e9129a7560b9056beea3a4a8755140be9a4242ab6c59"
+   }
+  },
+  {
+   "id": "INV-18-C083",
+   "kind": "checklist",
+   "text": "Create integration tests with every supported adjacent layer and execution tier.",
+   "artifacts": [
+    "tests/test_integration.py",
+    "tests/test_integration_real.py"
+   ],
+   "tests": [
+    "tests/test_integration.py::INV12CodecTest::test_lower_lift_paths",
+    "tests/test_integration.py::INV15WaitableSetTest::test_readiness_paths",
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace",
+    "tests/test_integration.py::INV16AsyncTest::test_trace_continuity",
+    "tests/test_integration.py::INV17StreamTest::test_stream_to_completion",
+    "tests/test_integration.py::INV20HttpTest::test_trailer_paths",
+    "tests/test_integration.py::TierMatrixTest::test_local_and_wire_tier_identical_semantics",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv12_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv15_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv16_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv17_real",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv20_real",
+    "tests/test_observability.py::TraceTest::test_trace_continuity_across_wire"
+   ],
+   "test_status": {
+    "tests/test_integration.py::INV12CodecTest::test_lower_lift_paths": "pass",
+    "tests/test_integration.py::INV15WaitableSetTest::test_readiness_paths": "pass",
+    "tests/test_integration.py::INV16AsyncTest::test_return_error_crash_timeout_trace": "pass",
+    "tests/test_integration.py::INV16AsyncTest::test_trace_continuity": "pass",
+    "tests/test_integration.py::INV17StreamTest::test_stream_to_completion": "pass",
+    "tests/test_integration.py::INV20HttpTest::test_trailer_paths": "pass",
+    "tests/test_integration.py::TierMatrixTest::test_local_and_wire_tier_identical_semantics": "pass",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv12_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv15_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv16_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv17_real": "skip",
+    "tests/test_integration_real.py::RealAdjacentTest::test_inv20_real": "skip",
+    "tests/test_observability.py::TraceTest::test_trace_continuity_across_wire": "pass"
+   },
+   "blockers": [
+    "REAL_TIER_NOT_RUN"
+   ],
+   "status": "blocked",
+   "reason": "mandatory linked test skipped",
+   "artifact_digests": {
+    "tests/test_integration.py": "75eacbad985730a2e1660bd088857253dd0006c9fac7c3d40b2797c416f41a7c",
+    "tests/test_integration_real.py": "717472119706cc1d830f025270d61a775f5c87192eb935ccced92a809f9571a2"
+   }
+  },
+  {
+   "id": "INV-18-C084",
+   "kind": "checklist",
+   "text": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Completion primitive.",
+   "artifacts": [
+    "tools/compat_matrix.py",
+    "conformance/COMPAT_RESULTS.json"
+   ],
+   "tests": [
+    "tests/test_release.py::ComponentPinTest::test_pk_core_integration_declared"
+   ],
+   "test_status": {
+    "tests/test_release.py::ComponentPinTest::test_pk_core_integration_declared": "pass"
+   },
+   "blockers": [
+    "PLATFORMS_NOT_RUN"
+   ],
+   "status": "partial",
+   "reason": "open blockers: PLATFORMS_NOT_RUN",
+   "artifact_digests": {
+    "tools/compat_matrix.py": "9d926716fc7a460eff9a0593722d1242cd0171fa1055b2b1f0cbd9670fe08180",
+    "conformance/COMPAT_RESULTS.json": "ceac33ae6c59ee487bc966ebef518c0efdf136d1f1f0e1b38d9e0eb02707cb10"
+   }
+  },
+  {
+   "id": "INV-18-C085",
+   "kind": "checklist",
+   "text": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Completion primitive.",
+   "artifacts": [
+    "tests/test_property.py",
+    "fixtures/fuzz_corpus.json"
+   ],
+   "tests": [
+    "tests/test_config.py::ValidationTest::test_fuzz_malformed_configs_never_crash_or_activate",
+    "tests/test_errors.py::TaxonomyTest::test_malformed_records_rejected",
+    "tests/test_property.py::FuzzTest::test_corpus_is_well_formed",
+    "tests/test_property.py::FuzzTest::test_decoder_fuzz",
+    "tests/test_property.py::FuzzTest::test_error_record_fuzz",
+    "tests/test_property.py::FuzzTest::test_payload_metadata_extremes",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely"
+   ],
+   "test_status": {
+    "tests/test_config.py::ValidationTest::test_fuzz_malformed_configs_never_crash_or_activate": "pass",
+    "tests/test_errors.py::TaxonomyTest::test_malformed_records_rejected": "pass",
+    "tests/test_property.py::FuzzTest::test_corpus_is_well_formed": "pass",
+    "tests/test_property.py::FuzzTest::test_decoder_fuzz": "pass",
+    "tests/test_property.py::FuzzTest::test_error_record_fuzz": "pass",
+    "tests/test_property.py::FuzzTest::test_payload_metadata_extremes": "pass",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering": "pass",
+    "tests/test_property.py::PropertyTest::test_random_operation_sequences": "pass",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "tests/test_property.py": "35b853b8beec61b41cb27321f22b1d6a380250f85dd75761c112f9fe64b54dcf",
+    "fixtures/fuzz_corpus.json": "37d735e2f3a2bbff9bde324ad409280c4ef0b47d31cec4b64c2ee512855230dc"
+   }
+  },
+  {
+   "id": "INV-18-C086",
+   "kind": "checklist",
+   "text": "Create concurrency and race-condition tests for shared/distributed Completion primitive state.",
+   "artifacts": [
+    "tests/test_future.py"
+   ],
+   "tests": [
+    "tests/test_future.py::FutureTest::test_concurrent_resolution_has_exactly_one_winner",
+    "tests/test_future.py::FutureTest::test_concurrent_take_has_exactly_one_winner",
+    "tests/test_future.py::FutureV43Test::test_happens_before_visibility",
+    "tests/test_future.py::FutureV43Test::test_resolve_cancel_race_has_one_winner",
+    "tests/test_perf.py::HarnessTest::test_contention_correctness",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering",
+    "tests/test_resilience.py::DistributedTest::test_simultaneous_owners_single_winner"
+   ],
+   "test_status": {
+    "tests/test_future.py::FutureTest::test_concurrent_resolution_has_exactly_one_winner": "pass",
+    "tests/test_future.py::FutureTest::test_concurrent_take_has_exactly_one_winner": "pass",
+    "tests/test_future.py::FutureV43Test::test_happens_before_visibility": "pass",
+    "tests/test_future.py::FutureV43Test::test_resolve_cancel_race_has_one_winner": "pass",
+    "tests/test_perf.py::HarnessTest::test_contention_correctness": "pass",
+    "tests/test_property.py::PropertyTest::test_concurrent_random_ordering": "pass",
+    "tests/test_resilience.py::DistributedTest::test_simultaneous_owners_single_winner": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "tests/test_future.py": "a639dad78bfdb07a041604a3849e210a7cc7a660a721cfa26b64a17040a926ce"
+   }
+  },
+  {
+   "id": "INV-18-C087",
+   "kind": "checklist",
+   "text": "Create security tests derived directly from the Completion primitive threat model.",
+   "artifacts": [
+    "conformance/THREAT_MODEL.json"
+   ],
+   "tests": [
+    "tests/test_release.py::IntegrityTest::test_tampered_artifact_detected",
+    "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected",
+    "tests/test_security.py::AuditTest::test_mutation_and_deletion_detected",
+    "tests/test_security.py::AuthnTest::test_credential_negatives",
+    "tests/test_security.py::AuthnTest::test_replay_rejected",
+    "tests/test_security.py::CapabilityAttackTest::test_constant_time_compare_used",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks",
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed",
+    "tests/test_security.py::ThreatModelTest::test_threat_model_structure_and_traceability"
+   ],
+   "test_status": {
+    "tests/test_release.py::IntegrityTest::test_tampered_artifact_detected": "pass",
+    "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected": "pass",
+    "tests/test_security.py::AuditTest::test_mutation_and_deletion_detected": "pass",
+    "tests/test_security.py::AuthnTest::test_credential_negatives": "pass",
+    "tests/test_security.py::AuthnTest::test_replay_rejected": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_constant_time_compare_used": "pass",
+    "tests/test_security.py::CapabilityAttackTest::test_forged_token_refused": "pass",
+    "tests/test_security.py::DosTest::test_high_concurrency_flood_bounded": "pass",
+    "tests/test_security.py::InjectionTest::test_hostile_documents_fail_securely": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_capability_refused": "pass",
+    "tests/test_security.py::IsolationTest::test_cross_tenant_wire_refused": "pass",
+    "tests/test_security.py::LeakTest::test_sentinel_secret_never_leaks": "pass",
+    "tests/test_security.py::OutageTest::test_each_outage_fails_closed": "pass",
+    "tests/test_security.py::ThreatModelTest::test_threat_model_structure_and_traceability": "pass"
+   },
+   "blockers": [
+    "THREAT_MODEL_NOT_APPROVED"
+   ],
+   "status": "partial",
+   "reason": "open blockers: THREAT_MODEL_NOT_APPROVED",
+   "artifact_digests": {
+    "conformance/THREAT_MODEL.json": "f097283c83fc7c056ff20b56123b4cdf75cd666ef01444d7d68960c656b1eeb1"
+   }
+  },
+  {
+   "id": "INV-18-C088",
+   "kind": "checklist",
+   "text": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Completion primitive.",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [
+    "tests/test_perf.py::HarnessTest::test_contention_correctness",
+    "tests/test_perf.py::HarnessTest::test_micro_benchmarks_reproducible_with_metadata",
+    "tests/test_perf.py::HarnessTest::test_soak_short"
+   ],
+   "test_status": {
+    "tests/test_perf.py::HarnessTest::test_contention_correctness": "pass",
+    "tests/test_perf.py::HarnessTest::test_micro_benchmarks_reproducible_with_metadata": "pass",
+    "tests/test_perf.py::HarnessTest::test_soak_short": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "bench.py": "515477153f68e64c9e4ff44c09510ba54ad51810d28534a63b4cbc1559961030"
+   }
+  },
+  {
+   "id": "INV-18-C089",
+   "kind": "checklist",
+   "text": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+   "artifacts": [
+    "tests/test_resilience.py"
+   ],
+   "tests": [
+    "tests/test_resilience.py::DegradedTest::test_each_noncritical_dependency_disabled",
+    "tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent",
+    "tests/test_resilience.py::DistributedTest::test_partition_and_reconnect",
+    "tests/test_resilience.py::DistributedTest::test_remote_producer_disappears",
+    "tests/test_resilience.py::FaultTest::test_fault_suite",
+    "tests/test_resilience.py::RestartTest::test_process_termination_and_restart",
+    "tests/test_runtime.py::DisableTest::test_disable_under_load"
+   ],
+   "test_status": {
+    "tests/test_resilience.py::DegradedTest::test_each_noncritical_dependency_disabled": "pass",
+    "tests/test_resilience.py::DistributedTest::test_duplicate_delivery_is_idempotent": "pass",
+    "tests/test_resilience.py::DistributedTest::test_partition_and_reconnect": "pass",
+    "tests/test_resilience.py::DistributedTest::test_remote_producer_disappears": "pass",
+    "tests/test_resilience.py::FaultTest::test_fault_suite": "pass",
+    "tests/test_resilience.py::RestartTest::test_process_termination_and_restart": "pass",
+    "tests/test_runtime.py::DisableTest::test_disable_under_load": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "tests/test_resilience.py": "3a3096cf04558dc83f08f979c1a5b7e55d4502de37acc4802b2e4e5b6a138b69"
+   }
+  },
+  {
+   "id": "INV-18-C090",
+   "kind": "checklist",
+   "text": "Require machine-readable acceptance evidence before certifying a Completion primitive release for production.",
+   "artifacts": [
+    "certify.py",
+    "conformance/RELEASE_EVIDENCE.json",
+    "testrunner.py"
+   ],
+   "tests": [
+    "tests/test_contract.py::PublicApiTest::test_pk_core_integration_is_lazy",
+    "tests/test_release.py::GateTest::test_evidence_record_complete_and_sealed",
+    "tests/test_release.py::GateTest::test_skipped_mandatory_test_blocks",
+    "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected",
+    "tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core"
+   ],
+   "test_status": {
+    "tests/test_contract.py::PublicApiTest::test_pk_core_integration_is_lazy": "pass",
+    "tests/test_release.py::GateTest::test_evidence_record_complete_and_sealed": "pass",
+    "tests/test_release.py::GateTest::test_skipped_mandatory_test_blocks": "pass",
+    "tests/test_release.py::IntegrityTest::test_tampered_evidence_detected": "pass",
+    "tests/test_security.py::AuthorityTest::test_core_modules_do_not_import_pk_core": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "certify.py": "d74e2d055c4f157fd4c23e581a3ee8be18c1a5d2d564b071045fa78c10070d9e",
+    "testrunner.py": "e5652df927c6d588ab92ad9be337b8739270b06520c8350df68c60b309309d20"
+   }
+  },
+  {
+   "id": "INV-18-C091",
+   "kind": "checklist",
+   "text": "Define production SLOs, error budgets, and support commitments for Completion primitive.",
+   "artifacts": [
+    "docs/OPERATIONS.md",
+    "slo.py"
+   ],
+   "tests": [
+    "tests/test_observability.py::SloTest::test_slo_report_from_telemetry",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present"
+   ],
+   "test_status": {
+    "tests/test_observability.py::SloTest::test_slo_report_from_telemetry": "pass",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass"
+   },
+   "blockers": [
+    "THRESHOLDS_PROPOSED"
+   ],
+   "status": "partial",
+   "reason": "open blockers: THRESHOLDS_PROPOSED",
+   "artifact_digests": {
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68",
+    "slo.py": "a882a00aa25b358bfa574d5b26cca734ddc117b29bd8fa6c92cd38a074eabb6d"
+   }
+  },
+  {
+   "id": "INV-18-C092",
+   "kind": "checklist",
+   "text": "Define canary, staged rollout, rollback, and emergency-disable procedures for Completion primitive.",
+   "artifacts": [
+    "docs/OPERATIONS.md",
+    "__main__.py"
+   ],
+   "tests": [
+    "tests/test_config.py::RollbackTest::test_rollback_with_inflight_futures",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute",
+    "tests/test_runtime.py::DisableTest::test_drain_and_freeze"
+   ],
+   "test_status": {
+    "tests/test_config.py::RollbackTest::test_rollback_with_inflight_futures": "pass",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute": "pass",
+    "tests/test_runtime.py::DisableTest::test_drain_and_freeze": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68",
+    "__main__.py": "238467cb0ecfd359b12e8e9e00d60a18a42f5e5f3067cf108f2b2f141a69053e"
+   }
+  },
+  {
+   "id": "INV-18-C093",
+   "kind": "checklist",
+   "text": "Maintain a supported-version compatibility matrix for Completion primitive and adjacent dependencies.",
+   "artifacts": [
+    "conformance/COMPAT_MATRIX.json"
+   ],
+   "tests": [
+    "tests/test_release.py::ComponentPinTest::test_pk_core_integration_declared",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present"
+   ],
+   "test_status": {
+    "tests/test_release.py::ComponentPinTest::test_pk_core_integration_declared": "pass",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass"
+   },
+   "blockers": [
+    "PK_CORE_MISSING"
+   ],
+   "status": "partial",
+   "reason": "open blockers: PK_CORE_MISSING",
+   "artifact_digests": {
+    "conformance/COMPAT_MATRIX.json": "a315de48c212a1549e7254b5ad736077dcb174b523b1011163fc3c07b2550735"
+   }
+  },
+  {
+   "id": "INV-18-C094",
+   "kind": "checklist",
+   "text": "Define patching, vulnerability response, and end-of-life SLAs for Completion primitive.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68"
+   }
+  },
+  {
+   "id": "INV-18-C095",
+   "kind": "checklist",
+   "text": "Provide backup, restore, migration, or reconstruction procedures for Completion primitive state where applicable.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68"
+   }
+  },
+  {
+   "id": "INV-18-C096",
+   "kind": "checklist",
+   "text": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute",
+    "tests/test_wire.py::FixtureTest::test_reference_example_runs"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass",
+    "tests/test_release.py::RunbookTest::test_runbook_commands_execute": "pass",
+    "tests/test_wire.py::FixtureTest::test_reference_example_runs": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68"
+   }
+  },
+  {
+   "id": "INV-18-C097",
+   "kind": "checklist",
+   "text": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+   "artifacts": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests/test_observability.py::AlertTest::test_every_alert_has_severity_and_runbook",
+    "tests/test_observability.py::ExplainTest::test_operator_can_diagnose_predefined_incidents",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present"
+   ],
+   "test_status": {
+    "tests/test_observability.py::AlertTest::test_every_alert_has_severity_and_runbook": "pass",
+    "tests/test_observability.py::ExplainTest::test_operator_can_diagnose_predefined_incidents": "pass",
+    "tests/test_release.py::GovernanceTest::test_operations_policies_present": "pass"
+   },
+   "blockers": [
+    "TABLETOP_PENDING"
+   ],
+   "status": "partial",
+   "reason": "open blockers: TABLETOP_PENDING",
+   "artifact_digests": {
+    "docs/OPERATIONS.md": "252caee404754826246464a652421e37a67d3e5d027ed8f9996c7111a132fc68"
+   }
+  },
+  {
+   "id": "INV-18-C098",
+   "kind": "checklist",
+   "text": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+   "artifacts": [
+    "governance/REVIEWS.json"
+   ],
+   "tests": [
+    "tests/test_release.py::GovernanceTest::test_review_register"
+   ],
+   "test_status": {
+    "tests/test_release.py::GovernanceTest::test_review_register": "pass"
+   },
+   "blockers": [
+    "REVIEW_NOT_COUNTERSIGNED"
+   ],
+   "status": "partial",
+   "reason": "open blockers: REVIEW_NOT_COUNTERSIGNED",
+   "artifact_digests": {
+    "governance/REVIEWS.json": "53a46fba9f39899ce56bdccee90a20c0666e0020e6b254714229f2d5d5b15673"
+   }
+  },
+  {
+   "id": "INV-18-C099",
+   "kind": "checklist",
+   "text": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+   "artifacts": [
+    "governance/WAIVERS.json"
+   ],
+   "tests": [
+    "tests/test_release.py::GateTest::test_conditions_need_acceptance",
+    "tests/test_release.py::GateTest::test_expired_waiver_fails",
+    "tests/test_release.py::GovernanceTest::test_waiver_register"
+   ],
+   "test_status": {
+    "tests/test_release.py::GateTest::test_conditions_need_acceptance": "pass",
+    "tests/test_release.py::GateTest::test_expired_waiver_fails": "pass",
+    "tests/test_release.py::GovernanceTest::test_waiver_register": "pass"
+   },
+   "blockers": [],
+   "status": "satisfied",
+   "reason": "",
+   "artifact_digests": {
+    "governance/WAIVERS.json": "47708f85b33a52767a31f877aaae466cd2335839cb1063d0bff440f591102cb6"
+   }
+  },
+  {
+   "id": "INV-18-C100",
+   "kind": "checklist",
+   "text": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+   "artifacts": [
+    "certify.py",
+    "component.py"
+   ],
+   "tests": [
+    "tests/test_component.py::ConformanceTest::test_all_100_requirements_answered",
+    "tests/test_component.py::ConformanceTest::test_checks_survive_optimised_mode",
+    "tests/test_component.py::ConformanceTest::test_version",
+    "tests/test_release.py::GateTest::test_conditions_need_acceptance",
+    "tests/test_release.py::GateTest::test_expired_waiver_fails",
+    "tests/test_release.py::GateTest::test_failures_and_regressions_block",
+    "tests/test_release.py::GateTest::test_skipped_mandatory_test_blocks",
+    "tests/test_release.py::RTMTest::test_complete_rtm_from_passing_results"
+   ],
+   "test_status": {
+    "tests/test_component.py::ConformanceTest::test_all_100_requirements_answered": "skip",
+    "tests/test_component.py::ConformanceTest::test_checks_survive_optimised_mode": "skip",
+    "tests/test_component.py::ConformanceTest::test_version": "skip",
+    "tests/test_release.py::GateTest::test_conditions_need_acceptance": "pass",
+    "tests/test_release.py::GateTest::test_expired_waiver_fails": "pass",
+    "tests/test_release.py::GateTest::test_failures_and_regressions_block": "pass",
+    "tests/test_release.py::GateTest::test_skipped_mandatory_test_blocks": "pass",
+    "tests/test_release.py::RTMTest::test_complete_rtm_from_passing_results": "pass"
+   },
+   "blockers": [],
+   "status": "blocked",
+   "reason": "mandatory linked test skipped",
+   "artifact_digests": {
+    "certify.py": "d74e2d055c4f157fd4c23e581a3ee8be18c1a5d2d564b071045fa78c10070d9e",
+    "component.py": "7ba42e78889bd90f1b6e65e601fff86775eb4578e2fd0f29dc095199f6099205"
+   }
+  }
+ ]
+}

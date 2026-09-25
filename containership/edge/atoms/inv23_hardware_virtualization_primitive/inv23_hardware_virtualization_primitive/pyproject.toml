@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools==68.1.2", "wheel==0.42.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv23-hardware-virtualization-primitive"
+dynamic = ["version"]
+description = "INV-23 hardware virtualization primitive: host probe, fenced cross-process claim, schemas, telemetry (Post-Kubernetes series)."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "David Paul Russell", email = "davidpaulrussell@linearfinance.org" }]
+# License intentionally omitted: no license has been granted yet (see LICENSE-STATUS.md, WVR-003).
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: MacOS",
+  "Private :: Do Not Upload",
+]
+dependencies = []                      # runtime is stdlib-only
+
+[project.optional-dependencies]
+# pk_core 4.0.0 is vendored (vendor/pk_core, SHA-256 pinned) for conformance; it is not on PyPI.
+test = ["jsonschema==4.26.0", "hypothesis==6.112.1"]
+otel = ["opentelemetry-api>=1.25,<2"]
+dev = ["ruff==0.15.11", "mypy==1.20.2", "build>=1.2", "pip-audit==2.7.3", "cyclonedx-bom==4.6.1"]
+
+[project.scripts]
+inv23-probe = "inv23_hardware_virtualization_primitive.cli:main"
+
+[tool.setuptools]
+package-dir = { "inv23_hardware_virtualization_primitive" = "." }
+packages = [
+  "inv23_hardware_virtualization_primitive",
+  "inv23_hardware_virtualization_primitive.backends",
+  "inv23_hardware_virtualization_primitive.ownership",
+  "inv23_hardware_virtualization_primitive.vendor.pk_core",
+  "inv23_hardware_virtualization_primitive.tests",
+  "inv23_hardware_virtualization_primitive.tests.unit",
+  "inv23_hardware_virtualization_primitive.tests.property",
+  "inv23_hardware_virtualization_primitive.tests.schema",
+  "inv23_hardware_virtualization_primitive.tests.multiprocess",
+  "inv23_hardware_virtualization_primitive.tests.integration",
+  "inv23_hardware_virtualization_primitive.tests.hardware",
+  "inv23_hardware_virtualization_primitive.tests.conformance",
+]
+
+[tool.setuptools.package-data]
+"inv23_hardware_virtualization_primitive" = [
+  "schemas/*.json", "schemas/*.md", "CHECKLIST.json", "MASTER.md", "MASTER_PROVENANCE.json",
+  "compatibility.json", "VERSION", "vendor/VENDORED.json", "security/waivers.json",
+]
+"inv23_hardware_virtualization_primitive.tests" = ["fixtures/schema/*.json"]
+
+[tool.setuptools.dynamic]
+version = { attr = "inv23_hardware_virtualization_primitive._version.__version__" }
+
+[tool.ruff]
+line-length = 140
+target-version = "py39"
+extend-exclude = ["vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+ignore = ["S101", "S603", "S607", "S311", "UP007", "UP045", "B008", "UP006", "UP035", "UP031"]  # py3.9 floor keeps typing aliases
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B"]
+"component.py" = ["E402", "E501"]  # generated master-applied prose
+"contract.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.9"
+exclude = ["vendor/", "tests/", "benchmarks/", "tools/"]
+warn_unused_ignores = true
+strict_optional = true
+# Incremental strictness: public API modules are fully typed; see README "Quality gates".
+[[tool.mypy.overrides]]
+module = ["inv23_hardware_virtualization_primitive.backends.*", "inv23_hardware_virtualization_primitive.schema", "inv23_hardware_virtualization_primitive.admission"]
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["pk_core", "pk_core.*", "opentelemetry", "opentelemetry.*"]
+ignore_missing_imports = true   # pk_core is vendored (verified at runtime); otel is optional

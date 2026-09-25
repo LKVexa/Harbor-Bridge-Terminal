@@ -1,0 +1,81 @@
+{
+  "name": "hermit-spiral-terminal",
+  "productName": "HERMIT",
+  "version": "2.0.0-ramws.1",
+  "description": "HERMIT \u2014 virtual terminal on the SPIRAL backend. RAMWS candidate: hermit.vws.v2 RAM-resident virtual WebSocket (bounded allocation ledger, byte credits, worker-thread sessions), DF fabric control surface.",
+  "author": "David Paul Russell",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "check": "node scripts/syntax-check.js",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win --x64",
+    "pack": "electron-builder --dir",
+    "gateway": "node gateway/server.js",
+    "test": "node --test \"tests/{protocol,worker,vt,desktop-ipc,gateway,security,fabric,chaos,ram}/*.test.js\" tests/ui/client-units.test.js",
+    "test:ui": "node --test tests/ui/browser.test.js",
+    "test:load": "node tests/load/bench.js",
+    "verify": "node tools/verify.js",
+    "start:web": "node tools/start-local.js",
+    "experiment": "node tests/load/experiment.js"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "org.linearfinance.hermit",
+    "productName": "HERMIT",
+    "copyright": "Copyright \u00a9 2026 David Paul Russell",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "client/**/*",
+      "protocol/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/browser",
+        "to": "browser",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "HERMIT-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    },
+    "portable": {
+      "artifactName": "HERMIT-${version}-portable.exe"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

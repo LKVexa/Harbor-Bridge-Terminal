@@ -1,0 +1,163 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ios735-lctl.invalid/schemas/toolchain-lock-v1.schema.json",
+ "title": "IOS735_LCTL/TOOLCHAIN_LOCK/1",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema",
+  "lock_version",
+  "java_policy",
+  "toolchains"
+ ],
+ "properties": {
+  "schema": {
+   "const": "IOS735_LCTL/TOOLCHAIN_LOCK/1"
+  },
+  "lock_version": {
+   "type": "string",
+   "minLength": 1
+  },
+  "note": {
+   "type": "string"
+  },
+  "java_policy": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "min_major"
+   ],
+   "properties": {
+    "min_major": {
+     "type": "integer",
+     "minimum": 21
+    },
+    "max_major": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "allowed_vendors": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "notes": {
+     "type": "string"
+    }
+   }
+  },
+  "toolchains": {
+   "type": "array",
+   "minItems": 2,
+   "maxItems": 2,
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "role",
+     "name",
+     "version",
+     "publisher",
+     "jar_path",
+     "sha256",
+     "status",
+     "approval"
+    ],
+    "properties": {
+     "role": {
+      "enum": [
+       "lctl161",
+       "lctl160"
+      ]
+     },
+     "name": {
+      "type": "string",
+      "minLength": 1
+     },
+     "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[A-Za-z0-9.]+)?$"
+     },
+     "publisher": {
+      "type": "string",
+      "minLength": 1
+     },
+     "jar_path": {
+      "enum": [
+       "runtime/bin/lctl-hyperfederated.jar",
+       "runtime/bin/lctl-runtime.jar"
+      ]
+     },
+     "sha256": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "size": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "minimum": 1
+     },
+     "platforms": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "distribution": {
+      "type": "string"
+     },
+     "signature": {
+      "type": [
+       "object",
+       "null"
+      ]
+     },
+     "status": {
+      "enum": [
+       "APPROVED",
+       "PENDING_OWNER_APPROVAL",
+       "REVOKED"
+      ]
+     },
+     "approval": {
+      "type": [
+       "object",
+       "null"
+      ]
+     },
+     "version_marker": {
+      "type": "object",
+      "required": [
+       "file",
+       "contains"
+      ],
+      "properties": {
+       "file": {
+        "type": "string",
+        "minLength": 1
+       },
+       "contains": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,6 @@
+{"title": "INV-09 validation boundary", "panels": [
+ {"title": "Outcomes by profile", "expr": "sum by (outcome, profile) (rate(inv09_validations_total[5m]))"},
+ {"title": "Refusal codes (top)", "expr": "topk(10, sum by (code) (rate(inv09_validations_total{outcome!=\"accept\"}[15m])))"},
+ {"title": "p50/p99 latency", "expr": "histogram_quantile(0.99, sum by (le) (rate(inv09_validation_latency_ms_bucket[5m])))"},
+ {"title": "Cache hit ratio", "expr": "sum(rate(inv09_validations_total{cache=\"hit\"}[5m])) / sum(rate(inv09_validations_total[5m]))"},
+ {"title": "Internal errors", "expr": "sum(rate(inv09_validations_total{code=\"INTERNAL_ERROR\"}[5m]))"}]}

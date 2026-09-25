@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_DEVICE_CATALOGUE/1",
+  "title": "PK Device Catalogue v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "environment",
+    "devices"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_DEVICE_CATALOGUE/1"
+    },
+    "environment": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "device_class",
+          "version",
+          "registers",
+          "rationale",
+          "reviewer"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+          },
+          "device_class": {
+            "const": "paravirtual"
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:[-+][0-9A-Za-z.-]+)?$"
+          },
+          "registers": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 256,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+            }
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "reviewer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        }
+      },
+      "maxItems": 64
+    }
+  }
+}

@@ -1,0 +1,181 @@
+
+scratch root: /tmp/pa21studio-verify-_umjv3k_
+
+-- the plan is computed before anything is written ------------------------------
+  [PASS] the plan names every path an install will write                5 paths, all under the studio root
+  [PASS] the source is identified before it is used                     directory, None bytes
+  [PASS] nothing was written by planning                                
+
+-- install ----------------------------------------------------------------------
+  [PASS] the install reports every step it took                         prepare → copy_runtime → verify_copy → build_runner → signing → vm_selftest → bind_pa21 → write_manifest → prove
+  [PASS] the copied runtime was re-hashed against the package's own manifest 892 files re-hashed against RELEASE_CONTENTS.sha256, 0 mismatched
+  [PASS] the install proved itself by executing what it compiled        8/8 checks passed
+  [PASS] every shipped template compiled AND ran to its declared answer template:hello, template:loop, template:fabric, template:field, template:memory
+  [PASS] the execution mode is stated, not implied                      SIGNED_VERIFIED: an installation that can verify signatures says so, and one that cannot says that instead
+  [PASS] the manifest records exactly what may later be removed         13 owned paths
+  [PASS] a second install into the same root is refused unless forced   installing over an installation is a decision, not a default
+
+-- applications ------------------------------------------------------------------
+  [PASS] scaffolding produces a source and a manifest                   
+  [PASS] the scaffold uses the language's own operand separator         U+203A, which is what the compiler accepts
+  [PASS] the application compiles to an image with provenance           144 bytes
+  [PASS] provenance binds source, BRIR and image together               
+  [PASS] NEGATIVE: a single flipped byte in the image fails verification the provenance manifest no longer matches the image on disk
+  [PASS] the application runs and meets its own declared expectations   status OK, R2=42
+  [PASS] the result carries the execution mode with it                  SIGNED_VERIFIED
+
+-- the device fabric, on RAM ------------------------------------------------------
+  [PASS] a program that uses the device services runs at all            console write, block write, block read and monotonic read, none of which exist on a VM with no host abstraction layer
+  [PASS] the backend is RAM, and the result says which adapter          memory adapter, backend RAM
+  [PASS] what the guest wrote reached the console, and is reported back console holds 'PA21'
+  [PASS] the persistent block device kept it, framed by the runtime     object 0 holds 512 framed bytes with a BRO1 header
+  [PASS] the guest read its own bytes back out of the block device      the read returned without a trap, so the round trip closed
+  [PASS] nothing was written to disk to achieve any of that             the whole fabric lived in the process's memory
+  [PASS] the deterministic backend replays: two runs, identical fabric  same console bytes, same storage, same counters
+  [PASS] and the seeded backend is seeded: the entropy source differs   seeds 1 and 2 are carried in the result
+  [PASS] console input can be handed to the guest before it runs        the adapter's console-in buffer is loaded from the caller
+
+-- every project is a container ---------------------------------------------------
+  [PASS] a new project IS a container, sealed at creation               3 files sealed before anything is compiled
+  [PASS] it declares the format, and this studio speaks it              PA21C/1
+  [PASS] it lives in the studio's own container registry                /tmp/pa21studio-verify-_umjv3k_/containers
+  [PASS] the registry is derived from disk, not appended to             3 container(s) indexed
+  [PASS] the services it will ask the fabric for are read out of the source console, monotonic state, persistent block
+  [PASS] building it folds the image in and re-seals the container      state SEALED, image digest recorded in CONTAINER.json
+  [PASS] and the container verifies as a whole: seal plus image digest  8 files re-hashed
+  [PASS] a container runs from the registry by name                     OK, console 'PA21'
+  [PASS] editing the source is DRAFT, not damage, and is named that way the source has been edited since this container was built, so the image on disk is from 
+  [PASS] the studio will not run an image the source has moved past     it offers studio run ledger_app --build
+  [PASS] and `run --build` closes the loop in one step                  built from the source on disk, then run
+  [PASS] NEGATIVE: a file ADDED to a container is caught too            src/smuggled.lctlc is present but unlisted
+  [PASS] rebuilding re-seals it, and it verifies again                  
+  [PASS] NEGATIVE: a change under image/ is BROKEN, not a draft         files outside src/ no longer match the seal: image/ledger_app.brimg
+
+-- the authoring loop -------------------------------------------------------------
+  [PASS] code that already exists becomes a container in one step       no scaffold to paste into: --from takes the file as the source
+  [PASS] and a generator can write it straight to the studio            `studio new NAME --from -` reads the source from a pipe
+  [PASS] it builds and runs like any other container                    R2=42 from 144 bytes
+  [PASS] watching rebuilds and reruns on save, with the new answer      8 x 6 = 48 after the edit
+  [PASS] a compiler refusal is reported by the loop, not thrown by it   ERROR: non-canonical constant expression NOT_A_NUMBER
+
+-- what an agent is given ---------------------------------------------------------
+  [PASS] the description states the preamble a first attempt omits      magic line, @unit line, then the literal column header row
+  [PASS] the opcode and service tables come from the runtime, not from here 41 opcodes, 22 services, read out of tools/lctl430.py
+  [PASS] every service the runtime offers carries its operand convention 22 services, each with what ra, rb and the destination register mean
+  [PASS] and it says which services leave their destination unwritten   a zero in that register is not evidence a transfer failed
+  [PASS] the register file is described as the VM defines it            16 registers, read from the enum in src/brvm.h
+  [PASS] the example the description carries compiles and runs          OK, console 'PA21'
+  [PASS] and nothing was left behind by trying it                       the scratch container is removed when it is not kept
+  [PASS] a refusal comes back with the rule it broke                    ERROR: row outside table -> emit the three preamble lines in this descriptio…
+  [PASS] a run that succeeds and does nothing is reported as such       OK, trap 0, and the console write named under `quiet`
+  [PASS] while the same run still reports what did happen               calls {'CONSOLE_WRITE': 1, 'MONOTONIC': 1}
+  [PASS] a candidate is promoted into a container, sealed               from_description
+  [PASS] and it runs from the registry like any other container         no difference between what was tried and what was kept
+  [PASS] a refusal the studio has no rule for says so, rather than guessing an unrecognised message is returned as the compiler's own wording
+
+-- what it repairs ----------------------------------------------------------------
+  [PASS] it repairs the magic line                                      1 edit(s): inserted the LCTLC/1.2 magic line at the top…
+  [PASS] it repairs the column header row                               1 edit(s): inserted the column header row after the @unit line…
+  [PASS] it repairs the @unit language revision                         1 edit(s): set @unit version=4.3.0, which the compiler names as…
+  [PASS] it repairs the operand separator                               1 edit(s): line 6: source operands 'R0,R1' were not separated b…
+  [PASS] it repairs prose in the META column                            1 edit(s): line 6: META is key=value, not prose; wrote note=the…
+  [PASS] it repairs a capability the unit never asked for               1 edit(s): added ARITH to br_request_caps; a row uses it and th…
+  [PASS] it repairs a row on the wrong capability                       1 edit(s): line 6: MUL declared CONTROL; its opcode class requi…
+  [PASS] it repairs a destination on an opcode that produces nothing    1 edit(s): line 7: HALT produces no value, so its OUT column is…
+  [PASS] it repairs a missing terminator                                1 edit(s): appended a HALT row (D); the program ran off the end…
+  [PASS] it repairs a non-canonical immediate                           1 edit(s): wrote the immediate 007 in canonical form as 7…
+  [PASS] a source broken ten ways at once still comes out compiling     10/10 kinds
+  [PASS] several refusals in one source are worked through in order     4 corrections, 4 rounds
+  [PASS] every edit is reported, with the refusal that prompted it      no repair is applied without an account of it
+  [PASS] a source that already compiles is left exactly as it was       nothing to fix, so nothing was touched
+  [PASS] NEGATIVE: it declines a refusal that needs a value it cannot know ERROR: MOVI requires imm
+  [PASS] NEGATIVE: and one where guessing would change the program      ERROR: line 6: invalid opcode MULTIPLY — guessing which opcode was meant would change the program
+  [PASS] try --fix repairs, then compiles and runs in the same call     4 corrections, then R2=42
+  [PASS] and what it repaired travels with the result                   the corrected source is returned, not just applied
+  [PASS] the studio publishes what it will and will not repair          16 corrections, 11 refusals it declines on purpose
+  [PASS] a container packs into one archive, sealed as it stands        5145 bytes, sha256 79de8a39d3959be2…
+  [PASS] another studio imports it, verifying the seal on the way in    ledger_app 0.1.0 landed in the second studio
+  [PASS] and it runs there, unchanged, on that studio's own runtime     OK, console 'PA21'
+  [PASS] a container signed by another studio runs, unverified, and says why this container was signed with a key this studio does not trust; run `
+  [PASS] and once its key is trusted, it is verified before it runs     f8ce34dd2368b241… is now one of 2 trusted key(s)
+  [PASS] NEGATIVE: a tampered archive is refused on import              the seal inside the archive no longer matches its contents
+  [PASS] removing a container removes exactly that one                  0 container(s) left in the second studio
+
+-- the fabric, across runs --------------------------------------------------------
+  [PASS] a host-delivered message reaches the guest                     MAILBOX_GET answered 10 for the 10 bytes the host left
+  [PASS] and what the guest sends comes back to the host                the full round trip: host to guest, guest to console, guest back to host
+  [PASS] NEGATIVE: with nothing delivered, the receive answers zero     and the result says why, rather than looking like a success
+  [PASS] the persistent block device is persistent between runs         three runs of one image counted [1, 2, 3], reading back what the previous run wrote
+  [PASS] and a fresh run is unaffected by what was carried              state is a decision per run, so a default run stays reproducible
+  [PASS] the carried state can be discarded                             after a reset the count starts again at 1
+
+-- the ABI, as programs -----------------------------------------------------------
+  [PASS] every claim the description makes is demonstrated here         14/14 claims demonstrated
+  [PASS] and each claim names the evidence that carried it              14 claims, each with the registers and fabric it was judged on
+  [PASS] a single service can be interrogated on its own                both mailbox claims, including the one that says a guest cannot receive its own message
+
+-- containers as a regression suite -----------------------------------------------
+  [PASS] a container with no declared answer is reported, not passed    silence is not success
+  [PASS] a run can be recorded as the container's expectation           3 register(s) recorded, on the deterministic adapter so it is reproducible
+  [PASS] recording it re-seals the container                            the expectation is part of what the seal covers
+  [PASS] and the suite then passes on it                                1 pass
+  [PASS] NEGATIVE: a change in behaviour is caught by the suite         registers.R0: expected 7, got 9; registers.R2: expected 42, got 54
+  [PASS] and passes again once the behaviour is restored                the expectation is a fact about the container, not the run
+  [PASS] a container may declare a trap as its answer, and pass on it   a container that demonstrates DIV_ZERO is right when it traps and wrong when it does not
+
+-- signed images -----------------------------------------------------------------
+  [PASS] an image built here is signed with the runtime's own tool      Ed25519, by the runtime's own brctl, 208 bytes
+  [PASS] and the VM verifies it through the HAL before it runs          the signature is checked by the VM on the RAM fabric, not by the studio afterwards
+  [PASS] the raw development path is still there, and says so           the difference between the two is visible in every result
+  [PASS] NEGATIVE: a flipped byte in a signed image is refused          trap 13, before any instruction executed
+  [PASS] NEGATIVE: an unsigned image is refused where one is required   trap 26
+  [PASS] verification checks the signature with brctl, independently    the runtime's own tool, which knows nothing about this studio
+
+-- a trap names the row -----------------------------------------------------------
+  [PASS] a trap is named, not numbered                                  trap 6 is DIV_ZERO
+  [PASS] and it names the row of source that did it                     DIV_ZERO at row C (DIVU), source line 6: C│exec│DIVU│R2│C0:ARITH│R0›R1│_│_
+  [PASS] the VM's own diagnostics ring is reported, resolved to rows    2 record(s) the VM kept
+  [PASS] a trace is the run itself, one instruction at a time           three steps, ending on the row that trapped
+
+-- this platform, honestly --------------------------------------------------------
+  [PASS] paths with spaces and non-ASCII survive sealing                the case a Windows path usually breaks on
+  [PASS] seals are written with forward slashes on every platform       a container sealed on one platform verifies on the other
+  [PASS] the MSVC build line is constructed, not improvised at each site a.c /Fe:a.exe /link libcrypto.lib
+  [PASS] and what this host cannot demonstrate is listed as untested    the Windows entry points (studio.cmd, INSTALL.cmd) and the %LOCALAPPDATA% root: 
+
+-- the fabric as a picture you can run --------------------------------------------
+  [PASS] the fabric survives the round trip through the image, exactly  156 bytes, sha e027e63132ad0390… both ways
+  [PASS] a container's fabric becomes a tiled TIFF, shards as tiles     2x2 shards
+  [PASS] a tick reads the image, runs the container, writes it back     tick 1 -> 2, the fabric changed each time
+  [PASS] every tick is appended as an immutable frame                   3 frames on file, newest first
+  [PASS] an edit made to the image is executed on the next tick         painted the cell to 200 in the .tif; the run advanced it to 201 -- the image is the live state
+  [PASS] the fabric renders to a viewable image                         (32, 16) cells -> (512, 256) px PNG
+  [PASS] the live loop runs the fabric in constant flux                 3 ticks, each one changed the fabric
+
+-- the PA21 gate -----------------------------------------------------------------
+  [PASS] an application requiring OPERATIONAL items is allowed          items [1, 2, 3]
+  [PASS] NEGATIVE: one non-OPERATIONAL item is enough to refuse         item 15 is SCAFFOLDED, so the run is refused
+  [PASS] and the refusal happens before anything is executed            the delivery does not carry every required item as OPERATIONAL
+  [PASS] NEGATIVE: an item the ledger has never heard of fails closed   an application cannot depend on a capability the delivery does not carry
+
+-- refusals ----------------------------------------------------------------------
+  [PASS] NEGATIVE: an application name that is not a name is refused    
+  [PASS] NEGATIVE: scaffolding over a non-empty directory is refused    
+  [PASS] NEGATIVE: a missing VM package is refused                      
+  [PASS] NEGATIVE: an unknown template is refused                       
+
+-- uninstall ---------------------------------------------------------------------
+  [PASS] the uninstall plan names what will go, before it goes          29 paths, and the user's file is not among them
+  [PASS] uninstall removes what the manifest recorded                   28 paths removed
+  [PASS] and leaves what it did not create, saying so                   5 file(s) left alone
+  [PASS] the runtime directory is gone                                  
+  [PASS] uninstalling twice is not an error                             
+  [PASS] the scratch root can be removed completely                     
+
+====================================================================================================
+  TOTAL 135   PASS 135   FAIL 0
+====================================================================================================
+
+ALL CHECKS PASS
+
+--- stderr ---

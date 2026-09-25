@@ -1,0 +1,18 @@
+{
+ "schema": "INV41_BLOCKERS/1",
+ "note": "Items this remediation pass cannot close from inside the repository. Each names what would unblock it. The production exit gate (tools/release_gate.py) refuses GO while any is open.",
+ "blockers": [
+  {"id": "B-OWN-01", "title": "Human owners and approvals", "needs": "Owner confirms accountable owner, names a backup owner, security/release/incident/policy approvers, and approves ADR-0001, SLO thresholds, operational commitments.", "unblocks": ["REQ-GOV-001", "REQ-GOV-002", "REQ-GOV-005", "REQ-PER-002"], "sections": [1, 2, 15, 23]},
+  {"id": "B-LIC-01", "title": "Repository licence", "needs": "Owner chooses the licence; LICENSE full text added.", "unblocks": ["REQ-SUP-003"], "sections": [24]},
+  {"id": "B-SIGN-01", "title": "Approved release-signing identity", "needs": "Sigstore/GPG/KMS signing identity and trust root; replaces the development HMAC signature in dist/RELEASE_MANIFEST.json.", "unblocks": ["REQ-SUP-002"], "sections": [7, 24]},
+  {"id": "B-KEY-01", "title": "Key management / transport", "needs": "KMS/HSM for config-signing, audit-sealing and transport keys; external append-only audit anchor; TLS termination for collectors.", "unblocks": ["REQ-AUD-006", "REQ-DAT-002"], "sections": [12, 13]},
+  {"id": "B-IDN-01", "title": "Production identity mechanisms", "needs": "Owner names trust anchors and mechanisms (OIDC/JWT issuer, SPIFFE/mTLS, attestation) per profile; adapters written against IdentityAdapter.", "unblocks": ["REQ-IDN-003"], "sections": [11]},
+  {"id": "B-ISO-01", "title": "Hostile-code isolation runtime", "needs": "Network/filesystem namespaces + seccomp (Linux), AppContainer/job objects (Windows), or a pinned Wasm/microVM runtime.", "unblocks": ["REQ-ISO-003"], "sections": [10]},
+  {"id": "B-EST-01", "title": "pk_core / sibling-layer estate baseline", "needs": "Authoritative pk_core package pinned by commit/digest plus sibling INV-30/42/44 and PLN-07 fixtures.", "unblocks": ["REQ-EST-002"], "sections": [6]},
+  {"id": "B-COMPAT-01", "title": "Multi-runtime CI matrix", "needs": "CI runners for Windows, macOS and aarch64 (workflow provided, never executed). CPython 3.10/3.11/3.12/3.13 on Linux x86_64 were available and certified in this pass.", "unblocks": ["REQ-TST-006"], "sections": [19]},
+  {"id": "B-SOAK-01", "title": "Release-tier soak", "needs": "Scheduled 4 h+ run of tools/scale_soak.py --tier release on the reference host.", "unblocks": ["REQ-TST-005"], "sections": [22]},
+  {"id": "B-FLEET-01", "title": "Fleet / distributed tests", "needs": "A multi-node deployment of the bridge/service mode (none exists).", "unblocks": ["REQ-TST-005"], "sections": [22]},
+  {"id": "B-DEPLOY-01", "title": "Deployment telemetry & canary", "needs": "Real metrics/log/trace backends, alert routing, a canary population and observation window.", "unblocks": ["REQ-OBS-007"], "sections": [16, 17, 23]},
+  {"id": "B-EDGE-01", "title": "Edge power/thermal", "needs": "Access to a representative far-edge device with power measurement.", "unblocks": ["REQ-PER-003"], "sections": [15]}
+ ]
+}

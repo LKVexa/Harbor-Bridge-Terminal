@@ -1,0 +1,46 @@
+# Prometheus alerting rules for INV-16 (metrics: observability.METRICS; runbook: docs/RUNBOOK.md)
+groups:
+  - name: inv16-integrity
+    rules:
+      - alert: Inv16DoubleDeliveryAttempted
+        expr: increase(inv16_double_delivery_attempts_total[5m]) > 0
+        labels: {severity: page, owner: inv16}
+        annotations: {summary: "Second completion rejected on {{ $labels.instance }}", runbook: "docs/RUNBOOK.md#r1"}
+      - alert: Inv16CalleeTrapStorm
+        expr: increase(inv16_trapped_calls_total[5m]) > 50
+        labels: {severity: page, owner: inv16}
+        annotations: {summary: "Callee traps ending many calls", runbook: "docs/RUNBOOK.md#r4"}
+      - alert: Inv16CallIdNearExhaustion
+        expr: inv16_call_ids_remaining < 0.1 * 18446744073709551615
+        labels: {severity: ticket, owner: inv16}
+        annotations: {runbook: "docs/RUNBOOK.md#r5"}
+  - name: inv16-saturation
+    rules:
+      - alert: Inv16ReentrancyRefusalStorm
+        expr: sum by (instance) (rate(inv16_reentrancy_refusals_total[5m])) > 10
+        for: 10m
+        labels: {severity: ticket, owner: inv16}
+        annotations: {runbook: "docs/RUNBOOK.md#r2"}
+      - alert: Inv16ConcurrencySaturation
+        expr: sum by (instance) (rate(inv16_concurrency_refusals_total[5m])) > 1
+        for: 10m
+        labels: {severity: ticket, owner: inv16}
+        annotations: {runbook: "docs/RUNBOOK.md#r3"}
+      - alert: Inv16CancellationSpike
+        expr: rate(inv16_cancelled_calls_total[5m]) > 5 * rate(inv16_cancelled_calls_total[1h] offset 1d)
+        for: 15m
+        labels: {severity: ticket, owner: inv16}
+        annotations: {runbook: "docs/RUNBOOK.md#r4"}
+      - alert: Inv16LateEventsAfterExpiry
+        expr: increase(inv16_expired_late_events_total[15m]) > 0
+        labels: {severity: ticket, owner: inv16}
+        annotations: {runbook: "docs/RUNBOOK.md#r6"}
+      - alert: Inv16BridgeSloBurn
+        expr: histogram_quantile(0.99, sum by (le) (rate(inv16_bridge_latency_ns_bucket[10m]))) > 5000
+        for: 30m
+        labels: {severity: ticket, owner: inv16}
+        annotations: {summary: "p99 bridge latency above 5us SLO", runbook: "docs/RUNBOOK.md#r3"}
+      - alert: Inv16TelemetrySinkFailing
+        expr: increase(inv16_sink_failures_total[15m]) > 0
+        labels: {severity: ticket, owner: inv16}
+        annotations: {runbook: "docs/RUNBOOK.md#r9"}

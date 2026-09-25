@@ -1,0 +1,61 @@
+# INV-45 CI (A4). Third-party actions pinned by commit SHA; token is read-only.
+# NOTE: the SHAs below must be re-verified against the upstream tags by the release owner before first use.
+name: inv45-ci
+on:
+  push: {branches: [main]}
+  pull_request: {}
+  schedule: [{cron: "17 3 * * *"}]   # nightly long fuzz + soak
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-14, windows-2022]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        node: ["20", "22"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with: {path: inv45_sfi_mechanisms}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with: {python-version: "${{ matrix.python }}"}
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+        with: {node-version: "${{ matrix.node }}"}
+      - run: python -m pip install -c inv45_sfi_mechanisms/constraints.txt cryptography jsonschema
+      - run: python inv45_sfi_mechanisms/tools/ci.py --fuzz-seconds 5 --report release/ci_report-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.node }}.json
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8c75cf882  # v4.4.3
+        if: always()
+        with: {name: "ci-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.node }}", path: inv45_sfi_mechanisms/release/ci_report-*.json}
+  nightly:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {path: inv45_sfi_mechanisms}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with: {node-version: "22"}
+      - run: python -m pip install -c inv45_sfi_mechanisms/constraints.txt cryptography jsonschema
+      - run: python inv45_sfi_mechanisms/tools/fuzz_campaign.py --seconds 3600
+      - run: python inv45_sfi_mechanisms/benchmarks/bench.py --out bench.json --soak-seconds 1800
+      - run: python inv45_sfi_mechanisms/tools/perf_gate.py bench.json
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test]
+    runs-on: ubuntu-24.04
+    environment: production-release    # protected: requires the release approver (OWNERSHIP.md)
+    permissions: {contents: read, id-token: write, attestations: write}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {path: inv45_sfi_mechanisms}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with: {node-version: "22"}
+      - run: python -m pip install -c inv45_sfi_mechanisms/constraints.txt cryptography jsonschema
+      - run: python inv45_sfi_mechanisms/tools/ci.py
+      - run: python inv45_sfi_mechanisms/benchmarks/bench.py --out bench.json
+      - run: python inv45_sfi_mechanisms/tools/release.py build --bench bench.json
+      - run: python inv45_sfi_mechanisms/tools/release.py gate   # NO_GO fails the job

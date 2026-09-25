@@ -1,0 +1,61 @@
+name: inv67-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: {python: ["3.10", "3.11", "3.12", "3.13"]}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv67_kubernetes_integration_mechanism}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - name: Unit/contract/integration/security/fuzz/fault/concurrency/perf
+        working-directory: inv67_kubernetes_integration_mechanism
+        run: |
+          python -m unittest discover -s tests -t tests -p 'test_*.py'
+          python -O -m unittest discover -s tests -t tests -p 'test_*.py'
+      - name: Manifest drift
+        run: python -m inv67_kubernetes_integration_mechanism.plane.manifests
+      - name: Component gate (local mode)
+        run: python -m inv67_kubernetes_integration_mechanism.governance.gate
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install ruff==0.15.11 mypy==1.20.2 bandit==1.7.10 pip-audit==2.7.3
+      - run: ruff check .
+      - run: mypy
+      - run: bandit -q -r . -c pyproject.toml
+      - run: pip-audit --strict || true   # no runtime deps; kept to catch future ones
+  kind-matrix:
+    # Real-cluster compatibility (EXC-005): applies CRD/RBAC/Deployment on kind for each supported minor.
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: {k8s: ["v1.29.8", "v1.30.4", "v1.31.1", "v1.32.0"]}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: helm/kind-action@v1
+        with: {node_image: "kindest/node:${{ matrix.k8s }}"}
+      - run: kubectl apply -f api/crds/ && kubectl apply -f deploy/base/namespace.yaml -f deploy/base/rbac.yaml
+      - run: kubectl apply --dry-run=server -f examples/wasmworkload.yaml
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test, static, kind-matrix]
+    runs-on: ubuntu-latest
+    environment: release            # protected: holds INV67_RELEASE_KEY / INV67_EVIDENCE_KEY
+    permissions: {contents: write, id-token: write}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv67_kubernetes_integration_mechanism}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - env: {INV67_RELEASE_KEY: "${{ secrets.INV67_RELEASE_KEY }}", INV67_EVIDENCE_KEY: "${{ secrets.INV67_EVIDENCE_KEY }}"}
+        run: |
+          python -m inv67_kubernetes_integration_mechanism.governance.gate --release
+          python -m inv67_kubernetes_integration_mechanism.governance.release build
+          python -m inv67_kubernetes_integration_mechanism.governance.release verify

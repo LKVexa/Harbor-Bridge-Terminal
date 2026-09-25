@@ -1,0 +1,1665 @@
+{
+"component": "C15",
+"items": [
+{
+"id": "C15-001",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Define the exact health endpoint path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "GET /health path defined and implemented",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs",
+"gateway/server.js:95"
+]
+},
+{
+"id": "C15-002",
+"task_class": "DOCUMENT",
+"area": "01. Health contract",
+"req": "Record HTTP 200 as the article's successful response example.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "200 {status:ok} recorded as success example",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C15-003",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Decide what application condition counts as healthy.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "healthy = listening and not draining",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs",
+"gateway/server.js:99"
+]
+},
+{
+"id": "C15-004",
+"task_class": "IMPLEMENT",
+"area": "01. Health contract",
+"req": "Distinguish process existence from service readiness.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "ready&&!draining readiness vs bare process existence",
+"prior_evidence": [
+"gateway/server.js:97-100"
+]
+},
+{
+"id": "C15-005",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Decide whether dependency checks belong in this endpoint.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "comment: minimal, constant work, no dependency checks",
+"prior_evidence": [
+"gateway/server.js:97"
+]
+},
+{
+"id": "C15-006",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Define the response body format.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "JSON body {status}",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs",
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-007",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Define permitted request methods.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "GET/HEAD enforced in code but not documented as a decision",
+"prior_evidence": [
+"gateway/server.js:98"
+]
+},
+{
+"id": "C15-008",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Define an upper bound for health response time.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "tested <250ms but no documented response-time budget decision",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-009",
+"task_class": "SPECIFY",
+"area": "01. Health contract",
+"req": "Define whether the endpoint is public.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "unauthenticated by design",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs",
+"gateway/server.js:97"
+]
+},
+{
+"id": "C15-010",
+"task_class": "IMPLEMENT",
+"area": "01. Health contract",
+"req": "Approve the health contract before wiring deployment checks.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no formal approval record of the health contract found",
+"prior_evidence": []
+},
+{
+"id": "C15-011",
+"task_class": "IMPLEMENT",
+"area": "02. Routing",
+"req": "Match the health path through the ordinary HTTP branch.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "matched inside ordinary http.createServer handler",
+"prior_evidence": [
+"gateway/server.js:91-101"
+]
+},
+{
+"id": "C15-012",
+"task_class": "IMPLEMENT",
+"area": "02. Routing",
+"req": "Keep health processing outside WebSocket receive loops.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health handling separate from WS receive loop in ws.js",
+"prior_evidence": [
+"gateway/server.js:91-101",
+"gateway/ws.js"
+]
+},
+{
+"id": "C15-013",
+"task_class": "IMPLEMENT",
+"area": "02. Routing",
+"req": "Avoid upgrading a health request into a persistent connection.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "upgrade handler only matches /ws/terminal, never /health",
+"prior_evidence": [
+"gateway/server.js:152-158"
+]
+},
+{
+"id": "C15-014",
+"task_class": "SPECIFY",
+"area": "02. Routing",
+"req": "Define behavior for the path with a trailing slash.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "trailing-slash behavior for /health/ undefined and untested",
+"prior_evidence": []
+},
+{
+"id": "C15-015",
+"task_class": "SPECIFY",
+"area": "02. Routing",
+"req": "Define behavior for query parameters on the health path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "safePath strips query implicitly; no explicit design decision documented",
+"prior_evidence": [
+"gateway/log.js:16"
+]
+},
+{
+"id": "C15-016",
+"task_class": "SPECIFY",
+"area": "02. Routing",
+"req": "Define behavior for unsupported health methods.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "405 with Allow header, tested",
+"prior_evidence": [
+"gateway/server.js:98",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-017",
+"task_class": "SPECIFY",
+"area": "02. Routing",
+"req": "Define behavior for a health-like but unknown path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "behavior for health-like unknown path (e.g. /healthz) undocumented",
+"prior_evidence": []
+},
+{
+"id": "C15-018",
+"task_class": "REVIEW",
+"area": "02. Routing",
+"req": "Ensure the listener prefix covers the health path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "single listener covers all paths incl. /health",
+"prior_evidence": [
+"gateway/server.js:91"
+]
+},
+{
+"id": "C15-019",
+"task_class": "IMPLEMENT",
+"area": "02. Routing",
+"req": "Keep the application path identical to the deployment healthCheckPath.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "app path /health matches Blueprint healthCheckPath",
+"prior_evidence": [
+"gateway/server.js:95",
+"deploy/render.yaml:12"
+]
+},
+{
+"id": "C15-020",
+"task_class": "TEST",
+"area": "02. Routing",
+"req": "Test route matching independently of deployment configuration.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "route matching tested via fetch, independent of deploy config",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-021",
+"task_class": "SPECIFY",
+"area": "03. Response implementation",
+"req": "Set the approved success status when the health condition is satisfied.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "200 on ok condition",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-022",
+"task_class": "SPECIFY",
+"area": "03. Response implementation",
+"req": "Set a deliberate non-success result when it is not satisfied.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "503 on not-ready/draining",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-023",
+"task_class": "IMPLEMENT",
+"area": "03. Response implementation",
+"req": "Use a small bounded response body.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "tiny fixed JSON body",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-024",
+"task_class": "SPECIFY",
+"area": "03. Response implementation",
+"req": "Set headers appropriate to the selected body format.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "Content-Type application/json set via json() helper",
+"prior_evidence": [
+"gateway/server.js:76"
+]
+},
+{
+"id": "C15-025",
+"task_class": "IMPLEMENT",
+"area": "03. Response implementation",
+"req": "Write only the intended response bytes.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no record file confirming only intended bytes are written",
+"prior_evidence": []
+},
+{
+"id": "C15-026",
+"task_class": "IMPLEMENT",
+"area": "03. Response implementation",
+"req": "Close the response after writing it.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "res.end(text) closes response",
+"prior_evidence": [
+"gateway/server.js:77"
+]
+},
+{
+"id": "C15-027",
+"task_class": "IMPLEMENT",
+"area": "03. Response implementation",
+"req": "Handle a client disconnect while writing the response.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "res.on('error',()=>{}) handles client disconnect during write",
+"prior_evidence": [
+"gateway/server.js:93"
+]
+},
+{
+"id": "C15-028",
+"task_class": "IMPLEMENT",
+"area": "03. Response implementation",
+"req": "Avoid exposing credentials or environment dumps.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "body carries only status, no credentials/env",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-029",
+"task_class": "IMPLEMENT",
+"area": "03. Response implementation",
+"req": "Avoid exposing unnecessary internal network details.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "no internal network details in body",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-030",
+"task_class": "TEST",
+"area": "03. Response implementation",
+"req": "Test the response with a simple HTTP client.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "tested via fetch() as a simple HTTP client",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-031",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define initialization states that are not yet ready.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "'starting' status distinct from 'ok'/'draining'",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-032",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define when listener binding becomes successful.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "registry.ready=true set only after server.listen callback",
+"prior_evidence": [
+"gateway/server.js:191"
+]
+},
+{
+"id": "C15-033",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define when worker infrastructure becomes available.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "workers are spawned per-session on demand; no global worker-infra gate (D-001 profile)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C15-034",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define whether required storage connectivity affects readiness.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no required datastore in this profile; snapshots optional (D-004-style)",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C15-035",
+"task_class": "IMPLEMENT",
+"area": "04. Readiness state",
+"req": "Prevent readiness before mandatory initialization completes.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "ready flips true only post-listen",
+"prior_evidence": [
+"gateway/server.js:191"
+]
+},
+{
+"id": "C15-036",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define readiness during intentional shutdown.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "draining=true immediately makes /health 503",
+"prior_evidence": [
+"gateway/server.js:200"
+]
+},
+{
+"id": "C15-037",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define readiness during a listener-wide fault.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "readiness during a listener-wide fault (e.g. uncaught error) undefined",
+"prior_evidence": []
+},
+{
+"id": "C15-038",
+"task_class": "SPECIFY",
+"area": "04. Readiness state",
+"req": "Define any permitted degraded but healthy state.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no degraded-but-healthy state designed; readiness is binary",
+"prior_evidence": []
+},
+{
+"id": "C15-039",
+"task_class": "IMPLEMENT",
+"area": "04. Readiness state",
+"req": "Update readiness through a thread-safe mechanism.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Node single-threaded event loop; no thread-safety mechanism needed (D-001)",
+"prior_evidence": [
+"docs/ARCHITECTURE.md"
+]
+},
+{
+"id": "C15-040",
+"task_class": "DOCUMENT",
+"area": "04. Readiness state",
+"req": "Document the state transitions visible through the endpoint.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ok/draining/starting mentioned briefly, no full state-transition doc",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C15-041",
+"task_class": "TEST",
+"area": "05. Responsiveness",
+"req": "Test health requests with no WebSocket clients.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health fetched before any client connects",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-042",
+"task_class": "TEST",
+"area": "05. Responsiveness",
+"req": "Test health requests with idle WebSocket clients.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "health-with-idle-client not distinctly tested",
+"prior_evidence": []
+},
+{
+"id": "C15-043",
+"task_class": "TEST",
+"area": "05. Responsiveness",
+"req": "Test health requests while large messages are received.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health tested while large inbound messages arrive",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-044",
+"task_class": "TEST",
+"area": "05. Responsiveness",
+"req": "Test health requests while large messages are sent.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health tested while bulk output streams (300000 lines)",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-045",
+"task_class": "TEST",
+"area": "05. Responsiveness",
+"req": "Test health requests during a connection burst.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "health during a connection burst not tested",
+"prior_evidence": []
+},
+{
+"id": "C15-046",
+"task_class": "TEST",
+"area": "05. Responsiveness",
+"req": "Test health requests when worker capacity is reached.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "health when worker capacity is reached not tested",
+"prior_evidence": []
+},
+{
+"id": "C15-047",
+"task_class": "IMPLEMENT",
+"area": "05. Responsiveness",
+"req": "Keep dependency checks bounded by the approved response budget.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "single O(1) flag check, no dependency calls",
+"prior_evidence": [
+"gateway/server.js:99"
+]
+},
+{
+"id": "C15-048",
+"task_class": "IMPLEMENT",
+"area": "05. Responsiveness",
+"req": "Prevent a slow optional dependency from blocking health indefinitely.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "no external/dependency call exists to block on",
+"prior_evidence": [
+"gateway/server.js:99"
+]
+},
+{
+"id": "C15-049",
+"task_class": "MEASURE",
+"area": "05. Responsiveness",
+"req": "Measure response latency and variability.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "latency measured across 25 samples, worst asserted <250ms",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-050",
+"task_class": "DOCUMENT",
+"area": "05. Responsiveness",
+"req": "Record the load level used for the health responsiveness test.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "load level embedded in test code, not published as a formal record",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-051",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test health behavior when mandatory initialization fails.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "mandatory-initialization-failure health behavior not tested",
+"prior_evidence": []
+},
+{
+"id": "C15-052",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test health behavior when listener startup fails.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "malformed PORT refuses to start (exit 78)",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C15-053",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test health behavior during a required datastore outage when applicable.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no required datastore exists to outage-test",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C15-054",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test health behavior during worker admission exhaustion.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "health during worker admission exhaustion not jointly tested",
+"prior_evidence": []
+},
+{
+"id": "C15-055",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test health behavior after an unexpected worker failure.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "health after unexpected worker failure not jointly tested",
+"prior_evidence": []
+},
+{
+"id": "C15-056",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test health behavior when the shutdown flag is set.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health flips to 503 once shutdown flag (draining) is set",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-057",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test the handler's own response-write exception path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "handler's own response-write exception path not tested",
+"prior_evidence": []
+},
+{
+"id": "C15-058",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test malformed HTTP requests directed at the health path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "malformed HTTP requests to /health not specifically tested",
+"prior_evidence": []
+},
+{
+"id": "C15-059",
+"task_class": "TEST",
+"area": "06. Failure cases",
+"req": "Test repeated requests without increasing retained resources.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "repeated-request resource growth not tested",
+"prior_evidence": []
+},
+{
+"id": "C15-060",
+"task_class": "REVIEW",
+"area": "06. Failure cases",
+"req": "Confirm a failure response does not accidentally become HTTP 200.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no dedicated test confirms failure never silently becomes 200",
+"prior_evidence": []
+},
+{
+"id": "C15-061",
+"task_class": "SPECIFY",
+"area": "07. Deployment integration",
+"req": "Set the Blueprint healthCheckPath to the exact implemented path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "healthCheckPath: /health matches implemented path",
+"prior_evidence": [
+"deploy/render.yaml:12"
+]
+},
+{
+"id": "C15-062",
+"task_class": "VERIFY",
+"area": "07. Deployment integration",
+"req": "VERIFY current platform health-check semantics.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Render never authorized; platform semantics unverified",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-063",
+"task_class": "VERIFY",
+"area": "07. Deployment integration",
+"req": "VERIFY current platform timing and failure thresholds before documenting them.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "platform timing/failure thresholds unverified, no Render access",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-064",
+"task_class": "IMPLEMENT",
+"area": "07. Deployment integration",
+"req": "Deploy a build with a working health handler.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "Docker/Render deploy authored but never built or run",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C15-065",
+"task_class": "IMPLEMENT",
+"area": "07. Deployment integration",
+"req": "Deploy an isolated test build with intentional health failure.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no isolated failure build was deployed",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C15-066",
+"task_class": "MEASURE",
+"area": "07. Deployment integration",
+"req": "Observe actual platform behavior during that failure.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no platform to observe failure behavior on",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C15-067",
+"task_class": "REVIEW",
+"area": "07. Deployment integration",
+"req": "Confirm health requests are served through the public-edge routing path.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no public edge / WAN available",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-068",
+"task_class": "DOCUMENT",
+"area": "07. Deployment integration",
+"req": "Record timestamps linking startup and health availability.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no record links startup timestamp to health availability",
+"prior_evidence": []
+},
+{
+"id": "C15-069",
+"task_class": "VERIFY",
+"area": "07. Deployment integration",
+"req": "Verify health configuration across every intended environment.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "only the loopback/dev environment was exercised",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-070",
+"task_class": "DOCUMENT",
+"area": "07. Deployment integration",
+"req": "Document limits of the deployment-health test.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "'Not run' table documents Docker/Render limits explicitly",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-071",
+"task_class": "SPECIFY",
+"area": "08. Protection and exposure",
+"req": "Decide whether authentication is intentionally absent from the health endpoint.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "comment states endpoint is intentionally unauthenticated",
+"prior_evidence": [
+"gateway/server.js:97"
+]
+},
+{
+"id": "C15-072",
+"task_class": "IMPLEMENT",
+"area": "08. Protection and exposure",
+"req": "Avoid requiring a browser-specific preflight for platform health requests.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "plain GET, no custom request headers requiring CORS preflight",
+"prior_evidence": [
+"gateway/server.js:95-101"
+]
+},
+{
+"id": "C15-073",
+"task_class": "IMPLEMENT",
+"area": "08. Protection and exposure",
+"req": "Limit the response to operationally necessary information.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "response limited to {status}",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-074",
+"task_class": "IMPLEMENT",
+"area": "08. Protection and exposure",
+"req": "Avoid returning session counts unless explicitly approved.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "session counts only appear on /live, not /health",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-075",
+"task_class": "IMPLEMENT",
+"area": "08. Protection and exposure",
+"req": "Avoid returning database names or connection strings.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "no database is used; no such fields possible",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-076",
+"task_class": "IMPLEMENT",
+"area": "08. Protection and exposure",
+"req": "Prevent query input from changing the health policy.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "safePath strips query before path match; query cannot alter policy",
+"prior_evidence": [
+"gateway/log.js:16",
+"gateway/server.js:95"
+]
+},
+{
+"id": "C15-077",
+"task_class": "IMPLEMENT",
+"area": "08. Protection and exposure",
+"req": "Keep expensive diagnostics on a separate protected path if needed.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "/live is the separate, more detailed diagnostics path",
+"prior_evidence": [
+"gateway/server.js:102"
+]
+},
+{
+"id": "C15-078",
+"task_class": "TEST",
+"area": "08. Protection and exposure",
+"req": "Test unauthorized request variations for information leakage.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "'health / live / config expose no secrets' test covers unauthorized variations",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-079",
+"task_class": "REVIEW",
+"area": "08. Protection and exposure",
+"req": "Review response headers for unnecessary details.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "no dedicated review/test of response headers for leakage",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-080",
+"task_class": "DOCUMENT",
+"area": "08. Protection and exposure",
+"req": "Document the accepted public-health exposure.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "documents unauthenticated public exposure",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C15-081",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record health handler initialization.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.listening logs startup generally, not a health-handler-specific init record",
+"prior_evidence": [
+"gateway/server.js:191"
+]
+},
+{
+"id": "C15-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track healthy and unhealthy responses separately.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "counters.healthProbes is a single aggregate, not split healthy/unhealthy",
+"prior_evidence": [
+"gateway/server.js:96"
+]
+},
+{
+"id": "C15-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track health response duration.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no per-response duration metric implemented",
+"prior_evidence": []
+},
+{
+"id": "C15-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track response-write failures separately from readiness failures.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no separate write-failure counter implemented",
+"prior_evidence": []
+},
+{
+"id": "C15-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging every successful probe when it creates excessive noise.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "no log call per probe; only a counter increments",
+"prior_evidence": [
+"gateway/server.js:95-101"
+]
+},
+{
+"id": "C15-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Preserve enough unhealthy-probe detail for incident diagnosis.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only draining/starting string distinguishes unhealthy state, minimal detail",
+"prior_evidence": [
+"gateway/server.js:100"
+]
+},
+{
+"id": "C15-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate unhealthy periods with deployment revisions.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no correlation of unhealthy periods with deployment revisions implemented",
+"prior_evidence": []
+},
+{
+"id": "C15-088",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Document how to reproduce a health request manually.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "GET /health -> 200 example documents manual reproduction",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C15-089",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Document how to distinguish unreachable and unhealthy service states.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "docs do not distinguish unreachable vs unhealthy service states",
+"prior_evidence": []
+},
+{
+"id": "C15-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Assign ownership for health policy changes.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented ownership for health policy changes",
+"prior_evidence": []
+},
+{
+"id": "C15-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the health response contract.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health response contract published",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C15-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the readiness state model.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "readiness states named briefly but no full published state model",
+"prior_evidence": [
+"docs/OPERATIONS.md#health-and-logs"
+]
+},
+{
+"id": "C15-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link ordinary HTTP route tests.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "ordinary HTTP route tests linked via EVIDENCE_INDEX/e2e.test.js",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link health-under-load tests.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "health-under-load test present (<250ms while streaming)",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link shutdown-state health tests.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "shutdown-state health test present (503 while draining)",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C15-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link platform deployment-health observations.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no platform deployment-health observations exist to link",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record the exact configured healthCheckPath.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "PASS",
+"prior_note": "exact configured healthCheckPath: /health",
+"prior_evidence": [
+"deploy/render.yaml:12"
+]
+},
+{
+"id": "C15-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record verified platform behavior with dated evidence.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "BLOCKED",
+"prior_note": "never deployed; no dated platform-behavior evidence",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C15-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "List unresolved health semantics.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "unresolved health semantics not compiled into a list",
+"prior_evidence": []
+},
+{
+"id": "C15-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the endpoint only when its observed behavior matches the contract.",
+"ram_overlay": "Maintain a tiny metadata-only liveness response outside tenant data queues; separate readiness/admission state where configured. Do not serialize all sessions on a health request.",
+"challenge": "Keep health memory and response cost bounded during queue saturation and shutdown.",
+"ref_work": [
+"R26",
+"R27"
+],
+"prior_status": "OPEN",
+"prior_note": "no record of formal approval matching observed behavior to contract",
+"prior_evidence": []
+}
+]
+}

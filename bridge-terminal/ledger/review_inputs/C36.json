@@ -1,0 +1,1730 @@
+{
+"component": "C36",
+"items": [
+{
+"id": "C36-001",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define the worker's exclusive socket responsibilities.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Header comment: one receive path and one send path per connection, exclusively owned",
+"prior_evidence": [
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C36-002",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define its receive-loop responsibility.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_onData/_parse implement the per-connection receive loop",
+"prior_evidence": [
+"gateway/ws.js:144-202"
+]
+},
+{
+"id": "C36-003",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define its message-accumulation responsibility.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "frag.chunks/frag.bytes accumulate CONT frames until fin",
+"prior_evidence": [
+"gateway/ws.js:182-194"
+]
+},
+{
+"id": "C36-004",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define its application-message handoff.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "emit('text',bytes) -> Connection._onText is the application handoff",
+"prior_evidence": [
+"gateway/ws.js:208",
+"gateway/connection.js:38"
+]
+},
+{
+"id": "C36-005",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define its use of the serialized outbound path.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut/_flush drains through the single _write ordered send path",
+"prior_evidence": [
+"gateway/connection.js:71-77",
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C36-006",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define its close and disconnect responsibilities.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "close()/_destroy()/_onClose implement close & disconnect handling",
+"prior_evidence": [
+"gateway/ws.js:104-225"
+]
+},
+{
+"id": "C36-007",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define immutable configuration received at startup.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes/sendQueueBytes/controlReserve/assemblyMs are constructor-time immutable options",
+"prior_evidence": [
+"gateway/ws.js:42-49"
+]
+},
+{
+"id": "C36-008",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define completion metadata returned to supervision.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "'close' event carries {code,reason,clean,initiator} to Connection._onSocketClose",
+"prior_evidence": [
+"gateway/ws.js:131-140",
+"gateway/connection.js:312"
+]
+},
+{
+"id": "C36-009",
+"task_class": "SPECIFY",
+"area": "01. Worker contract",
+"req": "Define the cleanup owner.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.destroyed guard makes _destroy() the single idempotent cleanup owner",
+"prior_evidence": [
+"gateway/ws.js:131-133"
+]
+},
+{
+"id": "C36-010",
+"task_class": "IMPLEMENT",
+"area": "01. Worker contract",
+"req": "Approve the per-connection worker lifecycle.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Lifecycle is implemented and commented but no explicit approval/sign-off record was found",
+"prior_evidence": [
+"gateway/ws.js",
+"gateway/connection.js"
+]
+},
+{
+"id": "C36-011",
+"task_class": "REVIEW",
+"area": "02. Startup",
+"req": "Validate the received WebSocket reference.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Handshake validity (subprotocol/version/key/path) is verified before a WsConnection is created",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C36-012",
+"task_class": "REVIEW",
+"area": "02. Startup",
+"req": "Validate the connection identifier.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Connection id is self-generated (crypto.randomBytes), not received/validated from elsewhere; no explicit validation test",
+"prior_evidence": [
+"gateway/connection.js:22"
+]
+},
+{
+"id": "C36-013",
+"task_class": "REVIEW",
+"area": "02. Startup",
+"req": "Validate required identity or session metadata.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "No credential / wrong credential / malformed header -> 401 before upgrade; identity validated pre-connection",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C36-014",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Initialize the connection-local receive buffer.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.buf = Buffer.alloc(0) initializes the connection-local receive buffer",
+"prior_evidence": [
+"gateway/ws.js:50"
+]
+},
+{
+"id": "C36-015",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Initialize message accumulation state.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag = null initializes accumulation state",
+"prior_evidence": [
+"gateway/ws.js:51"
+]
+},
+{
+"id": "C36-016",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Initialize the outbound queue reference or send owner.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.pendingOut = [] initializes the outbound queue",
+"prior_evidence": [
+"gateway/connection.js:28"
+]
+},
+{
+"id": "C36-017",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Initialize cancellation and shutdown signaling.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.gen=1 (generation fence) and this.closing=false initialize shutdown signaling",
+"prior_evidence": [
+"gateway/connection.js:24,33"
+]
+},
+{
+"id": "C36-018",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Register readiness through the agreed handoff mechanism.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "registry.conns.add(conn) registers the connection once constructed",
+"prior_evidence": [
+"gateway/server.js:199"
+]
+},
+{
+"id": "C36-019",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Fail startup cleanly when any mandatory dependency is missing.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "try/catch around Connection construction releases capacity/socket on failure",
+"prior_evidence": [
+"gateway/server.js:194-204"
+]
+},
+{
+"id": "C36-020",
+"task_class": "IMPLEMENT",
+"area": "02. Startup",
+"req": "Avoid accepting application work before initialization is complete.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_onText no-ops before/after CLOSED; worker withholds REPL output until the open barrier ('opened' record) fires",
+"prior_evidence": [
+"gateway/connection.js:104",
+"worker/host.js:124-126"
+]
+},
+{
+"id": "C36-021",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Run only one receive loop for the owned socket.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Single socket.on('data') -> _parse loop; comment documents exactly one receive path [downgraded: VERIFY item without a test or measurement citation]",
+"prior_evidence": [
+"gateway/ws.js:9-11,61"
+]
+},
+{
+"id": "C36-022",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Pass completed receive results through the interpreter.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_message emits 'text', consumed by codec.decode in _onText",
+"prior_evidence": [
+"gateway/ws.js:204-209",
+"gateway/connection.js:111"
+]
+},
+{
+"id": "C36-023",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Accumulate incomplete messages correctly.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Fragment accumulation implemented and covered by conformance fragmentation tests",
+"prior_evidence": [
+"gateway/ws.js:182-194",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C36-024",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Deliver completed text through the decoder.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Strict TextDecoder('utf-8',{fatal:true}) runs before the text is emitted/decoded further",
+"prior_evidence": [
+"gateway/ws.js:206-208"
+]
+},
+{
+"id": "C36-025",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Deliver completed binary data when supported.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary frames are rejected (close 1003) by design; D-007 is text/base64 only",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-007",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C36-026",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Detect peer close through the managed result path.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_onClose handles the CLOSE opcode through the managed frame-parse result path",
+"prior_evidence": [
+"gateway/ws.js:198,211-225"
+]
+},
+{
+"id": "C36-027",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Respect the configured logical-message size bound.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes checked from the header before buffering the payload",
+"prior_evidence": [
+"gateway/ws.js:170"
+]
+},
+{
+"id": "C36-028",
+"task_class": "IMPLEMENT",
+"area": "03. Receive servicing",
+"req": "Avoid performing receive processing on the master dispatcher.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Receive parsing lives entirely in per-connection WsConnection instances, never in server.js's shared handlers",
+"prior_evidence": [
+"gateway/ws.js",
+"gateway/server.js"
+]
+},
+{
+"id": "C36-029",
+"task_class": "TEST",
+"area": "03. Receive servicing",
+"req": "Test a worker with an idle client.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "idleMs/heartbeat timers exist for idle clients, but no test explicitly named 'idle client' was found in the index",
+"prior_evidence": [
+"gateway/connection.js:47-50"
+]
+},
+{
+"id": "C36-030",
+"task_class": "TEST",
+"area": "03. Receive servicing",
+"req": "Test a worker receiving repeated fragmented messages.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Multiple repeated-fragmentation scenarios tested (ping interleaved in fragments, split UTF-8, stalled assembly deadline)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C36-031",
+"task_class": "SPECIFY",
+"area": "04. Application interaction",
+"req": "Define the interface to application-specific handlers.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "TerminalTransport contract documents the application-facing interface",
+"prior_evidence": [
+"docs/PROTOCOL.md#terminal-api-terminaltransport-clienttransportjs"
+]
+},
+{
+"id": "C36-032",
+"task_class": "IMPLEMENT",
+"area": "04. Application interaction",
+"req": "Supply the authenticated identity without raw credentials.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.principal carries tenant/sub only; logs never include raw bearer/ticket values",
+"prior_evidence": [
+"gateway/connection.js:20-21",
+"gateway/server.js:205"
+]
+},
+{
+"id": "C36-033",
+"task_class": "IMPLEMENT",
+"area": "04. Application interaction",
+"req": "Supply the safe session context.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "sid is 144 random opaque bits, generated fresh, not derived from sensitive state",
+"prior_evidence": [
+"gateway/connection.js:214"
+]
+},
+{
+"id": "C36-034",
+"task_class": "IMPLEMENT",
+"area": "04. Application interaction",
+"req": "Preserve required per-connection message ordering.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Output seq contiguous starting at 1; ordering documented and enforced",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gatewayconnectionjs",
+"gateway/connection.js:238-240"
+]
+},
+{
+"id": "C36-035",
+"task_class": "SPECIFY",
+"area": "04. Application interaction",
+"req": "Define handling of unsupported application message types.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "default switch case returns UNSUPPORTED error for unknown message types",
+"prior_evidence": [
+"gateway/connection.js:152"
+]
+},
+{
+"id": "C36-036",
+"task_class": "SPECIFY",
+"area": "04. Application interaction",
+"req": "Define behavior when an application handler fails.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "process.on('uncaughtException') sends exit{code:70, reason:'worker_failure'} then exits",
+"prior_evidence": [
+"worker/host.js:163"
+]
+},
+{
+"id": "C36-037",
+"task_class": "IMPLEMENT",
+"area": "04. Application interaction",
+"req": "Bound queued application work according to approved requirements.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "OutputGate bounds queued application output to maxPendingBytes",
+"prior_evidence": [
+"worker/output-gate.js:15-19,34-42",
+"config/limits.json"
+]
+},
+{
+"id": "C36-038",
+"task_class": "IMPLEMENT",
+"area": "04. Application interaction",
+"req": "Avoid evaluating received message text as PowerShell code.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "'terminal-escape and command-injection text is data: no host effect'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C36-039",
+"task_class": "TEST",
+"area": "04. Application interaction",
+"req": "Test a slow handler alongside other active workers.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "'slow consumer: ... a fast tenant is unaffected' demonstrates isolation from a slow handler",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C36-040",
+"task_class": "IMPLEMENT",
+"area": "04. Application interaction",
+"req": "Mark application behavior not specified by the article as a design decision.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Fabric/DF allowlist behavior explicitly recorded as an owner design decision beyond the source article",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-002"
+]
+},
+{
+"id": "C36-041",
+"task_class": "IMPLEMENT",
+"area": "05. Outbound interaction",
+"req": "Submit replies through the approved serialized send path.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_send() is the sole path used for request.ack/output/etc., routed via pendingOut",
+"prior_evidence": [
+"gateway/connection.js:59-70"
+]
+},
+{
+"id": "C36-042",
+"task_class": "IMPLEMENT",
+"area": "05. Outbound interaction",
+"req": "Avoid calling SendAsync through an uncoordinated second path.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_write() is the only place a frame is written to the socket; no second uncoordinated writer found",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C36-043",
+"task_class": "IMPLEMENT",
+"area": "05. Outbound interaction",
+"req": "Keep response payload ownership valid until queue admission.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Payload encoded synchronously and copied into frame buffers before queue admission",
+"prior_evidence": [
+"gateway/connection.js:59-69",
+"gateway/ws.js:72-80"
+]
+},
+{
+"id": "C36-044",
+"task_class": "IMPLEMENT",
+"area": "05. Outbound interaction",
+"req": "Handle queue rejection according to application policy.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Control-message queue rejection terminates the connection (1008); data path applies _flow backpressure instead",
+"prior_evidence": [
+"gateway/connection.js:63-64,79-83"
+]
+},
+{
+"id": "C36-045",
+"task_class": "IMPLEMENT",
+"area": "05. Outbound interaction",
+"req": "Handle terminal send failure through lifecycle coordination.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Socket error/close routes through _destroy -> 'close' event -> _onSocketClose cleanup",
+"prior_evidence": [
+"gateway/ws.js:63-65",
+"gateway/connection.js:312-334"
+]
+},
+{
+"id": "C36-046",
+"task_class": "TEST",
+"area": "05. Outbound interaction",
+"req": "Test a reply while ReceiveAsync is pending.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "ReceiveAsync is a .NET/ClientWebSocket API with no meaning in the event-driven Node model",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-001"
+]
+},
+{
+"id": "C36-047",
+"task_class": "TEST",
+"area": "05. Outbound interaction",
+"req": "Test unsolicited server messages when required by the application.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Server-initiated heartbeat.ping exists, but no test explicitly named for unsolicited server messages was found",
+"prior_evidence": [
+"gateway/connection.js:157-163"
+]
+},
+{
+"id": "C36-048",
+"task_class": "TEST",
+"area": "05. Outbound interaction",
+"req": "Test a slow-reading client.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "'peer that stops reading its TCP socket: gateway send queue stays within budget and the connection is contained'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C36-049",
+"task_class": "IMPLEMENT",
+"area": "05. Outbound interaction",
+"req": "Stop new application sends after the chosen close boundary.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_onText and sendText both refuse work once state is CLOSED/not OPEN",
+"prior_evidence": [
+"gateway/connection.js:104",
+"gateway/ws.js:95"
+]
+},
+{
+"id": "C36-050",
+"task_class": "DOCUMENT",
+"area": "05. Outbound interaction",
+"req": "Document whether pending replies are drained or discarded.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Close waits up to 3s for peer Close; _closeSocket documents bounded-grace draining of pendingOut",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport",
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C36-051",
+"task_class": "IMPLEMENT",
+"area": "06. State and resource limits",
+"req": "Keep the reusable receive buffer connection-local.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.buf is an instance field, one per WsConnection",
+"prior_evidence": [
+"gateway/ws.js:50"
+]
+},
+{
+"id": "C36-052",
+"task_class": "IMPLEMENT",
+"area": "06. State and resource limits",
+"req": "Keep partial-message storage connection-local.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag is an instance field, one per WsConnection",
+"prior_evidence": [
+"gateway/ws.js:51"
+]
+},
+{
+"id": "C36-053",
+"task_class": "IMPLEMENT",
+"area": "06. State and resource limits",
+"req": "Keep outbound queue accounting connection-local.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut/unackedBytes/outBytesBySeq are instance fields on Connection",
+"prior_evidence": [
+"gateway/connection.js:27-28"
+]
+},
+{
+"id": "C36-054",
+"task_class": "SPECIFY",
+"area": "06. State and resource limits",
+"req": "Define worker memory expectations.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Worker/gateway per-session memory bound formula documented explicitly",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#per-session-memory-bound-gateway-side"
+]
+},
+{
+"id": "C36-055",
+"task_class": "SPECIFY",
+"area": "06. State and resource limits",
+"req": "Define any idle or application-processing timeout requirements.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "openTimeoutMs, heartbeatMs, idleMs timers implement idle/processing timeout requirements",
+"prior_evidence": [
+"gateway/connection.js:45-50"
+]
+},
+{
+"id": "C36-056",
+"task_class": "IMPLEMENT",
+"area": "06. State and resource limits",
+"req": "Avoid retaining every completed message in worker state.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "outBytesBySeq entries deleted on ack; no full message log retained",
+"prior_evidence": [
+"gateway/connection.js:143"
+]
+},
+{
+"id": "C36-057",
+"task_class": "IMPLEMENT",
+"area": "06. State and resource limits",
+"req": "Bound retained error records.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "stderrTail bounded via .slice(-2048)",
+"prior_evidence": [
+"gateway/connection.js:189"
+]
+},
+{
+"id": "C36-058",
+"task_class": "IMPLEMENT",
+"area": "06. State and resource limits",
+"req": "Release temporary application objects after use.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut entries are shifted off (released) once sent",
+"prior_evidence": [
+"gateway/connection.js:72-75"
+]
+},
+{
+"id": "C36-059",
+"task_class": "TEST",
+"area": "06. State and resource limits",
+"req": "Test a near-limit message followed by a small message.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Boundary size tests exist (oversize/F17 bounds) but no test named for a near-limit message immediately followed by a small one",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/worker/kernel.test.js"
+]
+},
+{
+"id": "C36-060",
+"task_class": "MEASURE",
+"area": "06. State and resource limits",
+"req": "Measure retained memory after repeated message processing.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3 measures RSS across 8 concurrent sessions, not memory retained specifically after repeated message processing",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"
+]
+},
+{
+"id": "C36-061",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle client disconnect during an idle receive.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "socket 'close'/'end' handlers call _destroy regardless of activity state, including idle",
+"prior_evidence": [
+"gateway/ws.js:64-65"
+]
+},
+{
+"id": "C36-062",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle client disconnect during message accumulation.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_destroy calls _dropFragments, releasing any in-progress accumulation on disconnect",
+"prior_evidence": [
+"gateway/ws.js:136"
+]
+},
+{
+"id": "C36-063",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle a managed protocol error.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_fail() closes with the correct protocol error code (1002/1007/1008/1009)",
+"prior_evidence": [
+"gateway/ws.js:123-127"
+]
+},
+{
+"id": "C36-064",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle a decoder rejection.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "codec.decode() failures mapped to BAD_MESSAGE/LIMIT_EXCEEDED/UNSUPPORTED with strike counting",
+"prior_evidence": [
+"gateway/connection.js:110-116"
+]
+},
+{
+"id": "C36-065",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle an application handler exception.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "uncaughtException handler reports exit{70,'worker_failure'} rather than crashing silently",
+"prior_evidence": [
+"worker/host.js:163"
+]
+},
+{
+"id": "C36-066",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle an outbound send exception.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_write guards destroyed/socket.destroyed; socket 'error' triggers _destroy with transport-error",
+"prior_evidence": [
+"gateway/ws.js:82",
+"gateway/ws.js:63"
+]
+},
+{
+"id": "C36-067",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Handle required session-state lookup failure when applicable.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Unknown/foreign sid lookups return FORBIDDEN uniformly",
+"prior_evidence": [
+"gateway/connection.js:124-125"
+]
+},
+{
+"id": "C36-068",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Signal a terminal worker outcome to supervision.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_finalExit sends the single authoritative session.exit and logs it",
+"prior_evidence": [
+"gateway/connection.js:274-283"
+]
+},
+{
+"id": "C36-069",
+"task_class": "IMPLEMENT",
+"area": "07. Failure isolation",
+"req": "Prevent a worker fault from corrupting other workers' shared state.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Per-connection instance state plus 'the other tenant is unaffected' isolation test",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C36-070",
+"task_class": "TEST",
+"area": "07. Failure isolation",
+"req": "Test a failing worker alongside healthy connections.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Worker killed (-9) test confirms other sessions stay healthy",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C36-071",
+"task_class": "MEASURE",
+"area": "08. Shutdown",
+"req": "Observe the shared or connection-local shutdown signal.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "registry.draining flag observed at _open() and admission",
+"prior_evidence": [
+"gateway/connection.js:169",
+"gateway/server.js:221"
+]
+},
+{
+"id": "C36-072",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Stop admitting new application work at the agreed boundary.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_open() rejects NOT_READY once registry.draining is true",
+"prior_evidence": [
+"gateway/connection.js:169"
+]
+},
+{
+"id": "C36-073",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Coordinate closure with the send and receive owners.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "end() sequences worker close, kill, then _closeSocket flush+close",
+"prior_evidence": [
+"gateway/connection.js:286-310"
+]
+},
+{
+"id": "C36-074",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Avoid creating competing CloseAsync operations.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "closeSent / this.closing guards prevent duplicate close operations",
+"prior_evidence": [
+"gateway/ws.js:107",
+"gateway/connection.js:287"
+]
+},
+{
+"id": "C36-075",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Release partial messages according to the interruption policy.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments() called from _fail and _destroy on interruption",
+"prior_evidence": [
+"gateway/ws.js:129,136"
+]
+},
+{
+"id": "C36-076",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Release queued payloads according to the drain policy.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_closeSocket gives a bounded grace flush; _onSocketClose clears pendingOut afterward",
+"prior_evidence": [
+"gateway/connection.js:303-309,331"
+]
+},
+{
+"id": "C36-077",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Stop outstanding operations before disposing their dependencies.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_clearTimers() runs before socket close / registry release in both shutdown paths",
+"prior_evidence": [
+"gateway/connection.js:304,330"
+]
+},
+{
+"id": "C36-078",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Report completion within the approved shutdown budget.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "SIGTERM drain measured at 15-20ms wall, within the shutdown budget",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only",
+"e/I049/drain-measure.json"
+]
+},
+{
+"id": "C36-079",
+"task_class": "IMPLEMENT",
+"area": "08. Shutdown",
+"req": "Handle repeated shutdown notifications.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "end() early-returns if already closing/CLOSED, tolerating repeated notifications",
+"prior_evidence": [
+"gateway/connection.js:287"
+]
+},
+{
+"id": "C36-080",
+"task_class": "TEST",
+"area": "08. Shutdown",
+"req": "Test worker shutdown from each lifecycle state.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "F04 close settles active reader; close during running command; exit/Ctrl-D logout \u2014 cover multiple lifecycle states",
+"prior_evidence": [
+"tests/worker/kernel.test.js"
+]
+},
+{
+"id": "C36-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Emit a safe worker-started event.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "log.info('ws.accepted',{conn,tenant,sub,origin}) is a safe started event",
+"prior_evidence": [
+"gateway/server.js:205"
+]
+},
+{
+"id": "C36-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Emit a safe worker-completed event.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "log.info('session.exit',{conn,code,reason,...}) is a safe completed event",
+"prior_evidence": [
+"gateway/connection.js:281"
+]
+},
+{
+"id": "C36-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Include connection identity in worker error records.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "log.warn('worker.failed',{conn: this.id,...}) includes connection identity",
+"prior_evidence": [
+"gateway/connection.js:263"
+]
+},
+{
+"id": "C36-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track received and sent message counts where useful.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "stats {rxBytes,txBytes,rxMessages,txMessages} tracked per connection",
+"prior_evidence": [
+"gateway/ws.js:58"
+]
+},
+{
+"id": "C36-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track partial-message size without logging contents.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "frag.bytes tracked as a number; raw payload content is never logged",
+"prior_evidence": [
+"gateway/ws.js:51,186,193"
+]
+},
+{
+"id": "C36-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track queue pressure for the connection.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "_flow() reads pendingOut.length/unackedBytes to decide congestion (queue pressure)",
+"prior_evidence": [
+"gateway/connection.js:80"
+]
+},
+{
+"id": "C36-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track cleanup completion.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "this.destroyed flag and registry.forget(this) both mark cleanup completion",
+"prior_evidence": [
+"gateway/ws.js:132-133",
+"gateway/connection.js:333"
+]
+},
+{
+"id": "C36-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid recording raw tokens, cookies, or private message bodies.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "'logger: single-line JSON, secret-like fields dropped, newlines neutralised, query strings removed'",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C36-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Preserve the original exception category for runtime failures.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Error codes/reasons preserved distinctly (e.code, worker_failure vs configured exit reasons) rather than collapsed [downgraded on manual spot-check: exception c",
+"prior_evidence": [
+"gateway/server.js:250",
+"gateway/connection.js:262-263"
+]
+},
+{
+"id": "C36-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for diagnosing one stuck worker.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "workerStallMs watchdog + stderrTail exist in code, but no documented diagnostic runbook for a stuck worker was verified",
+"prior_evidence": [
+"gateway/connection.js:243-252"
+]
+},
+{
+"id": "C36-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the worker lifecycle and ownership contract.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "State machine table and ownership comment publish the lifecycle/ownership contract",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine-gatewayconnectionjs",
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C36-092",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link startup and failed-startup tests.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit doc table linking startup/failed-startup tests to this item was found",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C36-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link text-binary-fragmentation tests.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Explicitly cites 'gateway/ws.js, 15 tests in tests/gateway/ws-conformance.test.js' for framing/fragmentation",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C36-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link simultaneous send-receive tests.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit doc link naming simultaneous send/receive tests specifically",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C36-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link slow-client and slow-handler isolation tests.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Explicitly cites tests/chaos/lifecycle.test.js for slow-client / unacknowledging-client isolation",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control-end-to-end"
+]
+},
+{
+"id": "C36-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link application-error and transport-error cleanup tests.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit doc link naming application-error/transport-error cleanup tests specifically",
+"prior_evidence": [
+"docs/RELEASE.md#integration-packs-60"
+]
+},
+{
+"id": "C36-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link shutdown-state coverage.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "RECOVERY.md has a Shutdown section but no verified explicit per-state test link was confirmed",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown-i049"
+]
+},
+{
+"id": "C36-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document memory and queue limits.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Memory bound formula and queue-size limits documented together",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md",
+"config/limits.json"
+]
+},
+{
+"id": "C36-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record application-specific decisions outside the article's detail.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "PASS",
+"prior_note": "Fabric allowlist and ticket-cookie auth are recorded as application-specific decisions beyond the source article",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-002,D-006"
+]
+},
+{
+"id": "C36-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the worker only after one connection's complete lifecycle is demonstrated.",
+"ram_overlay": "Keep lightweight session state separate from active command execution. Charge waiting command input and task state; do not create a permanent OS thread for each idle connection as an unstated requirement.",
+"challenge": "Hold many authorized sessions idle, then burst commands; show bounded work admission and cleanup.",
+"ref_work": [
+"R11",
+"R17"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Full vertical-slice lifecycle is demonstrated by the e2e test, but no explicit written approval/sign-off was found",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+}
+]
+}

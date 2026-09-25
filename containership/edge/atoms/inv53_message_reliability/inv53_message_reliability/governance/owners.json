@@ -1,0 +1,103 @@
+{
+ "schema": "inv53.owners/1",
+ "component": "INV-53",
+ "status": "UNASSIGNED",
+ "note": "No person has been named. The exit gate blocks until every role has a name, a backup and a review date. Claude does not bind people to roles.",
+ "roles": {
+  "service_owner": {
+   "name": null,
+   "backup": null,
+   "contact_route": null,
+   "assigned_on": null,
+   "next_review": null
+  },
+  "technical_owner": {
+   "name": null,
+   "backup": null,
+   "contact_route": null,
+   "assigned_on": null,
+   "next_review": null
+  },
+  "security_owner": {
+   "name": null,
+   "backup": null,
+   "contact_route": null,
+   "assigned_on": null,
+   "next_review": null
+  },
+  "operations_owner": {
+   "name": null,
+   "backup": null,
+   "contact_route": null,
+   "assigned_on": null,
+   "next_review": null
+  },
+  "qa_owner": {
+   "name": null,
+   "backup": null,
+   "contact_route": null,
+   "assigned_on": null,
+   "next_review": null
+  },
+  "release_approver": {
+   "name": null,
+   "backup": null,
+   "contact_route": null,
+   "assigned_on": null,
+   "next_review": null
+  }
+ },
+ "escalation": {
+  "primary": "operations_owner",
+  "secondary": "technical_owner",
+  "incident_commander_handoff": "operations_owner -> service_owner at SEV1/SEV2",
+  "response": {
+   "SEV1": "page 24x7, ack <= 15 min",
+   "SEV2": "page 24x7, ack <= 30 min",
+   "SEV3": "business hours, next business day",
+   "SEV4": "backlog"
+  }
+ },
+ "decision_rights": {
+  "protocol_change": [
+   "technical_owner",
+   "security_owner"
+  ],
+  "production_config_change": [
+   "operations_owner"
+  ],
+  "emergency_disable": [
+   "operations_owner",
+   "service_owner"
+  ],
+  "dlq_purge": [
+   "service_owner"
+  ],
+  "dlq_redrive": [
+   "operations_owner"
+  ],
+  "release_approval": [
+   "release_approver",
+   "security_owner",
+   "qa_owner"
+  ]
+ },
+ "path_ownership": {
+  "reliability.py durable.py service.py": [
+   "technical_owner"
+  ],
+  "security.py docs/security/**": [
+   "security_owner"
+  ],
+  "protocol.py schemas/** docs/spec/**": [
+   "technical_owner"
+  ],
+  "docs/ops/** governance/**": [
+   "operations_owner",
+   "service_owner"
+  ],
+  "tests/** tools/ci.py": [
+   "qa_owner"
+  ]
+ }
+}

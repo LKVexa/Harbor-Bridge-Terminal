@@ -1,0 +1,182 @@
+{
+  "messages": {
+    "compact": {
+      "revision": 1000,
+      "schema": "cstate.compact/1.1"
+    },
+    "hello": {
+      "capabilities": [
+        "watch.stream"
+      ],
+      "client": "ref-client/4.3.0",
+      "protocol": "PK_CSTATE",
+      "schema": "cstate.hello/1.0",
+      "versions": [
+        "1.1",
+        "1.0"
+      ]
+    },
+    "lease_grant": {
+      "schema": "cstate.lease_grant/1.1",
+      "ttl": 10
+    },
+    "lease_keepalive": {
+      "id": 3,
+      "schema": "cstate.lease_keepalive/1.1"
+    },
+    "lease_revoke": {
+      "id": 3,
+      "schema": "cstate.lease_revoke/1.1"
+    },
+    "range": {
+      "key": "pods/",
+      "limit": 100,
+      "page_token": "",
+      "prefix": true,
+      "revision": 0,
+      "schema": "cstate.range/1.1"
+    },
+    "txn": {
+      "compare": [
+        {
+          "key": "leader",
+          "op": "==",
+          "operand": 7,
+          "target": "MOD"
+        },
+        {
+          "key": "lease:3",
+          "op": "==",
+          "operand": 12,
+          "target": "FENCE"
+        }
+      ],
+      "deadline_ms": 2000,
+      "failure": [
+        {
+          "range": {
+            "key": "leader"
+          }
+        }
+      ],
+      "request_id": "r-1",
+      "schema": "cstate.txn/1.1",
+      "success": [
+        {
+          "put": {
+            "key": "leader",
+            "lease": 3,
+            "value": {
+              "node": "n1"
+            }
+          }
+        }
+      ]
+    },
+    "watch": {
+      "kinds": [
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "EXPIRE"
+      ],
+      "prefix": "pods/",
+      "prev_value": true,
+      "progress_interval_ms": 5000,
+      "schema": "cstate.watch/1.1",
+      "start_revision": 42
+    }
+  },
+  "responses": {
+    "error": {
+      "error": {
+        "category": "quota",
+        "code": "CSTATE_QUOTA",
+        "details": {
+          "limit": "rate_per_identity_rps",
+          "retry_after_s": 0.5
+        },
+        "message": "rate limit exceeded",
+        "retryable": true
+      }
+    },
+    "event": {
+      "create_revision": 43,
+      "index": 0,
+      "key": "leader",
+      "kind": "CREATE",
+      "lease": 3,
+      "mod_revision": 43,
+      "prev_value": null,
+      "revision": 43,
+      "schema": "cstate.event/1",
+      "txn_id": "req-1",
+      "value": {
+        "node": "n1"
+      },
+      "version": 1
+    },
+    "health": {
+      "status": "ready"
+    },
+    "txn": {
+      "compare_results": [
+        true,
+        true
+      ],
+      "durability": "fsync",
+      "replayed": false,
+      "responses": [
+        {
+          "put": {
+            "prev": null,
+            "revision": 43
+          }
+        }
+      ],
+      "revision": 43,
+      "succeeded": true,
+      "txn_id": "req-1"
+    },
+    "version": {
+      "backend": "inv05-local-mvcc/1",
+      "capabilities": [
+        "..."
+      ],
+      "commit": "unknown",
+      "config_sha256": "",
+      "event_schema": "cstate.event/1",
+      "schema": "PK_CSTATE/1.1",
+      "version": "4.3.0"
+    },
+    "watch_frames": [
+      {
+        "events": [],
+        "revision": 43,
+        "type": "events",
+        "watch_id": 1
+      },
+      {
+        "revision": 44,
+        "type": "progress",
+        "watch_id": 1
+      },
+      {
+        "error": {
+          "category": "compaction",
+          "code": "CSTATE_COMPACTED",
+          "details": {
+            "compact_revision": 45,
+            "resume_revision": 42
+          },
+          "message": "revision 42 compacted; relist",
+          "retryable": false
+        },
+        "revision": 50,
+        "type": "canceled",
+        "watch_id": 1
+      }
+    ]
+  },
+  "schema": "cstate.golden/1"
+}

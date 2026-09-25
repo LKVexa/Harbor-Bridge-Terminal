@@ -1,0 +1,8 @@
+# INV-38-C048 fail-safe behaviour per dependency outage. Mirrors failsafe.py.
+dependencies:
+  identity:    {cached_ops: none,        max_cache_age_s: 0,    on_expiry: fail_closed}
+  attestation: {cached_ops: none,        max_cache_age_s: 0,    on_expiry: fail_closed}
+  policy:      {cached_ops: read_only,   max_cache_age_s: 300,  on_expiry: fail_closed}
+  key:         {cached_ops: existing_qp, max_cache_age_s: 60,   on_expiry: revoke_and_stop}
+  time:        {cached_ops: none,        max_cache_age_s: 5,    on_expiry: fail_closed}
+recovery_revalidation_order: [time, identity, policy, key]

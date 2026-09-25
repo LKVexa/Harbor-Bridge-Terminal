@@ -1,0 +1,74 @@
+{
+ "component": 19,
+ "title": "Versioned wire schemas for PK_DYN_LEASE/1, PK_DYN_SCALE/1, and PK_DYN_COST/1",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "PK_DYN_LEASE/1 canonical schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/schemas/PK_DYN_LEASE_1.json",
+   "modules": [
+    "production/schemas.py::validate_message"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_lease_schema"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "PK_DYN_SCALE/1 canonical schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/schemas/PK_DYN_SCALE_1.json",
+   "modules": [
+    "production/schemas.py::validate_message"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_scale_schema"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "PK_DYN_COST/1 canonical schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/schemas/PK_DYN_COST_1.json",
+   "modules": [
+    "production/schemas.py::validate_message"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_cost_schema"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "schema compatibility/version negotiation",
+   "state": "IMPLEMENTED",
+   "spec": "production/schemas.py::__doc__",
+   "modules": [
+    "production/schemas.py::negotiate",
+    "production/compat.py::schema_change_ok"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_negotiation",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestCompat.test_schema_evolution_rules"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "canonical serialization, validation, and golden fixtures",
+   "state": "IMPLEMENTED",
+   "spec": "production/fixtures/golden/pk_dyn_v1.json",
+   "modules": [
+    "production/schemas.py::encode",
+    "production/schemas.py::decode",
+    "production/core.py::canonical"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_invalid_golden_fixtures",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_decoder_rejections",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestSchemas.test_lease_schema"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "JSON-Schema subset + stdlib validator; no Protobuf/OpenAPI toolchain (stdlib only). Scale fixture is reproduced from model.Pool.tick."
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv68:PK_PACK_RESPONSE:1",
+  "title": "PK_PACK/1 response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["hosts", "unplaced", "assignments", "decisions"],
+  "properties": {
+    "hosts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "cpu", "mem", "used"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "cpu": {"type": "number", "exclusiveMinimum": 0},
+          "mem": {"type": "number", "exclusiveMinimum": 0},
+          "used": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cpu", "mem"],
+            "properties": {
+              "cpu": {"type": "number", "minimum": 0},
+              "mem": {"type": "number", "minimum": 0}
+            }
+          }
+        }
+      }
+    },
+    "unplaced": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "assignments": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["workload", "status", "host", "reason", "cpu", "mem"],
+        "properties": {
+          "workload": {"type": "string", "minLength": 1},
+          "status": {"enum": ["placed", "unplaced"]},
+          "host": {"type": ["string", "null"]},
+          "reason": {"type": "string", "minLength": 1},
+          "cpu": {"type": "number", "minimum": 0},
+          "mem": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}

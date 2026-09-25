@@ -1,0 +1,65 @@
+# INV-17 streaming primitive -- CI (C070, C081-C090). The package directory is the repo root;
+# jobs check it out under its package name so `import inv17_streaming_primitive` works.
+name: inv17-ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv17_streaming_primitive }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - name: compile
+        run: python -m compileall -q -x "vendor|benchmarks/reference" inv17_streaming_primitive
+      - name: unit + contract + property + soak + adversarial + pk_core conformance
+        run: python inv17_streaming_primitive/tools/run_tests.py
+      - name: same suite under python -O
+        run: python -O inv17_streaming_primitive/tools/run_tests.py
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv17_streaming_primitive }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install "ruff==0.15.11" "mypy==1.20.2"
+      - run: ruff check .
+        working-directory: inv17_streaming_primitive
+      - run: mypy
+        working-directory: inv17_streaming_primitive
+      - name: coverage threshold (ci/coverage-policy.json)
+        run: python inv17_streaming_primitive/tools/coverage_run.py
+      - name: long fuzz + soak
+        env: { INV17_FUZZ_CASES: "3000", INV17_SOAK_SECONDS: "30" }
+        run: python inv17_streaming_primitive/tests/test_property.py && python inv17_streaming_primitive/tests/test_soak.py
+      - name: schema manifest drift
+        run: python inv17_streaming_primitive/tools/gen_schema_manifest.py --check
+  release-evidence:
+    needs: [test, quality]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv17_streaming_primitive }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install "ruff==0.15.11" "mypy==1.20.2"
+      - name: evidence bundle (bench, perf gate, pk_core gate, SBOM, traceability, exit gate)
+        env: { INV17_SOURCE_REVISION: "${{ github.sha }}" }
+        run: python inv17_streaming_primitive/tools/evidence_bundle.py
+      - name: exit gate verdict (NO_GO fails the release job)
+        run: python inv17_streaming_primitive/tools/exit_gate.py || [ $? -eq 2 ]
+        working-directory: .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inv17-release-evidence
+          path: |
+            inv17_streaming_primitive/evidence/
+            inv17_streaming_primitive/conformance/
+            inv17_streaming_primitive/traceability/
+            inv17_streaming_primitive/benchmarks/results/

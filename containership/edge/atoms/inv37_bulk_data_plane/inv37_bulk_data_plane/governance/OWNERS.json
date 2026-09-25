@@ -1,0 +1,34 @@
+{
+  "schema": "INV37_OWNERS/1",
+  "component": "INV-37 Bulk data plane",
+  "review_by": "2027-03-22",
+  "note": "Roles are defined by this repository; people are NOT. Each 'assignee' must be filled by the accountable organization. Until then tools/check_governance.py reports BLOCKED and the production gate cannot pass.",
+  "roles": {
+    "service_owner":        {"assignee": null, "backup": null, "codeowners_handle": "@inv37-service-owner", "responsibilities": ["roadmap", "release approval", "SLO ownership", "rollback authority"]},
+    "backup_owner":         {"assignee": null, "backup": null, "codeowners_handle": "@inv37-backup-owner", "responsibilities": ["acts for service_owner when unavailable"]},
+    "security_owner":       {"assignee": null, "backup": null, "codeowners_handle": "@inv37-security", "responsibilities": ["threat model", "security exceptions", "key custody policy", "vulnerability response"]},
+    "sre_owner":            {"assignee": null, "backup": null, "codeowners_handle": "@inv37-sre", "responsibilities": ["on-call", "incident command", "dashboards/alerts", "capacity"]},
+    "architecture_approver":{"assignee": null, "backup": null, "codeowners_handle": "@inv37-architecture", "responsibilities": ["ADR approval", "schema/transport changes", "policy precedence changes"]}
+  },
+  "raci": {
+    "architecture_decision":  {"R": "architecture_approver", "A": "architecture_approver", "C": ["security_owner", "service_owner"], "I": ["sre_owner"]},
+    "schema_change":          {"R": "service_owner", "A": "architecture_approver", "C": ["security_owner"], "I": ["sre_owner"]},
+    "transport_change":       {"R": "service_owner", "A": "architecture_approver", "C": ["security_owner", "sre_owner"], "I": []},
+    "security_exception":     {"R": "security_owner", "A": "security_owner", "C": ["service_owner"], "I": ["sre_owner", "architecture_approver"]},
+    "incident_command":       {"R": "sre_owner", "A": "service_owner", "C": ["security_owner"], "I": ["architecture_approver"]},
+    "release_approval":       {"R": "service_owner", "A": "service_owner", "C": ["security_owner", "sre_owner"], "I": ["architecture_approver"]},
+    "rollback":               {"R": "sre_owner", "A": "service_owner", "C": [], "I": ["security_owner"]},
+    "policy_precedence":      {"R": "architecture_approver", "A": "architecture_approver", "C": ["security_owner", "sre_owner"], "I": ["service_owner"]}
+  },
+  "escalation": [
+    {"level": 1, "who": "sre_owner (on-call first responder)", "when": "any SEV1-SEV3 page", "ack_minutes": {"SEV1": 5, "SEV2": 15, "SEV3": 60}},
+    {"level": 2, "who": "service_owner", "when": "SEV1 unresolved 30m, SEV2 unresolved 2h"},
+    {"level": 3, "who": "security_owner", "when": "any suspected integrity/cross-tenant/credential incident, immediately"},
+    {"level": 4, "who": "architecture_approver", "when": "fix requires schema/transport/precedence change"},
+    {"level": 5, "who": "executive sponsor (to be named by organization)", "when": "SEV1 customer impact > 4h"}
+  ],
+  "on_call": {"coverage": "24x7 for prod profile; business hours for edge/dev", "handoff": "written handoff at rotation boundary incl. open incidents, freezes, waivers",
+              "after_hours": "primary + secondary pager; secondary auto-pages after missed ack"},
+  "transfer_procedure": "Ownership transfer requires: new assignee acceptance recorded in APPROVALS.json, CODEOWNERS update, access review (C098), handoff of open waivers/incidents; outgoing owner remains backup for 30 days.",
+  "tabletop": {"last_exercised": null, "evidence": null}
+}

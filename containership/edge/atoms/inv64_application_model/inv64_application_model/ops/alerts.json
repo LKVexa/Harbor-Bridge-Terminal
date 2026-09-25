@@ -1,0 +1,28 @@
+{
+  "format": "PK_APP_ALERTS/1",
+  "note": "Alert rules as code (PromQL-style expressions over the PK_APP_TELEMETRY/1 catalog). tools/governance_check.py verifies every metric exists in telemetry.METRICS, every alert has owner/route/runbook, and every runbook anchor exists.",
+  "alerts": [
+    {"id": "INV64-A01", "class": "slo-burn", "severity": "SEV2", "owner_role": "inv64-sre-oncall", "route": "page",
+     "expr": "burn_rate(inv64_requests_total{outcome=~\"terminal_failure|retryable_failure\"}, 1h) > 14.4 and burn_rate(..., 5m) > 14.4",
+     "window": "1h/5m multi-window", "dedup": "alertname", "runbook": "ops/RUNBOOK.md#slo-burn"},
+    {"id": "INV64-A02", "class": "overload", "severity": "SEV3", "owner_role": "inv64-sre-oncall", "route": "ticket",
+     "expr": "rate(inv64_admission_rejected_total[5m]) / rate(inv64_requests_total[5m]) > 0.01", "window": "5m", "dedup": "alertname", "runbook": "ops/RUNBOOK.md#overload"},
+    {"id": "INV64-A03", "class": "dependency-outage", "severity": "SEV2", "owner_role": "inv64-sre-oncall", "route": "page",
+     "expr": "increase(inv64_dependency_failures_total[5m]) > 5", "window": "5m", "dedup": "dependency", "runbook": "ops/RUNBOOK.md#dependency-outage"},
+    {"id": "INV64-A04", "class": "policy-rejection-spike", "severity": "SEV3", "owner_role": "inv64-component-owner", "route": "ticket",
+     "expr": "rate(inv64_rejections_total{code=~\"manifest.*|secret.*\"}[15m]) > 3 * rate(...[1d] offset 1d)", "window": "15m", "dedup": "code", "runbook": "ops/RUNBOOK.md#rejection-spike"},
+    {"id": "INV64-A05", "class": "attack-pattern", "severity": "SECURITY", "owner_role": "inv64-security-contact", "route": "page",
+     "expr": "rate(inv64_authn_total{outcome=\"denied\"}[5m]) > 1 or increase(inv64_rejections_total{code=\"auth.replay\"}[5m]) > 0", "window": "5m", "dedup": "alertname", "runbook": "ops/INCIDENT_RESPONSE.md#auth-bypass"},
+    {"id": "INV64-A06", "class": "software-defect", "severity": "SEV2", "owner_role": "inv64-component-owner", "route": "page",
+     "expr": "increase(inv64_rejections_total{code=\"internal\"}[10m]) > 0", "window": "10m", "dedup": "alertname", "runbook": "ops/RUNBOOK.md#defect"},
+    {"id": "INV64-A07", "class": "audit-integrity", "severity": "SEV1", "owner_role": "inv64-security-contact", "route": "page",
+     "expr": "increase(inv64_audit_dropped_total[5m]) > 0", "window": "5m", "dedup": "alertname", "runbook": "ops/INCIDENT_RESPONSE.md#audit"},
+    {"id": "INV64-A08", "class": "change-safety", "severity": "SEV2", "owner_role": "inv64-sre-oncall", "route": "page",
+     "expr": "increase(inv64_rollback_total{trigger=\"auto\"}[30m]) > 0", "window": "30m", "dedup": "alertname", "runbook": "ops/RUNBOOK.md#activation"},
+    {"id": "INV64-A09", "class": "telemetry-self-health", "severity": "SEV3", "owner_role": "inv64-sre-oncall", "route": "ticket",
+     "expr": "increase(inv64_log_dropped_total[15m]) > 0 or increase(inv64_telemetry_sink_errors_total[15m]) > 0 or absent(inv64_requests_total)", "window": "15m", "dedup": "alertname", "runbook": "ops/RUNBOOK.md#telemetry"},
+    {"id": "INV64-A10", "class": "crypto", "severity": "SECURITY", "owner_role": "inv64-security-contact", "route": "page",
+     "expr": "increase(inv64_crypto_failures_total[10m]) > 0", "window": "10m", "dedup": "kind", "runbook": "ops/INCIDENT_RESPONSE.md#key-compromise"}
+  ],
+  "suppression": {"requires": ["reason", "owner", "expires (<= 7 days)"], "audited": true, "active": []}
+}

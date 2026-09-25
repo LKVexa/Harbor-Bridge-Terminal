@@ -1,0 +1,179 @@
+{
+  "$id": "urn:pk:PK_BRANCH_MATRIX:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Canonical form: UTF-8 JSON, sorted keys, no whitespace, integers only; entries sorted by interface; integrity.entries_digest = sha256(canonical(entries)). Unknown fields are rejected. Additive fields require a new minor schema file; any removal/reinterpretation requires /2.",
+  "properties": {
+    "contract": {
+      "const": "PK_BRANCH_MATRIX/1"
+    },
+    "entries": {
+      "items": {
+        "additionalProperties": false,
+        "else": {
+          "not": {
+            "required": [
+              "shim_id"
+            ]
+          }
+        },
+        "if": {
+          "properties": {
+            "classification": {
+              "const": "shimmable"
+            }
+          }
+        },
+        "properties": {
+          "classification": {
+            "enum": [
+              "identical",
+              "shimmable",
+              "divergent"
+            ]
+          },
+          "deprecation": {
+            "additionalProperties": false,
+            "properties": {
+              "announced": {
+                "type": "string"
+              },
+              "end_of_support": {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              "migration": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "end_of_support"
+            ],
+            "type": "object"
+          },
+          "interface": {
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9-]*:[a-z][a-z0-9-]*(/[a-z][a-z0-9-]*)?$",
+            "type": "string"
+          },
+          "proof_ref": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "shim_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_version": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "target_version": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "interface",
+          "classification",
+          "source_version",
+          "target_version",
+          "rationale"
+        ],
+        "then": {
+          "required": [
+            "shim_id",
+            "proof_ref"
+          ]
+        },
+        "type": "object"
+      },
+      "maxItems": 4096,
+      "minItems": 1,
+      "type": "array"
+    },
+    "generated_at": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "type": "string"
+    },
+    "integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "entries_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entries_digest"
+      ],
+      "type": "object"
+    },
+    "producer": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "source_baseline": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "type": "object"
+    },
+    "target_baseline": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "contract",
+    "revision",
+    "source_baseline",
+    "target_baseline",
+    "generated_at",
+    "producer",
+    "entries",
+    "integrity"
+  ],
+  "title": "PK_BRANCH_MATRIX/1",
+  "type": "object"
+}

@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv68-resource-packing"
+dynamic = ["version"]
+description = "INV-68 resource packing: deterministic multi-dimensional first-fit-decreasing placement with headroom, no memory overcommit, fragmentation reporting, and an authenticated, audited service boundary."
+readme = "README.md"
+requires-python = ">=3.10"
+# The owner has not chosen a distribution license (LICENSING.md). Do not redistribute.
+license = { text = "LicenseRef-Proprietary-Pending" }
+authors = [{ name = "LinearFinance.org Research Division (owner: David Paul Russell)" }]
+maintainers = [{ name = "inv68 accountable owner (role; see ops/owners.json -- unassigned)" }]
+dependencies = []  # the runtime is stdlib-only
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: Other/Proprietary License",
+    "Private :: Do Not Upload",
+]
+
+[project.optional-dependencies]
+# Evidence tooling only (schemas_check). Exact pins: requirements-dev.lock.
+dev = ["jsonschema>=4.18"]
+# pk_core is required only by contract.py/component.py. Distribution, version and digest are unknown
+# (compatibility.json pk_core.pin = null); it is deliberately NOT pinned to a guess.
+conformance = []
+
+[project.scripts]
+inv68-release-gate = "inv68_resource_packing.release_gate:main"
+inv68-audit = "inv68_resource_packing.audit:main"
+inv68-preflight = "inv68_resource_packing.tools.preflight:main"
+
+[tool.setuptools]
+package-dir = { "inv68_resource_packing" = "." }
+packages = ["inv68_resource_packing", "inv68_resource_packing.tools", "inv68_resource_packing.tests"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
+
+[tool.setuptools.package-data]
+inv68_resource_packing = ["VERSION", "*.md", "NOTICE", "CODEOWNERS", "CHECKLIST.json", "COMPONENTS_STATUS.json",
+                          "compatibility.json", "ERRORS.json", "requirements-dev.lock", "schemas/*", "bench/*.json", "examples/*.json",
+                          "ops/*", "dashboards/*.json", "provenance/*.json", "source/*", "tools/*.sh", "tools/*.ps1"]
+"inv68_resource_packing.tests" = ["fixtures/*.json", "fixtures/adjacent/*.json"]

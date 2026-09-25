@@ -1,0 +1,65 @@
+{
+ "schema": "PK_ESCALATION/1",
+ "component": "INV-72",
+ "levels": [
+  {
+   "sev": "SEV1",
+   "examples": [
+    "cross-tenant partition share",
+    "placement below memory requirement",
+    "audit chain broken"
+   ],
+   "page": "inv72-oncall immediately",
+   "ack_min": 5,
+   "escalate_after_min": 15,
+   "to": [
+    "inv72-service-owner",
+    "inv72-security-owner"
+   ],
+   "exec_trigger": "any isolation breach"
+  },
+  {
+   "sev": "SEV2",
+   "examples": [
+    "all decisions refused (inventory stale)",
+    "admission shedding > 20% for 15 min"
+   ],
+   "page": "inv72-oncall",
+   "ack_min": 15,
+   "escalate_after_min": 60,
+   "to": [
+    "inv72-service-owner"
+   ]
+  },
+  {
+   "sev": "SEV3",
+   "examples": [
+    "degraded offline-grace decisions",
+    "p99 above threshold"
+   ],
+   "page": "ticket",
+   "ack_min": 240,
+   "escalate_after_min": 1440,
+   "to": [
+    "inv72-service-owner"
+   ]
+  },
+  {
+   "sev": "SEV4",
+   "examples": [
+    "telemetry sink failures"
+   ],
+   "page": "ticket",
+   "ack_min": 1440,
+   "escalate_after_min": 4320,
+   "to": [
+    "inv72-service-owner"
+   ]
+  }
+ ],
+ "handoff": "incident commander hands off only with a written state summary in the incident doc; security-relevant incidents always add inv72-security-owner",
+ "tabletop": {
+  "status": "NOT_RUN",
+  "reason": "no named people to exercise (all roles UNASSIGNED)"
+ }
+}

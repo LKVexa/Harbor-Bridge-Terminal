@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_SFI_CONFIG:1",
+  "title": "Declarative configuration (full semantic rules in production/config.py)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_SFI_CONFIG/1"
+    },
+    "environment": {
+      "type": "string"
+    },
+    "site": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "region_base": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "region_log2": {
+          "type": "integer",
+          "minimum": 12,
+          "maximum": 31
+        },
+        "function_import_allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[^.]+\\..+$"
+          }
+        },
+        "allow_memory_grow": {
+          "type": "boolean"
+        },
+        "allow_memory_export": {
+          "type": "boolean"
+        },
+        "require_imported_memory": {
+          "type": "boolean"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_module_bytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 67108864
+        },
+        "max_functions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "max_function_body_bytes": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 16777216
+        },
+        "max_total_instructions": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 50000000
+        },
+        "deadline_seconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 60
+        }
+      }
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_concurrent": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "max_per_tenant": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "max_queue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    },
+    "trust": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "descriptor_ttl_seconds": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "trust_max_age_seconds": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        "seal_key_ref": {
+          "type": "string",
+          "pattern": "^(env|file):.+"
+        },
+        "idp_key_ref": {
+          "type": "string",
+          "pattern": "^(env|file):.+"
+        }
+      }
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "node-v8"
+        },
+        "node_major": {
+          "type": "integer",
+          "minimum": 18,
+          "maximum": 99
+        },
+        "call_timeout_seconds": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 120
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log_level": {
+          "enum": [
+            "debug",
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "trace_sample_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400
+        }
+      }
+    }
+  }
+}

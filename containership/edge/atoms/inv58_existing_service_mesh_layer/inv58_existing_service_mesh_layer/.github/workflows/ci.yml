@@ -1,0 +1,37 @@
+name: inv58-ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv58_existing_service_mesh_layer}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install "jsonschema>=4.18,<5"
+      - run: python -B -m compileall -q inv58_existing_service_mesh_layer
+      - run: python -B inv58_existing_service_mesh_layer/tools/run_tests.py
+      - run: python -B -O inv58_existing_service_mesh_layer/tools/run_tests.py
+      - run: python -B inv58_existing_service_mesh_layer/tools/rtm.py --check
+      - run: python -B inv58_existing_service_mesh_layer/tools/gen_fixtures.py --check
+      - run: python -B inv58_existing_service_mesh_layer/tools/bootstrap.py --dev-keys
+  gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv58_existing_service_mesh_layer}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install "jsonschema>=4.18,<5"
+      # exit 3 (NO_GO) fails publication; only GO (0) may publish
+      - run: python -B inv58_existing_service_mesh_layer/tools/release_gate.py
+        env: {INV58_RELEASE_SIGNING_KEY: "${{ secrets.INV58_RELEASE_SIGNING_KEY }}"}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: acceptance-record, path: inv58_existing_service_mesh_layer/release/ACCEPTANCE_RECORD.json}

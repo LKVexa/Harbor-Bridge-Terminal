@@ -1,0 +1,90 @@
+# INV-25 CI / release pipeline (work item 5).
+# Action references are pinned to full commit SHAs; the SHAs below MUST be verified by
+# @inv25-release before first use (PENDING) - replace if they do not match the tagged releases.
+name: inv25
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  schedule:
+    - cron: "17 3 * * 1"   # weekly long fuzz + vulnerability scan
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        mode: ["", "-O"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with: {path: inv25_microvm_devices}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with: {python-version: "${{ matrix.python }}"}
+      - name: Unit, contract, security, fault, concurrency, fuzz-smoke, perf-quick
+        run: python ${{ matrix.mode }} -m unittest discover -s inv25_microvm_devices/tests -v
+      - name: RTM linkage
+        run: python inv25_microvm_devices/tools/rtm.py check
+
+  pk-integration:
+    # Enabled once the pk_core source is declared (docs/pk_core.md, W-0006).
+    if: ${{ vars.PK_CORE_DECLARED == 'true' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {path: inv25_microvm_devices}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with: {python-version: "3.12"}
+      - run: pip install --require-hashes -r inv25_microvm_devices/requirements.lock
+      - run: python -m inv25_microvm_devices.pk_bootstrap
+      - run: python -m pk_core list | grep -q INV-25
+      - run: python -m pk_core run INV-25 --evidence pk/pk_evidence.jsonl
+      - run: python -m pk_core gate INV-25 --out pk/PK_GATE_RESULTS.json
+      - run: python -m pk_core verify pk/pk_evidence.jsonl
+      - run: python -O -m unittest inv25_microvm_devices.tests.test_component
+
+  scheduled-security:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {path: inv25_microvm_devices}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with: {python-version: "3.12"}
+      - run: INV25_FUZZ_ITER=200000 python -m unittest inv25_microvm_devices/tests/test_fuzz.py
+        working-directory: .
+      - run: pip install pip-audit==2.7.3 && pip-audit -r inv25_microvm_devices/requirements.lock
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test]
+    runs-on: ubuntu-24.04
+    environment: release          # protected environment: required reviewers = @inv25-release
+    permissions:
+      contents: write
+      id-token: write             # build provenance attestation
+      attestations: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {path: inv25_microvm_devices}
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with: {python-version: "3.12"}
+      - name: Build (reproducibility asserted), manifest, SBOM
+        run: python inv25_microvm_devices/tools/release.py build --dist dist
+        env: {INV25_BUILDER: "github-actions/${{ github.run_id }}"}
+      - name: Gate (must be GO)
+        run: |
+          export INV25_ARCHIVE_DIGEST=$(python -c "import json;print(json.load(open('dist/release-manifest.json'))['archive']['sha256'])")
+          python inv25_microvm_devices/tools/gate.py run --require-go
+          python inv25_microvm_devices/tools/gate.py verify
+        env:
+          CI: "true"
+          INV25_RELEASE: "1"
+          INV25_BUILD_ID: "${{ github.run_id }}"
+          INV25_GATE_KEY: "${{ secrets.INV25_GATE_KEY }}"   # never exposed to pull_request jobs
+      - uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2  # v2.2.3
+        with: {subject-path: "dist/*.tar.gz"}

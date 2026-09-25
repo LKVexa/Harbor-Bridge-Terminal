@@ -1,0 +1,174 @@
+{
+ "schema": "PK_WAIVER_REGISTER/1",
+ "component": "INV-72",
+ "max_duration_days": {
+  "low": 180,
+  "medium": 90,
+  "high": 30,
+  "security": 30
+ },
+ "renewal_authority": {
+  "security": "inv72-security-owner + pk-architecture-board",
+  "other": "inv72-service-owner"
+ },
+ "expiry_behavior": "expired or unapproved entries block tools/release_gate.py (verdict NO_GO)",
+ "entries": [
+  {
+   "id": "W-001",
+   "category": "exception",
+   "controls": [
+    "INV-72-C009",
+    "INV-72-C010",
+    "INV-72-C098"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "no accountable people named; ADR and reviews need them",
+   "risk": "high",
+   "compensating": "governance_check fails closed on placeholders",
+   "owner": "inv72-service-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2026-10-23",
+   "remediation": "name holders in ops/OWNERS.json; approve ADR-0001",
+   "status": "pending_approval"
+  },
+  {
+   "id": "W-002",
+   "category": "exception",
+   "controls": [
+    "INV-72-C030",
+    "INV-72-C083",
+    "INV-72-C084",
+    "INV-72-C089"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "GAP-02, GAP-11, INV-68, INV-69 not in this archive; CI matrix not executed",
+   "risk": "high",
+   "compensating": "contract-level adapters + integration tests; declared CI matrix",
+   "owner": "inv72-service-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2026-10-23",
+   "remediation": "certify against real neighbours; run .github/workflows/ci.yml",
+   "status": "pending_approval"
+  },
+  {
+   "id": "W-003",
+   "category": "exception",
+   "controls": [
+    "INV-72-C031",
+    "INV-72-C043",
+    "INV-72-C046"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "GPU passthrough / local-inference runtime, drivers and execution isolation are owned by the host and GAP-11; nothing to pin here",
+   "risk": "high",
+   "compensating": "APPROVED_TECH lists the unpinned host items explicitly",
+   "owner": "inv72-security-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2026-10-23",
+   "remediation": "architecture board selects and pins host stack",
+   "status": "pending_approval"
+  },
+  {
+   "id": "W-004",
+   "category": "exception",
+   "controls": [
+    "INV-72-C045",
+    "INV-72-C047"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "HMAC integrity only; no asymmetric signing, KMS or at-rest encryption available in-archive",
+   "risk": "security",
+   "compensating": "digest+HMAC on inventory, hash-chained journal and audit, SHA256SUMS manifest",
+   "owner": "inv72-security-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2026-10-23",
+   "remediation": "host KMS + signing service; encrypt journal at rest",
+   "status": "pending_approval"
+  },
+  {
+   "id": "W-005",
+   "category": "technical_debt",
+   "controls": [
+    "INV-72-C062",
+    "INV-72-C063",
+    "INV-72-C070",
+    "INV-72-C088"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "perf thresholds PROPOSED; no reference hardware; soak 60 s not 24 h; p99 at MAX_INVENTORY straddles the 10 ms SLO",
+   "risk": "medium",
+   "compensating": "perf gate refuses quick results; bound-checked inputs",
+   "owner": "inv72-service-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2026-12-22",
+   "remediation": "run bench on perf-reference runner; approve thresholds; vectorise device validation",
+   "status": "pending_approval",
+   "test_coverage": "bench/perf_suite.py"
+  },
+  {
+   "id": "W-006",
+   "category": "exception",
+   "controls": [
+    "INV-72-C068"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "power/thermal measurement needs edge hardware",
+   "risk": "low",
+   "compensating": "matcher adds no accelerator load; CPU cost measured",
+   "owner": "inv72-service-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2027-03-22",
+   "remediation": "measure on a far-edge reference node",
+   "status": "pending_approval"
+  },
+  {
+   "id": "W-007",
+   "category": "exception",
+   "controls": [
+    "INV-72-C090",
+    "INV-72-C100",
+    "INV-72-C096",
+    "INV-72-C097"
+   ],
+   "scope": "release 4.3.0",
+   "rationale": "release approval, runbook drills and incident exercises require named humans",
+   "risk": "high",
+   "compensating": "release gate fails closed; falsifier proves GO reachable",
+   "owner": "inv72-service-owner",
+   "approver": null,
+   "opened": "2026-09-23",
+   "expires": "2026-10-23",
+   "remediation": "approver named and signs release; drills recorded",
+   "status": "pending_approval"
+  }
+ ],
+ "deprecated_behaviors": [
+  {
+   "id": "D-001",
+   "behavior": "match(reserve=True) mutating Device.tenants as the ownership record",
+   "replacement": "ReservationStore / AcceleratorService.request",
+   "announced": "4.3.0",
+   "removal_target": "5.0.0"
+  }
+ ],
+ "technical_debt": [
+  {
+   "id": "TD-1",
+   "item": "device validation dominates decide() cost at large inventories",
+   "owner": "inv72-service-owner",
+   "due": "2026-12-22"
+  },
+  {
+   "id": "TD-2",
+   "item": "partition memory is not subdivided; a shared partition admits same-tenant jobs regardless of remaining slice memory",
+   "owner": "inv72-service-owner",
+   "due": "2026-12-22"
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "PK_MICROVM_DASHBOARD/1",
+  "title": "INV-24 MicroVM runtime — overview",
+  "panels": [
+    {"title": "Instances by state", "expr": "sum by (state) (microvm_instances)"},
+    {"title": "Cold boot p50/p95/p99", "expr": "histogram_quantile(0.99, sum by (le) (rate(microvm_boot_seconds_bucket[5m])))"},
+    {"title": "Boot budget breaches", "expr": "sum(rate(microvm_boot_budget_breaches_total[5m]))"},
+    {"title": "Admission outcomes by code", "expr": "sum by (outcome, code) (rate(microvm_admission_decisions_total[5m]))"},
+    {"title": "Admission queue depth", "expr": "microvm_admission_queue_depth"},
+    {"title": "Device refusals", "expr": "sum by (device) (rate(microvm_device_refusals_total[5m]))"},
+    {"title": "Dependency health", "expr": "microvm_dependency_up"},
+    {"title": "Cleanup failures", "expr": "sum(rate(microvm_cleanup_total{outcome=\"failed\"}[5m]))"},
+    {"title": "Build info", "expr": "microvm_build_info"}
+  ]
+}

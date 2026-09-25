@@ -1,0 +1,185 @@
+{
+  "schema": "PK_ALERT_RULES/1",
+  "component": "INV-69",
+  "dedup_window_s": 300,
+  "storm_guard": "max 1 page per class per 15 min; others grouped",
+  "maintenance": "suppress by class via silence with owner+expiry recorded in WAIVERS.json",
+  "rules": [
+    {
+      "class": "ordinary_load",
+      "id": "A-LOAD-HIGH",
+      "rule": {
+        "type": "ratio_ge",
+        "num": "admission.active",
+        "den": "admission.max_active",
+        "value": 0.8
+      },
+      "severity": "SEV4",
+      "runbook": "ops/RUNBOOK.md#rb-dependency",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "info: high but healthy load; no page"
+    },
+    {
+      "class": "degradation",
+      "id": "A-SATURATION",
+      "rule": {
+        "type": "ge",
+        "metric": "admission.shed",
+        "value": 1
+      },
+      "severity": "SEV3",
+      "runbook": "ops/RUNBOOK.md#rb-dependency",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "admission shedding (AGT-CAP-003) \u2014 C069 saturation"
+    },
+    {
+      "class": "degradation",
+      "id": "A-QUEUE-AGE",
+      "rule": {
+        "type": "ge",
+        "metric": "admission.oldest_wait_s",
+        "value_from_config": "health.queue_age_warning_s"
+      },
+      "severity": "SEV3",
+      "runbook": "ops/RUNBOOK.md#rb-dependency",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "queue age beyond C052 threshold"
+    },
+    {
+      "class": "policy_rejection",
+      "id": "A-DENY-SPIKE",
+      "rule": {
+        "type": "ratio_ge",
+        "num": "refusals",
+        "den": "steps",
+        "value": 0.5,
+        "min_den": 20
+      },
+      "severity": "SEV3",
+      "runbook": "ops/RUNBOOK.md#rb-approval-bypass",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "policy denials > 50% of steps \u2014 ordinary policy, not a system failure"
+    },
+    {
+      "class": "dependency_failure",
+      "id": "A-DEP-FAIL",
+      "rule": {
+        "type": "code_ge",
+        "metric": "failures",
+        "codes": [
+          "AGT-DEP-001",
+          "AGT-DEP-002",
+          "AGT-TRU-001",
+          "AGT-SBX-001"
+        ],
+        "value": 3
+      },
+      "severity": "SEV2",
+      "runbook": "ops/RUNBOOK.md#rb-dependency",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "dependency/trust failures"
+    },
+    {
+      "class": "attack",
+      "id": "A-APPROVAL-MISUSE",
+      "rule": {
+        "type": "code_ge",
+        "metric": "approval_refusals",
+        "codes": [
+          "AGT-APR-002"
+        ],
+        "value": 3
+      },
+      "severity": "SEV2",
+      "runbook": "ops/RUNBOOK.md#rb-approval-bypass",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "repeated self/irrelevant approval attempts"
+    },
+    {
+      "class": "attack",
+      "id": "A-MALFORMED",
+      "rule": {
+        "type": "code_ge",
+        "metric": "refusals",
+        "codes": [
+          "AGT-VAL-002",
+          "AGT-AUTHZ-001"
+        ],
+        "value": 10
+      },
+      "severity": "SEV3",
+      "runbook": "ops/RUNBOOK.md#rb-approval-bypass",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "malformed/oversized input or allowlist probing"
+    },
+    {
+      "class": "attack",
+      "id": "A-INTEGRITY",
+      "rule": {
+        "type": "code_ge",
+        "metric": "failures",
+        "codes": [
+          "AGT-INT-001",
+          "AGT-INT-002",
+          "AGT-INT-003"
+        ],
+        "value": 1
+      },
+      "severity": "SEV1",
+      "runbook": "ops/RUNBOOK.md#rb-audit-chain",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "integrity failure (chain, artifact, fencing)"
+    },
+    {
+      "class": "software_defect",
+      "id": "A-INTERNAL",
+      "rule": {
+        "type": "code_ge",
+        "metric": "failures",
+        "codes": [
+          "AGT-INTERNAL-001"
+        ],
+        "value": 1
+      },
+      "severity": "SEV2",
+      "runbook": "ops/RUNBOOK.md#rb-bad-release",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "unknown exception translated to internal error"
+    },
+    {
+      "class": "software_defect",
+      "id": "A-SEALED",
+      "rule": {
+        "type": "status_reason",
+        "reason": "HLT-SEALED"
+      },
+      "severity": "SEV2",
+      "runbook": "ops/RUNBOOK.md#rb-runaway",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "audit capacity sealed an agent"
+    },
+    {
+      "class": "degradation",
+      "id": "A-STALL",
+      "rule": {
+        "type": "status_reason",
+        "reason": "HLT-STALL-CRIT"
+      },
+      "severity": "SEV3",
+      "runbook": "ops/RUNBOOK.md#rb-runaway",
+      "owner": "inv69-oncall",
+      "escalation": "ops/ESCALATION.json",
+      "description": "run stalled beyond critical threshold"
+    }
+  ]
+}

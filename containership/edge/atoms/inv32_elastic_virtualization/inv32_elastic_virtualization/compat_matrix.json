@@ -1,0 +1,138 @@
+{
+ "schema": "PK_INV32_COMPAT_MATRIX/1",
+ "version": "2026-09-22.1",
+ "columns": [
+  "inv32",
+  "provider",
+  "hypervisor",
+  "pk_core",
+  "python",
+  "guest_agent",
+  "state_store",
+  "schema_api",
+  "os_kernel",
+  "cpu_arch"
+ ],
+ "status_values": [
+  "supported",
+  "conditional",
+  "deprecated",
+  "experimental",
+  "unsupported"
+ ],
+ "rows": [
+  {
+   "inv32": "4.3.x",
+   "provider": "fake-hyperflux-1.x",
+   "hypervisor": "n/a (reference)",
+   "pk_core": "absent",
+   "python": ">=3.10,<3.14",
+   "guest_agent": "n/a",
+   "state_store": "PK_INV32_STORE/1 (local fs)",
+   "schema_api": "PK_RESOURCE_ADJUSTMENT/2, PK_RESOURCE_AUDIT/1, PK_HOST_RESOURCES/1",
+   "os_kernel": "Linux (fcntl required)",
+   "cpu_arch": "any",
+   "status": "supported",
+   "scope": "test/reference only \u2014 never production control",
+   "features": [
+    "memory_grow",
+    "memory_reclaim",
+    "vcpu_hotplug",
+    "free_page_reporting",
+    "fencing_tokens",
+    "idempotency_keys"
+   ],
+   "limitations": [
+    "no real hypervisor"
+   ],
+   "tested_by": "CI unit/contract/fault suites"
+  },
+  {
+   "inv32": "4.3.x",
+   "provider": "fake-hyperflux-1.x",
+   "hypervisor": "n/a",
+   "pk_core": ">=1.0,<2.0",
+   "python": ">=3.10,<3.14",
+   "guest_agent": "n/a",
+   "state_store": "PK_INV32_STORE/1",
+   "schema_api": "same",
+   "os_kernel": "Linux",
+   "cpu_arch": "any",
+   "status": "conditional",
+   "scope": "inventory adapter (component.py) \u2014 requires pk_core artifact (BLOCKED: not supplied)",
+   "features": [],
+   "limitations": [
+    "pk_core pin/hash unknown"
+   ],
+   "tested_by": "tests/test_component.py (skips without pk_core)"
+  },
+  {
+   "inv32": "4.3.x",
+   "provider": "HyperFlux (any)",
+   "hypervisor": "any",
+   "pk_core": "any",
+   "python": "any",
+   "guest_agent": "any",
+   "state_store": "any",
+   "schema_api": "any",
+   "os_kernel": "any",
+   "cpu_arch": "any",
+   "status": "unsupported",
+   "scope": "production",
+   "features": [],
+   "limitations": [
+    "BLOCKED: HyperFlux spec not pinned (ADR-0001); adapter fails closed"
+   ],
+   "tested_by": "test_hyperflux_shell_fails_closed_without_pinned_spec"
+  },
+  {
+   "inv32": "4.3.x",
+   "provider": "any",
+   "hypervisor": "any",
+   "pk_core": "any",
+   "python": "<3.10",
+   "guest_agent": "any",
+   "state_store": "any",
+   "schema_api": "any",
+   "os_kernel": "any",
+   "cpu_arch": "any",
+   "status": "unsupported",
+   "scope": "all",
+   "features": [],
+   "limitations": [
+    "bootstrap exits 3"
+   ],
+   "tested_by": "bootstrap._check_runtime"
+  },
+  {
+   "inv32": "4.2.0",
+   "provider": "none",
+   "hypervisor": "none",
+   "pk_core": "sibling checkout",
+   "python": ">=3.10",
+   "guest_agent": "n/a",
+   "state_store": "memory only",
+   "schema_api": "PK_RESOURCE_ADJUSTMENT/2 (+v1 revert)",
+   "os_kernel": "any",
+   "cpu_arch": "any",
+   "status": "deprecated",
+   "scope": "reference model only",
+   "features": [],
+   "limitations": [
+    "no durability/authz"
+   ],
+   "tested_by": "tests/test_model.py"
+  }
+ ],
+ "mixed_version": {
+  "peer_negotiation": "N and N-1 minor within the same schema major interoperate; majors must match (request major 2).",
+  "rolling_upgrade_order": [
+   "lease/state schema (none in 4.3)",
+   "controllers one host at a time",
+   "provider adapters"
+  ],
+  "new_schema_write_rule": "a controller writes a new schema major only after every reader in the host group runs a version that reads it (N-1 must read N before N writes N).",
+  "downgrade": "4.3 -> 4.2 is state-lossy (4.2 has no durable store); allowed only with store preserved for re-upgrade.",
+  "activation_rejects_outside_policy": true
+ }
+}

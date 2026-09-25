@@ -1,0 +1,73 @@
+{
+ "component": 51,
+ "title": "Metrics exporter",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "metrics endpoint/exporter implementation",
+   "state": "IMPLEMENTED",
+   "spec": "production/metrics.py::SCHEMA",
+   "modules": [
+    "production/metrics.py::Registry.render",
+    "production/metrics.py::wsgi_app",
+    "production/metrics.py::InstrumentedPool"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_exporter_exposition_and_wsgi"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "stable metric naming and units",
+   "state": "IMPLEMENTED",
+   "spec": "production/metrics.py::CATALOG",
+   "modules": [
+    "production/metrics.py::validate_catalog"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_naming_and_units"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "histograms/buckets for latency and lease age",
+   "state": "IMPLEMENTED",
+   "spec": "production/metrics.py::LATENCY_BUCKETS",
+   "modules": [
+    "production/metrics.py::Registry.observe",
+    "production/metrics.py::InstrumentedPool.tick"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_histograms_latency_and_lease_age"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "label/cardinality governance",
+   "state": "IMPLEMENTED",
+   "spec": "production/metrics.py::CATALOG",
+   "modules": [
+    "production/metrics.py::Registry._key"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_label_cardinality_governance",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialExhaustion.test_metrics_cardinality_bounded"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "scrape/export failure and self-health metrics",
+   "state": "IMPLEMENTED",
+   "spec": "production/metrics.py::Registry.scrape",
+   "modules": [
+    "production/metrics.py::Registry.scrape"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_scrape_failure_self_health",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.MetricsTests.test_tick_error_counted"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "WSGI app tested in-process; no socket bound. Scrape by a real Prometheus not demonstrated (no live env)."
+}

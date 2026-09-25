@@ -1,0 +1,53 @@
+# INV-27 CI (MC-090). Declared, NOT executed on hosted runners in this pass (W-CI).
+# The same lanes were run locally with tools/ci.py on CPython 3.11 / Linux x86_64.
+name: inv27
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv27_unikernel_execution }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: python -B inv27_unikernel_execution/tests/run_all.py
+      - run: python -O -B inv27_unikernel_execution/tests/run_all.py
+      - run: python -B -m inv27_unikernel_execution.tools.lint
+      - run: python -B -m inv27_unikernel_execution.tools.deps_check
+      - run: python -B -m inv27_unikernel_execution.tools.coverage_check
+      - run: python -B -m inv27_unikernel_execution.tools.rtm --check
+      - run: python -B -m inv27_unikernel_execution.tools.mc_status --check
+      - run: python -B -m inv27_unikernel_execution.tools.manifest --verify
+  fuzz-long:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv27_unikernel_execution }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: INV27_FUZZ_ITERS=50000 python -B inv27_unikernel_execution/tests/test_parser.py Fuzz
+  vmm-e2e:
+    runs-on: [self-hosted, kvm, qemu-8]      # W-VMM: needs a host with an approved QEMU/Firecracker
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv27_unikernel_execution }
+      - run: echo "real-VMM end-to-end suite not written yet; needs a host with an approved VMM (W-VMM)" && exit 1
+  perf-gate:
+    runs-on: [self-hosted, perf-reference]
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv27_unikernel_execution }
+      - run: python -B inv27_unikernel_execution/bench/perf_suite.py
+      - run: python -B -m inv27_unikernel_execution.tools.perf_gate
+  release-gate:
+    needs: [test, perf-gate]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv27_unikernel_execution }
+      - run: python -B -m inv27_unikernel_execution.tools.release_gate

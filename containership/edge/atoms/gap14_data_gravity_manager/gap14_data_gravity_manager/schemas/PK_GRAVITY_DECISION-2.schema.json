@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_GRAVITY_DECISION:2",
+  "title": "PK_GRAVITY_DECISION/2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "executable",
+    "recommendation",
+    "provenance",
+    "sig"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_GRAVITY_DECISION/2"
+    },
+    "executable": {
+      "type": "boolean"
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direction",
+        "to",
+        "cost",
+        "cost_breakdown",
+        "reason_code",
+        "options",
+        "eliminated",
+        "elimination_details"
+      ],
+      "properties": {
+        "direction": {
+          "enum": [
+            "move-compute",
+            "move-data",
+            "move-data-partial",
+            "replicate",
+            "none"
+          ]
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+        },
+        "cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cost_breakdown": {
+          "type": "object",
+          "required": [
+            "kind",
+            "from",
+            "to"
+          ]
+        },
+        "reason_code": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "direction",
+              "to",
+              "cost",
+              "cost_breakdown"
+            ],
+            "properties": {
+              "direction": {
+                "enum": [
+                  "move-compute",
+                  "move-data",
+                  "move-data-partial",
+                  "replicate",
+                  "none"
+                ]
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+              },
+              "cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cost_breakdown": {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "from",
+                  "to"
+                ]
+              }
+            }
+          }
+        },
+        "eliminated": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "elimination_details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "direction",
+              "code",
+              "reason"
+            ],
+            "properties": {
+              "direction": {
+                "enum": [
+                  "move-compute",
+                  "move-data",
+                  "move-data-partial",
+                  "replicate",
+                  "none"
+                ]
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "$ref": "PK_DECISION_PROVENANCE-1.schema.json"
+    },
+    "sig": {
+      "$ref": "PK_SIGNATURE-1.schema.json"
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seq",
+        "digest"
+      ],
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

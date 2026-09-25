@@ -1,0 +1,536 @@
+{
+ "element": "INV-42",
+ "version": "4.2.0",
+ "audit_date": "2026-09-22",
+ "count": 42,
+ "items": [
+  {
+   "id": "MC-001",
+   "severity": "blocker",
+   "component": "pk_core dependency and executable suite-level release gate",
+   "checks": [
+    "INV-42-C040",
+    "INV-42-C090",
+    "INV-42-C100"
+   ],
+   "detail": "pk_core is not bundled or declared by this archive. The three framework conformance tests therefore skip; production certification cannot be reproduced from this repository alone.",
+   "status_4_3_0": "implemented-blocked-external",
+   "evidence_4_3_0": "tools/certify.py (dev/certification profiles, hard-fail, API+version probe, evidence); SPEC_MANIFEST.json pk_core contract; CI gate job",
+   "external_dependency": "W-001: pk_core version/source/hash must be supplied by suite owner"
+  },
+  {
+   "id": "MC-002",
+   "severity": "high",
+   "component": "MASTER.md source/master prompt artifact",
+   "checks": [
+    "INV-42-C020",
+    "INV-42-C098"
+   ],
+   "detail": "README 4.1.0 claimed this file was carried verbatim, but the archive does not contain it. 4.2.0 corrects the claim but cannot reconstruct a verbatim missing source artifact.",
+   "status_4_3_0": "waived",
+   "evidence_4_3_0": "NFR.md SHALL requirements stand in; not reconstructed (would be fabrication)",
+   "external_dependency": "W-002"
+  },
+  {
+   "id": "MC-003",
+   "severity": "high",
+   "component": "accountable owner and escalation metadata",
+   "checks": [
+    "INV-42-C009",
+    "INV-42-C097"
+   ],
+   "detail": "No owner, on-call, escalation target, or support contact is present.",
+   "status_4_3_0": "partial-waived",
+   "evidence_4_3_0": "OWNERS.yaml (accountable owner, escalation ladder, support hours)",
+   "external_dependency": "W-003: on-call/secondary/security contact TBD"
+  },
+  {
+   "id": "MC-004",
+   "severity": "high",
+   "component": "requirements traceability matrix",
+   "checks": [
+    "INV-42-C011",
+    "INV-42-C020",
+    "INV-42-C090"
+   ],
+   "detail": "No machine-readable mapping from every checklist requirement to concrete code/test/evidence exists. The component adapter exercises selected items only.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "tools/traceability.py + TRACEABILITY.json (100/100 mapped, evidence paths validated, CI --check, test_operations)"
+  },
+  {
+   "id": "MC-005",
+   "severity": "high",
+   "component": "adjacent-layer adapters and integration tests",
+   "checks": [
+    "INV-42-C030",
+    "INV-42-C083",
+    "INV-42-C089"
+   ],
+   "detail": "No tests exercise INV-41, INV-13, INV-11, PLN-03, real ABI/WIT boundaries, process transfer, reconnect, or degraded control plane behavior.",
+   "status_4_3_0": "implemented-pending-external",
+   "evidence_4_3_0": "adapters.py (INV-41 source, INV-13 ABI boundary), tests/test_integration.py (process transfer, degraded control plane, schema conformance), wit/inv42-descriptor.wit",
+   "external_dependency": "W-006: real sibling-layer builds"
+  },
+  {
+   "id": "MC-006",
+   "severity": "high",
+   "component": "pinned implementation/specification manifest",
+   "checks": [
+    "INV-42-C031",
+    "INV-42-C093"
+   ],
+   "detail": "Scoped descriptors/file descriptors, sockets, WIT imports, pk_core, and related protocol/runtime versions are not pinned in a dependency/specification manifest.",
+   "status_4_3_0": "implemented-pending-external",
+   "evidence_4_3_0": "SPEC_MANIFEST.json (protocols, runtime, adjacent layers, tooling)",
+   "external_dependency": "W-001 for pk_core pin"
+  },
+  {
+   "id": "MC-007",
+   "severity": "high",
+   "component": "reproducible packaging and dependency metadata",
+   "checks": [
+    "INV-42-C031",
+    "INV-42-C040",
+    "INV-42-C093"
+   ],
+   "detail": "No pyproject/setup/lock/environment manifest defines installation, Python bounds, or the pk_core dependency. Compatibility is documented but not enforced.",
+   "status_4_3_0": "implemented-pending-external",
+   "evidence_4_3_0": "pyproject.toml (Python bounds, stdlib-only runtime, extras), requirements-release.txt hash policy",
+   "external_dependency": "W-001; owner generates tooling hashes"
+  },
+  {
+   "id": "MC-008",
+   "severity": "high",
+   "component": "CI pipeline and mandatory release checks",
+   "checks": [
+    "INV-42-C070",
+    "INV-42-C090",
+    "INV-42-C098",
+    "INV-42-C100"
+   ],
+   "detail": "No CI workflow runs unit, optimized-mode, integration, fuzz, benchmark, security, coverage, or pk_core gates on change/release.",
+   "status_4_3_0": "implemented-pending-external",
+   "evidence_4_3_0": ".github/workflows/ci.yml (matrix tests, -O, extended fuzz, traceability, coverage, perf, certification, release build/verify, exit gate)",
+   "external_dependency": "needs first CI run (W-006)"
+  },
+  {
+   "id": "MC-009",
+   "severity": "medium",
+   "component": "license and notice files",
+   "checks": [
+    "INV-42-C094",
+    "INV-42-C100"
+   ],
+   "detail": "This archive contains no LICENSE/NOTICE, so distribution terms are not self-contained.",
+   "status_4_3_0": "partial-waived",
+   "evidence_4_3_0": "LICENSE (all-rights-reserved holding notice), NOTICE",
+   "external_dependency": "W-008: owner licence choice"
+  },
+  {
+   "id": "MC-010",
+   "severity": "high",
+   "component": "formal success/degraded/retryable/terminal failure taxonomy",
+   "checks": [
+    "INV-42-C014",
+    "INV-42-C025",
+    "INV-42-C051"
+   ],
+   "detail": "Typed local exceptions exist, but end-to-end operation outcomes, retryability, cancellation, timeout, and backpressure semantics are not specified.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "outcomes.py TAXONOMY/classify/RETRY_POLICY; OutcomeTaxonomyTest"
+  },
+  {
+   "id": "MC-011",
+   "severity": "medium",
+   "component": "deployment-context semantics",
+   "checks": [
+    "INV-42-C012",
+    "INV-42-C018",
+    "INV-42-C019"
+   ],
+   "detail": "Cloud/datacenter/near-edge/far-edge applicability, disconnected behavior, and precedence among security/residency/SLO/cost constraints are not defined.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "NFR.md deployment contexts, disconnected, precedence, unsupported"
+  },
+  {
+   "id": "MC-012",
+   "severity": "medium",
+   "component": "quantitative non-functional requirements",
+   "checks": [
+    "INV-42-C013",
+    "INV-42-C062",
+    "INV-42-C091"
+   ],
+   "detail": "Zero-error security SLOs are declared, but latency, availability, determinism, throughput, support, and tail-latency thresholds are not quantified.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "NFR.md quantitative table, PERF_THRESHOLDS.json, SLO.md"
+  },
+  {
+   "id": "MC-013",
+   "severity": "medium",
+   "component": "configuration applicability/provenance decision",
+   "checks": [
+    "INV-42-C035",
+    "INV-42-C036",
+    "INV-42-C037",
+    "INV-42-C038"
+   ],
+   "detail": "The runtime has almost no mutable configuration, but the repository does not formally mark these configuration requirements N/A or define provenance/atomic rollback if configuration is later introduced.",
+   "status_4_3_0": "implemented (N/A decision)",
+   "evidence_4_3_0": "NFR.md Configuration: no mutable config; rules if introduced"
+  },
+  {
+   "id": "MC-014",
+   "severity": "blocker",
+   "component": "artifact integrity, provenance, SBOM, and release signing",
+   "checks": [
+    "INV-42-C045",
+    "INV-42-C094",
+    "INV-42-C100"
+   ],
+   "detail": "No hashes/provenance attestations, SBOM, dependency verification, signed release manifest, or approved-version policy is included.",
+   "status_4_3_0": "implemented-blocked-external",
+   "evidence_4_3_0": "tools/release.py (reproducible archive, CycloneDX SBOM, SLSA provenance, Ed25519 signed manifest, verify incl. rebuild), RELEASE.md, KEY_MANAGEMENT.md",
+   "external_dependency": "W-004: HSM/KMS production key"
+  },
+  {
+   "id": "MC-015",
+   "severity": "blocker",
+   "component": "confidential authenticated transport profile",
+   "checks": [
+    "INV-42-C023",
+    "INV-42-C044",
+    "INV-42-C047"
+   ],
+   "detail": "PK_DESCRIPTOR/2 authenticates the descriptor itself but does not authenticate remote peers or encrypt bearer descriptors in transit. SECURITY.md explicitly delegates this to the containing transport.",
+   "status_4_3_0": "implemented-blocked-external",
+   "evidence_4_3_0": "transport.py TLS1.3 mTLS profile, identity pin, bounded frames; TransportTest (round-trip, rogue CA, plain socket); ADR-0003",
+   "external_dependency": "W-005: deployment PKI"
+  },
+  {
+   "id": "MC-016",
+   "severity": "high",
+   "component": "external identity/attestation/policy/key/time outage behavior",
+   "checks": [
+    "INV-42-C044",
+    "INV-42-C048"
+   ],
+   "detail": "No integration contract defines trust bootstrap or fail-closed behavior for unavailable external identity, attestation, policy, key, or time services.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "key_provider fail-closed (KeyUnavailable), NFR.md External services, KeyProviderTest, degraded-control-plane test"
+  },
+  {
+   "id": "MC-017",
+   "severity": "high",
+   "component": "tamper-evident security audit event sink",
+   "checks": [
+    "INV-42-C049",
+    "INV-42-C073",
+    "INV-42-C079"
+   ],
+   "detail": "In-memory counters exist, but security-sensitive operations are not emitted to a tamper-evident audit ledger with retention/privacy/export policy.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "audit.py hash chain + MAC + anchored head + allow-list; AuditTest (modify/delete/reorder/truncate/re-forge)"
+  },
+  {
+   "id": "MC-018",
+   "severity": "medium",
+   "component": "managed key lifecycle / protected-memory integration",
+   "checks": [
+    "INV-42-C047"
+   ],
+   "detail": "The per-table key is random and best-effort zeroized, but there is no OS/hardware protected-memory facility, rotation for long-lived sessions, or external key-management integration.",
+   "status_4_3_0": "partial-waived",
+   "evidence_4_3_0": "key_provider injection, rotation-by-table-replacement, KEY_MANAGEMENT.md",
+   "external_dependency": "W-007: no protected memory in CPython"
+  },
+  {
+   "id": "MC-019",
+   "severity": "high",
+   "component": "fault-injection and recovery test suite",
+   "checks": [
+    "INV-42-C051",
+    "INV-42-C052",
+    "INV-42-C060"
+   ],
+   "detail": "No process crash, resource pressure, forced failure, dependency failure, or recovery-objective fault tests are present.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "FaultInjectionTest (mint failure no partial commit - bug fixed, close failure, restart, child crash), observer-failure test"
+  },
+  {
+   "id": "MC-020",
+   "severity": "medium",
+   "component": "health/readiness adapter and stall thresholds",
+   "checks": [
+    "INV-42-C052",
+    "INV-42-C071"
+   ],
+   "detail": "status() exposes bounded counters, but no readiness/health endpoint, stall threshold, dependency status, or active-capability export is implemented.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "telemetry.health (ready/degraded/not_ready, saturation, stall)"
+  },
+  {
+   "id": "MC-021",
+   "severity": "medium",
+   "component": "metrics exporter",
+   "checks": [
+    "INV-42-C061",
+    "INV-42-C069",
+    "INV-42-C072"
+   ],
+   "detail": "Counters are only returned in-process; no OpenTelemetry/Prometheus/other exporter, rates, latency histograms, saturation model, or resource-use metrics exist.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "telemetry.Metrics Prometheus exporter (ops by outcome/class, latency histograms, saturation, disable gauge)"
+  },
+  {
+   "id": "MC-022",
+   "severity": "medium",
+   "component": "structured logging with privacy controls",
+   "checks": [
+    "INV-42-C073",
+    "INV-42-C075",
+    "INV-42-C079"
+   ],
+   "detail": "No structured event/log API exists. SECURITY.md says bearer descriptors must not be logged, but there is no logger adapter or redaction test.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "telemetry.StructuredLogger + redact; leak tests"
+  },
+  {
+   "id": "MC-023",
+   "severity": "medium",
+   "component": "distributed tracing propagation",
+   "checks": [
+    "INV-42-C074"
+   ],
+   "detail": "No trace-context integration exists for boundary operations.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "telemetry.span/parse_traceparent/with_trace (W3C)"
+  },
+  {
+   "id": "MC-024",
+   "severity": "medium",
+   "component": "operator explain view and release/infrastructure correlation",
+   "checks": [
+    "INV-42-C076",
+    "INV-42-C077",
+    "INV-42-C078"
+   ],
+   "detail": "Typed failures explain local rejections, but there is no operator-facing decision view, release lineage, or live infrastructure graph correlation.",
+   "status_4_3_0": "implemented-pending-external",
+   "evidence_4_3_0": "telemetry.explain (decision view + release lineage)",
+   "external_dependency": "live infra graph is a platform service"
+  },
+  {
+   "id": "MC-025",
+   "severity": "medium",
+   "component": "telemetry retention/sampling/privacy/export policy",
+   "checks": [
+    "INV-42-C079"
+   ],
+   "detail": "No telemetry governance policy is included.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "TELEMETRY_POLICY.md"
+  },
+  {
+   "id": "MC-026",
+   "severity": "medium",
+   "component": "dashboards and alerts",
+   "checks": [
+    "INV-42-C080"
+   ],
+   "detail": "No dashboards, alert rules, attack/degradation classifications, or operational visualization artifacts are present.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "dashboards/inv42_dashboard.json, alerts/inv42_alerts.yml (attack/policy/load/dependency/degradation classes)"
+  },
+  {
+   "id": "MC-027",
+   "severity": "high",
+   "component": "parser/input fuzzing harness",
+   "checks": [
+    "INV-42-C085"
+   ],
+   "detail": "Strict parser regression tests exist, but there is no coverage-guided or property-based fuzzing corpus/harness.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "FuzzTest seeded mutational fuzzing (20k default, 200k in CI with rotating seed) + regression corpus"
+  },
+  {
+   "id": "MC-028",
+   "severity": "medium",
+   "component": "mixed-operation concurrency/race suite",
+   "checks": [
+    "INV-42-C086"
+   ],
+   "detail": "Concurrent allocation uniqueness is tested; concurrent resolve/close/destroy/status races and high-contention stress are not.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "ConcurrencyTest mixed open/resolve/close/status and destroy races"
+  },
+  {
+   "id": "MC-029",
+   "severity": "high",
+   "component": "expanded threat-derived adversarial suite",
+   "checks": [
+    "INV-42-C050",
+    "INV-42-C087"
+   ],
+   "detail": "Forgery, tamper, replay, fork, capacity, and type-confusion cases are covered, but injection/log-safety, timing/side-channel analysis, key compromise simulation, hostile Mapping/object behavior, and sustained exhaustion tests are absent.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "THREAT_MODEL.md T1-T15; AdversarialTest (hostile subclasses - bug fixed, log safety, constant-time, key compromise, sustained exhaustion)"
+  },
+  {
+   "id": "MC-030",
+   "severity": "high",
+   "component": "benchmark, soak, burst, overload, and fleet-scale suite",
+   "checks": [
+    "INV-42-C061",
+    "INV-42-C063",
+    "INV-42-C064",
+    "INV-42-C088"
+   ],
+   "detail": "No reproducible performance harness or baseline evidence exists.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "tools/bench.py (latency, burst, overload, fleet, soak)"
+  },
+  {
+   "id": "MC-031",
+   "severity": "high",
+   "component": "cross-runtime/OS/CPU/provider compatibility matrix and CI",
+   "checks": [
+    "INV-42-C084",
+    "INV-42-C093"
+   ],
+   "detail": "Only Python 3.13.5 was exercised in this audit. No supported Python/OS/CPU/hypervisor/provider matrix is tested.",
+   "status_4_3_0": "implemented-pending-external",
+   "evidence_4_3_0": "CI matrix 4 OS/arch x Python 3.10-3.13",
+   "external_dependency": "W-006: run evidence"
+  },
+  {
+   "id": "MC-032",
+   "severity": "medium",
+   "component": "coverage measurement and threshold gate",
+   "checks": [
+    "INV-42-C081",
+    "INV-42-C082",
+    "INV-42-C090"
+   ],
+   "detail": "No coverage tool/report/threshold demonstrates exercised branch coverage of runtime and certification adapter.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "tools/coverage_gate.py (95% descriptors, 85% others; all runtime modules currently >= 85.7%)"
+  },
+  {
+   "id": "MC-033",
+   "severity": "high",
+   "component": "performance thresholds and regression gate",
+   "checks": [
+    "INV-42-C062",
+    "INV-42-C070"
+   ],
+   "detail": "No p50/p95/p99/worst-case acceptance thresholds or release-blocking regression rule exists.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "PERF_THRESHOLDS.json p50/p95/p99, release-blocking in bench + CI"
+  },
+  {
+   "id": "MC-034",
+   "severity": "medium",
+   "component": "edge power/thermal measurement",
+   "checks": [
+    "INV-42-C068"
+   ],
+   "detail": "No constrained-edge power or thermal measurement exists; applicability has not been formally marked N/A.",
+   "status_4_3_0": "implemented (N/A decision)",
+   "evidence_4_3_0": "NFR.md Edge power"
+  },
+  {
+   "id": "MC-035",
+   "severity": "high",
+   "component": "measured SLO/error-budget and support commitment machinery",
+   "checks": [
+    "INV-42-C091"
+   ],
+   "detail": "Contract SLO text is not connected to measured telemetry, burn-rate alerts, support hours, or escalation commitments.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "SLO.md + burn-rate alerts"
+  },
+  {
+   "id": "MC-036",
+   "severity": "high",
+   "component": "canary/staged rollout/rollback/emergency-disable automation",
+   "checks": [
+    "INV-42-C092"
+   ],
+   "detail": "README/OPERATIONS describe intent, but there are no executable rollout, rollback, or emergency-disable procedures in this archive.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "emergency_disable()/INV42_EMERGENCY_DISABLE, ROLLOUT.md, tools/rollout.py canary evaluator + tests"
+  },
+  {
+   "id": "MC-037",
+   "severity": "high",
+   "component": "vulnerability response, patching, EOL, and adjacent-version support policy",
+   "checks": [
+    "INV-42-C093",
+    "INV-42-C094"
+   ],
+   "detail": "Protocol compatibility is documented, but dependency support windows, vulnerability SLAs, patch cadence, and EOL policy are absent.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "VULNERABILITY_POLICY.md"
+  },
+  {
+   "id": "MC-038",
+   "severity": "high",
+   "component": "incident response runbook",
+   "checks": [
+    "INV-42-C097"
+   ],
+   "detail": "No severity model, paging path, containment playbook, forensic preservation, or recovery workflow is present.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "INCIDENT_RUNBOOK.md"
+  },
+  {
+   "id": "MC-039",
+   "severity": "medium",
+   "component": "recurring review automation/evidence",
+   "checks": [
+    "INV-42-C098"
+   ],
+   "detail": "No scheduled access, dependency, architecture, configuration, or policy review workflow/evidence exists.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "REVIEWS.json, tools/review_due.py, .github/workflows/review.yml"
+  },
+  {
+   "id": "MC-040",
+   "severity": "medium",
+   "component": "exception/waiver/technical-debt registry",
+   "checks": [
+    "INV-42-C099"
+   ],
+   "detail": "No owner/expiry-based waiver or technical-debt ledger is present.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "WAIVERS.json (owner/expiry/exit condition), enforced by traceability + exit gate"
+  },
+  {
+   "id": "MC-041",
+   "severity": "blocker",
+   "component": "machine-readable acceptance evidence and formal production exit result",
+   "checks": [
+    "INV-42-C090",
+    "INV-42-C100"
+   ],
+   "detail": "CHECKLIST.json defines requirements but no produced evidence ledger/gate result is bundled. Without pk_core and the missing integration/security/performance evidence, production exit cannot be demonstrated.",
+   "status_4_3_0": "implemented-blocked-external",
+   "evidence_4_3_0": "tools/exit_gate.py -> evidence/PRODUCTION_EXIT.json (current verdict NOT_ELIGIBLE)",
+   "external_dependency": "closes when W-001/W-004/W-005 close"
+  },
+  {
+   "id": "MC-042",
+   "severity": "optional",
+   "component": "policy-controlled descriptor transfer/delegation between tables",
+   "checks": [],
+   "detail": "The contract lists descriptor transfer between tables as optional; no delegation/transfer API is implemented. This is not a mandatory v4.2.0 correctness blocker.",
+   "status_4_3_0": "implemented",
+   "evidence_4_3_0": "delegation.py re-issuance (move/share, default deny, idempotent txn, atomic, audited), ADR-0002, DelegationTest"
+  }
+ ],
+ "remediation": {
+  "version": "4.3.0",
+  "date": "2026-09-22"
+ }
+}

@@ -1,0 +1,52 @@
+# MC-44: INV-10 CI/CD — compile, unit, optimized, fuzz, integration, benchmark, SBOM, docs, evidence, signing.
+name: inv10
+on:
+  push: { branches: [main] }
+  pull_request:
+  schedule: [{ cron: "17 3 * * *" }]   # nightly: heavier fuzz/soak
+  workflow_dispatch:
+  release: { types: [published] }
+permissions: { contents: read }
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy: { matrix: { python: ["3.10", "3.11", "3.12", "3.13"] } }
+    env:
+      INV10_FUZZ_CASES: ${{ github.event_name == 'schedule' && '20000' || '400' }}
+      INV10_SOAK_SECONDS: ${{ github.event_name == 'schedule' && '120' || '1.5' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: python -m compileall -q inv10_component_composition_system tools
+      - run: python -m unittest discover -s inv10_component_composition_system/tests -t inv10_component_composition_system/tests -v
+      - run: python -O -m unittest discover -s inv10_component_composition_system/tests -t inv10_component_composition_system/tests
+      - run: python tools/bench.py --json bench-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@v4
+        with: { name: bench-${{ matrix.python }}, path: bench-${{ matrix.python }}.json }
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install --require-hashes -r requirements.lock || pip install setuptools==75.8.0 wheel==0.45.1 build
+      - run: python -m pip install build && SOURCE_DATE_EPOCH=1790000000 python -m build --no-isolation
+      - run: python tools/gen_vectors.py && git diff --exit-code conformance/vectors.json   # identity must not drift
+      - run: python tools/gen_sbom.py && python tools/gen_docs.py
+      - run: python tools/gen_evidence.py
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: "dist/\nsbom.cdx.json\nevidence/\nconformance/\ndocs/api/" }
+  release:
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release            # protected environment: human approval required
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python tools/gen_sbom.py && python tools/gen_docs.py && python tools/gen_evidence.py
+      - run: python tools/sign_release.py sign && python tools/sign_release.py verify
+        env: { INV10_SIGNING_KEY: "${{ secrets.INV10_SIGNING_KEY }}", INV10_SIGNER: "${{ github.actor }}" }

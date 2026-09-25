@@ -1,0 +1,39 @@
+{
+ "schema": "PK_DASHBOARD/1",
+ "component": "INV-28",
+ "title": "INV-28 Unikernel toolchain selection",
+ "panels": [
+  {
+   "title": "Selections by toolchain/env",
+   "query": "sum by (toolchain,environment)(rate(inv28_selections_total[5m]))"
+  },
+  {
+   "title": "Refusals by code",
+   "query": "sum by (code)(rate(inv28_selection_refusals_total[5m]))"
+  },
+  {
+   "title": "Candidate eliminations by code",
+   "query": "sum by (code)(rate(inv28_candidate_eliminations_total[5m]))"
+  },
+  {
+   "title": "Selection latency p50/p99",
+   "query": "histogram_quantile(0.99, sum(rate(inv28_selection_latency_ms_bucket[5m])) by (le))"
+  },
+  {
+   "title": "Registered toolchains by maturity/lifecycle",
+   "query": "inv28_toolchains_registered"
+  },
+  {
+   "title": "Stale reviews",
+   "query": "inv28_stale_reviews"
+  },
+  {
+   "title": "Registry revision",
+   "query": "inv28_registry_revision"
+  },
+  {
+   "title": "Dependency errors",
+   "query": "sum by (dependency)(rate(inv28_dependency_errors_total[5m]))"
+  }
+ ]
+}

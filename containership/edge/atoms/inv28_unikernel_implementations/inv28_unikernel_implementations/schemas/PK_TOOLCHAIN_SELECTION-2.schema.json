@@ -1,0 +1,285 @@
+{
+ "$id": "urn:pk:inv28:PK_TOOLCHAIN_SELECTION-2",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "advisory_snapshot": {
+   "pattern": "^([0-9a-f]{64})?$",
+   "type": "string"
+  },
+  "artifact_sha256": {
+   "pattern": "^([0-9a-f]{64})?$",
+   "type": "string"
+  },
+  "certification_id": {
+   "maxLength": 512,
+   "type": "string"
+  },
+  "certification_snapshot": {
+   "pattern": "^([0-9a-f]{64})?$",
+   "type": "string"
+  },
+  "decision_id": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "eliminated": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "codes": {
+      "items": {
+       "enum": [
+        "TC_LANGUAGE_UNSUPPORTED",
+        "TC_RUNTIME_UNSUPPORTED",
+        "TC_ARCH_UNSUPPORTED",
+        "TC_DEVICE_UNSUPPORTED",
+        "TC_FEATURE_UNSUPPORTED",
+        "TC_HYPERVISOR_UNSUPPORTED",
+        "TC_PROVIDER_UNSUPPORTED",
+        "TC_ABI_UNSUPPORTED",
+        "TC_LIMITATION_CONFLICT",
+        "TC_SITE_ARCH_UNSUPPORTED",
+        "TC_SITE_HYPERVISOR_UNSUPPORTED",
+        "TC_MATURITY_BELOW_POLICY",
+        "TC_NO_SECURITY_CONTACT",
+        "TC_SECURITY_RESPONSE_INADEQUATE",
+        "TC_REVIEW_STALE",
+        "TC_REVIEW_MISSING",
+        "TC_REVIEW_REJECTED",
+        "TC_LIFECYCLE_NOT_SELECTABLE",
+        "TC_END_OF_LIFE",
+        "TC_ADVISORY_OPEN",
+        "TC_NOT_CERTIFIED",
+        "TC_CERTIFICATION_INVALID",
+        "TC_INTEGRITY_MISSING",
+        "TC_POLICY_DENIED",
+        "TC_DISABLED",
+        "TC_NOT_IN_ROLLOUT",
+        "SEL_NO_SUITABLE_TOOLCHAIN",
+        "SEL_INVALID_REQUEST",
+        "SEL_LIMIT_EXCEEDED",
+        "SEL_DEADLINE_EXCEEDED",
+        "SEL_CANCELLED",
+        "SEL_DEPENDENCY_UNAVAILABLE",
+        "SEL_CLOCK_UNTRUSTED",
+        "SEL_POLICY_INVALID",
+        "REG_REVISION_CONFLICT",
+        "REG_DUPLICATE",
+        "REG_UNKNOWN_TOOLCHAIN",
+        "REG_INTEGRITY_FAILURE",
+        "REG_ILLEGAL_TRANSITION",
+        "REG_UNAUTHORIZED",
+        "REG_CAPACITY_EXCEEDED",
+        "BIND_ARTIFACT_MISMATCH",
+        "BIND_TICKET_TAMPERED",
+        "BIND_TICKET_EXPIRED"
+       ]
+      },
+      "minItems": 1,
+      "type": "array"
+     },
+     "toolchain": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+     }
+    },
+    "required": [
+     "codes",
+     "toolchain"
+    ],
+    "type": "object"
+   },
+   "maxItems": 256,
+   "type": "array"
+  },
+  "eliminated_truncated": {
+   "minimum": 0,
+   "type": "integer"
+  },
+  "evaluated_at": {
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+   "type": "string"
+  },
+  "maturity": {
+   "enum": [
+    "experimental",
+    "beta",
+    "mature"
+   ]
+  },
+  "outcome": {
+   "const": "SELECTED"
+  },
+  "policy_digest": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "policy_id": {
+   "maxLength": 512,
+   "minLength": 1,
+   "type": "string"
+  },
+  "policy_revision": {
+   "minimum": 1,
+   "type": "integer"
+  },
+  "record_digest": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "registry_digest": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "registry_revision": {
+   "minimum": 0,
+   "type": "integer"
+  },
+  "request_digest": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  },
+  "schema": {
+   "const": "PK_TOOLCHAIN_SELECTION/2"
+  },
+  "ticket": {
+   "oneOf": [
+    {
+     "type": "null"
+    },
+    {
+     "additionalProperties": false,
+     "properties": {
+      "artifact_sha256": {
+       "pattern": "^([0-9a-f]{64})?$",
+       "type": "string"
+      },
+      "certification_id": {
+       "maxLength": 512,
+       "type": "string"
+      },
+      "decision_id": {
+       "pattern": "^[0-9a-f]{64}$",
+       "type": "string"
+      },
+      "expires_at": {
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+       "type": "string"
+      },
+      "issued_at": {
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+       "type": "string"
+      },
+      "policy_digest": {
+       "pattern": "^[0-9a-f]{64}$",
+       "type": "string"
+      },
+      "record_digest": {
+       "pattern": "^[0-9a-f]{64}$",
+       "type": "string"
+      },
+      "registry_revision": {
+       "minimum": 0,
+       "type": "integer"
+      },
+      "schema": {
+       "const": "PK_TOOLCHAIN_TICKET/1"
+      },
+      "signature": {
+       "additionalProperties": false,
+       "properties": {
+        "alg": {
+         "const": "HMAC-SHA256"
+        },
+        "key_id": {
+         "maxLength": 512,
+         "minLength": 1,
+         "type": "string"
+        },
+        "mac": {
+         "pattern": "^[0-9a-f]{64}$",
+         "type": "string"
+        },
+        "purpose": {
+         "const": "ticket"
+        }
+       },
+       "required": [
+        "alg",
+        "key_id",
+        "mac",
+        "purpose"
+       ],
+       "type": "object"
+      },
+      "toolchain_ref": {
+       "maxLength": 512,
+       "minLength": 1,
+       "type": "string"
+      }
+     },
+     "required": [
+      "artifact_sha256",
+      "certification_id",
+      "decision_id",
+      "expires_at",
+      "issued_at",
+      "policy_digest",
+      "record_digest",
+      "registry_revision",
+      "schema",
+      "signature",
+      "toolchain_ref"
+     ],
+     "type": "object"
+    }
+   ]
+  },
+  "toolchain": {
+   "maxLength": 512,
+   "minLength": 1,
+   "type": "string"
+  },
+  "version": {
+   "maxLength": 512,
+   "minLength": 1,
+   "type": "string"
+  },
+  "waivers": {
+   "items": {
+    "maxLength": 512,
+    "minLength": 1,
+    "type": "string"
+   },
+   "type": "array"
+  }
+ },
+ "required": [
+  "advisory_snapshot",
+  "artifact_sha256",
+  "certification_id",
+  "certification_snapshot",
+  "decision_id",
+  "eliminated",
+  "eliminated_truncated",
+  "evaluated_at",
+  "maturity",
+  "outcome",
+  "policy_digest",
+  "policy_id",
+  "policy_revision",
+  "record_digest",
+  "registry_digest",
+  "registry_revision",
+  "request_digest",
+  "schema",
+  "ticket",
+  "toolchain",
+  "version",
+  "waivers"
+ ],
+ "title": "INV-28 selection result v2",
+ "type": "object"
+}

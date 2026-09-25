@@ -1,0 +1,68 @@
+{
+ "matrix": {
+  "schema": "PK_FAULT_MATRIX/1",
+  "scenarios": [
+   {
+    "id": "F01",
+    "fault": "process crash + restart",
+    "expect": "non-revoked links restored, revoked absent",
+    "test": "tests/fault/test_state_recovery.py::test_process_restart_restores_non_revoked_and_not_revoked"
+   },
+   {
+    "id": "F02",
+    "fault": "torn WAL append",
+    "expect": "tail discarded, prior records intact",
+    "test": "tests/fault/test_state_recovery.py::test_torn_tail_discarded_mid_record_corruption_fails_closed"
+   },
+   {
+    "id": "F03",
+    "fault": "WAL/snapshot corruption",
+    "expect": "PK_PROVIDER_STATE_CORRUPT, no partial load",
+    "test": "tests/fault/test_state_recovery.py::test_snapshot_checksum_and_compaction"
+   },
+   {
+    "id": "F04",
+    "fault": "restore of older backup",
+    "expect": "refused without force; tombstones win",
+    "test": "tests/fault/test_state_recovery.py::test_backup_restore_never_resurrects_revoked"
+   },
+   {
+    "id": "F05",
+    "fault": "partition: old owner keeps running",
+    "expect": "old owner fenced",
+    "test": "tests/fault/test_failover_splitbrain.py::test_stale_owner_is_fenced_after_takeover"
+   },
+   {
+    "id": "F06",
+    "fault": "backend down",
+    "expect": "unhealthy + calls refused retryable, breaker opens",
+    "test": "tests/fault/test_fault_scenarios.py::test_backend_outage_opens_breaker_then_recovers"
+   },
+   {
+    "id": "F07",
+    "fault": "backend slow",
+    "expect": "deadline exceeded, no hang",
+    "test": "tests/fault/test_fault_scenarios.py::test_slow_backend_hits_deadline"
+   },
+   {
+    "id": "F08",
+    "fault": "secret backend down",
+    "expect": "fail closed",
+    "test": "tests/security/test_secret_handling.py::test_backend_outage_fails_closed"
+   },
+   {
+    "id": "F09",
+    "fault": "state key unavailable",
+    "expect": "PK_PROVIDER_KEY_UNAVAILABLE, no plaintext fallback",
+    "test": "tests/security/test_key_rotation.py::test_missing_key_fails_closed"
+   },
+   {
+    "id": "F10",
+    "fault": "transient backend errors",
+    "expect": "idempotent ops retried within deadline; non-idempotent not",
+    "test": "tests/fault/test_fault_scenarios.py::test_transient_failure_retry_rules"
+   }
+  ]
+ },
+ "executed_by": "evidence/test-results.json"
+}

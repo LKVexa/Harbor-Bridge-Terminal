@@ -1,0 +1,37 @@
+# M27/M01/M30 - CI matrix. NOT EXECUTED from the build container (no CI runner was
+# available); it is the committed definition the release gate expects. Pin actions
+# by commit digest before first use (tags shown for readability).
+name: inv61
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    defaults: { run: { shell: bash } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: python -m pip install -r requirements.lock      # setup-python's interpreter, no venv split
+      - run: python -B -m unittest discover -s tests -v
+      - run: python -B tools/bench.py --n 2000 --out evidence/bench-${{ matrix.os }}-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@v4
+        with: { name: "bench-${{ matrix.os }}-${{ matrix.python }}", path: evidence/ }
+  release-gate:
+    needs: test
+    runs-on: ubuntu-22.04
+    env: { INV61_REQUIRE_PK_CORE: "1" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: python -m pip install -r requirements.lock
+      # pk_core install step goes here once its source is known (docs/DEPENDENCIES.md)
+      - run: python -B tools/run_gate_tests.py      # fails on ANY skip, unlike plain unittest
+      - run: python -B tools/sbom.py --out evidence/sbom.cdx.json --sums SHA256SUMS
+      - run: python -B tools/checklist_status.py --check
+      - run: python -B tools/soak.py --seconds 300 --clients 16 --out evidence/soak.json

@@ -1,0 +1,73 @@
+{
+ "component": 20,
+ "title": "Authentication boundary",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "controller identity issuance",
+   "state": "IMPLEMENTED",
+   "spec": "production/authn.py::__doc__",
+   "modules": [
+    "production/authn.py::Authority.issue_controller"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestAuthn.test_controller_issuance"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "node/provider identity issuance",
+   "state": "IMPLEMENTED",
+   "spec": "production/authn.py::__doc__",
+   "modules": [
+    "production/authn.py::Authority.issue_node",
+    "production/authn.py::Authority.issue_provider",
+    "production/authn.py::Authority.new_join_token"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestAuthn.test_node_and_provider_issuance"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "trust roots and certificate/token formats",
+   "state": "PARTIAL",
+   "spec": "production/authn.py::TYP",
+   "modules": [
+    "production/authn.py::Authority.verify",
+    "production/core.py::TrustRoot"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestAuthn.test_token_format_and_trust_root"
+   ],
+   "blocker": "asymmetric PKI (X.509/SPIFFE) with KMS/HSM-held production root keys; stdlib has no asymmetric signing and core.TrustRoot refuses production keys"
+  },
+  {
+   "name": "mutual authentication handshake and rotation",
+   "state": "PARTIAL",
+   "spec": "production/authn.py::mutual_handshake",
+   "modules": [
+    "production/authn.py::mutual_handshake",
+    "production/authn.py::Authority.rotate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestAuthn.test_mutual_handshake_and_rotation"
+   ],
+   "blocker": "mTLS transport and asymmetric per-identity keys; current proof-of-possession is HMAC so the verifier shares the authority keyring"
+  },
+  {
+   "name": "revocation, expiry, and compromised-credential handling",
+   "state": "IMPLEMENTED",
+   "spec": "production/authn.py::__doc__",
+   "modules": [
+    "production/authn.py::Authority.revoke_token",
+    "production/authn.py::Authority.compromise"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestAuthn.test_revocation_expiry_compromise"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Revocation lists are in-process; distributing them across controllers requires the persistence layer of another component."
+}

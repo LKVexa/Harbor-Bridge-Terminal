@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_GAP04_HEALTH/1",
+  "title": "Health/readiness v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "site",
+    "code_version",
+    "config_version",
+    "config_digest",
+    "generation",
+    "clock",
+    "now",
+    "live",
+    "ready",
+    "not_ready_reasons",
+    "dependencies",
+    "lease",
+    "tier",
+    "partitioned",
+    "partition_epoch",
+    "policy",
+    "journal",
+    "reconciliation",
+    "quarantine",
+    "overrides_active"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_GAP04_HEALTH/1"
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "code_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "config_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "config_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "clock": {
+      "type": "object"
+    },
+    "now": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "live": {
+      "type": "boolean"
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "not_ready_reasons": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "clock_unanchored",
+          "quarantined",
+          "storage_frozen",
+          "no_lease",
+          "no_policy"
+        ]
+      }
+    },
+    "dependencies": {
+      "type": "object"
+    },
+    "lease": {
+      "type": "object"
+    },
+    "tier": {
+      "enum": [
+        "full",
+        "sustain",
+        "freeze",
+        "expired"
+      ]
+    },
+    "partitioned": {
+      "type": "boolean"
+    },
+    "partition_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "policy": {
+      "type": "object"
+    },
+    "journal": {
+      "type": "object"
+    },
+    "reconciliation": {
+      "type": "object"
+    },
+    "quarantine": {
+      "type": "boolean"
+    },
+    "overrides_active": {
+      "type": "array"
+    }
+  }
+}

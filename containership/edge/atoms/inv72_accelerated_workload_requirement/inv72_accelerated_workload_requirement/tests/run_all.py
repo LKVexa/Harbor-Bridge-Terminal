@@ -1,0 +1,31 @@
+"""Mandatory release test profile for INV-72 (run under both `python` and `python -O`).
+
+Exit non-zero on any failure or on any skip that is not a declared lane.  Every skip is printed by name
+with its reason, so none is silent.  With the vendored pk_core present there are no declared lanes left,
+so any skip at all fails the profile.
+"""
+import json
+import pathlib
+import sys
+import unittest
+
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+sys.dont_write_bytecode = True
+MODULES = ("test_matcher", "test_component", "test_repository_integrity", "test_v43", "test_fuzz", "test_gates")
+DECLARED_SKIP_LANES: dict = {}
+
+suite = unittest.TestSuite()
+loader = unittest.TestLoader()
+for name in MODULES:
+    suite.addTests(loader.loadTestsFromName(name))
+result = unittest.TextTestRunner(verbosity=1).run(suite)
+skips = [{"test": t.id(), "reason": r} for t, r in result.skipped]
+undeclared = [s for s in skips if s["test"].split(".")[0] not in DECLARED_SKIP_LANES]
+for s in skips:
+    print(f"SKIP {s['test']}: {s['reason']}")
+summary = {"tests": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
+           "skipped": len(skips), "undeclared_skips": len(undeclared), "optimized_mode": not __debug__,
+           "python": sys.version.split()[0]}
+print("RESULT " + json.dumps(summary))
+sys.exit(0 if result.wasSuccessful() and not undeclared else 1)

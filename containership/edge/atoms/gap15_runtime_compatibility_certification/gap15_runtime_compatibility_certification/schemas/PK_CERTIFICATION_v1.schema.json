@@ -1,0 +1,108 @@
+{
+  "$id": "urn:gap15:schema:certification:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "age": {
+      "type": "integer"
+    },
+    "deployable": {
+      "type": "boolean"
+    },
+    "evaluated_at": {
+      "maximum": 4611686018427387904,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "expires_at": {
+      "maximum": 4611686018427387904,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "key": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "partition": {
+          "pattern": "^[a-z0-9-]{1,63}/[a-z0-9-]{1,63}/[a-z0-9-]{1,63}$",
+          "type": "string"
+        },
+        "profile_id": {
+          "maxLength": 100,
+          "type": "string"
+        },
+        "runtime": {
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "required": [
+        "partition",
+        "artifact_digest",
+        "runtime",
+        "profile_id"
+      ],
+      "type": "object"
+    },
+    "ledger_seq": {
+      "maximum": 4611686018427387904,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "matrix_revision": {
+      "maximum": 4611686018427387904,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "policy_revision": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 1024,
+      "type": "string"
+    },
+    "reason_code": {
+      "pattern": "^R_[A-Z_]{2,40}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "PK_CERTIFICATION/1"
+    },
+    "tested_at": {
+      "maximum": 4611686018427387904,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "verdict": {
+      "enum": [
+        "certified",
+        "incompatible",
+        "untested",
+        "expired",
+        "end-of-life",
+        "revoked",
+        "quarantined",
+        "retest-required"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "verdict",
+    "reason_code",
+    "reason",
+    "deployable",
+    "key",
+    "matrix_revision",
+    "ledger_seq",
+    "policy_revision",
+    "evaluated_at"
+  ],
+  "title": "PK_CERTIFICATION/1",
+  "type": "object",
+  "x-gap15-schema-set": "1.0.0"
+}

@@ -1,0 +1,15 @@
+# INV-38 CI acceptance pipeline (design). All steps run without hardware.
+stages:
+  - lint_typecheck
+  - unit_tests:            {cmd: "python -m pytest -q"}
+  - rtm_validate:          {cmd: "python -m inv38_kernel_bypass_transport.rtm_tools ."}
+  - schema_golden_vectors: {cmd: "python -m pytest tests/test_schemas_golden.py -q"}
+  - fuzz_smoke:            {cmd: "python tests/fuzz/fuzz_transport.py --iterations 2000"}
+  - audit_chain_verify:    {cmd: "python -m pytest tests/test_audit_log.py -q"}
+  - release_gate:          {cmd: "python -m pytest tests/test_release_gate.py -q"}
+  - governance_check:      {cmd: "python -m pytest tests/test_governance_checks.py -q"}
+gates:
+  - reject_if: rtm_invalid
+  - reject_if: expired_or_unapproved_waiver
+  - reject_if: overdue_mandatory_review
+  - reject_if: skipped_test_marked_pass

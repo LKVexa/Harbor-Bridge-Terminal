@@ -1,0 +1,79 @@
+// INV-60 Wasm application fabric control interfaces.
+// Package version follows COMPATIBILITY.md: additive changes bump minor; any
+// removal/retype bumps major and requires a new package version.
+package inv60:lattice@1.0.0;
+
+interface types {
+  /// sha256 content address, "sha256:<64 hex>"; algorithm agility via the variant.
+  variant digest { sha256(string) }
+  type host-id = string;
+  type component-id = string;
+  type link-name = string;
+  type tenant-id = string;
+  type operation-id = string;
+
+  enum outcome { ok, accepted, partial, degraded, retryable, permanent, conflict, unauthorized, unavailable, limit, integrity, invalid }
+  enum retry-hint { never, safe, after, unknown }
+
+  record request-meta {
+    protocol: string,
+    operation-id: operation-id,
+    deadline-ms: option<u32>,
+    idempotency-key: option<string>,
+    traceparent: option<string>,
+  }
+
+  record fabric-error {
+    code: string,
+    number: u16,
+    outcome: outcome,
+    retry: retry-hint,
+    retry-after-ms: option<u32>,
+    message: string,
+    operation-id: operation-id,
+  }
+
+  record provenance {
+    signer: string,
+    builder: string,
+    slsa-level: u8,
+    policy-version: string,
+  }
+}
+
+interface membership {
+  use types.{host-id, request-meta, fabric-error};
+  enum host-state { unknown, joining, active, draining, suspect, lost, quarantined, removed }
+  join: func(meta: request-meta, host: host-id, region: string) -> result<host-state, fabric-error>;
+  status: func(meta: request-meta, host: host-id) -> result<host-state, fabric-error>;
+}
+
+interface lifecycle {
+  use types.{digest, component-id, tenant-id, host-id, request-meta, fabric-error};
+  enum component-state { absent, staged, starting, running, degraded, stopping, stopped, failed, quarantined }
+  /// PK_LATTICE_START/1
+  start: func(meta: request-meta, component: component-id, artifact: digest, tenant: tenant-id) -> result<host-id, fabric-error>;
+  stop: func(meta: request-meta, component: component-id, tenant: tenant-id) -> result<component-state, fabric-error>;
+}
+
+interface links {
+  use types.{component-id, link-name, tenant-id, request-meta, fabric-error};
+  /// PK_LATTICE_LINK/1
+  grant: func(meta: request-meta, component: component-id, link: link-name, tenant: tenant-id,
+              %interface: string, operations: list<string>, ttl-s: u32) -> result<string, fabric-error>;
+  revoke: func(meta: request-meta, component: component-id, link: link-name, tenant: tenant-id) -> result<_, fabric-error>;
+}
+
+interface invoke {
+  use types.{component-id, link-name, tenant-id, request-meta, fabric-error};
+  /// PK_LATTICE_CALL/1
+  call: func(meta: request-meta, component: component-id, link: link-name, tenant: tenant-id,
+             operation: string, payload: list<u8>) -> result<list<u8>, fabric-error>;
+}
+
+world fabric-control {
+  export membership;
+  export lifecycle;
+  export links;
+  export invoke;
+}

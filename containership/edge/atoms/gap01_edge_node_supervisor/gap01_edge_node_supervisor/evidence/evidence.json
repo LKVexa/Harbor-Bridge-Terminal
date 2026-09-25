@@ -1,0 +1,268 @@
+{
+  "schema": "GAP01_EVIDENCE/1",
+  "element": "GAP-01",
+  "version": "5.0.0",
+  "generated": "2026-09-22T22:38:26.683159+00:00",
+  "python": "3.11.15",
+  "platform": "linux",
+  "source_tree_sha256": "0d2b2f12605fc4b58f5428dac84f4798d1dc58af06c4384b40916d77620fdacb",
+  "checks": [
+    {
+      "check": "unit+property+integration+chaos+fuzz",
+      "cmd": "/usr/bin/python3 -m unittest discover -s tests",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:37:35.177243+00:00",
+      "tail": [
+        ".........sss..........................................................................",
+        "----------------------------------------------------------------------",
+        "Ran 86 tests in 25.845s",
+        "",
+        "OK (skipped=3)"
+      ]
+    },
+    {
+      "check": "coverage>=85",
+      "cmd": "/usr/bin/python3 tools/coverage_stdlib.py --min 85 --json evidence/coverage.json",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:01.162048+00:00",
+      "tail": [
+        "inventory                 82/   88   93.2%",
+        "client                    28/   30   93.3%",
+        "schema_validator          66/   72   91.7%",
+        "TOTAL                   1922/ 2120   90.7%  (tests ok=True)",
+        "----------------------------------------------------------------------",
+        "Ran 86 tests in 14.142s",
+        "",
+        "OK (skipped=3)"
+      ]
+    },
+    {
+      "check": "verify.py",
+      "cmd": "/usr/bin/python3 verify.py",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:16.764340+00:00",
+      "tail": [
+        "----------------------------------------------------------------------",
+        "Ran 9 tests in 2.295s",
+        "",
+        "OK",
+        "----------------------------------------------------------------------",
+        "Ran 4 tests in 3.913s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "check": "ruff",
+      "cmd": "ruff check .",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:26.333859+00:00",
+      "tail": [
+        "All checks passed!"
+      ]
+    },
+    {
+      "check": "mypy",
+      "cmd": "mypy --config-file pyproject.toml .",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:26.343695+00:00",
+      "tail": [
+        "Success: no issues found in 17 source files"
+      ]
+    },
+    {
+      "check": "perf_gate",
+      "cmd": "/usr/bin/python3 tools/perf_gate.py evidence/bench.json",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:26.488964+00:00",
+      "tail": [
+        "PASS no_fsync.admit.p99_ms = 2.897 (max 10.0)",
+        "PASS fsync.admit.p99_ms = 3.953 (max 25.0)",
+        "PASS no_fsync.status.p99_ms = 0.178 (max 5.0)",
+        "PASS no_fsync.drain.per_workload_ms = 0.006 (max 1.0)",
+        "PASS no_fsync.restart_recovery_s = 0.01 (max 1.0)",
+        "PASS no_fsync.metrics_render_ms = 0.142 (max 20.0)"
+      ]
+    },
+    {
+      "check": "traceability",
+      "cmd": "/usr/bin/python3 tools/traceability.py",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:26.509335+00:00",
+      "tail": [
+        "{'met': 75, 'partial': 20, 'exception': 5}"
+      ]
+    },
+    {
+      "check": "repo hygiene (links, JSON, secret scan)",
+      "cmd": "/usr/bin/python3 tools/check_repo.py",
+      "returncode": 0,
+      "passed": true,
+      "started": "2026-09-22T22:38:26.536208+00:00",
+      "tail": [
+        "PASS: 0 problem(s)"
+      ]
+    }
+  ],
+  "all_passed": true,
+  "traceability": {
+    "met": 75,
+    "partial": 20,
+    "exception": 5
+  },
+  "bench": {
+    "no_fsync": {
+      "fsync": false,
+      "workloads": 500,
+      "admit": {
+        "n": 500,
+        "p50_ms": 1.828,
+        "p99_ms": 2.897,
+        "mean_ms": 1.918
+      },
+      "status": {
+        "n": 200,
+        "p50_ms": 0.114,
+        "p99_ms": 0.178,
+        "mean_ms": 0.122
+      },
+      "drain": {
+        "workloads": 500,
+        "seconds": 0.0028,
+        "complete": true,
+        "per_workload_ms": 0.006
+      },
+      "restart_recovery_s": 0.01,
+      "metrics_render_ms": 0.142,
+      "transition_cycle": {
+        "n": 100,
+        "p50_ms": 4.571,
+        "p99_ms": 6.752,
+        "mean_ms": 4.677
+      }
+    },
+    "fsync": {
+      "fsync": true,
+      "workloads": 200,
+      "admit": {
+        "n": 200,
+        "p50_ms": 2.612,
+        "p99_ms": 3.953,
+        "mean_ms": 2.593
+      },
+      "status": {
+        "n": 200,
+        "p50_ms": 0.172,
+        "p99_ms": 0.294,
+        "mean_ms": 0.168
+      },
+      "drain": {
+        "workloads": 200,
+        "seconds": 0.003,
+        "complete": true,
+        "per_workload_ms": 0.015
+      },
+      "restart_recovery_s": 0.0057,
+      "metrics_render_ms": 0.127,
+      "transition_cycle": {
+        "n": 100,
+        "p50_ms": 6.206,
+        "p99_ms": 8.301,
+        "mean_ms": 6.289
+      }
+    }
+  },
+  "soak": {
+    "nodes": 20,
+    "seconds": 30.0,
+    "cycles": 27,
+    "ops": 10337,
+    "ops_per_s": 344.6,
+    "invariant_violations": 0,
+    "audit_chains_ok": true,
+    "tracemalloc_growth_kb": 1226.9
+  },
+  "coverage": {
+    "total_pct": 90.7,
+    "modules": {
+      "supervisor": {
+        "executable": 128,
+        "covered": 114,
+        "pct": 89.1
+      },
+      "controller": {
+        "executable": 512,
+        "covered": 484,
+        "pct": 94.5
+      },
+      "store": {
+        "executable": 247,
+        "covered": 227,
+        "pct": 91.9
+      },
+      "security": {
+        "executable": 168,
+        "covered": 157,
+        "pct": 93.5
+      },
+      "config": {
+        "executable": 139,
+        "covered": 126,
+        "pct": 90.6
+      },
+      "health": {
+        "executable": 77,
+        "covered": 73,
+        "pct": 94.8
+      },
+      "runtime": {
+        "executable": 171,
+        "covered": 153,
+        "pct": 89.5
+      },
+      "errors": {
+        "executable": 75,
+        "covered": 69,
+        "pct": 92.0
+      },
+      "observability": {
+        "executable": 167,
+        "covered": 153,
+        "pct": 91.6
+      },
+      "server": {
+        "executable": 66,
+        "covered": 60,
+        "pct": 90.9
+      },
+      "bootstrap": {
+        "executable": 180,
+        "covered": 130,
+        "pct": 72.2
+      },
+      "inventory": {
+        "executable": 88,
+        "covered": 82,
+        "pct": 93.2
+      },
+      "client": {
+        "executable": 30,
+        "covered": 28,
+        "pct": 93.3
+      },
+      "schema_validator": {
+        "executable": 72,
+        "covered": 66,
+        "pct": 91.7
+      }
+    },
+    "tests_ok": true
+  }
+}

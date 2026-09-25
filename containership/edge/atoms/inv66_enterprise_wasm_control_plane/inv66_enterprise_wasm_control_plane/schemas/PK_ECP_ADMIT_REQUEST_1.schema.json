@@ -1,0 +1,177 @@
+{
+ "$defs": {
+  "component": {
+   "additionalProperties": false,
+   "properties": {
+    "attestation": {
+     "$ref": "#/$defs/statement"
+    },
+    "image": {
+     "maxLength": 2048,
+     "minLength": 3,
+     "pattern": "^[a-z0-9.\\-:]+/[^\\s@]+(@sha256:[0-9a-f]{64})?(:[^\\s@/]+)?$",
+     "type": "string"
+    },
+    "name": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+     "type": "string"
+    },
+    "signature": {
+     "maxLength": 4096,
+     "type": "string"
+    },
+    "signer": {
+     "maxLength": 512,
+     "minLength": 1,
+     "type": "string"
+    }
+   },
+   "required": [
+    "name",
+    "image",
+    "signer"
+   ],
+   "type": "object"
+  },
+  "statement": {
+   "additionalProperties": false,
+   "properties": {
+    "builder": {
+     "maxLength": 512,
+     "type": "string"
+    },
+    "sbom_digest": {
+     "pattern": "^[0-9a-f]{64}$",
+     "type": "string"
+    },
+    "schema": {
+     "const": "PK_ECP_ARTIFACT_STATEMENT/1"
+    },
+    "signature": {
+     "maxLength": 4096,
+     "type": "string"
+    },
+    "signer": {
+     "maxLength": 512,
+     "type": "string"
+    },
+    "source_repo": {
+     "maxLength": 2048,
+     "type": "string"
+    },
+    "source_rev": {
+     "maxLength": 128,
+     "type": "string"
+    },
+    "subject_digest": {
+     "pattern": "^[0-9a-f]{64}$",
+     "type": "string"
+    }
+   },
+   "required": [
+    "schema",
+    "subject_digest",
+    "builder",
+    "signer",
+    "signature"
+   ],
+   "type": "object"
+  }
+ },
+ "$id": "urn:pk:inv66:PK_ECP_ADMIT/1 request",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "deadline_ms": {
+   "maximum": 600000,
+   "minimum": 1,
+   "type": "integer"
+  },
+  "dry_run": {
+   "type": "boolean"
+  },
+  "idempotency_key": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+   "type": "string"
+  },
+  "lattice": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+   "type": "string"
+  },
+  "manifest": {
+   "additionalProperties": false,
+   "properties": {
+    "app": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+     "type": "string"
+    },
+    "components": {
+     "items": {
+      "$ref": "#/$defs/component"
+     },
+     "maxItems": 10000,
+     "minItems": 1,
+     "type": "array"
+    },
+    "source": {
+     "additionalProperties": false,
+     "properties": {
+      "path": {
+       "maxLength": 1024,
+       "type": "string"
+      },
+      "repo": {
+       "maxLength": 2048,
+       "type": "string"
+      },
+      "rev": {
+       "maxLength": 128,
+       "type": "string"
+      }
+     },
+     "required": [
+      "repo",
+      "rev"
+     ],
+     "type": "object"
+    },
+    "version": {
+     "maxLength": 128,
+     "type": "string"
+    }
+   },
+   "required": [
+    "components"
+   ],
+   "type": "object"
+  },
+  "protocol": {
+   "enum": [
+    "PK_ECP_ADMIT/1"
+   ]
+  },
+  "request_id": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+   "type": "string"
+  },
+  "tenant": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+   "type": "string"
+  },
+  "traceparent": {
+   "pattern": "^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$",
+   "type": "string"
+  }
+ },
+ "required": [
+  "protocol",
+  "request_id",
+  "tenant",
+  "lattice",
+  "manifest"
+ ],
+ "title": "PK_ECP_ADMIT/1 request",
+ "type": "object",
+ "x-compat": "additive-minor",
+ "x-version": "1.0.0"
+}

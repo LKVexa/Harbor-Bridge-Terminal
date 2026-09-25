@@ -1,0 +1,551 @@
+{
+ "schema": "INV41_INTERFACES/1",
+ "contract_version": "1.0.0",
+ "api_version": "INV41-API/1",
+ "compatibility": {
+  "semver": "MAJOR on removal/semantic change of any boundary, error code or schema field; MINOR on additive; PATCH on fixes",
+  "unknown_fields": "rejected for configuration; results are closed schemas (additionalProperties:false)",
+  "supported_config_schemas": [
+   "INV41_CONFIG/0 (migrated)",
+   "INV41_CONFIG/1"
+  ],
+  "refusal": "IncompatibleVersion INV41-E032 / ConfigRejected INV41-E030"
+ },
+ "retry": {
+  "retryable_codes": [
+   "INV41-E020",
+   "INV41-E021",
+   "INV41-E022"
+  ],
+  "max_attempts": 3,
+  "backoff": "full-jitter exponential base 10ms cap 500ms",
+  "budget": "token bucket 100 cap / 10 per s",
+  "never_retry": [
+   "INV41-E001",
+   "INV41-E002",
+   "INV41-E003",
+   "INV41-E004",
+   "INV41-E005",
+   "INV41-E006",
+   "INV41-E030",
+   "INV41-E031"
+  ]
+ },
+ "uncertain_completion": "in-process operations are synchronous: no uncertain state. Bridge requests are idempotent reads of invoke(); a timed-out caller re-issues the same request.",
+ "exported_symbols": [
+  "__version__",
+  "ELEMENT_ID",
+  "ELEMENT_NAME",
+  "CapabilityError",
+  "CrossAuthority",
+  "Forged",
+  "InvalidGrant",
+  "LimitExceeded",
+  "Revoked",
+  "Widening"
+ ],
+ "boundaries": [
+  {
+   "name": "Authority.__init__",
+   "classification": "in-process trusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "constructing a domain grants nothing outside it",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E006",
+    "INV41-E010",
+    "INV41-E011"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Authority.grant",
+   "classification": "in-process trusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "caller holds the Authority object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E002",
+    "INV41-E004",
+    "INV41-E006",
+    "INV41-E010",
+    "INV41-E011"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Authority.bind_holder",
+   "classification": "in-process trusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E003",
+    "INV41-E005",
+    "INV41-E006",
+    "INV41-E010",
+    "INV41-E011"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Reference.attenuate",
+   "classification": "in-process untrusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E002",
+    "INV41-E003",
+    "INV41-E006",
+    "INV41-E010",
+    "INV41-E011"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Reference.invoke",
+   "classification": "in-process untrusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E003",
+    "INV41-E010"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Holder.use",
+   "classification": "in-process untrusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E003",
+    "INV41-E005",
+    "INV41-E010"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Holder.delegate",
+   "classification": "in-process untrusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E002",
+    "INV41-E003",
+    "INV41-E005"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Membrane.wrap",
+   "classification": "in-process untrusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E003",
+    "INV41-E006",
+    "INV41-E011"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Membrane.revoke",
+   "classification": "in-process trusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "O(live descendants)",
+   "idempotent": null
+  },
+  {
+   "name": "Broker.*",
+   "classification": "in-process trusted",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E020",
+    "INV41-E022",
+    "INV41-E099"
+   ],
+   "timeout": "admission wait <= 50 ms then INV41-E020",
+   "idempotent": null
+  },
+  {
+   "name": "selfcheck.run",
+   "classification": "operator interface",
+   "producer": "operator",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "public",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "preflight.run",
+   "classification": "operator interface",
+   "producer": "operator",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "public",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Broker.health",
+   "classification": "operator interface",
+   "producer": "operator",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal; no secrets (INV41_HEALTH/1)",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "Metrics.exposition",
+   "classification": "operator interface",
+   "producer": "INV-41",
+   "consumer": "metrics collector",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal; bounded labels",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "AuditChain / verify_chain",
+   "classification": "file/artifact",
+   "producer": "INV-41",
+   "consumer": "audit collector / offline verifier",
+   "trust": "in-process trusted",
+   "authn": "HMAC-SHA256 seal per event",
+   "authz": "n/a (read-only verification)",
+   "data_classification": "confidential",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "ConfigStore.activate",
+   "classification": "file/artifact",
+   "producer": "operator/automation",
+   "consumer": "INV-41",
+   "trust": "in-process trusted",
+   "authn": "HMAC-SHA256 signature by trusted key id (dev); production signer BLOCKED",
+   "authz": "signer trusted and not revoked; version monotonic",
+   "data_classification": "confidential",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E023",
+    "INV41-E030"
+   ],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "HmacTokenAdapter.authenticate",
+   "classification": "network",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "untrusted",
+   "authn": "issuer/audience/signature/nbf/exp/nonce",
+   "authz": "none: authentication never authorizes; PrincipalBinder maps to a domain",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E021",
+    "INV41-E023",
+    "INV41-E031"
+   ],
+   "timeout": "caller-supplied; outage -> INV41-E021",
+   "idempotent": null
+  },
+  {
+   "name": "CapabilityBridge.request",
+   "classification": "IPC",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "untrusted (isolated process)",
+   "authn": "session id + principal key",
+   "authz": "opaque session-bound handle",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E001",
+    "INV41-E003",
+    "INV41-E010",
+    "INV41-E031"
+   ],
+   "timeout": "4096-byte message cap",
+   "idempotent": null
+  },
+  {
+   "name": "PK_REFERENCE/1 result",
+   "classification": "file/artifact",
+   "producer": "INV-41",
+   "consumer": "caller",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "PK_MEMBRANE/1 result",
+   "classification": "file/artifact",
+   "producer": "INV-41",
+   "consumer": "caller",
+   "trust": "in-process trusted",
+   "authn": "none (in-process; caller identity is the held object)",
+   "authz": "possession of authentic same-domain object",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [],
+   "timeout": "non-blocking; O(|ops|)",
+   "idempotent": null
+  },
+  {
+   "name": "control-plane (future)",
+   "classification": "network",
+   "producer": "caller",
+   "consumer": "INV-41",
+   "trust": "untrusted",
+   "authn": "BLOCKED: not designed",
+   "authz": "BLOCKED",
+   "data_classification": "internal",
+   "version": "INV41-API/1",
+   "limits": {
+    "identifier_len": 256,
+    "operations": 256,
+    "policy_resources": 4096,
+    "holder_entries": 1024,
+    "membrane_depth": 32
+   },
+   "errors": [
+    "INV41-E032"
+   ],
+   "timeout": "BLOCKED",
+   "idempotent": null
+  }
+ ]
+}

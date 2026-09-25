@@ -1,0 +1,31 @@
+{
+  "schema": "RAMWS/EXPERIMENT_PROPOSAL/1",
+  "approved": true,
+  "approval": { "by": "David Paul Russell (owner) — profile LOCAL_VOLATILE and v2-only protocol approved 2026-09-21 in the Cowork session; experiment configuration frozen by the implementer BEFORE any measurement", "at": "2026-09-21T21:05:00Z", "note": "owner approved profile/protocol; the implementer chose the workloads and thresholds below and froze them before data collection" },
+  "baseline_identity": "hermit-vws 1.1.0-vws.1 (sha256 db65b5e39bd36fb19f9f2e78eeb0d571ab0acc619b44bb1040ee40f290314fd6): hermit.vws.v1, JSON+base64 data, one worker PROCESS per session, output acks",
+  "candidate_identity": "hermit-ramws 2.0.0-ramws.1 (working tree, release/manifest.json after packaging): hermit.vws.v2, binary data frames, one worker THREAD per session with transferred buffers, byte credits, allocation ledger",
+  "independent_launches": 3,
+  "warmed_runs_per_launch": 10,
+  "warmup_runs_per_launch": 2,
+  "randomized_order": "arm order is randomized per launch pair; within a launch the workloads run in a fixed order W1,W2,W3 after warm-up",
+  "cluster_unit": "process_launch",
+  "confidence_level": 0.95,
+  "interval_method": "cluster bootstrap over process launches (3 clusters, 10000 resamples) on the per-launch mean of CPU-seconds per completed unit; with 3 clusters the interval is wide by construction and is reported as such",
+  "cpu_reduction_lower_bound_must_exceed": 0.05,
+  "capacity_relative_error_maximum": 0.1,
+  "exact_transport_fidelity_required": true,
+  "latency_noninferiority_margin": "candidate p50 keystroke echo <= 1.10 x baseline p50 (per-launch means)",
+  "throughput_noninferiority_margin": "candidate bulk MiB/s >= 0.90 x baseline",
+  "absolute_service_limits": "1 session per run, loopback, no TLS, no compression, same host, same Node v22.22.2",
+  "workload_identity": {
+    "W1_interactive": "300 single-byte inputs, each awaited until its echo output arrives (Ctrl-U every 50)",
+    "W2_bulk_output": "one command 'seq 1 200000; seq 1 200000; echo BULK-END' (~2.9 MB raw output), fully consumed and acknowledged/credited",
+    "W3_paste": "one 3000-character paste followed by Enter (echo of the line)",
+    "completed_unit": "W1: one echoed keystroke; W2: one MiB of raw terminal output delivered; W3: one paste"
+  },
+  "measurement_boundary": "server process tree CPU = gateway process utime+stime (from /proc/<pid>/stat, includes worker threads) + every worker child process utime+stime (process backend), sampled before and after each run; the test client runs in a SEPARATE process and is excluded; there is no edge or TLS",
+  "residency_attribution_method": "ram/residency.js interval over the gateway pid (+ worker pids): major faults and VmSwap deltas; process scope only; reported per launch",
+  "exclusion_rules": "a run is excluded only if the client reports a protocol error or timeout; excluded runs are retained in raw.jsonl with the reason; no other exclusion",
+  "status": "FROZEN_BEFORE_DATA",
+  "note": "One host, loopback, 2 vCPU, no other load control. Results characterise this host only."
+}

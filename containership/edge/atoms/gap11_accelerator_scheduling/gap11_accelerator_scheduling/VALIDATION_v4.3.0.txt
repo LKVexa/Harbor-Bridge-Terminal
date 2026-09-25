@@ -1,0 +1,19 @@
+GAP-11 accelerator scheduling v4.3.0 validation (control-plane overlay)
+Date: 2026-09-22   Interpreter: CPython 3.11.15 (linux/x86_64)
+
+PASS  compile (in-memory, no .pyc): allocator.py, gap11_control/**/*.py, tools/*.py
+PASS  v4.2.0 core suite unchanged: tests/test_allocator.py 16/16 (also under python -O)
+PASS  overlay suite: 92 tests, 0 failures, 0 errors (also under python -O)
+SKIP  tests/test_component.py: 3 tests — sibling pk_core not supplied (unchanged from v4.2.0)
+PASS  fuzz: 6,000 mutated decodes (seed 1103), only typed errors
+PASS  property test: 400 random ops (seed 20260922), single-owner / no cross-tenant reuse / capacity / idempotency invariants
+PASS  barrier collisions x5 seeds, soak 8 threads x 15 iterations, split-brain, crash at 5 WAL write points
+PASS  benchmark (64 devices, fsync off, PROPOSED thresholds; varies per run, latest in evidence/benchmark.json): allocate p99 6.32 ms, release p99 1.19 ms, decode p99 0.053 ms
+PASS  reproducible source archive (two builds, identical sha256)
+PASS  residue scan (no __pycache__, .pyc, keys, tokens)
+PASS  v4.2.0 manifest: 10 of 13 original files byte-identical, including allocator.py, component.py, contract.py, __init__.py, VERSION, CHECKLIST.json and both test files;
+      README.md, CHANGELOG.md, MISSING_COMPONENTS.md were deliberately appended to (release/MANIFEST_v4.2.0.sha256)
+
+Checklist (1,000 component checks): EVIDENCED 575 · PARTIAL 231 · BLOCKED 112 · OPEN 82 · FAILED 0
+Exit gates met: 0/10.  Production verdict: NO_GO (computed by tools/run_checklist.py; falsifier test proves GO is reachable when every input holds).
+Not independently reviewed. Nothing here is an approval.

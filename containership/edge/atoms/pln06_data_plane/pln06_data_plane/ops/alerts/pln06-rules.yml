@@ -1,0 +1,43 @@
+# WP #41 - Prometheus alerting rules.  Each alert names the class it distinguishes:
+# load | degradation | policy_rejection | dependency_failure | attack | defect
+groups:
+  - name: pln06
+    rules:
+      - alert: PLN06HighLoadBackpressure
+        expr: pk06_backpressure_events > 0 and rate(pk06_admitted_total[5m]) > 0 and pk06_inflight >= pk06_inflight_limit * 0.9
+        for: 10m
+        labels: {severity: sev3, class: load}
+        annotations: {summary: "Sustained saturation: capacity model says scale out (shard planes)", runbook: "docs/RUNBOOKS.md#day-2--operations"}
+      - alert: PLN06LatencySLOBurn
+        expr: histogram_quantile(0.99, sum by (le) (rate(pk06_transfer_seconds_bucket{tier="inline"}[5m]))) > 0.05
+        for: 15m
+        labels: {severity: sev2, class: degradation}
+        annotations: {summary: "Inline p99 > 50 ms (NFR ceiling)"}
+      - alert: PLN06ResidencyRejectionSpike
+        expr: sum(rate(pk06_refusals_total{code="PK_RESIDENCY_VIOLATION"}[10m])) > 5 * sum(rate(pk06_refusals_total{code="PK_RESIDENCY_VIOLATION"}[1d] offset 1d))
+        for: 10m
+        labels: {severity: sev3, class: policy_rejection}
+        annotations: {summary: "Residency refusals 5x above baseline - policy change or misrouted workload"}
+      - alert: PLN06DependencyDown
+        expr: pk06_health_ready == 0
+        for: 2m
+        labels: {severity: sev2, class: dependency_failure}
+        annotations: {summary: "Key service, audit ledger, or GAP-13 policy unavailable (see health.dependencies)"}
+      - alert: PLN06AuthFailuresAttack
+        expr: sum(rate(pk06_refusals_total{code=~"PK_AUTHN_FAILED|PK_AUTHZ_DENIED|PK_CLASSIFICATION_LABEL_INVALID"}[5m])) > 1
+        for: 5m
+        labels: {severity: sev1, class: attack}
+        annotations: {summary: "Authentication/authorization/label failures - possible spoofing or replay"}
+      - alert: PLN06IntegrityQuarantine
+        expr: increase(pk06_refusals_total{code="PK_PAYLOAD_INTEGRITY_MISMATCH"}[15m]) > 0
+        labels: {severity: sev1, class: attack}
+        annotations: {summary: "Payload failed manifest verification and was quarantined"}
+      - alert: PLN06StalledBacklog
+        expr: pk06_backlog_oldest_seconds > 300
+        for: 5m
+        labels: {severity: sev2, class: defect}
+        annotations: {summary: "Transfers without progress > 5 min - run reap_stalled, inspect adapter"}
+      - alert: PLN06MetricCardinalityOverflow
+        expr: pk06_metrics_overflowed > 0
+        labels: {severity: sev4, class: defect}
+        annotations: {summary: "Label cardinality cap hit"}

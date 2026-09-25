@@ -1,0 +1,172 @@
+{
+  "schema": "PK_ECP_WAIVERS/1",
+  "version": "4.3.0",
+  "updated": "2026-09-22",
+  "waivers": [
+    {
+      "id": "W-001",
+      "covers": "MC-003",
+      "rationale": "Named owners (security, on-call, backups) not yet assigned by the organisation.",
+      "compensating_controls": "Roles and escalation defined; exit gate blocks GO until named.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-002",
+      "covers": "MC-002, all MC-*-D05",
+      "rationale": "Human architecture/security/operations reviews and ADR sign-off not yet performed.",
+      "compensating_controls": "All artifacts prepared for review; exit gate blocks GO.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-003",
+      "covers": "MC-060, C001-C100",
+      "rationale": "pk_core (Post-Kubernetes runtime) is not bundled, so the 100-item conformance run cannot execute in this archive.",
+      "compensating_controls": "Conformance CI job fails if pk_core absent; RTM maps every C-item to local evidence.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-004",
+      "covers": "MC-019, MC-020, MC-031, MC-033, MC-056",
+      "rationale": "Adapters are implemented and tested against live HTTP fakes, but not against a real IdP, GAP-13, GAP-07, INV-63, registry or wasmCloud lattice.",
+      "compensating_controls": "Fail-closed behaviour tested; E2E environment required before prod.",
+      "owner": "operations owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-005",
+      "covers": "MC-001",
+      "rationale": "Authoritative Post-Kubernetes master prompt/workflow text is not in the archive; MASTER.md is generated from CHECKLIST.json with provenance and a pinned external reference.",
+      "compensating_controls": "Digest/count check in repo_checks.py.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-006",
+      "covers": "MC-039, MC-058, MC-059",
+      "rationale": "Leader lease/fencing verified multi-process on one host; multi-node HA over replicated/network storage and network-partition tests not executed.",
+      "compensating_controls": "Single-site deployment until storage flock semantics validated.",
+      "owner": "operations owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-007",
+      "covers": "MC-034, MC-035",
+      "rationale": "Journal is not encrypted at application level (encrypted volume required); anchor/snapshot MAC key rotation lacks multi-key verification.",
+      "compensating_controls": "Encrypted volume mandated in runbook; rotation procedure documented.",
+      "owner": "security owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-008",
+      "covers": "MC-071",
+      "rationale": "License selection not yet approved by owner/legal; shipped as all-rights-reserved pending decision.",
+      "compensating_controls": "No redistribution until approved.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-009",
+      "covers": "MC-009",
+      "rationale": "Weighted fair queuing across tenants not implemented (token-bucket quotas + shared bulkhead only).",
+      "compensating_controls": "Per-tenant quotas configured for noisy tenants.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": false
+    },
+    {
+      "id": "W-010",
+      "covers": "MC-057, MC-061, MC-062",
+      "rationale": "CI/CD pipeline defined but not executed on hosted runners; no signed build/provenance produced yet; base image digest placeholder.",
+      "compensating_controls": "Local clean-container runs recorded as evidence.",
+      "owner": "operations owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-011",
+      "covers": "MC-045",
+      "rationale": "Under 8-thread saturation, p99 exceeds 50 ms (queueing on single writer); SLO met for offered load <=70% of throughput.",
+      "compensating_controls": "Capacity threshold + shedding alerts.",
+      "owner": "operations owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-012",
+      "covers": "MC-048",
+      "rationale": "Edge power/thermal: N/A \u2014 central control-plane component; edge placement unsupported.",
+      "compensating_controls": "Documented unsupported mode.",
+      "owner": "service owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": false
+    },
+    {
+      "id": "W-013",
+      "covers": "MC-070",
+      "rationale": "SIEM integration is an export API + MAC-sealed bundle; no connector to a specific SIEM product.",
+      "compensating_controls": "Export scheduled by ops tooling.",
+      "owner": "operations owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": false
+    },
+    {
+      "id": "W-014",
+      "covers": "MC-064, MC-065, INV66-PROG-11",
+      "rationale": "Runbooks not yet exercised by operators; drills not yet run.",
+      "compensating_controls": "Quarterly drills scheduled on first production readiness review.",
+      "owner": "operations owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    },
+    {
+      "id": "W-015",
+      "covers": "MC-029",
+      "rationale": "Transparency-log inclusion is an adapter hook; no Rekor/log client shipped.",
+      "compensating_controls": "Signature + digest pin + key expiry enforced.",
+      "owner": "security owner",
+      "approved_by": null,
+      "status": "proposed",
+      "expires": "2026-12-31",
+      "release_blocking_for_prod": true
+    }
+  ]
+}

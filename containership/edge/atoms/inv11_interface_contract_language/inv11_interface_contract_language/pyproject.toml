@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv11-interface-contract-language"
+version = "4.3.0"
+description = "INV-11 WIT interface contract language: parser, resolver, structural compatibility, release evidence"
+requires-python = ">=3.10,<3.14"
+readme = "README.md"
+license = { text = "UNDECLARED - owner decision pending (see ADR-0001)" }
+dependencies = []  # the structural model and WIT front end are stdlib-only
+
+[project.optional-dependencies]
+# pk_core is published on the internal estate index, not PyPI (see docs/DEPENDENCIES.md)
+estate = ["pk-core>=4.0,<5"]
+dev = ["mypy==1.20.2", "ruff==0.15.11"]
+
+[project.scripts]
+inv11-wit = "inv11_interface_contract_language.wit.cli:main"
+
+[tool.setuptools]
+package-dir = { "inv11_interface_contract_language" = "." }
+packages = ["inv11_interface_contract_language", "inv11_interface_contract_language.wit"]
+
+[tool.setuptools.package-data]
+inv11_interface_contract_language = ["schemas/*.json", "conformance/*.json", "OWNERSHIP.json", "VERSION", "CHECKLIST.json"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["wit", "interface_model.py", "metadata.py", "__init__.py"]
+strict = true
+# adapter boundary to pk_core is typed Any until pk_core ships stubs
+[[tool.mypy.overrides]]
+module = ["pk_core", "pk_core.*"]
+ignore_missing_imports = true
+
+# 4.2.0 baseline pk_core adapter: kept byte-identical; typing it strictly is
+# BLOCKED until pk_core ships type information (see evidence MC-24).
+[[tool.mypy.overrides]]
+module = ["inv11_interface_contract_language.component", "inv11_interface_contract_language.contract", "component", "contract"]
+ignore_errors = true
+
+# operational tooling (differential, perf, ops, lifecycle, release, cli) is
+# type-checked non-strictly; the compatibility core above is strict.
+[[tool.mypy.overrides]]
+module = ["wit.differential", "wit.perf", "wit.ops", "wit.lifecycle", "wit.release", "wit.cli", "wit.__main__",
+          "inv11_interface_contract_language.wit.differential", "inv11_interface_contract_language.wit.perf",
+          "inv11_interface_contract_language.wit.ops", "inv11_interface_contract_language.wit.lifecycle",
+          "inv11_interface_contract_language.wit.release", "inv11_interface_contract_language.wit.cli"]
+strict = false
+disallow_untyped_defs = false
+disallow_any_generics = false
+warn_return_any = false
+check_untyped_defs = true
+
+[tool.ruff]
+line-length = 140
+target-version = "py310"
+extend-exclude = ["tests/fixtures"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "UP", "I"]
+ignore = ["S101", "S311", "S603", "S607", "E501"]  # S311: seeded PRNGs generate test data, never secrets
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = ["S", "B", "E741", "UP031"]
+"**/component.py" = ["E402"]  # 4.2.0 baseline file, left byte-identical

@@ -1,0 +1,18 @@
+{
+  "title": "INV-29 Hybrid Wasm/unikernel",
+  "schemaVersion": 39,
+  "tags": ["inv29", "post-kubernetes"],
+  "panels": [
+    {"title": "Admissions vs refusals by code", "type": "timeseries", "targets": [{"expr": "sum by (outcome, code) (rate(inv29_compositions_total[5m]))"}]},
+    {"title": "Admission latency p50/p95/p99 (ms)", "type": "timeseries", "targets": [
+      {"expr": "histogram_quantile(0.5, sum by (le) (rate(inv29_admission_latency_ms_bucket[5m])))"},
+      {"expr": "histogram_quantile(0.95, sum by (le) (rate(inv29_admission_latency_ms_bucket[5m])))"},
+      {"expr": "histogram_quantile(0.99, sum by (le) (rate(inv29_admission_latency_ms_bucket[5m])))"}]},
+    {"title": "Import refusals", "type": "stat", "targets": [{"expr": "increase(inv29_import_refusals_total[1h])"}]},
+    {"title": "Layer / attestation failures", "type": "timeseries", "targets": [{"expr": "sum by (code) (rate(inv29_layer_failures_total[5m]))"}]},
+    {"title": "Dependency availability", "type": "state-timeline", "targets": [{"expr": "inv29_dependency_available"}]},
+    {"title": "Hybrid instances by state", "type": "bargauge", "targets": [{"expr": "inv29_hybrid_instances"}]},
+    {"title": "Replay cache fill", "type": "gauge", "targets": [{"expr": "inv29_replay_cache_fill_ratio"}]},
+    {"title": "Dropped metric series", "type": "stat", "targets": [{"expr": "inv29_metric_series_dropped_total"}]}
+  ]
+}

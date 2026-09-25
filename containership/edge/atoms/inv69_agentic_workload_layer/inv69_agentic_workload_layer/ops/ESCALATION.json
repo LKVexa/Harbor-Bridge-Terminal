@@ -1,0 +1,108 @@
+{
+  "schema": "PK_ESCALATION/1",
+  "severities": {
+    "SEV1": {
+      "trigger": "confirmed policy/approval bypass, audit-chain failure, sandbox escape indicator, leaked credential in use",
+      "ack_min": 15,
+      "page": true
+    },
+    "SEV2": {
+      "trigger": "critical dependency down >5 min (runs refused), integrity alert unconfirmed, data loss risk",
+      "ack_min": 30,
+      "page": true
+    },
+    "SEV3": {
+      "trigger": "degraded mode, p99 regression, retry storm, elevated denials without attack evidence",
+      "ack_min": 240,
+      "page": false
+    },
+    "SEV4": {
+      "trigger": "single-run failure, cosmetic, documentation",
+      "ack_min": 1440,
+      "page": false
+    }
+  },
+  "matrix": [
+    {
+      "class": "approval_bypass",
+      "severity": "SEV1",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-service-owner",
+      "security": "inv69-security-owner",
+      "decision": "pk-architecture-board",
+      "runbook": "RUNBOOK.md#rb-approval-bypass"
+    },
+    {
+      "class": "audit_chain_failure",
+      "severity": "SEV1",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-service-owner",
+      "security": "inv69-security-owner",
+      "decision": "pk-architecture-board",
+      "runbook": "RUNBOOK.md#rb-audit-chain"
+    },
+    {
+      "class": "sandbox_escape",
+      "severity": "SEV1",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-security-owner",
+      "security": "inv69-security-owner",
+      "decision": "pk-architecture-board",
+      "runbook": "RUNBOOK.md#rb-sandbox-escape"
+    },
+    {
+      "class": "leaked_credential",
+      "severity": "SEV1",
+      "primary": "inv69-security-owner",
+      "secondary": "inv69-oncall",
+      "security": "inv69-security-owner",
+      "decision": "inv69-service-owner",
+      "runbook": "RUNBOOK.md#rb-leaked-credential"
+    },
+    {
+      "class": "runaway_loop",
+      "severity": "SEV3",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-service-owner",
+      "security": "inv69-security-owner",
+      "decision": "inv69-service-owner",
+      "runbook": "RUNBOOK.md#rb-runaway"
+    },
+    {
+      "class": "dependency_outage",
+      "severity": "SEV2",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-service-owner",
+      "security": "inv69-security-owner",
+      "decision": "inv69-service-owner",
+      "runbook": "RUNBOOK.md#rb-dependency"
+    },
+    {
+      "class": "corrupt_state",
+      "severity": "SEV2",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-service-owner",
+      "security": "inv69-security-owner",
+      "decision": "pk-architecture-board",
+      "runbook": "RUNBOOK.md#rb-corrupt-state"
+    },
+    {
+      "class": "bad_release_or_config",
+      "severity": "SEV2",
+      "primary": "inv69-oncall",
+      "secondary": "inv69-release-approver",
+      "security": "inv69-security-owner",
+      "decision": "inv69-service-owner",
+      "runbook": "RUNBOOK.md#rb-bad-release"
+    },
+    {
+      "class": "release_blocking_regression",
+      "severity": "SEV3",
+      "primary": "inv69-release-approver",
+      "secondary": "inv69-service-owner",
+      "security": "inv69-security-owner",
+      "decision": "inv69-service-owner",
+      "runbook": "RUNBOOK.md#rb-bad-release"
+    }
+  ]
+}

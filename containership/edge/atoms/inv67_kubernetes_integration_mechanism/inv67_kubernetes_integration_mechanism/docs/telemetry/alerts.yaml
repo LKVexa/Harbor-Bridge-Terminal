@@ -1,0 +1,28 @@
+groups:
+  - name: inv67
+    rules:
+      - alert: INV67NoLeader
+        expr: max(inv67_leader) == 0
+        for: 2m
+        labels: {severity: page}
+        annotations: {runbook: docs/runbooks/degraded-mode.md}
+      - alert: INV67ReconcileStalled
+        expr: probe_success{job="inv67-healthz"} == 0
+        for: 5m
+        labels: {severity: page}
+      - alert: INV67DownstreamDegraded
+        expr: rate(inv67_requeues_total{reason=~"DownstreamUnavailable|CircuitOpen"}[5m]) > 0.5
+        for: 10m
+        labels: {severity: ticket}
+      - alert: INV67RefusalSpike
+        expr: sum by (reason) (rate(inv67_refused_total[10m])) > 1
+        for: 15m
+        labels: {severity: ticket}
+      - alert: INV67QueueSaturation
+        expr: inv67_queue_depth > 1000
+        for: 10m
+        labels: {severity: page}
+      - alert: INV67TranslationSlow
+        expr: histogram_quantile(0.99, rate(inv67_reconcile_seconds_bucket[5m])) > 1
+        for: 15m
+        labels: {severity: ticket}

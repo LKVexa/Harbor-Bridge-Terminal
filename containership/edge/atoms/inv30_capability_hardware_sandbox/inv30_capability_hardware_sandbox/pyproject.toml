@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv30-capability-hardware-sandbox"
+version = "4.3.0"
+description = "INV-30 capability hardware sandbox: CHERI-shaped semantic model, service boundary and hardware-backend adapter"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = {text = "LicenseRef-LinearFinance-Proprietary"}
+authors = [{name = "David Paul Russell", email = "davidpaulrussell@linearfinance.org"}]
+dependencies = []                       # the semantic model and service are stdlib-only
+
+[project.optional-dependencies]
+framework = ["pk-core>=4.0.0,<5.0.0"]   # estate runtime; not on PyPI - installed from the estate (see docs/INSTALL.md)
+
+[project.scripts]
+inv30-ops = "inv30_capability_hardware_sandbox.ops:main"
+inv30-release = "inv30_capability_hardware_sandbox.release:main"
+
+[tool.setuptools]
+packages = ["inv30_capability_hardware_sandbox", "inv30_capability_hardware_sandbox.tests"]
+
+[tool.setuptools.package-dir]
+inv30_capability_hardware_sandbox = "."
+"inv30_capability_hardware_sandbox.tests" = "tests"
+
+[tool.setuptools.package-data]
+inv30_capability_hardware_sandbox = ["*.json", "*.md", "VERSION", "LICENSE", "NOTICE", "schemas/*.json",
+  "config/*.json", "config/overlays/*.json", "fixtures/*/*.json", "docs/*.md"]

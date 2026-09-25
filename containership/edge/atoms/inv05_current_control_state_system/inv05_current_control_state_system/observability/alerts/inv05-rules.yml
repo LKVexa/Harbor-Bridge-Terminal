@@ -1,0 +1,56 @@
+groups:
+- name: inv05-slo
+  rules:
+  - alert: INV05NotReady
+    expr: max(cstate_state{state=~"not_ready|failed"}) == 1
+    for: 2m
+    labels: {severity: page, sev: "1"}
+    annotations: {summary: "INV-05 not ready or failed", runbook: "docs/operations/INCIDENTS.md#diagnosis-tree-by-alert"}
+  - alert: INV05Degraded
+    expr: cstate_state{state="degraded"} == 1
+    for: 10m
+    labels: {severity: ticket, sev: "2"}
+  - alert: INV05ErrorBudgetBurnFast
+    expr: (sum(rate(cstate_requests_total{result=~"internal|unavailable|timeout"}[5m])) / sum(rate(cstate_requests_total[5m]))) > (14.4 * 0.001)
+    for: 5m
+    labels: {severity: page, sev: "1"}
+    annotations: {summary: "Burning 99.9% availability budget 14x", runbook: "docs/operations/INCIDENTS.md"}
+  - alert: INV05ErrorBudgetBurnSlow
+    expr: (sum(rate(cstate_requests_total{result=~"internal|unavailable|timeout"}[6h])) / sum(rate(cstate_requests_total[6h]))) > (1 * 0.001)
+    for: 30m
+    labels: {severity: ticket, sev: "2"}
+  - alert: INV05WriteLatencyP99
+    expr: histogram_quantile(0.99, sum by (le) (rate(cstate_request_duration_seconds_bucket{op="txn"}[5m]))) > 0.010
+    for: 15m
+    labels: {severity: ticket, sev: "2"}
+    annotations: {summary: "txn p99 above 10 ms SLO (1% budget)"}
+  - alert: INV05TxnConflictsHigh
+    expr: rate(cstate_txn_conflicts_total[5m]) / clamp_min(rate(cstate_requests_total{op="txn"}[5m]), 1) > 0.5
+    for: 15m
+    labels: {severity: info}
+  - alert: INV05SlowConsumers
+    expr: increase(cstate_watch_slow_consumer_cancels_total[15m]) > 5
+    labels: {severity: ticket, sev: "3"}
+  - alert: INV05WatchBacklog
+    expr: cstate_watch_backlog_events > 50000
+    for: 10m
+    labels: {severity: ticket, sev: "2"}
+  - alert: INV05CompactionLag
+    expr: cstate_compaction_lag_revisions > 500000
+    for: 30m
+    labels: {severity: ticket, sev: "2"}
+  - alert: INV05HistoryNearCeiling
+    expr: cstate_history_events > 800000
+    for: 5m
+    labels: {severity: page, sev: "2"}
+  - alert: INV05AuthFailuresSpike
+    expr: sum(rate(cstate_authn_failures_total[5m])) > 5 or sum(rate(cstate_authz_denials_total[5m])) > 20
+    for: 5m
+    labels: {severity: page, sev: "2", team: security}
+  - alert: INV05BreakGlassUsed
+    expr: increase(cstate_admin_ops_total{action="admin.break_glass"}[5m]) > 0
+    labels: {severity: page, team: security}
+  - alert: INV05FDsHigh
+    expr: process_open_fds > 50000
+    for: 10m
+    labels: {severity: ticket}

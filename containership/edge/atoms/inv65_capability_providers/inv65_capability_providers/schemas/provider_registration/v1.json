@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\x00-\\x1f\\x7f\\s]([^\\x00-\\x1f\\x7f]*[^\\x00-\\x1f\\x7f\\s])?$",
+      "type": "string"
+    }
+  },
+  "$id": "urn:pk:inv65:provider_registration:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "$ref": "#/$defs/id"
+    },
+    "environment": {
+      "$ref": "#/$defs/id"
+    },
+    "implementation_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "instance_id": {
+      "$ref": "#/$defs/id"
+    },
+    "lease_epoch": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "site": {
+      "$ref": "#/$defs/id"
+    },
+    "versions": {
+      "items": {
+        "pattern": "^[0-9]+\\.[0-9]+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "instance_id",
+    "contract_id",
+    "versions",
+    "site",
+    "environment",
+    "implementation_digest",
+    "lease_epoch"
+  ],
+  "title": "PK provider registration v1",
+  "type": "object",
+  "x-compat": "additive-only within v1; breaking changes require v2",
+  "x-version": "1.0"
+}

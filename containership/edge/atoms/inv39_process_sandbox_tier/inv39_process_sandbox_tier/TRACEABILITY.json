@@ -1,0 +1,3130 @@
+{
+ "schema": "INV39_TRACEABILITY/1",
+ "version": "5.1.0",
+ "summary": {
+  "IMPLEMENTED": 50,
+  "PARTIAL": 47,
+  "BLOCKED": 9
+ },
+ "accepted": 0,
+ "components": [
+  {
+   "id": "MC-001",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Named accountable owner and escalation path",
+   "checks": [
+    "C009"
+   ],
+   "status": "BLOCKED",
+   "code": [
+    "docs/OWNERSHIP.md"
+   ],
+   "tests": [],
+   "gap": "a named accountable owner, security reviewer, on-call and release approver",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-002",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Approved ADR selecting and justifying Linux bubblewrap/seccomp and macOS Seatbelt, including rejected alternatives",
+   "checks": [
+    "C010"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/ADR-0001-enforcement-backends.md"
+   ],
+   "tests": [],
+   "gap": "ADR is Proposed; owner approval",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-003",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Formal SHALL-level functional requirements specification with deployment-context applicability",
+   "checks": [
+    "C011",
+    "C012"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/REQUIREMENTS.md"
+   ],
+   "tests": [
+    "test_enforcement_linux",
+    "test_service_e2e"
+   ],
+   "gap": "owner approval; FR-14 (macOS) unverified",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-004",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Quantified non-functional objectives for startup latency, availability, determinism, isolation, CPU/memory overhead, and tail latency",
+   "checks": [
+    "C013",
+    "C061",
+    "C062",
+    "C091"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/NFR.json",
+    "tools/bench.py"
+   ],
+   "tests": [],
+   "gap": "numbers PROPOSED, measured on one host; owner approval",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-005",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Machine-readable success / partial / degraded / retryable / terminal outcome semantics",
+   "checks": [
+    "C014"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "errors.py"
+   ],
+   "tests": [
+    "test_contracts_and_fixtures.ErrorTaxonomyTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-006",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Enforced production lifecycle state machine covering create, apply, verify, exec, terminate, and cleanup",
+   "checks": [
+    "C015"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "lifecycle.py",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_control_plane.LeaseQuarantineLifecycleTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-007",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Backward-compatibility, deprecation, and migration policy for schemas/backends",
+   "checks": [
+    "C016",
+    "C027",
+    "C093"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/COMPATIBILITY.md",
+    "control.py::negotiate"
+   ],
+   "tests": [
+    "test_contracts_and_fixtures.NegotiationTest"
+   ],
+   "gap": "policy owner approval; migration tooling for /1 consumers",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-008",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Capacity ceilings, tenant quotas, fairness rules, and concurrency limits",
+   "checks": [
+    "C017",
+    "C067"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::Admission",
+    "docs/LIMITS_AND_CAPACITY.md"
+   ],
+   "tests": [
+    "test_control_plane.AdmissionTest"
+   ],
+   "gap": "values PROPOSED",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-009",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Explicit behavior for disconnected/offline operation and unavailable control-plane dependencies",
+   "checks": [
+    "C018"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "runtime.py",
+    "config.py::offline_mode",
+    "docs/OPERATING_POLICY.md"
+   ],
+   "tests": [
+    "test_service_e2e.RefusalPathTest",
+    "test_resilience"
+   ],
+   "gap": "cached-profiles-only mode is declared but launch path treats it as allow; profile pinning store not built",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-010",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Precedence rules for security vs residency vs SLO vs cost conflicts",
+   "checks": [
+    "C019"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATING_POLICY.md",
+    "config.py::TIGHTEN_ONLY"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest.test_overlay_tighten_only"
+   ],
+   "gap": "residency/cost inputs do not exist in this tier; owner approval",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-011",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Requirements traceability matrix linking all 100 checks to code, tests, evidence, owner, and status",
+   "checks": [
+    "C020"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "TRACEABILITY.json",
+    "tools/gen_traceability.py"
+   ],
+   "tests": [
+    "test_release.TraceabilityTest"
+   ],
+   "gap": "owners UNASSIGNED for all 100 checks",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-012",
+   "priority": "P2 / Required production readiness",
+   "category": "Architecture, requirements, and governance",
+   "component": "Supported platform/kernel/runtime/backend compatibility matrix",
+   "checks": [
+    "C031",
+    "C084",
+    "C093"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/COMPATIBILITY.md"
+   ],
+   "tests": [],
+   "gap": "only x86_64 / kernel 6.18 / Python 3.11 exercised",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-013",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Authentication requirements for control-plane/profile/evidence boundaries",
+   "checks": [
+    "C023",
+    "C044"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::issue_token/authenticate"
+   ],
+   "tests": [
+    "test_control_plane.AuthTest"
+   ],
+   "gap": "IdP / key distribution integration is external",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-014",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Authorization/capability model for who may create, update, launch, inspect, or terminate a sandbox",
+   "checks": [
+    "C024"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::Authorizer"
+   ],
+   "tests": [
+    "test_control_plane.AuthzTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-015",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Timeout, cancellation, retry, idempotency, and backpressure semantics for backend calls",
+   "checks": [
+    "C025"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::IdempotencyCache/retry",
+    "linux/launcher.py (timeout, cancel)"
+   ],
+   "tests": [
+    "test_control_plane.RetryIdempotencyTest",
+    "test_enforcement_linux.EnforcementTest.test_cancellation_kills_tree"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-016",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Stable machine-readable error code taxonomy and structured error payload schema",
+   "checks": [
+    "C026"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "errors.py",
+    "schemas/PK_SANDBOX_ERROR-1.schema.json"
+   ],
+   "tests": [
+    "test_contracts_and_fixtures"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-017",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Version negotiation / mixed-version peer behavior",
+   "checks": [
+    "C027"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::negotiate"
+   ],
+   "tests": [
+    "test_contracts_and_fixtures.NegotiationTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-018",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Explicit interface payload, concurrency, queue, connection, and resource limits",
+   "checks": [
+    "C028"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "docs/LIMITS_AND_CAPACITY.md",
+    "control.py::Limits"
+   ],
+   "tests": [
+    "test_control_plane.AdmissionTest"
+   ],
+   "gap": "no request queue: max_queue reserved",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-019",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Reference request/response fixtures for both public schemas, including negative fixtures",
+   "checks": [
+    "C029"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "fixtures/",
+    "tools/make_fixtures.py"
+   ],
+   "tests": [
+    "test_contracts_and_fixtures.FixtureContractTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-020",
+   "priority": "P1 / High",
+   "category": "Interfaces and integration",
+   "component": "Automated interoperability tests with PLN-04, GAP-13, GAP-09, and any runtime launcher/control-plane neighbor",
+   "checks": [
+    "C030",
+    "C083"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "integration.py"
+   ],
+   "tests": [
+    "test_service_e2e.InteropTest"
+   ],
+   "gap": "tested against reference stubs only; real PLN-04/GAP-13/GAP-09 builds not available",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-021",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Dependency/package manifest declaring and pinning `pk_core` and supported Python versions",
+   "checks": [
+    "C031",
+    "C032"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "pyproject.toml"
+   ],
+   "tests": [],
+   "gap": "pk_core wheel + digest not supplied",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-022",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Immutable release artifact definition and reproducible build metadata",
+   "checks": [
+    "C032"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tools/build_release.py"
+   ],
+   "tests": [
+    "test_release.ReleaseTest.test_reproducible"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-023",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Declarative profile/configuration loader with secure defaults and schema validation before activation",
+   "checks": [
+    "C033",
+    "C034"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py::load/validate"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest",
+    "test_backends_and_fuzz.FuzzTest.test_config_loader"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-024",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Site/environment-specific configuration overlay mechanism without rebuilding artifacts",
+   "checks": [
+    "C035"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py::overlay"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest.test_overlay_tighten_only"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-025",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Configuration provenance record: version, author/actor, source, digest, and activation time",
+   "checks": [
+    "C036"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py::ConfigStore"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest.test_atomic_activation_provenance_and_rollback"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-026",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Atomic/transactional configuration activation",
+   "checks": [
+    "C037"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py::ConfigStore._write_atomic"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest.test_atomic_activation_provenance_and_rollback"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-027",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Automatic and operator-driven configuration rollback implementation",
+   "checks": [
+    "C038"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py::ConfigStore.rollback"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest.test_atomic_activation_provenance_and_rollback"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-028",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Secret/credential handling policy and secret-redaction tests for configuration/diagnostics",
+   "checks": [
+    "C039"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py::redact",
+    "docs/OPERATING_POLICY.md"
+   ],
+   "tests": [
+    "test_evidence_and_config.ConfigTest.test_redaction",
+    "test_evidence_and_config.TelemetryTest.test_logger_ids_and_redaction"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-029",
+   "priority": "P1 / High",
+   "category": "Packaging, configuration, and release inputs",
+   "component": "Deterministic bootstrap/install path from an empty supported node",
+   "checks": [
+    "C040"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "tools/bootstrap.sh"
+   ],
+   "tests": [],
+   "gap": "run on this container only, not on a freshly provisioned supported node",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-030",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Native Linux seccomp filter compiler/installer",
+   "checks": [
+    "C031",
+    "C034",
+    "C042",
+    "C043",
+    "C044",
+    "C045",
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/seccomp.py",
+    "linux/syscall_tables.py"
+   ],
+   "tests": [
+    "test_backends_and_fuzz.CompilerTest",
+    "test_enforcement_linux"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-031",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Linux bubblewrap (`bwrap`) launcher/integration adapter",
+   "checks": [
+    "C010",
+    "C031",
+    "C046"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "backends.py::bwrap_argv"
+   ],
+   "tests": [
+    "test_backends_and_fuzz.BackendAdapterTest.test_bwrap_argv"
+   ],
+   "gap": "bwrap not installed on build host; adapter never executed",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-032",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "macOS Seatbelt profile compiler/launcher/verification adapter",
+   "checks": [
+    "C010",
+    "C031",
+    "C084"
+   ],
+   "status": "BLOCKED",
+   "code": [
+    "backends.py::seatbelt_profile/seatbelt_argv"
+   ],
+   "tests": [
+    "test_backends_and_fuzz.BackendAdapterTest.test_seatbelt_profile"
+   ],
+   "gap": "a macOS host to execute and certify the Seatbelt backend",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-033",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Backend capability discovery and fail-closed platform feature probing",
+   "checks": [
+    "C031",
+    "C034",
+    "C084"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "backends.py::probe/require"
+   ],
+   "tests": [
+    "test_backends_and_fuzz.BackendAdapterTest.test_probe_never_raises_and_require_fails_closed"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-034",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "`PR_SET_NO_NEW_PRIVS` enforcement before child execution",
+   "checks": [
+    "C042",
+    "C043"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/seccomp.py::set_no_new_privs"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_kernel_read_back_shows_controls"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-035",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "UID/GID switching, supplementary-group clearing, user-namespace mapping, and setuid/file-capability regain prevention",
+   "checks": [
+    "C042",
+    "C043",
+    "C044",
+    "C045",
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/primitives.py::switch_ids/write_id_maps/lock_securebits"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_run_as_unprivileged_identity",
+    "test_enforcement_linux.EnforcementTest.test_all_escape_probes_blocked"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-036",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Complete Linux capability handling: bounding, permitted, effective, inheritable, and ambient set reduction",
+   "checks": [
+    "C042",
+    "C043"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/primitives.py::drop_capabilities"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_kernel_read_back_shows_controls"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-037",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Mount namespace hardening, private propagation, root/pivot isolation, read-only bind policy, and safe temporary filesystem setup",
+   "checks": [
+    "C043",
+    "C046"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "linux/primitives.py::make_mounts_private/mount_private_tmpfs"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_kernel_read_back_shows_controls"
+   ],
+   "gap": "no pivot_root / read-only root in the native backend (bwrap path provides it, unexecuted)",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-038",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Optional Landlock/filesystem policy backend promised by the contract",
+   "checks": [
+    "C043",
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/landlock.py"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_landlock_confines_reads"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-039",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Network namespace setup, interface policy, inherited-socket control, and network egress policy",
+   "checks": [
+    "C043",
+    "C046"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "linux/launcher.py (net ns)"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_network_namespace_blocks_egress_even_with_socket_allowed"
+   ],
+   "gap": "deny-all egress only; no allow-listed egress / interface policy",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-040",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Device isolation and `/proc`/`/sys` exposure policy",
+   "checks": [
+    "C043",
+    "C046"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "linux/primitives.py::mount_fresh_proc"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_all_escape_probes_blocked"
+   ],
+   "gap": "/sys and /dev still host views in native backend",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-041",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "File-descriptor inheritance closure / allow-list",
+   "checks": [
+    "C043",
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/primitives.py::close_fds_except"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_all_escape_probes_blocked"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-042",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Environment-variable sanitization and dangerous loader-variable stripping",
+   "checks": [
+    "C043",
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/primitives.py::sanitize_env"
+   ],
+   "tests": [
+    "test_backends_and_fuzz.BackendAdapterTest.test_env_sanitizer",
+    "test_enforcement_linux"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-043",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Resource enforcement using rlimits and/or cgroup v2 for processes, CPU, memory, I/O, and file descriptors",
+   "checks": [
+    "C017",
+    "C043",
+    "C050",
+    "C054",
+    "C067"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "linux/primitives.py::apply_rlimits"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_kernel_read_back_shows_controls"
+   ],
+   "gap": "cgroup v2 CPU/memory/IO not implemented (EX-004)",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-044",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Child launcher that guarantees no workload code executes before all containment controls are active",
+   "checks": [
+    "C034",
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/launcher.py::launch"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_pre_exec_refusal_means_nothing_runs"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-045",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "PID 1/subreaper behavior, signal forwarding, child reaping, timeout termination, and cleanup",
+   "checks": [
+    "C051",
+    "C052",
+    "C053",
+    "C054",
+    "C055",
+    "C056",
+    "C057"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/launcher.py::_supervisor"
+   ],
+   "tests": [
+    "test_enforcement_linux.EnforcementTest.test_timeout_kills_whole_tree",
+    "test_enforcement_linux.EnforcementTest.test_host_crash_kills_sandbox"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-046",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Trustworthy backend applied-state attestation/read-back bound to `profile_digest`",
+   "checks": [
+    "C004",
+    "C034",
+    "C045",
+    "C049"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "linux/launcher.py::read_back/verify",
+    "runtime.py",
+    "attestation.py"
+   ],
+   "tests": [
+    "test_service_e2e.EndToEndTest.test_launch_produces_verifiable_signed_evidence"
+   ],
+   "gap": "trust root is an HMAC node key (see MC-050)",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-047",
+   "priority": "P0 / Release-blocking",
+   "category": "Production sandbox enforcement backends",
+   "component": "Kernel/backend evidence adapter for facts that cannot be exactly read back from normal kernel APIs (notably installed seccomp rule contents)",
+   "checks": [
+    "C004",
+    "C045",
+    "C090"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "linux/launcher.py (program digest)",
+    "docs/EXCEPTIONS.json EX-003"
+   ],
+   "tests": [],
+   "gap": "rule contents launcher-attested; PTRACE_SECCOMP_GET_FILTER read-back not built",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-048",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Backend-specific threat model with attack paths, mitigations, owners, and tests linked to each threat",
+   "checks": [
+    "C041",
+    "C050",
+    "C087"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/THREAT_MODEL.json"
+   ],
+   "tests": [
+    "test_threat_model"
+   ],
+   "gap": "draft; owner/security sign-off",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-049",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Signed policy/artifact verification, digest pinning, provenance validation, and downgrade protection",
+   "checks": [
+    "C045"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "attestation.py",
+    "profiles.py"
+   ],
+   "tests": [],
+   "gap": "no asymmetric signatures on policy artifacts; downgrade protection covers config overlays only",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-050",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Node/control-plane identity and attestation mechanism before trusting profile or evidence sources",
+   "checks": [
+    "C044"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "attestation.py::NodeIdentity"
+   ],
+   "tests": [],
+   "gap": "hardware-rooted node attestation (TPM/TEE) and an identity service",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-051",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Isolation proof/tests spanning execution, memory, filesystem/state, network, and device boundaries",
+   "checks": [
+    "C046"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tools/escape_probes.c"
+   ],
+   "tests": [
+    "test_enforcement_linux"
+   ],
+   "gap": "memory boundary = separate address spaces; no dedicated test",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-052",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Encryption design for any remote sensitive profile/evidence transport and at-rest sensitive state",
+   "checks": [
+    "C047"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATING_POLICY.md"
+   ],
+   "tests": [],
+   "gap": "design only; no transport exists; at-rest encryption delegated to disk encryption",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-053",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Fail-safe behavior when identity, attestation, policy, key, or trusted-time services are unavailable",
+   "checks": [
+    "C048"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "attestation.py::EvidenceVerifier",
+    "runtime.py"
+   ],
+   "tests": [
+    "test_evidence_and_config.EvidenceTest.test_time_source_down_fails_safe",
+    "test_service_e2e.RefusalPathTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-054",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Tamper-evident security audit-event sink / append-only evidence chain",
+   "checks": [
+    "C049"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "attestation.py::AuditChain"
+   ],
+   "tests": [
+    "test_evidence_and_config.AuditChainTest"
+   ],
+   "gap": "external anchoring of the head hash is an operator step",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-055",
+   "priority": "P0 / Release-blocking",
+   "category": "Security, trust, and audit",
+   "component": "Adversarial escape suite covering privilege escalation, injection, replay, spoofing, sandbox escape, side channels, and resource exhaustion",
+   "checks": [
+    "C050",
+    "C087"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tools/escape_probes.c"
+   ],
+   "tests": [
+    "test_enforcement_linux",
+    "test_threat_model"
+   ],
+   "gap": "side channels are residual (T15)",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-056",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Comprehensive failure-mode matrix for process, runtime, node, site, dependency, and control-plane failures",
+   "checks": [
+    "C051"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATING_POLICY.md"
+   ],
+   "tests": [
+    "test_resilience"
+   ],
+   "gap": "site/control-plane failure rows are design statements",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-057",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Health/readiness/stall detection with quantified thresholds",
+   "checks": [
+    "C052"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "runtime.py::status"
+   ],
+   "tests": [],
+   "gap": "no watchdog / stall detector with quantified thresholds",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-058",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Bounded retry/backoff/jitter implementation for operations that are actually safe to retry",
+   "checks": [
+    "C053"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::retry"
+   ],
+   "tests": [
+    "test_control_plane.RetryIdempotencyTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-059",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Admission control/load shedding/circuit breaking around sandbox creation and backend saturation",
+   "checks": [
+    "C054"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "control.py::Admission"
+   ],
+   "tests": [
+    "test_control_plane.AdmissionTest",
+    "test_resilience"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-060",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Failover semantics preserving isolation/residency guarantees",
+   "checks": [
+    "C055"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATING_POLICY.md"
+   ],
+   "tests": [],
+   "gap": "no cross-node failover by design; needs PLN-04 confirmation",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-061",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Defined and tested degraded mode when noncritical dependencies are unavailable",
+   "checks": [
+    "C056"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATING_POLICY.md"
+   ],
+   "tests": [],
+   "gap": "telemetry-export degraded mode described; GAP-09 exporter not built",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-062",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Crash-consistency/restart/resume semantics for launcher/backend/evidence state",
+   "checks": [
+    "C057"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "config.py",
+    "attestation.py",
+    "linux/launcher.py"
+   ],
+   "tests": [
+    "test_resilience"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-063",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Duplicate ownership/stale-controller/duplicate-execution prevention",
+   "checks": [
+    "C058"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "control.py::LeaseTable"
+   ],
+   "tests": [
+    "test_control_plane.LeaseQuarantineLifecycleTest.test_fenced_leases"
+   ],
+   "gap": "leases are in-process; multi-controller needs a shared store",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-064",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Quarantine/freeze/disable/kill control with authorization and audit",
+   "checks": [
+    "C059"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "control.py::Quarantine"
+   ],
+   "tests": [
+    "test_control_plane.LeaseQuarantineLifecycleTest.test_quarantine_authorized_and_audited"
+   ],
+   "gap": "quarantine blocks new launches; does not yet kill already-running sandboxes",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-065",
+   "priority": "P1 / High",
+   "category": "Resilience and failure handling",
+   "component": "Automated fault-injection suite proving recovery objectives",
+   "checks": [
+    "C060"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "tests/test_resilience.py"
+   ],
+   "tests": [
+    "test_resilience"
+   ],
+   "gap": "local fault injection only; no recovery-objective numbers",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-066",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Reproducible startup, CPU, memory, storage, network, and density benchmark harness",
+   "checks": [
+    "C061",
+    "C063",
+    "C064"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tools/bench.py"
+   ],
+   "tests": [],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-067",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "p50/p95/p99/worst-case release thresholds",
+   "checks": [
+    "C062"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/NFR.json"
+   ],
+   "tests": [],
+   "gap": "thresholds PROPOSED",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-068",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Steady/burst/overload/scale/recovery performance scenarios",
+   "checks": [
+    "C063"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "tools/bench.py"
+   ],
+   "tests": [],
+   "gap": "steady + burst only; overload/scale/recovery scenarios missing",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-069",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Per-workload/per-tenant overhead accounting",
+   "checks": [
+    "C064"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "observability.py"
+   ],
+   "tests": [],
+   "gap": "per-profile metrics; per-tenant CPU/memory accounting needs cgroups",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-070",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Profiling evidence for serialization/copy/context-switch/hop inefficiencies",
+   "checks": [
+    "C065"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "evidence/profile-launch.txt"
+   ],
+   "tests": [],
+   "gap": "one cProfile run; no hop/copy analysis",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-071",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Verified optimization implementation/evidence for locality, batching, zero-copy, or equivalent where applicable",
+   "checks": [
+    "C066"
+   ],
+   "status": "BLOCKED",
+   "code": [],
+   "tests": [],
+   "gap": "depends on MC-070 analysis; no optimisation claimed",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-072",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Capacity model and saturation signals predicting resource exhaustion",
+   "checks": [
+    "C067",
+    "C069"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/LIMITS_AND_CAPACITY.md"
+   ],
+   "tests": [],
+   "gap": "single-node model only",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-073",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Power/thermal measurements for constrained edge nodes",
+   "checks": [
+    "C068"
+   ],
+   "status": "BLOCKED",
+   "code": [],
+   "tests": [],
+   "gap": "edge hardware and a power meter",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-074",
+   "priority": "P2 / Required production readiness",
+   "category": "Performance and resource efficiency",
+   "component": "Automated release gate that blocks startup/density/throughput/tail-latency regressions",
+   "checks": [
+    "C070"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tools/bench.py --gate",
+    "ci/ci.sh"
+   ],
+   "tests": [],
+   "gap": "thresholds PROPOSED",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-075",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Runtime status surface exposing health, readiness, version, active config digest, dependency status, and actual active controls",
+   "checks": [
+    "C071"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "runtime.py::status",
+    "schemas/PK_SANDBOX_STATUS-1.schema.json"
+   ],
+   "tests": [
+    "test_service_e2e.EndToEndTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-076",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Structured metrics implementation for rate/errors/latency/saturation/backlog/resource use",
+   "checks": [
+    "C072"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "observability.py::Metrics"
+   ],
+   "tests": [
+    "test_evidence_and_config.TelemetryTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-077",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Structured logging implementation with stable node/tenant/workload/component/operation identifiers",
+   "checks": [
+    "C073"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "observability.py::Logger"
+   ],
+   "tests": [
+    "test_evidence_and_config.TelemetryTest.test_logger_ids_and_redaction"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-078",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Trace-context propagation across control-plane/backend/launcher boundaries",
+   "checks": [
+    "C074"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "observability.py::new_traceparent"
+   ],
+   "tests": [
+    "test_evidence_and_config.TelemetryTest.test_trace_propagation",
+    "test_service_e2e.EndToEndTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-079",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "High-cardinality diagnostic channel with redaction/privacy controls",
+   "checks": [
+    "C075"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "observability.py::Diagnostics"
+   ],
+   "tests": [
+    "test_evidence_and_config.TelemetryTest.test_diagnostics_sampled_and_redacted"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-080",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Persistent reason record for every automated admission/rejection/rollback/termination decision",
+   "checks": [
+    "C076"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "observability.py::Reasons"
+   ],
+   "tests": [
+    "test_service_e2e.RefusalPathTest"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-081",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Operator explain view tying decisions to profile, policy, topology, constraints, and evidence",
+   "checks": [
+    "C077"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "observability.py::Reasons.explain"
+   ],
+   "tests": [
+    "test_evidence_and_config.TelemetryTest.test_reasons_and_explain"
+   ],
+   "gap": "API only, no UI",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-082",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Correlation with release lineage and live infrastructure graph",
+   "checks": [
+    "C078"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "runtime.py (release_digest in evidence)"
+   ],
+   "tests": [],
+   "gap": "live infrastructure graph does not exist here",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-083",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Telemetry retention, sampling, privacy, and export policy",
+   "checks": [
+    "C079"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATING_POLICY.md",
+    "config.py::telemetry"
+   ],
+   "tests": [],
+   "gap": "retention enforced by the export target, not built",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-084",
+   "priority": "P1 / High",
+   "category": "Observability and explainability",
+   "component": "Dashboards and alerts distinguishing load, degradation, policy rejection, dependency failure, attack, and software defect",
+   "checks": [
+    "C080"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "observability.py::ALERT_RULES"
+   ],
+   "tests": [
+    "test_evidence_and_config.TelemetryTest.test_alert_classes_distinct"
+   ],
+   "gap": "dashboards not deployed",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-085",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Public-schema contract tests validating positive and negative fixtures",
+   "checks": [
+    "C082"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "schema_check.py",
+    "fixtures/"
+   ],
+   "tests": [
+    "test_contracts_and_fixtures"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-086",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Real backend integration tests with adjacent layers and actual OS enforcement",
+   "checks": [
+    "C083"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "tests/test_enforcement_linux.py",
+    "tests/test_service_e2e.py"
+   ],
+   "tests": [
+    "test_enforcement_linux",
+    "test_service_e2e"
+   ],
+   "gap": "real OS enforcement verified; adjacent layers are stubs",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-087",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Compatibility matrix test suite across supported CPU architectures, kernels, Python/runtime versions, bubblewrap/Seatbelt versions, and schema versions",
+   "checks": [
+    "C084"
+   ],
+   "status": "BLOCKED",
+   "code": [
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "gap": "runners for aarch64, other kernels, Python 3.10/3.12/3.13, bwrap and macOS",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-088",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Fuzz testing for profile parsing, schema boundaries, backend arguments, and untrusted identifiers",
+   "checks": [
+    "C085"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tests/test_backends_and_fuzz.py::FuzzTest"
+   ],
+   "tests": [
+    "test_backends_and_fuzz.FuzzTest"
+   ],
+   "gap": "generative, seeded; no coverage-guided fuzzer",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-089",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Concurrency/race tests for simultaneous create/update/terminate operations and evidence handling",
+   "checks": [
+    "C086"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tests"
+   ],
+   "tests": [
+    "test_service_e2e.EndToEndTest.test_concurrent_launches_respect_quota_and_isolate_evidence",
+    "test_control_plane.AdmissionTest.test_concurrent_acquire_never_exceeds_ceiling"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-090",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Security test suite mechanically derived from the threat model",
+   "checks": [
+    "C087"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "docs/THREAT_MODEL.json"
+   ],
+   "tests": [
+    "test_threat_model"
+   ],
+   "gap": "",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-091",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Benchmark, soak, burst, and fleet-scale certification tests",
+   "checks": [
+    "C088"
+   ],
+   "status": "BLOCKED",
+   "code": [
+    "tools/bench.py"
+   ],
+   "tests": [],
+   "gap": "soak (>1 h) and fleet-scale environments",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-092",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Disaster/partition/reconnect/degraded-control-plane tests",
+   "checks": [
+    "C089"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "tests/test_resilience.py"
+   ],
+   "tests": [
+    "test_resilience"
+   ],
+   "gap": "partition/reconnect need a real control plane",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-093",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Machine-readable signed acceptance evidence required before release certification",
+   "checks": [
+    "C090"
+   ],
+   "status": "BLOCKED",
+   "code": [
+    "tools/exit_gate.py (acceptance bundle)"
+   ],
+   "tests": [],
+   "gap": "an independent human reviewer's signing key and signature",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-094",
+   "priority": "P0 / Release-blocking",
+   "category": "Testing and certification",
+   "component": "Full 100-check `pk_core` conformance evidence from this archive; current integration tests skip because `pk_core` is absent",
+   "checks": [
+    "C090",
+    "C100"
+   ],
+   "status": "BLOCKED",
+   "code": [
+    "tests/test_component.py"
+   ],
+   "tests": [],
+   "gap": "pk_core framework (fails under INV39_CERT_TARGET=1)",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-095",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Executable canary/staged rollout workflow with tested rollback and emergency disable",
+   "checks": [
+    "C092"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATIONS.md",
+    "config.py::rollback",
+    "control.py::Quarantine"
+   ],
+   "tests": [],
+   "gap": "no fleet orchestrator",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-096",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Supported-version compatibility matrix for backend/kernel/runtime/adjacent dependencies",
+   "checks": [
+    "C093"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/COMPATIBILITY.md"
+   ],
+   "tests": [],
+   "gap": "see MC-012",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-097",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Patching, vulnerability response, security advisory, and end-of-life SLA/process",
+   "checks": [
+    "C094"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "gap": "advisory channel + SLA owner unassigned",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-098",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Backup/restore/reconstruction procedure for policy, configuration, evidence, and exception state where external state exists",
+   "checks": [
+    "C095"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "test_resilience"
+   ],
+   "gap": "restore drill not performed",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-099",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Detailed executable day-0/day-1/day-2 runbooks rather than README-level guidance",
+   "checks": [
+    "C096"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "gap": "not exercised by an operator",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-100",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Incident severity, paging, escalation, containment, and recovery runbook",
+   "checks": [
+    "C097"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "gap": "paging integration + owner",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-101",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Recurring access/policy/dependency/configuration/architecture review process",
+   "checks": [
+    "C098"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "gap": "owner + calendar",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-102",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Exception/waiver/technical-debt/deprecation register with owner and expiry",
+   "checks": [
+    "C099"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "docs/EXCEPTIONS.json"
+   ],
+   "tests": [],
+   "gap": "every entry owner _UNASSIGNED_",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-103",
+   "priority": "P0 / Release-blocking",
+   "category": "Operations and release governance",
+   "component": "Formal automated production exit gate spanning architecture through ownership readiness",
+   "checks": [
+    "C100"
+   ],
+   "status": "IMPLEMENTED",
+   "code": [
+    "tools/exit_gate.py"
+   ],
+   "tests": [
+    "test_release.ReleaseTest.test_exit_gate_reports_no_go"
+   ],
+   "gap": "verdict is NO_GO by construction until owners/acceptance exist",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-104",
+   "priority": "P0 / Release-blocking",
+   "category": "Operations and release governance",
+   "component": "CI workflow executing compile, unit, optimized-mode, schema, backend integration, security, benchmark, and release gates",
+   "checks": [
+    "C081",
+    "C082",
+    "C083",
+    "C084",
+    "C085",
+    "C086",
+    "C087",
+    "C088",
+    "C089",
+    "C090",
+    "C100"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "ci/ci.sh",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "gap": "ci.sh executed locally; hosted workflow never run",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-105",
+   "priority": "P0 / Release-blocking",
+   "category": "Operations and release governance",
+   "component": "SBOM/provenance generation and signed release artifact pipeline",
+   "checks": [
+    "C045",
+    "C090"
+   ],
+   "status": "PARTIAL",
+   "code": [
+    "tools/build_release.py"
+   ],
+   "tests": [
+    "test_release"
+   ],
+   "gap": "SBOM+provenance done; release signing key not provisioned",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  },
+  {
+   "id": "MC-106",
+   "priority": "P1 / High",
+   "category": "Operations and release governance",
+   "component": "Distribution license/NOTICE and package metadata suitable for redistribution",
+   "checks": [],
+   "status": "BLOCKED",
+   "code": [
+    "pyproject.toml"
+   ],
+   "tests": [],
+   "gap": "the owner's choice of licence and NOTICE text",
+   "owner": "_UNASSIGNED_",
+   "accepted": false
+  }
+ ],
+ "checks": [
+  {
+   "check": "INV-39-C001",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define the exact production responsibility of Process sandbox tier.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C002",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document what Process sandbox tier owns and explicitly does not own.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C003",
+   "dimension": "Architecture & Scope",
+   "requirement": "Identify upstream, downstream, and peer dependencies of Process sandbox tier.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C004",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define the authoritative source of truth used by Process sandbox tier.",
+   "components": [
+    "MC-046",
+    "MC-047"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C005",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document assumptions Process sandbox tier makes about nodes, runtimes, networks, storage, and control planes.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C006",
+   "dimension": "Architecture & Scope",
+   "requirement": "Define tenant, environment, site, and workload boundaries relevant to Process sandbox tier.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C007",
+   "dimension": "Architecture & Scope",
+   "requirement": "Separate mandatory Process sandbox tier capabilities from optional optimizations.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C008",
+   "dimension": "Architecture & Scope",
+   "requirement": "Document unsupported deployment patterns and non-goals for Process sandbox tier.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C009",
+   "dimension": "Architecture & Scope",
+   "requirement": "Assign an accountable owner and escalation path for Process sandbox tier.",
+   "components": [
+    "MC-001"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C010",
+   "dimension": "Architecture & Scope",
+   "requirement": "Approve an architecture decision record for Process sandbox tier, its technologies (Seatbelt, bubblewrap), and its function (Near-zero-startup sandbox for trusted code).",
+   "components": [
+    "MC-002",
+    "MC-031",
+    "MC-032"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C011",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Translate the source function of Process sandbox tier \u2014 Near-zero-startup sandbox for trusted code \u2014 into testable SHALL-level requirements.",
+   "components": [
+    "MC-003"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C012",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define functional requirements for Process sandbox tier across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+   "components": [
+    "MC-003"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C013",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+   "components": [
+    "MC-004"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C014",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Process sandbox tier.",
+   "components": [
+    "MC-005"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C015",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define lifecycle states and legal state transitions managed or exposed by Process sandbox tier.",
+   "components": [
+    "MC-006"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C016",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define versioning and backward-compatibility requirements for Process sandbox tier.",
+   "components": [
+    "MC-007"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C017",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Process sandbox tier.",
+   "components": [
+    "MC-008",
+    "MC-043"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C018",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define behavior when network connectivity is intermittent or absent.",
+   "components": [
+    "MC-009"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C019",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Define precedence rules when Process sandbox tier requirements conflict with security, residency, SLO, or cost constraints.",
+   "components": [
+    "MC-010"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C020",
+   "dimension": "Requirements & Semantics",
+   "requirement": "Maintain a requirements traceability matrix from each Process sandbox tier requirement to implementation and verification evidence.",
+   "components": [
+    "MC-011"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C021",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Process sandbox tier.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C022",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Use versioned typed schemas for all externally visible Process sandbox tier contracts.",
+   "components": [],
+   "status": "NO_RESIDUAL_GAP",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C023",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define authentication requirements at each Process sandbox tier boundary.",
+   "components": [
+    "MC-013"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C024",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define authorization and explicit capability requirements at each Process sandbox tier boundary.",
+   "components": [
+    "MC-014"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C025",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Process sandbox tier.",
+   "components": [
+    "MC-015"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C026",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define structured failure codes and machine-readable error details for Process sandbox tier.",
+   "components": [
+    "MC-016"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C027",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Define compatibility behavior when peers use different supported versions.",
+   "components": [
+    "MC-007",
+    "MC-017"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C028",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Document payload, concurrency, queue, connection, or resource limits at Process sandbox tier interfaces.",
+   "components": [
+    "MC-018"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C029",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Provide reference examples and conformance fixtures for Process sandbox tier.",
+   "components": [
+    "MC-019"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C030",
+   "dimension": "Interfaces & Integration",
+   "requirement": "Create automated integration tests proving Process sandbox tier interoperates with adjacent architectural layers.",
+   "components": [
+    "MC-020"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C031",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Select and pin approved implementations, versions, or specifications for Process sandbox tier: Seatbelt, bubblewrap.",
+   "components": [
+    "MC-012",
+    "MC-021",
+    "MC-030",
+    "MC-031",
+    "MC-032",
+    "MC-033"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C032",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Separate immutable artifacts from mutable configuration and state for Process sandbox tier.",
+   "components": [
+    "MC-021",
+    "MC-022"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C033",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Define declarative configuration and secure defaults for Process sandbox tier.",
+   "components": [
+    "MC-023"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C034",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+   "components": [
+    "MC-023",
+    "MC-030",
+    "MC-033",
+    "MC-044",
+    "MC-046"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C035",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+   "components": [
+    "MC-024"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C036",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Record configuration provenance, version, author, and activation time.",
+   "components": [
+    "MC-025"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C037",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+   "components": [
+    "MC-026"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C038",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Define automatic and operator-driven rollback for failed Process sandbox tier changes.",
+   "components": [
+    "MC-027"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C039",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Keep credentials and secret material out of ordinary Process sandbox tier configuration and diagnostics.",
+   "components": [
+    "MC-028"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C040",
+   "dimension": "Implementation & Configuration",
+   "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Process sandbox tier operation.",
+   "components": [
+    "MC-029"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C041",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Threat-model Process sandbox tier against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+   "components": [
+    "MC-048"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C042",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Apply least privilege to every identity and capability used by Process sandbox tier.",
+   "components": [
+    "MC-030",
+    "MC-034",
+    "MC-035",
+    "MC-036"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C043",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Process sandbox tier permits.",
+   "components": [
+    "MC-030",
+    "MC-034",
+    "MC-035",
+    "MC-036",
+    "MC-037",
+    "MC-038",
+    "MC-039",
+    "MC-040",
+    "MC-041",
+    "MC-042",
+    "MC-043"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C044",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+   "components": [
+    "MC-013",
+    "MC-030",
+    "MC-035",
+    "MC-050"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C045",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Process sandbox tier.",
+   "components": [
+    "MC-030",
+    "MC-035",
+    "MC-046",
+    "MC-047",
+    "MC-049",
+    "MC-105"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C046",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Enforce tenant/workload isolation across Process sandbox tier execution, memory, state, network, and device boundaries as applicable.",
+   "components": [
+    "MC-030",
+    "MC-031",
+    "MC-035",
+    "MC-037",
+    "MC-038",
+    "MC-039",
+    "MC-040",
+    "MC-041",
+    "MC-042",
+    "MC-044",
+    "MC-051"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C047",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Encrypt sensitive Process sandbox tier data in transit and at rest with managed key rotation.",
+   "components": [
+    "MC-052"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C048",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+   "components": [
+    "MC-053"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C049",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Emit tamper-evident audit events for security-sensitive Process sandbox tier operations.",
+   "components": [
+    "MC-046",
+    "MC-054"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C050",
+   "dimension": "Security, Trust & Isolation",
+   "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+   "components": [
+    "MC-043",
+    "MC-048",
+    "MC-055"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C051",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Process sandbox tier.",
+   "components": [
+    "MC-045",
+    "MC-056"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C052",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define automated health and stall detection thresholds for Process sandbox tier.",
+   "components": [
+    "MC-045",
+    "MC-057"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C053",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+   "components": [
+    "MC-045",
+    "MC-058"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C054",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Process sandbox tier failure cascades.",
+   "components": [
+    "MC-043",
+    "MC-045",
+    "MC-059"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C055",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+   "components": [
+    "MC-045",
+    "MC-060"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C056",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+   "components": [
+    "MC-045",
+    "MC-061"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C057",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Process sandbox tier state.",
+   "components": [
+    "MC-045",
+    "MC-062"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C058",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+   "components": [
+    "MC-063"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C059",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Process sandbox tier behavior.",
+   "components": [
+    "MC-064"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C060",
+   "dimension": "Resilience & Failure Handling",
+   "requirement": "Run fault-injection tests proving Process sandbox tier recovery against documented objectives.",
+   "components": [
+    "MC-065"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C061",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Establish reproducible baselines for Process sandbox tier latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+   "components": [
+    "MC-004",
+    "MC-066"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C062",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Process sandbox tier.",
+   "components": [
+    "MC-004",
+    "MC-067"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C063",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure Process sandbox tier under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+   "components": [
+    "MC-066",
+    "MC-068"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C064",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure per-workload and per-tenant overhead introduced by Process sandbox tier.",
+   "components": [
+    "MC-066",
+    "MC-069"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C065",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Process sandbox tier.",
+   "components": [
+    "MC-070"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C066",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+   "components": [
+    "MC-071"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C067",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+   "components": [
+    "MC-008",
+    "MC-043",
+    "MC-072"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C068",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+   "components": [
+    "MC-073"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C069",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Define capacity models and saturation signals that predict when Process sandbox tier needs more resources.",
+   "components": [
+    "MC-072"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C070",
+   "dimension": "Performance & Resource Efficiency",
+   "requirement": "Block releases that regress approved Process sandbox tier startup, density, throughput, or tail-latency thresholds.",
+   "components": [
+    "MC-074"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C071",
+   "dimension": "Observability & Explainability",
+   "requirement": "Expose Process sandbox tier health, readiness, version, configuration, dependency status, and active capability set.",
+   "components": [
+    "MC-075"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C072",
+   "dimension": "Observability & Explainability",
+   "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+   "components": [
+    "MC-076"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C073",
+   "dimension": "Observability & Explainability",
+   "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+   "components": [
+    "MC-077"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C074",
+   "dimension": "Observability & Explainability",
+   "requirement": "Propagate trace context across all relevant Process sandbox tier boundaries.",
+   "components": [
+    "MC-078"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C075",
+   "dimension": "Observability & Explainability",
+   "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+   "components": [
+    "MC-079"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C076",
+   "dimension": "Observability & Explainability",
+   "requirement": "Record the reason for every automated decision made by Process sandbox tier.",
+   "components": [
+    "MC-080"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C077",
+   "dimension": "Observability & Explainability",
+   "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+   "components": [
+    "MC-081"
+   ],
+   "status": "IMPLEMENTED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C078",
+   "dimension": "Observability & Explainability",
+   "requirement": "Correlate Process sandbox tier events with application release lineage and the live infrastructure graph.",
+   "components": [
+    "MC-082"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C079",
+   "dimension": "Observability & Explainability",
+   "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+   "components": [
+    "MC-083"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C080",
+   "dimension": "Observability & Explainability",
+   "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+   "components": [
+    "MC-084"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C081",
+   "dimension": "Testing & Certification",
+   "requirement": "Create unit tests for deterministic Process sandbox tier logic and state transitions.",
+   "components": [
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C082",
+   "dimension": "Testing & Certification",
+   "requirement": "Create contract tests for every public Process sandbox tier interface.",
+   "components": [
+    "MC-085",
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C083",
+   "dimension": "Testing & Certification",
+   "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+   "components": [
+    "MC-020",
+    "MC-086",
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C084",
+   "dimension": "Testing & Certification",
+   "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Process sandbox tier.",
+   "components": [
+    "MC-012",
+    "MC-032",
+    "MC-033",
+    "MC-087",
+    "MC-104"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C085",
+   "dimension": "Testing & Certification",
+   "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Process sandbox tier.",
+   "components": [
+    "MC-088",
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C086",
+   "dimension": "Testing & Certification",
+   "requirement": "Create concurrency and race-condition tests for shared/distributed Process sandbox tier state.",
+   "components": [
+    "MC-089",
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C087",
+   "dimension": "Testing & Certification",
+   "requirement": "Create security tests derived directly from the Process sandbox tier threat model.",
+   "components": [
+    "MC-048",
+    "MC-055",
+    "MC-090",
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C088",
+   "dimension": "Testing & Certification",
+   "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Process sandbox tier.",
+   "components": [
+    "MC-091",
+    "MC-104"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C089",
+   "dimension": "Testing & Certification",
+   "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+   "components": [
+    "MC-092",
+    "MC-104"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C090",
+   "dimension": "Testing & Certification",
+   "requirement": "Require machine-readable acceptance evidence before certifying a Process sandbox tier release for production.",
+   "components": [
+    "MC-047",
+    "MC-093",
+    "MC-094",
+    "MC-104",
+    "MC-105"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C091",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define production SLOs, error budgets, and support commitments for Process sandbox tier.",
+   "components": [
+    "MC-004"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C092",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Process sandbox tier.",
+   "components": [
+    "MC-095"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C093",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Maintain a supported-version compatibility matrix for Process sandbox tier and adjacent dependencies.",
+   "components": [
+    "MC-007",
+    "MC-012",
+    "MC-096"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C094",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Process sandbox tier.",
+   "components": [
+    "MC-097"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C095",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Provide backup, restore, migration, or reconstruction procedures for Process sandbox tier state where applicable.",
+   "components": [
+    "MC-098"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C096",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+   "components": [
+    "MC-099"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C097",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+   "components": [
+    "MC-100"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C098",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+   "components": [
+    "MC-101"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C099",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+   "components": [
+    "MC-102"
+   ],
+   "status": "PARTIAL",
+   "owner": "_UNASSIGNED_"
+  },
+  {
+   "check": "INV-39-C100",
+   "dimension": "Operations, Release & Governance",
+   "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+   "components": [
+    "MC-094",
+    "MC-103",
+    "MC-104"
+   ],
+   "status": "BLOCKED",
+   "owner": "_UNASSIGNED_"
+  }
+ ]
+}

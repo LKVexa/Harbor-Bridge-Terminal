@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gap01-edge-node-supervisor"
+version = "5.0.0"
+description = "GAP-01 Edge Node Supervisor: local lifecycle authority for an edge node"
+requires-python = ">=3.10"
+dependencies = []            # runtime is standard-library only (see DEPENDENCIES.md)
+license = { file = "LICENSE" }
+
+[project.optional-dependencies]
+conformance = ["pk_core"]    # external Post-Kubernetes framework; not on PyPI (see DEPENDENCIES.md)
+dev = ["ruff==0.15.11", "mypy==1.20.2", "coverage==7.13.1"]
+
+[project.scripts]
+gap01-supervisor = "gap01_edge_node_supervisor.bootstrap:main"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+extend-exclude = ["component.py", "contract.py", "tests/test_component.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "S", "UP", "BLE"]
+ignore = ["S101", "S603", "S311", "E701", "E702"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B", "E501", "BLE", "UP031"]
+"tools/*" = ["S", "E501"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_unused_ignores = false
+check_untyped_defs = true
+exclude = ["tests/", "component\\.py", "contract\\.py", "tools/"]
+
+[tool.coverage.run]
+branch = true
+source = ["gap01_edge_node_supervisor"]
+omit = ["*/tests/*", "*/component.py", "*/contract.py", "*/tools/*", "*/verify.py"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true

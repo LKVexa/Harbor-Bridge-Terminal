@@ -1,0 +1,36 @@
+# C084/C093 platform matrix, C070 regression gate, C100 exit gate.
+# The repository root is the package directory; CI checks it out under its package name.
+name: inv18-ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-14, ubuntu-24.04-arm]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    env:
+      INV18_CONTEXT: ci-${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv18_completion_primitive }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: python inv18_completion_primitive/tools/run_tests.py results-${{ matrix.os }}-${{ matrix.python }}.json
+      - run: python -O inv18_completion_primitive/tests/test_future.py
+      - run: python inv18_completion_primitive/tools/api_snapshot.py
+      - uses: actions/upload-artifact@v4
+        with: { name: "results-${{ matrix.os }}-${{ matrix.python }}", path: "results-*.json" }
+  gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv18_completion_primitive }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: python inv18_completion_primitive/tools/verify.py inv18_completion_primitive
+      # exit 0 GO, 10 CONDITIONAL_GO, 20 NO_GO; NO_GO fails the job and blocks promotion
+      - run: python -m inv18_completion_primitive gate
+        env: { INV18_RELEASE_KEY: "${{ secrets.INV18_RELEASE_KEY }}", INV18_SOURCE_COMMIT: "${{ github.sha }}" }

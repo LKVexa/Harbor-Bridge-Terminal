@@ -1,0 +1,46 @@
+{
+ "schema": "PK_SNAPSHOT_ROLLOUT/1",
+ "stages": [
+  {
+   "stage": "canary",
+   "scope": "1 node per site, reference tenants only",
+   "bake_minutes": 60,
+   "gates": [
+    "no INV26-SoftwareDefect",
+    "no INV26-IntegrityFailure",
+    "restore p99 within approved threshold (needs X014)",
+    "reseed failures == 0"
+   ]
+  },
+  {
+   "stage": "10%",
+   "bake_minutes": 240,
+   "gates": [
+    "as canary",
+    "error budget burn < 2x"
+   ]
+  },
+  {
+   "stage": "50%",
+   "bake_minutes": 720,
+   "gates": [
+    "as above"
+   ]
+  },
+  {
+   "stage": "100%",
+   "gates": [
+    "release manager sign-off"
+   ]
+  }
+ ],
+ "automatic_rollback_triggers": [
+  "any SEV1 alert",
+  "INV26-SoftwareDefect",
+  "readiness false on >5% nodes for 5 min",
+  "restore p99 > threshold for 15 min",
+  "crash loop (3 restarts/10 min)"
+ ],
+ "rollback": "config: ConfigStore.rollback(to_revision); software: previous sealed release + compatible config (schema majors coupled); trust revocations are never rolled back without break-glass",
+ "emergency_disable": "handle('disable') with snapshot.admin -> all capture/restore SNAP_DISABLED; readiness false"
+}

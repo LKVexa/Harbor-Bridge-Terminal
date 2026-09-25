@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_SFI_PROOF:1",
+  "title": "PK_SFI_PROOF/1 production verification proof",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "result",
+    "profile_id",
+    "profile_sha256",
+    "verifier_version",
+    "artifact_sha256",
+    "artifact_bytes",
+    "region",
+    "memory",
+    "functions",
+    "instructions",
+    "memory_accesses",
+    "indirect_call_sites",
+    "permitted_indirect_targets",
+    "function_imports",
+    "exports"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_SFI_PROOF/1"
+    },
+    "result": {
+      "const": "VERIFIED"
+    },
+    "profile_id": {
+      "const": "PK-SFI-WASM32-MVP-1"
+    },
+    "profile_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "verifier_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifact_bytes": {
+      "type": "integer",
+      "minimum": 8,
+      "maximum": 67108864
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base",
+        "size",
+        "guard"
+      ],
+      "properties": {
+        "base": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 4096
+        },
+        "guard": {
+          "const": 8
+        }
+      }
+    },
+    "memory": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min_pages",
+            "max_pages",
+            "imported"
+          ],
+          "properties": {
+            "min_pages": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "max_pages": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "imported": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "functions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "instructions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "memory_accesses": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loads",
+        "stores",
+        "confined"
+      ],
+      "properties": {
+        "loads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "confined": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "indirect_call_sites": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "permitted_indirect_targets": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "maxItems": 100000
+    },
+    "function_imports": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2049
+      }
+    },
+    "exports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

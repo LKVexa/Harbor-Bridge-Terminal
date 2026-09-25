@@ -1,0 +1,90 @@
+# GAP-07 admission verifier - reference Kubernetes packaging (#47).
+# Image build, registry and cert-manager issuer are estate-specific placeholders (<...>).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gap07-system
+  labels: {pod-security.kubernetes.io/enforce: restricted}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gap07-verifier
+  namespace: gap07-system
+  annotations:
+    # workload identity binding for read-only public-key/metadata access; the VERIFIER never signs.
+    eks.amazonaws.com/role-arn: "<arn:aws:iam::ACCOUNT:role/gap07-verifier-readonly>"
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gap07-verifier
+  namespace: gap07-system
+spec:
+  replicas: 3
+  selector: {matchLabels: {app: gap07-verifier}}
+  template:
+    metadata: {labels: {app: gap07-verifier}}
+    spec:
+      serviceAccountName: gap07-verifier
+      securityContext: {runAsNonRoot: true, runAsUser: 65532, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: verifier
+        image: "<registry>/gap07-verifier@sha256:<digest>"   # digest-pinned; verified by GAP-07 itself (self-hosting policy)
+        args: ["--trust-root=/var/lib/gap07/trust", "--time-state=/var/lib/gap07/time.json"]
+        ports: [{containerPort: 8443, name: https}, {containerPort: 9090, name: metrics}]
+        readinessProbe: {httpGet: {path: /readyz, port: 9090}, periodSeconds: 5}
+        livenessProbe: {httpGet: {path: /livez, port: 9090}, periodSeconds: 10}
+        resources:
+          requests: {cpu: 250m, memory: 128Mi}
+          limits: {cpu: "2", memory: 512Mi}
+        securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+        volumeMounts:
+        - {name: state, mountPath: /var/lib/gap07}
+        - {name: bootstrap, mountPath: /etc/gap07/bootstrap, readOnly: true}
+        - {name: tls, mountPath: /etc/gap07/tls, readOnly: true}
+      volumes:
+      - name: state
+        persistentVolumeClaim: {claimName: gap07-state}
+      - name: bootstrap   # anchors + config/time/release authority SPKIs, installed out-of-band (RUNBOOKS R9)
+        configMap: {name: gap07-bootstrap-pins}
+      - name: tls
+        secret: {secretName: gap07-webhook-tls}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: gap07-verifier, namespace: gap07-system}
+spec: {minAvailable: 2, selector: {matchLabels: {app: gap07-verifier}}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: gap07-verifier, namespace: gap07-system}
+spec:
+  podSelector: {matchLabels: {app: gap07-verifier}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - ports: [{port: 8443}, {port: 9090}]
+  egress:
+  - to: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: gap07-system}}}]   # trust relay / log mirror / time authority, estate-specific
+    ports: [{port: 443}]
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: gap07-artifact-admission
+  annotations: {cert-manager.io/inject-ca-from: "gap07-system/gap07-webhook-tls"}
+webhooks:
+- name: artifacts.gap07.pk
+  failurePolicy: Fail           # errors/timeouts never become allows
+  sideEffects: None
+  timeoutSeconds: 10
+  admissionReviewVersions: [v1]
+  clientConfig: {service: {namespace: gap07-system, name: gap07-verifier, path: /admit, port: 8443}}
+  rules:
+  - operations: [CREATE, UPDATE]
+    apiGroups: ["", apps, batch]
+    apiVersions: ["*"]
+    resources: [pods, deployments, statefulsets, daemonsets, jobs, cronjobs, replicasets]
+  namespaceSelector:
+    matchExpressions: [{key: gap07.pk/exempt, operator: DoesNotExist}]

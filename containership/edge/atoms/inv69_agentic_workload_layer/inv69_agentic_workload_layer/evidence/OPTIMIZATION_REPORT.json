@@ -1,0 +1,160 @@
+{
+ "schema": "PK_OPTIMIZATION_REPORT/1",
+ "controls": [
+  "INV-69-C065",
+  "INV-69-C066"
+ ],
+ "method": "bench/perf_suite.py --quick on the same machine (fingerprint below); 'before' = one run immediately before the optimisation commit, 'after' = median of 3 runs after. Quick mode, n=300: indicative, not a gating measurement.",
+ "fingerprint": {
+  "python": "3.11.15",
+  "implementation": "CPython",
+  "machine": "x86_64",
+  "system": "Linux",
+  "release": "6.18.44-fc-v37",
+  "cpu_count": 2,
+  "optimized_mode": false,
+  "version": "4.3.0",
+  "code_digest": "865a7f000680283b3762aa247fdf6ff4f0242dee43b1efe19d3031e85acc5ce9"
+ },
+ "before": {
+  "p50_us": 439.93,
+  "p95_us": 999.58,
+  "p99_us": 1304.5,
+  "single_thread_ops_s": 1770.1,
+  "cpu_us_per_op": 564.61,
+  "duplicate_work_counters": {
+   "telemetry.py:lineage": 1.0,
+   "redaction.py:check_bounds": 2.0,
+   "runtime.py:_check_bounds": 2.0,
+   "runtime.py:_event_digest": 1.0,
+   "governed.py:_digest": 1.0,
+   "governed.py:lineage": 1.0,
+   "runtime.py:_canonical_bytes": 2.0,
+   "__init__.py:dumps": 9.0
+  },
+  "top3": [
+   {
+    "function": "redaction.py:43:redact",
+    "calls_per_invoke": 47.0,
+    "tottime_us_per_invoke": 194.3
+   },
+   {
+    "function": "~:0:<built-in method builtins.isinstance>",
+    "calls_per_invoke": 465.0,
+    "tottime_us_per_invoke": 115.57
+   },
+   {
+    "function": "~:0:<built-in method builtins.any>",
+    "calls_per_invoke": 48.0,
+    "tottime_us_per_invoke": 95.26
+   }
+  ]
+ },
+ "after_median_of_3": {
+  "p50_us": 324.99,
+  "p95_us": 506.92,
+  "p99_us": 1001.97,
+  "single_thread_ops_s": 3613.2,
+  "cpu_us_per_op": 276.71,
+  "duplicate_work_counters": {
+   "governed.py:lineage": 1.0,
+   "redaction.py:check_bounds": 1.0,
+   "runtime.py:_check_bounds": 1.0,
+   "runtime.py:_event_digest": 1.0,
+   "governed.py:_digest": 1.0,
+   "runtime.py:_canonical_bytes": 2.0,
+   "__init__.py:dumps": 9.0
+  },
+  "top3": [
+   {
+    "function": "redaction.py:46:redact",
+    "calls_per_invoke": 47.0,
+    "tottime_us_per_invoke": 131.24
+   },
+   {
+    "function": "~:0:<method 'search' of 're.Pattern' objects>",
+    "calls_per_invoke": 125.0,
+    "tottime_us_per_invoke": 83.24
+   },
+   {
+    "function": "encoder.py:205:iterencode",
+    "calls_per_invoke": 5.0,
+    "tottime_us_per_invoke": 63.74
+   }
+  ]
+ },
+ "findings_C065": [
+  {
+   "id": "P-1",
+   "kind": "duplicated work",
+   "finding": "kernel traversed each argument twice per step (bounds check inside _within_bounds and again inside _arg_ref)",
+   "action": "fixed: one traversal reused (runtime.Agent.step)"
+  },
+  {
+   "id": "P-2",
+   "kind": "avoidable cost",
+   "finding": "typing.Mapping in hot isinstance checks: ~85 __instancecheck__/__subclasscheck__ calls per invoke",
+   "action": "fixed: collections.abc.Mapping"
+  },
+  {
+   "id": "P-3",
+   "kind": "avoidable cost",
+   "finding": "retry engine built a new random.Random() (urandom seeding) on every call: 3 per invoke",
+   "action": "fixed: one module RNG"
+  },
+  {
+   "id": "P-4",
+   "kind": "duplicated state/computation",
+   "finding": "lineage recomputed for every run event",
+   "action": "fixed: cached per (config generation, topology snapshot, minute)"
+  },
+  {
+   "id": "P-5",
+   "kind": "serialization",
+   "finding": "redaction iterated 12 secret fragments and 4 regexes per field",
+   "action": "fixed: two combined regexes"
+  },
+  {
+   "id": "P-6",
+   "kind": "serialization",
+   "finding": "~9 json.dumps per invoke (two hash chains + telemetry copy)",
+   "action": "kept: both chains are required (kernel PK_AGENT_STEP/1 and run-event PK_AGENT_RUN_EVENT/1); documented duplicate audit levels"
+  },
+  {
+   "id": "P-7",
+   "kind": "duplicated computation",
+   "finding": "argument canonicalised twice (kernel HMAC arg_ref + unkeyed sha256 for idempotency key)",
+   "action": "kept deliberately: the kernel key is per-process, so a failover executor could not match a committed effect; the unkeyed digest is what makes replay suppression survive failover"
+  },
+  {
+   "id": "P-8",
+   "kind": "context switches / contention",
+   "finding": "one runtime-wide RLock around the event chain serialises all tenants; 8 threads are slower than 1",
+   "action": "open: shard the chain per tenant or batch appends (needs ADR; affects audit ordering semantics)"
+  },
+  {
+   "id": "P-9",
+   "kind": "network hops",
+   "finding": "0 hops in-process: adapters are local; real hop count depends on INV-57/59/70/71 deployment",
+   "action": "not measurable here"
+  },
+  {
+   "id": "P-10",
+   "kind": "duplicated state",
+   "finding": "completed runs and events retained forever (~18 KB/run) \u2014 found by soak",
+   "action": "fixed: GovernedRuntime.archive() bounded retention (INV-69-owned growth FLAT in soak_with_archive)"
+  },
+  {
+   "id": "P-11",
+   "kind": "duplicated images",
+   "finding": "n/a: pure-Python package, no images",
+   "action": "n/a"
+  }
+ ],
+ "not_applicable_C066": [
+  "kernel bypass",
+  "zero-copy networking",
+  "direct composition across process boundaries (adapters are already in-process)"
+ ],
+ "semantics_preserved_by": "tests/run_all.py 131 tests normal and -O after each change"
+}

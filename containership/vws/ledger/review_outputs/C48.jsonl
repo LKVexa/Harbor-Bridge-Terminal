@@ -1,0 +1,100 @@
+{"id": "C48-001", "status": "PASS", "evidence": ["gateway/server.js:172", "gateway/server.js:218-221"], "note": "registry.draining gates /api/ws-ticket (503) and WS upgrade admission before origin/auth checks"}
+{"id": "C48-002", "status": "PASS", "evidence": ["gateway/server.js:218-221"], "note": "only shutdown() sets registry.draining=true; a single coordinator owns the stop"}
+{"id": "C48-003", "status": "PASS", "evidence": ["gateway/server.js:172,221-238"], "note": "admit() rejects new upgrades separately from the per-connection drain loop for existing sessions"}
+{"id": "C48-004", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no HttpListener.Stop in Node candidate; server.close()+draining flag substitute (docs/ARCHITECTURE.md no longer exists)"}
+{"id": "C48-005", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:225-227"], "note": "finish() calls server.closeAllConnections(), which can abruptly cut lingering plain HTTP requests; no written policy for already-accepted HTTP contexts"}
+{"id": "C48-006", "status": "PASS", "evidence": ["gateway/server.js:166-206"], "note": "admit() runs synchronously per upgrade event, so there is no async gap for an 'in-progress' upgrade to straddle"}
+{"id": "C48-007", "status": "PASS", "evidence": ["gateway/server.js:192-204"], "note": "acceptUpgrade + Connection creation happen synchronously within admit(), with try/catch release on failure"}
+{"id": "C48-008", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:242-248", "gateway/connection.js:305-315"], "note": "kill/terminate-after-1.5s behavior is implemented in code but docs/RECOVERY.md (cited record) no longer exists; not published as a standalone decision record"}
+{"id": "C48-009", "status": "PASS", "evidence": ["gateway/server.js:200-203"], "note": "hand-off-after-101 race explicitly commented and handled"}
+{"id": "C48-010", "status": "OPEN", "evidence": [], "note": "no formal published ingress-stop decision table found"}
+{"id": "C48-011", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no listener.Stop concept in Node's event-driven http server"}
+{"id": "C48-012", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no GetContextAsync in Node http server"}
+{"id": "C48-013", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js"], "note": "health-during-draining is tested; a dedicated 'already in-flight ordinary request survives shutdown' test was not found"}
+{"id": "C48-014", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js:39-64"], "note": "'health / live / config ... health flips to 503 while draining' opens a session, calls shutdown(), asserts service.draining then session.exit{shutdown} and close 1001"}
+{"id": "C48-015", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:166-206"], "note": "synchronous admission avoids the race by construction, but no dedicated in-progress-upgrade race test exists"}
+{"id": "C48-016", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "SIGTERM test asserts drain completes within VWS_SHUTDOWN_MS (ms<8000) but this observation is not written up as a record (e/I049/drain-measure.json does not exist)"}
+{"id": "C48-017", "status": "PASS", "evidence": ["gateway/server.js:216-248"], "note": "shutdown() implements stop-admission-then-per-connection-drain sequence matching the documented order in docs/OPERATIONS.md#restart-semantics"}
+{"id": "C48-018", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "no incompatibility found between tested Node behavior and the stop-then-drain plan, but no formal revision record exists (docs/ARCHITECTURE.md gone)"}
+{"id": "C48-019", "status": "OPEN", "evidence": [], "note": "no verification notes file preserving the original source claim was found"}
+{"id": "C48-020", "status": "PASS", "evidence": ["docs/RELEASE.md#gate-decision"], "note": "GO/CONDITIONAL/NO-GO gates are tied to actual test evidence (95/95), not assumed behavior"}
+{"id": "C48-021", "status": "PASS", "evidence": ["gateway/server.js:218"], "note": "shutdown() is the single coordinator-owned entry point for stop requests"}
+{"id": "C48-022", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:221-222"], "note": "registry.draining=true set synchronously first, then logged (Node single-threaded => atomic) [downgraded: RECORD item without a written record]"}
+{"id": "C48-023", "status": "PASS", "evidence": ["gateway/server.js:172", "gateway/connection.js:169"], "note": "admit() and _open() both check registry.draining before assigning new work"}
+{"id": "C48-024", "status": "PASS", "evidence": ["gateway/server.js:219"], "note": "shutdownPromise guard makes repeated stop requests harmless"}
+{"id": "C48-025", "status": "PASS", "evidence": ["gateway/server.js:216-242"], "note": "only the top-level shutdown() function can flip registry.draining; Connection objects have no such access"}
+{"id": "C48-026", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:218,222"], "note": "reason captured and logged as part of gateway.draining [downgraded: RECORD item without a written record]"}
+{"id": "C48-027", "status": "OPEN", "evidence": [], "note": "no defined behavior if shutdown() runs before listen() completes"}
+{"id": "C48-028", "status": "OPEN", "evidence": ["gateway/server.js:257"], "note": "gw.listen().catch just logs and exits 1 with no interplay defined with shutdown()"}
+{"id": "C48-029", "status": "OPEN", "evidence": [], "note": "no documented decision for an absent listener/server reference"}
+{"id": "C48-030", "status": "OPEN", "evidence": [], "note": "no systematic test of all permitted entry states for stop handling"}
+{"id": "C48-031", "status": "PASS", "evidence": ["gateway/server.js:172"], "note": "registry.draining gate stops new upgrade admission"}
+{"id": "C48-032", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no .NET pending-acceptance task/exception classification in Node's callback-based server.on('upgrade'/'request')"}
+{"id": "C48-033", "status": "PASS", "evidence": ["gateway/connection.js:281-288", "gateway/server.js:166-171"], "note": "_workerExited classifies exit reason from closing/killedByUs flags; admit() treats registry.draining as an expected-shutdown 503, not an error"}
+{"id": "C48-034", "status": "PASS", "evidence": ["gateway/server.js:216-242"], "note": "registry.draining is never reset false; no restart path exists"}
+{"id": "C48-035", "status": "PASS", "evidence": ["gateway/server.js:236"], "note": "connections registered before the shutdown for-loop are included and drained normally"}
+{"id": "C48-036", "status": "PASS", "evidence": ["gateway/server.js:172,221"], "note": "draining flag is set before any per-connection loop runs, so no new connection appears after intent is recorded"}
+{"id": "C48-037", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:120,172"], "note": "503 rejection implemented for undispatched requests, but no formal decision table backs it (see C48-010)"}
+{"id": "C48-038", "status": "PASS", "evidence": ["gateway/server.js:226,229"], "note": "server.close(callback) + gateway.stopped log signal the accept path has fully exited"}
+{"id": "C48-039", "status": "PASS", "evidence": ["gateway/server.js:39-52,105"], "note": "registry.conns Set tracks in-flight contexts; exposed via /live"}
+{"id": "C48-040", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:234"], "note": "zero-connection immediate-onEmpty path exists in code but no dedicated zero-request drain measurement found"}
+{"id": "C48-041", "status": "PASS", "evidence": ["gateway/server.js:172"], "note": "registry.draining rechecked at the top of admit() before any upgrade is accepted"}
+{"id": "C48-042", "status": "PASS", "evidence": ["gateway/server.js:172,192"], "note": "same synchronous check precedes acceptUpgrade() later in admit()"}
+{"id": "C48-043", "status": "PASS", "evidence": ["gateway/server.js:220"], "note": "admit(): 'if (registry.draining || !registry.ready) return reject(503, \\'draining\\', ...)' checked before Origin/handshake/identity"}
+{"id": "C48-044", "status": "PASS", "evidence": ["gateway/server.js:166-206"], "note": "synchronous admission means an upgrade either fully completes before draining or is rejected; no ownership gap"}
+{"id": "C48-045", "status": "PASS", "evidence": ["gateway/server.js:199,200-203"], "note": "registry.conns.add(conn) happens immediately on successful hand-off; try/catch releases on failure"}
+{"id": "C48-046", "status": "PASS", "evidence": ["gateway/server.js:236-239"], "note": "single uniform policy: every registry.conns member gets service.draining + end()"}
+{"id": "C48-047", "status": "PASS", "evidence": ["gateway/server.js:194-204", "tests/security/authz.test.js"], "note": "reserve/release pattern with try/catch prevents capacity leaks during hand-off races; capacity tests pass"}
+{"id": "C48-048", "status": "OPEN", "evidence": [], "note": "no test for a deliberately slow upgrade racing ingress stop"}
+{"id": "C48-049", "status": "OPEN", "evidence": [], "note": "no test for simultaneous upgrade attempts at the stop boundary"}
+{"id": "C48-050", "status": "PASS", "evidence": ["gateway/connection.js:274-283"], "note": "_finalExit's exitSent guard preserves exactly one final outcome per request/session"}
+{"id": "C48-051", "status": "PASS", "evidence": ["gateway/server.js:96-101", "docs/OPERATIONS.md#health-and-logs"], "note": "/health returns 503 once registry.draining is true, documented"}
+{"id": "C48-052", "status": "OPEN", "evidence": [], "note": "no documented policy for completion of ordinary HTTP requests already in progress at shutdown"}
+{"id": "C48-053", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:146-148"], "note": "headersTimeout/requestTimeout exist generally; not specifically bounding remaining writes during shutdown"}
+{"id": "C48-054", "status": "PASS", "evidence": ["gateway/server.js:100"], "note": "/health checks !registry.draining before reporting ok, so readiness is not advertised after the boundary"}
+{"id": "C48-055", "status": "PASS", "evidence": ["gateway/server.js:94"], "note": "res.on('error', () => {}) handles a client disconnecting mid-response"}
+{"id": "C48-056", "status": "OPEN", "evidence": [], "note": "no dedicated test for a health request timed immediately before stop"}
+{"id": "C48-057", "status": "OPEN", "evidence": [], "note": "no dedicated health-request-racing-stop test found"}
+{"id": "C48-058", "status": "OPEN", "evidence": [], "note": "no test for an unsupported route racing with stop"}
+{"id": "C48-059", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js:39-64"], "note": "edge behavior (503 on /health, 1001 close) is exercised by tests but not written up as an operator-facing record; e/I049/drain-measure.json does not exist"}
+{"id": "C48-060", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "no hosting-platform routing layer exists to compare against; deployment never run"}
+{"id": "C48-061", "status": "PASS", "evidence": ["gateway/server.js:221-238"], "note": "shutdown() itself begins draining then immediately proceeds to notify connections"}
+{"id": "C48-062", "status": "PASS", "evidence": ["gateway/server.js:216-248"], "note": "shutdown() drain loop (service.draining control message then end(1001)) is ordered after the verified synchronous admit() behavior"}
+{"id": "C48-063", "status": "PASS", "evidence": ["gateway/server.js:225"], "note": "finish() calls c._killWorker/c.ws.terminate via each Connection's own methods, not an unrelated helper"}
+{"id": "C48-064", "status": "PASS", "evidence": ["gateway/server.js:39-52,236"], "note": "registry.conns Set is the single approved mechanism iterated to drain"}
+{"id": "C48-065", "status": "PASS", "evidence": ["gateway/server.js:200-203", "tests/chaos/lifecycle.test.js:154-165"], "note": "hand-off-exception path releases/removes not-fully-registered connections; test confirms no leak"}
+{"id": "C48-066", "status": "PASS", "evidence": ["gateway/server.js:172,221"], "note": "draining checked before any new worker/Connection is created, so none appear after the boundary"}
+{"id": "C48-067", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js:39-64"], "note": "idle open session observed to receive service.draining then close 1001 session.exit{{shutdown}} during gw.shutdown()"}
+{"id": "C48-068", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-115"], "note": "SIGTERM real-process test only exercises an idle client; no dedicated test drains a session with an active/busy command running"}
+{"id": "C48-069", "status": "OPEN", "evidence": [], "note": "no forced/interrupted-close scenario was recorded; both measured drains were clean"}
+{"id": "C48-070", "status": "PASS", "evidence": ["docs/VALIDATION.md#not-run-and-why", "docs/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"], "note": "docs consistently mark unmeasured/unverified items rather than claiming uninterrupted draining"}
+{"id": "C48-071", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:226"], "note": "server.close(() => {}) ignores any error argument from the close callback"}
+{"id": "C48-072", "status": "OPEN", "evidence": [], "note": "no handling or test for a listener-disposal race distinct from close()"}
+{"id": "C48-073", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no separate .NET acceptance task to await; Node's server.on('upgrade') is synchronous per event"}
+{"id": "C48-074", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: no acceptance loop to bound; admission runs synchronously inside the 'upgrade'/'request' event handlers"}
+{"id": "C48-075", "status": "OPEN", "evidence": [], "note": "a single 'forced' flag covers all failure modes; ingress-stop failure is not distinguished from drain failure"}
+{"id": "C48-076", "status": "PASS", "evidence": ["gateway/server.js:216-242"], "note": "no retry loop around server.close() exists, so no infinite-retry risk"}
+{"id": "C48-077", "status": "PASS", "evidence": ["gateway/connection.js:286-301"], "note": "connection end() sequence (snapshot, worker close, 1.5s grace) preserves resources until workers release them"}
+{"id": "C48-078", "status": "PASS", "evidence": ["gateway/server.js:232,254"], "note": "hard timeout forces cleanup and process.exit(1) when the boundary can't be enforced gracefully"}
+{"id": "C48-079", "status": "OPEN", "evidence": [], "note": "measured drains never hit the hard-timeout path; no partial-shutdown-after-failure test found"}
+{"id": "C48-080", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:216-227"], "note": "forced-cleanup policy (hard timeout -> finish(true), terminate sockets/workers) is implemented and commented in code but not published as operator documentation"}
+{"id": "C48-081", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:222"], "note": "gateway.draining logged when ingress stop is requested [downgraded: RECORD item without a written record]"}
+{"id": "C48-082", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:226,229"], "note": "only the final gateway.stopped result is logged; no separate 'attempted' event before the outcome"}
+{"id": "C48-083", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229"], "note": "gateway.stopped logged once registry drains and server.close() completes, signaling exit of the accept path [downgraded: RECORD item without a written record]"}
+{"id": "C48-084", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:222"], "note": "connections count logged in gateway.draining [downgraded: RECORD item without a written record]"}
+{"id": "C48-085", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:222"], "note": "connections count is a 1:1 proxy for active workers under D-003 (one worker per session) [downgraded: RECORD item without a written record]"}
+{"id": "C48-086", "status": "PASS", "evidence": ["gateway/server.js:229"], "note": "gateway.stopped includes drainMs; ts field on every log line correlates timing"}
+{"id": "C48-087", "status": "PASS", "evidence": ["gateway/log.js:10"], "note": "logger filters out payload/data/token fields; shutdown logs carry only counts/booleans"}
+{"id": "C48-088", "status": "OPEN", "evidence": [], "note": "no load-scale repetition of boundary races found"}
+{"id": "C48-089", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:18-19,44"], "note": "registry.reserved.size asserted before/after events (worker kill, TCP loss)"}
+{"id": "C48-090", "status": "PASS", "evidence": ["docs/VALIDATION.md#validation-what-ran-what-it-proves-what-did-not-run"], "note": "exact environment and test command preserved"}
+{"id": "C48-091", "status": "OPEN", "evidence": [], "note": "no published ingress-stop decision table document found"}
+{"id": "C48-092", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: listener.Stop behavior evidence is a .NET-only kit item"}
+{"id": "C48-093", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions-approved-by-the-owner-on-2026-09-21"], "note": "RD-03: pending-acceptance (GetContextAsync) termination tests are .NET-only"}
+{"id": "C48-094", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:154-165"], "note": "'exception during hand-off after the 101' test covers the upgrade-handoff race"}
+{"id": "C48-095", "status": "OPEN", "evidence": [], "note": "no dedicated ordinary-HTTP-request-during-shutdown test found"}
+{"id": "C48-096", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-115", "tests/gateway/e2e.test.js:39-64"], "note": "real-process SIGTERM test and health-during-draining test both link active-session stop behavior to code"}
+{"id": "C48-097", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics"], "note": "docs/OPERATIONS.md#restart-semantics: 'admission off, service.draining, workers stopped, listener closed, exit 0 inside VWS_SHUTDOWN_MS'"}
+{"id": "C48-098", "status": "OPEN", "evidence": [], "note": "no forced/incomplete outcome was ever recorded; only clean drains were measured"}
+{"id": "C48-099", "status": "IN_PROGRESS", "evidence": ["docs/VALIDATION.md#not-run-and-why", "docs/RELEASE.md#release-notes"], "note": "general unresolved items listed but not itemized specifically for listener/ingress-stop semantics"}
+{"id": "C48-100", "status": "PASS", "evidence": ["gateway/server.js:100,172", "tests/gateway/e2e.test.js", "docs/RELEASE.md#gate-decision"], "note": "503 rejection during draining demonstrated by tests before the release gate approves local/loopback use"}

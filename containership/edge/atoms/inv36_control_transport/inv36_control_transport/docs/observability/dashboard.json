@@ -1,0 +1,19 @@
+{
+  "schema": "inv36.dashboard/1",
+  "title": "INV-36 Control transport",
+  "panels": [
+    {"title": "Frame rate by direction", "expr": "sum by (direction) (rate(inv36_frames_total[1m]))"},
+    {"title": "Frame size p50/p99", "expr": "histogram_quantile(0.99, sum(rate(inv36_frame_bytes_bucket[5m])) by (le))"},
+    {"title": "Latency by stage p99", "expr": "histogram_quantile(0.99, sum(rate(inv36_latency_seconds_bucket[5m])) by (le, stage))"},
+    {"title": "Handshake outcomes", "expr": "sum by (outcome, code) (rate(inv36_handshakes_total[5m]))"},
+    {"title": "Auth / integrity failures", "expr": "sum by (reason) (rate(inv36_integrity_failures_total[5m])) + sum(rate(inv36_auth_failures_total[5m]))"},
+    {"title": "Authorization denials", "expr": "sum by (reason) (rate(inv36_authz_denials_total[5m]))"},
+    {"title": "Saturation and queue depth", "expr": "max(inv36_saturation_ratio) and max(inv36_queue_depth)"},
+    {"title": "Shed work by priority", "expr": "sum by (priority) (rate(inv36_dropped_total[5m]))"},
+    {"title": "Active sessions", "expr": "sum(inv36_active_sessions)"},
+    {"title": "Dependency breakers", "expr": "max by (breaker) (inv36_breaker_state)"},
+    {"title": "Process resources", "expr": "inv36_process_rss_bytes or inv36_process_open_fds or inv36_process_threads"},
+    {"title": "Quarantine", "expr": "max(inv36_quarantine_active)"},
+    {"title": "Sessions (join with build/version from structured logs for rollout view)", "expr": "sum(inv36_active_sessions)"}
+  ]
+}

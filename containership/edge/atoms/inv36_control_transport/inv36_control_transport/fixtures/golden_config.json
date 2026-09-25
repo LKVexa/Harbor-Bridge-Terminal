@@ -1,0 +1,100 @@
+{
+ "schema": "inv36.fixture/1",
+ "valid": {
+  "minimum": {
+   "environment": "test",
+   "identity_key_ref": "secretref://test/inv36/identity",
+   "telemetry_endpoint": "http://127.0.0.1:0/none",
+   "max_sessions": 1,
+   "max_sessions_per_tenant": 1,
+   "send_queue_high_water": 2,
+   "send_queue_low_water": 1,
+   "telemetry_buffer": 16
+  },
+  "typical": {
+   "environment": "test",
+   "identity_key_ref": "secretref://test/inv36/identity",
+   "telemetry_endpoint": "http://127.0.0.1:0/none"
+  },
+  "maximum": {
+   "environment": "test",
+   "identity_key_ref": "secretref://test/inv36/identity",
+   "telemetry_endpoint": "http://127.0.0.1:0/none",
+   "max_sessions": 65536,
+   "max_sessions_per_tenant": 65536,
+   "send_queue_high_water": 1048576,
+   "send_queue_low_water": 1048575,
+   "session_max_age_s": 604800,
+   "read_timeout_ms": 600000,
+   "write_timeout_ms": 600000,
+   "stall_threshold_ms": 3600000
+  }
+ },
+ "invalid": [
+  {
+   "name": "hwm_le_lwm",
+   "overlay": {
+    "environment": "test",
+    "identity_key_ref": "secretref://test/inv36/identity",
+    "telemetry_endpoint": "http://127.0.0.1:0/none",
+    "send_queue_high_water": 10,
+    "send_queue_low_water": 10
+   }
+  },
+  {
+   "name": "unknown_field",
+   "overlay": {
+    "environment": "test",
+    "identity_key_ref": "secretref://test/inv36/identity",
+    "telemetry_endpoint": "http://127.0.0.1:0/none",
+    "bogus": 1
+   }
+  },
+  {
+   "name": "inline_secret",
+   "overlay": {
+    "environment": "test",
+    "identity_key_ref": "-----BEGIN PRIVATE KEY-----",
+    "telemetry_endpoint": "http://127.0.0.1:0/none"
+   }
+  },
+  {
+   "name": "prod_debug",
+   "overlay": {
+    "environment": "prod",
+    "log_level": "debug"
+   }
+  },
+  {
+   "name": "ns_mismatch",
+   "overlay": {
+    "environment": "prod",
+    "identity_key_ref": "secretref://test/x"
+   }
+  },
+  {
+   "name": "frame_above_protocol",
+   "overlay": {
+    "environment": "test",
+    "identity_key_ref": "secretref://test/inv36/identity",
+    "telemetry_endpoint": "http://127.0.0.1:0/none",
+    "max_frame_bytes": 65537
+   }
+  },
+  {
+   "name": "traversal",
+   "overlay": {
+    "environment": "test",
+    "identity_key_ref": "secretref://test/inv36/identity",
+    "telemetry_endpoint": "http://127.0.0.1:0/none",
+    "policy_ref": "policy://../../etc"
+   }
+  },
+  {
+   "name": "dev_flag_in_prod",
+   "overlay": {
+    "dev_allow_insecure_test_keys": true
+   }
+  }
+ ]
+}

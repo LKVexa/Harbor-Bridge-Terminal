@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv67:PK_K8S_TRANSLATE:1",
+  "title": "INV-67 Kubernetes placement translation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "app", "namespace", "labels", "annotations", "units"],
+  "properties": {
+    "schema": {"const": "PK_K8S_TRANSLATE/1"},
+    "app": {"type": "string", "minLength": 1},
+    "namespace": {"type": "string", "minLength": 1},
+    "labels": {"type": "object", "additionalProperties": {"type": "string"}},
+    "annotations": {"type": "object", "additionalProperties": {"type": "string"}},
+    "units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "image", "cpu", "memory", "requests", "limits"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "image": {"type": "string", "minLength": 1},
+          "cpu": {"type": "number", "minimum": 0},
+          "memory": {"type": "number", "minimum": 0},
+          "requests": {"$ref": "#/$defs/resources"},
+          "limits": {"$ref": "#/$defs/resources"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cpu": {"type": "number", "minimum": 0},
+        "memory": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

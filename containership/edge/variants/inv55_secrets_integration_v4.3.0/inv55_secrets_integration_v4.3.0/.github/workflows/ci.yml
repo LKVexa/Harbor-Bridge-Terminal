@@ -1,0 +1,77 @@
+name: inv55-ci
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -r requirements-test.txt
+      - run: python -m compileall -q inv55_secrets_integration tools
+      - run: python -m unittest discover -s tests -v
+      - run: python -O -m unittest discover -s tests
+      - run: python -m inv55_secrets_integration.bootstrap --config-dir config --env prod --check
+
+  vault-real:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        vault: ["1.15.6", "1.16.3", "1.17.6", "1.18.1"]
+    services:
+      vault:
+        image: hashicorp/vault:${{ matrix.vault }}
+        env:
+          VAULT_DEV_ROOT_TOKEN_ID: ci-dev-root   # inv55-scan: allow (disposable dev-mode token)
+        ports: ["8200:8200"]
+        options: --cap-add=IPC_LOCK
+    env:
+      INV55_VAULT_ADDR: http://127.0.0.1:8200
+      INV55_VAULT_TOKEN: ci-dev-root             # inv55-scan: allow (disposable dev-mode token)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements-test.txt
+      - name: real Vault suite must not skip
+        run: |
+          python -m unittest tests/test_vault_real.py -v 2>&1 | tee vr.log
+          ! grep -q "skipped" vr.log
+
+  secret-scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/secret_scan.py .
+
+  benchmark-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python tools/benchmark.py --n 3000 --compare evidence/benchmark_baseline.json --out bench.json
+      - uses: actions/upload-artifact@v4
+        with: { name: benchmark, path: bench.json }
+
+  gate:
+    needs: [test, vault-real, secret-scan, benchmark-gate]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements-test.txt
+      - run: python tools/release_evidence.py
+      - run: python tools/exit_gate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: release-evidence, path: evidence/ }

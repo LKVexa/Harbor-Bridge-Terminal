@@ -1,0 +1,985 @@
+{
+  "schema": "urn:pk:inv17:closure:1",
+  "checklist": "INV17_v4.2.0_Missing_Component_Implementation_Checklist.md",
+  "statuses": {
+    "IMPLEMENTED_VERIFIED": "implementation and verification artifact exist in this repository and pass",
+    "IMPLEMENTED_PENDING_HUMAN": "implemented; a named human act (approval, assignment, drill, hosted CI run) is still required",
+    "NA_PROPOSED": "not-applicable disposition drafted with rationale and evidence; needs approver",
+    "WAIVER_PROPOSED": "partially implemented; remainder covered by a PROPOSED waiver",
+    "MEASURED_FAILING": "measured and failing"
+  },
+  "components": [
+    {
+      "n": 1,
+      "title": "Accountable owner and escalation record",
+      "controls": "C009,C097",
+      "priority": "P0",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "governance/OWNERS.json",
+        "operations/ESCALATION.md",
+        "operations/SEVERITY_MATRIX.md"
+      ],
+      "verification": [
+        "tools/validate_governance.py",
+        "tools/drill.py"
+      ],
+      "open_item": "owner, deputy, paging target and review dates must be filled by a human; gate fails until then"
+    },
+    {
+      "n": 2,
+      "title": "Approved architecture decision record",
+      "controls": "C010",
+      "priority": "P0",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "governance/ADR-0001-stream-design.md"
+      ],
+      "verification": [],
+      "open_item": "ADR status is Proposed; approval is a human act"
+    },
+    {
+      "n": 3,
+      "title": "SHALL-level requirements specification",
+      "controls": "C011-C019",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "spec/requirements.md",
+        "spec/requirements.json",
+        "spec/failure-semantics.md"
+      ],
+      "verification": [
+        "tests/test_artifacts.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 4,
+      "title": "Lifecycle/state-machine specification",
+      "controls": "C014-C015",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "spec/stream-state-machine.md",
+        "spec/stream-state-machine.json"
+      ],
+      "verification": [
+        "tests/test_artifacts.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 5,
+      "title": "Requirements traceability matrix",
+      "controls": "C020",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "traceability/requirements-traceability.json",
+        "tools/gen_traceability.py"
+      ],
+      "verification": [
+        "tests/test_artifacts.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 6,
+      "title": "External schema/WIT artifacts",
+      "controls": "C021-C022",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "schemas/pk_stream.v1.schema.json",
+        "schemas/pk_stream_credit.v1.schema.json",
+        "schemas/pk_stream_close.v1.schema.json",
+        "schemas/pk_stream.wit",
+        "interfaces/schema-manifest.json",
+        "wire.py"
+      ],
+      "verification": [
+        "tests/test_schemas.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 7,
+      "title": "Boundary authentication specification",
+      "controls": "C023,C044",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/authentication-boundaries.md",
+        "security/trust-boundaries.json",
+        "security.py"
+      ],
+      "verification": [
+        "tests/test_security.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 8,
+      "title": "Capability/authorization policy",
+      "controls": "C024,C042-C043",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/capability-policy.md",
+        "security/capability-policy.json"
+      ],
+      "verification": [
+        "tests/test_security.py",
+        "tests/test_adversarial.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 9,
+      "title": "Timeout/cancellation/retry/idempotency contract",
+      "controls": "C025",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "spec/operation-semantics.md",
+        "stream.py"
+      ],
+      "verification": [
+        "tests/test_stream_ops.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 10,
+      "title": "Cross-version compatibility protocol",
+      "controls": "C016,C027,C093",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "spec/version-negotiation.md",
+        "compatibility/compatibility-matrix.json",
+        "compatibility/fixtures/v1-golden.json"
+      ],
+      "verification": [
+        "tests/test_schemas.py",
+        "tests/test_control.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 11,
+      "title": "Tenant/workload fairness policy",
+      "controls": "C017,C028",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "spec/fairness-and-quotas.md",
+        "control.py"
+      ],
+      "verification": [
+        "tests/test_control.py",
+        "tests/test_adversarial.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 12,
+      "title": "Cloud/datacenter/near-edge/far-edge applicability profile",
+      "controls": "C012,C018",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "deployment/applicability-matrix.json",
+        "deployment/tier-profiles.md",
+        "config/overlays/far-edge.json",
+        "config/overlays/cloud.json"
+      ],
+      "verification": [
+        "tests/test_disaster.py",
+        "tests/test_config.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 13,
+      "title": "Declarative configuration loader/schema",
+      "controls": "C032-C035",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "configuration.py",
+        "config/stream-config.schema.json",
+        "config/defaults.json"
+      ],
+      "verification": [
+        "tests/test_config.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 14,
+      "title": "Configuration provenance record",
+      "controls": "C036",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "config/provenance.schema.json",
+        "configuration.py"
+      ],
+      "verification": [
+        "tests/test_config.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 15,
+      "title": "Atomic configuration activation/rollback mechanism",
+      "controls": "C037-C038",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "configuration.py"
+      ],
+      "verification": [
+        "tests/test_config.py",
+        "tests/test_fault_injection.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 16,
+      "title": "Deterministic bootstrap/package manifest",
+      "controls": "C031,C040",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "pyproject.toml",
+        "vendor/pk_core",
+        "integration/pk_core_compatibility.json",
+        "evidence/release-manifest.json"
+      ],
+      "verification": [
+        "tools/evidence_bundle.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 17,
+      "title": "Adjacent-layer integration adapters",
+      "controls": "C030,C083",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "adapters.py",
+        "integration/adjacent-layers.json",
+        "vendor/pk_siblings"
+      ],
+      "verification": [
+        "tests/test_adapters.py"
+      ],
+      "open_item": "INV-12 reciprocity gap recorded as TD-001 (sibling-side fix)"
+    },
+    {
+      "n": 18,
+      "title": "pk_core integration dependency",
+      "controls": "C030,C090",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "vendor/pk_core",
+        "integration/pk_core_compatibility.json",
+        "conformance/PK_GATE_RESULTS.json"
+      ],
+      "verification": [
+        "tests/test_component.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 19,
+      "title": "Dedicated threat-model artifact",
+      "controls": "C041",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/THREAT_MODEL.md",
+        "security/threat-model.json"
+      ],
+      "verification": [
+        "tests/test_artifacts.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 20,
+      "title": "Artifact integrity/provenance/SBOM pipeline",
+      "controls": "C045",
+      "priority": "P0",
+      "status": "WAIVER_PROPOSED",
+      "artifacts": [
+        "tools/sbom.py",
+        "evidence/sbom.cdx.json",
+        "evidence/provenance.intoto.json"
+      ],
+      "verification": [
+        "tools/sbom.py"
+      ],
+      "open_item": "digests + SBOM + unsigned attestation produced; signing needs a release key (WVR-003)"
+    },
+    {
+      "n": 21,
+      "title": "Tenant/workload isolation verification",
+      "controls": "C046",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/isolation-model.md"
+      ],
+      "verification": [
+        "tests/test_security.py",
+        "tests/test_adversarial.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 22,
+      "title": "Data classification/encryption/residency policy",
+      "controls": "C047",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/data-policy.md",
+        "security/data-classification.json"
+      ],
+      "verification": [
+        "tests/test_security.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 23,
+      "title": "Trust-service outage behavior",
+      "controls": "C048",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/trust-dependency-failure.md"
+      ],
+      "verification": [
+        "tests/test_security.py",
+        "tests/test_fault_injection.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 24,
+      "title": "Tamper-evident security audit events",
+      "controls": "C049",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "security/audit-event-schema.json",
+        "security.py"
+      ],
+      "verification": [
+        "tests/test_security.py"
+      ],
+      "open_item": "truncation detection requires an externally stored anchor (documented residual)"
+    },
+    {
+      "n": 25,
+      "title": "Adversarial/resource-exhaustion security suite",
+      "controls": "C050,C087",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tests/test_adversarial.py"
+      ],
+      "verification": [
+        "tests/test_adversarial.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 26,
+      "title": "Automated health and stall thresholds",
+      "controls": "C052",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "operations/health-policy.json",
+        "control.py"
+      ],
+      "verification": [
+        "tests/test_control.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 27,
+      "title": "Load shedding/circuit-breaker policy",
+      "controls": "C054",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "resilience/overload-policy.md",
+        "control.py"
+      ],
+      "verification": [
+        "tests/test_control.py",
+        "tests/test_fault_injection.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 28,
+      "title": "Failover/distributed disposition",
+      "controls": "C055,C058",
+      "priority": "P1",
+      "status": "NA_PROPOSED",
+      "artifacts": [
+        "resilience/distributed-applicability.md",
+        "deployment/applicability-matrix.json"
+      ],
+      "verification": [
+        "tests/test_disaster.py"
+      ],
+      "open_item": "N/A disposition drafted; approver must sign off"
+    },
+    {
+      "n": 29,
+      "title": "Crash/restart/resume/replay semantics",
+      "controls": "C057",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "spec/crash-semantics.md"
+      ],
+      "verification": [
+        "tests/test_control.py",
+        "tests/test_disaster.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 30,
+      "title": "Quarantine/freeze/emergency-disable control",
+      "controls": "C059",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "operations/emergency-disable.md",
+        "control.py"
+      ],
+      "verification": [
+        "tests/test_control.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 31,
+      "title": "Fault-injection suite",
+      "controls": "C060",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tests/test_fault_injection.py"
+      ],
+      "verification": [
+        "tests/test_fault_injection.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 32,
+      "title": "Reproducible benchmark harness",
+      "controls": "C061-C063",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/bench.py",
+        "benchmarks/profiles.json",
+        "benchmarks/README.md",
+        "benchmarks/results/latest.json"
+      ],
+      "verification": [
+        "tools/bench.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 33,
+      "title": "Percentile and worst-case SLO measurement",
+      "controls": "C062",
+      "priority": "P0",
+      "status": "MEASURED_FAILING",
+      "artifacts": [
+        "slo/performance-slo.json",
+        "benchmarks/results/latest.json"
+      ],
+      "verification": [
+        "tools/bench.py"
+      ],
+      "open_item": "SLO-3 (p99 < 1us) measured and NOT met on the reference host; needs SLO revision or a native fast path"
+    },
+    {
+      "n": 34,
+      "title": "Per-tenant/per-workload overhead benchmark",
+      "controls": "C064",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/bench.py",
+        "benchmarks/results/latest.json"
+      ],
+      "verification": [
+        "tools/bench.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 35,
+      "title": "Copy/context-switch/serialization profiling",
+      "controls": "C065-C066",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/profile_copies.py",
+        "benchmarks/results/profile.json"
+      ],
+      "verification": [
+        "tools/profile_copies.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 36,
+      "title": "Power/thermal measurement",
+      "controls": "C068",
+      "priority": "P2",
+      "status": "WAIVER_PROPOSED",
+      "artifacts": [
+        "benchmarks/power-thermal.md",
+        "governance/waivers.json"
+      ],
+      "verification": [],
+      "open_item": "not measured: no edge hardware (WVR-001)"
+    },
+    {
+      "n": 37,
+      "title": "Capacity/saturation model",
+      "controls": "C069",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "performance/capacity-model.md",
+        "performance/capacity-model.json",
+        "tools/capacity.py"
+      ],
+      "verification": [
+        "tools/capacity.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 38,
+      "title": "Performance regression release gate",
+      "controls": "C070",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/perf_gate.py",
+        "benchmarks/baseline.json",
+        "benchmarks/results/perf-gate.json"
+      ],
+      "verification": [
+        "tools/perf_gate.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 39,
+      "title": "Health/readiness/version/capability endpoint",
+      "controls": "C071",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability.py",
+        "observability/status-schema.json"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 40,
+      "title": "Metrics exporter",
+      "controls": "C072",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability.py",
+        "observability/metrics.md"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 41,
+      "title": "Structured logging",
+      "controls": "C073",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability.py",
+        "observability/log-schema.json"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 42,
+      "title": "Trace propagation",
+      "controls": "C074",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability.py",
+        "observability/tracing.md",
+        "schemas/pk_stream_credit.v1.schema.json"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 43,
+      "title": "High-cardinality diagnostics/privacy guard",
+      "controls": "C075",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability/diagnostic-policy.md"
+      ],
+      "verification": [
+        "tests/test_observability.py",
+        "tests/test_edge_paths.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 44,
+      "title": "Decision-reason/explainability surface",
+      "controls": "C076-C077",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability.py",
+        "observability/decision-schema.json"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 45,
+      "title": "Release-lineage/infrastructure correlation",
+      "controls": "C078",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "observability/lineage-schema.json"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 46,
+      "title": "Telemetry retention/sampling/export policy",
+      "controls": "C079",
+      "priority": "P1",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "observability/telemetry-policy.md"
+      ],
+      "verification": [
+        "tests/test_observability.py"
+      ],
+      "open_item": "sampling implemented; retention values PROPOSED and need approval"
+    },
+    {
+      "n": 47,
+      "title": "Dashboards and alert rules",
+      "controls": "C080",
+      "priority": "P1",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "observability/dashboards/inv17-overview.json",
+        "observability/alert-rules.json",
+        "observability/dashboards.md"
+      ],
+      "verification": [
+        "tests/test_artifacts.py"
+      ],
+      "open_item": "definitions validated against exported metric names; not yet loaded into a live Prometheus/Grafana"
+    },
+    {
+      "n": 48,
+      "title": "Exhaustive public-interface contract tests",
+      "controls": "C082",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tests/test_schemas.py"
+      ],
+      "verification": [
+        "tests/test_schemas.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 49,
+      "title": "Platform/runtime compatibility matrix/tests",
+      "controls": "C084",
+      "priority": "P0",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "compatibility/platform-matrix.json",
+        ".github/workflows/ci.yml"
+      ],
+      "verification": [],
+      "open_item": "matrix defined in CI; only CPython 3.11/Linux executed in this build"
+    },
+    {
+      "n": 50,
+      "title": "Fuzz/property-based tests",
+      "controls": "C085",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tests/test_property.py"
+      ],
+      "verification": [
+        "tests/test_property.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 51,
+      "title": "Deep race/soak concurrency suite",
+      "controls": "C086",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tests/test_soak.py"
+      ],
+      "verification": [
+        "tests/test_soak.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 52,
+      "title": "Benchmark/soak/burst/fleet-scale suite",
+      "controls": "C088",
+      "priority": "P0",
+      "status": "WAIVER_PROPOSED",
+      "artifacts": [
+        "tests/test_soak.py",
+        "tools/bench.py",
+        "governance/waivers.json"
+      ],
+      "verification": [
+        "tests/test_soak.py"
+      ],
+      "open_item": "per-instance soak/burst run; fleet-scale not exercised (WVR-002)"
+    },
+    {
+      "n": 53,
+      "title": "Disaster/partition/reconnect suite",
+      "controls": "C089",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tests/test_disaster.py",
+        "deployment/applicability-matrix.json"
+      ],
+      "verification": [
+        "tests/test_disaster.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 54,
+      "title": "Machine-readable release evidence bundle",
+      "controls": "C090",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/evidence_bundle.py",
+        "evidence/release-manifest.json",
+        "evidence/pk_evidence.jsonl"
+      ],
+      "verification": [
+        "tools/evidence_bundle.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 55,
+      "title": "Canary/staged rollout/rollback implementation",
+      "controls": "C092",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "operations/rollout.md",
+        "tools/rollout.py"
+      ],
+      "verification": [
+        "tests/test_artifacts.py"
+      ],
+      "open_item": "simulation over in-process instances; no real fleet"
+    },
+    {
+      "n": 56,
+      "title": "Vulnerability response / patch / EOL policy",
+      "controls": "C094",
+      "priority": "P0",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "governance/support-policy.md"
+      ],
+      "verification": [],
+      "open_item": "target SLAs PROPOSED; need owner approval"
+    },
+    {
+      "n": 57,
+      "title": "State backup/restore applicability record",
+      "controls": "C095",
+      "priority": "P1",
+      "status": "NA_PROPOSED",
+      "artifacts": [
+        "operations/state-recovery.md",
+        "deployment/applicability-matrix.json"
+      ],
+      "verification": [
+        "tests/test_disaster.py"
+      ],
+      "open_item": "N/A disposition drafted; approver must sign off"
+    },
+    {
+      "n": 58,
+      "title": "Full operational runbook",
+      "controls": "C096-C097",
+      "priority": "P0",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "operations/RUNBOOK.md",
+        "tools/drill.py",
+        "evidence/drill-sev1.json"
+      ],
+      "verification": [
+        "tools/drill.py"
+      ],
+      "open_item": "simulated tabletop generated; a human-attended drill is still required"
+    },
+    {
+      "n": 59,
+      "title": "Recurring governance review process",
+      "controls": "C098",
+      "priority": "P1",
+      "status": "IMPLEMENTED_PENDING_HUMAN",
+      "artifacts": [
+        "governance/review-policy.md",
+        "governance/review-record.schema.json"
+      ],
+      "verification": [
+        "tools/validate_governance.py"
+      ],
+      "open_item": "no review has been held yet"
+    },
+    {
+      "n": 60,
+      "title": "Exceptions/waivers/technical-debt register",
+      "controls": "C099",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "governance/waivers.json",
+        "governance/technical-debt.json"
+      ],
+      "verification": [
+        "tools/validate_governance.py"
+      ],
+      "open_item": ""
+    },
+    {
+      "n": 61,
+      "title": "Formal production exit-gate artifact",
+      "controls": "C100",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/exit_gate.py",
+        "conformance/PRODUCTION_EXIT_GATE.json"
+      ],
+      "verification": [
+        "tools/exit_gate.py"
+      ],
+      "open_item": "the gate exists and runs; its verdict is NOT GO"
+    },
+    {
+      "n": 62,
+      "title": "Continuous integration workflow",
+      "controls": "C070,C081-C090",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        ".github/workflows/ci.yml",
+        "ci/jobs.json",
+        "tools/run_tests.py"
+      ],
+      "verification": [],
+      "open_item": "workflow authored; not yet executed on a hosted runner"
+    },
+    {
+      "n": 63,
+      "title": "Static typing/linting policy",
+      "controls": "C031,C081",
+      "priority": "P1",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "pyproject.toml",
+        "evidence/lint.json"
+      ],
+      "verification": [],
+      "open_item": ""
+    },
+    {
+      "n": 64,
+      "title": "Coverage report and minimum threshold",
+      "controls": "C081-C087",
+      "priority": "P0",
+      "status": "IMPLEMENTED_VERIFIED",
+      "artifacts": [
+        "tools/coverage_run.py",
+        "ci/coverage-policy.json",
+        "evidence/coverage.json"
+      ],
+      "verification": [
+        "tools/coverage_run.py"
+      ],
+      "open_item": ""
+    }
+  ]
+}

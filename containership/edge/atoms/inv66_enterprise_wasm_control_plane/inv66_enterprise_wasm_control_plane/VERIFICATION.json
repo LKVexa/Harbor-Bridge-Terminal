@@ -1,0 +1,23 @@
+{
+  "schema": "INV66_VERIFICATION/2",
+  "element": "INV-66",
+  "version": "4.3.0",
+  "note": "Verification results are generated, not hand-written. See the files below; this pointer file is static so it cannot drift from them.",
+  "results": {
+    "ci_lanes_and_per_test_outcomes": "release/ci_report.json",
+    "benchmark": "release/bench.json",
+    "perf_gate": "release/perf_gate.json",
+    "package_reproducibility": "release/package.json",
+    "rtm": "release/rtm.json",
+    "acceptance_evidence": "release/evidence.json",
+    "missing_components_execution": "release/mc_status.json",
+    "exit_gate": "release/exit_gate.json",
+    "manifest_signature": "release/MANIFEST.sig.json"
+  },
+  "reproduce": ["python tools/ci.py", "python tools/bench.py --soak-seconds 60", "python tools/release.py build", "python tools/release.py verify"],
+  "limitations": [
+    "pk_core is not bundled, so the 100-item pk_core gate reports NOT_RUN (waiver W-01).",
+    "Adjacent layers (INV-63, GAP-13) are exercised against protocol-faithful stubs, not real services (W-03).",
+    "The release manifest is signed with an ephemeral key (NONPRODUCTION-EPHEMERAL)."
+  ]
+}

@@ -1,0 +1,12 @@
+{"schema": "INV18_ALERTS/1",
+ "rules": [
+  {"id": "A1-invariant", "class": "defect", "severity": "SEV1", "when": [["counter", "inv18_invariant_violations_total", {}, ">", 0]], "runbook": "docs/OPERATIONS.md#inc-1-invariant-violation"},
+  {"id": "A2-double-resolution-burst", "class": "defect", "severity": "SEV3", "when": [["counter", "inv18_double_resolutions_total", {}, ">", 100]], "runbook": "docs/OPERATIONS.md#inc-4-producer-defects"},
+  {"id": "A3-abandonment-abnormal", "class": "degradation", "severity": "SEV3", "when": [["ratio", "inv18_abandonments_total", "inv18_futures_created_total", ">", 0.05]], "runbook": "docs/OPERATIONS.md#inc-4-producer-defects"},
+  {"id": "A4-saturation", "class": "degradation", "severity": "SEV2", "when": [["counter", "inv18_limit_hits_total", {"limit": "process"}, ">", 0]], "runbook": "docs/OPERATIONS.md#rb-d2-4-capacity-review"},
+  {"id": "A5-tenant-abuse", "class": "abuse", "severity": "SEV3", "when": [["counter", "inv18_limit_hits_total", {"limit": "tenant"}, ">", 50]], "runbook": "docs/OPERATIONS.md#inc-3-security-event"},
+  {"id": "A6-auth-attack", "class": "abuse", "severity": "SEV2", "when": [["counter_any", "inv18_rejections_total", {"code": ["UNAUTHENTICATED", "REPLAY_DETECTED"]}, ">", 20]], "runbook": "docs/OPERATIONS.md#inc-3-security-event"},
+  {"id": "A7-policy-rejection", "class": "policy", "severity": "SEV4", "when": [["counter_any", "inv18_rejections_total", {"code": ["PERMISSION_DENIED", "COMPONENT_DISABLED"]}, ">", 0]], "runbook": "docs/OPERATIONS.md#rb-d2-2-diagnostics"},
+  {"id": "A8-dependency", "class": "dependency", "severity": "SEV3", "when": [["counter_any", "inv18_telemetry_dropped_total", {}, ">", 0]], "runbook": "docs/OPERATIONS.md#rb-d2-2-diagnostics"},
+  {"id": "A9-slo-latency", "class": "slo", "severity": "SEV2", "when": [["percentile", "inv18_resolution_latency_seconds", "p99", ">", 0.0008]], "runbook": "docs/OPERATIONS.md#slo-policy"}
+ ]}

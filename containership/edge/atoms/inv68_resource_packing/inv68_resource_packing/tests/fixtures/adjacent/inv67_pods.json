@@ -1,0 +1,17 @@
+{
+  "fixture": "INV-67 Kubernetes integration mechanism -> INV-68 PK_PACK/1 workloads (emulated, v1)",
+  "valid": [
+    {"metadata": {"name": "api-0", "namespace": "shop"},
+     "spec": {"containers": [
+       {"name": "app", "resources": {"requests": {"cpu": "500m", "memory": "1Gi"}}},
+       {"name": "sidecar", "resources": {"requests": {"cpu": "250m", "memory": "512Mi"}}}]}},
+    {"metadata": {"name": "batch-0"},
+     "spec": {"containers": [{"name": "job", "resources": {"requests": {"cpu": "2", "memory": "4G"}}}]}}
+  ],
+  "invalid": [
+    {"metadata": {"name": "no-requests"}, "spec": {"containers": [{"name": "c", "resources": {"limits": {"cpu": "1"}}}]}},
+    {"metadata": {"name": "bad-unit"}, "spec": {"containers": [{"name": "c", "resources": {"requests": {"cpu": "1x"}}}]}},
+    {"metadata": {"name": "negative"}, "spec": {"containers": [{"name": "c", "resources": {"requests": {"memory": "-1Gi"}}}]}},
+    {"metadata": {"name": "not-string"}, "spec": {"containers": [{"name": "c", "resources": {"requests": {"cpu": [1]}}}]}}
+  ]
+}

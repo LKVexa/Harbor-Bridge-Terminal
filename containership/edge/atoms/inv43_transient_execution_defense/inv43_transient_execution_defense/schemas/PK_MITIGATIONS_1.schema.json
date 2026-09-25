@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PK_MITIGATIONS/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "node", "mitigations", "active", "inactive_or_unknown",
+    "required_for_cotenancy", "total_cost_percent", "smt_enabled", "core_scheduling"
+  ],
+  "properties": {
+    "schema": {"const": "PK_MITIGATIONS/1"},
+    "node": {"type": "string", "minLength": 1},
+    "mitigations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status", "cost_percent"],
+        "properties": {
+          "status": {"enum": ["active", "inactive", "unknown"]},
+          "cost_percent": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "active": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "inactive_or_unknown": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "required_for_cotenancy": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "total_cost_percent": {"type": "number", "minimum": 0},
+    "smt_enabled": {"type": "boolean"},
+    "core_scheduling": {"type": "boolean"}
+  }
+}

@@ -1,0 +1,757 @@
+{
+  "schema": "PK_POLICY_COMPONENT_STATUS/1",
+  "engine_release": "5.0.0",
+  "checklist": "GAP13 Missing Components Professional Checklist v1.0.0",
+  "status_legend": {
+    "VERIFYING": "implemented and passing automated verification in this package; awaiting independent review/acceptance and any listed target-environment items before DONE",
+    "BLOCKED": "cannot be closed from this package; blocker stated",
+    "DONE": "accepted by an independent reviewer (none yet \u2014 acceptance cannot be self-granted)"
+  },
+  "owner_default": "UNASSIGNED (see docs/OWNERS.yaml)",
+  "components": [
+    {
+      "id": "G13-MC-001",
+      "title": "Cryptographic policy-bundle verification adapter",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "verify.py, engine.py::load/activate",
+      "tests": "test_verify, test_engine.EngineTests.test_caller_asserted_verification_is_refused, test_security.TM01/TM12",
+      "docs": "docs/INTEGRATION_CONTRACTS.md#gap-07",
+      "open_items": [
+        "Integration against the real GAP-07 build (reference adapter only in this package)",
+        "Independent security review"
+      ]
+    },
+    {
+      "id": "G13-MC-002",
+      "title": "Typed PK_POLICY_BUNDLE/1 schema and parser",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "bundle.py, canonical.py, schemas/PK_POLICY_BUNDLE_1.schema.json",
+      "tests": "test_bundle_schema, test_fuzz_property.ParserFuzz",
+      "docs": "docs/REQUIREMENTS.md REQ-BND-004..006",
+      "open_items": [
+        "Coverage-guided fuzzing (atheris/libFuzzer) beyond the stdlib random fuzzer",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-003",
+      "title": "Typed PK_POLICY_VERDICT/1 schema artifact",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "schemas/PK_POLICY_VERDICT_1.schema.json",
+      "tests": "test_bundle_schema.SchemaArtifactTests, GoldenTests",
+      "docs": "fixtures/verdict_*.golden.json",
+      "open_items": [
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-004",
+      "title": "Typed PK_POLICY_EXPLANATION/1 schema artifact",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "schemas/PK_POLICY_EXPLANATION_1.schema.json, engine.py::explain",
+      "tests": "test_bundle_schema, test_engine.test_explain_redacts_values",
+      "docs": "fixtures/explanation.golden.json",
+      "open_items": [
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-005",
+      "title": "Trusted attribute/context provider",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "attributes.py::TrustedContextProvider/StaticContextProvider",
+      "tests": "test_replay_authz_audit.AttributeTests, test_security.TM02/TM03",
+      "docs": "docs/INTEGRATION_CONTRACTS.md#ext-03 #ext-05",
+      "open_items": [
+        "Production provider bound to EXT-03 identity/attestation and EXT-05 topology (reference provider only)",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-006",
+      "title": "Request attribute allowlist/type system",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "attributes.py::AttributeSchema/build_request",
+      "tests": "test_replay_authz_audit.AttributeTests, test_fuzz_property.RequestFuzz",
+      "docs": "docs/REQUIREMENTS.md REQ-ATT-*",
+      "open_items": [
+        "Estate-wide attribute catalogue sign-off by policy authors (EXT-01)",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-007",
+      "title": "Stale-policy enforcement mode",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "service.py::bundle_age/_staleness/evaluate, config.py",
+      "tests": "test_service.StaleTests, test_faults clock tests",
+      "docs": "docs/RUNBOOKS.md#stale-policy",
+      "open_items": [
+        "Per-site staleness limits approved by operations",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-008",
+      "title": "Replay/downgrade protection",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "replay.py, storage.py",
+      "tests": "test_replay_authz_audit.ReplayTests, test_faults.test_restore_from_old_cache_cannot_downgrade, test_concurrency.test_concurrent_arrivals_single_winner_floor",
+      "docs": "docs/RUNBOOKS.md#issuer-sequence-reset",
+      "open_items": [
+        "Issuer sequence-reset procedure exercised with GAP-07 key rotation",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-009",
+      "title": "Secure administrative authorization boundary",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "authz.py, service.py::_authorize, rpc.py",
+      "tests": "test_replay_authz_audit.AuthTests, test_service SoD tests, test_rpc_distribution",
+      "docs": "docs/RUNBOOKS.md#break-glass",
+      "open_items": [
+        "Bind TokenAuthenticator to the production IdP (EXT-03); HMAC token format is the reference",
+        "Anomaly detection beyond rate limiting",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-010",
+      "title": "Tamper-evident security audit log",
+      "priority": 0,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "audit.py",
+      "tests": "test_replay_authz_audit.AuditTests",
+      "docs": "docs/OBSERVABILITY.md#audit",
+      "open_items": [
+        "WORM/remote sink and retention enforcement in target deployment",
+        "Independent review"
+      ]
+    },
+    {
+      "id": "G13-MC-011",
+      "title": "Policy distribution client/controller",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "distribution.py",
+      "tests": "test_rpc_distribution.DistributionTests, test_integration.test_gap04_disconnected_operation",
+      "docs": "docs/RUNBOOKS.md#distribution",
+      "open_items": [
+        "Target distribution endpoint + mTLS in deployment profile"
+      ]
+    },
+    {
+      "id": "G13-MC-012",
+      "title": "Persistent bundle cache",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "cache.py, storage.py",
+      "tests": "test_faults",
+      "docs": "docs/RUNBOOKS.md#restart",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-013",
+      "title": "Rollback manager",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "service.py::rollback/_auto_rollback",
+      "tests": "test_service.RollbackAndControlTests",
+      "docs": "docs/RUNBOOKS.md#rollback",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-014",
+      "title": "Atomic concurrent policy swap",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "service.py::Snapshot (RCU), engine.py::activate",
+      "tests": "test_concurrency",
+      "docs": "docs/ADR-001-evaluator-architecture.md#concurrency",
+      "open_items": [
+        "Free-threaded (no-GIL) CPython validation"
+      ]
+    },
+    {
+      "id": "G13-MC-015",
+      "title": "Service/RPC transport",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "rpc.py",
+      "tests": "test_rpc_distribution.RpcTests",
+      "docs": "docs/RUNBOOKS.md#deployment",
+      "open_items": [
+        "TLS termination/mTLS sidecar in target profile"
+      ]
+    },
+    {
+      "id": "G13-MC-016",
+      "title": "Structured error model",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "errors.py, schemas/PK_POLICY_ERROR_1.schema.json",
+      "tests": "test_service.test_error_codes_unique_and_stable, test_bundle_schema.test_error_objects_validate",
+      "docs": "docs/ERROR_CODES.md",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-017",
+      "title": "Compatibility/version matrix",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "compat.py",
+      "tests": "test_bundle_schema.CompatTests",
+      "docs": "docs/COMPATIBILITY.md",
+      "open_items": [
+        "Windows/macOS CI rows (waiver W-004)"
+      ]
+    },
+    {
+      "id": "G13-MC-018",
+      "title": "Environment/site configuration model",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "config.py::EngineConfig/Limits",
+      "tests": "test_service.test_config_validation",
+      "docs": "docs/RUNBOOKS.md#configuration",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-019",
+      "title": "Configuration provenance record",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "config.py::ConfigProvenance, service.py::reconfigure",
+      "tests": "test_service.test_config_provenance_chain",
+      "docs": "docs/RUNBOOKS.md#configuration",
+      "open_items": [
+        "Signature on configuration documents (digest-chained only)"
+      ]
+    },
+    {
+      "id": "G13-MC-020",
+      "title": "Emergency disable/freeze/quarantine",
+      "priority": 1,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "service.py::set_control/quarantine",
+      "tests": "test_service.RollbackAndControlTests",
+      "docs": "docs/RUNBOOKS.md#emergency-controls",
+      "open_items": [
+        "Game-day exercise in target environment"
+      ]
+    },
+    {
+      "id": "G13-MC-021",
+      "title": "Health/readiness/status endpoint",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "service.py::health/status, rpc.py /v1/health /v1/ready /v1/status",
+      "tests": "test_service, test_rpc_distribution",
+      "docs": "docs/OBSERVABILITY.md#health",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-022",
+      "title": "Metrics subsystem",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "telemetry.py::Metrics, rpc.py /metrics",
+      "tests": "test_telemetry.test_metrics",
+      "docs": "docs/OBSERVABILITY.md#metrics",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-023",
+      "title": "Structured logging",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "telemetry.py::StructuredLogger",
+      "tests": "test_telemetry.test_logging_stable_ids_privacy",
+      "docs": "docs/OBSERVABILITY.md#logging",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-024",
+      "title": "Distributed tracing hooks",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "telemetry.py::Tracer",
+      "tests": "test_telemetry.test_tracing_propagation",
+      "docs": "docs/OBSERVABILITY.md#tracing",
+      "open_items": [
+        "OTLP exporter wiring in deployment"
+      ]
+    },
+    {
+      "id": "G13-MC-025",
+      "title": "Telemetry redaction/privacy policy",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "telemetry.py::FIELD_CLASSES/Redactor/RETENTION/SAMPLING",
+      "tests": "test_telemetry.test_redaction_allowlist, test_security.TM11",
+      "docs": "docs/OBSERVABILITY.md#privacy",
+      "open_items": [
+        "Privacy/DPO approval of retention table"
+      ]
+    },
+    {
+      "id": "G13-MC-026",
+      "title": "Release-lineage/topology correlation",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "telemetry.py::Lineage",
+      "tests": "test_telemetry.test_lineage",
+      "docs": "docs/OBSERVABILITY.md#lineage",
+      "open_items": [
+        "Live EXT-05 topology snapshot feed"
+      ]
+    },
+    {
+      "id": "G13-MC-027",
+      "title": "Dashboards and alert rules",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "ops/dashboards/gap13_overview.json, ops/alerts/gap13_alerts.yaml",
+      "tests": "test_packaging.test_alerts_reference_real_metrics",
+      "docs": "docs/OBSERVABILITY.md#alerts",
+      "open_items": [
+        "Import into target Grafana/Prometheus and exercise with synthetic failures"
+      ]
+    },
+    {
+      "id": "G13-MC-028",
+      "title": "Incident runbooks and severity model",
+      "priority": 2,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/RUNBOOKS.md",
+      "tests": "test_packaging.test_runbooks_reference_current_interfaces",
+      "docs": "docs/RUNBOOKS.md#incident-response",
+      "open_items": [
+        "Named paging rotation (depends on G13-MC-041)"
+      ]
+    },
+    {
+      "id": "G13-MC-029",
+      "title": "Compiled/indexed matcher",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "engine.py::CompiledIndex",
+      "tests": "test_engine.IndexEquivalenceTests, bench",
+      "docs": "evidence bench.sizes",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-030",
+      "title": "Capacity and hard-limit controls",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "config.py::Limits (enforced in bundle.py, attributes.py, service.py, audit.py, engine.explain)",
+      "tests": "test_bundle_schema.test_limits, test_security.TM07",
+      "docs": "docs/RUNBOOKS.md#configuration",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-031",
+      "title": "Admission control/load shedding",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "service.py::_admit, rpc.py 503+Retry-After",
+      "tests": "test_service.test_admission_control_sheds, bench overload probe",
+      "docs": "docs/SLO.md",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-032",
+      "title": "Performance benchmark suite",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "bench.py, ops/perf_baseline.json",
+      "tests": "release_gate perf checks",
+      "docs": "docs/SLO.md#performance",
+      "open_items": [
+        "Baseline on production-class hardware"
+      ]
+    },
+    {
+      "id": "G13-MC-033",
+      "title": "Edge power/thermal benchmark",
+      "priority": 3,
+      "status": "BLOCKED",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "bench.py (workload), docs/EDGE_POWER_BENCH.md (protocol)",
+      "tests": "\u2014",
+      "docs": "docs/EDGE_POWER_BENCH.md",
+      "open_items": [
+        "Requires far-edge reference hardware and a power meter; no measurement possible in this build environment"
+      ]
+    },
+    {
+      "id": "G13-MC-034",
+      "title": "Fault-injection suite",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "storage.py fault hook, tests/test_faults.py",
+      "tests": "test_faults",
+      "docs": "docs/RUNBOOKS.md",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-035",
+      "title": "Fuzz/property-based tests",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "tests/test_fuzz_property.py",
+      "tests": "test_fuzz_property",
+      "docs": "docs/REQUIREMENTS.md",
+      "open_items": [
+        "Long-running coverage-guided fuzz campaign in CI nightly"
+      ]
+    },
+    {
+      "id": "G13-MC-036",
+      "title": "Concurrency/race test suite",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "tests/test_concurrency.py",
+      "tests": "test_concurrency",
+      "docs": "docs/ADR-001-evaluator-architecture.md#concurrency",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-037",
+      "title": "Security test suite from threat model",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "tests/test_security.py",
+      "tests": "test_security (TM01-TM12)",
+      "docs": "docs/THREAT_MODEL.md",
+      "open_items": [
+        "External penetration test"
+      ]
+    },
+    {
+      "id": "G13-MC-038",
+      "title": "Integration tests with adjacent components",
+      "priority": 3,
+      "status": "BLOCKED",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "tests/test_integration.py (reference adapters)",
+      "tests": "test_integration",
+      "docs": "docs/INTEGRATION_CONTRACTS.md",
+      "open_items": [
+        "Real GAP-07, GAP-04, PLN-01, PLN-06, PLN-07 builds are not in this package; contract tests pass against reference adapters only"
+      ]
+    },
+    {
+      "id": "G13-MC-039",
+      "title": "Machine-readable certification evidence",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "certify.py",
+      "tests": "test_packaging.test_certify_manifest_roundtrip",
+      "docs": "evidence/",
+      "open_items": [
+        "Manifest signing key custody (EXT-04)"
+      ]
+    },
+    {
+      "id": "G13-MC-040",
+      "title": "Release regression gate",
+      "priority": 3,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "release_gate.py, ops/release_gate.json, ci/gap13-release-gate.yml",
+      "tests": "test_packaging.test_release_gate_blocks_on_failures",
+      "docs": "docs/PRODUCTION_EXIT_GATE.md",
+      "open_items": [
+        "Wire CI workflow into the owning repository"
+      ]
+    },
+    {
+      "id": "G13-MC-041",
+      "title": "Named accountable owner and escalation path",
+      "priority": 4,
+      "status": "BLOCKED",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/OWNERS.yaml",
+      "tests": "test_packaging.test_owners_file_shape",
+      "docs": "docs/OWNERS.yaml",
+      "open_items": [
+        "Role structure defined; named people/teams must be supplied by the organisation \u2014 not invented here"
+      ]
+    },
+    {
+      "id": "G13-MC-042",
+      "title": "Approved ADR",
+      "priority": 4,
+      "status": "BLOCKED",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/ADR-001-evaluator-architecture.md",
+      "tests": "\u2014",
+      "docs": "docs/ADR-001-evaluator-architecture.md",
+      "open_items": [
+        "ADR written with status Proposed; approval requires the architecture authority named in OWNERS.yaml"
+      ]
+    },
+    {
+      "id": "G13-MC-043",
+      "title": "SHALL-level requirements specification",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/REQUIREMENTS.md",
+      "tests": "test_packaging.test_traceability_complete",
+      "docs": "docs/REQUIREMENTS.md",
+      "open_items": [
+        "Stakeholder review"
+      ]
+    },
+    {
+      "id": "G13-MC-044",
+      "title": "Requirements traceability matrix",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/TRACEABILITY.json",
+      "tests": "test_packaging.test_traceability_complete",
+      "docs": "docs/TRACEABILITY.json",
+      "open_items": []
+    },
+    {
+      "id": "G13-MC-045",
+      "title": "Deployment-pattern support matrix",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/DEPLOYMENT_MATRIX.md",
+      "tests": "test_packaging.test_documents_claimed_are_present",
+      "docs": "docs/DEPLOYMENT_MATRIX.md",
+      "open_items": [
+        "Far-edge row pending MC-033"
+      ]
+    },
+    {
+      "id": "G13-MC-046",
+      "title": "Production SLO/error-budget specification",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/SLO.md",
+      "tests": "release_gate perf thresholds",
+      "docs": "docs/SLO.md",
+      "open_items": [
+        "Commitment approval by service owner"
+      ]
+    },
+    {
+      "id": "G13-MC-047",
+      "title": "Day-0/1/2 executable runbooks",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/RUNBOOKS.md",
+      "tests": "test_packaging.test_runbooks_reference_current_interfaces",
+      "docs": "docs/RUNBOOKS.md",
+      "open_items": [
+        "Exercise in target environment"
+      ]
+    },
+    {
+      "id": "G13-MC-048",
+      "title": "Vulnerability/patch/EOL policy",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/SECURITY_POLICY.md",
+      "tests": "test_packaging.test_documents_claimed_are_present",
+      "docs": "docs/SECURITY_POLICY.md",
+      "open_items": [
+        "Approval by security owner"
+      ]
+    },
+    {
+      "id": "G13-MC-049",
+      "title": "Exception/waiver/technical-debt registry",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "WAIVERS.json",
+      "tests": "test_packaging.test_waivers_shape, release_gate",
+      "docs": "WAIVERS.json",
+      "open_items": [
+        "Waivers require named approvers (all currently PENDING_APPROVAL)"
+      ]
+    },
+    {
+      "id": "G13-MC-050",
+      "title": "Formal production-exit gate artifact",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "release_gate.py --profile production, docs/PRODUCTION_EXIT_GATE.md",
+      "tests": "test_packaging.test_release_gate_blocks_on_failures",
+      "docs": "evidence/<release>/gate_production.json",
+      "open_items": [
+        "Gate currently evaluates NO_GO for production: owner/ADR/acceptance blockers"
+      ]
+    },
+    {
+      "id": "G13-MC-051",
+      "title": "MASTER.md audit source",
+      "priority": 4,
+      "status": "VERIFYING",
+      "owner": "UNASSIGNED",
+      "reviewer": "UNASSIGNED",
+      "implementation": "docs/MASTER_SOURCE.md",
+      "tests": "test_packaging.test_documents_claimed_are_present, test_no_dangling_master_reference",
+      "docs": "docs/MASTER_SOURCE.md",
+      "open_items": [
+        "Original MASTER.md not in archive; formally superseded \u2014 owner may restore from the Post-Kubernetes series source and record its digest"
+      ]
+    }
+  ],
+  "external_contracts": [
+    {
+      "id": "EXT-01",
+      "title": "Policy authoring language/UI and approval workflow",
+      "status": "CONTRACT_DEFINED",
+      "contract": "docs/INTEGRATION_CONTRACTS.md#ext-01",
+      "open_items": [
+        "Adapter certification against the real system in the target deployment"
+      ]
+    },
+    {
+      "id": "EXT-02",
+      "title": "Enforcement point/data-plane",
+      "status": "CONTRACT_DEFINED",
+      "contract": "docs/INTEGRATION_CONTRACTS.md#ext-02",
+      "open_items": [
+        "Adapter certification against the real system in the target deployment"
+      ]
+    },
+    {
+      "id": "EXT-03",
+      "title": "Identity and attestation subsystem",
+      "status": "CONTRACT_DEFINED",
+      "contract": "docs/INTEGRATION_CONTRACTS.md#ext-03",
+      "open_items": [
+        "Adapter certification against the real system in the target deployment"
+      ]
+    },
+    {
+      "id": "EXT-04",
+      "title": "Artifact signing/key-custody",
+      "status": "CONTRACT_DEFINED",
+      "contract": "docs/INTEGRATION_CONTRACTS.md#ext-04",
+      "open_items": [
+        "Adapter certification against the real system in the target deployment"
+      ]
+    },
+    {
+      "id": "EXT-05",
+      "title": "Infrastructure topology",
+      "status": "CONTRACT_DEFINED",
+      "contract": "docs/INTEGRATION_CONTRACTS.md#ext-05",
+      "open_items": [
+        "Adapter certification against the real system in the target deployment"
+      ]
+    }
+  ]
+}

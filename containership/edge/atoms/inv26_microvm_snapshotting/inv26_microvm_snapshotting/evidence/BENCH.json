@@ -1,0 +1,147 @@
+{
+ "adapter": "reference",
+ "breakdown": {
+  "aead_decrypt_ms": 15.572,
+  "copies_identified": [
+   "blob read into memory (1x ciphertext)",
+   "AEAD output as a list of chunks, then one join (2x plaintext transiently)",
+   "unframe slices state/memory (1x plaintext)",
+   "adapter writes memory file for VMM load (1x plaintext on tmpfs)"
+  ],
+  "image_bytes": 16777267,
+  "memory_mib": 16,
+  "optimization_candidates": [
+   "stream-decrypt chunks directly into the VMM memory file after full-tag pre-verification pass",
+   "memoryview slicing in unframe to avoid a copy (decrypt side already uses memoryview)",
+   "UFFD memory backend (Firecracker) to page in lazily from a decrypted cache"
+  ],
+  "peak_alloc_over_image": 3.0,
+  "peak_python_alloc_bytes": 50355114,
+  "storage_read_ms": 7.705,
+  "unframe_ms": 9.697
+ },
+ "capture": [
+  {
+   "memory_mib": 1,
+   "request_ms": {
+    "max": 14.4626,
+    "mean": 12.3365,
+    "n": 15,
+    "p50": 12.0748,
+    "p95": 14.4626,
+    "p99": 14.4626
+   }
+  }
+ ],
+ "certifiable": false,
+ "certifiable_reason": "reference hypervisor: VMM restore cost excluded; not an SLO measurement",
+ "environment": {
+  "cores": 2,
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+  "cryptography": "46.0.7",
+  "kernel": "6.18.44-fc-v37",
+  "kvm_present": false,
+  "machine": "x86_64",
+  "python": "3.11.15"
+ },
+ "load": [
+  {
+   "admission_rejected_total": 0,
+   "concurrency": 4,
+   "latency_ms": {
+    "max": 31.0764,
+    "mean": 19.9103,
+    "n": 60,
+    "p50": 19.343,
+    "p95": 26.2143,
+    "p99": 31.0764
+   },
+   "ok": 60,
+   "rejected": {
+    "SNAP_OVERLOADED": 0
+   },
+   "tenants": 2,
+   "throughput_per_s": 195.6,
+   "unexpected_errors": {}
+  },
+  {
+   "admission_rejected_total": 0,
+   "concurrency": 16,
+   "latency_ms": {
+    "max": 144.697,
+    "mean": 82.59,
+    "n": 240,
+    "p50": 82.6124,
+    "p95": 123.1959,
+    "p99": 139.4512
+   },
+   "ok": 240,
+   "rejected": {
+    "SNAP_OVERLOADED": 0
+   },
+   "tenants": 4,
+   "throughput_per_s": 183.7,
+   "unexpected_errors": {}
+  }
+ ],
+ "max_rss_kib": 218644,
+ "profile": "quick",
+ "restore": [
+  {
+   "cpu_ms": {
+    "max": 5.6686,
+    "mean": 4.2155,
+    "n": 60,
+    "p50": 4.1235,
+    "p95": 4.9373,
+    "p99": 5.6686
+   },
+   "memory_mib": 1,
+   "request_ms": {
+    "max": 8.1988,
+    "mean": 5.556,
+    "n": 60,
+    "p50": 5.3392,
+    "p95": 7.2141,
+    "p99": 8.1988
+   },
+   "restore_path_ms": {
+    "max": 4.6338,
+    "mean": 2.8144,
+    "n": 60,
+    "p50": 2.701,
+    "p95": 3.5004,
+    "p99": 4.6338
+   }
+  },
+  {
+   "cpu_ms": {
+    "max": 42.6608,
+    "mean": 33.9893,
+    "n": 20,
+    "p50": 33.0257,
+    "p95": 41.4947,
+    "p99": 42.6608
+   },
+   "memory_mib": 16,
+   "request_ms": {
+    "max": 44.2313,
+    "mean": 35.9983,
+    "n": 20,
+    "p50": 34.676,
+    "p95": 43.4211,
+    "p99": 44.2313
+   },
+   "restore_path_ms": {
+    "max": 40.9879,
+    "mean": 33.0229,
+    "n": 20,
+    "p50": 31.921,
+    "p95": 39.7729,
+    "p99": 40.9879
+   }
+  }
+ ],
+ "schema": "PK_SNAPSHOT_BENCH/1",
+ "seconds": 3.6
+}

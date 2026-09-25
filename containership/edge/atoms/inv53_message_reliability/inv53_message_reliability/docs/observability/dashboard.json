@@ -1,0 +1,31 @@
+{
+ "schema": "inv53.dashboard/1",
+ "status": "PROPOSED \u2014 panel definitions only; no Grafana is bound",
+ "title": "INV-53 Message reliability",
+ "panels": [
+  {
+   "title": "Mode / readiness",
+   "source": "health()"
+  },
+  {
+   "title": "Ops by code",
+   "expr": "sum by (op,code) (rate(inv53_ops_total[5m]))"
+  },
+  {
+   "title": "p99 latency by op",
+   "expr": "histogram_quantile(0.99, sum by (le,op) (rate(inv53_op_seconds_bucket[5m])))"
+  },
+  {
+   "title": "Ready / in-flight / DLQ depth",
+   "expr": "inv53_ready, inv53_in_flight, inv53_dead_lettered"
+  },
+  {
+   "title": "Refusals by code",
+   "expr": "sum by (code) (rate(inv53_refusals_total[5m]))"
+  },
+  {
+   "title": "Build lineage",
+   "expr": "inv53_build_info"
+  }
+ ]
+}

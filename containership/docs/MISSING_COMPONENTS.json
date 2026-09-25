@@ -1,0 +1,2131 @@
+{
+  "schema": "UC/MISSING_COMPONENTS/1",
+  "release": "UC-2.2.0",
+  "assessed_date_local": "2026-09-21",
+  "timezone": "America/Los_Angeles",
+  "meaning": "Proposed implementation backlog. None of these end-state acceptance criteria is claimed satisfied by merely listing it.",
+  "priorities": {
+    "P0": "Required for the relevant safety/first-boot/promotion milestone",
+    "P1": "Required for a dependable managed service",
+    "P2": "Scale, optional integration or product scope; not required for an offline first guest"
+  },
+  "milestones": {
+    "A": "Dependable local control-plane foundation",
+    "B": "One genuinely bootable, semantically tested guest",
+    "C": "Isolated and operable single-host containership",
+    "D": "Optional independently qualified multi-host federation"
+  },
+  "items": [
+    {
+      "id": "UC-M01.01",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Trust-boundary and capability model",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Define operator, cargo author, guest, engine, hull and host trust boundaries. Keep control-plane permission, guest capability and proof status as separate fields.",
+      "acceptance_test": "A reviewed threat model maps every entry point to its actual enforcement boundary; no declaration is labeled enforcement.",
+      "depends_on": [],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.02",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Versioned runtime and guest contracts",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Specify boot, invoke, stop, inspect, snapshot and error contracts with strict required fields, extensions and version negotiation.",
+      "acceptance_test": "Contract tests reject unknown incompatible versions, duplicate fields and unsupported capabilities before mutation.",
+      "depends_on": [
+        "UC-M01.01"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.03",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Lifecycle state machine",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Separate desired and observed states: admitted, staged, built, booting, ready, running, draining, stopped, failed and quarantined.",
+      "acceptance_test": "Every transition has a durable reason and legal predecessor; failed readiness cannot produce a running status.",
+      "depends_on": [
+        "UC-M01.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.04",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Canonical manifest and schema evolution",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Extend checksum parsing to duplicate-key-safe JSON, schema migration, canonical encoding and non-ambiguous field semantics.",
+      "acceptance_test": "Equivalent manifests hash consistently; malicious duplicates and lossy downgrade migrations are rejected.",
+      "depends_on": [
+        "UC-M01.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.05",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Stable workload identity and generations",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Use immutable workload IDs and monotonic generations rather than directory names as authority across replacement and restore.",
+      "acceptance_test": "A stale process cannot write state or publish results for a replacement with the same display name.",
+      "depends_on": [
+        "UC-M01.03",
+        "UC-M01.04"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.06",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Closed-world source and dependency inventory",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Define which files are input, generated, excluded or runtime state; preserve an explicit rejection/exclusion ledger for every ingest.",
+      "acceptance_test": "Every original archive member is either hash-accounted cargo or has a documented policy disposition; no silently lost dependencies.",
+      "depends_on": [
+        "UC-M01.04"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.07",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Application semantics versus witness contract",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Distinguish sorting, metadata witnessing, dialect compilation and actual application execution. Define supported source languages and observable semantics.",
+      "acceptance_test": "A nontrivial application passes semantic input/output tests on its target; a row-sequence hash alone never satisfies execution.",
+      "depends_on": [
+        "UC-M01.02",
+        "UC-M01.06"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M01.08",
+      "phase": 1,
+      "phase_title": "Architecture and executable contracts",
+      "milestone": "A",
+      "component": "Artifact and dependency graph",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Represent source, compiler, runtime, configuration, guest image, state schema and evidence as a typed acyclic graph.",
+      "acceptance_test": "Changing any dependency invalidates exactly the affected images/evidence; cycles and missing dependencies are rejected.",
+      "depends_on": [
+        "UC-M01.04",
+        "UC-M01.06"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.01",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Chosen library-OS integration",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Choose one initial target such as a selected Unikraft configuration or a Solo5-compatible library OS. Port one supported C engine/workload first, not all runtimes at once.",
+      "acceptance_test": "A clean build links the application and only required OS libraries into a guest image, not a host Python command.",
+      "depends_on": [
+        "UC-M01.07"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.02",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Boot ABI and startup path",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Implement the selected architecture entry point, boot information validation, stack setup and platform startup sequence.",
+      "acceptance_test": "The chosen VMM loads the image and reaches a guest-originated ready signal without a conventional guest OS boot.",
+      "depends_on": [
+        "UC-M02.01"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.03",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Linker, image layout and permissions",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Define executable sections, relocations, memory map, zero initialization, overflow bounds and supported image format.",
+      "acceptance_test": "Malformed images are rejected; executable and writable regions follow the selected platform protection policy.",
+      "depends_on": [
+        "UC-M02.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.04",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Guest allocator and memory lifecycle",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Provide bounded allocation, failure behavior, stack budgets and memory ownership appropriate to the linked runtime.",
+      "acceptance_test": "Memory exhaustion yields a documented failure without host escape or cross-guest corruption.",
+      "depends_on": [
+        "UC-M02.03"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.05",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Guest execution loop and scheduling",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Select cooperative, preemptive or run-to-completion semantics; implement required timers, interrupt handling and cancellation points.",
+      "acceptance_test": "A deliberately non-terminating workload can be stopped at the host boundary and cannot starve other guests.",
+      "depends_on": [
+        "UC-M02.02",
+        "UC-M02.04"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.06",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Clock and entropy interfaces",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Keep deterministic simulation time separate from real monotonic time and cryptographic randomness; validate boot-time availability.",
+      "acceptance_test": "Replay uses recorded inputs while security keys never derive from deterministic witness seeds or replay clocks.",
+      "depends_on": [
+        "UC-M02.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.07",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Minimal console, block and transport drivers",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Implement only devices needed by the first workload: bounded console, selected block device and optional transport with validated descriptors.",
+      "acceptance_test": "Malformed descriptors and unavailable devices fail safely; no unused device is exposed by default.",
+      "depends_on": [
+        "UC-M02.02",
+        "UC-M02.04"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M02.08",
+      "phase": 2,
+      "phase_title": "Bootable unikernel guest",
+      "milestone": "B",
+      "component": "Guest ABI conformance and panic reporting",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Build positive/negative ABI probes, panic records and source-mapped traces for the chosen image/runtime combination.",
+      "acceptance_test": "A boot-success artifact includes image digest, ABI version, workload output and intentionally induced panic evidence.",
+      "depends_on": [
+        "UC-M02.03",
+        "UC-M02.05",
+        "UC-M02.06",
+        "UC-M02.07"
+      ],
+      "theory_sources": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.01",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Pluggable execution backend boundary",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Separate host-process adapters from actual guest backends; expose explicit isolation classes and capability negotiation.",
+      "acceptance_test": "An isolation-required workload cannot silently fall back to an in-process or ordinary subprocess adapter.",
+      "depends_on": [
+        "UC-M01.02",
+        "UC-M02.08"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.02",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Real hypervisor or tender integration",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Implement one supported backend that creates a separate guest instance from the built image and validates its boot configuration.",
+      "acceptance_test": "Two guest instances are independently booted, inspected and stopped; host-only VM interpreter runs cannot pass this gate.",
+      "depends_on": [
+        "UC-M03.01"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.03",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Host process sandbox profile",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Constrain the VMM/tender with the selected OS mechanisms: user identity, syscall policy, filesystem access and process isolation.",
+      "acceptance_test": "An adversarial guest cannot access unrelated host files or make forbidden host operations through exposed devices.",
+      "depends_on": [
+        "UC-M03.02"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.04",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Enforced default-deny networking",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Translate NETWORK=deny into absent devices and/or enforced host filtering. Explicitly isolate the host control-plane and metadata endpoints.",
+      "acceptance_test": "A guest traffic probe demonstrates denied egress and lateral access; policy text alone is not evidence.",
+      "depends_on": [
+        "UC-M03.03"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.05",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "CPU, memory, I/O and process quotas",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Apply aggregate per-workload and per-tenant limits, including compiler children, decoder workers and inherited processes.",
+      "acceptance_test": "Memory, fork, log and I/O flood probes remain inside quota and preserve another guest's health.",
+      "depends_on": [
+        "UC-M03.03"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.06",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Supervisor, watchdog and child-tree cleanup",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Track each child by generation, enforce deadlines, bound stdout/stderr, kill the complete tree and reap zombies.",
+      "acceptance_test": "Timeout and parent crash leave no executable orphan; failure reason and last bounded log survive.",
+      "depends_on": [
+        "UC-M03.01",
+        "UC-M03.05"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.07",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Privilege-separated resource broker",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Concentrate privileged device/network operations in a small authenticated broker instead of the entire ship process.",
+      "acceptance_test": "Unprivileged ship operation succeeds with only narrowly scoped broker requests; arbitrary paths and commands are denied.",
+      "depends_on": [
+        "UC-M03.03"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M03.08",
+      "phase": 3,
+      "phase_title": "Host isolation and supervision",
+      "milestone": "C",
+      "component": "Host capability and isolation evidence",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Expand doctor from informational checks to exercised backend capability probes, patch policy and immutable run-time evidence.",
+      "acceptance_test": "Admission records the selected backend and verified constraints; unavailable virtualization blocks rather than degrades security.",
+      "depends_on": [
+        "UC-M03.02",
+        "UC-M03.04",
+        "UC-M03.05"
+      ],
+      "theory_sources": [
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.01",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Locked toolchain and dependency closure",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Pin compiler, linker, libraries, engine sources and runtime artifacts with offline-usable checksums and origins.",
+      "acceptance_test": "Build works from an explicit dependency cache without implicit PATH/download substitutions; missing inputs are refused.",
+      "depends_on": [
+        "UC-M01.08"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.02",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Hermetic and reproducible build recipe",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Normalize timestamps, environment, source paths and generated metadata while separating nondeterministic build evidence.",
+      "acceptance_test": "Two isolated clean builders produce matching declared image digests or a precisely documented reproducibility boundary.",
+      "depends_on": [
+        "UC-M04.01"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.03",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Sandboxed build workers",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Treat compilers, build hooks and imported project tooling as untrusted execution with disposable roots and quotas.",
+      "acceptance_test": "A hostile build cannot read operator secrets, contact unapproved endpoints or persist outside its workspace.",
+      "depends_on": [
+        "UC-M03.03",
+        "UC-M03.05",
+        "UC-M04.01"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.04",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Semantic translation validation",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Compare source semantics, intermediate representation and native results across supported dialects; bound lowering sizes and arithmetic.",
+      "acceptance_test": "Generated and hand-written semantic test programs agree under edge cases; unsupported features are refused explicitly.",
+      "depends_on": [
+        "UC-M01.07",
+        "UC-M02.08"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.05",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Immutable content-addressed image store",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Address images and dependency blobs by digest, verify reads, publish atomically and separate source from executable outputs.",
+      "acceptance_test": "Interrupted publication exposes no partial image; a modified blob is rejected even when its filename matches.",
+      "depends_on": [
+        "UC-M01.04",
+        "UC-M04.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.06",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Software bill of materials and license inventory",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Produce machine-readable component/version/source/license records for the guest, host, bundled hull and hold.",
+      "acceptance_test": "Every linked or shipped runtime dependency maps to a source/version/license and a reviewable provenance record.",
+      "depends_on": [
+        "UC-M04.01",
+        "UC-M04.05"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.07",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Build provenance attestations",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Bind image digest to inputs, build recipe, builder identity and observed tests; use SLSA concepts without claiming an unassessed level.",
+      "acceptance_test": "An independent verifier reconstructs the build relationship and rejects altered subjects or unknown builders.",
+      "depends_on": [
+        "UC-M04.02",
+        "UC-M04.05"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M04.08",
+      "phase": 4,
+      "phase_title": "Build and artifact production",
+      "milestone": "B",
+      "component": "Authenticated image admission",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Verify release signatures against operator-established trust roots before build, mount or execution; disable implicit trust enrollment for untrusted cargo.",
+      "acceptance_test": "An intact but self-signed or unapproved image is rejected; signature policy failure never becomes a checksum-only pass.",
+      "depends_on": [
+        "UC-M04.05",
+        "UC-M04.07"
+      ],
+      "theory_sources": [
+        "S1",
+        "S5",
+        "S7"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.01",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Executable workload DAG planner",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Convert declared entry points and dependency edges into actual invocations, not merely script placement into folders.",
+      "acceptance_test": "A multi-step workload executes dependencies exactly in the required order and publishes explicit outputs.",
+      "depends_on": [
+        "UC-M01.07",
+        "UC-M01.08",
+        "UC-M03.01"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.02",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Resource-aware placement scheduler",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Replace heuristic complexity-only routing with measured capacity, ISA compatibility, memory bounds and isolation requirements.",
+      "acceptance_test": "An infeasible workload is queued or refused; placement never violates a hard resource or ISA constraint.",
+      "depends_on": [
+        "UC-M03.05",
+        "UC-M05.01"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.03",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Bounded queue and fairness control",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Implement priority, starvation prevention, backpressure and queue-capacity limits with durable work identifiers.",
+      "acceptance_test": "Overload produces bounded queues and explicit rejection while admitted tenants receive the chosen fairness guarantee.",
+      "depends_on": [
+        "UC-M05.02"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.04",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Idempotent reconciliation controller",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Continuously reconcile desired state to observed instances through generation-scoped idempotent operations.",
+      "acceptance_test": "Restarting the controller or redelivering a command neither duplicates instances nor loses an admitted workload.",
+      "depends_on": [
+        "UC-M01.03",
+        "UC-M01.05",
+        "UC-M05.01"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.05",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Workload readiness and liveness checks",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Separate successful build, boot, ready service, live process, completed invocation and correct application output.",
+      "acceptance_test": "A booted but incorrect or stalled guest is not marked ready; probes have deadlines and output-size limits.",
+      "depends_on": [
+        "UC-M03.06",
+        "UC-M05.04"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.06",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Graceful stop and drain protocol",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Stop admission, drain accepted work, flush state within a bound, then terminate and preserve a definitive exit reason.",
+      "acceptance_test": "Stop during active I/O either commits or records an interrupted operation without silently reporting completion.",
+      "depends_on": [
+        "UC-M05.04",
+        "UC-M05.05"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.07",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Safe restart and failure budget policy",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Define retryable versus permanent failures, exponential backoff, restart ceilings and quarantine for deterministic crashes.",
+      "acceptance_test": "A crash loop cannot consume unbounded resources or repeatedly promote a known-bad image.",
+      "depends_on": [
+        "UC-M05.05",
+        "UC-M05.06"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M05.08",
+      "phase": 5,
+      "phase_title": "Workload orchestration and scheduling",
+      "milestone": "C",
+      "component": "Replica scaling and placement migration",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Add explicit stateless/stateful scaling semantics, allocation reservations and drain-before-replace behavior.",
+      "acceptance_test": "Scaling out or in respects application state semantics and does not lose accepted requests or bypass quotas.",
+      "depends_on": [
+        "UC-M05.02",
+        "UC-M05.06",
+        "UC-M05.07"
+      ],
+      "theory_sources": [
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.01",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Machine-stable management API",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Provide versioned structured operations and errors; keep CLI presentation separate from machine contracts and long-running job IDs.",
+      "acceptance_test": "Contract tests exercise command/API parity and incompatible-version refusal without parsing human log text.",
+      "depends_on": [
+        "UC-M01.02",
+        "UC-M05.04"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.02",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Operator and service authentication",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Authenticate local broker clients and any remote control endpoints; design offline identity provisioning first.",
+      "acceptance_test": "Unauthenticated and expired identities cannot load, seal, mount, read secrets or stop another workload.",
+      "depends_on": [
+        "UC-M06.01"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.03",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Least-privilege authorization",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Define distinct permissions for read, build, execute, seal, sign, trust enrollment and destructive lifecycle actions.",
+      "acceptance_test": "A read-only operator cannot escalate through an indirect command or optional argument.",
+      "depends_on": [
+        "UC-M06.02"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.04",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Tenant and workspace isolation",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Separate state roots, credentials, image references, quotas and backend instances by tenant identity.",
+      "acceptance_test": "Cross-tenant name collisions, aliases and shared-cache references cannot expose mutable data.",
+      "depends_on": [
+        "UC-M03.03",
+        "UC-M06.03"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.05",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Policy-as-code admission evaluator",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Evaluate signed provenance, runtime class, resource budgets, device access and network requirements before any executable action.",
+      "acceptance_test": "A denied policy leaves no child process or externally visible partial workload; policy evidence is recorded.",
+      "depends_on": [
+        "UC-M03.08",
+        "UC-M04.08",
+        "UC-M06.03"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.06",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Typed configuration and migration",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Specify configuration schemas, precedence, secret references, defaults and generation-aware updates; reject unknown sensitive fields.",
+      "acceptance_test": "Invalid configuration is rejected atomically and an attempted downgrade cannot weaken an existing workload policy.",
+      "depends_on": [
+        "UC-M01.04",
+        "UC-M06.05"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.07",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Secret storage and injection boundary",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Keep secrets out of cargo, TIFFs, manifests, process arguments and public logs; supply scoped short-lived handles at runtime.",
+      "acceptance_test": "A redaction test finds no test secret in emitted artifacts, logs, snapshots or another tenant's state.",
+      "depends_on": [
+        "UC-M03.07",
+        "UC-M06.04"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M06.08",
+      "phase": 6,
+      "phase_title": "Control plane, identity and policy",
+      "milestone": "C",
+      "component": "Tamper-evident operator audit trail",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Record actor, command, policy decision, generation and outcome in an append-only independently anchored audit stream.",
+      "acceptance_test": "Changing or removing a recorded sensitive operation is detectable without trusting the same mutable workspace.",
+      "depends_on": [
+        "UC-M06.02",
+        "UC-M06.03",
+        "UC-M06.05"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.01",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Cross-resource durable transaction coordinator",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Extend staging/journals to berth, bill of lading, ship seals, hull mounts and runtime state with explicit commit/recovery semantics.",
+      "acceptance_test": "Crash injection at every mutation step recovers a coherent old or new generation with no missing cargo.",
+      "depends_on": [
+        "UC-M01.03",
+        "UC-M01.05"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.02",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Checkpoint and history rollover",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Turn the 512-page stop guard into validated immutable checkpoints, bounded history segments and an explicit restore index.",
+      "acceptance_test": "Long-running TIFF state continues after rollover and restores the same state as uninterrupted execution.",
+      "depends_on": [
+        "UC-M07.01"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.03",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Atomic multi-container tick commit",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Commit all participating node, fabric and hull results under one epoch or persist an explicit partial-tick record and recovery plan.",
+      "acceptance_test": "Power-loss simulation between any two picture writes never leaves an apparently complete mixed-generation tick.",
+      "depends_on": [
+        "UC-M07.01",
+        "UC-M07.02"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.04",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Strict state schema and decoder boundary",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Apply bounded schema validation to every TIFF/JSON/blob entry point, including embedded hull decoders, previews and import paths.",
+      "acceptance_test": "Malformed metadata, dimensions, integer fields and nested structures are rejected inside a bounded decoder worker.",
+      "depends_on": [
+        "UC-M03.05",
+        "UC-M07.02"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.05",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Workspace capacity reservation",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Reserve space for staging, image growth and backups before mutation; enforce minimum free-space thresholds and aggregate quotas.",
+      "acceptance_test": "A low-disk fault stops before destructive commit and preserves a usable recovery copy and clear error record.",
+      "depends_on": [
+        "UC-M03.05",
+        "UC-M07.01"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.06",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Reachability-based garbage collection",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Track references from active generations, snapshots and retained backups; quarantine then remove only unreferenced artifacts.",
+      "acceptance_test": "A concurrent deployment/restore cannot lose a referenced object; dry-run lists exactly the reclaimable bytes.",
+      "depends_on": [
+        "UC-M04.05",
+        "UC-M07.01",
+        "UC-M07.05"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.07",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Portable snapshots and state migrations",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Define snapshot format, engine/ABI compatibility, encrypted secret handling and schema migration with validation before restore.",
+      "acceptance_test": "A snapshot restored on a supported clean host resumes with equivalent application state; incompatible ABI is refused.",
+      "depends_on": [
+        "UC-M02.08",
+        "UC-M06.07",
+        "UC-M07.02"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M07.08",
+      "phase": 7,
+      "phase_title": "Persistence, transactions and recovery",
+      "milestone": "A",
+      "component": "Verified rollback and recovery commands",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Provide operator-facing inspect, restore and abandon commands for retained backups and transaction journals, with generation checks.",
+      "acceptance_test": "Automated restore returns registry, seals and mount state to a verified generation rather than only moving a directory.",
+      "depends_on": [
+        "UC-M07.01",
+        "UC-M07.03",
+        "UC-M07.07"
+      ],
+      "theory_sources": [
+        "S5",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.01",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Typed guest-host IPC ABI",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Define request/response buffers, handles, errors and ownership across the actual guest boundary; default to local transport.",
+      "acceptance_test": "Unknown operations, invalid handles and out-of-bounds buffers cannot reach arbitrary host functions.",
+      "depends_on": [
+        "UC-M01.02",
+        "UC-M02.07",
+        "UC-M03.07"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.02",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Message framing and versioned serialization",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Specify maximum lengths, canonical field encodings, numeric bounds, checksums and compatibility handling for every frame.",
+      "acceptance_test": "Truncated, oversized, duplicate-field and mismatched-version messages are rejected without desynchronizing the channel.",
+      "depends_on": [
+        "UC-M08.01"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.03",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Backpressure and bounded channels",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Use bounded queues, byte budgets, flow control and nonblocking cancellation instead of unbounded message accumulation.",
+      "acceptance_test": "Producer floods remain within a measured buffer budget and cannot deadlock unrelated workloads.",
+      "depends_on": [
+        "UC-M03.05",
+        "UC-M08.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.04",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Ordering, idempotency and replay semantics",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Assign request IDs and epochs; state at-most-once/at-least-once behavior and deduplicate side effects where needed.",
+      "acceptance_test": "Repeated or out-of-order messages cannot double-apply a committed external effect or overwrite newer state.",
+      "depends_on": [
+        "UC-M01.05",
+        "UC-M07.03",
+        "UC-M08.02"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.05",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Deadlines and cancellation propagation",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Carry deadlines across scheduler, guest IPC and storage operations using suitable monotonic clocks.",
+      "acceptance_test": "Canceled work stops using resources within its specified bound and has a deterministic final disposition.",
+      "depends_on": [
+        "UC-M02.06",
+        "UC-M03.06",
+        "UC-M08.03"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.06",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Shared-memory or buffer grant safety",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Where zero-copy is selected, validate grant lifetime, size, direction and revocation; otherwise keep bounded copied buffers.",
+      "acceptance_test": "Revoked or cross-tenant grants cannot be used after stop, replacement or channel reset.",
+      "depends_on": [
+        "UC-M06.04",
+        "UC-M08.01"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M08.07",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Optional policy-controlled network stack",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "For networked workloads only, add the selected virtual NIC, IP stack, TLS, DNS behavior and explicitly granted ingress/egress policy.",
+      "acceptance_test": "The offline profile still has no network access; approved endpoints work and all other routes remain denied.",
+      "depends_on": [
+        "UC-M02.07",
+        "UC-M03.04",
+        "UC-M06.05"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "optional_feature"
+    },
+    {
+      "id": "UC-M08.08",
+      "phase": 8,
+      "phase_title": "Guest communication and data plane",
+      "milestone": "C",
+      "component": "Optional service discovery and routing",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "For multi-service deployments, publish authenticated generation-aware endpoints with readiness, expiry and withdrawal.",
+      "acceptance_test": "A stopped or replaced generation cannot receive newly routed requests after its endpoint is withdrawn.",
+      "depends_on": [
+        "UC-M05.05",
+        "UC-M05.06",
+        "UC-M08.07"
+      ],
+      "theory_sources": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "scope": "optional_feature"
+    },
+    {
+      "id": "UC-M09.01",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Independent key lifecycle",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Separate development, build, release and operator trust keys; support rotation, revocation, offline roots and scoped enrollment.",
+      "acceptance_test": "A revoked signer cannot admit new images; one compromised online role cannot mint a new trusted root.",
+      "depends_on": [
+        "UC-M04.08",
+        "UC-M06.03"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.02",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Anti-rollback update metadata",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Use authenticated versioned update metadata and a trustworthy expiry/version policy suitable for offline distribution.",
+      "acceptance_test": "Older, expired or inconsistent metadata cannot silently replace a newer approved release.",
+      "depends_on": [
+        "UC-M09.01"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.03",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Verified executable-cache reads",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Verify cached engine source, libraries and executables against the approved dependency graph immediately before use; protect mutable roots.",
+      "acceptance_test": "Changing a cached adapter or native executable blocks execution even when the original hold ZIP still matches its pin.",
+      "depends_on": [
+        "UC-M04.05",
+        "UC-M06.05",
+        "UC-M09.01"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.04",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Image-state-policy binding",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Bind state to exact image, ABI, configuration, policy, tenant and generation instead of a name or accumulator alone.",
+      "acceptance_test": "State replay from a different image or tenant is rejected before guest execution.",
+      "depends_on": [
+        "UC-M01.05",
+        "UC-M07.07",
+        "UC-M09.01"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.05",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Proof and digest assurance hierarchy",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Label byte integrity, signature authenticity, witness agreement, semantic correctness and isolation evidence separately.",
+      "acceptance_test": "No promotion rule treats a deterministic hash witness as proof of arbitrary program correctness or authority.",
+      "depends_on": [
+        "UC-M01.07",
+        "UC-M04.04",
+        "UC-M06.05"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.06",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Native runtime memory-safety audit",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Review and fuzz the actual C engines, image loaders, device handlers and interpreters with sanitizers and hardened builds.",
+      "acceptance_test": "Adversarial image/bytecode corpora complete without sanitizer findings; each remaining finding has an explicit blocker.",
+      "depends_on": [
+        "UC-M02.08",
+        "UC-M03.02"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.07",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Guest escape and side-channel assessment",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Exercise host boundary attacks and document the chosen hardware/shared-resource threat model rather than asserting absolute isolation.",
+      "acceptance_test": "Independent tests and host configuration evidence support the declared tenant boundary; unsupported threats are clearly excluded.",
+      "depends_on": [
+        "UC-M03.03",
+        "UC-M03.04",
+        "UC-M03.05",
+        "UC-M09.06"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M09.08",
+      "phase": 9,
+      "phase_title": "Trust, integrity and adversarial security",
+      "milestone": "C",
+      "component": "Security advisory and dependency response",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Maintain reviewed component inventories, update policy, affected-image discovery and a revocation/rebuild workflow.",
+      "acceptance_test": "A simulated vulnerable dependency can be located, blocked, rebuilt and rolled back without disabling unrelated workloads.",
+      "depends_on": [
+        "UC-M04.06",
+        "UC-M09.01",
+        "UC-M09.02"
+      ],
+      "theory_sources": [
+        "S4",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.01",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Structured bounded logs",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Bound stdout, stderr, event logs and retained audit records; classify data and redact secrets at emission.",
+      "acceptance_test": "Log floods do not exhaust memory/disk and a bounded final failure record remains available.",
+      "depends_on": [
+        "UC-M03.06",
+        "UC-M06.07",
+        "UC-M07.05"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.02",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Resource and latency metrics",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Measure actual boot, queue, execution, memory, I/O and storage costs per image/generation with bounded label cardinality.",
+      "acceptance_test": "Metrics reconcile with host observations and distinguish guest work from compiler, decoder and controller overhead.",
+      "depends_on": [
+        "UC-M03.05",
+        "UC-M05.03"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.03",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "End-to-end execution traces",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Correlate source/admission/build/boot/invocation/state commit IDs with bounded trace retention.",
+      "acceptance_test": "One failed invocation can be traced to exact image, input generation, backend and commit disposition.",
+      "depends_on": [
+        "UC-M01.08",
+        "UC-M05.04",
+        "UC-M07.03"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.04",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Unified live health view",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Present boot/readiness/liveness/evidence status separately with last-progress age, current phase and actual blocked reason.",
+      "acceptance_test": "A stale or stopped workload cannot continue showing healthy merely because its last witness passed.",
+      "depends_on": [
+        "UC-M05.05",
+        "UC-M10.02",
+        "UC-M10.03"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.05",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Capacity and saturation alarms",
+      "priority": "P0",
+      "status": "MISSING",
+      "implementation_gap": "Report disk, memory, queue and history-limit pressure before admission or state advancement runs out of capacity.",
+      "acceptance_test": "Controlled resource pressure triggers a visible actionable warning and preserves the stop/refusal policy.",
+      "depends_on": [
+        "UC-M07.02",
+        "UC-M07.05",
+        "UC-M10.02"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.06",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Replay and interactive debugger",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Retain source maps and bounded deterministic inputs for guest stepping and reproduction; distinguish simulation from real-time I/O.",
+      "acceptance_test": "A recorded deterministic failure reproduces with the same observable state and flags unrecorded nondeterminism.",
+      "depends_on": [
+        "UC-M02.08",
+        "UC-M08.04",
+        "UC-M10.03"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.07",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Crash dumps and support bundle export",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Export versioned redacted state, logs, hashes and host capability evidence without keys, user cargo leakage or unbounded archives.",
+      "acceptance_test": "A support bundle is sufficient to reproduce a seeded failure and passes secret/content-scope checks.",
+      "depends_on": [
+        "UC-M06.07",
+        "UC-M07.07",
+        "UC-M10.01"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M10.08",
+      "phase": 10,
+      "phase_title": "Observability and operator experience",
+      "milestone": "C",
+      "component": "Operator UI with explicit authority cues",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Build a small management view over the stable API: inspect, stage, run, stop, recover and review evidence; retain CLI parity.",
+      "acceptance_test": "Destructive controls show scope and generation; UI status is derived from observed facts rather than animation or file presence.",
+      "depends_on": [
+        "UC-M06.01",
+        "UC-M06.03",
+        "UC-M07.08",
+        "UC-M10.04"
+      ],
+      "theory_sources": [
+        "S4"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M11.01",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Authenticated worker identity",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Only for multi-host scope: provision unique worker identities, enrollment policy and revocation independent of display names.",
+      "acceptance_test": "Unknown/revoked workers cannot receive cargo, join scheduling or publish trusted results.",
+      "depends_on": [
+        "UC-M06.02",
+        "UC-M09.01"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.02",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Secure inter-host transport",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Add authenticated encrypted bounded RPC and explicit cross-machine authorization; the offline profile must stay blocked.",
+      "acceptance_test": "A remote endpoint cannot impersonate a worker or deliver oversized/replayed control messages.",
+      "depends_on": [
+        "UC-M08.02",
+        "UC-M08.04",
+        "UC-M11.01"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.03",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Durable consensus control store",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Choose and specify a real consensus protocol and failure model for desired state; local ALLREDUCE witness agreement is not consensus.",
+      "acceptance_test": "Leader loss and network partition preserve the specified single-writer safety and recovery/liveness assumptions.",
+      "depends_on": [
+        "UC-M07.01",
+        "UC-M11.02"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.04",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Leases, fencing and ownership transfer",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Use epochs/fencing tokens to prevent old workers from committing after ownership moves or leases expire.",
+      "acceptance_test": "An isolated previous owner cannot mutate committed state after a new owner is activated.",
+      "depends_on": [
+        "UC-M01.05",
+        "UC-M11.03"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.05",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Partition and failure-domain placement",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Model independent hosts/zones and partial connectivity; avoid treating four interpreters on one host as four fault domains.",
+      "acceptance_test": "Loss of one selected fault domain preserves the explicitly promised replicas and never double-commits state.",
+      "depends_on": [
+        "UC-M05.02",
+        "UC-M11.04"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.06",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Distributed artifact and state replication",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Replicate immutable objects with digest validation and define consistency and placement rules for mutable state.",
+      "acceptance_test": "A worker resumes from independently verified objects after source-host loss; corrupt replicas are rejected.",
+      "depends_on": [
+        "UC-M04.05",
+        "UC-M07.07",
+        "UC-M11.03"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.07",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Rolling upgrades and compatibility negotiation",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Support mixed worker/image/ABI versions during controlled rollouts with admission and rollback gates.",
+      "acceptance_test": "Canary failure stops the rollout; incompatible state or protocol versions never silently interoperate.",
+      "depends_on": [
+        "UC-M01.02",
+        "UC-M07.08",
+        "UC-M11.05"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M11.08",
+      "phase": 11,
+      "phase_title": "Optional multi-host federation",
+      "milestone": "D",
+      "component": "Multi-host disaster-recovery qualification",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "Test full controller/worker loss, restored identity and data, split brain and lost update metadata in the declared topology.",
+      "acceptance_test": "A documented drill meets chosen recovery objectives without trusting stale leaders or unsigned replacement artifacts.",
+      "depends_on": [
+        "UC-M11.04",
+        "UC-M11.06",
+        "UC-M11.07"
+      ],
+      "theory_sources": [
+        "S4",
+        "S6"
+      ],
+      "scope": "optional_multi_host"
+    },
+    {
+      "id": "UC-M12.01",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Real operating-system CI matrix",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Run native Windows, Linux and any claimed macOS environments, including spaces, long roots, NTFS reparse points and no-toolchain hosts.",
+      "acceptance_test": "Every supported platform has machine-recorded launch/build/verify results; simulated path checks do not count as OS execution.",
+      "depends_on": [
+        "UC-M03.08",
+        "UC-M04.01"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M12.02",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Parser fuzzing campaign",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Fuzz archive, manifest, image, TIFF, bytecode and IPC parsers inside resource-limited workers with a retained corpus.",
+      "acceptance_test": "A budgeted campaign has reproducible seeds and no unexplained crashes, hangs, overreads or unbounded allocations.",
+      "depends_on": [
+        "UC-M07.04",
+        "UC-M08.02",
+        "UC-M09.06"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M12.03",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "State-machine and property-based tests",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Extend example regressions to generated legal/illegal lifecycle sequences, alias invariants and arithmetic edge cases.",
+      "acceptance_test": "Generated transitions preserve ownership, byte conservation, integrity and monotonic generation properties.",
+      "depends_on": [
+        "UC-M01.03",
+        "UC-M01.06",
+        "UC-M07.03"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M12.04",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Crash, disk-full and concurrency fault injection",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Inject process termination, partial writes, ENOSPC, permission changes and competing operators at every commit boundary.",
+      "acceptance_test": "Recovery converges to a documented state without data loss or a false successful verdict across repeated trials.",
+      "depends_on": [
+        "UC-M07.01",
+        "UC-M07.05",
+        "UC-M07.08"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M12.05",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Performance and capacity qualification",
+      "priority": "P1",
+      "status": "MISSING",
+      "implementation_gap": "Benchmark boot, workload throughput, tail latency, peak RSS and long-run TIFF/checkpoint growth against explicit baselines.",
+      "acceptance_test": "Published measurements include hardware, toolchain, sample count and failure rates; no estimated speedup is presented as measured.",
+      "depends_on": [
+        "UC-M04.02",
+        "UC-M10.02"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M12.06",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Optional OCI packaging/runtime conformance",
+      "priority": "P2",
+      "status": "MISSING",
+      "implementation_gap": "When OCI compatibility is selected, map guest images and lifecycle to specific pinned specification versions rather than merely adopting container names.",
+      "acceptance_test": "OCI descriptors and chosen lifecycle contracts pass their conformance checks; unsupported OCI features are explicitly refused.",
+      "depends_on": [
+        "UC-M03.01",
+        "UC-M04.05",
+        "UC-M06.01"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "optional_feature"
+    },
+    {
+      "id": "UC-M12.07",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Authenticated portable installer and updater",
+      "priority": "P1",
+      "status": "PARTIAL",
+      "implementation_gap": "Package short-path launchers, dependency checks, rollback and signed update metadata without silently overwriting user state.",
+      "acceptance_test": "A clean install and interrupted upgrade on each supported OS preserve user cargo and restore an approved release.",
+      "depends_on": [
+        "UC-M07.08",
+        "UC-M09.02",
+        "UC-M12.01"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    },
+    {
+      "id": "UC-M12.08",
+      "phase": 12,
+      "phase_title": "Qualification, packaging and release",
+      "milestone": "C",
+      "component": "Evidence-based release promotion and runbooks",
+      "priority": "P0",
+      "status": "PARTIAL",
+      "implementation_gap": "Define mandatory, optional and not-applicable gates; publish test scope, failures, residual risks and operator recovery procedures.",
+      "acceptance_test": "No release is labeled operational or isolated while a required gate is skipped, untested or supported only by a declaration.",
+      "depends_on": [
+        "UC-M09.05",
+        "UC-M09.07",
+        "UC-M12.01",
+        "UC-M12.02",
+        "UC-M12.03",
+        "UC-M12.04"
+      ],
+      "theory_sources": [
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "scope": "core_or_selected_profile"
+    }
+  ],
+  "theory_sources": {
+    "S1": {
+      "title": "Unikraft architecture",
+      "url": "https://unikraft.org/docs/internals/architecture",
+      "basis": "Modular library-OS APIs, selected platform targets and linked guest binaries."
+    },
+    "S2": {
+      "title": "MirageOS",
+      "url": "https://mirage.io/",
+      "basis": "Standalone specialized guest images and library-OS runtime integration."
+    },
+    "S3": {
+      "title": "Solo5 execution environment",
+      "url": "https://github.com/Solo5/solo5",
+      "basis": "Guest-facing ABI, host-facing tenders and isolation boundaries."
+    },
+    "S4": {
+      "title": "Firecracker production host setup",
+      "url": "https://github.com/firecracker-microvm/firecracker/blob/main/docs/prod-host-setup.md",
+      "basis": "Hardware isolation plus host-side privileges, syscall, network and resource policies."
+    },
+    "S5": {
+      "title": "OCI image specification",
+      "url": "https://github.com/opencontainers/image-spec",
+      "basis": "Content-addressed descriptors, image metadata and interoperable packaging."
+    },
+    "S6": {
+      "title": "OCI runtime specification",
+      "url": "https://github.com/opencontainers/runtime-spec",
+      "basis": "Runtime lifecycle and configuration contracts; interoperability is optional here."
+    },
+    "S7": {
+      "title": "SLSA v1.2",
+      "url": "https://slsa.dev/spec/v1.2/",
+      "basis": "Build/source assurance tracks and independently verifiable provenance."
+    },
+    "S8": {
+      "title": "The Update Framework specification",
+      "url": "https://theupdateframework.github.io/specification/latest/",
+      "basis": "Trusted update metadata, role separation, version/expiration and rollback defenses."
+    }
+  },
+  "topological_order": [
+    "UC-M01.01",
+    "UC-M01.02",
+    "UC-M01.03",
+    "UC-M01.04",
+    "UC-M01.05",
+    "UC-M01.06",
+    "UC-M07.01",
+    "UC-M01.07",
+    "UC-M01.08",
+    "UC-M07.02",
+    "UC-M02.01",
+    "UC-M04.01",
+    "UC-M07.03",
+    "UC-M02.02",
+    "UC-M04.02",
+    "UC-M12.03",
+    "UC-M02.03",
+    "UC-M02.06",
+    "UC-M04.05",
+    "UC-M02.04",
+    "UC-M04.06",
+    "UC-M04.07",
+    "UC-M02.05",
+    "UC-M02.07",
+    "UC-M04.08",
+    "UC-M02.08",
+    "UC-M03.01",
+    "UC-M04.04",
+    "UC-M03.02",
+    "UC-M05.01",
+    "UC-M03.03",
+    "UC-M09.06",
+    "UC-M05.04",
+    "UC-M03.04",
+    "UC-M03.05",
+    "UC-M03.07",
+    "UC-M06.01",
+    "UC-M10.03",
+    "UC-M03.06",
+    "UC-M03.08",
+    "UC-M04.03",
+    "UC-M05.02",
+    "UC-M07.04",
+    "UC-M07.05",
+    "UC-M09.07",
+    "UC-M08.01",
+    "UC-M06.02",
+    "UC-M12.06",
+    "UC-M05.05",
+    "UC-M12.01",
+    "UC-M05.03",
+    "UC-M07.06",
+    "UC-M08.02",
+    "UC-M06.03",
+    "UC-M05.06",
+    "UC-M10.02",
+    "UC-M08.03",
+    "UC-M08.04",
+    "UC-M12.02",
+    "UC-M06.04",
+    "UC-M06.05",
+    "UC-M09.01",
+    "UC-M05.07",
+    "UC-M10.04",
+    "UC-M10.05",
+    "UC-M12.05",
+    "UC-M08.05",
+    "UC-M10.06",
+    "UC-M06.07",
+    "UC-M08.06",
+    "UC-M06.06",
+    "UC-M06.08",
+    "UC-M08.07",
+    "UC-M09.05",
+    "UC-M09.02",
+    "UC-M09.03",
+    "UC-M11.01",
+    "UC-M05.08",
+    "UC-M07.07",
+    "UC-M10.01",
+    "UC-M08.08",
+    "UC-M09.08",
+    "UC-M11.02",
+    "UC-M07.08",
+    "UC-M09.04",
+    "UC-M10.07",
+    "UC-M11.03",
+    "UC-M10.08",
+    "UC-M12.04",
+    "UC-M12.07",
+    "UC-M11.04",
+    "UC-M11.06",
+    "UC-M12.08",
+    "UC-M11.05",
+    "UC-M11.07",
+    "UC-M11.08"
+  ]
+}

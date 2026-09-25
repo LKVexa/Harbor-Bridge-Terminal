@@ -1,0 +1,100 @@
+{"id": "C09-001", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference", "docs/vws200/ARCHITECTURE.md:39"], "note": "0.0.0.0 default bind documented for hosted reachability"}
+{"id": "C09-002", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md#2-recorded-decisions"], "note": "D-001: Node http.listen(port,host), no HttpListener URI-prefix syntax"}
+{"id": "C09-003", "status": "PASS", "evidence": ["docs/vws200/ARCHITECTURE.md:39", "docs/OPERATIONS.md:28"], "note": "0.0.0.0 recorded as bind address default"}
+{"id": "C09-004", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md#2-recorded-decisions"], "note": "D-001: no HttpListener + and * prefix forms in Node profile"}
+{"id": "C09-005", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md#2-recorded-decisions"], "note": "D-001: Node net.Server has no prefix form to select"}
+{"id": "C09-006", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No document states whether IPv6 support is in scope for binding"}
+{"id": "C09-007", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "No Docker/container built or run; interfaces unverified"}
+{"id": "C09-008", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference", "docs/vws200/RELEASE.md#gate-decision"], "note": "VWS_HOST config + gate table define supported binding configs"}
+{"id": "C09-009", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "Loopback-dev auth restricted to loopback but no explicit unsuitability rationale for hosted path"}
+{"id": "C09-010", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No approval record for binding behavior beyond self-review; SECURITY.md notes no independent review"}
+{"id": "C09-011", "status": "PASS", "evidence": ["gateway/config.js"], "note": "cfg.host is the single VWS_HOST-derived source"}
+{"id": "C09-012", "status": "PASS", "evidence": ["gateway/config.js"], "note": "cfg.port is the single PORT-derived source (intVar)"}
+{"id": "C09-013", "status": "PASS", "evidence": ["gateway/config.js", "gateway/origin.js"], "note": "host binding (VWS_HOST) kept separate from VWS_ALLOWED_ORIGINS public hostnames"}
+{"id": "C09-014", "status": "IN_PROGRESS", "evidence": ["gateway/config.js"], "note": "VWS_HOST value itself is not format-validated except when VWS_AUTH=none-loopback-dev"}
+{"id": "C09-015", "status": "PASS", "evidence": ["gateway/config.js", "gateway/server.js:191"], "note": "Host comes only from env config; no request input reaches listen()"}
+{"id": "C09-016", "status": "PASS", "evidence": ["gateway/config.js"], "note": "VWS_HOST is an explicit env override of the 0.0.0.0 default"}
+{"id": "C09-017", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference", "gateway/config.js"], "note": "none-loopback-dev documented and restricted to loopback host"}
+{"id": "C09-018", "status": "PASS", "evidence": ["docs/OPERATIONS.md:28"], "note": "Production binding default 0.0.0.0 recorded in config table"}
+{"id": "C09-019", "status": "PASS", "evidence": ["tests/gateway/config.test.js", "gateway/server.js:229"], "note": "load() validates cfg and throws before gw.listen() is called"}
+{"id": "C09-020", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:191", "tests/gateway/config.test.js"], "note": "gateway.listening logs host/port only; logger drops secret-like fields [downgraded: RECORD item without a written record]"}
+{"id": "C09-021", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "No target Linux container image was built/tested; only dev host used"}
+{"id": "C09-022", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:136"], "note": "Tested as current OS user in dev; not under intended container process identity"}
+{"id": "C09-023", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "No container network path exercised; Docker never built or run"}
+{"id": "C09-024", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md#2-recorded-decisions"], "note": "D-001: no alternate wildcard prefix form exists in Node profile"}
+{"id": "C09-025", "status": "NOT_APPLICABLE", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "D-001: no .NET release/prefix parsing in Node profile"}
+{"id": "C09-026", "status": "PASS", "evidence": ["tests/gateway/config.test.js", "tests/chaos/lifecycle.test.js:136"], "note": "PORT=nondefault value accepted and used to start real process"}
+{"id": "C09-027", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:236"], "note": "gateway.listen_failed handler exists but no test reproduces an occupied-port failure"}
+{"id": "C09-028", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No platform-specific (Windows vs Linux) binding exception record found beyond general note"}
+{"id": "C09-029", "status": "PASS", "evidence": ["docs/OPERATIONS.md:13"], "note": "Windows differences documented: SIGTERM/taskkill, python lookup, toolchain differences"}
+{"id": "C09-030", "status": "PASS", "evidence": ["tests/gateway/config.test.js", "tests/chaos/lifecycle.test.js:136"], "note": "Bind/port tests function as a minimal compatibility probe"}
+{"id": "C09-031", "status": "NOT_APPLICABLE", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "D-001: no shared prefix-construction function; Node listen(port,host) used directly"}
+{"id": "C09-032", "status": "PASS", "evidence": ["gateway/server.js:191"], "note": "Only cfg.host/cfg.port (validated) passed to server.listen"}
+{"id": "C09-033", "status": "PASS", "evidence": ["gateway/server.js:225,236"], "note": "cfg validated via load() before gw.listen() is invoked"}
+{"id": "C09-034", "status": "NOT_APPLICABLE", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "D-001: no HttpListener.IsListening property in Node http.Server"}
+{"id": "C09-035", "status": "PASS", "evidence": ["gateway/server.js:191,236"], "note": "server.once('error', reject) surfaces bind errors as a rejected listen() promise -> exit 1"}
+{"id": "C09-036", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:188-192"], "note": "No explicit close()/dispose on failed listen(); relies on process exit only"}
+{"id": "C09-037", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No guard found preventing createGateway/listen from being invoked twice concurrently"}
+{"id": "C09-038", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No documented cleanup procedure for an unsuccessful bind attempt"}
+{"id": "C09-039", "status": "PASS", "evidence": ["gateway/server.js:191"], "note": "registry.ready set true only inside listen() success callback; /health 503 until then"}
+{"id": "C09-040", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:191"], "note": "gateway.listening logs host/port/auth/fabric/maxSessions but not full effective config"}
+{"id": "C09-041", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "Health endpoint reached from a real client over loopback TCP"}
+{"id": "C09-042", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md#deployment-authored-not-executed"], "note": "No container network path available to test"}
+{"id": "C09-043", "status": "BLOCKED", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "Public internet/Render edge explicitly NO-GO, blocked on hosted rehearsal"}
+{"id": "C09-044", "status": "BLOCKED", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "WS upgrade through public edge blocked; no Render deployment executed"}
+{"id": "C09-045", "status": "BLOCKED", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "No externally routed exchange possible without hosted deployment"}
+{"id": "C09-046", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"], "note": "8 concurrent sessions tested, but only on loopback, not multiple external clients"}
+{"id": "C09-047", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js", "gateway/server.js"], "note": "Single http.Server handles /health, /config.json and the ws upgrade on one port"}
+{"id": "C09-048", "status": "BLOCKED", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "No deployment region/service exists to test against"}
+{"id": "C09-049", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No record of exact image/configuration since Dockerfile was never built"}
+{"id": "C09-050", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js", "tests/security/authz.test.js"], "note": "Loopback connectivity is exercised by the e2e/authz suites; the cited e/I053/bench.json evidence file no longer exists."}
+{"id": "C09-051", "status": "PASS", "evidence": ["tests/gateway/config.test.js"], "note": "Loopback-only VWS_AUTH=none-loopback-dev tested as isolated negative-path case"}
+{"id": "C09-052", "status": "IN_PROGRESS", "evidence": ["tests/gateway/config.test.js"], "note": "Test asserts rejection for non-loopback host but no explicit anti-masquerade assertion"}
+{"id": "C09-053", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No test found that starts the gateway on a port already occupied by another process"}
+{"id": "C09-054", "status": "PASS", "evidence": ["tests/gateway/config.test.js"], "note": "Invalid VWS_AUTH value ('oidc') rejected; malformed PORT strings rejected"}
+{"id": "C09-055", "status": "IN_PROGRESS", "evidence": ["gateway/config.js"], "note": "No dedicated test for a missing/empty VWS_HOST value (falls back to 0.0.0.0 default)"}
+{"id": "C09-056", "status": "NOT_APPLICABLE", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "D-001: no HttpListener wildcard prefix syntax exists to malform"}
+{"id": "C09-057", "status": "BLOCKED", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "Requires an unprivileged process/container to reproduce a permission failure; not available"}
+{"id": "C09-058", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No test of a configured PORT disagreeing with an edge-expected port (no edge exists)"}
+{"id": "C09-059", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:229,236"], "note": "ConfigError -> stderr message + exit 78; listen_failed logs reason [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C09-060", "status": "IN_PROGRESS", "evidence": ["tests/gateway/config.test.js"], "note": "Each test constructs fresh config objects; no shared mutable binding state to restore"}
+{"id": "C09-061", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No explicit inventory document of all routes reachable via the wildcard bind"}
+{"id": "C09-062", "status": "PASS", "evidence": ["gateway/server.js"], "note": "Only /health /live /config.json /api/ws-ticket /ws/terminal and static assets are routed; no admin routes"}
+{"id": "C09-063", "status": "PASS", "evidence": ["gateway/server.js", "gateway/auth.js"], "note": "Ticket/bearer identity check runs regardless of bind interface"}
+{"id": "C09-064", "status": "PASS", "evidence": ["tests/gateway/config.test.js", "tests/gateway/e2e.test.js"], "note": "Public config/health tests assert no secrets/paths leak"}
+{"id": "C09-065", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No review record of additional ports opened by DF/child processes"}
+{"id": "C09-066", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "Only one http.Server started in server.js; no explicit review record confirming this"}
+{"id": "C09-067", "status": "IN_PROGRESS", "evidence": ["docs/SECURITY.md#residual-risks-accepted-or-open"], "note": "TLS/edge boundary noted but container network boundary itself not documented"}
+{"id": "C09-068", "status": "PASS", "evidence": ["gateway/server.js", "docs/SECURITY.md"], "note": "Auth/origin/ticket checks are the authorization mechanism, independent of bind address"}
+{"id": "C09-069", "status": "IN_PROGRESS", "evidence": ["gateway/config.js"], "note": "none-loopback-dev override exists and is host-restricted, but no pre-deploy review record"}
+{"id": "C09-070", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No record naming an owner who accepted the 0.0.0.0 exposure"}
+{"id": "C09-071", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:136"], "note": "Real spawned process starts and binds from a fresh env/dir"}
+{"id": "C09-072", "status": "PASS", "evidence": ["gateway/server.js#shutdown", "tests/chaos/lifecycle.test.js:136"], "note": "shutdown() drains and closes the server; SIGTERM test verifies exit 0"}
+{"id": "C09-073", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js", "gateway/server.js#shutdown"], "note": "health flips to 503 while draining; registry.draining blocks new upgrades"}
+{"id": "C09-074", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:136"], "note": "Process spawned, killed via SIGTERM, and a fresh process can rebind"}
+{"id": "C09-075", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No test repeats startup failures to check for resource accumulation"}
+{"id": "C09-076", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No rapid-restart-after-container-kill test found"}
+{"id": "C09-077", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:136"], "note": "Each spawned process re-reads env, implying reread; not explicitly asserted"}
+{"id": "C09-078", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No documented behavior for PORT changing between deployments"}
+{"id": "C09-079", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No explicit test that listener resources are released/disposed after Stop"}
+{"id": "C09-080", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No documentation of binding resources retained until process exit"}
+{"id": "C09-081", "status": "PASS", "evidence": ["gateway/server.js:191"], "note": "gateway.listening log includes host and port"}
+{"id": "C09-082", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "ConfigError vs listen 'error' event are distinct paths but no design doc names this distinction"}
+{"id": "C09-083", "status": "NOT_APPLICABLE", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "D-001: no separate HttpListener prefix-parse-vs-port-conflict distinction in Node"}
+{"id": "C09-084", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No record of runtime version reported alongside compatibility failures"}
+{"id": "C09-085", "status": "PASS", "evidence": ["gateway/config.js", "docs/OPERATIONS.md#configuration-reference"], "note": "VWS_HOST env var is the recorded single source"}
+{"id": "C09-086", "status": "PASS", "evidence": ["gateway/log.js", "tests/gateway/config.test.js"], "note": "Logger redacts secret-like fields; no full-environment dump found in server.js"}
+{"id": "C09-087", "status": "PASS", "evidence": ["docs/OPERATIONS.md#health-and-logs"], "note": "GET /health procedure documented for external-connectivity smoke test"}
+{"id": "C09-088", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#run-it-locally-loopback"], "note": "Loopback run instructions exist; no explicit loopback-vs-external diagnosis procedure"}
+{"id": "C09-089", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RESOURCE_MODEL.md#measured-observed-loopback-this-host-only"], "note": "Loopback evidence format shown but no explicit 'what counts as proof' statement for external binding"}
+{"id": "C09-090", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No named owner assigned for binding configuration changes"}
+{"id": "C09-091", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "Approved host default (0.0.0.0) and env override published"}
+{"id": "C09-092", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration-reference"], "note": "VWS_HOST override documented as the supported policy"}
+{"id": "C09-093", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No Linux compatibility probe evidence file/link exists (BLOCKED item, not linked)"}
+{"id": "C09-094", "status": "BLOCKED", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "No direct external connectivity evidence exists; hosted rehearsal blocked"}
+{"id": "C09-095", "status": "BLOCKED", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "No public-edge HTTP/WS evidence exists; Render never used"}
+{"id": "C09-096", "status": "PASS", "evidence": ["tests/gateway/config.test.js"], "note": "Loopback-only negative test present and linkable"}
+{"id": "C09-097", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No dedicated port-conflict failure test/evidence exists to link"}
+{"id": "C09-098", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No IPv6 scope decision documented anywhere in docs/"}
+{"id": "C09-099", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RELEASE.md#gate-decision"], "note": "Gate table lists blocked items but not a dedicated 'unresolved host-runtime behavior' list"}
+{"id": "C09-100", "status": "OPEN", "evidence": ["docs/OPERATIONS.md", "gateway/config.js"], "note": "No external reachability was demonstrated (BLOCKED), so approval cannot have occurred"}

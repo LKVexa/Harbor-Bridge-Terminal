@@ -1,0 +1,2240 @@
+# GAP-10 4.3.0 — Checklist Evidence Matrix
+
+Source digest `8a8446a0e072c0fb…` · tests {'passed': 123, 'failed': 0, 'error': 0, 'skipped': 3} · items 2020
+
+Boxes stay unticked: the checklist requires *reviewed* evidence and no reviewer has signed (EX-001).
+Component-specific items (sections A and closure artefacts) were checked against code and tests by four independent adversarial reviewers; ⟲ marks an item whose status they changed (docs/REVIEW_OVERRIDES.json).
+
+| Status | Items |
+|---|---:|
+| EVIDENCED | 991 |
+| DOCUMENTED | 244 |
+| PARTIAL | 459 |
+| OPEN | 326 |
+
+
+## Global rules and gates
+
+- [ ] **EVIDENCED** No dependency loss, restart, stale sample, trust failure, policy failure, state corruption, or controller failover may accidentally produce a less restrictive ceiling. — _enforced by design (ADR-0002) and by P0 tests; review pending_
+- [ ] **EVIDENCED** Every externally visible interface SHALL be versioned, typed, bounded, authenticated where trust is required, and covered by contract tests. — _enforced by design (ADR-0002) and by P0 tests; review pending_
+- [ ] **EVIDENCED** Every capacity-increasing change SHALL be attributable to a validated policy/configuration revision, trusted input, and authorized actor or controller. — _enforced by design (ADR-0002) and by P0 tests; review pending_
+- [ ] **EVIDENCED** Every safety-critical state transition SHALL be explainable from retained evidence and correlated across metrics, logs, traces, audit records, and downstream enforcement. — _enforced by design (ADR-0002) and by P0 tests; review pending_
+- [ ] **OPEN** (EX-001) Production certification SHALL use machine-readable evidence tied to one exact source revision, build digest, policy set, schema set, compatibility matrix, and test report. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) P0 items SHALL be closed before production enforcement. P1 items SHALL be closed before normal production operation. P2/P3 items may proceed in parallel only after the P0 enforcement/state path is stable. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **EVIDENCED** Exceptions SHALL be explicit, owned, risk-assessed, time-bounded, and must not silently redefine a failed requirement as passed. — _enforced by design (ADR-0002) and by P0 tests; review pending_
+- [ ] **OPEN** (EX-001) Implementation/change reference (commit/PR/build) — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Requirement ID(s) — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Test or validation evidence — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Reviewer/approver — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Date — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Operational/runbook impact — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Security impact classification — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Rollback/recovery reference — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Known residual risk/exception ID, if any — _global rule / gate: satisfied only when every cited component is reviewed_
+
+## C01 — Authenticated telemetry adapter for GAP-09 [P0]
+
+Modules: `production/telemetry.py`, `production/keys.py` · tests: 11 passing
+
+- [ ] **EVIDENCED** Accept telemetry only when the producing GAP-09 identity is authenticated and authorized for the declared node/sensor scope. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Carry sensor identity, node identity, measurement timestamp, receive timestamp, attestation result, signature result, and source sequence/revision into the canonical sample. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify signed/attested telemetry before parsing values into trusted scheduling fields; treat verification failure as unusable evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate temperature in degrees Celsius, power in watts, battery fraction/percent, and optional sensor health fields against explicit schemas and physical plausibility limits. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Enforce maximum telemetry age and future-clock-skew using the GAP-10 freshness policy; never “refresh” stale source timestamps on receipt. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Detect replay/out-of-order samples using source sequence numbers and/or monotonic observed timestamps per sensor stream. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Aggregate multi-sensor input without dropping the trust status of the most restrictive contributing sample. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define behavior for partially trusted nodes where some sensors are valid and others are missing or rejected. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose counters for accepted, stale, future, malformed, unauthenticated, unauthorized, bad-signature, and replayed samples. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Create GAP-09 interoperability fixtures covering key rotation, schema version mismatch, clock skew, node re-enrollment, and duplicate delivery. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** Define the adapter boundary as a separately testable module with no implicit ambient authority or hidden transport assumptions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version every inbound and outbound message contract and reject unsupported major schema versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Normalize peer-specific payloads into canonical GAP-10 domain objects before any scheduling decision is evaluated. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve source identity, correlation IDs, evidence timestamps, trust state, and policy revision across translation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make duplicate delivery idempotent and prove that retries cannot multiply side effects or relax a ceiling. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Bound connection pools, outstanding RPCs, payload sizes, decode time, queue depth, and per-peer concurrency. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **PARTIAL** (EX-004) Specify explicit timeout, cancellation, retry, and backpressure behavior for every remote operation. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **EVIDENCED** Fail closed on malformed, unauthenticated, stale, ambiguous, or unsupported peer data. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose peer compatibility, negotiated version, last-success time, and current degraded mode through health telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide contract fixtures for nominal, boundary, malformed, stale, replayed, downgraded, and emergency cases. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Authenticated telemetry adapter for GAP-09. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** versioned adapter schema/contracts. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) positive and negative interoperability fixtures. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) integration test report with peer versions and applied outcomes. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** adapter health/metrics specification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** security/authentication test evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C02 — Downstream scheduler enforcement adapter [P0]
+
+Modules: `production/enforcement.py` · tests: 6 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Map `PK_POWER_CEILING/1` node decisions into the scheduler admission and placement primitive that actually limits allocatable capacity. — _Enforced only against in-process ReferenceScheduler; no real SCH-01 primitive_
+- [ ] **EVIDENCED** Ensure an excluded/emergency node cannot accept new placement regardless of ordinary scheduler score or workload priority. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Treat missing/unhealthy GAP-10 data as constrained according to the fail-closed contract, never as 100% capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Bind each admission decision to the GAP-10 ceiling revision/decision ID that was consulted. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prevent time-of-check/time-of-use races by revalidating the ceiling immediately before commit or using a transactional/fenced scheduler API. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Handle capacity decreases below already allocated load with explicit eviction, preemption, drain, or no-new-admission semantics. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define how fractional ceilings are converted into scheduler-specific CPU/GPU/memory/power tokens without rounding upward unsafely. — _to_units floors a single unit type; no CPU/GPU/memory/power token mapping_
+- [ ] **PARTIAL** (EX-004) ⟲ Confirm downstream rejection/acceptance and surface enforcement lag as a health failure when the applied ceiling differs from the desired ceiling. — _divergence() checked only against ReferenceScheduler_
+- [ ] **PARTIAL** (EX-004) ⟲ Test competing placement requests during a simultaneous nominal→critical transition. — _test_c31 races admission during nominal->critical on reference scheduler only_
+- [ ] **PARTIAL** (EX-004) ⟲ Prove via integration test that no scheduler code path, fallback queue, or manual placement path bypasses the ceiling. — _Bypass checked only on ReferenceScheduler.manual_place_
+- [ ] **EVIDENCED** Define the adapter boundary as a separately testable module with no implicit ambient authority or hidden transport assumptions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version every inbound and outbound message contract and reject unsupported major schema versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Normalize peer-specific payloads into canonical GAP-10 domain objects before any scheduling decision is evaluated. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve source identity, correlation IDs, evidence timestamps, trust state, and policy revision across translation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make duplicate delivery idempotent and prove that retries cannot multiply side effects or relax a ceiling. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Bound connection pools, outstanding RPCs, payload sizes, decode time, queue depth, and per-peer concurrency. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **PARTIAL** (EX-004) Specify explicit timeout, cancellation, retry, and backpressure behavior for every remote operation. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **EVIDENCED** Fail closed on malformed, unauthenticated, stale, ambiguous, or unsupported peer data. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose peer compatibility, negotiated version, last-success time, and current degraded mode through health telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide contract fixtures for nominal, boundary, malformed, stale, replayed, downgraded, and emergency cases. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Downstream scheduler enforcement adapter. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** versioned adapter schema/contracts. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) positive and negative interoperability fixtures. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) integration test report with peer versions and applied outcomes. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** adapter health/metrics specification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** security/authentication test evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C03 — Elasticity-plane enforcement adapter [P0]
+
+Modules: `production/enforcement.py` · tests: 1 passing
+
+- [ ] **EVIDENCED** Propagate GAP-10 ceiling reductions into autoscaler effective capacity so scale-out demand does not refill a thermally constrained node/site. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define whether scaling decisions consume node-level, pool-level, rack-level, or site-level aggregate power/thermal headroom. — _Pool-sum cap only; no rack/site aggregation choice_
+- [ ] **OPEN** (EX-001) ⟲ Prevent positive feedback loops where reduced capacity causes scale-out onto nodes within the same constrained cooling/power domain. — _Elasticity adapter has no cooling/power-domain awareness_
+- [ ] **EVIDENCED** Apply hysteresis/debounce to elasticity reactions separately from the safety ceiling so rapid scaling does not oscillate. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Define scale-in priority for constrained nodes while respecting disruption budgets and workload durability constraints. — _No scale-in priority or disruption-budget logic_
+- [ ] **PARTIAL** (EX-004) ⟲ Preserve emergency exclusion as absolute even when minimum-replica or availability targets would otherwise request more placement. — _No minimum-replica override handling test; excluded nodes contribute 0_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose desired versus applied elasticity limit and the GAP-10 decision revision that caused it. — _Desired vs applied cap not exposed or tested_
+- [ ] **PARTIAL** (EX-004) ⟲ Test simultaneous autoscaler demand spikes and thermal derating across multiple nodes in one site. — _Single-node derating only; no demand spike_
+- [ ] **PARTIAL** (EX-004) ⟲ Test recovery so capacity is restored only after GAP-10 hysteresis and downstream convergence are both satisfied. — _Cooldown tested; no downstream convergence gate_
+- [ ] **PARTIAL** (EX-004) ⟲ Verify no elasticity fallback mode substitutes stale unconstrained capacity during GAP-10/control-plane loss. — _Control-plane loss relies on CeilingView fail-closed; no c03 test_
+- [ ] **EVIDENCED** Define the adapter boundary as a separately testable module with no implicit ambient authority or hidden transport assumptions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version every inbound and outbound message contract and reject unsupported major schema versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Normalize peer-specific payloads into canonical GAP-10 domain objects before any scheduling decision is evaluated. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve source identity, correlation IDs, evidence timestamps, trust state, and policy revision across translation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make duplicate delivery idempotent and prove that retries cannot multiply side effects or relax a ceiling. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Bound connection pools, outstanding RPCs, payload sizes, decode time, queue depth, and per-peer concurrency. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **PARTIAL** (EX-004) Specify explicit timeout, cancellation, retry, and backpressure behavior for every remote operation. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **EVIDENCED** Fail closed on malformed, unauthenticated, stale, ambiguous, or unsupported peer data. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose peer compatibility, negotiated version, last-success time, and current degraded mode through health telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide contract fixtures for nominal, boundary, malformed, stale, replayed, downgraded, and emergency cases. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Elasticity-plane enforcement adapter. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** versioned adapter schema/contracts. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) positive and negative interoperability fixtures. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) integration test report with peer versions and applied outcomes. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** adapter health/metrics specification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** security/authentication test evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C04 — Durable per-node state store [P0]
+
+Modules: `production/store.py` · tests: 5 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Persist per-node band, last accepted trusted sample metadata, last accepted sample timestamp/sequence, policy revision, ceiling, exclusion state, and hysteresis state. — _NodeRecord lacks explicit ceiling and exclusion fields_
+- [ ] **OPEN** (EX-001) ⟲ Define a stable node key that resists accidental state inheritance when hardware is reprovisioned or node names are reused. — _Store key is node-name hash; no hardware-bound identity_
+- [ ] **EVIDENCED** Store enough provenance to decide whether recovered state is compatible with the currently active policy revision. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** On empty/corrupt/incompatible state, reconstruct to the conservative startup state rather than nominal. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use atomic writes or a transactional store so band and associated sample/policy metadata cannot diverge. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Protect against rollback to older store snapshots that would reaccept replayed telemetry or reopen capacity. — _Fencing token only; restoring an older snapshot is not detected_
+- [ ] **OPEN** (EX-001) ⟲ Define state compaction without deleting evidence needed for replay/freshness/ownership safety. — _No compaction_
+- [ ] **OPEN** (EX-001) ⟲ Implement schema migrations with forward-only safety checks and rollback procedures. — _No schema migration code or tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Test crash at every persistence boundary and verify post-restart state is equal or more restrictive than pre-crash state. — _No crash injection at each persistence boundary_
+- [ ] **OPEN** (EX-001) ⟲ Provide operator tooling to inspect/reconstruct one node without editing raw state directly. — _No operator inspect/reconstruct tool_
+- [ ] **EVIDENCED** Define the authoritative state model, key space, ownership, revision field, and serialization format. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify crash-consistency semantics for every write and the exact state visible after partial process failure. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use compare-and-swap, fencing token, transactional write, or equivalent concurrency control where multiple writers are possible. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Persist enough information to reconstruct the most restrictive safe state after restart without trusting missing evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define TTL/expiry semantics separately for telemetry-derived state, policy state, and ownership leases. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document migration rules for backward/forward-compatible state schema evolution. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Encrypt sensitive state at rest when it contains security, tenant, site, or infrastructure identifiers. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide integrity protection or authenticated storage semantics for safety-critical records. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define snapshot, compaction, backup, restore, and corruption-recovery procedures. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove through restart and failover tests that recovery never yields a less restrictive ceiling than justified by durable evidence. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Durable per-node state store. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ state schema and migration specification. — _No migration specification_
+- [ ] **PARTIAL** (EX-004) ⟲ crash-consistency/restart test report. — _Restart tests only; no crash-boundary report_
+- [ ] **EVIDENCED** backup/restore or reconstruction drill evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** ownership/transaction semantics document. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-007) state integrity and retention policy. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C05 — Atomic policy distribution and activation service [P0]
+
+Modules: `production/policy_service.py` · tests: 5 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define policy scopes for global, environment, site, hardware class, cooling domain, battery class, and node override with deterministic merge precedence. — _Flat scope string; no hierarchical merge precedence_
+- [ ] **EVIDENCED** Validate thermal threshold ordering, recovery margins, battery reserve ranges, power ratio bands, maximum sample age, future skew, and zero emergency ceiling. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Perform dry-run validation against representative telemetry before promotion to an enforcement stage. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use immutable revision IDs and content digests; never mutate an already-activated revision in place. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Activate one complete revision atomically across all policy fields required for a decision. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define staged rollout cohorts and abort conditions for policy-only changes independently of code rollout. — _Cohort staging only; abort conditions live in RolloutController guards_
+- [ ] **EVIDENCED** Keep an immediately available last-known-good signed revision for rollback. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Reject policy activation if referenced hardware calibration, key set, or schema version is unavailable. — _activate() does not check calibration, key set or schema availability_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose active/pending/previous revision and activation health through the readiness/explain interface. — _health() exposes active revisions only_
+- [ ] **PARTIAL** (EX-004) ⟲ Generate machine-readable activation evidence including validator output, approver, signature, rollout cohort, and result. — _Audit events only; no validator-output evidence record_
+- [ ] **EVIDENCED** Represent policy as a versioned immutable document with a unique revision ID and content digest. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define an explicit schema covering thresholds, hysteresis, ceilings, reserve rules, scope selectors, and emergency behavior. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate ordering invariants, units, numeric ranges, mandatory zero-capacity emergency semantics, and cross-field constraints before activation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate policy authoring, approval, distribution, activation, and rollback roles. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make activation atomic per declared scope and prevent mixed revisions within one scheduling decision. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record author, approver, provenance, signature, activation time, superseded revision, and rollback lineage. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Support dry-run/shadow evaluation against live telemetry before a revision can affect placement. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-002) Define deterministic precedence for global, environment, site, hardware-class, and node-specific policy layers. — _scope + calibration + cohort layering; no node-level override layer_
+- [ ] **EVIDENCED** Reject unsigned, expired, revoked, unauthorized, or unsupported policy revisions fail closed. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove rollback restores both policy and associated derived state without transiently opening capacity. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Atomic policy distribution and activation service. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** policy schema and validator. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** signed example revisions and provenance record. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** atomic activation/rollback test evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** policy authorization matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** staged rollout/dry-run report. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C06 — Policy authorization/signature verification [P0]
+
+Modules: `production/policy_service.py`, `production/keys.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Require signatures over canonical policy bytes plus immutable metadata such as revision, scope, issuer, issued-at, and expiry. — _Bundle signs scope/policy/parent; no issuer, issued-at or expiry_
+- [ ] **EVIDENCED** Authorize signers separately for ordinary policy changes versus emergency or capacity-increasing overrides. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use trust roots that can be rotated without accepting unsigned transition windows. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Check signer revocation and policy expiry before activation and periodically while active. — _Revocation checked at submit only; no policy expiry_
+- [ ] **PARTIAL** (EX-004) ⟲ Prevent threshold/budget/reserve increases from bypassing approval via partial patch, alternate API, old schema, or downgrade. — _No old-schema/downgrade bypass tests_
+- [ ] **EVIDENCED** Bind policy signature verification to the exact content digest consumed by the scheduling kernel. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record failed verification attempts without logging secret key material. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define safe behavior when signature verification, revocation, identity, or time service is unavailable. — _No test for verification/identity/time service unavailable_
+- [ ] **PARTIAL** (EX-004) ⟲ Test forged signatures, wrong audience/scope, expired signatures, revoked signers, replayed old revisions, and version downgrade. — _Expired/revoked-signer/downgrade cases not tested in c06_
+- [ ] **PARTIAL** (EX-004) ⟲ Prove unauthorized users cannot increase available capacity through any administrative or configuration interface. — _Policy submit path tested; not every admin interface_
+- [ ] **DOCUMENTED** Define assets, trust boundaries, identities, attacker capabilities, abuse cases, and security invariants in the GAP-10 threat model. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** Use workload- or service-scoped identity with least privilege and deny ambient filesystem, network, device, and secret authority. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Authenticate every control-plane peer before accepting safety-relevant data or commands. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Authorize every privileged operation against explicit capabilities or roles; authentication alone is insufficient. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-003) Use modern authenticated transport and managed key rotation; reject insecure downgrade paths. — _message-level HMAC implemented; transport TLS is deployment scope_
+- [ ] **EVIDENCED** Define revocation behavior and maximum exposure window for compromised credentials or signing keys. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Protect against replay with bounded freshness, nonce/sequence/revision checks, and monotonic state where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Keep raw secrets out of logs, metrics, traces, crash dumps, diagnostic bundles, and normal configuration files. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit tamper-evident audit records for authentication failures, authorization denials, trust changes, and administrative actions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Run adversarial tests for spoofing, replay, privilege escalation, parser abuse, resource exhaustion, and malicious downgrade attempts. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Policy authorization/signature verification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** threat-model update. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** identity/capability matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **DOCUMENTED** key/secret lifecycle runbook. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** adversarial test report. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** tamper-evident audit evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C07 — Explicit fail-closed scheduler behavior when GAP-10 is absent/unhealthy [P0]
+
+Modules: `production/enforcement.py` · tests: 3 passing
+
+- [ ] **EVIDENCED** Define the scheduler behavior when GAP-10 is unreachable, unready, stale, returns invalid data, or has no record for a node. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Choose an explicit conservative ceiling/exclusion state for each failure mode and encode it in the downstream contract. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Ensure cached last-known-good data expires according to freshness policy and cannot remain authoritative indefinitely. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Distinguish “GAP-10 absent” from “nominal” in scheduler state and telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Disable any scheduler fallback that assumes full node allocatable capacity after timeout or component restart. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Apply fail-closed behavior consistently across ordinary admission, rescheduling, autoscaling, maintenance drains, and manual operations. — _Admission only; rescheduling/drain/autoscaling not in c07 tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Provide a controlled emergency override only through authenticated, audited, expiring policy with explicit risk acceptance. — _Controls lack explicit risk-acceptance field_
+- [ ] **DOCUMENTED** (EX-007) Alert before widespread fail-closed behavior exhausts fleet capacity, without weakening enforcement automatically. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **PARTIAL** (EX-004) ⟲ Run kill/restart/network-partition tests while placements are in flight. — _No kill/partition tests with placements in flight_
+- [ ] **EVIDENCED** Prove every GAP-10 failure class either preserves the last still-valid restrictive ceiling or transitions to an equal/more restrictive state. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define the control state machine with legal transitions, terminal states, and fail-closed defaults. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Require authenticated and authorized control requests with an actor identity, reason, ticket/reference, and expiry where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make every control operation idempotent and safe under retries, duplicated delivery, and controller failover. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use fencing or generation numbers so stale controllers cannot overwrite newer decisions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define emergency behavior that monotonically restricts capacity; emergency controls must never implicitly reopen capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide explicit acknowledgement and downstream confirmation when a control action must propagate to enforcement points. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record every transition in an append-only audit trail with before/after state and policy revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Expose current control mode, owner, generation, age, and last transition reason in health/explain output. — _requires named people / review_
+- [ ] **EVIDENCED** Provide bounded manual recovery steps and two-person approval for high-risk capacity-increasing overrides where policy requires it. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Test concurrent commands, stale commands, expired commands, rollback, process crash, and partial downstream acknowledgement. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Explicit fail-closed scheduler behavior when GAP-10 is absent/unhealthy. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** control state-machine specification. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** authorization matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** audit-event examples. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** failover/concurrency test report. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** operator runbook with recovery gates. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C08 — Controller ownership/leader fencing [P0]
+
+Modules: `production/coordination.py`, `production/controller.py`, `production/store.py`, `production/enforcement.py` · tests: 2 passing
+
+- [ ] **EVIDENCED** Assign each node/control shard exactly one active ceiling publisher at a time using a lease plus monotonically increasing fencing token. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Require downstream consumers to reject publications carrying a fencing token older than the latest accepted owner generation. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ Define lease duration, renewal interval, maximum clock assumptions, and behavior when the backing coordination service is unavailable. — _Coordination-store unavailability and clock assumptions untested_
+- [ ] **EVIDENCED** Ensure an isolated old leader cannot continue publishing capacity after losing ownership. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Persist enough ownership metadata to reconcile safely after controller crash or coordination-store recovery. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Handle node moves between shards/controllers without a window of dual unfenced authority. — _No shard handoff or node-move logic_
+- [ ] **OPEN** (EX-001) Expose owner ID, generation/fence, lease age, renewal status, and conflict count. — _requires named people / review_
+- [ ] **EVIDENCED** Audit every ownership acquisition, loss, forced transfer, and conflict. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Test simultaneous startup, delayed network packets, store partitions, clock skew, stale leader recovery, and rapid failover. — _No delayed-packet, clock-skew or partition tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Prove split-brain cannot produce a higher applied ceiling than the most restrictive valid publisher. — _One stale-token scenario; no split-brain proof_
+- [ ] **EVIDENCED** Define the control state machine with legal transitions, terminal states, and fail-closed defaults. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Require authenticated and authorized control requests with an actor identity, reason, ticket/reference, and expiry where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make every control operation idempotent and safe under retries, duplicated delivery, and controller failover. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use fencing or generation numbers so stale controllers cannot overwrite newer decisions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define emergency behavior that monotonically restricts capacity; emergency controls must never implicitly reopen capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide explicit acknowledgement and downstream confirmation when a control action must propagate to enforcement points. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record every transition in an append-only audit trail with before/after state and policy revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Expose current control mode, owner, generation, age, and last transition reason in health/explain output. — _requires named people / review_
+- [ ] **EVIDENCED** Provide bounded manual recovery steps and two-person approval for high-risk capacity-increasing overrides where policy requires it. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Test concurrent commands, stale commands, expired commands, rollback, process crash, and partial downstream acknowledgement. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Controller ownership/leader fencing. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** control state-machine specification. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** authorization matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** audit-event examples. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** failover/concurrency test report. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** operator runbook with recovery gates. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C09 — Hardware/site calibration inventory [P1]
+
+Modules: `production/calibration.py` · tests: 5 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Create a signed inventory keyed by stable hardware identity/SKU/firmware containing supported temperature limits and power characteristics. — _Inventory not signed, not keyed by SKU/firmware_
+- [ ] **EVIDENCED** Record sustained/TDP/PL1/PL2 or vendor-equivalent limits separately; do not conflate instantaneous and sustained power budgets. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Capture battery chemistry, design capacity, current health/cycle state, reserve requirements, and supported discharge characteristics. — _No battery health/cycle/discharge characteristics in HardwareProfile_
+- [ ] **PARTIAL** (EX-004) ⟲ Record cooling topology, fan/cooling capability, inlet constraints, thermal design assumptions, and site derating factors. — _No inlet constraints or site derating factors_
+- [ ] **EVIDENCED** Distinguish vendor absolute maximums from operational safety thresholds and document safety margin rationale. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Version calibration entries and bind every GAP-10 decision to the calibration revision used. — _calibration_revision not bound into decisions_
+- [ ] **EVIDENCED** Reject unknown or ambiguous hardware classes into conservative defaults until calibrated. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Define revalidation triggers for firmware, BIOS, sensor-provider, battery, cooling, or hardware changes. — _No revalidation triggers_
+- [ ] **PARTIAL** (EX-004) ⟲ Provide calibration verification tests against actual sensor providers and device telemetry. — _No tests against real sensor providers_
+- [ ] **OPEN** (EX-001) ⟲ Audit changes to limits that could increase permitted capacity. — _Calibration register not audited_
+- [ ] **EVIDENCED** Define physical quantities, units, sampling assumptions, calibration ranges, and invalid-value handling explicitly. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document whether each model is conservative, worst-case, weighted, predictive, or probabilistic and why that is safe. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Establish deterministic behavior at exact threshold boundaries and around hysteresis margins. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define missing-sensor, stale-sensor, disagreement, outlier, saturation, and impossible-value semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use monotonic or conservative transformations so model uncertainty cannot increase allowed capacity accidentally. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate raw measurement, normalized measurement, derived feature, model output, and final ceiling decision in code and telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version calibration/model parameters independently from executable code and bind decisions to the active revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-006) Quantify numerical stability, precision, rounding, and overflow/underflow behavior for all supported runtimes. — _not quantified across runtimes; only sandbox CPython_
+- [ ] **EVIDENCED** Provide golden-vector fixtures covering nominal, boundary, emergency, degraded, and contradictory evidence scenarios. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) Validate predictions/estimates against measured hardware or replay datasets and define acceptable error envelopes. — _no site hardware data supplied; conservative profile only_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Hardware/site calibration inventory. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-005) model/calibration specification with units. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** golden vectors. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) hardware/replay validation dataset summary. — _no site hardware data supplied; conservative profile only_
+- [ ] **PARTIAL** (EX-005) error/uncertainty analysis. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** boundary and degraded-mode test evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C10 — Multi-sensor aggregation model [P1]
+
+Modules: `production/telemetry.py` · tests: 4 passing
+
+- [ ] **EVIDENCED** Enumerate CPU package/core, GPU hotspot/memory, VRM, SSD/NVMe, inlet, exhaust, chassis, PSU, accelerator, and vendor-specific sensors per hardware class. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define canonical sensor IDs, units, expected ranges, criticality, sampling cadence, and trust level. — _No per-sensor criticality/cadence/trust definitions_
+- [ ] **EVIDENCED** Choose explicit worst-case/weighted/domain aggregation rules and document why the rule cannot hide a dangerous hotspot. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Treat missing required sensors separately from optional sensors and define conservative substitution behavior. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Detect sensor disagreement, stuck values, implausible jumps, saturation, and duplicated sensor streams. — _No disagreement/saturation/jump detection in aggregate()_
+- [ ] **OPEN** (EX-001) ⟲ Account for different sensor lag/response times when combining fast hotspot and slow ambient readings. — _No sensor lag handling_
+- [ ] **EVIDENCED** Prevent averaging from lowering the effective severity below the most safety-critical sensor where policy forbids it. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose the full contributing-sensor set and winning constraint in explain output. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Build golden fixtures for one-hot hotspots, conflicting sensors, missing sensors, stale substreams, and simultaneous thermal/power events. — _No golden fixtures for stale substreams or simultaneous events_
+- [ ] **OPEN** (EX-001) ⟲ Validate aggregation against real hardware traces for each supported class. — _No real hardware traces_
+- [ ] **EVIDENCED** Define physical quantities, units, sampling assumptions, calibration ranges, and invalid-value handling explicitly. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document whether each model is conservative, worst-case, weighted, predictive, or probabilistic and why that is safe. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Establish deterministic behavior at exact threshold boundaries and around hysteresis margins. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define missing-sensor, stale-sensor, disagreement, outlier, saturation, and impossible-value semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use monotonic or conservative transformations so model uncertainty cannot increase allowed capacity accidentally. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate raw measurement, normalized measurement, derived feature, model output, and final ceiling decision in code and telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version calibration/model parameters independently from executable code and bind decisions to the active revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-006) Quantify numerical stability, precision, rounding, and overflow/underflow behavior for all supported runtimes. — _not quantified across runtimes; only sandbox CPython_
+- [ ] **EVIDENCED** Provide golden-vector fixtures covering nominal, boundary, emergency, degraded, and contradictory evidence scenarios. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) Validate predictions/estimates against measured hardware or replay datasets and define acceptable error envelopes. — _no site hardware data supplied; conservative profile only_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Multi-sensor aggregation model. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-005) model/calibration specification with units. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** golden vectors. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) hardware/replay validation dataset summary. — _no site hardware data supplied; conservative profile only_
+- [ ] **PARTIAL** (EX-005) error/uncertainty analysis. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** boundary and degraded-mode test evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C11 — Thermal rate-of-rise predictor [P1]
+
+Modules: `production/predictive.py` · tests: 4 passing
+
+- [ ] **EVIDENCED** Compute temperature derivative/rate-of-rise over a defined robust time window using trusted samples only. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define filtering/smoothing that reduces noise without delaying recognition of a genuine fast rise beyond the safety budget. — _No smoothing; no safety-budget latency analysis_
+- [ ] **PARTIAL** (EX-004) ⟲ Derive predicted time-to-threshold for elevated, critical, and emergency boundaries. — _Fixed-horizon prediction; no time-to-threshold per boundary_
+- [ ] **OPEN** (EX-001) ⟲ Incorporate current power draw/load trend where available so prediction responds to changing heat input. — _Predictor ignores power draw and load trend_
+- [ ] **PARTIAL** (EX-004) ⟲ Define conservative fallback when there are too few samples, irregular cadence, gaps, or clock anomalies. — _Too few samples returns nominal from predictor (kernel still applies)_
+- [ ] **EVIDENCED** Bound prediction horizon and model output so extrapolation cannot create unjustified capacity increases. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make predictive derating monotonic: increasing risk may restrict capacity earlier but prediction failure cannot relax static safety rules. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Calibrate model error by hardware class and environmental condition; publish confidence/error envelopes. — _No per-hardware error calibration or confidence envelopes_
+- [ ] **OPEN** (EX-001) ⟲ Measure the claimed pre-throttle objective using replay/bench traces and define numerator/denominator precisely. — _No measurement of the pre-throttle objective_
+- [ ] **PARTIAL** (EX-004) ⟲ Test abrupt workload spikes, sensor noise, cooling recovery, slow drift, missing samples, and false-positive control. — _No cooling-recovery/drift/missing-sample/false-positive tests_
+- [ ] **EVIDENCED** Define physical quantities, units, sampling assumptions, calibration ranges, and invalid-value handling explicitly. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document whether each model is conservative, worst-case, weighted, predictive, or probabilistic and why that is safe. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Establish deterministic behavior at exact threshold boundaries and around hysteresis margins. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define missing-sensor, stale-sensor, disagreement, outlier, saturation, and impossible-value semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use monotonic or conservative transformations so model uncertainty cannot increase allowed capacity accidentally. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate raw measurement, normalized measurement, derived feature, model output, and final ceiling decision in code and telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version calibration/model parameters independently from executable code and bind decisions to the active revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-006) Quantify numerical stability, precision, rounding, and overflow/underflow behavior for all supported runtimes. — _not quantified across runtimes; only sandbox CPython_
+- [ ] **EVIDENCED** Provide golden-vector fixtures covering nominal, boundary, emergency, degraded, and contradictory evidence scenarios. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) Validate predictions/estimates against measured hardware or replay datasets and define acceptable error envelopes. — _no site hardware data supplied; conservative profile only_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Thermal rate-of-rise predictor. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-005) model/calibration specification with units. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** golden vectors. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) hardware/replay validation dataset summary. — _no site hardware data supplied; conservative profile only_
+- [ ] **PARTIAL** (EX-005) error/uncertainty analysis. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** boundary and degraded-mode test evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C12 — Battery discharge/remaining-runtime estimator [P1]
+
+Modules: `production/predictive.py` · tests: 3 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Estimate remaining energy using design/full-charge capacity, current state of charge, health, temperature, and battery telemetry quality. — _BatteryModel ignores temperature and telemetry quality_
+- [ ] **EVIDENCED** Estimate discharge power from current load rather than treating remaining fraction as a direct runtime proxy. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Produce remaining-runtime estimate plus conservative lower bound under the current/expected workload. — _No conservative lower-bound estimate_
+- [ ] **PARTIAL** (EX-004) ⟲ Account for battery degradation, temperature-dependent capacity, inverter/UPS efficiency, and configured reserve. — _No temperature-dependent capacity or UPS efficiency_
+- [ ] **EVIDENCED** Define reserve in both energy/time terms where operational requirements demand minimum shutdown or migration time. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Handle charging, discharging, unknown direction, sensor reset, pack replacement, and mixed battery/utility states explicitly. — _Only on_mains handled_
+- [ ] **OPEN** (EX-001) ⟲ Prevent optimistic runtime recovery from one transient low-load sample by applying hysteresis/smoothing. — _No runtime smoothing/hysteresis_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose inputs, model revision, estimated runtime, reserve margin, and uncertainty in explain output. — _Explain lacks model revision/reserve margin/uncertainty_
+- [ ] **OPEN** (EX-001) ⟲ Validate estimates against controlled discharge traces per battery chemistry/hardware class. — _No controlled-discharge validation_
+- [ ] **PARTIAL** (EX-004) ⟲ Test sudden power increase, degraded-health pack, stale battery telemetry, pack swap, and transition to utility power. — _Only degraded-health case tested_
+- [ ] **EVIDENCED** Define physical quantities, units, sampling assumptions, calibration ranges, and invalid-value handling explicitly. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document whether each model is conservative, worst-case, weighted, predictive, or probabilistic and why that is safe. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Establish deterministic behavior at exact threshold boundaries and around hysteresis margins. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define missing-sensor, stale-sensor, disagreement, outlier, saturation, and impossible-value semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use monotonic or conservative transformations so model uncertainty cannot increase allowed capacity accidentally. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate raw measurement, normalized measurement, derived feature, model output, and final ceiling decision in code and telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version calibration/model parameters independently from executable code and bind decisions to the active revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-006) Quantify numerical stability, precision, rounding, and overflow/underflow behavior for all supported runtimes. — _not quantified across runtimes; only sandbox CPython_
+- [ ] **EVIDENCED** Provide golden-vector fixtures covering nominal, boundary, emergency, degraded, and contradictory evidence scenarios. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) Validate predictions/estimates against measured hardware or replay datasets and define acceptable error envelopes. — _no site hardware data supplied; conservative profile only_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Battery discharge/remaining-runtime estimator. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-005) model/calibration specification with units. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** golden vectors. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) hardware/replay validation dataset summary. — _no site hardware data supplied; conservative profile only_
+- [ ] **PARTIAL** (EX-005) error/uncertainty analysis. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** boundary and degraded-mode test evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C13 — Cooling-domain/site correlation [P1]
+
+Modules: `production/predictive.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Model rack/cabinet/room/cooling-loop membership as versioned topology rather than inferring it from node names. — _Membership is an unversioned dict_
+- [ ] **PARTIAL** (EX-004) ⟲ Define domain-level signals such as inlet temperature, exhaust temperature, CRAC/chiller status, fan state, power density, and aggregate heat load. — _Inlet only; no exhaust/CRAC/fan/heat-load_
+- [ ] **EVIDENCED** Propagate a shared cooling-domain constraint to all affected nodes even if an individual node sensor remains nominal. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define conservative behavior when topology membership or domain telemetry is missing, stale, or conflicting. — _Missing membership gives nominal domain band_
+- [ ] **PARTIAL** (EX-004) ⟲ Prevent correlated failures from being treated as independent capacity across nodes sharing the same cooling bottleneck. — _Quorum band only; no correlated capacity accounting_
+- [ ] **OPEN** (EX-001) ⟲ Include maintenance/outage state for shared cooling equipment in the domain constraint model. — _No cooling maintenance/outage state_
+- [ ] **OPEN** (EX-001) ⟲ Integrate site power availability and cooling capacity where a combined facility limit is required. — _No combined site power+cooling limit_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose domain ID, active domain constraint, contributing signals, and affected node count. — _Reason string only; no structured domain id/count_
+- [ ] **PARTIAL** (EX-004) ⟲ Test fan/chiller failure, hot-aisle recirculation, partial rack telemetry loss, domain split/merge, and site partition. — _Single scenario test_
+- [ ] **PARTIAL** (EX-004) ⟲ Validate that local recovery does not reopen nodes until shared-domain recovery criteria are also met. — _Recovery gating not explicitly tested_
+- [ ] **EVIDENCED** Define physical quantities, units, sampling assumptions, calibration ranges, and invalid-value handling explicitly. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document whether each model is conservative, worst-case, weighted, predictive, or probabilistic and why that is safe. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Establish deterministic behavior at exact threshold boundaries and around hysteresis margins. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define missing-sensor, stale-sensor, disagreement, outlier, saturation, and impossible-value semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use monotonic or conservative transformations so model uncertainty cannot increase allowed capacity accidentally. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate raw measurement, normalized measurement, derived feature, model output, and final ceiling decision in code and telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version calibration/model parameters independently from executable code and bind decisions to the active revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-006) Quantify numerical stability, precision, rounding, and overflow/underflow behavior for all supported runtimes. — _not quantified across runtimes; only sandbox CPython_
+- [ ] **EVIDENCED** Provide golden-vector fixtures covering nominal, boundary, emergency, degraded, and contradictory evidence scenarios. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) Validate predictions/estimates against measured hardware or replay datasets and define acceptable error envelopes. — _no site hardware data supplied; conservative profile only_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Cooling-domain/site correlation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-005) model/calibration specification with units. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** golden vectors. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-005) hardware/replay validation dataset summary. — _no site hardware data supplied; conservative profile only_
+- [ ] **PARTIAL** (EX-005) error/uncertainty analysis. — _no site hardware data supplied; conservative profile only_
+- [ ] **EVIDENCED** boundary and degraded-mode test evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C14 — Accelerator thermal integration with GAP-11 [P1]
+
+Modules: `production/predictive.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Consume GAP-11 accelerator inventory, allocation, hotspot temperature, power draw, power cap, and health using a versioned authenticated contract. — _AcceleratorReport unauthenticated, no versioned contract_
+- [ ] **PARTIAL** (EX-004) ⟲ Normalize GPU/NPU/FPGA vendor telemetry into canonical accelerator constraints without losing device identity. — _No vendor normalisation_
+- [ ] **PARTIAL** (EX-004) ⟲ Associate accelerator devices with the correct node, workload allocation, power rail, and cooling domain. — _No mapping to allocation/power rail/cooling domain_
+- [ ] **PARTIAL** (EX-004) ⟲ Include accelerator hotspot and aggregate board power in the most-restrictive-wins node ceiling calculation. — _Accelerator power computed but not used in node budget_
+- [ ] **EVIDENCED** Define behavior for accelerator telemetry loss while host CPU telemetry remains healthy. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Prevent scheduler placement onto an excluded accelerator while allowing safe non-accelerator capacity only if policy explicitly supports it. — _No per-device exclusion_
+- [ ] **EVIDENCED** Handle multi-accelerator nodes where one device is critical and others are nominal. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Propagate accelerator-caused ceilings to GAP-11 scheduling/admission paths as well as general node scheduling. — _No propagation to GAP-11 admission_
+- [ ] **PARTIAL** (EX-004) ⟲ Provide cross-component decision IDs so a GAP-10 ceiling can be traced to the exact GAP-11 sample/device. — _Device id only in reason_
+- [ ] **OPEN** (EX-001) ⟲ Test device reset, MIG/partition reconfiguration, hot-unplug, mixed vendors, power-cap changes, and schema-version skew. — _No reset/MIG/hot-unplug/schema-skew tests_
+- [ ] **EVIDENCED** Define the adapter boundary as a separately testable module with no implicit ambient authority or hidden transport assumptions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Version every inbound and outbound message contract and reject unsupported major schema versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Normalize peer-specific payloads into canonical GAP-10 domain objects before any scheduling decision is evaluated. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve source identity, correlation IDs, evidence timestamps, trust state, and policy revision across translation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make duplicate delivery idempotent and prove that retries cannot multiply side effects or relax a ceiling. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Bound connection pools, outstanding RPCs, payload sizes, decode time, queue depth, and per-peer concurrency. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **PARTIAL** (EX-004) Specify explicit timeout, cancellation, retry, and backpressure behavior for every remote operation. — _payload/decode/sensor bounds + store retry only; network peers are reference in-process_
+- [ ] **EVIDENCED** Fail closed on malformed, unauthenticated, stale, ambiguous, or unsupported peer data. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose peer compatibility, negotiated version, last-success time, and current degraded mode through health telemetry. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide contract fixtures for nominal, boundary, malformed, stale, replayed, downgraded, and emergency cases. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Accelerator thermal integration with GAP-11. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ versioned adapter schema/contracts. — _No PK_ACCEL_THERMAL schema file_
+- [ ] **PARTIAL** (EX-004) positive and negative interoperability fixtures. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) integration test report with peer versions and applied outcomes. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) ⟲ adapter health/metrics specification. — _No accelerator adapter metrics_
+- [ ] **PARTIAL** (EX-004) ⟲ security/authentication test evidence. — _No accelerator adapter authentication/security tests_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C15 — Workload-class-aware shedding policy [P1]
+
+Modules: `production/shedding.py` · tests: 1 passing
+
+- [ ] **EVIDENCED** Define workload classes using explicit policy attributes, not application-supplied free-form priority alone. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify deterministic shedding order for best-effort, batch, latency-sensitive, control-plane, safety-critical, and protected workloads as applicable. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Keep emergency node exclusion absolute unless a separately designed life/safety exception exists and is formally approved. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **PARTIAL** (EX-004) ⟲ Define how quotas, fairness, disruption budgets, tenant isolation, and protected minimums interact with thermal shedding. — _protected_share only; no quotas/fairness/disruption budgets_
+- [ ] **OPEN** (EX-001) ⟲ Prevent a tenant from self-classifying into a protected class without authorization. — _No authorization on workload class_
+- [ ] **EVIDENCED** Use stable tie-breakers so identical state yields identical shedding decisions. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Define whether shedding means no-new-admission, throttling, migration, eviction, pause, or termination per workload class. — _Shedding action type per class undefined_
+- [ ] **OPEN** (EX-001) ⟲ Expose the class rule and precedence path that caused each action. — _allocate() returns counts only; no rule path_
+- [ ] **OPEN** (EX-001) ⟲ Test starvation/fairness over prolonged constrained periods and recovery ordering when capacity returns. — _No starvation/fairness/recovery-ordering tests_
+- [ ] **EVIDENCED** Prove workload class can change which capacity is shed first but cannot bypass a critical/emergency safety ceiling. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Represent policy as a versioned immutable document with a unique revision ID and content digest. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define an explicit schema covering thresholds, hysteresis, ceilings, reserve rules, scope selectors, and emergency behavior. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate ordering invariants, units, numeric ranges, mandatory zero-capacity emergency semantics, and cross-field constraints before activation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate policy authoring, approval, distribution, activation, and rollback roles. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make activation atomic per declared scope and prevent mixed revisions within one scheduling decision. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record author, approver, provenance, signature, activation time, superseded revision, and rollback lineage. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Support dry-run/shadow evaluation against live telemetry before a revision can affect placement. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-002) Define deterministic precedence for global, environment, site, hardware-class, and node-specific policy layers. — _scope + calibration + cohort layering; no node-level override layer_
+- [ ] **EVIDENCED** Reject unsigned, expired, revoked, unauthorized, or unsupported policy revisions fail closed. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove rollback restores both policy and associated derived state without transiently opening capacity. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Workload-class-aware shedding policy. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ policy schema and validator. — _Shedding policy has no schema/validator_
+- [ ] **PARTIAL** (EX-004) ⟲ signed example revisions and provenance record. — _No signed shedding revisions_
+- [ ] **PARTIAL** (EX-004) ⟲ atomic activation/rollback test evidence. — _Activation/rollback exist for thermal policy only_
+- [ ] **DOCUMENTED** policy authorization matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **PARTIAL** (EX-004) ⟲ staged rollout/dry-run report. — _Dry-run for thermal policy only_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C16 — Constraint-precedence engine [P1]
+
+Modules: `production/shedding.py`, `production/controller.py` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Enumerate constraints including thermal safety, power, battery reserve, security/isolation, residency, availability/SLO, maintenance, operator emergency action, and cost. — _PRECEDENCE lacks power/battery-reserve sources_
+- [ ] **OPEN** (EX-001) ⟲ Classify each constraint as hard, soft, advisory, or optimization-only with explicit justification. — _No hard/soft/advisory classification_
+- [ ] **EVIDENCED** Define deterministic precedence and composition rules for every pair of potentially conflicting hard constraints. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Implement “most restrictive wins” for safety ceilings unless an ADR explicitly defines a safer specialized rule. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **OPEN** (EX-001) ⟲ Detect unsatisfiable constraint sets and return a structured terminal/degraded decision rather than silently dropping constraints. — _Unsatisfiable constraint sets not detected_
+- [ ] **EVIDENCED** Prevent cost or utilization objectives from overriding safety/security/residency hard constraints. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Version the precedence policy and bind each decision to the active revision. — _PRECEDENCE unversioned, not bound to decisions_
+- [ ] **PARTIAL** (EX-004) ⟲ Generate an explain tree showing evaluated constraints, precedence, winner, and rejected alternatives. — _Trail lacks rejected alternatives_
+- [ ] **PARTIAL** (EX-004) ⟲ Create exhaustive truth-table/property tests for boundary combinations and contradictory constraints. — _No exhaustive/property tests_
+- [ ] **OPEN** (EX-001) ⟲ Require architecture/security approval for any precedence change that can increase schedulable capacity. — _No approval gate for precedence changes_
+- [ ] **EVIDENCED** Represent policy as a versioned immutable document with a unique revision ID and content digest. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define an explicit schema covering thresholds, hysteresis, ceilings, reserve rules, scope selectors, and emergency behavior. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate ordering invariants, units, numeric ranges, mandatory zero-capacity emergency semantics, and cross-field constraints before activation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Separate policy authoring, approval, distribution, activation, and rollback roles. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make activation atomic per declared scope and prevent mixed revisions within one scheduling decision. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record author, approver, provenance, signature, activation time, superseded revision, and rollback lineage. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Support dry-run/shadow evaluation against live telemetry before a revision can affect placement. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-002) Define deterministic precedence for global, environment, site, hardware-class, and node-specific policy layers. — _scope + calibration + cohort layering; no node-level override layer_
+- [ ] **EVIDENCED** Reject unsigned, expired, revoked, unauthorized, or unsupported policy revisions fail closed. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove rollback restores both policy and associated derived state without transiently opening capacity. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Constraint-precedence engine. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ policy schema and validator. — _No precedence schema/validator_
+- [ ] **PARTIAL** (EX-004) ⟲ signed example revisions and provenance record. — _Precedence not a signed revision_
+- [ ] **PARTIAL** (EX-004) ⟲ atomic activation/rollback test evidence. — _No precedence activation/rollback_
+- [ ] **DOCUMENTED** policy authorization matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **PARTIAL** (EX-004) ⟲ staged rollout/dry-run report. — _No precedence dry-run_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C17 — Health/readiness API [P1]
+
+Modules: `production/controller.py` · tests: 1 passing
+
+- [ ] **EVIDENCED** Expose liveness separately from readiness; a process may be alive while unsafe to enforce. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Report active code version, schema versions, policy revision, calibration revision, ownership generation, and capability set. — _health() lacks code/schema version and calibration revision_
+- [ ] **EVIDENCED** Report telemetry freshness/trust status, state-store health, policy service health, scheduler/elasticity connectivity, and time-service status. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define readiness as false when any safety-critical dependency or invariant is unavailable, stale, invalid, or conflicting. — _ready = leader only; dependencies feed safe_to_enforce_
+- [ ] **PARTIAL** (EX-004) ⟲ Include reason codes and timestamps for every degraded/unready state. — _Checks are booleans without reason codes/timestamps_
+- [ ] **OPEN** (EX-001) ⟲ Protect detailed health output by authorization when it reveals infrastructure topology or security state. — _No authorization on health output_
+- [ ] **OPEN** (EX-001) ⟲ Rate-limit probes and ensure health checking cannot starve scheduling work. — _No probe rate limiting_
+- [ ] **EVIDENCED** Publish machine-readable health suitable for orchestration plus operator-readable diagnostic detail. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Test dependency flapping and apply readiness hysteresis/debounce without masking real unsafe states. — _No readiness debounce/hysteresis_
+- [ ] **OPEN** (EX-001) ⟲ Prove downstream components react to unready GAP-10 according to fail-closed semantics. — _Enforcement adapters do not consult GAP-10 readiness directly_
+- [ ] **EVIDENCED** Define the endpoint or service contract using a versioned schema with explicit request, response, and error types. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document authentication, authorization, scope, and information-disclosure rules for every operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate all query/path/body fields before processing and enforce strict maximum sizes and cardinalities. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Return stable machine-readable error codes rather than relying on free-form error text. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Define cacheability, consistency, freshness, and pagination/streaming semantics where applicable. — _in-process API only; no network endpoint semantics defined_
+- [ ] **EVIDENCED** Prevent the interface from exposing secrets, raw credentials, unredacted tenant data, or unnecessary infrastructure details. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use rate limiting, concurrency limits, timeouts, and cancellation to protect the control plane. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide deterministic reference examples and negative fixtures for malformed and unauthorized requests. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Instrument request count, error count, latency distribution, saturation, and dependency failures. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create contract, compatibility, security, and load tests for every supported API version. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Health/readiness API. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** OpenAPI/JSON Schema/RPC contract or equivalent. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** RBAC/capability matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **PARTIAL** (EX-004) ⟲ contract and negative fixtures. — _Health schema validated positively only_
+- [ ] **PARTIAL** (EX-006) load/rate-limit test report. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) security/privacy review. — _governance action by owners_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C18 — Quarantine/freeze/emergency-disable control [P1]
+
+Modules: `production/coordination.py` · tests: 4 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define distinct modes for quarantine, freeze, emergency-disable/exclusion, and controlled maintenance; do not overload one ambiguous flag. — _No controlled-maintenance mode_
+- [ ] **PARTIAL** (EX-004) ⟲ Ensure every mode has explicit effects on new admission, existing workloads, ceiling publication, policy updates, and recovery. — _Effects on policy updates/existing workloads undefined_
+- [ ] **EVIDENCED** Require authenticated/authorized actor, reason, scope, ticket/reference, and optional expiry for manual controls. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Default ambiguous emergency actions toward restricting capacity rather than enabling it. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Make capacity-increasing release from quarantine/freeze an explicit separate action with validation gates. — _release() has no validation gates_
+- [ ] **PARTIAL** (EX-004) ⟲ Propagate control state to scheduler and elasticity enforcement and verify acknowledgement. — _No downstream acknowledgement for controls_
+- [ ] **OPEN** (EX-001) ⟲ Persist control state durably so process restart cannot clear an active safety action. — _Controls held in memory; not persisted_
+- [ ] **DOCUMENTED** (EX-007) Expose current mode and origin in health/explain/UI and emit alerts for long-lived manual controls. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **PARTIAL** (EX-004) ⟲ Audit every create/update/clear attempt including denied actions. — _Denied release/CONTROL_INVALID not audited_
+- [ ] **PARTIAL** (EX-004) ⟲ Test stale operator sessions, duplicate commands, partial downstream failure, controller failover, expiry, and emergency rollback. — _Duplicate delivery only; no failover/expiry tests_
+- [ ] **EVIDENCED** Define the control state machine with legal transitions, terminal states, and fail-closed defaults. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Require authenticated and authorized control requests with an actor identity, reason, ticket/reference, and expiry where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Make every control operation idempotent and safe under retries, duplicated delivery, and controller failover. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use fencing or generation numbers so stale controllers cannot overwrite newer decisions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define emergency behavior that monotonically restricts capacity; emergency controls must never implicitly reopen capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide explicit acknowledgement and downstream confirmation when a control action must propagate to enforcement points. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Record every transition in an append-only audit trail with before/after state and policy revision. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Expose current control mode, owner, generation, age, and last transition reason in health/explain output. — _requires named people / review_
+- [ ] **EVIDENCED** Provide bounded manual recovery steps and two-person approval for high-risk capacity-increasing overrides where policy requires it. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Test concurrent commands, stale commands, expired commands, rollback, process crash, and partial downstream acknowledgement. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Quarantine/freeze/emergency-disable control. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** control state-machine specification. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** authorization matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** audit-event examples. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ failover/concurrency test report. — _No control failover/concurrency tests_
+- [ ] **DOCUMENTED** operator runbook with recovery gates. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C19 — Structured error taxonomy [P2]
+
+Modules: `production/errors.py` · tests: 1 passing
+
+- [ ] **EVIDENCED** Define a stable namespaced error-code catalog partitioned by validation, trust, telemetry, policy, storage, ownership, dependency, enforcement, and internal failures. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Assign retryability, severity, HTTP/RPC mapping, operator action, and safe fallback to every error code. — _No retryability/severity/HTTP mapping/operator action per code_
+- [ ] **PARTIAL** (EX-004) ⟲ Include structured details such as node ID, dependency, policy revision, sample age, and rejected field only when safe to disclose. — _Detail filtered by type, not disclosure safety_
+- [ ] **EVIDENCED** Keep human-readable messages non-authoritative; automation must branch on stable codes/fields. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define compatibility rules so adding new error codes is backward compatible and removing/redefining codes requires major versioning. — _Pinned equality; no backward-compatibility rule_
+- [ ] **PARTIAL** (EX-004) ⟲ Never encode secrets or raw signed payloads in error details. — _String secrets in detail pass through_
+- [ ] **PARTIAL** (EX-004) ⟲ Preserve root-cause chains across adapters without leaking peer-specific internals unnecessarily. — _Cause chain omitted_
+- [ ] **EVIDENCED** Map all current model validation/freshness/replay states into the taxonomy. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Add negative contract tests asserting exact codes for malformed, stale, replayed, unauthorized, ownership-conflict, and downstream-rejection cases. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Generate documentation directly from the machine-readable error catalog to prevent drift. — _ERROR_CODES.json hand-pinned, not generated docs_
+- [ ] **EVIDENCED** Define the endpoint or service contract using a versioned schema with explicit request, response, and error types. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document authentication, authorization, scope, and information-disclosure rules for every operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate all query/path/body fields before processing and enforce strict maximum sizes and cardinalities. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Return stable machine-readable error codes rather than relying on free-form error text. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Define cacheability, consistency, freshness, and pagination/streaming semantics where applicable. — _in-process API only; no network endpoint semantics defined_
+- [ ] **EVIDENCED** Prevent the interface from exposing secrets, raw credentials, unredacted tenant data, or unnecessary infrastructure details. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use rate limiting, concurrency limits, timeouts, and cancellation to protect the control plane. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide deterministic reference examples and negative fixtures for malformed and unauthorized requests. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Instrument request count, error count, latency distribution, saturation, and dependency failures. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create contract, compatibility, security, and load tests for every supported API version. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Structured error taxonomy. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **EVIDENCED** OpenAPI/JSON Schema/RPC contract or equivalent. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** RBAC/capability matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** contract and negative fixtures. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) load/rate-limit test report. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) security/privacy review. — _governance action by owners_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C20 — Tamper-evident audit sink [P2]
+
+Modules: `production/observability.py` · tests: 3 passing
+
+- [ ] **EVIDENCED** Use an append-only or cryptographically tamper-evident sink with ordered event identifiers and integrity verification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Capture policy author/approval/activation/rollback, emergency controls, ownership changes, trust failures, overrides, and production-gate actions. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Include actor/service identity, target scope, before/after state digest, policy/build revision, timestamp, and correlation ID. — _No correlation id/build revision/state digest in audit entries_
+- [ ] **PARTIAL** (EX-004) ⟲ Use a trusted timestamp strategy and define behavior when time trust is degraded. — _Caller-supplied timestamp_
+- [ ] **PARTIAL** (EX-004) ⟲ Protect audit writes from ordinary service credentials being able to rewrite/delete history. — _Tamper-evident but not write-protected_
+- [ ] **OPEN** (EX-001) ⟲ Define buffering/backpressure so temporary audit-sink failure does not silently lose security events. — _No buffering/backpressure on audit-sink failure_
+- [ ] **OPEN** (EX-001) ⟲ Define which operations must fail closed if their audit event cannot be durably recorded. — _No fail-closed behaviour on audit write failure_
+- [ ] **OPEN** (EX-001) ⟲ Encrypt sensitive audit data and restrict read access separately from write authority. — _No encryption/read access control_
+- [ ] **PARTIAL** (EX-007) Provide retention, export, legal/compliance, integrity-check, and restoration procedures. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **PARTIAL** (EX-004) ⟲ Test event-loss detection, ordering, duplicate submission, sink outage, key rotation, and integrity-verification failure. — _No sink-outage/key-rotation/duplicate tests_
+- [ ] **DOCUMENTED** Define assets, trust boundaries, identities, attacker capabilities, abuse cases, and security invariants in the GAP-10 threat model. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** Use workload- or service-scoped identity with least privilege and deny ambient filesystem, network, device, and secret authority. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Authenticate every control-plane peer before accepting safety-relevant data or commands. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Authorize every privileged operation against explicit capabilities or roles; authentication alone is insufficient. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-003) Use modern authenticated transport and managed key rotation; reject insecure downgrade paths. — _message-level HMAC implemented; transport TLS is deployment scope_
+- [ ] **EVIDENCED** Define revocation behavior and maximum exposure window for compromised credentials or signing keys. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Protect against replay with bounded freshness, nonce/sequence/revision checks, and monotonic state where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Keep raw secrets out of logs, metrics, traces, crash dumps, diagnostic bundles, and normal configuration files. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit tamper-evident audit records for authentication failures, authorization denials, trust changes, and administrative actions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Run adversarial tests for spoofing, replay, privilege escalation, parser abuse, resource exhaustion, and malicious downgrade attempts. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Tamper-evident audit sink. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** threat-model update. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** identity/capability matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **DOCUMENTED** key/secret lifecycle runbook. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** adversarial test report. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** tamper-evident audit evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C21 — Metrics exporter [P2]
+
+Modules: `production/observability.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Export current temperature by sensor/domain, power draw/budget ratio, battery/runtime reserve, selected band, ceiling fraction, and exclusion state. — _No per-sensor/domain temperature or exclusion-state gauge_
+- [ ] **PARTIAL** (EX-004) ⟲ Count state transitions, emergency exclusions, hysteresis holds, stale samples, future samples, replay rejects, invalid samples, and trust failures. — _No transition/stale/trust-failure counters beyond samples_total outcome_
+- [ ] **PARTIAL** (EX-004) ⟲ Measure decision latency and dependency latency with p50/p95/p99 histograms using consistent units/buckets. — _Decision latency only; no dependency latency histograms_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose state-store, policy-service, GAP-09, GAP-11, scheduler, elasticity, and time-service availability/error counters. — _Generic dependency_failures_total only_
+- [ ] **PARTIAL** (EX-004) ⟲ Export desired versus applied downstream ceiling and enforcement lag. — _Divergence gauge only; no enforcement-lag metric_
+- [ ] **PARTIAL** (EX-004) ⟲ Bound labels to site/node/hardware class/component/reason-code dimensions approved for cardinality. — _Series cap tested; no label allowlist_
+- [ ] **PARTIAL** (EX-004) ⟲ Avoid raw workload IDs in default metrics; use traces/logs for high-cardinality diagnosis. — _No test that metrics exclude workload IDs_
+- [ ] **PARTIAL** (EX-004) ⟲ Define metric reset/restart semantics and distinguish counters from gauges. — _Reset/restart semantics undefined_
+- [ ] **OPEN** (EX-001) ⟲ Provide recording rules for fleet-level thermal pressure, excluded-capacity percentage, and telemetry trust failure rate. — _No recording rules_
+- [ ] **PARTIAL** (EX-007) ⟲ Validate metric names, units, label sets, and alert expressions in CI. — _Alert test checks metric names only_
+- [ ] **EVIDENCED** Define an observability schema with stable names, units, labels, cardinality limits, and privacy classification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose rate, error, latency, saturation, backlog, resource use, safety-state, and dependency-health signals where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Attach stable node, site, component, policy revision, decision ID, and operation correlation identifiers. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Propagate trace context across GAP-09, GAP-10, scheduler, elasticity, policy, and state-store boundaries. — _traceparent helpers + in-process propagation; cross-service needs peers_
+- [ ] **EVIDENCED** Keep unbounded workload IDs, raw payloads, secrets, and high-cardinality data out of default metric labels. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-007) Define metric sampling, retention, aggregation, and export intervals appropriate to safety and operational debugging. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **EVIDENCED** Distinguish expected thermal derating from sensor trust failure, software failure, attack rejection, and downstream enforcement failure. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** (EX-007) Provide SLO-oriented dashboards with clearly documented alert thresholds and runbook links. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **EVIDENCED** Test that every safety-critical state transition generates the expected metric/log/trace/audit evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify observability loss cannot alter decision semantics or make the scheduler interpret missing telemetry as healthy capacity. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Metrics exporter. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ telemetry schema/data dictionary. — _Metric catalog is not a full data dictionary_
+- [ ] **DOCUMENTED** (EX-007) dashboard definitions. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **DOCUMENTED** (EX-007) alert rules plus runbooks. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **PARTIAL** (EX-004) ⟲ trace/log correlation examples. — _No correlation examples artefact_
+- [ ] **OPEN** (EX-001) ⟲ cardinality/privacy validation report. — _No cardinality/privacy report_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C22 — Structured logging and trace propagation [P2]
+
+Modules: `production/observability.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-001) ⟲ Define a structured log schema including timestamp, severity, component, node/site, decision ID, policy revision, owner generation, reason codes, and trace/span IDs. — _Logger fields tested; formal schema doc missing_
+- [ ] **PARTIAL** (EX-004) ⟲ Propagate W3C-compatible or estate-standard trace context across telemetry ingestion, decision calculation, state persistence, and downstream enforcement. — _traceparent reaches logs only; not passed downstream_
+- [ ] **OPEN** (EX-001) ⟲ Create spans for policy lookup, state load/store, model evaluation, ceiling publication, and downstream acknowledgement. — _No spans for policy lookup/store/publish/ack_
+- [ ] **EVIDENCED** Record decision inputs as bounded/redacted summaries rather than dumping raw signed payloads or secrets. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Use sampling rules that retain all emergency/security failures while controlling normal high-volume traces. — _No trace sampling rules_
+- [ ] **PARTIAL** (EX-004) ⟲ Normalize error taxonomy into logs and trace status so operators can pivot consistently. — _No error-to-trace-status mapping_
+- [ ] **PARTIAL** (EX-004) ⟲ Prevent attacker-controlled strings from causing log injection or unbounded field cardinality. — _No newline/control-char injection test_
+- [ ] **OPEN** (EX-007) ⟲ Define retention/privacy rules for node, site, tenant, workload, and hardware identifiers. — _No identifier retention/privacy rules_
+- [ ] **OPEN** (EX-001) ⟲ Test trace continuity through retries and asynchronous queues. — _No trace continuity test through retries_
+- [ ] **OPEN** (EX-001) ⟲ Provide a diagnostic bundle format linking logs/traces/metrics to a decision ID without exposing secret material. — _No diagnostic bundle format_
+- [ ] **EVIDENCED** Define an observability schema with stable names, units, labels, cardinality limits, and privacy classification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose rate, error, latency, saturation, backlog, resource use, safety-state, and dependency-health signals where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Attach stable node, site, component, policy revision, decision ID, and operation correlation identifiers. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Propagate trace context across GAP-09, GAP-10, scheduler, elasticity, policy, and state-store boundaries. — _traceparent helpers + in-process propagation; cross-service needs peers_
+- [ ] **EVIDENCED** Keep unbounded workload IDs, raw payloads, secrets, and high-cardinality data out of default metric labels. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-007) Define metric sampling, retention, aggregation, and export intervals appropriate to safety and operational debugging. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **EVIDENCED** Distinguish expected thermal derating from sensor trust failure, software failure, attack rejection, and downstream enforcement failure. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** (EX-007) Provide SLO-oriented dashboards with clearly documented alert thresholds and runbook links. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **EVIDENCED** Test that every safety-critical state transition generates the expected metric/log/trace/audit evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify observability loss cannot alter decision semantics or make the scheduler interpret missing telemetry as healthy capacity. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Structured logging and trace propagation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ telemetry schema/data dictionary. — _No full data dictionary_
+- [ ] **DOCUMENTED** (EX-007) dashboard definitions. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **DOCUMENTED** (EX-007) alert rules plus runbooks. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **PARTIAL** (EX-004) ⟲ trace/log correlation examples. — _No correlation examples artefact_
+- [ ] **OPEN** (EX-001) ⟲ cardinality/privacy validation report. — _No cardinality/privacy report_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C23 — Operator explain endpoint/UI [P2]
+
+Modules: `production/controller.py` · tests: 1 passing
+
+- [ ] **EVIDENCED** Show the current effective band, ceiling fraction, exclusion state, and whether downstream enforcement has acknowledged it. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ List exact contributing trusted samples with sensor/source IDs, values, observed times, age, and trust/freshness status. — _No per-sensor age/trust in explain_
+- [ ] **PARTIAL** (EX-004) ⟲ Show active policy and calibration revisions plus the precise thresholds/recovery margins applied. — _No calibration revision in explain_
+- [ ] **EVIDENCED** Expose each evaluated constraint and identify the most restrictive winning constraint. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Explain hysteresis: previous state, recovery threshold, hold reason, and conditions required to recover. — _No recovery threshold/conditions in explain_
+- [ ] **PARTIAL** (EX-001) ⟲ Show controller owner/fence and state-store revision used for the decision. — _Fencing token in health, not explain_
+- [ ] **PARTIAL** (EX-004) ⟲ Include scheduler/elasticity desired versus applied state and enforcement lag/error. — _No elasticity state or enforcement lag in explain_
+- [ ] **OPEN** (EX-001) ⟲ Protect sensitive topology and tenant/workload detail with role-based access and redaction. — _explain() has no RBAC/redaction_
+- [ ] **PARTIAL** (EX-004) ⟲ Provide immutable decision IDs that can be used to correlate audit, metrics, logs, and traces. — _Cross-signal correlation untested_
+- [ ] **PARTIAL** (EX-004) ⟲ Create usability/accuracy tests proving displayed explanations match machine decision records for golden scenarios. — _Key-presence assertions only_
+- [ ] **EVIDENCED** Define the endpoint or service contract using a versioned schema with explicit request, response, and error types. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Document authentication, authorization, scope, and information-disclosure rules for every operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Validate all query/path/body fields before processing and enforce strict maximum sizes and cardinalities. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Return stable machine-readable error codes rather than relying on free-form error text. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Define cacheability, consistency, freshness, and pagination/streaming semantics where applicable. — _in-process API only; no network endpoint semantics defined_
+- [ ] **EVIDENCED** Prevent the interface from exposing secrets, raw credentials, unredacted tenant data, or unnecessary infrastructure details. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use rate limiting, concurrency limits, timeouts, and cancellation to protect the control plane. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Provide deterministic reference examples and negative fixtures for malformed and unauthorized requests. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Instrument request count, error count, latency distribution, saturation, and dependency failures. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create contract, compatibility, security, and load tests for every supported API version. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Operator explain endpoint/UI. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** ⟲ OpenAPI/JSON Schema/RPC contract or equivalent. — _Schemas exist; no explain API contract_
+- [ ] **DOCUMENTED** RBAC/capability matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **PARTIAL** (EX-004) ⟲ contract and negative fixtures. — _Few negative fixtures; none for explain/health_
+- [ ] **PARTIAL** (EX-006) load/rate-limit test report. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) security/privacy review. — _governance action by owners_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C24 — Dashboards and alerts [P2]
+
+Modules: `ops/alerts.json`, `ops/dashboard.json` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-007) ⟲ Create fleet/site/node dashboards for temperature, power ratio, battery reserve, band distribution, excluded capacity, and decision latency. — _Dashboard lacks fleet/site/node views check_
+- [ ] **DOCUMENTED** ⟲ Separate informational expected derating from warning/critical conditions requiring operator action. — _Severity separation in alerts.json_
+- [ ] **PARTIAL** (EX-007) ⟲ Alert on stale/missing telemetry, trust/signature failures, policy invalidity, state-store failures, ownership conflict, scheduler enforcement lag, and component unready state. — _No alerts for policy invalidity/ownership conflict_
+- [ ] **DOCUMENTED** (EX-007) Detect fleet-wide correlated events separately from isolated node events to avoid alert storms. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **OPEN** (EX-007) ⟲ Use multi-window/burn-rate style alerting for SLO violations where appropriate. — _No burn-rate alerts_
+- [ ] **OPEN** (EX-001) ⟲ Define deduplication/grouping by site/cooling domain/node/reason to keep paging actionable. — _No dedup/grouping config_
+- [ ] **PARTIAL** (EX-001) ⟲ Attach exact runbook links, owner, severity, and expected first diagnostic action to every page-worthy alert. — _Owner and first diagnostic action missing from rules_
+- [ ] **PARTIAL** (EX-004) ⟲ Provide maintenance/silence controls that cannot disable underlying safety enforcement. — _No alert-silence mechanism_
+- [ ] **OPEN** (EX-007) ⟲ Test alerts using synthetic fault scenarios and verify routing/escalation paths. — _No synthetic alert-firing/routing tests_
+- [ ] **OPEN** (EX-001) ⟲ Review thresholds against production baselines and record approved changes. — _Needs production baselines and approval_
+- [ ] **EVIDENCED** Define an observability schema with stable names, units, labels, cardinality limits, and privacy classification. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose rate, error, latency, saturation, backlog, resource use, safety-state, and dependency-health signals where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Attach stable node, site, component, policy revision, decision ID, and operation correlation identifiers. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Propagate trace context across GAP-09, GAP-10, scheduler, elasticity, policy, and state-store boundaries. — _traceparent helpers + in-process propagation; cross-service needs peers_
+- [ ] **EVIDENCED** Keep unbounded workload IDs, raw payloads, secrets, and high-cardinality data out of default metric labels. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-007) Define metric sampling, retention, aggregation, and export intervals appropriate to safety and operational debugging. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **EVIDENCED** Distinguish expected thermal derating from sensor trust failure, software failure, attack rejection, and downstream enforcement failure. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** (EX-007) Provide SLO-oriented dashboards with clearly documented alert thresholds and runbook links. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **EVIDENCED** Test that every safety-critical state transition generates the expected metric/log/trace/audit evidence. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify observability loss cannot alter decision semantics or make the scheduler interpret missing telemetry as healthy capacity. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **DOCUMENTED** (EX-007) Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Dashboards and alerts. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ telemetry schema/data dictionary. — _No full data dictionary_
+- [ ] **DOCUMENTED** (EX-007) dashboard definitions. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **DOCUMENTED** (EX-007) alert rules plus runbooks. — _ops/alerts.json, ops/dashboard.json, docs/INCIDENT_SEVERITY.md_
+- [ ] **PARTIAL** (EX-004) ⟲ trace/log correlation examples. — _No correlation examples_
+- [ ] **OPEN** (EX-001) ⟲ cardinality/privacy validation report. — _No cardinality/privacy report_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C25 — Retry/backoff/circuit-breaker policy [P2]
+
+Modules: `production/coordination.py`, `production/controller.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define retry policy independently for GAP-09, policy service, state store, scheduler, elasticity, audit sink, and optional observability backends. — _One generic RetryPolicy; none per dependency_
+- [ ] **OPEN** (EX-001) ⟲ Classify operations by idempotency and side-effect safety before enabling automatic retry. — _No idempotency classification of operations_
+- [ ] **PARTIAL** (EX-004) ⟲ Use exponential backoff with jitter, maximum attempts/elapsed time, and a global retry budget to prevent retry storms. — _No global retry budget_
+- [ ] **PARTIAL** (EX-004) ⟲ Honor deadlines/cancellation from upstream requests and do not continue obsolete work indefinitely. — _No upstream cancellation propagation_
+- [ ] **PARTIAL** (EX-004) ⟲ Define circuit-breaker open/half-open/closed thresholds and minimum probe behavior. — _No minimum-probe behaviour test_
+- [ ] **PARTIAL** (EX-004) ⟲ Ensure breaker-open behavior maps to a conservative ceiling for safety-critical dependencies. — _Breaker-open to conservative ceiling not directly tested_
+- [ ] **OPEN** (EX-001) ⟲ Apply queue and concurrency limits so a slow dependency cannot exhaust workers or memory. — _No queue/concurrency limits_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose retries, breaker state, rejected work, timeout rate, and dependency saturation. — _No retry/breaker-state/saturation metrics_
+- [ ] **PARTIAL** (EX-004) ⟲ Test cascading outages and recovery to prove breakers prevent amplification while allowing controlled reconnection. — _No cascading-outage test_
+- [ ] **OPEN** (EX-001) ⟲ Verify retry configuration itself is policy/config validated and cannot be changed to infinite/unbounded values. — _RetryPolicy parameters not validated_
+- [ ] **DOCUMENTED** Enumerate dependency, process, host, node, network, site, storage, clock, and control-plane failure modes relevant to the component. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **EVIDENCED** Define retryable versus terminal errors and prohibit retries for non-idempotent operations unless guarded by idempotency keys or transactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use bounded exponential backoff with jitter and explicit retry budgets; never retry indefinitely. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define circuit-breaker thresholds and safe open-state behavior for failing dependencies. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify degraded operation for each noncritical dependency and fail-closed behavior for safety-critical dependency loss. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Bound all queues, buffers, caches, concurrent tasks, and in-flight requests to prevent resource-exhaustion cascades. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify restart, replay, resume, reconciliation, and duplicate-event semantics. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Define recovery time objective and recovery point objective where durable state is involved. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-007) Provide automated stall detection and liveness/readiness transitions with hysteresis to avoid flapping. — _stall detection implemented; readiness has no anti-flap hysteresis yet_
+- [ ] **EVIDENCED** Run deterministic fault-injection experiments and retain machine-readable evidence for each documented failure mode. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Retry/backoff/circuit-breaker policy. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** failure-mode and effects analysis. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** ⟲ retry/circuit-breaker specification. — _Specification is a document_
+- [ ] **PARTIAL** (EX-004) ⟲ fault-injection report. — _No fault-injection report artefact_
+- [ ] **DOCUMENTED** RTO/RPO or recovery objective evidence. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** degraded-mode runbook. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C26 — Partition/reconnect semantics [P2]
+
+Modules: `production/coordination.py` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define which decisions a disconnected edge node may make autonomously and which require central authority. — _Autonomous vs central decision split undefined_
+- [ ] **PARTIAL** (EX-004) ⟲ Define validity lifetime for cached policy, calibration, trust roots, ownership leases, and last trusted telemetry during disconnection. — _No validity lifetime for policy/trust roots/leases_
+- [ ] **EVIDENCED** Ensure loss of central connectivity cannot implicitly expand local capacity. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define local durable state and monotonic revision rules needed to continue safely offline. — _No offline durable-state rules tested_
+- [ ] **OPEN** (EX-001) ⟲ Handle local GAP-09 telemetry availability separately from central scheduler/policy reachability. — _Local telemetry vs central reachability not separated_
+- [ ] **OPEN** (EX-001) ⟲ Define how local admissions are journaled for later reconciliation. — _No local admission journal_
+- [ ] **PARTIAL** (EX-004) ⟲ On reconnect, compare policy revisions, ownership generations, node incarnation, and decision history before resuming central control. — _Reconnect does not compare revisions/generations_
+- [ ] **PARTIAL** (EX-004) ⟲ Resolve conflicts deterministically with safety constraints taking precedence over utilization optimization. — _Min-bound rule only_
+- [ ] **OPEN** (EX-001) ⟲ Test long partitions, repeated flap, simultaneous local/central updates, clock drift, stale trust roots, and reconnection storms. — _No long-partition/flap/reconnect-storm tests_
+- [ ] **OPEN** (EX-001) ⟲ Produce a reconnect audit report showing reconciled state and any rejected/stale operations. — _No reconnect audit report_
+- [ ] **DOCUMENTED** Enumerate dependency, process, host, node, network, site, storage, clock, and control-plane failure modes relevant to the component. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **EVIDENCED** Define retryable versus terminal errors and prohibit retries for non-idempotent operations unless guarded by idempotency keys or transactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use bounded exponential backoff with jitter and explicit retry budgets; never retry indefinitely. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define circuit-breaker thresholds and safe open-state behavior for failing dependencies. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify degraded operation for each noncritical dependency and fail-closed behavior for safety-critical dependency loss. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Bound all queues, buffers, caches, concurrent tasks, and in-flight requests to prevent resource-exhaustion cascades. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify restart, replay, resume, reconciliation, and duplicate-event semantics. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Define recovery time objective and recovery point objective where durable state is involved. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-007) Provide automated stall detection and liveness/readiness transitions with hysteresis to avoid flapping. — _stall detection implemented; readiness has no anti-flap hysteresis yet_
+- [ ] **EVIDENCED** Run deterministic fault-injection experiments and retain machine-readable evidence for each documented failure mode. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Partition/reconnect semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** failure-mode and effects analysis. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** ⟲ retry/circuit-breaker specification. — _Specification is a document_
+- [ ] **PARTIAL** (EX-004) ⟲ fault-injection report. — _No fault-injection report_
+- [ ] **DOCUMENTED** RTO/RPO or recovery objective evidence. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** degraded-mode runbook. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C27 — Clock-source/time-service strategy [P2]
+
+Modules: `production/clock.py` · tests: 2 passing
+
+- [ ] **EVIDENCED** Use monotonic time for elapsed-age calculations within a process and authenticated wall-clock only where cross-system timestamps require it. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define acceptable clock skew for telemetry, signatures, policy expiry, ownership leases, and audit timestamps separately. — _Single skew limit; none per purpose_
+- [ ] **EVIDENCED** Detect wall-clock jumps forward/backward and prevent them from making stale evidence appear fresh. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Define behavior when NTP/PTP/time-attestation is unavailable or loses trust. — _NTP/PTP handling unspecified_
+- [ ] **PARTIAL** (EX-004) ⟲ Carry both source observed-at and local receive-at timestamps when evaluating cross-node freshness. — _Receive timestamps not tested end-to-end_
+- [ ] **PARTIAL** (EX-004) ⟲ Prevent replay acceptance after restart by persisting monotonic source sequence/revision state where available. — _No restart replay test in c27_
+- [ ] **PARTIAL** (EX-004) ⟲ Expose clock source, sync status, estimated offset/error, and last trusted sync in health output. — _Offset/error estimate not exposed_
+- [ ] **OPEN** (EX-007) ⟲ Alert when time uncertainty exceeds the safety envelope even if the process remains otherwise healthy. — _No clock-uncertainty alert_
+- [ ] **PARTIAL** (EX-004) ⟲ Test leap/step adjustments, VM suspend/resume, DST-independent UTC behavior, extreme skew, and service loss. — _No leap/suspend/DST tests_
+- [ ] **OPEN** (EX-001) ⟲ Document every algorithm that depends on time and which clock it uses. — _No list of time-dependent algorithms and clocks_
+- [ ] **DOCUMENTED** Enumerate dependency, process, host, node, network, site, storage, clock, and control-plane failure modes relevant to the component. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **EVIDENCED** Define retryable versus terminal errors and prohibit retries for non-idempotent operations unless guarded by idempotency keys or transactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use bounded exponential backoff with jitter and explicit retry budgets; never retry indefinitely. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define circuit-breaker thresholds and safe open-state behavior for failing dependencies. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify degraded operation for each noncritical dependency and fail-closed behavior for safety-critical dependency loss. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Bound all queues, buffers, caches, concurrent tasks, and in-flight requests to prevent resource-exhaustion cascades. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify restart, replay, resume, reconciliation, and duplicate-event semantics. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Define recovery time objective and recovery point objective where durable state is involved. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-007) Provide automated stall detection and liveness/readiness transitions with hysteresis to avoid flapping. — _stall detection implemented; readiness has no anti-flap hysteresis yet_
+- [ ] **EVIDENCED** Run deterministic fault-injection experiments and retain machine-readable evidence for each documented failure mode. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Clock-source/time-service strategy. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** failure-mode and effects analysis. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** ⟲ retry/circuit-breaker specification. — _Specification is a document_
+- [ ] **PARTIAL** (EX-004) ⟲ fault-injection report. — _No fault-injection report_
+- [ ] **DOCUMENTED** RTO/RPO or recovery objective evidence. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** degraded-mode runbook. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C28 — Secret/key isolation model [P2]
+
+Modules: `production/keys.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Issue separate workload/service identities for telemetry read, policy read, state write, scheduler publish, audit write, and observability export capabilities. — _Key capabilities, not separate workload identities_
+- [ ] **OPEN** (EX-001) ⟲ Deny generic ambient credentials that grant unrelated storage/network/control-plane privileges. — _Deployment/IAM concern_
+- [ ] **PARTIAL** (EX-004) ⟲ Use short-lived credentials or managed identity where supported, with automated rotation and revocation. — _No short-lived managed credentials_
+- [ ] **PARTIAL** (EX-003) Protect signing keys/trust roots in dedicated key-management/HSM-backed systems where appropriate. — _HMAC, not asymmetric_
+- [ ] **OPEN** (EX-001) ⟲ Encrypt network traffic to GAP-09, GAP-11, policy, state, scheduler, elasticity, and audit services. — _No TLS in code_
+- [ ] **OPEN** (EX-001) ⟲ Encrypt sensitive local persisted state or diagnostic bundles when they contain topology/security metadata. — _No encryption of persisted state_
+- [ ] **OPEN** (EX-001) ⟲ Define secret bootstrap without embedding credentials in the artifact, source tree, ordinary environment dump, or logs. — _No secret bootstrap_
+- [ ] **OPEN** (EX-001) ⟲ Create explicit egress/ingress allowlists for the GAP-10 service identity. — _No egress/ingress allowlists_
+- [ ] **PARTIAL** (EX-004) ⟲ Test credential expiry, rotation, revocation, wrong audience, privilege escalation attempts, and secret-scraping diagnostics. — _No wrong-audience test_
+- [ ] **OPEN** (EX-007) ⟲ Continuously inventory granted permissions and alert on privilege drift from the approved capability model. — _No privilege-drift alert_
+- [ ] **DOCUMENTED** Define assets, trust boundaries, identities, attacker capabilities, abuse cases, and security invariants in the GAP-10 threat model. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** Use workload- or service-scoped identity with least privilege and deny ambient filesystem, network, device, and secret authority. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Authenticate every control-plane peer before accepting safety-relevant data or commands. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Authorize every privileged operation against explicit capabilities or roles; authentication alone is insufficient. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-003) Use modern authenticated transport and managed key rotation; reject insecure downgrade paths. — _message-level HMAC implemented; transport TLS is deployment scope_
+- [ ] **EVIDENCED** Define revocation behavior and maximum exposure window for compromised credentials or signing keys. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Protect against replay with bounded freshness, nonce/sequence/revision checks, and monotonic state where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Keep raw secrets out of logs, metrics, traces, crash dumps, diagnostic bundles, and normal configuration files. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit tamper-evident audit records for authentication failures, authorization denials, trust changes, and administrative actions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Run adversarial tests for spoofing, replay, privilege escalation, parser abuse, resource exhaustion, and malicious downgrade attempts. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Secret/key isolation model. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ threat-model update. — _No threat-model update document_
+- [ ] **DOCUMENTED** identity/capability matrix. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **DOCUMENTED** key/secret lifecycle runbook. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-004) ⟲ adversarial test report. — _Adversarial tests; no report artefact_
+- [ ] **EVIDENCED** tamper-evident audit evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C29 — End-to-end integration test harness [P3]
+
+Modules: `tests/harness.py`, `tests/test_prod_p3.py` · tests: 2 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Construct a real or protocol-faithful path from GAP-09 telemetry through GAP-10 decision/state to scheduler and elasticity enforcement. — _Ends at in-process reference stand-ins_
+- [ ] **PARTIAL** (EX-004) ⟲ Use the same schemas, authentication modes, retry policies, and version negotiation as production rather than test-only shortcuts. — _Not production transports/auth_
+- [ ] **PARTIAL** (EX-004) ⟲ Cover nominal, elevated, critical, emergency, recovery, stale, future, replayed, malformed, and forged telemetry. — _e2e lacks future/replayed/malformed scenarios_
+- [ ] **OPEN** (EX-001) ⟲ Cover power-only, battery-only, temperature-only, combined-constraint, and shared-domain constraint cases. — _No power-only/battery-only/shared-domain e2e cases_
+- [ ] **PARTIAL** (EX-004) ⟲ Assert both GAP-10 output and the final applied scheduler/elasticity capacity. — _Elasticity result barely asserted_
+- [ ] **PARTIAL** (EX-007) ⟲ Inject downstream rejection/timeouts and verify GAP-10 health/explain/alerts show enforcement mismatch. — _No downstream timeout injection_
+- [ ] **OPEN** (EX-001) ⟲ Exercise policy activation/rollback and controller failover while decisions are in flight. — _No in-flight activation/failover e2e test_
+- [ ] **OPEN** (EX-001) ⟲ Capture end-to-end decision latency and propagation/enforcement lag. — _No e2e latency/enforcement-lag capture_
+- [ ] **PARTIAL** (EX-004) ⟲ Run at least one supported cross-version compatibility combination in CI. — _No cross-version CI run_
+- [ ] **PARTIAL** (EX-004) ⟲ Publish machine-readable evidence linking scenarios to C030/C083 and build/policy versions. — _No scenario-to-build linkage test_
+- [ ] **EVIDENCED** Define a hermetic test topology and deterministic fixture set with pinned dependency versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Cover nominal, boundary, invalid, stale, replayed, degraded, emergency, recovery, and rollback scenarios. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Ensure failures are asserted using machine-readable outputs rather than brittle log-string matching. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use seeded randomness where fuzzing or randomized scheduling is employed so failures can be reproduced. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Capture code version, policy revision, schema versions, test seed, environment, and hardware class in results. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Separate unit, contract, integration, concurrency, fault-injection, performance, and certification suites. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Fail CI on skipped mandatory safety tests unless an explicit, approved waiver is attached. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **PARTIAL** (EX-006) Retain artifacts such as traces, input fixtures, output decisions, metrics, and crash data for failed runs. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-006) Define pass/fail thresholds before execution and block releases on regression beyond approved budgets. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Emit a machine-readable acceptance report that links every result to requirement and build provenance. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to End-to-end integration test harness. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** ⟲ test plan and coverage matrix. — _Evidence documents_
+- [ ] **DOCUMENTED** ⟲ deterministic fixtures/seeds. — _Seeded fixtures_
+- [ ] **DOCUMENTED** ⟲ machine-readable test results. — _evidence/TEST_REPORT.json_
+- [ ] **OPEN** (EX-001) ⟲ failure artifacts/minimized regressions. — _No minimised regression artefacts_
+- [ ] **DOCUMENTED** ⟲ requirements traceability report. — _evidence/CHECKLIST_EVIDENCE.md_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C30 — Contract/schema validator tests [P3]
+
+Modules: `production/schema_validate.py`, `tests/test_prod_p3.py` · tests: 5 passing
+
+- [ ] **EVIDENCED** Validate every bundled positive fixture against its declared Draft 2020-12 schema in CI. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Create negative fixtures for missing required fields, wrong types, extra forbidden fields, out-of-range values, NaN/Infinity encodings, and invalid enums. — _Few negative contract cases_
+- [ ] **PARTIAL** (EX-004) ⟲ Add property/fuzz generation for temperatures, power values, timestamps, IDs, policy thresholds, and nested payload sizes. — _Random mutation fuzz only_
+- [ ] **PARTIAL** (EX-004) ⟲ Limit parser depth, string length, array cardinality, numeric magnitude, and total message size. — _No depth/size/cardinality limit tests_
+- [ ] **OPEN** (EX-001) ⟲ Test unknown minor fields/version evolution according to the declared compatibility policy. — _No unknown-field/version-evolution tests_
+- [ ] **EVIDENCED** Test canonicalization/signature behavior so semantically altered policy cannot verify against a signed digest. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) ⟲ Fuzz timestamp parsing, Unicode identifiers, duplicate JSON keys if the parser permits them, and malformed encodings. — _No timestamp/Unicode/duplicate-key fuzzing_
+- [ ] **OPEN** (EX-001) ⟲ Run sanitizers/runtime hardening tools appropriate to any non-Python boundary libraries used later. — _No sanitizers (stdlib only)_
+- [ ] **OPEN** (EX-001) ⟲ Retain minimized crashing/rejected corpus inputs as regression fixtures. — _No retained minimised corpus_
+- [ ] **PARTIAL** (EX-004) ⟲ Block release on schema drift where code accepts data the published schema rejects or vice versa. — _No schema-drift release gate_
+- [ ] **EVIDENCED** Define a hermetic test topology and deterministic fixture set with pinned dependency versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Cover nominal, boundary, invalid, stale, replayed, degraded, emergency, recovery, and rollback scenarios. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Ensure failures are asserted using machine-readable outputs rather than brittle log-string matching. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use seeded randomness where fuzzing or randomized scheduling is employed so failures can be reproduced. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Capture code version, policy revision, schema versions, test seed, environment, and hardware class in results. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Separate unit, contract, integration, concurrency, fault-injection, performance, and certification suites. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Fail CI on skipped mandatory safety tests unless an explicit, approved waiver is attached. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **PARTIAL** (EX-006) Retain artifacts such as traces, input fixtures, output decisions, metrics, and crash data for failed runs. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-006) Define pass/fail thresholds before execution and block releases on regression beyond approved budgets. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Emit a machine-readable acceptance report that links every result to requirement and build provenance. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Contract/schema validator tests. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** ⟲ test plan and coverage matrix. — _Evidence documents_
+- [ ] **DOCUMENTED** ⟲ deterministic fixtures/seeds. — _Seeded fixtures_
+- [ ] **DOCUMENTED** ⟲ machine-readable test results. — _evidence/TEST_REPORT.json_
+- [ ] **OPEN** (EX-001) ⟲ failure artifacts/minimized regressions. — _No minimised regression artefacts_
+- [ ] **DOCUMENTED** ⟲ requirements traceability report. — _evidence/CHECKLIST_EVIDENCE.md_
+- [ ] **DOCUMENTED** ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability matrix artefact_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C31 — Concurrency/race test suite [P3]
+
+Modules: `tests/test_prod_p3.py` · tests: 4 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Exercise concurrent telemetry updates for the same node and prove deterministic last-valid-sample/replay semantics. — _No concurrent same-node replay race test_
+- [ ] **PARTIAL** (EX-004) ⟲ Race policy revision activation against telemetry update and ensure one complete policy revision is used per decision. — _Activation races only, not activation vs decision_
+- [ ] **PARTIAL** (EX-004) ⟲ Race state persistence against process shutdown/restart and verify crash-consistent recovery. — _Crash simulated; no persistence-vs-shutdown race_
+- [ ] **OPEN** (EX-001) Race leader failover/publication and verify downstream fencing rejects stale owners. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ Race duplicate scheduler publications and prove idempotent applied capacity. — _No concurrent duplicate publication test_
+- [ ] **PARTIAL** (EX-004) ⟲ Race node deletion/recreation using the same display name and ensure old state cannot attach to the new node incarnation. — _Sequential recreation; no incarnation id_
+- [ ] **OPEN** (EX-001) ⟲ Exercise thousands of nodes updating concurrently to reveal lock contention and shared-state corruption. — _No thousands-of-nodes concurrency test_
+- [ ] **PARTIAL** (EX-004) ⟲ Use deterministic schedulers/model-checking or repeated seeded stress where practical. — _Threads unseeded; no model checking_
+- [ ] **OPEN** (EX-001) ⟲ Instrument lock wait, queue depth, transaction conflicts, CAS retries, and ownership conflicts. — _No lock-wait/queue-depth/CAS-retry metrics_
+- [ ] **OPEN** (EX-001) ⟲ Retain exact seed/interleaving evidence for every discovered race regression. — _No interleaving capture_
+- [ ] **EVIDENCED** Define a hermetic test topology and deterministic fixture set with pinned dependency versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Cover nominal, boundary, invalid, stale, replayed, degraded, emergency, recovery, and rollback scenarios. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Ensure failures are asserted using machine-readable outputs rather than brittle log-string matching. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use seeded randomness where fuzzing or randomized scheduling is employed so failures can be reproduced. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Capture code version, policy revision, schema versions, test seed, environment, and hardware class in results. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Separate unit, contract, integration, concurrency, fault-injection, performance, and certification suites. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Fail CI on skipped mandatory safety tests unless an explicit, approved waiver is attached. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **PARTIAL** (EX-006) Retain artifacts such as traces, input fixtures, output decisions, metrics, and crash data for failed runs. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-006) Define pass/fail thresholds before execution and block releases on regression beyond approved budgets. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Emit a machine-readable acceptance report that links every result to requirement and build provenance. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Concurrency/race test suite. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ test plan and coverage matrix. — _No C31 test plan_
+- [ ] **PARTIAL** (EX-004) ⟲ deterministic fixtures/seeds. — _Thread tests nondeterministic_
+- [ ] **DOCUMENTED** ⟲ machine-readable test results. — _evidence/TEST_REPORT.json_
+- [ ] **OPEN** (EX-001) ⟲ failure artifacts/minimized regressions. — _No failure artefacts retained_
+- [ ] **PARTIAL** (EX-004) ⟲ requirements traceability report. — _Matrix auto-classified then reviewed; not signed_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C32 — Fault-injection suite [P3]
+
+Modules: `tests/test_prod_p3.py` · tests: 3 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Inject complete and partial loss of each sensor stream, including stuck-high, stuck-low, frozen timestamp, noisy, and implausible values. — _No stuck-high/frozen-timestamp/noisy tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Inject telemetry transport delay, reordering, duplication, corruption, authentication failure, and key rotation mid-stream. — _No reorder/corruption/mid-stream rotation fault test_
+- [ ] **PARTIAL** (EX-004) ⟲ Inject state-store unavailability, latency, partial write, stale replica, corruption, and recovery. — _Store outage only; no latency/partial write_
+- [ ] **OPEN** (EX-001) ⟲ Inject policy service outage, invalid revision, failed signature verification, rollback, and mixed-version response. — _No policy-service outage injection_
+- [ ] **PARTIAL** (EX-004) ⟲ Inject scheduler/elasticity timeout, rejection, partial acknowledgement, and stale enforcement state. — _Scheduler unavailable only_
+- [ ] **PARTIAL** (EX-004) ⟲ Inject controller process kill, host reboot, lease loss, split-brain conditions, and rapid failover. — _Simulated restart only_
+- [ ] **PARTIAL** (EX-004) ⟲ Inject network partitions between edge/site/control-plane components and test reconnect reconciliation. — _No reconnect reconciliation test_
+- [ ] **PARTIAL** (EX-004) ⟲ Inject clock jump/time-service loss and validate freshness/lease behavior. — _No c32 clock-jump test (covered in c27)_
+- [ ] **OPEN** (EX-001) ⟲ Assert safety invariants continuously during faults, not only final recovery state. — _No continuous invariant checking_
+- [ ] **OPEN** (EX-001) ⟲ Compare measured detection/recovery time to documented objectives and retain automated evidence. — _No measured detection/recovery time_
+- [ ] **EVIDENCED** Define a hermetic test topology and deterministic fixture set with pinned dependency versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Cover nominal, boundary, invalid, stale, replayed, degraded, emergency, recovery, and rollback scenarios. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Ensure failures are asserted using machine-readable outputs rather than brittle log-string matching. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use seeded randomness where fuzzing or randomized scheduling is employed so failures can be reproduced. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Capture code version, policy revision, schema versions, test seed, environment, and hardware class in results. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Separate unit, contract, integration, concurrency, fault-injection, performance, and certification suites. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Fail CI on skipped mandatory safety tests unless an explicit, approved waiver is attached. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **PARTIAL** (EX-006) Retain artifacts such as traces, input fixtures, output decisions, metrics, and crash data for failed runs. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-006) Define pass/fail thresholds before execution and block releases on regression beyond approved budgets. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Emit a machine-readable acceptance report that links every result to requirement and build provenance. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Fault-injection suite. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ test plan and coverage matrix. — _Matrix not signed off_
+- [ ] **PARTIAL** (EX-004) ⟲ deterministic fixtures/seeds. — _Fault tests unseeded beyond fuzz_
+- [ ] **DOCUMENTED** ⟲ machine-readable test results. — _evidence/TEST_REPORT.json_
+- [ ] **OPEN** (EX-001) ⟲ failure artifacts/minimized regressions. — _No failure artefacts_
+- [ ] **PARTIAL** (EX-004) ⟲ requirements traceability report. — _Traceability not signed off_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C33 — Benchmark/soak/fleet-scale harness [P3]
+
+Modules: `tools/bench.py` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define representative fleet tiers such as 1, 100, 1k, 10k, and target maximum nodes with realistic sensor rates. — _Sandbox 50-2000 nodes only_
+- [ ] **PARTIAL** (EX-004) ⟲ Benchmark decision path latency independent of downstream network latency and also end-to-end applied-ceiling latency. — _Ingest latency only; no applied-ceiling latency_
+- [ ] **PARTIAL** (EX-004) ⟲ Measure p50/p95/p99/max for telemetry ingest, decision compute, state persistence, policy lookup, publish, and acknowledgement. — _No max or per-stage metrics_
+- [ ] **PARTIAL** (EX-004) ⟲ Measure CPU, RSS, allocation rate, garbage collection, file descriptors, threads/tasks, and network/storage throughput. — _CPU and tracemalloc only_
+- [ ] **PARTIAL** (EX-004) ⟲ Run sustained soak long enough to reveal memory/handle leaks, state growth, metric-cardinality growth, and timer drift. — _Short sandbox soak_
+- [ ] **OPEN** (EX-001) ⟲ Run burst scenarios representing site power/cooling events where many nodes change band simultaneously. — _No burst band-change scenario_
+- [ ] **OPEN** (EX-001) ⟲ Run overload until admission/backpressure activates and verify graceful degradation without unsafe stale capacity. — _No overload/backpressure mechanism_
+- [ ] **OPEN** (EX-001) ⟲ Measure startup/restart recovery time at realistic state volumes. — _No restart recovery-time at volume_
+- [ ] **OPEN** (EX-001) ⟲ Quantify GAP-10 controller power/CPU overhead on constrained edge hardware. — _No edge hardware measurement_
+- [ ] **PARTIAL** (EX-004) ⟲ Publish release-blocking regression thresholds and compare every candidate build to a pinned baseline. — _No pinned baseline comparison_
+- [ ] **EVIDENCED** Define reproducible workload models, fleet sizes, sensor rates, decision rates, and hardware profiles. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Measure p50, p95, p99, maximum, and timeout-rate latency rather than averages alone. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Measure CPU, memory, allocation rate, queue depth, storage I/O, network I/O, and power overhead. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Benchmark startup, steady state, burst, overload, scale-out, scale-in, reconnect, and recovery. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Detect memory leaks, unbounded cache growth, descriptor leaks, task leaks, and queue accumulation during soak tests. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Set explicit saturation signals and hard resource limits that trigger safe load shedding before process failure. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Compare optimized and reference paths against golden semantic outputs to ensure optimization never changes safety behavior. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define hardware-normalized baselines so regressions can be compared across CPU architectures and node classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Publish benchmark methodology and raw result artifacts with build and environment provenance. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Block release when approved startup, density, throughput, resource, power, or tail-latency budgets regress. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **PARTIAL** (EX-006) Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Benchmark/soak/fleet-scale harness. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ benchmark methodology. — _No methodology doc_
+- [ ] **DOCUMENTED** ⟲ raw benchmark results. — _evidence/BENCH_2000x5.json, SOAK_200x200.json_
+- [ ] **PARTIAL** (EX-004) ⟲ baseline and regression thresholds. — _No pinned baseline_
+- [ ] **PARTIAL** (EX-004) ⟲ soak/leak report. — _Sandbox soak only_
+- [ ] **OPEN** (EX-001) ⟲ capacity/saturation model. — _No capacity/saturation model_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C34 — Cross-platform/hardware compatibility matrix [P3]
+
+Modules: `ops/compatibility_matrix.json` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ List supported CPU architectures, OS/runtime versions, Python/runtime versions, hypervisors/container modes, and edge hardware classes. — _Matrix mostly unverified_
+- [ ] **PARTIAL** (EX-004) ⟲ List supported sensor providers/drivers and the exact telemetry capabilities required from each. — _Sensor providers unverified_
+- [ ] **PARTIAL** (EX-004) ⟲ List supported GAP-09/GAP-11 schema versions plus scheduler/elasticity/state-store/policy-service versions. — _State-store/policy-service versions absent_
+- [ ] **OPEN** (EX-001) ⟲ Define minimum firmware/BIOS/BMC/driver versions when sensor correctness depends on them. — _No firmware/BIOS/BMC versions_
+- [ ] **OPEN** (EX-001) ⟲ Automate at least smoke/contract tests for every supported matrix row and deeper tests for tier-1 combinations. — _No per-row compatibility tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Mark unsupported/experimental combinations explicitly and prevent silent production enablement. — _No code-level prevention of unverified combos_
+- [ ] **OPEN** (EX-001) ⟲ Test endian/word-size/numeric precision differences where relevant across architectures. — _No cross-arch precision tests_
+- [ ] **OPEN** (EX-001) ⟲ Test suspend/resume, virtualization clock behavior, and device hot-plug on platforms that support them. — _No suspend/hot-plug tests_
+- [ ] **PARTIAL** (EX-004) ⟲ Publish deprecation dates and migration guidance before dropping a supported combination. — _No deprecation dates/migration guidance_
+- [ ] **OPEN** (EX-001) ⟲ Bind each release acceptance report to the exact compatibility matrix revision used for certification. — _Acceptance report not bound to matrix revision_
+- [ ] **EVIDENCED** Define a hermetic test topology and deterministic fixture set with pinned dependency versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Cover nominal, boundary, invalid, stale, replayed, degraded, emergency, recovery, and rollback scenarios. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Ensure failures are asserted using machine-readable outputs rather than brittle log-string matching. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use seeded randomness where fuzzing or randomized scheduling is employed so failures can be reproduced. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Capture code version, policy revision, schema versions, test seed, environment, and hardware class in results. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Separate unit, contract, integration, concurrency, fault-injection, performance, and certification suites. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Fail CI on skipped mandatory safety tests unless an explicit, approved waiver is attached. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **PARTIAL** (EX-006) Retain artifacts such as traces, input fixtures, output decisions, metrics, and crash data for failed runs. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-006) Define pass/fail thresholds before execution and block releases on regression beyond approved budgets. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **EVIDENCED** Emit a machine-readable acceptance report that links every result to requirement and build provenance. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Cross-platform/hardware compatibility matrix. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ test plan and coverage matrix. — _Traceability not signed off_
+- [ ] **PARTIAL** (EX-004) ⟲ deterministic fixtures/seeds. — _No compat fixtures per row_
+- [ ] **DOCUMENTED** ⟲ machine-readable test results. — _evidence/TEST_REPORT.json_
+- [ ] **OPEN** (EX-001) ⟲ failure artifacts/minimized regressions. — _No failure artefacts_
+- [ ] **PARTIAL** (EX-004) ⟲ requirements traceability report. — _Traceability not signed off_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C35 — SBOM, dependency pinning, and vulnerability policy [P3]
+
+Modules: `SBOM.cdx.json`, `docs/DEPENDENCY_POLICY.md` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Generate CycloneDX/SPDX or equivalent SBOM covering direct, transitive, build, and runtime dependencies. — _SBOM covers runtime only_
+- [ ] **PARTIAL** (EX-004) ⟲ Pin dependency versions/hashes and prohibit unconstrained floating production dependencies. — _No hash pinning enforced_
+- [ ] **PARTIAL** (EX-004) ⟲ Record license, source, maintainer, support status, and end-of-life date where known. — _No maintainer/support/EOL fields_
+- [ ] **PARTIAL** (EX-004) ⟲ Define approved vulnerability sources and automated scanning cadence. — _Scanning not automated_
+- [ ] **DOCUMENTED** ⟲ Classify vulnerability response SLA by exploitability/severity and whether the dependency is reachable in GAP-10. — _SLA in DEPENDENCY_POLICY.md_
+- [ ] **OPEN** (EX-001) ⟲ Define emergency patch path that preserves signing, testing, rollback, and audit requirements. — _No emergency patch path_
+- [ ] **PARTIAL** (EX-004) ⟲ Prohibit unsupported/EOL dependencies in release builds absent an approved expiring waiver. — _EOL rule not build-enforced_
+- [ ] **OPEN** (EX-001) ⟲ Verify dependency integrity and provenance before build use. — _No dependency integrity verification_
+- [ ] **OPEN** (EX-001) ⟲ Continuously compare deployed dependency inventory with the release SBOM to detect drift. — _No deployed-inventory drift detection_
+- [ ] **OPEN** (EX-001) ⟲ Include SBOM/scanner results in machine-readable production-gate evidence. — _No scanner results_
+- [ ] **EVIDENCED** Define immutable build inputs and pin toolchain, dependency, schema, and packaging versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Generate an SBOM and dependency/license inventory for every release artifact. — _SBOM.cdx.json + docs/DEPENDENCY_POLICY.md + import test_
+- [ ] **EVIDENCED** Generate checksums, signatures, build provenance, and reproducibility metadata. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Verify release artifacts in a clean environment before promotion. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-004) Define compatibility gates against supported GAP-09, GAP-11, scheduler, elasticity, state-store, and runtime versions. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** Use staged promotion with canary cohorts selected by site and hardware class. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define automated rollback triggers using safety, error, latency, and enforcement-health signals. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve previous known-good artifacts and policy revisions for bounded rollback. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Publish machine-readable acceptance evidence and human-readable release notes. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Require explicit production approval after all mandatory architecture, security, resilience, performance, observability, and operations gates pass. — _requires formal approval of the exact artefact_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to SBOM, dependency pinning, and vulnerability policy. — _SBOM.cdx.json + docs/DEPENDENCY_POLICY.md + import test_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ SBOM/provenance/signature bundle. — _HMAC provenance; SBOM not in signed bundle_
+- [ ] **PARTIAL** (EX-004) ⟲ reproducible build report. — _Same-sandbox double build only_
+- [ ] **PARTIAL** (EX-004) compatibility evidence. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) ⟲ rollout/rollback evidence. — _In-process rollout test only_
+- [ ] **OPEN** (EX-001) signed release acceptance record. — _requires formal approval of the exact artefact_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C36 — Artifact signing/provenance and reproducible release build [P3]
+
+Modules: `tools/build_release.py` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Build from declared source revision and pinned toolchain in a clean, isolated environment. — _No isolated build/pinned toolchain_
+- [ ] **PARTIAL** (EX-004) ⟲ Generate a deterministic manifest of every packaged file and SHA-256 or stronger digest. — _Determinism tested via zip digest only_
+- [ ] **PARTIAL** (EX-004) ⟲ Sign the release artifact and manifest with an approved release identity/key. — _HMAC test key, not release identity_
+- [ ] **PARTIAL** (EX-004) ⟲ Produce SLSA-style or equivalent build provenance identifying source, builder, inputs, invocation, and output digests. — _Not SLSA; no builder isolation_
+- [ ] **PARTIAL** (EX-004) ⟲ Eliminate nondeterministic timestamps/order/metadata where feasible and document remaining reproducibility limits. — _Reproducibility limits not documented_
+- [ ] **PARTIAL** (EX-004) ⟲ Rebuild independently and compare artifact digests or normalized content according to the reproducibility target. — _Same-host rebuild only_
+- [ ] **PARTIAL** (EX-004) ⟲ Verify signatures/provenance before deployment and fail closed on mismatch or unknown signer. — _verify() not invoked at deploy_
+- [ ] **PARTIAL** (EX-004) ⟲ Bind schemas, fixtures, policy defaults, checklist/evidence, changelog, and VERSION to the same release revision. — _No binding test of schemas/fixtures to revision_
+- [ ] **OPEN** (EX-001) ⟲ Archive source, build recipe, SBOM, test evidence, signatures, and provenance for later incident reconstruction. — _No archive process_
+- [ ] **OPEN** (EX-001) ⟲ Block promotion unless artifact verification succeeds in the target deployment environment. — _No promotion block in target environment_
+- [ ] **EVIDENCED** Define immutable build inputs and pin toolchain, dependency, schema, and packaging versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Generate an SBOM and dependency/license inventory for every release artifact. — _SBOM.cdx.json + docs/DEPENDENCY_POLICY.md + import test_
+- [ ] **EVIDENCED** Generate checksums, signatures, build provenance, and reproducibility metadata. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Verify release artifacts in a clean environment before promotion. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-004) Define compatibility gates against supported GAP-09, GAP-11, scheduler, elasticity, state-store, and runtime versions. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** Use staged promotion with canary cohorts selected by site and hardware class. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define automated rollback triggers using safety, error, latency, and enforcement-health signals. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve previous known-good artifacts and policy revisions for bounded rollback. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Publish machine-readable acceptance evidence and human-readable release notes. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Require explicit production approval after all mandatory architecture, security, resilience, performance, observability, and operations gates pass. — _requires formal approval of the exact artefact_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Artifact signing/provenance and reproducible release build. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ SBOM/provenance/signature bundle. — _SBOM unsigned_
+- [ ] **PARTIAL** (EX-004) ⟲ reproducible build report. — _Same-sandbox rebuild_
+- [ ] **PARTIAL** (EX-004) compatibility evidence. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) ⟲ rollout/rollback evidence. — _In-process rollout test only_
+- [ ] **OPEN** (EX-001) signed release acceptance record. — _requires formal approval of the exact artefact_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C37 — Canary/staged rollout controller [P3]
+
+Modules: `production/rollout.py` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define rollout cohorts by site, hardware class, sensor provider, battery/cooling class, and criticality to avoid correlated unknowns. — _Cohorts by site/hw only_
+- [ ] **PARTIAL** (EX-004) Separate code rollout from policy/calibration rollout while supporting coordinated compatibility gates. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) ⟲ Define pre-canary, canary, staged, broad, and complete phases with explicit entry/exit criteria. — _No named phases/entry-exit criteria_
+- [ ] **OPEN** (EX-001) ⟲ Monitor safety-state distribution, excluded capacity, telemetry rejection, enforcement lag, errors, latency, and resource use per cohort. — _No per-cohort metrics_
+- [ ] **PARTIAL** (EX-004) ⟲ Use automated rollback triggers for statistically/materially significant regressions and hard safety invariant violations. — _Guard-based rollback; no statistical triggers_
+- [ ] **PARTIAL** (EX-004) ⟲ Ensure rollback restores a known-good artifact plus compatible policy/schema/state migration path. — _No artifact/schema rollback_
+- [ ] **OPEN** (EX-001) ⟲ Pause rollout on observability blindness or inability to verify applied ceilings. — _No observability-blindness pause_
+- [ ] **OPEN** (EX-001) ⟲ Prevent automatic forward rollout from overriding a manually declared incident freeze. — _No incident freeze check_
+- [ ] **PARTIAL** (EX-004) ⟲ Test rollout interruption, controller restart, failed cohort, rollback, and resumed deployment in staging. — _No interruption/restart/resume test_
+- [ ] **OPEN** (EX-001) ⟲ Produce signed rollout evidence showing cohort membership, versions, metrics, decisions, and final disposition. — _Rollout history unsigned_
+- [ ] **EVIDENCED** Define immutable build inputs and pin toolchain, dependency, schema, and packaging versions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Generate an SBOM and dependency/license inventory for every release artifact. — _SBOM.cdx.json + docs/DEPENDENCY_POLICY.md + import test_
+- [ ] **EVIDENCED** Generate checksums, signatures, build provenance, and reproducibility metadata. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Verify release artifacts in a clean environment before promotion. — _hermetic sandbox run; release gating CI not wired_
+- [ ] **PARTIAL** (EX-004) Define compatibility gates against supported GAP-09, GAP-11, scheduler, elasticity, state-store, and runtime versions. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **EVIDENCED** Use staged promotion with canary cohorts selected by site and hardware class. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define automated rollback triggers using safety, error, latency, and enforcement-health signals. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Preserve previous known-good artifacts and policy revisions for bounded rollback. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Publish machine-readable acceptance evidence and human-readable release notes. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Require explicit production approval after all mandatory architecture, security, resilience, performance, observability, and operations gates pass. — _requires formal approval of the exact artefact_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Canary/staged rollout controller. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **PARTIAL** (EX-004) ⟲ SBOM/provenance/signature bundle. — _SBOM unsigned_
+- [ ] **PARTIAL** (EX-004) ⟲ reproducible build report. — _Same-sandbox rebuild_
+- [ ] **PARTIAL** (EX-004) compatibility evidence. — _real GAP-09/GAP-11/SCH-01/PLN-05 builds not available_
+- [ ] **PARTIAL** (EX-004) ⟲ rollout/rollback evidence. — _In-process rollout test only_
+- [ ] **OPEN** (EX-001) signed release acceptance record. — _requires formal approval of the exact artefact_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C38 — Backup/restore/reconstruction runbook [P3]
+
+Modules: `production/store.py`, `docs/RUNBOOK.md` · tests: 2 passing
+
+- [ ] **DOCUMENTED** ⟲ Define which GAP-10 data must be backed up versus reconstructed from authoritative sources. — _RUNBOOK backup section_
+- [ ] **PARTIAL** (EX-004) ⟲ Back up policy metadata, calibration references, ownership/state metadata, audit pointers, and durable node state required for safe recovery. — _Backup covers node state only_
+- [ ] **OPEN** (EX-001) ⟲ Encrypt and integrity-protect backups with separate restore authorization. — _Backup not encrypted; no restore authz_
+- [ ] **DOCUMENTED** Define RPO/RTO and backup frequency based on the safety impact of lost state. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-006) ⟲ Test restore into a clean environment and validate schema/version compatibility before activation. — _No schema/version compatibility check on restore_
+- [ ] **PARTIAL** (EX-004) ⟲ On restore, preserve replay protection and ownership generations so old data cannot resurrect stale authority. — _Replay protection across restore not tested_
+- [ ] **PARTIAL** (EX-004) ⟲ Reconcile restored GAP-10 state with live GAP-09 telemetry and downstream applied scheduler ceilings before reopening placement. — _No downstream reconcile in c38 test_
+- [ ] **DOCUMENTED** ⟲ Define site-disaster recovery where the original state store/coordination service is lost. — _RUNBOOK reconstruction_
+- [ ] **PARTIAL** (EX-004) ⟲ Provide reconstruction mode that starts conservatively when durable data is unavailable rather than fabricating nominal state. — _Conservative start tested via restored store only_
+- [ ] **OPEN** (EX-001) ⟲ Run periodic restore drills and retain evidence that final applied ceilings were verified before service reopening. — _No drill evidence_
+- [ ] **DOCUMENTED** Enumerate dependency, process, host, node, network, site, storage, clock, and control-plane failure modes relevant to the component. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **EVIDENCED** Define retryable versus terminal errors and prohibit retries for non-idempotent operations unless guarded by idempotency keys or transactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use bounded exponential backoff with jitter and explicit retry budgets; never retry indefinitely. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define circuit-breaker thresholds and safe open-state behavior for failing dependencies. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify degraded operation for each noncritical dependency and fail-closed behavior for safety-critical dependency loss. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Bound all queues, buffers, caches, concurrent tasks, and in-flight requests to prevent resource-exhaustion cascades. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Specify restart, replay, resume, reconciliation, and duplicate-event semantics. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Define recovery time objective and recovery point objective where durable state is involved. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-007) Provide automated stall detection and liveness/readiness transitions with hysteresis to avoid flapping. — _stall detection implemented; readiness has no anti-flap hysteresis yet_
+- [ ] **EVIDENCED** Run deterministic fault-injection experiments and retain machine-readable evidence for each documented failure mode. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **DOCUMENTED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Backup/restore/reconstruction runbook. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **DOCUMENTED** failure-mode and effects analysis. — _docs/COMPONENTS.md fail-closed + ADR-0001/0002_
+- [ ] **DOCUMENTED** ⟲ retry/circuit-breaker specification. — _Specification in docs_
+- [ ] **PARTIAL** (EX-004) ⟲ fault-injection report. — _Limited fault injection_
+- [ ] **DOCUMENTED** RTO/RPO or recovery objective evidence. — _docs/RUNBOOK.md_
+- [ ] **DOCUMENTED** degraded-mode runbook. — _docs/RUNBOOK.md_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C39 — Incident severity/paging/escalation definitions [P3]
+
+Modules: `docs/INCIDENT_SEVERITY.md` · tests: 1 passing
+
+- [ ] **PARTIAL** (EX-004) ⟲ Define incident classes for thermal emergency, fleet-wide cooling/power event, stale telemetry, trust/signature attack, policy failure, split-brain, state-store failure, and enforcement mismatch. — _Not all incident classes mapped_
+- [ ] **DOCUMENTED** ⟲ Assign severity based on safety impact, affected capacity/sites, duration, and ability to enforce ceilings—not merely service uptime. — _docs/INCIDENT_SEVERITY.md_
+- [ ] **PARTIAL** (EX-004) ⟲ Define paging targets, acknowledgement objectives, escalation timers, and executive/site escalation where applicable. — _No named paging targets_
+- [ ] **OPEN** (EX-001) ⟲ Assign primary/secondary owning teams for GAP-10, GAP-09, scheduler, facility/cooling, security, and platform dependencies. — _OWNERSHIP all unassigned_
+- [ ] **DOCUMENTED** Provide first-response runbooks with safe containment actions that do not expand capacity accidentally. — _docs/RUNBOOK.md_
+- [ ] **OPEN** (EX-001) ⟲ Define evidence preservation requirements for audit events, decisions, telemetry, policy, state, traces, and deployed artifact versions. — _No evidence-preservation requirements_
+- [ ] **OPEN** (EX-001) ⟲ Create communication templates/status fields for impacted sites and operational stakeholders. — _No communication templates_
+- [ ] **DOCUMENTED** ⟲ Define recovery criteria including verified downstream ceiling convergence, not just GAP-10 process recovery. — _RUNBOOK backup step 5_
+- [ ] **PARTIAL** (EX-004) ⟲ Require post-incident root-cause review and track corrective actions to closure. — _No corrective-action tracking_
+- [ ] **OPEN** (EX-004) Exercise at least one tabletop/game-day scenario for each highest-severity incident class. — _must be run in the target environment_
+- [ ] **OPEN** (EX-001) Assign a named accountable owner plus backup/on-call ownership for the capability. — _requires named people / review_
+- [ ] **DOCUMENTED** Record the architectural decision, alternatives considered, safety rationale, and rejected alternatives. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Maintain a requirements-to-design-to-code-to-test traceability chain. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Track exceptions and waivers with owner, justification, compensating control, expiry, and re-review date. — _requires named people / review_
+- [ ] **OPEN** (EX-001) Define service SLOs, error budgets, escalation objectives, and support commitments. — _governance action by owners_
+- [ ] **OPEN** (EX-001) Schedule periodic access, policy, dependency, configuration, and architecture reviews. — _governance action by owners_
+- [ ] **EVIDENCED** Require change management for safety-critical defaults, thresholds, trust roots, and enforcement semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deprecation and end-of-life policy for schemas, APIs, artifacts, and dependency versions. — _SBOM.cdx.json + docs/DEPENDENCY_POLICY.md + import test_
+- [ ] **PARTIAL** (EX-007) Retain audit evidence according to documented retention and access-control policy. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **OPEN** (EX-001) Require formal production exit approval and prohibit implicit certification based solely on checklist completion claims. — _requires formal approval of the exact artefact_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **EVIDENCED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Incident severity/paging/escalation definitions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **OPEN** (EX-001) approved ADR. — _governance action by owners_
+- [ ] **OPEN** (EX-001) owner/escalation record. — _requires named people / review_
+- [ ] **DOCUMENTED** exception/waiver register. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **OPEN** (EX-001) review minutes/evidence. — _requires named people / review_
+- [ ] **OPEN** (EX-001) signed production exit gate. — _requires formal approval of the exact artefact_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## C40 — Architecture decision record and exception register [P3]
+
+Modules: `docs/ADR.md`, `docs/EXCEPTION_REGISTER.md` · tests: 2 passing
+
+- [ ] **DOCUMENTED** Create an ADR describing GAP-10 responsibility, trust boundaries, data/control flows, state model, enforcement path, and key technology choices. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **DOCUMENTED** ⟲ Document rejected alternatives and safety/performance trade-offs, including why fail-closed and most-restrictive-wins semantics are required. — _docs/ADR.md_
+- [ ] **DOCUMENTED** Link the ADR to canonical contracts, schemas, policy model, state model, threat model, SLOs, and production topology. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **PARTIAL** (EX-001) ⟲ Create a machine-readable/human-readable exception register with unique ID, affected requirement, owner, rationale, compensating control, risk, approval, and expiry. — _Exception register exists; owners unassigned_
+- [ ] **DOCUMENTED** Prohibit permanent waivers; require expiry and explicit re-review. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **DOCUMENTED** Flag exceptions that can increase schedulable capacity as high-risk and require architecture/security/safety approval. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **DOCUMENTED** Review ADR and active exceptions on a defined cadence and upon material dependency/topology/security changes. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **OPEN** (EX-001) Create a production exit checklist covering C001–C100 with evidence links rather than self-attested completion text. — _requires formal approval of the exact artefact_
+- [ ] **DOCUMENTED** Require open P0/P1 gaps and expired high-risk exceptions to block production certification. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **OPEN** (EX-001) ⟲ Sign/date the production decision and retain immutable evidence tying approval to an exact build, policy set, compatibility matrix, and test report. — _No signed production decision_
+- [ ] **OPEN** (EX-001) Assign a named accountable owner plus backup/on-call ownership for the capability. — _requires named people / review_
+- [ ] **DOCUMENTED** Record the architectural decision, alternatives considered, safety rationale, and rejected alternatives. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Maintain a requirements-to-design-to-code-to-test traceability chain. — _implemented and covered by automated tests_
+- [ ] **OPEN** (EX-001) Track exceptions and waivers with owner, justification, compensating control, expiry, and re-review date. — _requires named people / review_
+- [ ] **OPEN** (EX-001) Define service SLOs, error budgets, escalation objectives, and support commitments. — _governance action by owners_
+- [ ] **OPEN** (EX-001) Schedule periodic access, policy, dependency, configuration, and architecture reviews. — _governance action by owners_
+- [ ] **EVIDENCED** Require change management for safety-critical defaults, thresholds, trust roots, and enforcement semantics. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deprecation and end-of-life policy for schemas, APIs, artifacts, and dependency versions. — _SBOM.cdx.json + docs/DEPENDENCY_POLICY.md + import test_
+- [ ] **PARTIAL** (EX-007) Retain audit evidence according to documented retention and access-control policy. — _fsynced chain; retention/WORM shipping is deployment scope_
+- [ ] **OPEN** (EX-001) Require formal production exit approval and prohibit implicit certification based solely on checklist completion claims. — _requires formal approval of the exact artefact_
+- [ ] **OPEN** (EX-001) Define a single accountable engineering owner and an operational/on-call owner for this component. — _requires named people / review_
+- [ ] **DOCUMENTED** Write a short design/ADR section defining scope, non-goals, authoritative data, trust boundaries, and upstream/downstream dependencies. — _docs/ADR.md + docs/COMPONENTS.md_
+- [ ] **EVIDENCED** Define versioned typed interfaces and reject unsupported major versions deterministically. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Use declarative configuration with schema validation, secure defaults, documented units, and explicit bounds. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define a fail-closed default for missing, invalid, stale, unauthorized, conflicting, or unavailable safety-critical evidence. — _implemented and covered by automated tests_
+- [ ] **DOCUMENTED** Apply least privilege and document the exact identities/capabilities/permissions required. — _docs/OWNERSHIP.md identities + keys.CAPABILITIES (tested)_
+- [ ] **EVIDENCED** Define timeout, cancellation, retry, idempotency, backpressure, and resource-limit semantics for external interactions. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Emit structured reason/error codes and correlation identifiers suitable for automation and incident analysis. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Expose health/readiness plus metrics, logs, traces, and audit events needed to verify correct operation. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Define deterministic restart/recovery behavior and ensure process restart cannot silently relax a previously justified restriction. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create unit/contract tests for all boundary values and invalid input classes. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Create integration/fault/concurrency tests covering the component’s interactions with adjacent GAP-10 services. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Define performance/resource budgets and prove queue, memory, concurrency, and latency remain bounded at target fleet scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **DOCUMENTED** Provide deployment, rollback, emergency-disable, and operator troubleshooting procedures. — _docs/RUNBOOK.md_
+- [ ] **EVIDENCED** Attach machine-readable acceptance evidence to the release and map it to the cited GAP-10 checklist requirements. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-004) Demonstrate the component in a production-faithful environment using the active GAP-10 schemas/contracts and a pinned build. — _reference backends in hermetic harness, not production peers_
+- [ ] **DOCUMENTED** Prove nominal, boundary, degraded, failure, emergency, recovery, restart, and rollback behavior relevant to Architecture decision record and exception register. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **EVIDENCED** Prove negative cases fail with stable machine-readable reason/error codes and do not silently fall back to unconstrained capacity. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify security controls with unauthorized, unauthenticated, replayed, stale, malformed, and resource-exhaustion scenarios where applicable. — _implemented and covered by automated tests_
+- [ ] **EVIDENCED** Verify the downstream applied state matches the GAP-10 desired state and alarm on any enforcement divergence. — _implemented and covered by automated tests_
+- [ ] **PARTIAL** (EX-006) Measure and record latency/resource overhead against approved budgets at representative scale. — _sandbox benchmark only (tools/bench.py)_
+- [ ] **OPEN** (EX-001) Complete a reviewer sign-off that the evidence satisfies the cited GAP-10 requirements and contains no unapproved skipped mandatory tests. — _requires named people / review_
+- [ ] **OPEN** (EX-001) approved ADR. — _governance action by owners_
+- [ ] **OPEN** (EX-001) owner/escalation record. — _requires named people / review_
+- [ ] **DOCUMENTED** exception/waiver register. — _docs/EXCEPTION_REGISTER.md_
+- [ ] **OPEN** (EX-001) review minutes/evidence. — _requires named people / review_
+- [ ] **OPEN** (EX-001) signed production exit gate. — _requires formal approval of the exact artefact_
+- [ ] **PARTIAL** (EX-004) ⟲ Requirement-to-evidence links recorded in the GAP-10 production traceability matrix. — _Traceability not signed off_
+- [ ] **OPEN** (EX-001) No unresolved blocker or expired waiver remains for this component. — _requires formal approval of the exact artefact_
+
+## Global rules and gates
+
+- [ ] **OPEN** (EX-001) Component 01: Authenticated telemetry adapter for GAP-09 is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 02: Downstream scheduler enforcement adapter is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 03: Elasticity-plane enforcement adapter is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 04: Durable per-node state store is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 05: Atomic policy distribution and activation service is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 06: Policy authorization/signature verification is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 07: Explicit fail-closed scheduler behavior when GAP-10 is absent/unhealthy is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 08: Controller ownership/leader fencing is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **PARTIAL** (EX-004) End-to-end fail-closed proof demonstrates GAP-09 → GAP-10 → scheduler/elasticity cannot accidentally reopen capacity during dependency, restart, policy, state, or ownership failures. — _test_c29/test_c32 with reference peers_
+- [ ] **OPEN** (EX-001) Component 09: Hardware/site calibration inventory is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 10: Multi-sensor aggregation model is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 11: Thermal rate-of-rise predictor is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 12: Battery discharge/remaining-runtime estimator is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 13: Cooling-domain/site correlation is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 14: Accelerator thermal integration with GAP-11 is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 15: Workload-class-aware shedding policy is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 16: Constraint-precedence engine is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 17: Health/readiness API is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 18: Quarantine/freeze/emergency-disable control is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Hardware/calibration, predictive models, precedence, health, and emergency controls are validated on every production hardware/site class. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 19: Structured error taxonomy is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 20: Tamper-evident audit sink is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 21: Metrics exporter is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 22: Structured logging and trace propagation is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 23: Operator explain endpoint/UI is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 24: Dashboards and alerts is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 25: Retry/backoff/circuit-breaker policy is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 26: Partition/reconnect semantics is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 27: Clock-source/time-service strategy is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 28: Secret/key isolation model is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Security and resilience game-day demonstrates trust failure, partitions, store failure, time loss, and downstream failure remain bounded and observable. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 29: End-to-end integration test harness is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 30: Contract/schema validator tests is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 31: Concurrency/race test suite is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 32: Fault-injection suite is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 33: Benchmark/soak/fleet-scale harness is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 34: Cross-platform/hardware compatibility matrix is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 35: SBOM, dependency pinning, and vulnerability policy is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 36: Artifact signing/provenance and reproducible release build is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 37: Canary/staged rollout controller is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 38: Backup/restore/reconstruction runbook is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 39: Incident severity/paging/escalation definitions is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Component 40: Architecture decision record and exception register is implemented, verified, operationally owned, and evidenced. — _global rule / gate: satisfied only when every cited component is reviewed_
+- [ ] **OPEN** (EX-001) Formal production exit gate is signed for the exact release artifact and no evidence is inherited from a different build/policy/compatibility matrix without revalidation. — _global rule / gate: satisfied only when every cited component is reviewed_

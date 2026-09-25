@@ -1,0 +1,35 @@
+# MC-050 — alert rules (Prometheus). Status: draft; thresholds need owner tuning.
+groups:
+- name: inv06-traditional-iac
+  rules:
+  - alert: Inv06StalePlanSpike
+    expr: increase(pk_iac_state_stale_refusals[15m]) > 5
+    labels: {severity: warning, class: stale-plans}
+  - alert: Inv06PolicyRejections
+    expr: increase(pk_iac_policy_denied_total[15m]) > 10
+    labels: {severity: info, class: policy-rejection}
+  - alert: Inv06DriftDetected
+    expr: pk_iac_state_drifted > 0
+    for: 30m
+    labels: {severity: warning, class: drift}
+  - alert: Inv06Saturation
+    expr: pk_iac_admission_queue_depth > 12
+    for: 5m
+    labels: {severity: warning, class: saturation}
+  - alert: Inv06LoadShedding
+    expr: increase(pk_iac_admission_shed_total[5m]) > 0
+    labels: {severity: warning, class: overload}
+  - alert: Inv06DependencyDown
+    expr: pk_iac_dependency_up == 0
+    for: 2m
+    labels: {severity: critical, class: dependency-failure}
+  - alert: Inv06AuthFailuresBurst
+    expr: increase(pk_iac_authn_failed_total[5m]) > 50
+    labels: {severity: critical, class: attack}
+  - alert: Inv06InternalErrors
+    expr: increase(pk_iac_errors_total{code="PK_IAC_ERROR"}[10m]) > 0
+    labels: {severity: critical, class: software-defect}
+  - alert: Inv06ApplyLatencyP99
+    expr: histogram_quantile(0.99, sum by (le) (rate(pk_iac_apply_seconds_bucket[10m]))) > 2
+    for: 10m
+    labels: {severity: warning, class: slo}

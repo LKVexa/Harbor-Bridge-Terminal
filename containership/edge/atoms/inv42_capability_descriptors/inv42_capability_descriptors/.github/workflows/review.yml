@@ -1,0 +1,14 @@
+# MC-039 - weekly recurring review / waiver-expiry check
+name: inv42-reviews
+on:
+  schedule: [{cron: "0 16 * * 1"}]
+  workflow_dispatch:
+permissions: {contents: read, issues: write}
+jobs:
+  due:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38
+        with: {python-version: "3.12"}
+      - run: python tools/review_due.py

@@ -1,0 +1,48 @@
+{
+  "schema": "PK_PACK_DASHBOARD/1",
+  "title": "INV-68 Resource packing",
+  "version": "1.0.0",
+  "format_note": "panel list; import into Grafana by mapping expr to targets",
+  "panels": [
+    {
+      "title": "Requests by code",
+      "expr": "sum by (code) (rate(inv68_requests_total[5m]))"
+    },
+    {
+      "title": "p99 latency",
+      "expr": "histogram_quantile(0.99, sum by (le) (rate(inv68_request_latency_ms_bucket[5m])))"
+    },
+    {
+      "title": "In flight / queue",
+      "expr": "inv68_in_flight or inv68_queue_depth"
+    },
+    {
+      "title": "Efficiency ratio",
+      "expr": "inv68_efficiency_ratio"
+    },
+    {
+      "title": "Memory overcommit hosts (must be 0)",
+      "expr": "inv68_mem_overcommit_hosts"
+    },
+    {
+      "title": "Stranded capacity",
+      "expr": "inv68_stranded_cpu or inv68_stranded_mem"
+    },
+    {
+      "title": "Unplaced by tenant",
+      "expr": "sum by (tenant) (rate(inv68_unplaced_total[15m]))"
+    },
+    {
+      "title": "Audit loss",
+      "expr": "increase(inv68_audit_dropped_total[1h])"
+    },
+    {
+      "title": "Frozen",
+      "expr": "inv68_frozen"
+    },
+    {
+      "title": "Configuration version / rollouts",
+      "expr": "inv68_config_info"
+    }
+  ]
+}

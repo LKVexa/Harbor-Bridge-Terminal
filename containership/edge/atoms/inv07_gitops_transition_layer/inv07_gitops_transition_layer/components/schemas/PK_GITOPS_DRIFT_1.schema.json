@@ -1,0 +1,73 @@
+{
+ "$id": "https://pk.example/schemas/PK_GITOPS_DRIFT_1.schema.json",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "action": {
+   "enum": [
+    "reverted",
+    "reported_only"
+   ]
+  },
+  "at": {
+   "minimum": 0,
+   "type": "number"
+  },
+  "decision_id": {
+   "maxLength": 128,
+   "type": "string"
+  },
+  "detected_against": {
+   "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+   "type": "string"
+  },
+  "reconciled_to": {
+   "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+   "type": "string"
+  },
+  "ref": {
+   "maxLength": 210,
+   "pattern": "^refs/(heads|tags)/[A-Za-z0-9._/-]{1,200}$",
+   "type": "string"
+  },
+  "resources": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "change": {
+      "enum": [
+       "modified",
+       "deleted",
+       "added"
+      ]
+     },
+     "rid": {
+      "maxLength": 600,
+      "type": "string"
+     }
+    },
+    "required": [
+     "rid",
+     "change"
+    ],
+    "type": "object"
+   },
+   "maxItems": 100000,
+   "minItems": 1,
+   "type": "array"
+  },
+  "schema": {
+   "const": "PK_GITOPS_DRIFT/1"
+  }
+ },
+ "required": [
+  "schema",
+  "ref",
+  "detected_against",
+  "resources",
+  "action",
+  "at"
+ ],
+ "title": "PK_GITOPS_DRIFT/1",
+ "type": "object"
+}

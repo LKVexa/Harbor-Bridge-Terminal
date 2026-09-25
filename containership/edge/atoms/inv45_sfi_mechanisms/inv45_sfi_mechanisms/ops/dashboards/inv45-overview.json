@@ -1,0 +1,126 @@
+{
+ "title": "INV-45 SFI mechanisms \u2014 overview",
+ "schemaVersion": 39,
+ "uid": "inv45-overview",
+ "tags": [
+  "inv45",
+  "sfi"
+ ],
+ "description": "Rows separate ordinary load, degradation, policy rejection, dependency failure, attack indicators and software defects (C080). Not yet loaded into a live Grafana.",
+ "panels": [
+  {
+   "id": 1,
+   "type": "timeseries",
+   "title": "Ordinary load",
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "rate(sfi_modules_verified_total[5m])",
+     "refId": "A"
+    },
+    {
+     "expr": "histogram_quantile(0.95, rate(sfi_submit_latency_ms_bucket[5m]))",
+     "refId": "B"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "type": "timeseries",
+   "title": "Degradation",
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 24,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "inv45_health_status",
+     "refId": "A"
+    },
+    {
+     "expr": "sfi_audit_spool_events",
+     "refId": "B"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "type": "timeseries",
+   "title": "Policy rejection",
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 24,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (code)(rate(sfi_modules_loaded_total{outcome=\"rejected\",code=~\"SFI_POLICY_REJECTED|SFI_UNSUPPORTED_FEATURE|SFI_MALFORMED_ARTIFACT|SFI_INVALID_MODULE|SFI_RESOURCE_LIMIT\"}[5m]))",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "Dependency failure",
+   "gridPos": {
+    "x": 0,
+    "y": 24,
+    "w": 24,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum by (code)(rate(sfi_loads_total{code=~\"SFI_DEPENDENCY_UNAVAILABLE|SFI_TRUST_STALE\"}[5m]))",
+     "refId": "A"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "type": "timeseries",
+   "title": "Attack indicators",
+   "gridPos": {
+    "x": 0,
+    "y": 32,
+    "w": 24,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "rate(sfi_unmasked_accesses_total[5m])",
+     "refId": "A"
+    },
+    {
+     "expr": "sum by (code)(rate(sfi_loads_total{code=~\"SFI_REPLAY_DETECTED|SFI_SIGNATURE_INVALID|SFI_DIGEST_MISMATCH|SFI_UNAUTHORIZED|SFI_ROLLBACK_REJECTED\"}[5m])) + rate(sfi_authn_failures_total[5m])",
+     "refId": "B"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "type": "timeseries",
+   "title": "Software defect",
+   "gridPos": {
+    "x": 0,
+    "y": 40,
+    "w": 24,
+    "h": 8
+   },
+   "targets": [
+    {
+     "expr": "sum(rate(sfi_modules_loaded_total{code=\"SFI_INTERNAL_INVARIANT\"}[5m])) + sum(rate(sfi_loads_total{code=\"SFI_INTERNAL_INVARIANT\"}[5m]))",
+     "refId": "A"
+    }
+   ]
+  }
+ ]
+}

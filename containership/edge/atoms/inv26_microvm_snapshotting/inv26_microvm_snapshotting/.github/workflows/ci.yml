@@ -1,0 +1,55 @@
+name: inv26-ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: {python: ["3.10", "3.11", "3.12", "3.13"]}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv26_microvm_snapshotting}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install -r inv26_microvm_snapshotting/requirements.lock
+      - name: unit (normal and -O)
+        run: |
+          python -m unittest discover -s inv26_microvm_snapshotting/tests -t .
+          python -O -m unittest discover -s inv26_microvm_snapshotting/tests -t .
+      - name: generated artifacts + traceability must be in sync
+        run: |
+          python -m inv26_microvm_snapshotting.tools.gen_artifacts && git -C inv26_microvm_snapshotting diff --exit-code
+          python -m inv26_microvm_snapshotting.tools.rtm --check
+      - run: python -m inv26_microvm_snapshotting.tools.fuzz --iterations 6000 --seed ${{ github.run_number }}
+      - run: python -m inv26_microvm_snapshotting.tools.faults
+      - run: python -m inv26_microvm_snapshotting.tools.secret_scan
+  perf-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv26_microvm_snapshotting}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r inv26_microvm_snapshotting/requirements.lock
+      - run: |
+          python -m inv26_microvm_snapshotting.tools.bench --profile quick --out bench.json
+          python -m inv26_microvm_snapshotting.tools.bench --compare inv26_microvm_snapshotting/bench/baseline.json bench.json
+  bootstrap-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv26_microvm_snapshotting}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r inv26_microvm_snapshotting/requirements.lock setuptools wheel
+      - run: python -m inv26_microvm_snapshotting.tools.release build --dist dist
+      - run: INV26_STATE=$RUNNER_TEMP/inv26 INV26_DIST=dist PROFILE=reference bash inv26_microvm_snapshotting/tools/bootstrap.sh
+  release-gate:
+    # Production certification: must run on a KVM host with Firecracker (self-hosted runner). Fails closed (NO_GO)
+    # until every blocker in evidence/EXIT_GATE.json is closed; skipped pk_core tests count as failures.
+    runs-on: [self-hosted, kvm]
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv26_microvm_snapshotting}
+      - run: python -m inv26_microvm_snapshotting.tools.run_evidence
+      - run: python -m inv26_microvm_snapshotting.tools.gate --selftest

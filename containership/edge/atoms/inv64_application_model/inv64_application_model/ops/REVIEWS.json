@@ -1,0 +1,18 @@
+{
+  "format": "PK_APP_REVIEWS/1",
+  "domains": [
+    {"domain": "access", "cadence_days": 90, "reviewer_role": "inv64-security-contact", "severity_if_overdue": "High",
+     "scope": "principals, roles/capabilities, tenant scopes, break-glass accounts, stale identities, least privilege", "collector": "tools/review_collect.py access", "last": null, "next_due": "2026-10-22"},
+    {"domain": "policy", "cadence_days": 90, "reviewer_role": "inv64-security-contact", "severity_if_overdue": "High",
+     "scope": "authz / trust / secret / telemetry / retention policies current and tested", "collector": "tools/review_collect.py policy", "last": null, "next_due": "2026-10-22"},
+    {"domain": "dependency", "cadence_days": 30, "reviewer_role": "inv64-component-owner", "severity_if_overdue": "High",
+     "scope": "supported versions, advisories, provenance, upcoming EOL", "collector": "tools/review_collect.py dependency", "last": null, "next_due": "2026-10-22"},
+    {"domain": "configuration", "cadence_days": 30, "reviewer_role": "inv64-sre-oncall", "severity_if_overdue": "Medium",
+     "scope": "active vs approved config, drift, stale overlays, expired register entries", "collector": "tools/review_collect.py configuration", "last": null, "next_due": "2026-10-22"},
+    {"domain": "architecture", "cadence_days": 180, "reviewer_role": "architecture-review-board", "severity_if_overdue": "Medium",
+     "scope": "adjacent-layer assumptions, platform tiers, threat model, capacity model, OAM baseline", "collector": "manual + ADR revalidation", "last": null, "next_due": "2026-12-22"}
+  ],
+  "out_of_cycle_triggers": ["SEV1/SEV2 incident", "trust-model change", "new platform tier", "new provider class", "major dependency upgrade", "OAM baseline change"],
+  "separation_of_duties": "The reviewer of an access/policy change may not be its author (tools/governance_check.py rejects reviewer == author in history entries).",
+  "history": []
+}

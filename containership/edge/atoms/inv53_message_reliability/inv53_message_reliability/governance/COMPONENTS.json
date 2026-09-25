@@ -1,0 +1,1850 @@
+{
+ "schema": "inv53.register/1",
+ "version": "5.1.0",
+ "expected_count": 96,
+ "status_meaning": {
+  "COMPLETE": "implemented, verified and accepted by a named owner (none are)",
+  "IMPLEMENTED_LOCAL": "implemented and verified by executable tests in this archive; production acceptance pending",
+  "PARTIAL": "part implemented; remaining work named in blockers",
+  "BLOCKED": "cannot be implemented without an external input named in blockers"
+ },
+ "components": [
+  {
+   "id": "1",
+   "title": "Accountable owner and escalation metadata",
+   "area": "Architecture & governance",
+   "severity": "High",
+   "checklist": "C009",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "governance/OWNERS.md",
+    "governance/owners.json",
+    "CODEOWNERS",
+    "governance/service-catalog.json"
+   ],
+   "tests": [
+    "test_repository.py::GateTest::test_delivered_tree_is_no_go_with_named_blockers"
+   ],
+   "blockers": [
+    "no people named for any role (owner decision; Claude does not bind people)"
+   ]
+  },
+  {
+   "id": "2",
+   "title": "Approved architecture decision record",
+   "area": "Architecture & governance",
+   "severity": "High",
+   "checklist": "C010",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/adr/ADR-0001-delivery-semantics.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "ADR status PROPOSED: needs technical_owner + security_owner approval"
+   ]
+  },
+  {
+   "id": "3",
+   "title": "Deployment-context requirement matrix",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C012",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/DEPLOYMENT_CONTEXTS.md",
+    "config.py"
+   ],
+   "tests": [
+    "test_protocol_config.py::ConfigTest::test_layering_and_provenance"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "per-context values not validated on real edge hardware"
+   ]
+  },
+  {
+   "id": "4",
+   "title": "Complete non-functional requirements specification",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C013",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/spec/NFR.md"
+   ],
+   "tests": [
+    "test_property_concurrency.py::PropertyTest::test_no_message_is_ever_lost",
+    "test_property_concurrency.py::PropertyTest::test_durable_equals_reference_model"
+   ],
+   "blockers": [
+    "targets PROPOSED; reference hardware not named"
+   ]
+  },
+  {
+   "id": "5",
+   "title": "Outcome/failure semantic taxonomy",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C014",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/OUTCOMES.md",
+    "errors.py",
+    "schemas/errors.json"
+   ],
+   "tests": [
+    "test_protocol_config.py::ProtocolTest::test_error_taxonomy_is_closed_and_consistent",
+    "test_service.py::BrokerTest::test_public_contract_roundtrip"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "6",
+   "title": "Normative lifecycle state machine",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C015",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/STATE_MACHINE.md",
+    "durable.py"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_state_machine_doc_matches_code",
+    "test_durable.py::DurableTest::test_dead_letter_redrive_and_purge_are_durable"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "7",
+   "title": "Protocol and behavior compatibility policy",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C016",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/spec/COMPATIBILITY.md",
+    "protocol.py"
+   ],
+   "tests": [
+    "test_protocol_config.py::ProtocolTest::test_negotiation",
+    "test_durable.py::DurableTest::test_unknown_schema_snapshot_refused"
+   ],
+   "blockers": [
+    "only one wire/store version exists, so no cross-version test can run yet"
+   ]
+  },
+  {
+   "id": "8",
+   "title": "Quota, capacity, and fairness policy",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C017",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/QUOTAS.md",
+    "service.py",
+    "config.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_quota_and_shedding",
+    "test_durable.py::DurableTest::test_capacity_refusal_changes_nothing",
+    "test_durable.py::DurableTest::test_message_size_limit",
+    "test_service.py::OpenFailureTest::test_queue_count_limit_and_unopenable_stores_are_typed_refusals"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "9",
+   "title": "Disconnected/intermittent-network semantics",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C018",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/DISCONNECTED.md"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_lease_survives_restart_and_is_not_redelivered_early",
+    "test_durable.py::DurableTest::test_idempotent_put_after_indeterminate_failure",
+    "test_service.py::BrokerTest::test_T4_stale_consumer_cannot_settle_redelivered_message",
+    "test_service.py::BrokerTest::test_R5_client_supplied_time_cannot_steal_a_lease"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "not exercised over a real intermittent link"
+   ]
+  },
+  {
+   "id": "10",
+   "title": "Constraint-precedence policy",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C019",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/CONSTRAINT_PRECEDENCE.md",
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_freeze_emergency_disable_and_drain",
+    "test_service.py::BrokerTest::test_T1_unauthenticated_is_refused_and_audited",
+    "test_service.py::BrokerTest::test_R7_refusals_create_no_state"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "11",
+   "title": "Requirements traceability matrix",
+   "area": "Requirements & semantics",
+   "severity": "High",
+   "checklist": "C020",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/TRACEABILITY.md",
+    "gate.py",
+    "governance/COMPONENTS.json"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_traceability_matrix_is_generated_not_edited",
+    "test_repository.py::RepositoryTest::test_register_is_honest_about_the_tree"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "granularity is per component, not per checkbox"
+   ]
+  },
+  {
+   "id": "12",
+   "title": "Versioned typed protocol schemas",
+   "area": "Interfaces & integration",
+   "severity": "Critical",
+   "checklist": "C021-C022",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "protocol.py",
+    "schemas/request.schema.json",
+    "schemas/response.schema.json"
+   ],
+   "tests": [
+    "test_protocol_config.py::ProtocolTest::test_generated_schemas_have_not_drifted",
+    "test_protocol_config.py::ProtocolTest::test_every_required_field_in_schema_matches_validator",
+    "test_service.py::BrokerTest::test_R6_malformed_headers_are_a_validation_error"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "13",
+   "title": "Boundary authentication specification",
+   "area": "Interfaces & integration",
+   "severity": "Critical",
+   "checklist": "C023",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "security.py",
+    "docs/security/THREAT_MODEL.md"
+   ],
+   "tests": [
+    "test_security.py::AuthnTest::test_valid_signature",
+    "test_security.py::AuthnTest::test_tampered_body_rejected",
+    "test_security.py::AuthnTest::test_replay_rejected",
+    "test_security.py::AuthnTest::test_skew_rejected",
+    "test_service.py::BrokerTest::test_T1_unauthenticated_is_refused_and_audited"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "HMAC shared keys only; no mTLS/OIDC binding"
+   ]
+  },
+  {
+   "id": "14",
+   "title": "Authorization/capability model",
+   "area": "Interfaces & integration",
+   "severity": "Critical",
+   "checklist": "C024",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "security.py",
+    "docs/security/AUTHORITY.md"
+   ],
+   "tests": [
+    "test_security.py::AuthzTest::test_default_deny_and_exact_scope",
+    "test_security.py::AuthzTest::test_admin_does_not_imply_data_access",
+    "test_service.py::BrokerTest::test_T2_cross_tenant_access_denied_even_with_same_queue_name"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "15",
+   "title": "Timeout/cancellation/retry/idempotency/backpressure contract",
+   "area": "Interfaces & integration",
+   "severity": "High",
+   "checklist": "C025",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/spec/INTERFACE_CONTRACT.md",
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::PolicyUnitTest::test_backoff_full_jitter_bounds",
+    "test_durable.py::DurableTest::test_idempotent_put_after_indeterminate_failure"
+   ],
+   "blockers": [
+    "durable consumer dedupe coupled to the business effect is not provided (DEBT-03)"
+   ]
+  },
+  {
+   "id": "16",
+   "title": "Machine-readable error taxonomy",
+   "area": "Interfaces & integration",
+   "severity": "High",
+   "checklist": "C026",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "errors.py",
+    "schemas/errors.json"
+   ],
+   "tests": [
+    "test_protocol_config.py::ProtocolTest::test_error_taxonomy_is_closed_and_consistent"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "17",
+   "title": "Mixed-version interoperability behavior",
+   "area": "Interfaces & integration",
+   "severity": "High",
+   "checklist": "C027",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/spec/COMPATIBILITY.md"
+   ],
+   "tests": [
+    "test_protocol_config.py::ProtocolTest::test_negotiation"
+   ],
+   "blockers": [
+    "single protocol version; mixed-version interop cannot be exercised until a v2 exists"
+   ]
+  },
+  {
+   "id": "18",
+   "title": "Interface resource-limit specification",
+   "area": "Interfaces & integration",
+   "severity": "High",
+   "checklist": "C028",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/spec/QUOTAS.md",
+    "protocol.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_T6_oversized_and_malformed_inputs"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "19",
+   "title": "Protocol examples and conformance fixtures",
+   "area": "Interfaces & integration",
+   "severity": "Medium",
+   "checklist": "C029",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "fixtures/wire",
+    "docs/spec/INTERFACE_CONTRACT.md"
+   ],
+   "tests": [
+    "test_protocol_config.py::ProtocolTest::test_conformance_fixtures"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "20",
+   "title": "Adjacent-layer integration suite",
+   "area": "Interfaces & integration",
+   "severity": "Critical",
+   "checklist": "C030",
+   "audit_status_5_0_0": "MISSING",
+   "status": "BLOCKED",
+   "artifacts": [
+    "service.py"
+   ],
+   "tests": [],
+   "blockers": [
+    "no INV-52 envelope or INV-54 broker implementation is available to integrate against; pk_core conformance lane is the only adjacent-layer check (see CI evidence)"
+   ]
+  },
+  {
+   "id": "21",
+   "title": "Approved implementation/specification pin set",
+   "area": "Implementation & configuration",
+   "severity": "Critical",
+   "checklist": "C031",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "requirements/pk_core.lock.json",
+    "tools/build_release.py"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_pk_core_pin_is_well_formed"
+   ],
+   "blockers": [
+    "pin set not approved by an owner; broker/spec pins for INV-52/54 do not exist"
+   ]
+  },
+  {
+   "id": "22",
+   "title": "Declarative configuration schema and secure defaults",
+   "area": "Implementation & configuration",
+   "severity": "High",
+   "checklist": "C032-C034",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "config.py",
+    "schemas/config.schema.json"
+   ],
+   "tests": [
+    "test_protocol_config.py::ConfigTest::test_secure_defaults",
+    "test_protocol_config.py::ConfigTest::test_rejections",
+    "test_service.py::BrokerTest::test_secure_defaults_require_authn_and_audit"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "23",
+   "title": "Site/environment override mechanism",
+   "area": "Implementation & configuration",
+   "severity": "Medium",
+   "checklist": "C035",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "config.py",
+    "docs/spec/DEPLOYMENT_CONTEXTS.md"
+   ],
+   "tests": [
+    "test_protocol_config.py::ConfigTest::test_layering_and_provenance"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "24",
+   "title": "Configuration provenance record",
+   "area": "Implementation & configuration",
+   "severity": "High",
+   "checklist": "C036",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "test_protocol_config.py::ConfigTest::test_layering_and_provenance",
+    "test_repository.py::DrillTest::test_cli_surfaces"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "25",
+   "title": "Atomic configuration update mechanism",
+   "area": "Implementation & configuration",
+   "severity": "High",
+   "checklist": "C037",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "config.py"
+   ],
+   "tests": [
+    "test_protocol_config.py::ConfigTest::test_atomic_update_cas_and_rollback"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "26",
+   "title": "Configuration rollback mechanism",
+   "area": "Implementation & configuration",
+   "severity": "High",
+   "checklist": "C038",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "config.py",
+    "docs/ops/ROLLOUT.md"
+   ],
+   "tests": [
+    "test_protocol_config.py::ConfigTest::test_atomic_update_cas_and_rollback"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "27",
+   "title": "Secret/KMS integration boundary",
+   "area": "Implementation & configuration",
+   "severity": "Critical",
+   "checklist": "C039",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "security.py",
+    "docs/security/ENCRYPTION.md"
+   ],
+   "tests": [
+    "test_security.py::AuthnTest::test_kms_unbound_fails_closed",
+    "test_security.py::AuthnTest::test_env_provider",
+    "test_security.py::AuthnTest::test_provider_crash_fails_closed"
+   ],
+   "blockers": [
+    "no KMS is bound; the boundary fails closed by design"
+   ]
+  },
+  {
+   "id": "28",
+   "title": "Deterministic bootstrap path",
+   "area": "Implementation & configuration",
+   "severity": "High",
+   "checklist": "C040",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/ops/RUNBOOKS.md",
+    "config.py"
+   ],
+   "tests": [
+    "test_repository.py::DrillTest::test_cli_surfaces",
+    "test_protocol_config.py::ConfigTest::test_secure_defaults"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "29",
+   "title": "Full threat model",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C041",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/security/THREAT_MODEL.md"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_T1_unauthenticated_is_refused_and_audited",
+    "test_service.py::BrokerTest::test_T2_cross_tenant_access_denied_even_with_same_queue_name",
+    "test_service.py::BrokerTest::test_T8_logs_and_metrics_never_contain_payload_or_lease",
+    "test_service.py::BrokerTest::test_R4_health_over_the_wire_shows_only_the_callers_tenant"
+   ],
+   "blockers": [
+    "not reviewed by a named security_owner; T13 (encryption at rest) open"
+   ]
+  },
+  {
+   "id": "30",
+   "title": "Least-privilege authority model",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C042-C043",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/security/AUTHORITY.md",
+    "security.py"
+   ],
+   "tests": [
+    "test_security.py::AuthzTest::test_default_deny_and_exact_scope",
+    "test_security.py::AuthzTest::test_grants_cannot_span_tenants"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "31",
+   "title": "Node/peer/artifact/control-plane authentication",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C044",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "security.py"
+   ],
+   "tests": [
+    "test_security.py::AuthnTest::test_principal_bound_to_kid"
+   ],
+   "blockers": [
+    "node/peer/control-plane identity (mTLS, attestation) not available; artifact authentication covered only by digest pins"
+   ]
+  },
+  {
+   "id": "32",
+   "title": "Supply-chain verification and SBOM policy",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C045",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/security/SUPPLY_CHAIN.md",
+    "tools/build_release.py"
+   ],
+   "tests": [],
+   "blockers": [
+    "release signing key and provenance attestation not provided; no vulnerability feed reachable"
+   ]
+  },
+  {
+   "id": "33",
+   "title": "Tenant/workload isolation enforcement",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C046",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py",
+    "security.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_T2_cross_tenant_access_denied_even_with_same_queue_name",
+    "test_service.py::BrokerTest::test_T5_path_traversal_names_refused"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "process-level isolation only (one broker process may serve several tenants)"
+   ]
+  },
+  {
+   "id": "34",
+   "title": "Encryption and key-rotation specification",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C047",
+   "audit_status_5_0_0": "MISSING",
+   "status": "BLOCKED",
+   "artifacts": [
+    "docs/security/ENCRYPTION.md"
+   ],
+   "tests": [
+    "test_security.py::AuthnTest::test_rotation_and_retirement"
+   ],
+   "blockers": [
+    "payload encryption at rest needs a crypto library decision and a bound KMS (DEBT-02); auth-key rotation is implemented"
+   ]
+  },
+  {
+   "id": "35",
+   "title": "Security dependency outage behavior",
+   "area": "Security, trust & isolation",
+   "severity": "High",
+   "checklist": "C048",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "security.py",
+    "service.py"
+   ],
+   "tests": [
+    "test_security.py::AuthnTest::test_kms_unbound_fails_closed",
+    "test_service.py::BrokerTest::test_T7_audit_sink_outage_fails_closed"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "36",
+   "title": "Tamper-evident security audit log",
+   "area": "Security, trust & isolation",
+   "severity": "High",
+   "checklist": "C049",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "security.py"
+   ],
+   "tests": [
+    "test_security.py::AuditTest::test_chain_verifies_and_detects_edit",
+    "test_security.py::AuditTest::test_tail_truncation_needs_external_anchor",
+    "test_security.py::AuditTest::test_refuses_secret_fields",
+    "test_security.py::AuditTest::test_malformed_anchor_and_non_record_lines_fail_verification"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "external anchoring of the head is an operator procedure, not automated"
+   ]
+  },
+  {
+   "id": "37",
+   "title": "Adversarial security test suite",
+   "area": "Security, trust & isolation",
+   "severity": "Critical",
+   "checklist": "C050",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "tests/test_service.py",
+    "tests/test_protocol_config.py"
+   ],
+   "tests": [
+    "test_protocol_config.py::FuzzTest::test_random_requests_never_escape",
+    "test_service.py::BrokerTest::test_T3_replayed_request_refused"
+   ],
+   "blockers": [
+    "no independent red-team or external penetration test"
+   ]
+  },
+  {
+   "id": "38",
+   "title": "System failure-mode matrix",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C051",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/architecture/FAILURE_MODES.md"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_storage_failure_opens_breaker_recovers_and_loses_nothing",
+    "test_durable.py::DurableTest::test_mid_journal_corruption_refuses_to_open",
+    "test_service.py::OpenFailureTest::test_queue_count_limit_and_unopenable_stores_are_typed_refusals"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "39",
+   "title": "Health and stall detection thresholds",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C052",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_health_readiness_and_stall_detection"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "thresholds PROPOSED"
+   ]
+  },
+  {
+   "id": "40",
+   "title": "Safe retry backoff/jitter policy",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C053",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py",
+    "docs/spec/INTERFACE_CONTRACT.md"
+   ],
+   "tests": [
+    "test_service.py::PolicyUnitTest::test_backoff_full_jitter_bounds"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "41",
+   "title": "Admission control/load shedding/circuit breaking",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C054",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_quota_and_shedding",
+    "test_service.py::PolicyUnitTest::test_breaker_half_open_single_probe",
+    "test_service.py::PolicyUnitTest::test_token_bucket_clock_regression_grants_nothing",
+    "test_service.py::BrokerTest::test_R7_refusals_create_no_state",
+    "test_service.py::BrokerTest::test_R7_quota_refusal_does_not_strand_the_breaker_probe"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "42",
+   "title": "Failover/residency/consistency semantics",
+   "area": "Resilience & failure handling",
+   "severity": "Critical",
+   "checklist": "C055",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/architecture/DURABILITY.md"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_epoch_fencing_refuses_superseded_writer"
+   ],
+   "blockers": [
+    "no cross-site replication or failover exists in INV-53; residency = store path"
+   ]
+  },
+  {
+   "id": "43",
+   "title": "Defined degraded operating modes",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C056",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/architecture/FAILURE_MODES.md",
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_freeze_emergency_disable_and_drain",
+    "test_service.py::BrokerTest::test_quota_and_shedding",
+    "test_service.py::BrokerTest::test_storage_failure_opens_breaker_recovers_and_loses_nothing"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "44",
+   "title": "Durable crash-consistency/restart/replay implementation",
+   "area": "Resilience & failure handling",
+   "severity": "Critical",
+   "checklist": "C057",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "durable.py",
+    "docs/architecture/DURABILITY.md"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_messages_survive_restart",
+    "test_durable.py::DurableTest::test_torn_final_record_is_truncated_and_reported",
+    "test_durable.py::DurableTest::test_crash_after_write_is_recovered_by_replay",
+    "test_property_concurrency.py::PropertyTest::test_crash_at_any_write_then_recover_preserves_invariants",
+    "test_durable.py::DurableTest::test_crash_between_snapshot_and_journal_reset_recovers",
+    "test_durable.py::DurableTest::test_tail_removal_after_clean_shutdown_is_detected",
+    "test_durable.py::DurableTest::test_external_anchor_detects_tail_loss_after_a_crash",
+    "test_durable.py::DurableTest::test_compaction_failure_inside_append_fail_stops"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "fsync durability not qualified on target storage media"
+   ]
+  },
+  {
+   "id": "45",
+   "title": "Distributed ownership and split-brain fencing",
+   "area": "Resilience & failure handling",
+   "severity": "Critical",
+   "checklist": "C058",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "durable.py"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_second_live_writer_is_refused",
+    "test_durable.py::DurableTest::test_epoch_fencing_refuses_superseded_writer",
+    "test_durable.py::DurableTest::test_epoch_fencing_holds_when_stat_identity_is_unchanged",
+    "test_durable.py::DurableTest::test_closed_failed_or_fenced_writer_cannot_compact_or_back_up"
+   ],
+   "blockers": [
+    "cross-host ownership election needs an external consensus service (DEBT-01)"
+   ]
+  },
+  {
+   "id": "46",
+   "title": "Quarantine/freeze/emergency-disable controls",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C059",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py",
+    "docs/ops/ROLLOUT.md"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_freeze_emergency_disable_and_drain"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "47",
+   "title": "Fault-injection/chaos recovery suite",
+   "area": "Resilience & failure handling",
+   "severity": "Critical",
+   "checklist": "C060",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "tests/test_property_concurrency.py",
+    "durable.py"
+   ],
+   "tests": [
+    "test_property_concurrency.py::PropertyTest::test_crash_at_any_write_then_recover_preserves_invariants",
+    "test_durable.py::DurableTest::test_write_failure_before_write_fail_stops_and_loses_nothing"
+   ],
+   "blockers": [
+    "in-process fault injection only; no kill -9 / power-cut / disk-fault chaos on real hosts"
+   ]
+  },
+  {
+   "id": "48",
+   "title": "DLQ redrive/replay workflow",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C059/C095",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "durable.py",
+    "__main__.py",
+    "docs/ops/RUNBOOKS.md"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_dead_letter_redrive_and_purge_are_durable",
+    "test_service.py::BrokerTest::test_extend_nack_redrive_explain",
+    "test_repository.py::DrillTest::test_backup_restore_redrive_drill"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "49",
+   "title": "Graceful drain/shutdown semantics",
+   "area": "Resilience & failure handling",
+   "severity": "High",
+   "checklist": "C025/C057",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_freeze_emergency_disable_and_drain",
+    "test_service.py::BrokerTest::test_graceful_shutdown_then_restart_preserves_state"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "50",
+   "title": "Reproducible benchmark harness and baseline",
+   "area": "Performance & resource efficiency",
+   "severity": "High",
+   "checklist": "C061",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "bench.py",
+    "docs/perf/PERFORMANCE.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "baseline recorded in CI evidence for this build only"
+   ]
+  },
+  {
+   "id": "51",
+   "title": "Percentile/worst-case performance thresholds",
+   "area": "Performance & resource efficiency",
+   "severity": "High",
+   "checklist": "C062",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "perf/THRESHOLDS.json"
+   ],
+   "tests": [],
+   "blockers": [
+    "thresholds PROPOSED, no owner approval"
+   ]
+  },
+  {
+   "id": "52",
+   "title": "Load-shape performance matrix",
+   "area": "Performance & resource efficiency",
+   "severity": "High",
+   "checklist": "C063",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "five shapes on one host; no fleet shapes"
+   ]
+  },
+  {
+   "id": "53",
+   "title": "Per-tenant/workload overhead accounting",
+   "area": "Performance & resource efficiency",
+   "severity": "Medium",
+   "checklist": "C064",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "observability.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_metrics_exposition_and_cardinality_cap"
+   ],
+   "blockers": [
+    "per-tenant request counts only; no per-tenant CPU/memory accounting"
+   ]
+  },
+  {
+   "id": "54",
+   "title": "Serialization/copy/context-switch profile",
+   "area": "Performance & resource efficiency",
+   "severity": "Medium",
+   "checklist": "C065",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [],
+   "blockers": [
+    "serialized bytes and peak memory measured; context switches not measured (no perf counters)"
+   ]
+  },
+  {
+   "id": "55",
+   "title": "Optimization plan and guarded fast paths",
+   "area": "Performance & resource efficiency",
+   "severity": "Medium",
+   "checklist": "C066",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/perf/PERFORMANCE.md",
+    "durable.py"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_epoch_fencing_holds_when_stat_identity_is_unchanged"
+   ],
+   "blockers": [
+    "O1 kept; O2 fast path withdrawn after the review reproduced a fencing bypass; O3/O4 proposed only"
+   ]
+  },
+  {
+   "id": "56",
+   "title": "End-to-end resource-bound model",
+   "area": "Performance & resource efficiency",
+   "severity": "High",
+   "checklist": "C067",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/perf/PERFORMANCE.md"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_capacity_refusal_changes_nothing"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "57",
+   "title": "Power/thermal measurement",
+   "area": "Performance & resource efficiency",
+   "severity": "Medium",
+   "checklist": "C068",
+   "audit_status_5_0_0": "MISSING",
+   "status": "BLOCKED",
+   "artifacts": [
+    "docs/perf/PERFORMANCE.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "no power/thermal instrumentation (RAPL/IPMI) available"
+   ]
+  },
+  {
+   "id": "58",
+   "title": "Capacity model and saturation predictors",
+   "area": "Performance & resource efficiency",
+   "severity": "High",
+   "checklist": "C069",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "bench.py",
+    "docs/perf/PERFORMANCE.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "single-queue linear model only; not validated against production load"
+   ]
+  },
+  {
+   "id": "59",
+   "title": "Performance regression release gate",
+   "area": "Performance & resource efficiency",
+   "severity": "High",
+   "checklist": "C070",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "bench.py",
+    "tools/ci.py"
+   ],
+   "tests": [],
+   "blockers": [
+    "gate runs in CI but thresholds are PROPOSED, so it cannot PASS the exit gate"
+   ]
+  },
+  {
+   "id": "60",
+   "title": "Health/readiness/status surface",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C071",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_health_readiness_and_stall_detection",
+    "test_service.py::BrokerTest::test_R4_health_over_the_wire_shows_only_the_callers_tenant"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "61",
+   "title": "Production metrics exporter",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C072",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "observability.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_metrics_exposition_and_cardinality_cap"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "exporter not scraped by a real Prometheus here"
+   ]
+  },
+  {
+   "id": "62",
+   "title": "Structured logging",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C073",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "observability.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_T8_logs_and_metrics_never_contain_payload_or_lease"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "63",
+   "title": "Trace-context propagation",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C074",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "observability.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_trace_context_propagates_to_consumer"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "no OTLP exporter"
+   ]
+  },
+  {
+   "id": "64",
+   "title": "Safe high-cardinality diagnostics/redaction",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C075",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "observability.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_T8_logs_and_metrics_never_contain_payload_or_lease",
+    "test_service.py::BrokerTest::test_metrics_exposition_and_cardinality_cap"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "65",
+   "title": "Decision-reason event model",
+   "area": "Observability & explainability",
+   "severity": "Medium",
+   "checklist": "C076",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "observability.py",
+    "service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_freeze_emergency_disable_and_drain"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "66",
+   "title": "Operator explain view",
+   "area": "Observability & explainability",
+   "severity": "Medium",
+   "checklist": "C077",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "durable.py",
+    "__main__.py"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_explain_view",
+    "test_service.py::BrokerTest::test_extend_nack_redrive_explain"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "67",
+   "title": "Release-lineage/infrastructure correlation",
+   "area": "Observability & explainability",
+   "severity": "Medium",
+   "checklist": "C078",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "observability.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_metrics_exposition_and_cardinality_cap"
+   ],
+   "blockers": [
+    "build id comes from INV53_BUILD_ID; no infrastructure inventory to correlate with"
+   ]
+  },
+  {
+   "id": "68",
+   "title": "Telemetry retention/sampling/privacy/export policy",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C079",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/observability/TELEMETRY_POLICY.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "retention is enforced by the telemetry backend, which is not bound"
+   ]
+  },
+  {
+   "id": "69",
+   "title": "Dashboards and actionable alerts",
+   "area": "Observability & explainability",
+   "severity": "High",
+   "checklist": "C080",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/observability/alerts.json",
+    "docs/observability/dashboard.json"
+   ],
+   "tests": [],
+   "blockers": [
+    "alert rules and panels PROPOSED; no Prometheus/Grafana/Alertmanager bound"
+   ]
+  },
+  {
+   "id": "70",
+   "title": "Public-interface contract tests",
+   "area": "Testing & certification",
+   "severity": "Critical",
+   "checklist": "C082",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tests/test_service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_public_contract_roundtrip",
+    "test_service.py::BrokerTest::test_extend_nack_redrive_explain"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "71",
+   "title": "Adjacent-tier integration tests",
+   "area": "Testing & certification",
+   "severity": "Critical",
+   "checklist": "C083",
+   "audit_status_5_0_0": "MISSING",
+   "status": "BLOCKED",
+   "artifacts": [],
+   "tests": [],
+   "blockers": [
+    "no adjacent-tier (INV-52/INV-54) implementation to integrate against"
+   ]
+  },
+  {
+   "id": "72",
+   "title": "Compatibility test matrix",
+   "area": "Testing & certification",
+   "severity": "High",
+   "checklist": "C084",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/spec/COMPATIBILITY.md",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "blockers": [
+    "CPython 3.10-3.13 executed on Linux (evidence/CI_MATRIX.json); Windows, where the msvcrt lock path runs, not executed"
+   ]
+  },
+  {
+   "id": "73",
+   "title": "Fuzz/property-based test suite",
+   "area": "Testing & certification",
+   "severity": "High",
+   "checklist": "C085",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tests/test_protocol_config.py",
+    "tests/test_property_concurrency.py"
+   ],
+   "tests": [
+    "test_protocol_config.py::FuzzTest::test_random_requests_never_escape",
+    "test_protocol_config.py::FuzzTest::test_structured_well_typed_fuzz_reaches_every_op",
+    "test_property_concurrency.py::PropertyTest::test_durable_equals_reference_model"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "stdlib fuzzing (no coverage-guided fuzzer)"
+   ]
+  },
+  {
+   "id": "74",
+   "title": "Concurrency/race-condition suite",
+   "area": "Testing & certification",
+   "severity": "High",
+   "checklist": "C086",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tests/test_property_concurrency.py"
+   ],
+   "tests": [
+    "test_property_concurrency.py::ConcurrencyTest::test_reference_queue_each_message_acked_exactly_once",
+    "test_property_concurrency.py::ConcurrencyTest::test_durable_queue_each_message_acked_exactly_once",
+    "test_property_concurrency.py::ConcurrencyTest::test_racing_stale_and_fresh_acks"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "75",
+   "title": "Threat-derived security tests",
+   "area": "Testing & certification",
+   "severity": "Critical",
+   "checklist": "C087",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/security/THREAT_MODEL.md",
+    "tests/test_service.py"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_T1_unauthenticated_is_refused_and_audited",
+    "test_service.py::BrokerTest::test_T2_cross_tenant_access_denied_even_with_same_queue_name",
+    "test_service.py::BrokerTest::test_T3_replayed_request_refused",
+    "test_service.py::BrokerTest::test_T4_stale_consumer_cannot_settle_redelivered_message",
+    "test_service.py::BrokerTest::test_T5_path_traversal_names_refused",
+    "test_service.py::BrokerTest::test_T6_oversized_and_malformed_inputs",
+    "test_service.py::BrokerTest::test_T7_audit_sink_outage_fails_closed",
+    "test_service.py::BrokerTest::test_T8_logs_and_metrics_never_contain_payload_or_lease",
+    "test_service.py::BrokerTest::test_internal_errors_do_not_leak",
+    "test_service.py::BrokerTest::test_R4_health_over_the_wire_shows_only_the_callers_tenant",
+    "test_service.py::BrokerTest::test_R5_client_supplied_time_cannot_steal_a_lease",
+    "test_service.py::BrokerTest::test_R8_dot_names_refused"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "T13 has no test because encryption at rest does not exist"
+   ]
+  },
+  {
+   "id": "76",
+   "title": "Benchmark/soak/burst/fleet-scale tests",
+   "area": "Testing & certification",
+   "severity": "High",
+   "checklist": "C088",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "bench.py"
+   ],
+   "tests": [],
+   "blockers": [
+    "benchmark only; no soak (hours), no fleet-scale run"
+   ]
+  },
+  {
+   "id": "77",
+   "title": "Disaster/partition/reconnect tests",
+   "area": "Testing & certification",
+   "severity": "Critical",
+   "checklist": "C089",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "tests/test_durable.py"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_lease_survives_restart_and_is_not_redelivered_early",
+    "test_durable.py::DurableTest::test_epoch_fencing_refuses_superseded_writer"
+   ],
+   "blockers": [
+    "restart/fencing covered; no real network partition/reconnect test"
+   ]
+  },
+  {
+   "id": "78",
+   "title": "Machine-readable production acceptance evidence",
+   "area": "Testing & certification",
+   "severity": "Critical",
+   "checklist": "C090",
+   "audit_status_5_0_0": "EXTERNAL-UNVERIFIED",
+   "status": "PARTIAL",
+   "artifacts": [
+    "tools/ci.py",
+    "gate.py"
+   ],
+   "tests": [
+    "test_repository.py::GateTest::test_falsifier_fully_satisfied_synthetic_tree_reaches_go"
+   ],
+   "blockers": [
+    "evidence is machine-readable and digest-bound but not signed and not produced in production"
+   ]
+  },
+  {
+   "id": "79",
+   "title": "Production support commitments",
+   "area": "Operations, release & governance",
+   "severity": "High",
+   "checklist": "C091",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/ops/SUPPORT.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "support commitments need a service_owner"
+   ]
+  },
+  {
+   "id": "80",
+   "title": "Canary/staged rollout/rollback/emergency-disable runbook",
+   "area": "Operations, release & governance",
+   "severity": "High",
+   "checklist": "C092",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/ops/ROLLOUT.md"
+   ],
+   "tests": [
+    "test_service.py::BrokerTest::test_freeze_emergency_disable_and_drain"
+   ],
+   "blockers": [
+    "runbook exists; no production canary has been run"
+   ]
+  },
+  {
+   "id": "81",
+   "title": "Supported-version compatibility matrix",
+   "area": "Operations, release & governance",
+   "severity": "High",
+   "checklist": "C093",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/spec/COMPATIBILITY.md",
+    "SECURITY.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "Linux CPython 3.10-3.13 verified; Windows unverified; support windows need an owner"
+   ]
+  },
+  {
+   "id": "82",
+   "title": "Vulnerability response and EOL policy",
+   "area": "Operations, release & governance",
+   "severity": "High",
+   "checklist": "C094",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "SECURITY.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "no named security contact; response targets PROPOSED"
+   ]
+  },
+  {
+   "id": "83",
+   "title": "Backup/restore/migration/reconstruction procedures",
+   "area": "Operations, release & governance",
+   "severity": "Critical",
+   "checklist": "C095",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "docs/ops/BACKUP_RESTORE.md",
+    "durable.py"
+   ],
+   "tests": [
+    "test_durable.py::DurableTest::test_backup_restore_roundtrip_and_tamper",
+    "test_durable.py::DurableTest::test_restore_refuses_non_empty_target",
+    "test_repository.py::DrillTest::test_backup_restore_redrive_drill"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "RPO/RTO PROPOSED"
+   ]
+  },
+  {
+   "id": "84",
+   "title": "Day-0/day-1/day-2 runbooks",
+   "area": "Operations, release & governance",
+   "severity": "High",
+   "checklist": "C096",
+   "audit_status_5_0_0": "PARTIAL",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/ops/RUNBOOKS.md"
+   ],
+   "tests": [
+    "test_repository.py::DrillTest::test_cli_surfaces",
+    "test_repository.py::DrillTest::test_offline_cli_refuses_a_store_owned_by_a_live_writer"
+   ],
+   "blockers": [
+    "runbooks drilled by tests only, not by named operators"
+   ]
+  },
+  {
+   "id": "85",
+   "title": "Incident severity/paging/escalation playbook",
+   "area": "Operations, release & governance",
+   "severity": "High",
+   "checklist": "C097",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/ops/INCIDENT_PLAYBOOK.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "paging cannot work until owners and routes are bound"
+   ]
+  },
+  {
+   "id": "86",
+   "title": "Recurring review program",
+   "area": "Operations, release & governance",
+   "severity": "Medium",
+   "checklist": "C098",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "docs/ops/REVIEW_PROGRAM.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "program defined; no review has been held"
+   ]
+  },
+  {
+   "id": "87",
+   "title": "Exception/waiver/debt/deprecation register",
+   "area": "Operations, release & governance",
+   "severity": "Medium",
+   "checklist": "C099",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "governance/WAIVERS.json"
+   ],
+   "tests": [
+    "test_repository.py::GateTest::test_live_waiver_needs_named_approver_and_future_expiry"
+   ],
+   "blockers": [
+    "register exists with debt/deprecations; no waiver approver bound"
+   ]
+  },
+  {
+   "id": "88",
+   "title": "Formal production exit gate artifact",
+   "area": "Operations, release & governance",
+   "severity": "Critical",
+   "checklist": "C100",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "gate.py"
+   ],
+   "tests": [
+    "test_repository.py::GateTest::test_delivered_tree_is_no_go_with_named_blockers",
+    "test_repository.py::GateTest::test_truth_table_each_single_omission_is_no_go",
+    "test_repository.py::GateTest::test_R8_waiver_cannot_turn_missing_or_blocked_into_go",
+    "test_repository.py::GateTest::test_verified_waiver_on_partial_component_is_honoured"
+   ],
+   "blockers": [
+    "gate evaluates NO_GO; signing needs a bound approval verifier"
+   ]
+  },
+  {
+   "id": "89",
+   "title": "Packaging/build metadata",
+   "area": "Repository delivery",
+   "severity": "High",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "pyproject.toml"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_version_consistency"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "90",
+   "title": "Explicit `pk_core` dependency declaration",
+   "area": "Repository delivery",
+   "severity": "High",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "requirements/pk_core.lock.json",
+    "requirements/runtime.txt"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_pk_core_pin_is_well_formed"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "91",
+   "title": "Reproducible dependency lock/pin manifest",
+   "area": "Repository delivery",
+   "severity": "High",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "requirements/pk_core.lock.json",
+    "tools/build_release.py"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_pk_core_pin_is_well_formed"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  },
+  {
+   "id": "92",
+   "title": "CI pipeline",
+   "area": "Repository delivery",
+   "severity": "High",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tools/ci.py",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "GitHub workflow declared, not executed on GitHub"
+   ]
+  },
+  {
+   "id": "93",
+   "title": "License and notice files",
+   "area": "Repository delivery",
+   "severity": "Medium",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "BLOCKED",
+   "artifacts": [
+    "NOTICE"
+   ],
+   "tests": [],
+   "blockers": [
+    "no license has been chosen by the owner; NOTICE says so"
+   ]
+  },
+  {
+   "id": "94",
+   "title": "Security policy/contact",
+   "area": "Repository delivery",
+   "severity": "High",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "PARTIAL",
+   "artifacts": [
+    "SECURITY.md"
+   ],
+   "tests": [],
+   "blockers": [
+    "policy written; reporting channel has no named owner"
+   ]
+  },
+  {
+   "id": "95",
+   "title": "Static-analysis/type-check gate",
+   "area": "Repository delivery",
+   "severity": "Medium",
+   "checklist": "Repository quality",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "tools/lint.py",
+    "pyproject.toml"
+   ],
+   "tests": [],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json",
+    "ruff/mypy configured but not installed here; stdlib AST gate enforced in CI"
+   ]
+  },
+  {
+   "id": "96",
+   "title": "Master prompt/workflow source artifact",
+   "area": "Repository delivery",
+   "severity": "Medium",
+   "checklist": "Series packaging",
+   "audit_status_5_0_0": "MISSING",
+   "status": "IMPLEMENTED_LOCAL",
+   "artifacts": [
+    "MASTER.md"
+   ],
+   "tests": [
+    "test_repository.py::RepositoryTest::test_master_prompt_artifact_is_real"
+   ],
+   "blockers": [
+    "owner acceptance pending: no named role/approver in governance/owners.json"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,246 @@
+{
+  "$defs": {
+    "ident": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "[A-Za-z0-9\\-_.:]+",
+      "type": "string"
+    }
+  },
+  "$id": "urn:inv62:config:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "admission": {
+      "additionalProperties": false,
+      "properties": {
+        "burst": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_in_flight": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "rate_per_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "cloud_node": {
+      "$ref": "#/$defs/ident"
+    },
+    "coordinator_capability": {
+      "$ref": "#/$defs/ident"
+    },
+    "election": {
+      "additionalProperties": false,
+      "properties": {
+        "lease_ttl_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "renew_before_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "environment": {
+      "enum": [
+        "dev",
+        "test",
+        "staging",
+        "prod"
+      ]
+    },
+    "health": {
+      "additionalProperties": false,
+      "properties": {
+        "down_after_failures": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "flap_window_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "max_flaps": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "probe_interval_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "stale_after_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "suspect_after_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "up_after_successes": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_caps_per_node": {
+          "maximum": 1024,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_degree": {
+          "maximum": 65536,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_links": {
+          "maximum": 5000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_nodes": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_tenants": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_cross_site_failover": {
+          "type": "boolean"
+        },
+        "residency_required": {
+          "type": "boolean"
+        },
+        "stale_link_behaviour": {
+          "enum": [
+            "exclude",
+            "degrade"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "secrets": {
+      "additionalProperties": false,
+      "properties": {
+        "active_token_key": {
+          "pattern": "[A-Za-z0-9\\-_]{1,64}",
+          "type": "string"
+        },
+        "audit_key": {
+          "pattern": "secret://[a-z0-9][a-z0-9\\-_/]{0,127}",
+          "type": "string"
+        },
+        "config_signing_key": {
+          "pattern": "secret://[a-z0-9][a-z0-9\\-_/]{0,127}",
+          "type": "string"
+        },
+        "state_key": {
+          "pattern": "secret://[a-z0-9][a-z0-9\\-_/]{0,127}",
+          "type": "string"
+        },
+        "token_keys": {
+          "additionalProperties": {
+            "pattern": "secret://[a-z0-9][a-z0-9\\-_/]{0,127}",
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "token_keys",
+        "audit_key"
+      ],
+      "type": "object"
+    },
+    "security": {
+      "additionalProperties": false,
+      "properties": {
+        "audit_fsync": {
+          "type": "boolean"
+        },
+        "encrypt_at_rest": {
+          "type": "boolean"
+        },
+        "require_auth": {
+          "const": true
+        },
+        "require_signed_config": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "site": {
+      "$ref": "#/$defs/ident"
+    },
+    "state_dir": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "type": "string"
+    },
+    "telemetry": {
+      "additionalProperties": false,
+      "properties": {
+        "expose_node_names": {
+          "type": "boolean"
+        },
+        "log_level": {
+          "enum": [
+            "debug",
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "max_label_values": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "retention_days": {
+          "maximum": 400,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "trace_sample_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "environment",
+    "cloud_node",
+    "secrets"
+  ],
+  "title": "INV-62 edge topology configuration v1",
+  "type": "object"
+}

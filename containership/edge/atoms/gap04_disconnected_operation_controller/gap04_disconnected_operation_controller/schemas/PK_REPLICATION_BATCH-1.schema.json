@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_REPLICATION_BATCH/1",
+  "title": "GAP-05 reconciliation batch v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "txn_id",
+    "batch_no",
+    "site",
+    "partition_epoch",
+    "partitioned_since",
+    "generation",
+    "audit_head",
+    "traceparent",
+    "decisions"
+  ],
+  "properties": {
+    "contract": {
+      "const": "PK_REPLICATION_BATCH/1"
+    },
+    "txn_id": {
+      "type": "string",
+      "pattern": "^tx-[0-9a-f]{32}$"
+    },
+    "batch_no": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "partition_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "partitioned_since": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "audit_head": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "traceparent": {
+      "type": "string"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "d",
+        "title": "decision",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "decision_id",
+          "kind",
+          "subject",
+          "at",
+          "tier",
+          "policy_digest",
+          "lease_id"
+        ],
+        "properties": {
+          "decision_id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "at": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tier": {
+            "enum": [
+              "full",
+              "sustain",
+              "freeze",
+              "expired"
+            ]
+          },
+          "policy_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "lease_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+package ex:http@0.2.0;
+interface types {
+  variant method { get, post, put, other(string) }
+  record header { name: string, value: list<u8> }
+  resource request {
+    constructor(m: method, path: string);
+    headers: func() -> list<header>;
+    body: func() -> result<list<u8>>;
+  }
+  resource response {
+    status: func() -> u16;
+  }
+}
+interface handler {
+  use types.{request, response};
+  handle: func(r: own<request>) -> result<response, string>;
+}
+world proxy {
+  import types;
+  export handler;
+}

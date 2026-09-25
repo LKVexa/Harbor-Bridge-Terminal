@@ -1,0 +1,34 @@
+{
+ "schema": "PK_DASHBOARD/1",
+ "title": "INV-72 accelerator requirement",
+ "panels": [
+  {
+   "title": "Decisions by outcome",
+   "query": "rate(accel_matched_total[5m]), rate(accel_refused_total[5m]), rate(accel_errors_total[5m])"
+  },
+  {
+   "title": "Refusals by reason code",
+   "query": "sum by (reason) (rate(accel_refused_total[5m]))"
+  },
+  {
+   "title": "Latency p50/p95/p99",
+   "query": "histogram_quantile(accel_decision_latency_ms)"
+  },
+  {
+   "title": "Shed / in-flight",
+   "query": "rate(accel_shed_total[5m]), accel_inflight"
+  },
+  {
+   "title": "Inventory age vs bound",
+   "query": "accel_inventory_age_seconds"
+  },
+  {
+   "title": "Reservations / quarantined",
+   "query": "accel_active_reservations, accel_quarantined_devices"
+  },
+  {
+   "title": "Fleet saturation by class",
+   "query": "capacity.model()"
+  }
+ ]
+}

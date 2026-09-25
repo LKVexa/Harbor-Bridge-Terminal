@@ -1,0 +1,18 @@
+# Recurring review automation (MC-066): weekly extraction of effective access, trust and drift.
+name: inv66-recurring-review
+on:
+  schedule: [{cron: "0 6 * * 1"}]
+  workflow_dispatch: {}
+permissions: {contents: read}
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv66_enterprise_wasm_control_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install cryptography
+      - run: python inv66_enterprise_wasm_control_plane/tools/review.py --config inv66_enterprise_wasm_control_plane/config/examples/base.json inv66_enterprise_wasm_control_plane/config/examples/prod.json --out review.json
+      - uses: actions/upload-artifact@v4
+        with: {name: recurring-review, path: review.json}

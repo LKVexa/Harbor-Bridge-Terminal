@@ -1,0 +1,30 @@
+{
+ "schema": "PK_SNAPSHOT_COMPATIBILITY/1",
+ "package": "6.0.0",
+ "interfaces": {
+  "PK_SNAPSHOT_CAPTURE_REQUEST": {"current": 2, "accept": [2], "refuse": [1], "note": "v1 had no workload/environment binding"},
+  "PK_SNAPSHOT_RESTORE_REQUEST": {"current": 2, "accept": [2], "refuse": [1]},
+  "PK_SNAPSHOT (capture response)": {"current": 2},
+  "PK_SNAPSHOT_RESTORE (restore response)": {"current": 2},
+  "PK_SNAPSHOT_MANIFEST": {"current": 1, "accept": [1]},
+  "AES-256-GCM-CHUNKED envelope": {"current": 1, "accept": [1]},
+  "PK_SNAPSHOT_METASTORE": {"current": 1, "accept": [1]},
+  "PK_SNAPSHOT_CONFIG": {"current": 1, "accept": [1]},
+  "PK_SNAPSHOT_ERRORS": {"current": 1, "rule": "codes never recycled; retired codes move to RESERVED"}
+ },
+ "rules": {
+  "additive": "new optional fields -> minor bump; readers MUST reject unknown fields at trust boundaries, so a new field is only sent to peers that advertise the new minor",
+  "breaking": "any removed/renamed/re-typed field or changed semantics -> major bump; old major refused with SNAP_UNSUPPORTED_VERSION before state mutation",
+  "security_downgrade": "never negotiated: encryption, tenant binding, grant requirement, entropy ack are LOCKED config invariants",
+  "old_snapshots": "a snapshot is restorable only with the same VMM major, arch and device fingerprint; otherwise re-capture (no migration of VMM state files)",
+  "downgrade": "package downgrade within the same interface majors is supported; across a major, metadata export/import (BACKUP_RESTORE.md) + re-capture"
+ },
+ "peers": {
+  "firecracker": {"supported": ["1.x (tested against protocol fake only)"], "minimum": "1.0", "maximum_tested": null},
+  "cloud-hypervisor": {"supported": ["v3x-v4x API (protocol fake only)"], "maximum_tested": null},
+  "cryptography": {"pin": "46.0.7", "minimum": "42.0"},
+  "python": {"supported": ["3.10", "3.11", "3.12", "3.13"], "tested": ["3.11.15"]},
+  "pk_core": {"pin": null, "note": "required only by contract.py/component.py; distribution/version/digest unknown -> not pinned to a guess (X013 BLOCKED_EXTERNAL)"}
+ },
+ "tested_matrix": [{"os": "Linux x86_64 (container, kernel 6.18)", "python": "3.11.15", "vmm": "reference + protocol fakes", "kvm": false}]
+}

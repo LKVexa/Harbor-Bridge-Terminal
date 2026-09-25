@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv66:schema:PK_ECP_ADMIT:1:request",
+  "title": "PK_ECP_ADMIT/1 request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol",
+    "request_id",
+    "tenant",
+    "lattice",
+    "manifest"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "PK_ECP_ADMIT/1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+    },
+    "deadline_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60000
+    },
+    "tenant": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+    },
+    "lattice": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "staging",
+        "prod"
+      ]
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "components"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "image",
+              "signer",
+              "signature"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+              },
+              "image": {
+                "type": "string",
+                "maxLength": 2048,
+                "pattern": "^[a-z0-9][a-z0-9.-]*(:[0-9]{1,5})?/[a-z0-9._/-]{1,512}@sha256:[0-9a-f]{64}$"
+              },
+              "signer": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,255}$"
+              },
+              "signature": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9+/=_-]{16,1024}$"
+              },
+              "attestations": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "digest"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "slsa-provenance/v1",
+                        "spdx-sbom/2.3",
+                        "cyclonedx-sbom/1.5"
+                      ]
+                    },
+                    "digest": {
+                      "type": "string",
+                      "pattern": "^sha256:[0-9a-f]{64}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

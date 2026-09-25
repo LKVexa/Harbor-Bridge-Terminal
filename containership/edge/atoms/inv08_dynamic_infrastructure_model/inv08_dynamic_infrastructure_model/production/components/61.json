@@ -1,0 +1,69 @@
+{
+ "component": 61,
+ "title": "Backup/restore/migration/reconstruction tooling",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "persistent-state backup format",
+   "state": "IMPLEMENTED",
+   "spec": "production/backup.py (PK_DYN_BACKUP/2)",
+   "modules": [
+    "production/backup.py::write_backup"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.BackupTest.test_backup_format"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "backup integrity and encryption",
+   "state": "PARTIAL",
+   "spec": "production/backup.py::verify_backup",
+   "modules": [
+    "production/backup.py::verify_backup"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.BackupTest.test_integrity_hmac_and_tamper"
+   ],
+   "blocker": "encryption at rest: no vetted cipher in stdlib and no KMS provisioned; HMAC key nonproduction"
+  },
+  {
+   "name": "restore validation in isolated environment",
+   "state": "IMPLEMENTED",
+   "spec": "production/backup.py::restore",
+   "modules": [
+    "production/backup.py::restore",
+    "production/backup.py::pool_from_state"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.BackupTest.test_restore_isolated_validation"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "schema/data migration tooling",
+   "state": "IMPLEMENTED",
+   "spec": "production/backup.py::migrate",
+   "modules": [
+    "production/backup.py::migrate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.BackupTest.test_schema_migration"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "disaster reconstruction from source-of-truth and provider inventory",
+   "state": "PARTIAL",
+   "spec": "production/backup.py::reconstruct",
+   "modules": [
+    "production/backup.py::reconstruct"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.BackupTest.test_reconstruction"
+   ],
+   "blocker": "real provider inventory API absent (inventory supplied by a double)"
+  }
+ ],
+ "notes": ""
+}

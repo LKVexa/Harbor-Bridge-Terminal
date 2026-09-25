@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv68:PK_PACK_CONFIG:1",
+  "title": "PK_PACK_CONFIG/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "config_version",
+    "headroom",
+    "cpu_overcommit",
+    "limits",
+    "tenants",
+    "provenance"
+  ],
+  "description": "Normative ranges are enforced by config.validate(); memory overcommit is deliberately absent (fixed at 1.0).",
+  "properties": {
+    "schema": {
+      "const": "PK_PACK_CONFIG/1"
+    },
+    "config_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "headroom": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 1
+    },
+    "cpu_overcommit": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_workloads",
+        "max_payload_bytes",
+        "max_name_length",
+        "max_concurrency",
+        "max_queue",
+        "request_timeout_ms",
+        "capacity_staleness_s"
+      ],
+      "properties": {
+        "max_workloads": {
+          "type": "integer"
+        },
+        "max_payload_bytes": {
+          "type": "integer"
+        },
+        "max_name_length": {
+          "type": "integer"
+        },
+        "max_concurrency": {
+          "type": "integer"
+        },
+        "max_queue": {
+          "type": "integer"
+        },
+        "request_timeout_ms": {
+          "type": "integer"
+        },
+        "capacity_staleness_s": {
+          "type": "integer"
+        }
+      }
+    },
+    "tenants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_quota"
+      ],
+      "properties": {
+        "default_quota": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_workloads_per_request": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_requests_per_minute": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "overrides": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "max_workloads_per_request": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "max_requests_per_minute": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "author",
+        "change_ref",
+        "created"
+      ],
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "change_ref": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1682 @@
+{
+"component": "C29",
+"items": [
+{
+"id": "C29-001",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Define the complete-byte-sequence input contract.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "decode() jsdoc documents the complete-byte-sequence input contract",
+"prior_evidence": [
+"protocol/codec.js:276-280"
+]
+},
+{
+"id": "C29-002",
+"task_class": "IMPLEMENT",
+"area": "01. Decoder scope",
+"req": "Require an explicit WebSocket message type with the payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "validate() requires msg.type matching a known schema branch before anything else",
+"prior_evidence": [
+"protocol/codec.js:260-266"
+]
+},
+{
+"id": "C29-003",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Define supported text application payloads.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md/envelope schema define the supported text application message types",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C29-004",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Define supported binary application payloads.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary application payloads are not supported by hermit.vws.v1 (text only, D-001-style protocol decision)",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C29-005",
+"task_class": "IMPLEMENT",
+"area": "01. Decoder scope",
+"req": "Distinguish UTF-8 decoding from application schema parsing.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "decode() has separate BAD_UTF8 stage (utf8Strict) then BAD_JSON stage (strictParse), distinct error codes",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-006",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Identify whether application parsing belongs in this component or its consumer.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "File header states state/parsing ownership is NOT decided here; owned by gateway connection state machine",
+"prior_evidence": [
+"protocol/codec.js:15-17"
+]
+},
+{
+"id": "C29-007",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Define the maximum accepted completed payload size.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "MAX_ENVELOPE_BYTES=65536 / config maxBytes define the max accepted completed payload size",
+"prior_evidence": [
+"protocol/codec.js:25,258"
+]
+},
+{
+"id": "C29-008",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Define ownership of input bytes during decoding.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "decode() accepts Uint8Array|string per jsdoc but no explicit ownership/copy contract documented",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-009",
+"task_class": "SPECIFY",
+"area": "01. Decoder scope",
+"req": "Define output types delivered to application handlers.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "Return type {msg, bytes} documents output delivered to callers/handlers",
+"prior_evidence": [
+"protocol/codec.js:276-280"
+]
+},
+{
+"id": "C29-010",
+"task_class": "IMPLEMENT",
+"area": "01. Decoder scope",
+"req": "Approve the decoder boundary.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit approval/sign-off record found for the decoder boundary",
+"prior_evidence": []
+},
+{
+"id": "C29-011",
+"task_class": "IMPLEMENT",
+"area": "02. Completion precondition",
+"req": "Accept bytes only from a completed logical message.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.decode is invoked only from _onText, which only fires from ws.js's 'text' event on completed messages",
+"prior_evidence": [
+"gateway/connection.js:38",
+"gateway/ws.js:204-208"
+]
+},
+{
+"id": "C29-012",
+"task_class": "IMPLEMENT",
+"area": "02. Completion precondition",
+"req": "Reject a handoff marked incomplete.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "ws.js never emits 'text' for an incomplete/partial message, so no incomplete handoff can reach the decoder",
+"prior_evidence": [
+"gateway/ws.js:184,194,204-208"
+]
+},
+{
+"id": "C29-013",
+"task_class": "VERIFY",
+"area": "02. Completion precondition",
+"req": "Verify the delivered length matches accumulation metadata.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found explicitly asserting delivered length equals accumulation byte-count metadata",
+"prior_evidence": []
+},
+{
+"id": "C29-014",
+"task_class": "IMPLEMENT",
+"area": "02. Completion precondition",
+"req": "Prevent Close control results from entering payload decoding.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "OP.CLOSE is routed to _onClose, a separate path from _message/_onText decoding",
+"prior_evidence": [
+"gateway/ws.js:198,211-225"
+]
+},
+{
+"id": "C29-015",
+"task_class": "IMPLEMENT",
+"area": "02. Completion precondition",
+"req": "Preserve message order required by the application.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "_onText processes messages synchronously in arrival order; seq checks additionally enforce input order",
+"prior_evidence": [
+"gateway/connection.js:103-154"
+]
+},
+{
+"id": "C29-016",
+"task_class": "IMPLEMENT",
+"area": "02. Completion precondition",
+"req": "Avoid reading from a reusable buffer that may be overwritten.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "Bytes passed to decode are the already-copied per-message Buffer, not the mutable receive buffer this.buf",
+"prior_evidence": [
+"gateway/ws.js:172-176,204-208"
+]
+},
+{
+"id": "C29-017",
+"task_class": "TEST",
+"area": "02. Completion precondition",
+"req": "Test a one-receive complete message.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js valid vectors and e2e vertical slice exercise a one-message decode path",
+"prior_evidence": [
+"tests/protocol/codec.test.js:13-17",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C29-018",
+"task_class": "TEST",
+"area": "02. Completion precondition",
+"req": "Test a many-receive complete message.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Fragmentation tests assemble multi-receive messages before decode, but no decoder-specific many-receive test",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:44-51"
+]
+},
+{
+"id": "C29-019",
+"task_class": "TEST",
+"area": "02. Completion precondition",
+"req": "Test an interrupted accumulation that produces no decoder call.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "'stalled fragment assembly hits the deadline -> 1008' means decode is never called for that message",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:52-55"
+]
+},
+{
+"id": "C29-020",
+"task_class": "DOCUMENT",
+"area": "02. Completion precondition",
+"req": "Document the handoff evidence required from the accumulator.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No document found specifying what handoff evidence the accumulator must provide to the decoder",
+"prior_evidence": []
+},
+{
+"id": "C29-021",
+"task_class": "SPECIFY",
+"area": "03. UTF-8 configuration",
+"req": "Select the .NET UTF-8 decoding API.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Selecting a .NET UTF-8 decoding API has no meaning in Node; codec.js uses the WHATWG TextDecoder (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C29-022",
+"task_class": "SPECIFY",
+"area": "03. UTF-8 configuration",
+"req": "Define the policy for invalid UTF-8 bytes.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "utf8Strict uses TextDecoder('utf-8',{fatal:true}); policy is reject on invalid bytes",
+"prior_evidence": [
+"protocol/codec.js:242"
+]
+},
+{
+"id": "C29-023",
+"task_class": "VERIFY",
+"area": "03. UTF-8 configuration",
+"req": "VERIFY the selected API's fallback behavior.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js invalid-vector/UTF-8 tests and ws-conformance 'invalid UTF-8 text -> 1007' verify fatal-decode behavior",
+"prior_evidence": [
+"tests/protocol/codec.test.js",
+"tests/gateway/ws-conformance.test.js:21"
+]
+},
+{
+"id": "C29-024",
+"task_class": "IMPLEMENT",
+"area": "03. UTF-8 configuration",
+"req": "Configure the intended fallback behavior explicitly where supported.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "{fatal:true} explicitly configures the strict fallback behavior",
+"prior_evidence": [
+"protocol/codec.js:242"
+]
+},
+{
+"id": "C29-025",
+"task_class": "SPECIFY",
+"area": "03. UTF-8 configuration",
+"req": "Define handling of a byte-order mark if relevant to the application.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No BOM-handling logic or documented policy found in codec.js",
+"prior_evidence": []
+},
+{
+"id": "C29-026",
+"task_class": "IMPLEMENT",
+"area": "03. UTF-8 configuration",
+"req": "Avoid culture-dependent text decoding choices.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "TextDecoder/JSON parsing used are locale-independent by construction; no culture-dependent APIs used",
+"prior_evidence": [
+"protocol/codec.js:242,292"
+]
+},
+{
+"id": "C29-027",
+"task_class": "IMPLEMENT",
+"area": "03. UTF-8 configuration",
+"req": "Preserve meaningful whitespace in the application payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "strictParse only skips insignificant JSON whitespace outside strings; string content (incl. whitespace) preserved via JSON.parse unescape",
+"prior_evidence": [
+"protocol/codec.js:99-116"
+]
+},
+{
+"id": "C29-028",
+"task_class": "IMPLEMENT",
+"area": "03. UTF-8 configuration",
+"req": "Avoid automatic newline normalization unless required.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "No newline-normalization logic present in decode path",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-029",
+"task_class": "SPECIFY",
+"area": "03. UTF-8 configuration",
+"req": "Define whether a decoded null character is allowed by the application.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Raw control chars (incl NUL) in string literals are rejected, but escaped \\u0000 is accepted; no documented app policy",
+"prior_evidence": [
+"protocol/codec.js:105"
+]
+},
+{
+"id": "C29-030",
+"task_class": "DOCUMENT",
+"area": "03. UTF-8 configuration",
+"req": "Record the exact decoder configuration.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md and codec.js header record the exact strict-UTF-8/strict-JSON decoder configuration",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"protocol/codec.js:1-17"
+]
+},
+{
+"id": "C29-031",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Decode a simple ASCII payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "ASCII payloads decode via utf8Strict+strictParse; exercised by codec.test.js valid vectors",
+"prior_evidence": [
+"protocol/codec.js:281-295",
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C29-032",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Decode accented characters.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "TextDecoder('utf-8') decodes accented characters as standard UTF-8; no dedicated accented-char test found",
+"prior_evidence": [
+"protocol/codec.js:242"
+]
+},
+{
+"id": "C29-033",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Decode multi-byte scripts relevant to intended users.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "Generic UTF-8 decode supports multi-byte scripts; no dedicated script-specific test found",
+"prior_evidence": [
+"protocol/codec.js:242"
+]
+},
+{
+"id": "C29-034",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Decode supplementary Unicode characters.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codeUnitsToPoints iterates via for...of (code-point aware), showing supplementary-character awareness",
+"prior_evidence": [
+"protocol/codec.js:151"
+]
+},
+{
+"id": "C29-035",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Decode an empty text payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Empty string literals parse fine structurally; no dedicated empty-text-payload test found",
+"prior_evidence": [
+"protocol/codec.js:99-104"
+]
+},
+{
+"id": "C29-036",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Decode text assembled across many receive boundaries.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "Fragmentation tests reassemble multi-receive text before it reaches decode successfully",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:44-51"
+]
+},
+{
+"id": "C29-037",
+"task_class": "IMPLEMENT",
+"area": "04. Text correctness",
+"req": "Compare output exactly with the originally encoded string.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js valid-vector roundtrip and client-units byte-exact reassembly test",
+"prior_evidence": [
+"tests/protocol/codec.test.js:13-17",
+"tests/ui/client-units.test.js"
+]
+},
+{
+"id": "C29-038",
+"task_class": "TEST",
+"area": "04. Text correctness",
+"req": "Test a short payload after a large payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for a short payload decoded immediately after a large payload",
+"prior_evidence": []
+},
+{
+"id": "C29-039",
+"task_class": "TEST",
+"area": "04. Text correctness",
+"req": "Test meaningful leading and trailing whitespace.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for meaningful leading/trailing whitespace preservation",
+"prior_evidence": []
+},
+{
+"id": "C29-040",
+"task_class": "TEST",
+"area": "04. Text correctness",
+"req": "Test a text payload at the approved size limit.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "'VWS200 raw invalid vectors are rejected (3) + wire size' exercises the approved size boundary",
+"prior_evidence": [
+"tests/protocol/codec.test.js:23-27"
+]
+},
+{
+"id": "C29-041",
+"task_class": "TEST",
+"area": "05. Invalid text",
+"req": "Test an invalid UTF-8 byte sequence.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "'invalid UTF-8 text -> 1007' and codec.test.js invalid vectors",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:21",
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C29-042",
+"task_class": "TEST",
+"area": "05. Invalid text",
+"req": "Test a truncated multi-byte sequence presented as a completed payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js 'raw invalid vectors ... + invalid UTF-8' covers truncated/invalid byte sequences presented as complete",
+"prior_evidence": [
+"tests/protocol/codec.test.js:23-27"
+]
+},
+{
+"id": "C29-043",
+"task_class": "TEST",
+"area": "05. Invalid text",
+"req": "Test unexpected byte-order-mark behavior.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No BOM-specific test found",
+"prior_evidence": []
+},
+{
+"id": "C29-044",
+"task_class": "TEST",
+"area": "05. Invalid text",
+"req": "Test embedded null characters according to the application policy.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated embedded-null-character test found (code rejects raw NUL in string, allows \\u0000)",
+"prior_evidence": []
+},
+{
+"id": "C29-045",
+"task_class": "TEST",
+"area": "05. Invalid text",
+"req": "Test text exceeding the approved application limit.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "'VWS200 invalid vectors are rejected (18)' includes maxLength/size-exceeding cases per schema",
+"prior_evidence": [
+"tests/protocol/codec.test.js:18-22"
+]
+},
+{
+"id": "C29-046",
+"task_class": "IMPLEMENT",
+"area": "05. Invalid text",
+"req": "Distinguish decoding failure from application schema failure.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "CodecError carries distinct codes (BAD_UTF8, BAD_JSON, BAD_MESSAGE) distinguishing decode vs schema failure",
+"prior_evidence": [
+"protocol/codec.js:29-31"
+]
+},
+{
+"id": "C29-047",
+"task_class": "IMPLEMENT",
+"area": "05. Invalid text",
+"req": "Avoid silently repairing input unless the policy explicitly permits it.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "fatal:true TextDecoder and strict hand-rolled JSON parser throw rather than repair malformed input",
+"prior_evidence": [
+"protocol/codec.js:242,292"
+]
+},
+{
+"id": "C29-048",
+"task_class": "IMPLEMENT",
+"area": "05. Invalid text",
+"req": "Return a deliberate error outcome to the socket owner.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "_onText catches codec errors and returns a deliberate _error() envelope to the client",
+"prior_evidence": [
+"gateway/connection.js:110-116"
+]
+},
+{
+"id": "C29-049",
+"task_class": "IMPLEMENT",
+"area": "05. Invalid text",
+"req": "Avoid logging the entire rejected payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "_error sends only a fixed safe message (sliced 256 chars, no echoed input); SECURITY.md confirms no secret/content leakage",
+"prior_evidence": [
+"gateway/connection.js:84-91",
+"docs/SECURITY.md"
+]
+},
+{
+"id": "C29-050",
+"task_class": "TEST",
+"area": "05. Invalid text",
+"req": "Test that a rejected message does not contaminate the next message.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Each _onText call is independent with no shared parse state, but no dedicated test isolates this claim",
+"prior_evidence": [
+"gateway/connection.js:103-154"
+]
+},
+{
+"id": "C29-051",
+"task_class": "IMPLEMENT",
+"area": "06. Binary handoff",
+"req": "Return complete binary bytes without text conversion.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-052",
+"task_class": "IMPLEMENT",
+"area": "06. Binary handoff",
+"req": "Preserve byte-for-byte content.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-053",
+"task_class": "IMPLEMENT",
+"area": "06. Binary handoff",
+"req": "Preserve length metadata.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-054",
+"task_class": "SPECIFY",
+"area": "06. Binary handoff",
+"req": "Define whether the consumer receives an owned array or a read-only abstraction.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-055",
+"task_class": "IMPLEMENT",
+"area": "06. Binary handoff",
+"req": "Prevent later buffer reuse from modifying the consumer's payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-056",
+"task_class": "TEST",
+"area": "06. Binary handoff",
+"req": "Test a binary payload containing every byte range.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-057",
+"task_class": "TEST",
+"area": "06. Binary handoff",
+"req": "Test an empty binary payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-058",
+"task_class": "TEST",
+"area": "06. Binary handoff",
+"req": "Test a large binary payload.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-059",
+"task_class": "IMPLEMENT",
+"area": "06. Binary handoff",
+"req": "Reject binary messages when the application does not support them.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-060",
+"task_class": "DOCUMENT",
+"area": "06. Binary handoff",
+"req": "Document the binary consumer's ownership and disposal responsibilities.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Binary messages are not part of hermit.vws.v1 (always closed 1003); no binary handoff path exists",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"gateway/ws.js:183"
+]
+},
+{
+"id": "C29-061",
+"task_class": "SPECIFY",
+"area": "07. Application parsing boundary",
+"req": "Decide whether JSON parsing is actually required by the application.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "JSON parsing is required: every envelope is parsed via strictParse before validation",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-062",
+"task_class": "IMPLEMENT",
+"area": "07. Application parsing boundary",
+"req": "Keep a plain-text path when no structured format is required.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Every hermit.vws.v1 message is a structured JSON envelope by protocol design; no plain-text-only path is required",
+"prior_evidence": []
+},
+{
+"id": "C29-063",
+"task_class": "REVIEW",
+"area": "07. Application parsing boundary",
+"req": "Validate required schemas only after complete text decoding.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "decode(): utf8Strict -> strictParse -> validate/schema check, schema validated only after full text decode [downgraded: VERIFY item without a test or measuremen",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-064",
+"task_class": "SPECIFY",
+"area": "07. Application parsing boundary",
+"req": "Define malformed structured-payload behavior when parsing is selected.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "BAD_JSON/DUPLICATE_KEY/NONFINITE errors define malformed-payload behavior",
+"prior_evidence": [
+"protocol/codec.js:29-31,44-130"
+]
+},
+{
+"id": "C29-065",
+"task_class": "SPECIFY",
+"area": "07. Application parsing boundary",
+"req": "Define unknown message-type behavior at the application layer.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "validate() throws BAD_MESSAGE 'unknown type' for an unrecognized message type",
+"prior_evidence": [
+"protocol/codec.js:262-264"
+]
+},
+{
+"id": "C29-066",
+"task_class": "IMPLEMENT",
+"area": "07. Application parsing boundary",
+"req": "Bound nested or oversized application structures according to approved requirements.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "MAX_DEPTH=8 bounds nesting in strictParse",
+"prior_evidence": [
+"protocol/codec.js:26,45"
+]
+},
+{
+"id": "C29-067",
+"task_class": "IMPLEMENT",
+"area": "07. Application parsing boundary",
+"req": "Keep parser exceptions distinguishable from transport errors.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "CodecError (protocol/application) is a distinct class from ws.js transport-level _fail/WS close handling",
+"prior_evidence": [
+"protocol/codec.js:29-31",
+"gateway/ws.js:123-129"
+]
+},
+{
+"id": "C29-068",
+"task_class": "IMPLEMENT",
+"area": "07. Application parsing boundary",
+"req": "Avoid evaluating received text as PowerShell code.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "SECURITY.md: 'SPIRAL has no $(...)/backtick execution and no OS shell'; no eval()/exec of received text found in codec.js/connection.js",
+"prior_evidence": [
+"docs/SECURITY.md"
+]
+},
+{
+"id": "C29-069",
+"task_class": "TEST",
+"area": "07. Application parsing boundary",
+"req": "Test synthetic malformed application content.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "'VWS200 invalid vectors are rejected (18)' and 'duplicate key nested, __proto__ key, deep nesting, trailing data'",
+"prior_evidence": [
+"tests/protocol/codec.test.js:18-22,28-31"
+]
+},
+{
+"id": "C29-070",
+"task_class": "IMPLEMENT",
+"area": "07. Application parsing boundary",
+"req": "Mark unselected application parsing features N/A rather than inventing them.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "assertSupported() explicitly throws SCHEMA_UNSUPPORTED for any schema keyword outside the SUPPORTED allowlist",
+"prior_evidence": [
+"protocol/codec.js:136-149"
+]
+},
+{
+"id": "C29-071",
+"task_class": "MEASURE",
+"area": "08. Resource behavior",
+"req": "Measure memory required to decode representative large text.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No memory measurement isolating decode of representative large text found",
+"prior_evidence": []
+},
+{
+"id": "C29-072",
+"task_class": "IMPLEMENT",
+"area": "08. Resource behavior",
+"req": "Account for simultaneous byte and string representations.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "decode() holds both raw bytes and decoded text as locals simultaneously; not documented as an accounted tradeoff",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-073",
+"task_class": "IMPLEMENT",
+"area": "08. Resource behavior",
+"req": "Avoid retaining both representations longer than necessary.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "decode() is a synchronous function; text/bytes are local variables released after return (no cross-call retention)",
+"prior_evidence": [
+"protocol/codec.js:281-295"
+]
+},
+{
+"id": "C29-074",
+"task_class": "IMPLEMENT",
+"area": "08. Resource behavior",
+"req": "Bound the number of decoded messages waiting for handlers.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "Rate limiter (token bucket, 20-strike cap) bounds how many decoded messages can arrive faster than handled",
+"prior_evidence": [
+"gateway/connection.js:95-116"
+]
+},
+{
+"id": "C29-075",
+"task_class": "SPECIFY",
+"area": "08. Resource behavior",
+"req": "Define behavior when application consumers are slower than decoding.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Flow-control section documents output-side backpressure (pause/ack window); no explicit statement for slow decode consumers",
+"prior_evidence": [
+"docs/PROTOCOL.md:41-47"
+]
+},
+{
+"id": "C29-076",
+"task_class": "IMPLEMENT",
+"area": "08. Resource behavior",
+"req": "Release input ownership after the consumer contract permits it.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit input-ownership-release rule documented beyond GC-based lifetime of local variables",
+"prior_evidence": []
+},
+{
+"id": "C29-077",
+"task_class": "TEST",
+"area": "08. Resource behavior",
+"req": "Test many small messages for retained-object growth.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for many-small-messages retained-object growth",
+"prior_evidence": []
+},
+{
+"id": "C29-078",
+"task_class": "TEST",
+"area": "08. Resource behavior",
+"req": "Test repeated near-limit messages.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No test found for repeated near-size-limit messages",
+"prior_evidence": []
+},
+{
+"id": "C29-079",
+"task_class": "MEASURE",
+"area": "08. Resource behavior",
+"req": "Measure decoder latency independently of network latency.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No decoder-only latency measurement found; RESOURCE_MODEL.md W1 measures full round trip including network",
+"prior_evidence": []
+},
+{
+"id": "C29-080",
+"task_class": "DOCUMENT",
+"area": "08. Resource behavior",
+"req": "Record an approved resource budget.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "config/limits.json (envelopeBytes) and RESOURCE_MODEL.md record the approved resource budget",
+"prior_evidence": [
+"config/limits.json",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C29-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Track decoded text and binary message counts separately.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "stats.rxMessages counts all text messages but no separate text/binary breakdown (binary is unsupported so moot)",
+"prior_evidence": [
+"gateway/ws.js:58,205"
+]
+},
+{
+"id": "C29-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Track decoding failures by safe category.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "CodecError codes + connection.js strikes counter categorize decode failures safely",
+"prior_evidence": [
+"protocol/codec.js:29-31",
+"gateway/connection.js:107,114"
+]
+},
+{
+"id": "C29-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Track completed payload size without recording private contents.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "stats.rxBytes tracks byte counts without logging payload contents",
+"prior_evidence": [
+"gateway/ws.js:58,146"
+]
+},
+{
+"id": "C29-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Correlate decoding failures with the owning connection.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "Log calls include conn: this.id, correlating failures with the owning connection",
+"prior_evidence": [
+"gateway/connection.js:62-64,108"
+]
+},
+{
+"id": "C29-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Avoid exposing internal parser stack traces to clients.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "_error() sends only a fixed, truncated message string, never a stack trace",
+"prior_evidence": [
+"gateway/connection.js:84-91"
+]
+},
+{
+"id": "C29-086",
+"task_class": "TEST",
+"area": "09. Diagnostics and protection",
+"req": "Test error messages using synthetic sensitive-looking payloads.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "'secrets and host details never reach the shell, the protocol, or the logs'; 'terminal-escape and command-injection text is data'",
+"prior_evidence": [
+"tests/security/authz.test.js"
+]
+},
+{
+"id": "C29-087",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and protection",
+"req": "Document how to distinguish truncation from decoding failure.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "protocol/bridge.js documents clean-vs-truncated EOF, but no equivalent doc contrasts truncation vs decode failure for the WS envelope decoder",
+"prior_evidence": [
+"protocol/bridge.js:103-107"
+]
+},
+{
+"id": "C29-088",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and protection",
+"req": "Record the decoder configuration revision in tests.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No decoder-configuration revision/version tracked in tests found",
+"prior_evidence": []
+},
+{
+"id": "C29-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Provide representative valid and invalid test fixtures.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js uses representative VWS200 valid and invalid vector fixtures",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C29-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and protection",
+"req": "Assign ownership for encoding-policy changes.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No document assigning ownership for encoding-policy changes found",
+"prior_evidence": []
+},
+{
+"id": "C29-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the completed-payload input contract.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md and codec.js header publish the completed-payload input contract",
+"prior_evidence": [
+"docs/PROTOCOL.md",
+"protocol/codec.js:1-17"
+]
+},
+{
+"id": "C29-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the UTF-8 fallback policy.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md: 'invalid UTF-8 closes 1007'; codec.js fatal decoder documents the UTF-8 fallback policy",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C29-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish binary ownership rules.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No binary support, so no binary ownership rules are applicable to publish",
+"prior_evidence": []
+},
+{
+"id": "C29-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link multilingual text integrity tests.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No multilingual-text-integrity test specifically linked/found",
+"prior_evidence": []
+},
+{
+"id": "C29-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link invalid-byte rejection tests.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "codec.test.js invalid vectors and ws-conformance 'invalid UTF-8 text -> 1007' are the linked invalid-byte tests",
+"prior_evidence": [
+"tests/protocol/codec.test.js",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C29-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link binary byte-for-byte tests.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "No binary support, so no binary byte-for-byte tests are applicable",
+"prior_evidence": []
+},
+{
+"id": "C29-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link application parsing tests only where implemented.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "PASS",
+"prior_note": "PROTOCOL.md links codec.test.js ('All 40 series vectors pass') as the implemented application-parsing tests",
+"prior_evidence": [
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C29-098",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link memory and repeated-message measurements.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No memory/repeated-message measurement specific to the decoder found or linked",
+"prior_evidence": []
+},
+{
+"id": "C29-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved encoding or application-schema decisions.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "OPEN",
+"prior_note": "No ledger entry found recording unresolved encoding/application-schema decisions",
+"prior_evidence": []
+},
+{
+"id": "C29-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve decoding only when complete payloads preserve the intended content.",
+"ram_overlay": "Decode only valid completed text messages or use a correctly stateful bounded decoder. Charge simultaneous byte and string representations, and do not quantize transport payloads.",
+"challenge": "Split every multibyte character boundary and verify exact text output; reject malformed encodings without command execution.",
+"ref_work": [
+"R13",
+"R14"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit sign-off statement found; correctness only evidenced indirectly via passing codec/ws-conformance tests",
+"prior_evidence": []
+}
+]
+}

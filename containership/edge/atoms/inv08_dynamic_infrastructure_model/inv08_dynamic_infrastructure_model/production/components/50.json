@@ -1,0 +1,71 @@
+{
+ "component": 50,
+ "title": "Edge power/thermal model",
+ "priority": "P2",
+ "subparts": [
+  {
+   "name": "per-node power telemetry",
+   "state": "PARTIAL",
+   "spec": "production/power.py::validate_power",
+   "modules": [
+    "production/power.py::validate_power"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.PowerTests.test_power_telemetry_validation"
+   ],
+   "blocker": "real power sensors (RAPL/IPMI/PDU) on edge nodes; schema+validation over supplied samples only"
+  },
+  {
+   "name": "thermal sensor telemetry",
+   "state": "PARTIAL",
+   "spec": "production/power.py::validate_thermal",
+   "modules": [
+    "production/power.py::validate_thermal"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.PowerTests.test_thermal_telemetry_validation"
+   ],
+   "blocker": "real thermal sensors (hwmon/IPMI) on edge nodes"
+  },
+  {
+   "name": "power/thermal budget model",
+   "state": "IMPLEMENTED",
+   "spec": "production/power.py::PowerBudget",
+   "modules": [
+    "production/power.py::PowerBudget"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.PowerTests.test_budget_model"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "thermal throttling and derating response",
+   "state": "IMPLEMENTED",
+   "spec": "production/power.py::derate",
+   "modules": [
+    "production/power.py::ThermalPolicy",
+    "production/power.py::derate",
+    "production/power.py::capped_tick"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.PowerTests.test_derating_response",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.PowerTests.test_derating_missing_telemetry_fails_safe"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "energy-efficiency benchmark under constrained edge workloads",
+   "state": "PARTIAL",
+   "spec": "production/power.py::energy_efficiency",
+   "modules": [
+    "production/power.py::energy_efficiency"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.PowerTests.test_energy_efficiency"
+   ],
+   "blocker": "edge hardware under real constrained workloads; computation over supplied telemetry only"
+  }
+ ],
+ "notes": "Derating is applied by clamping demand because Pool raises PoolInvariantError if max_nodes is lowered below current size."
+}

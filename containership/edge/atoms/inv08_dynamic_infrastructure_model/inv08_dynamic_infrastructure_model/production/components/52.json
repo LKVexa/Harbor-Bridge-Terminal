@@ -1,0 +1,75 @@
+{
+ "component": 52,
+ "title": "Structured logging and trace propagation",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "structured log event schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/logging_trace.py::SCHEMA",
+   "modules": [
+    "production/logging_trace.py::StructuredLogger.log"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.LoggingTraceTests.test_schema"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "operation/tenant/workload/node correlation IDs",
+   "state": "IMPLEMENTED",
+   "spec": "production/logging_trace.py::StructuredLogger.log",
+   "modules": [
+    "production/logging_trace.py::StructuredLogger.log"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.LoggingTraceTests.test_correlation_ids"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "trace/span context propagation",
+   "state": "IMPLEMENTED",
+   "spec": "production/logging_trace.py::parse_traceparent",
+   "modules": [
+    "production/logging_trace.py::TraceContext",
+    "production/logging_trace.py::parse_traceparent",
+    "production/logging_trace.py::inject",
+    "production/logging_trace.py::extract"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.LoggingTraceTests.test_trace_propagation",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.FuzzParsers.test_traceparent_fuzz"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "cross-process/provider trace boundaries",
+   "state": "IMPLEMENTED",
+   "spec": "production/logging_trace.py::extract",
+   "modules": [
+    "production/logging_trace.py::extract",
+    "production/logging_trace.py::provider_span"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.LoggingTraceTests.test_provider_boundary"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "redaction and log integrity rules",
+   "state": "IMPLEMENTED",
+   "spec": "production/logging_trace.py::verify_lines",
+   "modules": [
+    "production/logging_trace.py::StructuredLogger.log",
+    "production/logging_trace.py::verify_lines"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.LoggingTraceTests.test_redaction_and_integrity",
+    "inv08_dynamic_infrastructure_model.production.tests.test_secobs.AdversarialReplaySpoof.test_log_and_json_injection"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "W3C traceparent only (tracestate not propagated)."
+}

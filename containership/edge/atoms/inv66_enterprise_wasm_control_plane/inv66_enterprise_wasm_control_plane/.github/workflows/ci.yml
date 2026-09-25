@@ -1,0 +1,33 @@
+# CI (MC-057, MC-061). The matrix rows mirror release/compatibility.json; a row that is
+# DECLARED_UNTESTED there becomes TESTED only when its job here passes and the release tool records it.
+name: inv66-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  lanes:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-24.04-arm]
+        python: ["3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv66_enterprise_wasm_control_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install -c inv66_enterprise_wasm_control_plane/constraints.txt cryptography jsonschema ruff mypy pip-audit
+      - run: python inv66_enterprise_wasm_control_plane/tools/ci.py --out ci_report.json
+      - uses: actions/upload-artifact@v4
+        with: {name: "ci-${{ matrix.os }}-${{ matrix.python }}", path: ci_report.json}
+  perf:
+    runs-on: ubuntu-24.04
+    needs: lanes
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv66_enterprise_wasm_control_plane}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -c inv66_enterprise_wasm_control_plane/constraints.txt cryptography
+      - run: python inv66_enterprise_wasm_control_plane/tools/bench.py --soak-seconds 300 --out bench.json
+      - run: python inv66_enterprise_wasm_control_plane/tools/perf_gate.py bench.json

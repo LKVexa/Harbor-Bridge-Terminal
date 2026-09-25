@@ -1,0 +1,18 @@
+{
+ "schema": "PK_SNAPSHOT_ALERTS/1",
+ "note": "Rules are evaluated over inv26_requests_total by code (ratio of window traffic, minimum events). tools/drills.py drill_alerts proves the four classes separate. Paging targets are unassigned (ops/ownership.json).",
+ "rules": [
+  {"alert": "INV26-SecurityBoundaryProbe", "class": "attack", "severity": "SEV2-security", "codes": ["SNAP_TENANT_MISMATCH", "SNAP_WORKLOAD_MISMATCH", "SNAP_ENVIRONMENT_MISMATCH", "SNAP_GRANT_REPLAYED", "SNAP_GRANT_INVALID", "SNAP_FORBIDDEN", "SNAP_UNAUTHENTICATED"], "threshold_ratio": 0.2, "min_events": 5, "runbook": "INCIDENT_RESPONSE.md#security-boundary-probe"},
+  {"alert": "INV26-DependencyOutage", "class": "dependency_failure", "severity": "SEV2", "codes": ["SNAP_KMS_UNAVAILABLE", "SNAP_STORAGE_UNAVAILABLE", "SNAP_HYPERVISOR_FAILED", "SNAP_CIRCUIT_OPEN", "SNAP_DEPENDENCY_UNAVAILABLE", "SNAP_AUDIT_UNAVAILABLE"], "threshold_ratio": 0.2, "min_events": 5, "runbook": "RUNBOOK.md#dependency-outage"},
+  {"alert": "INV26-SoftwareDefect", "class": "defect", "severity": "SEV2", "codes": ["SNAP_INTERNAL"], "threshold_ratio": 0.01, "min_events": 1, "runbook": "INCIDENT_RESPONSE.md#defect"},
+  {"alert": "INV26-IntegrityFailure", "class": "corruption", "severity": "SEV1-security", "codes": ["SNAP_CIPHERTEXT_INVALID", "SNAP_STORAGE_CORRUPT", "SNAP_SIGNATURE_INVALID"], "threshold_ratio": 0.0, "min_events": 1, "runbook": "INCIDENT_RESPONSE.md#integrity"},
+  {"alert": "INV26-OverloadRatio", "class": "degradation", "severity": "SEV3", "codes": ["SNAP_OVERLOADED", "SNAP_QUOTA_EXCEEDED", "SNAP_TIMEOUT"], "threshold_ratio": 0.5, "min_events": 3, "runbook": "RUNBOOK.md#overload"},
+  {"alert": "INV26-EntropyFailure", "class": "dependency_failure", "severity": "SEV1-security", "codes": ["SNAP_ENTROPY_FAILED"], "threshold_ratio": 0.0, "min_events": 1, "runbook": "INCIDENT_RESPONSE.md#entropy"}
+ ],
+ "gauges": [
+  {"alert": "INV26-Stalled", "metric": "inv26_stalled_operations", "op": ">", "value": 0, "for_s": 60, "severity": "SEV3"},
+  {"alert": "INV26-BreakerOpen", "metric": "inv26_breaker_state", "op": "==", "value": 2, "for_s": 30, "severity": "SEV2"},
+  {"alert": "INV26-AuditBuffering", "metric": "inv26_audit_buffered", "op": ">", "value": 0, "for_s": 60, "severity": "SEV2-security"},
+  {"alert": "INV26-NotReady", "metric": "health.ready", "op": "==", "value": false, "for_s": 60, "severity": "SEV2"}
+ ]
+}

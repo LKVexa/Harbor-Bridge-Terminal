@@ -1,0 +1,106 @@
+{
+ "schema": "PK_ALERTS/1",
+ "alerts": [
+  {
+   "name": "Inv32ReserveInvariantAtRisk",
+   "class": "software_defect_or_state_corruption",
+   "severity": "page",
+   "expr": "min(inv32_memory_mib{kind=\"free\"}) < 0",
+   "for": "0m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "host",
+   "blast_radius": "all guests on host"
+  },
+  {
+   "name": "Inv32AuditIntegrityFailure",
+   "class": "audit_corruption",
+   "severity": "page",
+   "expr": "increase(inv32_refusals_total{reason=\"audit_integrity_error\"}[5m]) > 0",
+   "for": "0m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "host",
+   "blast_radius": "host mutations frozen"
+  },
+  {
+   "name": "Inv32ProviderDown",
+   "class": "dependency_outage",
+   "severity": "page",
+   "expr": "increase(inv32_circuit_open_total{dependency=\"provider\"}[10m]) > 0",
+   "for": "5m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "host",
+   "blast_radius": "host mutations"
+  },
+  {
+   "name": "Inv32Overload",
+   "class": "overload",
+   "severity": "ticket",
+   "expr": "rate(inv32_refusals_total{reason=~\"overloaded|quota_exceeded\"}[5m]) > 1",
+   "for": "10m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "host",
+   "blast_radius": "new adjustments delayed"
+  },
+  {
+   "name": "Inv32OrdinaryLoadHigh",
+   "class": "ordinary_load",
+   "severity": "info",
+   "expr": "inv32_inflight_operations > 0.7 * 64",
+   "for": "15m",
+   "runbook": "docs/PERFORMANCE.md#capacity-model",
+   "scope": "host",
+   "blast_radius": "none"
+  },
+  {
+   "name": "Inv32PolicyRejectionSpike",
+   "class": "policy_rejection",
+   "severity": "ticket",
+   "expr": "rate(inv32_refusals_total{reason=~\"reserve_breach|floor_breach|quota_exceeded\"}[15m]) > 5",
+   "for": "15m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "tenant-aggregate",
+   "blast_radius": "tenant growth"
+  },
+  {
+   "name": "Inv32AttackSignal",
+   "class": "attack_signal",
+   "severity": "page",
+   "expr": "rate(inv32_refusals_total{reason=~\"authentication_failed|authorization_denied\"}[5m]) > 10",
+   "for": "5m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "host",
+   "blast_radius": "possible cross-tenant probing"
+  },
+  {
+   "name": "Inv32StaleController",
+   "class": "software_defect_or_split_brain",
+   "severity": "page",
+   "expr": "increase(inv32_refusals_total{reason=~\"fencing_rejected|not_owner\"}[5m]) > 0",
+   "for": "2m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "host",
+   "blast_radius": "host mutations"
+  },
+  {
+   "name": "Inv32StuckMutation",
+   "class": "stall",
+   "severity": "page",
+   "expr": "inv32_inflight_operations > 0 and increase(inv32_requests_total[10m]) == 0",
+   "for": "10m",
+   "runbook": "docs/RUNBOOKS.md#incident-runbooks",
+   "scope": "guest",
+   "blast_radius": "one guest"
+  },
+  {
+   "name": "Inv32CertExpiringSoon",
+   "class": "dependency_outage",
+   "severity": "ticket",
+   "expr": "inv32_cert_expiry_seconds < 14*86400",
+   "for": "1h",
+   "runbook": "docs/RUNBOOKS.md#day-2-operations",
+   "scope": "node",
+   "blast_radius": "node authn",
+   "note": "metric emitted by the deployment's cert exporter (BLOCKED PKI)"
+  }
+ ]
+}

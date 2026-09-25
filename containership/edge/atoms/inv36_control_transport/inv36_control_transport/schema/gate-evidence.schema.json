@@ -1,0 +1,38 @@
+{
+  "$id": "inv36.gate-evidence/1",
+  "title": "INV-36 gate evidence document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "component", "version", "mode", "source_digest", "generated_at", "environment", "tools", "results", "summary", "exit_code", "deterministic_digest"],
+  "properties": {
+    "schema": {"const": "inv36.gate-evidence/1"},
+    "component": {"const": "INV-36"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "mode": {"enum": ["local", "certify"]},
+    "source_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_digest": {"type": ["string", "null"]},
+    "generated_at": {"type": "string"},
+    "environment": {"type": "object"},
+    "tools": {"type": "object"},
+    "results": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "status", "requirements", "evidence", "detail"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1, "maxLength": 64},
+          "status": {"enum": ["PASS", "FAIL", "SKIP", "ERROR"]},
+          "requirements": {"type": "array", "items": {"type": "string"}},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "detail": {"type": "string", "maxLength": 4000},
+          "duration_s": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "summary": {"type": "object", "required": ["PASS", "FAIL", "SKIP", "ERROR", "certifiable"]},
+    "exit_code": {"type": "integer", "minimum": 0, "maximum": 4},
+    "deterministic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "estate": {"type": "object"},
+    "references": {"type": "object", "required": ["adr", "adr_sha256", "requirements_baseline", "requirements_sha256", "idl_sha256"]}
+  }
+}

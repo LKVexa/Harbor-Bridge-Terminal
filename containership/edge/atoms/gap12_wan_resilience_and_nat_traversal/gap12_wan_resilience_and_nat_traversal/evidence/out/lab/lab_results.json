@@ -1,0 +1,1541 @@
+{
+ "schema": "G12-LAB-RESULTS/1",
+ "available": true,
+ "kernel": "6.18.44-fc-v37",
+ "limits": [
+  "kernel without IPv6 (EAFNOSUPPORT)",
+  "no tc/netem: delay/jitter/reorder/dup/corrupt/bandwidth/MTU impairment unavailable",
+  "loss injected with iptables -m statistic only"
+ ],
+ "results": [
+  {
+   "scenario": "stun_eim_apdf",
+   "started": 1790119088.055318,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "nat_b": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "reason": "OK",
+    "mapped": [
+     "198.51.100.1",
+     40000
+    ],
+    "consistent": true,
+    "sends": [
+     1,
+     1
+    ]
+   },
+   "assertion": true,
+   "elapsed_s": 0.055,
+   "pcap": "stun_eim_apdf.pcap",
+   "pcap_summary": {
+    "packets": 8,
+    "flows": [
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "198.51.100.254:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "stun_apdm",
+   "started": 1790119089.6231408,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "apdm",
+     "address+port-dependent mapping (symmetric NAT)"
+    ],
+    "nat_b": [
+     "apdm",
+     "address+port-dependent mapping (symmetric NAT)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE --random-fully",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE --random-fully"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "reason": "DEP_INCONSISTENT",
+    "mapped": [
+     "198.51.100.1",
+     61184
+    ],
+    "consistent": false,
+    "sends": [
+     1,
+     1
+    ]
+   },
+   "assertion": true,
+   "elapsed_s": 0.063,
+   "pcap": "stun_apdm.pcap",
+   "pcap_summary": {
+    "packets": 8,
+    "flows": [
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:36835",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:61184",
+      "dst": "198.51.100.254:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:36835",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:61184",
+      "count": 1
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "stun_udp_blocked",
+   "started": 1790119091.1711206,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "udp_blocked",
+     "TCP-only egress: UDP dropped at the router"
+    ],
+    "nat_b": [
+     "udp_blocked",
+     "TCP-only egress: UDP dropped at the router"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "ra: iptables -A FORWARD -p udp -j DROP",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE",
+     "rb: iptables -A FORWARD -p udp -j DROP"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "reason": "NET_UDP_BLOCKED",
+    "mapped": null,
+    "consistent": null,
+    "sends": [
+     5,
+     5
+    ]
+   },
+   "assertion": true,
+   "elapsed_s": 3.854,
+   "pcap": "stun_udp_blocked.pcap",
+   "pcap_summary": {
+    "packets": 0,
+    "flows": []
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "stun_lossy30",
+   "started": 1790119096.4389484,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "lossy30",
+     "port-restricted cone with 30 % random packet loss on forwarded traffic"
+    ],
+    "nat_b": [
+     "lossy30",
+     "port-restricted cone with 30 % random packet loss on forwarded traffic"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "ra: iptables -A FORWARD -m statistic --mode random --probability 0.30 -j DROP",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE",
+     "rb: iptables -A FORWARD -m statistic --mode random --probability 0.30 -j DROP"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "runs": [
+     {
+      "reason": "OK",
+      "mapped": [
+       "198.51.100.1",
+       41000
+      ],
+      "consistent": true,
+      "sends": [
+       3,
+       5
+      ]
+     },
+     {
+      "reason": "OK",
+      "mapped": [
+       "198.51.100.1",
+       41001
+      ],
+      "consistent": null,
+      "sends": [
+       5,
+       2
+      ]
+     },
+     {
+      "reason": "OK",
+      "mapped": [
+       "198.51.100.1",
+       41002
+      ],
+      "consistent": true,
+      "sends": [
+       3,
+       1
+      ]
+     },
+     {
+      "reason": "OK",
+      "mapped": [
+       "198.51.100.1",
+       41003
+      ],
+      "consistent": true,
+      "sends": [
+       1,
+       2
+      ]
+     },
+     {
+      "reason": "OK",
+      "mapped": [
+       "198.51.100.1",
+       41004
+      ],
+      "consistent": true,
+      "sends": [
+       2,
+       4
+      ]
+     }
+    ],
+    "succeeded": 5,
+    "runs_with_retransmission": 5
+   },
+   "assertion": true,
+   "elapsed_s": 5.305,
+   "pcap": "stun_lossy30.pcap",
+   "pcap_summary": {
+    "packets": 48,
+    "flows": [
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41000",
+      "dst": "198.51.100.253:3479",
+      "count": 5
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41000",
+      "dst": "198.51.100.254:3478",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41001",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41001",
+      "dst": "198.51.100.254:3478",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41002",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41002",
+      "dst": "198.51.100.254:3478",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41003",
+      "dst": "198.51.100.253:3479",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41003",
+      "dst": "198.51.100.254:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41004",
+      "dst": "198.51.100.253:3479",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:41004",
+      "dst": "198.51.100.254:3478",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:41000",
+      "count": 5
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:41001",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:41002",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:41003",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:41004",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:41000",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:41001",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:41002",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:41003",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:41004",
+      "count": 2
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "classify_eim_apdf",
+   "started": 1790119103.1589942,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "nat_b": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "mapping": "endpoint-independent",
+    "filtering": "address-and-port-dependent",
+    "label": "port-restricted-cone",
+    "missing": [],
+    "mapped": [
+     "198.51.100.1",
+     40001
+    ]
+   },
+   "assertion": true,
+   "elapsed_s": 1.255,
+   "pcap": "classify_eim_apdf.pcap",
+   "pcap_summary": {
+    "packets": 26,
+    "flows": [
+     {
+      "proto": "icmp",
+      "src": "198.51.100.1:0",
+      "dst": "198.51.100.253:0",
+      "count": 3
+     },
+     {
+      "proto": "icmp",
+      "src": "198.51.100.1:0",
+      "dst": "198.51.100.254:0",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40001",
+      "dst": "198.51.100.253:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40001",
+      "dst": "198.51.100.254:3478",
+      "count": 7
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3478",
+      "dst": "198.51.100.1:40001",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:40001",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:40001",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3479",
+      "dst": "198.51.100.1:40001",
+      "count": 3
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "classify_apdm",
+   "started": 1790119105.8270564,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "apdm",
+     "address+port-dependent mapping (symmetric NAT)"
+    ],
+    "nat_b": [
+     "apdm",
+     "address+port-dependent mapping (symmetric NAT)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE --random-fully",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE --random-fully"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "mapping": "address-and-port-dependent",
+    "filtering": "address-and-port-dependent",
+    "label": "symmetric",
+    "missing": [],
+    "mapped": [
+     "198.51.100.1",
+     27002
+    ]
+   },
+   "assertion": true,
+   "elapsed_s": 1.256,
+   "pcap": "classify_apdm.pcap",
+   "pcap_summary": {
+    "packets": 28,
+    "flows": [
+     {
+      "proto": "icmp",
+      "src": "198.51.100.1:0",
+      "dst": "198.51.100.253:0",
+      "count": 3
+     },
+     {
+      "proto": "icmp",
+      "src": "198.51.100.1:0",
+      "dst": "198.51.100.254:0",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:27002",
+      "dst": "198.51.100.254:3478",
+      "count": 7
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:48113",
+      "dst": "198.51.100.253:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:53673",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3478",
+      "dst": "198.51.100.1:48113",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:27002",
+      "count": 3
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:53673",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:27002",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3479",
+      "dst": "198.51.100.1:27002",
+      "count": 3
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "classify_eim_eif",
+   "started": 1790119108.4991815,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "eim_eif",
+     "endpoint-independent mapping and filtering (full cone, static forward of the client port)"
+    ],
+    "nat_b": [
+     "eim_eif",
+     "endpoint-independent mapping and filtering (full cone, static forward of the client port)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -p udp --sport 40000 -j SNAT --to-source 198.51.100.1:40000",
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "ra: iptables -t nat -A PREROUTING -i ra_out -p udp --dport 40000 -j DNAT --to-destination 10.1.0.2:40000",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -p udp --sport 40000 -j SNAT --to-source 192.0.2.1:40000",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE",
+     "rb: iptables -t nat -A PREROUTING -i rb_out -p udp --dport 40000 -j DNAT --to-destination 10.2.0.2:40000"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "mapping": "endpoint-independent",
+    "filtering": "endpoint-independent",
+    "label": "full-cone",
+    "missing": [],
+    "mapped": [
+     "198.51.100.1",
+     40000
+    ]
+   },
+   "assertion": true,
+   "elapsed_s": 0.05,
+   "pcap": "classify_eim_eif.pcap",
+   "pcap_summary": {
+    "packets": 10,
+    "flows": [
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "198.51.100.253:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "198.51.100.254:3478",
+      "count": 2
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3478",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "cgnat_double_nat",
+   "started": 1790119109.958854,
+   "seed": 0,
+   "topology": {
+    "topology": "cgnat",
+    "doc": "a --[home NAT]-- 100.64.0.0/10 --[carrier NAT]-- inet; b public",
+    "nat_a": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "nat_b": [
+     "none",
+     "no NAT (routed public addressing)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "192.168.1.2/24",
+      "ra",
+      "ra_in",
+      "192.168.1.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "100.64.0.2/24",
+      "cg",
+      "cg_in",
+      "100.64.0.1/24"
+     ],
+     [
+      "cg",
+      "cg_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "cg: iptables -t nat -A POSTROUTING -o cg_out -j MASQUERADE"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "classification": {
+     "mapping": "endpoint-independent",
+     "filtering": "address-and-port-dependent",
+     "label": "port-restricted-cone",
+     "missing": [],
+     "mapped": [
+      "198.51.100.1",
+      40001
+     ]
+    },
+    "cgnat": {
+     "verdict": "likely",
+     "indicators": [
+      "home gateway WAN address inside 100.64.0.0/10",
+      "gateway WAN address differs from the STUN-mapped public address (another NAT layer upstream)"
+     ],
+     "evidence": {
+      "local_address": "192.168.1.2",
+      "mapped_address": "198.51.100.1",
+      "gateway_wan_address": "100.64.0.2",
+      "hops": null,
+      "mapping": "endpoint-independent"
+     },
+     "note": "diagnostic/policy signal only: never proof of peer identity or of exact carrier topology"
+    }
+   },
+   "assertion": true,
+   "elapsed_s": 1.327,
+   "pcap": "cgnat_double_nat.pcap",
+   "pcap_summary": {
+    "packets": 12,
+    "flows": [
+     {
+      "proto": "udp",
+      "src": "100.64.0.2:40001",
+      "dst": "198.51.100.253:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "100.64.0.2:40001",
+      "dst": "198.51.100.254:3478",
+      "count": 7
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3478",
+      "dst": "100.64.0.2:40001",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "100.64.0.2:40001",
+      "count": 1
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "tcp_fallback_udp_blocked",
+   "started": 1790119112.694968,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "udp_blocked",
+     "TCP-only egress: UDP dropped at the router"
+    ],
+    "nat_b": [
+     "udp_blocked",
+     "TCP-only egress: UDP dropped at the router"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "ra: iptables -A FORWARD -p udp -j DROP",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE",
+     "rb: iptables -A FORWARD -p udp -j DROP"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "udp": "NET_UDP_BLOCKED",
+    "tcp": "OK",
+    "echo": "tcp-ok",
+    "open_sockets": 0
+   },
+   "assertion": true,
+   "elapsed_s": 1.26,
+   "pcap": "tcp_fallback_udp_blocked.pcap",
+   "pcap_summary": {
+    "packets": 12,
+    "flows": [
+     {
+      "proto": "tcp",
+      "src": "198.51.100.1:43790",
+      "dst": "198.51.100.254:8443",
+      "count": 5
+     },
+     {
+      "proto": "tcp",
+      "src": "198.51.100.254:8443",
+      "dst": "198.51.100.1:43790",
+      "count": 5
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "e2e_holepunch_eim",
+   "started": 1790119115.3550646,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "nat_b": [
+     "eim_apdf",
+     "endpoint-independent mapping, address+port-dependent filtering (port-restricted cone)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "a_mapped": [
+     "198.51.100.1",
+     40000
+    ],
+    "b_mapped": [
+     "192.0.2.1",
+     40000
+    ],
+    "controller": {
+     "ok": true,
+     "strategy": "hole-punch",
+     "trusted": true,
+     "reason": "OK",
+     "trail": [
+      {
+       "strategy": "direct",
+       "outcome": "failure",
+       "reason": "NET_UNREACHABLE",
+       "elapsed": 0.0006,
+       "cleanup_finished": true
+      },
+      {
+       "strategy": "hole-punch",
+       "outcome": "success",
+       "reason": "OK",
+       "elapsed": 2.4614,
+       "cleanup_finished": true
+      }
+     ],
+     "status": "healthy",
+     "explain": {
+      "peer": "ep-0d093b43e3",
+      "status": "healthy",
+      "summary": "using hole-punch (last success 3650.209243304)",
+      "decision_trail": [
+       {
+        "strategy": "direct",
+        "outcome": "failure",
+        "reason": "NET_UNREACHABLE",
+        "class": "network",
+        "meaning": "destination or route unreachable"
+       },
+       {
+        "strategy": "hole-punch",
+        "outcome": "success",
+        "reason": "OK",
+        "class": "ok",
+        "meaning": "operation succeeded"
+       }
+      ],
+      "last_error_type": null
+     },
+     "relay_counters": null,
+     "instrumented_bytes": null,
+     "metrics_sample": [
+      "g12_attempts_total{strategy=\"direct\",outcome=\"network\"} 1.0",
+      "g12_attempts_total{strategy=\"hole-punch\",outcome=\"ok\"} 1.0"
+     ]
+    },
+    "peer_b": {
+     "punch": {
+      "ok": true,
+      "cause": "ok",
+      "remote": [
+       "198.51.100.1",
+       40000
+      ],
+      "sent": 40,
+      "received_valid": 40,
+      "received_invalid": 0,
+      "elapsed": 2.538126230239868
+     },
+     "relay_echoes": 0
+    }
+   },
+   "assertion": true,
+   "elapsed_s": 14.734,
+   "pcap": "e2e_holepunch_eim.pcap",
+   "pcap_summary": {
+    "packets": 98,
+    "flows": [
+     {
+      "proto": "icmp",
+      "src": "198.51.100.254:0",
+      "dst": "198.51.100.1:0",
+      "count": 4
+     },
+     {
+      "proto": "tcp",
+      "src": "198.51.100.1:56248",
+      "dst": "10.2.0.2:40000",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "192.0.2.1:40000",
+      "dst": "198.51.100.1:40000",
+      "count": 40
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "192.0.2.1:40000",
+      "count": 43
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:40000",
+      "dst": "198.51.100.254:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:40000",
+      "count": 1
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  },
+  {
+   "scenario": "e2e_relay_symmetric",
+   "started": 1790119131.4792676,
+   "seed": 0,
+   "topology": {
+    "topology": "two_nat",
+    "doc": "a --[natA]-- inet --[natB]-- b; inet hosts STUN on 198.51.100.254 and 192.0.2.254, TURN on 198.51.100.254",
+    "nat_a": [
+     "apdm",
+     "address+port-dependent mapping (symmetric NAT)"
+    ],
+    "nat_b": [
+     "apdm",
+     "address+port-dependent mapping (symmetric NAT)"
+    ],
+    "links": [
+     [
+      "a",
+      "a0",
+      "10.1.0.2/24",
+      "ra",
+      "ra_in",
+      "10.1.0.1/24"
+     ],
+     [
+      "ra",
+      "ra_out",
+      "198.51.100.1/24",
+      "inet",
+      "i_a",
+      "198.51.100.254/24"
+     ],
+     [
+      "b",
+      "b0",
+      "10.2.0.2/24",
+      "rb",
+      "rb_in",
+      "10.2.0.1/24"
+     ],
+     [
+      "rb",
+      "rb_out",
+      "192.0.2.1/24",
+      "inet",
+      "i_b",
+      "192.0.2.254/24"
+     ]
+    ],
+    "gateway_rules": [
+     "ra: iptables -t nat -A POSTROUTING -o ra_out -j MASQUERADE --random-fully",
+     "rb: iptables -t nat -A POSTROUTING -o rb_out -j MASQUERADE --random-fully"
+    ],
+    "kernel": "6.18.44-fc-v37"
+   },
+   "result": {
+    "a_mapped": [
+     "198.51.100.1",
+     54812
+    ],
+    "b_mapped": [
+     "192.0.2.1",
+     8341
+    ],
+    "controller": {
+     "ok": true,
+     "strategy": "relay",
+     "trusted": true,
+     "reason": "OK",
+     "trail": [
+      {
+       "strategy": "direct",
+       "outcome": "failure",
+       "reason": "NET_UNREACHABLE",
+       "elapsed": 0.0006,
+       "cleanup_finished": true
+      },
+      {
+       "strategy": "hole-punch",
+       "outcome": "failure",
+       "reason": "NET_UNREACHABLE",
+       "elapsed": 4.9024,
+       "cleanup_finished": true
+      },
+      {
+       "strategy": "relay",
+       "outcome": "success",
+       "reason": "OK",
+       "elapsed": 0.0966,
+       "cleanup_finished": true
+      }
+     ],
+     "status": "healthy",
+     "explain": {
+      "peer": "ep-0d093b43e3",
+      "status": "healthy",
+      "summary": "using relay (last success 3666.448255315)",
+      "decision_trail": [
+       {
+        "strategy": "direct",
+        "outcome": "failure",
+        "reason": "NET_UNREACHABLE",
+        "class": "network",
+        "meaning": "destination or route unreachable"
+       },
+       {
+        "strategy": "hole-punch",
+        "outcome": "failure",
+        "reason": "NET_UNREACHABLE",
+        "class": "network",
+        "meaning": "destination or route unreachable"
+       },
+       {
+        "strategy": "relay",
+        "outcome": "success",
+        "reason": "OK",
+        "class": "ok",
+        "meaning": "operation succeeded"
+       }
+      ],
+      "last_error_type": null
+     },
+     "relay_counters": {
+      "payload_out": 12,
+      "payload_in": 48,
+      "overhead_out": 12,
+      "overhead_in": 56,
+      "control_out": 392
+     },
+     "instrumented_bytes": 12,
+     "metrics_sample": [
+      "g12_attempts_total{strategy=\"direct\",outcome=\"network\"} 1.0",
+      "g12_attempts_total{strategy=\"hole-punch\",outcome=\"network\"} 1.0",
+      "g12_attempts_total{strategy=\"relay\",outcome=\"ok\"} 1.0"
+     ]
+    },
+    "peer_b": {
+     "punch": {
+      "ok": false,
+      "cause": "nat_filtering",
+      "remote": null,
+      "sent": 40,
+      "received_valid": 0,
+      "received_invalid": 0,
+      "elapsed": 4.9547646045684814
+     },
+     "relay_echoes": 3
+    }
+   },
+   "assertion": true,
+   "elapsed_s": 5.241,
+   "pcap": "e2e_relay_symmetric.pcap",
+   "pcap_summary": {
+    "packets": 130,
+    "flows": [
+     {
+      "proto": "icmp",
+      "src": "192.0.2.1:0",
+      "dst": "198.51.100.1:0",
+      "count": 8
+     },
+     {
+      "proto": "icmp",
+      "src": "198.51.100.1:0",
+      "dst": "192.0.2.1:0",
+      "count": 7
+     },
+     {
+      "proto": "icmp",
+      "src": "198.51.100.254:0",
+      "dst": "198.51.100.1:0",
+      "count": 4
+     },
+     {
+      "proto": "tcp",
+      "src": "198.51.100.1:1750",
+      "dst": "10.2.0.2:40000",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "192.0.2.1:15342",
+      "dst": "198.51.100.1:54812",
+      "count": 40
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:30092",
+      "dst": "198.51.100.254:3480",
+      "count": 8
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:4340",
+      "dst": "198.51.100.253:3479",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:54812",
+      "dst": "198.51.100.254:3478",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.1:63924",
+      "dst": "192.0.2.1:8341",
+      "count": 43
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.253:3479",
+      "dst": "198.51.100.1:4340",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3478",
+      "dst": "198.51.100.1:54812",
+      "count": 1
+     },
+     {
+      "proto": "udp",
+      "src": "198.51.100.254:3480",
+      "dst": "198.51.100.1:30092",
+      "count": 11
+     }
+    ]
+   },
+   "passed": true,
+   "teardown_leftovers": []
+  }
+ ]
+}

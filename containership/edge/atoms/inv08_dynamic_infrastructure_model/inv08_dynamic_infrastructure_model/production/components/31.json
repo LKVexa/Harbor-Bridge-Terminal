@@ -1,0 +1,71 @@
+{
+ "component": 31,
+ "title": "Atomic configuration deployment/rollback",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "transactional configuration staging",
+   "state": "IMPLEMENTED",
+   "spec": "production/config.py::module docstring (Deployment)",
+   "modules": [
+    "production/config.py::ConfigDeployer.stage"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestConfigDeploy.test_staging_is_not_active"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "pre-activation validation",
+   "state": "IMPLEMENTED",
+   "spec": "production/config.py::ConfigDeployer.validate_staged",
+   "modules": [
+    "production/config.py::ConfigDeployer.validate_staged"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestConfigDeploy.test_preactivation_validation_required"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "atomic activation boundary",
+   "state": "IMPLEMENTED",
+   "spec": "production/config.py::ConfigDeployer.activate",
+   "modules": [
+    "production/config.py::ConfigDeployer.activate",
+    "production/leasestore.py::_atomic_write"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestConfigDeploy.test_atomic_activation_and_lkg_rollback"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "last-known-good snapshot/rollback point",
+   "state": "IMPLEMENTED",
+   "spec": "production/config.py::ConfigDeployer.rollback",
+   "modules": [
+    "production/config.py::ConfigDeployer.rollback"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestConfigDeploy.test_atomic_activation_and_lkg_rollback",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestConfigDeploy.test_rollback_without_lkg"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "rollback verification and failed-activation quarantine",
+   "state": "IMPLEMENTED",
+   "spec": "production/config.py::ConfigDeployer.activate",
+   "modules": [
+    "production/config.py::ConfigDeployer.activate",
+    "production/config.py::ConfigDeployer._restore"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestConfigDeploy.test_failed_activation_quarantined_and_restored"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Single-host file swap; multi-node config distribution is not implemented."
+}

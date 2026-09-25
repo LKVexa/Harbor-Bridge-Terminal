@@ -1,0 +1,153 @@
+# INV-64 CI (MC-37). Place the package directory at the repository root as
+# ./inv64_application_model (all commands run from the repository root).
+# NOTE: this workflow has not yet been executed on a runner (MC-37 blocker).
+name: inv64-ci
+on:
+  push: {branches: [main]}
+  pull_request: {}
+  schedule: [{cron: "17 3 * * *"}]        # nightly extended fuzz/soak
+  workflow_dispatch: {}
+permissions:
+  contents: read                          # least privilege; release job elevates only what it needs
+concurrency: {group: "inv64-${{ github.ref }}", cancel-in-progress: true}
+env:
+  PYTHONHASHSEED: "0"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m compileall -q inv64_application_model
+      - run: python -O -c "import inv64_application_model, inv64_application_model.service"
+      - run: python -m inv64_application_model.tools.source_integrity --json
+      - run: python -m inv64_application_model.tools.build_ledger --check
+      - run: python -m inv64_application_model.tools.secret_scan --json > secret_scan.json
+      - run: python -m inv64_application_model.tools.governance_check --json > governance.json || true   # blocking findings surface in the gate
+      - uses: actions/upload-artifact@v4
+        with: {name: static-evidence, path: "*.json"}
+
+  tests:
+    needs: static
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m pip install -c inv64_application_model/constraints-certification.txt cryptography
+      - run: python inv64_application_model/tests/run_all.py --standalone-only --json evidence-${{ matrix.os }}-${{ matrix.python }}.json
+      - run: python -O inv64_application_model/tests/run_all.py --standalone-only
+      - run: python -m inv64_application_model.tools.preflight --out preflight-${{ matrix.os }}-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: "tests-${{ matrix.os }}-${{ matrix.python }}", path: "*.json"}
+
+  build:
+    needs: static
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install build==1.2.2 -c inv64_application_model/constraints-certification.txt
+      - run: python -m inv64_application_model.tools.build_check --dist dist --out BUILD.json
+      - run: python -m inv64_application_model.tools.secret_scan dist
+      - uses: actions/upload-artifact@v4
+        with: {name: dist, path: "dist/\nBUILD.json"}
+
+  security-resilience:
+    needs: static
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install -c inv64_application_model/constraints-certification.txt cryptography
+      - run: python -m inv64_application_model.tools.fuzz --seed ${{ github.run_number }} --iterations ${{ github.event_name == 'schedule' && 50000 || 3000 }} --out FUZZ.json
+      - run: python -m inv64_application_model.tools.faults --out FAULTS.json
+      - run: python -m inv64_application_model.tools.stress --profile ${{ github.event_name == 'schedule' && 'extended' || 'ci' }} --out STRESS.json
+      - run: python -m inv64_application_model.tools.integration --out INTEGRATION.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: resilience-evidence, path: "*.json"}
+
+  performance:
+    needs: static
+    runs-on: ubuntu-24.04          # replace with the designated reference runner (MC-21)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m inv64_application_model.bench.perf --out PERF.json
+      - run: python -m inv64_application_model.bench.perf --compare inv64_application_model/evidence/PERF_BASELINE.json --candidate PERF.json --out PERF_GATE.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: perf-evidence, path: "*.json"}
+
+  advisories:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install pip-audit==2.7.3
+      - run: pip-audit -r inv64_application_model/constraints-certification.txt --format json -o advisories.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: advisories, path: advisories.json}
+
+  certification:
+    # Full conformance with the pinned pk_core and real adjacent layers. FAILS until
+    # compatibility.json carries a pk_core pin and PK_CORE_REPO/PK_CORE_REF are configured.
+    needs: [tests, build, security-resilience, performance]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: ${{ vars.PK_CORE_REPO != '' }}
+        with: {repository: "${{ vars.PK_CORE_REPO }}", ref: "${{ vars.PK_CORE_REF }}", path: pk}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/download-artifact@v4
+        with: {path: collected}
+      - run: python -m pip install -c inv64_application_model/constraints-certification.txt cryptography
+      - run: PK_CORE_PATH=$PWD/pk python -m inv64_application_model.tools.run_evidence --out evidence --certification
+      - run: PK_CORE_PATH=$PWD/pk python -m pk_core gate INV-64 --out evidence/PK_GATE_RESULTS.json
+      - run: python -m inv64_application_model.release_gate --evidence evidence --pk-gate evidence/PK_GATE_RESULTS.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: certification-evidence, path: evidence/}
+
+  release:
+    # Protected: runs only on tags, in the 'release' environment (required reviewers), after certification.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: certification
+    runs-on: ubuntu-24.04
+    environment: release
+    permissions: {contents: write, id-token: write}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/download-artifact@v4
+        with: {name: certification-evidence, path: evidence}
+      - uses: actions/download-artifact@v4
+        with: {name: dist, path: dist}
+      - run: python -m pip install -c inv64_application_model/constraints-certification.txt cryptography
+      # INV64_SIGNING_KEY_HEX must come from a managed signer bound to this environment (never a plain repo secret
+      # readable by pull-request jobs). tools/release.py refuses managed signing unless EXIT_GATE verdict is GO.
+      - run: python -m inv64_application_model.tools.release build --dist dist --evidence evidence --out release
+        env:
+          INV64_SIGNING_KEY_HEX: ${{ secrets.INV64_SIGNING_KEY_HEX }}
+          INV64_SIGNING_KID: ${{ vars.INV64_SIGNING_KID }}
+      - run: python -m inv64_application_model.tools.release verify --release release --dist dist --trusted-key ${{ vars.INV64_SIGNING_PUBKEY }} --trusted-kid ${{ vars.INV64_SIGNING_KID }}
+      - uses: actions/upload-artifact@v4
+        with: {name: release, path: "release/\ndist/"}

@@ -1,0 +1,35 @@
+# Prometheus alerting rules for INV-43 (item 41). Not yet deployed or validated
+# against a live Prometheus — status PARTIAL in remediation/STATUS.json.
+groups:
+- name: inv43
+  rules:
+  - alert: INV43PolicyRejectionSurge          # load vs policy separated by failure_class label
+    expr: sum(rate(inv43_refusals_total{failure_class="policy_rejection"}[10m])) / sum(rate(inv43_decisions_total[10m])) > 0.2
+    for: 15m
+    labels: {severity: sev3, class: policy_rejection}
+  - alert: INV43DegradedPosture
+    expr: sum(rate(inv43_refusals_total{failure_class="degraded_input"}[5m])) > 1
+    for: 10m
+    labels: {severity: sev3, class: degradation}
+  - alert: INV43DependencyFailure
+    expr: sum(rate(inv43_refusals_total{failure_class="dependency_failure"}[5m])) > 0
+    for: 5m
+    labels: {severity: sev3, class: dependency_failure}
+  - alert: INV43AttackSuspected
+    expr: sum(increase(inv43_refusals_total{failure_class="attack_suspected"}[5m])) > 0
+    labels: {severity: sev2, class: attack}
+  - alert: INV43SoftwareDefect
+    expr: sum(increase(inv43_refusals_total{failure_class="software_defect"}[5m])) > 0
+    labels: {severity: sev2, class: software_defect}
+  - alert: INV43Overload
+    expr: sum(rate(inv43_refusals_total{failure_class="overload"}[5m])) > 0
+    for: 5m
+    labels: {severity: sev3, class: load}
+  - alert: INV43SmtUnsafeNodes
+    expr: inv43_smt_unsafe_nodes > 0
+    for: 30m
+    labels: {severity: sev4, class: policy_rejection}
+  - alert: INV43DecisionLatencyP99
+    expr: histogram_quantile(0.99, sum(rate(inv43_decision_seconds_bucket[5m])) by (le)) > 0.002
+    for: 10m
+    labels: {severity: sev3, class: load}

@@ -1,0 +1,56 @@
+// PLN-03 distributed runtime plane - WIT contract (component-model).  MC-012 / MC-053.
+// These interfaces mirror schemas/*.json one-to-one; the conformance fixtures exercise both.
+// STATUS: specification only.  No wasmCloud host/provider or wRPC transport is shipped in this
+// archive; binding generation and interop tests are tracked as BLOCKED in REMEDIATION_STATUS.json.
+package pk:runtime@1.0.0;
+
+interface types {
+  record call-context {
+    workload: string,
+    tenant: string,
+    token: string,
+    deadline-ms: option<u32>,
+    traceparent: option<string>,
+  }
+  enum outcome { success, degraded, retryable, terminal }
+  record error-envelope {
+    code: string,
+    outcome: outcome,
+    retryable: bool,
+    message: string,
+    details: list<tuple<string, string>>,
+    trace-id: option<string>,
+  }
+}
+
+interface state {            // PK_STATE/1
+  use types.{call-context, error-envelope};
+  variant txn-op { set(tuple<string, list<u8>>), delete(string) }
+  get:      func(ctx: call-context, key: string) -> result<option<list<u8>>, error-envelope>;
+  set:      func(ctx: call-context, key: string, value: list<u8>) -> result<_, error-envelope>;
+  delete:   func(ctx: call-context, key: string) -> result<bool, error-envelope>;
+  transact: func(ctx: call-context, ops: list<txn-op>) -> result<_, error-envelope>;
+}
+
+interface messaging {        // PK_MESSAGE/1
+  use types.{call-context, error-envelope, outcome};
+  publish:   func(ctx: call-context, topic: string, payload: list<u8>, idempotency-key: string) -> result<tuple<bool, outcome>, error-envelope>;
+  subscribe: func(ctx: call-context, topic: string) -> result<list<list<u8>>, error-envelope>;
+}
+
+interface secrets {          // PK_SECRET/1
+  use types.{call-context, error-envelope};
+  fetch: func(ctx: call-context, reference: string) -> result<list<u8>, error-envelope>;
+}
+
+interface invoke {           // PK_INVOKE/1
+  use types.{call-context, error-envelope};
+  call: func(ctx: call-context, component: string, payload: list<u8>) -> result<list<u8>, error-envelope>;
+}
+
+world pln03-runtime {
+  export state;
+  export messaging;
+  export secrets;
+  export invoke;
+}

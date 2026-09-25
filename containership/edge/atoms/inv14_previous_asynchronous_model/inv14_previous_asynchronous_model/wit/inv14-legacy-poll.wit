@@ -1,0 +1,166 @@
+// INV-14 legacy poll contract, v4.3.0.  Canonical machine-readable definition of
+// PK_POLL/1, PK_POLLABLE/1, PK_POLL_ERROR/1 and PK_POLL_METRICS/1 for the
+// component-model boundary.  JSON Schemas in ../schemas/ define the same shapes
+// for the Python/serialized boundary; tests/test_contracts.py checks they agree.
+package pk:inv14@4.3.0;
+
+interface types {
+  /// PK_POLL_ERROR/1 codes (closed set; see schemas/pk_poll_error.schema.json)
+  enum error-code {
+    adjacent-absent,
+    adjacent-path,
+    audit-corrupt,
+    audit-event-type,
+    audit-record-size,
+    audit-unavailable,
+    audit-weak-key,
+    checkpoint-corrupt,
+    checkpoint-missing,
+    clock-ceiling,
+    clock-invalid-config,
+    clock-schema-mismatch,
+    clock-source,
+    clock-ticks-range,
+    clock-tick-range,
+    config-invalid,
+    config-limit-range,
+    config-no-provenance,
+    config-overlay,
+    config-schema-mismatch,
+    config-too-large,
+    config-version-reuse,
+    core-absent,
+    core-api-incompatible,
+    core-floating-version,
+    core-hash-mismatch,
+    core-import-failed,
+    core-interpreter,
+    core-lock-missing,
+    core-lock-schema,
+    core-mutable-source,
+    core-no-digest,
+    core-unpinned,
+    core-version-mismatch,
+    governance-invalid,
+    governance-self-approval,
+    governance-waiver-too-long,
+    migration-consumer,
+    migration-parity-required,
+    migration-refused,
+    migration-rollback,
+    migration-terminal,
+    migration-type,
+    poll-admission-state,
+    poll-cancelled,
+    poll-disabled,
+    poll-draining,
+    poll-drain-incomplete,
+    poll-duplicate-handle,
+    poll-duplicate-name,
+    poll-duration-limit,
+    poll-empty-set,
+    poll-eol-removed,
+    poll-error,
+    poll-failed-state,
+    poll-foreign-owner,
+    poll-identity-refused,
+    poll-illegal-transition,
+    poll-invalid-cancel-token,
+    poll-invalid-clock,
+    poll-invalid-identity,
+    poll-invalid-key-id,
+    poll-invalid-limit,
+    poll-invalid-member,
+    poll-invalid-principal,
+    poll-invalid-request,
+    poll-invalid-set,
+    poll-invalid-state,
+    poll-invalid-tick-duration,
+    poll-invalid-timeout,
+    poll-lifecycle-state,
+    poll-migration-overdue,
+    poll-migration-regression,
+    poll-no-trust-root,
+    poll-overloaded,
+    poll-quarantined,
+    poll-registry-closed,
+    poll-set-limit,
+    poll-tenant-quota,
+    poll-timeout-limit,
+    poll-token-expired,
+    poll-token-malformed,
+    poll-token-not-yet-valid,
+    poll-token-right,
+    poll-token-signature,
+    poll-token-subject,
+    poll-token-ttl,
+    poll-token-untrusted,
+    poll-transition-unattributed,
+    poll-unknown-state,
+    poll-unregistered-consumer,
+    poll-weak-key,
+  }
+
+  /// PK_POLL_ERROR/1
+  record poll-error {
+    schema: string,          // "PK_POLL_ERROR/1"
+    code: error-code,
+    message: string,
+    deprecated: bool,        // always true
+    migrate-to: string,      // "INV-15 New asynchronous ABI"
+  }
+
+  /// PK_POLL/1 result
+  record poll-result {
+    schema: string,          // "PK_POLL/1"
+    owner: string,
+    ready: list<string>,
+    ready-indexes: list<u32>,
+    timed-out: bool,
+    timeout-ticks: u32,
+    set-size: u32,
+    deprecated: bool,
+    migrate-to: string,
+  }
+
+  /// PK_POLLABLE/1 descriptor (the handle itself is wasi:io/poll.pollable)
+  record pollable-descriptor {
+    schema: string,          // "PK_POLLABLE/1"
+    name: string,
+    owner: string,
+  }
+
+  /// PK_POLL_METRICS/1
+  record poll-metrics {
+    schema: string,
+    owner: string,
+    deprecated-uses: u64,
+    polls-ready: u64,
+    polls-timeout: u64,
+    polls-cancelled: u64,
+    cross-instance-refusals: u64,
+    invalid-requests: u64,
+    total-pollables: u64,
+    max-set-size-seen: u32,
+    max-pollables: u32,
+    max-timeout-ticks: u32,
+  }
+}
+
+interface legacy-poll {
+  use wasi:io/poll@0.2.0.{pollable};
+  use types.{poll-result, poll-error, poll-metrics};
+
+  /// Bounded wait.  The adapter appends one wasi:clocks/monotonic-clock
+  /// subscribe-duration(timeout-ticks * tick-ns) pollable after the members and
+  /// maps its index to timed-out; wasi:io/poll.poll traps on an empty list, so
+  /// empty sets are refused before the call.
+  poll: func(owner: string, names: list<string>, members: list<borrow<pollable>>, timeout-ticks: u32) -> result<poll-result, poll-error>;
+  metrics: func(owner: string) -> poll-metrics;
+}
+
+world inv14-legacy-host {
+  import wasi:io/poll@0.2.0;
+  import wasi:clocks/monotonic-clock@0.2.0;
+  export legacy-poll;
+}

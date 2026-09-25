@@ -1,0 +1,47 @@
+# INV-66 CI/CD (MC-057 matrix, MC-061 pipeline, MC-060/068 evidence).  Skipped tests are failures.
+name: inv66-ci
+on:
+  push: { branches: [main] }
+  pull_request:
+  schedule: [{ cron: "17 6 * * 1" }]       # weekly recurring review (MC-066)
+permissions: { contents: read }
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+        python: ["3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -c constraints.txt cryptography jsonschema
+      - run: python tools/repo_checks.py
+      - run: python -m unittest discover -s inv66_enterprise_wasm_control_plane/tests -v 2>&1 | tee test.log
+      - run: python -O -m unittest discover -s inv66_enterprise_wasm_control_plane/tests
+      - run: python tools/no_unapproved_skips.py test.log
+      - run: pip install --no-deps . && python tools/smoke.py
+      - run: python tools/bench.py --n 3000 --fsync --gate --baseline perf/baseline.json --out perf/results-${{ matrix.os }}-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08  # v4.6.0
+        with: { name: "evidence-${{ matrix.os }}-${{ matrix.python }}", path: "test.log\nperf/results-*.json" }
+  conformance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - run: echo "Requires pk_core (Post-Kubernetes runtime). Set PK_CORE_PATH via repository secret; job fails if absent."
+      - run: test -n "$PK_CORE_PATH" && python -m unittest inv66_enterprise_wasm_control_plane/tests/test_component.py
+        env: { PK_CORE_PATH: "${{ secrets.PK_CORE_PATH }}" }
+  release:
+    needs: [test, conformance]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions: { contents: write, id-token: write, attestations: write }
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - run: python tools/release_manifest.py --write && python tools/sbom.py && python tools/gen_evidence.py
+      - run: python -m pip wheel --no-deps -w dist .
+      - uses: actions/attest-build-provenance@520d128f165991a6c774bcb264f323e3d70747f4  # v2.2.0
+        with: { subject-path: "dist/*.whl" }
+      - run: python tools/exit_gate.py --require GO

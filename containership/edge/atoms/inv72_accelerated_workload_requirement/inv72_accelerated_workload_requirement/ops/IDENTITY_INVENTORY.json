@@ -1,0 +1,52 @@
+{
+ "schema": "PK_IDENTITY_INVENTORY/1",
+ "component": "INV-72",
+ "identities": [
+  {
+   "principal": "GAP-11 scheduler",
+   "capabilities": [
+    "accel.reserve",
+    "accel.release",
+    "accel.read"
+   ],
+   "tenant_scope": "tenants it schedules"
+  },
+  {
+   "principal": "INV-69 agent layer",
+   "capabilities": [
+    "accel.reserve",
+    "accel.release"
+   ],
+   "tenant_scope": "one tenant per run"
+  },
+  {
+   "principal": "GAP-02 discovery",
+   "capabilities": [],
+   "inventory_mac_key": "own key; can only publish inventory"
+  },
+  {
+   "principal": "operator",
+   "capabilities": [
+    "accel.operate",
+    "accel.read",
+    "accel.config"
+   ],
+   "tenant_scope": "*",
+   "note": "human only; service identities refused by governance"
+  },
+  {
+   "principal": "eligibility probe",
+   "capabilities": [
+    "accel.match"
+   ],
+   "tenant_scope": "per caller"
+  }
+ ],
+ "ambient_authority": {
+  "filesystem": "journal path only (host supplied)",
+  "network": "none - inventory and keys arrive through injected callables",
+  "devices": "none - INV-72 never touches a device",
+  "kernel": "none",
+  "secrets": "keys held by the host KeyProvider; INV-72 never stores them"
+ }
+}

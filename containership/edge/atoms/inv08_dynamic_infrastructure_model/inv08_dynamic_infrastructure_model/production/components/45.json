@@ -1,0 +1,73 @@
+{
+ "component": 45,
+ "title": "Quarantine/freeze/emergency-disable controls",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "node/workload quarantine API",
+   "state": "IMPLEMENTED",
+   "spec": "production/controls.py::module docstring (PK_DYN_CONTROLS/1)",
+   "modules": [
+    "production/controls.py::Controls.quarantine",
+    "production/controller.py::Controller.reconcile"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestControls.test_quarantine_api"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "controller/site freeze control",
+   "state": "IMPLEMENTED",
+   "spec": "production/controls.py::Controls.freeze",
+   "modules": [
+    "production/controls.py::Controls.freeze"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestControls.test_freeze"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "emergency scale-disable/kill switch",
+   "state": "IMPLEMENTED",
+   "spec": "production/controls.py::Controls.kill",
+   "modules": [
+    "production/controls.py::Controls.kill"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestControls.test_kill_switch"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "authorization and break-glass policy",
+   "state": "PARTIAL",
+   "spec": "production/controls.py::POLICY",
+   "modules": [
+    "production/controls.py::Controls._authorize",
+    "production/controls.py::Controls.break_glass"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestControls.test_authz_and_break_glass"
+   ],
+   "blocker": "authenticated operator identity source and a human owner to assign roles (UNASSIGNED); actors are caller-asserted strings"
+  },
+  {
+   "name": "safe thaw/unquarantine and audit trail",
+   "state": "IMPLEMENTED",
+   "spec": "production/controls.py::module docstring",
+   "modules": [
+    "production/controls.py::Controls.unquarantine",
+    "production/controls.py::Controls.thaw",
+    "production/controls.py::Controls.unkill",
+    "production/audit.py::AuditLog"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestControls.test_safe_thaw_and_audit_trail"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Control state is in-memory per process; durable/replicated control state is not implemented."
+}

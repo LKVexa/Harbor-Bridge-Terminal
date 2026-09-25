@@ -1,0 +1,1272 @@
+{
+  "schema": "INV63_REQUIREMENTS/1",
+  "requirements": [
+    {
+      "check_id": "INV-63-C001",
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the exact production responsibility of Wasm deployment manager.",
+      "shall": "The manager SHALL own desired-state storage, diff computation, spread, convergence and bounded rollouts only.",
+      "implementation": [
+        "contract.py::build",
+        "service.py::DeploymentService"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C002",
+      "dimension": "Architecture & Scope",
+      "requirement": "Document what Wasm deployment manager owns and explicitly does not own.",
+      "shall": "The manager SHALL NOT define manifests, run components, sign artifacts or provision hosts.",
+      "implementation": [
+        "contract.py::build"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C003",
+      "dimension": "Architecture & Scope",
+      "requirement": "Identify upstream, downstream, and peer dependencies of Wasm deployment manager.",
+      "shall": "Upstream INV-64, downstream INV-60/INV-66 and peer GAP-08 dependencies SHALL be declared.",
+      "implementation": [
+        "contract.py::build",
+        "docs/interfaces/BOUNDARIES.json"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C004",
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the authoritative source of truth used by Wasm deployment manager.",
+      "shall": "The journaled desired-state record SHALL be the source of truth; lattice state is observed and corrected.",
+      "implementation": [
+        "store.py::Journal",
+        "service.py::_observe"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C005",
+      "dimension": "Architecture & Scope",
+      "requirement": "Document assumptions Wasm deployment manager makes about nodes, runtimes, networks, storage, and control planes.",
+      "shall": "Every node/runtime/network/storage/control-plane assumption SHALL be catalogued and, where feasible, checked at startup.",
+      "implementation": [
+        "preflight.py::run",
+        "service.py::status"
+      ],
+      "design": [
+        "docs/architecture/ASSUMPTIONS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C006",
+      "dimension": "Architecture & Scope",
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Wasm deployment manager.",
+      "shall": "Tenant, environment, site and workload boundaries SHALL be enforced.",
+      "implementation": [
+        "security.py::namespace",
+        "config.py::load_layers"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C007",
+      "dimension": "Architecture & Scope",
+      "requirement": "Separate mandatory Wasm deployment manager capabilities from optional optimizations.",
+      "shall": "Mandatory vs optional behaviour SHALL be declared.",
+      "implementation": [
+        "contract.py::build"
+      ],
+      "design": [
+        "README.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C008",
+      "dimension": "Architecture & Scope",
+      "requirement": "Document unsupported deployment patterns and non-goals for Wasm deployment manager.",
+      "shall": "Non-goals SHALL be declared.",
+      "implementation": [
+        "contract.py::build"
+      ],
+      "design": [
+        "README.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C009",
+      "dimension": "Architecture & Scope",
+      "requirement": "Assign an accountable owner and escalation path for Wasm deployment manager.",
+      "shall": "An accountable owner, on-call rotation, security contact, release approver and escalation path SHALL be recorded and validated.",
+      "implementation": [
+        "OWNERS.yaml",
+        "CODEOWNERS",
+        "gate.py::check_owners"
+      ],
+      "design": [
+        "ops/runbooks/INCIDENT.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C010",
+      "dimension": "Architecture & Scope",
+      "requirement": "Approve an architecture decision record for Wasm deployment manager, its technologies (Wadm), and its function (Desired-state deployment/reconciliation).",
+      "shall": "An approved ADR SHALL record Wadm selection, role, alternatives, boundaries, data ownership, failure model and acceptance criteria.",
+      "implementation": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C011",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Translate the source function of Wasm deployment manager \u2014 Desired-state deployment/reconciliation \u2014 into testable SHALL-level requirements.",
+      "shall": "Desired-state reconciliation SHALL be specified as testable SHALL requirements (this catalogue).",
+      "implementation": [
+        "docs/requirements/REQUIREMENTS.json"
+      ],
+      "design": [
+        "docs/requirements/REQUIREMENTS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C012",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define functional requirements for Wasm deployment manager across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "shall": "Functional behaviour SHALL be defined per tier: cloud, datacenter, near-edge and far-edge (offline autonomy, constrained limits).",
+      "implementation": [
+        "config.py::validate",
+        "deploy/config/site/edge-site-a.json",
+        "service.py::reconcile_ns"
+      ],
+      "design": [
+        "docs/requirements/REQUIREMENTS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C013",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "shall": "Latency, availability, durability, consistency, isolation and determinism SHALL have numeric NFRs verified by tests/benchmarks.",
+      "implementation": [
+        "perf/thresholds.json",
+        "perf/bench.py",
+        "store.py::Journal.append"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C014",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Wasm deployment manager.",
+      "shall": "Every response SHALL carry one of SUCCESS, PARTIAL, DEGRADED, RETRYABLE, TERMINAL with defined semantics.",
+      "implementation": [
+        "errors.py::Outcome",
+        "service.py::handle"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C015",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Wasm deployment manager.",
+      "shall": "Lifecycle states and legal transitions SHALL be defined and illegal transitions rejected.",
+      "implementation": [
+        "lifecycle.py::TRANSITIONS",
+        "lifecycle.py::Lifecycle"
+      ],
+      "design": [
+        "docs/architecture/LIFECYCLE.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C016",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define versioning and backward-compatibility requirements for Wasm deployment manager.",
+      "shall": "Contracts SHALL be semver'd by schema major; minors additive; deprecations dated; the legacy Manager API preserved.",
+      "implementation": [
+        "schema.py::SUPPORTED",
+        "schema.py::DEPRECATED"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C017",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Wasm deployment manager.",
+      "shall": "Per-tenant instance quotas, request-rate fairness and global capacity ceilings SHALL be enforced.",
+      "implementation": [
+        "resilience.py::Admission",
+        "service.py::op_set_desired"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C018",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "shall": "With intermittent/absent connectivity the manager SHALL journal intents, report DEGRADED within the autonomy window, fail RETRYABLE beyond it, and resynchronise on reconnect.",
+      "implementation": [
+        "service.py::reconcile_ns",
+        "service.py::resync"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C019",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define precedence rules when Wasm deployment manager requirements conflict with security, residency, SLO, or cost constraints.",
+      "shall": "Conflicts SHALL resolve in precedence security > residency > consistency > SLO > cost.",
+      "implementation": [
+        "service.py::PRECEDENCE",
+        "service.py::_eligible"
+      ],
+      "design": [
+        "docs/requirements/PRECEDENCE.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C020",
+      "dimension": "Requirements & Semantics",
+      "requirement": "Maintain a requirements traceability matrix from each Wasm deployment manager requirement to implementation and verification evidence.",
+      "shall": "A traceability matrix requirement->design->implementation->test->evidence->owner SHALL be generated per release.",
+      "implementation": [
+        "audit.py::write_docs"
+      ],
+      "design": [
+        "docs/requirements/TRACEABILITY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C021",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Wasm deployment manager.",
+      "shall": "Every exposed boundary SHALL be inventoried with contract, authN, authZ, timeout, limits and owner.",
+      "implementation": [
+        "docs/interfaces/BOUNDARIES.json"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C022",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Use versioned typed schemas for all externally visible Wasm deployment manager contracts.",
+      "shall": "Every external contract SHALL have a versioned JSON schema validated at the boundary.",
+      "implementation": [
+        "schema.py::validate",
+        "schemas/"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C023",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authentication requirements at each Wasm deployment manager boundary.",
+      "shall": "Every inbound boundary SHALL authenticate callers (signed, expiring, replay-protected tokens).",
+      "implementation": [
+        "security.py::TokenAuthority"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C024",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authorization and explicit capability requirements at each Wasm deployment manager boundary.",
+      "shall": "Every operation SHALL require an explicit capability, scoped to the caller's tenant.",
+      "implementation": [
+        "security.py::Authorizer",
+        "security.py::OP_CAPABILITY"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C025",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Wasm deployment manager.",
+      "shall": "Timeouts, cancellation, retries (idempotent only), idempotency keys and backpressure SHALL be defined and enforced.",
+      "implementation": [
+        "resilience.py::Deadline",
+        "resilience.py::RetryPolicy",
+        "service.py::handle"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C026",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define structured failure codes and machine-readable error details for Wasm deployment manager.",
+      "shall": "Every failure SHALL be a stable code with retryability and machine-readable details.",
+      "implementation": [
+        "errors.py::ErrorCode",
+        "errors.py::DeploymentError"
+      ],
+      "design": [
+        "docs/interfaces/ERROR_CODES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C027",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "shall": "Peers SHALL negotiate the highest common schema major and fail closed when none exists.",
+      "implementation": [
+        "schema.py::negotiate"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C028",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Wasm deployment manager interfaces.",
+      "shall": "Payload, depth, concurrency, queue, rate and size limits SHALL be documented and enforced.",
+      "implementation": [
+        "schema.py::MAX_PAYLOAD_BYTES",
+        "resilience.py::Admission"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C029",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Provide reference examples and conformance fixtures for Wasm deployment manager.",
+      "shall": "Reference examples and digest-bound conformance fixtures SHALL ship with the package.",
+      "implementation": [
+        "fixtures/FIXTURES.json",
+        "tools/gen_fixtures.py"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C030",
+      "dimension": "Interfaces & Integration",
+      "requirement": "Create automated integration tests proving Wasm deployment manager interoperates with adjacent architectural layers.",
+      "shall": "Automated tests SHALL prove interoperation with INV-64 (desired input), INV-60 (lattice) and INV-66 (controller).",
+      "implementation": [
+        "adapter.py::InMemoryLattice",
+        "adapter.py::WadmAdapter"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C031",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Select and pin approved implementations, versions, or specifications for Wasm deployment manager: Wadm.",
+      "shall": "Wadm and all runtime dependencies SHALL be pinned by version and digest and approved.",
+      "implementation": [
+        "pins.json",
+        "requirements.lock"
+      ],
+      "design": [
+        "docs/architecture/ADR-0001-wadm-deployment-manager.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C032",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Wasm deployment manager.",
+      "shall": "Immutable package, mutable config and mutable state SHALL be physically separate.",
+      "implementation": [
+        "store.py::Journal",
+        "config.py::load_layers"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C033",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define declarative configuration and secure defaults for Wasm deployment manager.",
+      "shall": "Configuration SHALL be declarative with secure defaults (prod profile by default).",
+      "implementation": [
+        "config.py::SECURE_DEFAULTS"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C034",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "shall": "Configuration SHALL be validated before activation and fail closed on security-critical errors.",
+      "implementation": [
+        "config.py::validate"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C035",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "shall": "Site/environment overlays SHALL change behaviour without rebuilding the package.",
+      "implementation": [
+        "config.py::load_layers",
+        "deploy/config/"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C036",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "shall": "Each activation SHALL record version, digest, author, time, reason and previous digest.",
+      "implementation": [
+        "config.py::ConfigStore.activate"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C037",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "shall": "Configuration activation SHALL be atomic (all-or-nothing).",
+      "implementation": [
+        "config.py::ConfigStore.activate"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C038",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define automatic and operator-driven rollback for failed Wasm deployment manager changes.",
+      "shall": "Failed rollouts SHALL auto-rollback; operators SHALL be able to roll back workloads and configuration.",
+      "implementation": [
+        "service.py::_rollback",
+        "service.py::op_rollback",
+        "config.py::ConfigStore.rollback"
+      ],
+      "design": [
+        "ops/runbooks/CANARY_ROLLBACK.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C039",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Keep credentials and secret material out of ordinary Wasm deployment manager configuration and diagnostics.",
+      "shall": "Secrets SHALL appear only as refs (env:/file:) and SHALL be redacted from logs, traces and errors.",
+      "implementation": [
+        "security.py::redact",
+        "config.py::_scan_secrets"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C040",
+      "dimension": "Implementation & Configuration",
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Wasm deployment manager operation.",
+      "shall": "Bootstrap from an empty node SHALL be deterministic and gated by preflight.",
+      "implementation": [
+        "preflight.py::run",
+        "tools/bootstrap.py"
+      ],
+      "design": [
+        "ops/runbooks/DAY0_BOOTSTRAP.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C041",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Threat-model Wasm deployment manager against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "shall": "A STRIDE threat model SHALL cover tenants, workloads, inputs, supply chain, control plane and insiders, each threat mapped to controls and tests.",
+      "implementation": [
+        "docs/architecture/THREAT_MODEL.md"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C042",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Apply least privilege to every identity and capability used by Wasm deployment manager.",
+      "shall": "Each role SHALL hold the minimum capability set; platform principals SHALL NOT mutate tenant workloads.",
+      "implementation": [
+        "security.py::ROLES",
+        "security.py::Authorizer"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C043",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Wasm deployment manager permits.",
+      "shall": "The service SHALL use only injected handles (adapter, journal dir); no ambient FS/network/device/secret authority.",
+      "implementation": [
+        "service.py::DeploymentService.__init__"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C044",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "shall": "Nodes, peers, artifacts, providers and controllers SHALL be authenticated before trust.",
+      "implementation": [
+        "security.py::TokenAuthority",
+        "security.py::ArtifactVerifier"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C045",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Wasm deployment manager.",
+      "shall": "Artifacts SHALL be verified by digest, Ed25519 signature from a trusted key id, approved version and revocation list before deploy or rollout.",
+      "implementation": [
+        "security.py::ArtifactVerifier"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C046",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Enforce tenant/workload isolation across Wasm deployment manager execution, memory, state, network, and device boundaries as applicable.",
+      "shall": "Tenant state, identifiers, quotas and placement SHALL be isolated.",
+      "implementation": [
+        "security.py::namespace",
+        "security.py::Authorizer"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C047",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Encrypt sensitive Wasm deployment manager data in transit and at rest with managed key rotation.",
+      "shall": "Sensitive state SHALL be encrypted at rest (AES-256-GCM) with key ids and rotation; transit SHALL use the transport's TLS/mTLS.",
+      "implementation": [
+        "security.py::Sealer",
+        "store.py::Journal"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C048",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "shall": "When identity, key, verifier or time services are unavailable the manager SHALL fail closed.",
+      "implementation": [
+        "security.py::_require_crypto",
+        "service.py::op_set_desired",
+        "preflight.py::run"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C049",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Emit tamper-evident audit events for security-sensitive Wasm deployment manager operations.",
+      "shall": "Security-sensitive operations SHALL emit hash-chained, fsync'd audit records; tampering SHALL be detected at load.",
+      "implementation": [
+        "store.py::Journal"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C050",
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "shall": "Adversarial tests SHALL cover escalation, injection, replay, spoofing, escape and exhaustion.",
+      "implementation": [
+        "tests/test_security.py"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C051",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Wasm deployment manager.",
+      "shall": "Component/process/node/site/network/provider/dependency/control-plane failures SHALL be enumerated with detection and response.",
+      "implementation": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C052",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define automated health and stall detection thresholds for Wasm deployment manager.",
+      "shall": "Health and stall thresholds SHALL be defined and detected automatically.",
+      "implementation": [
+        "resilience.py::HealthMonitor",
+        "service.py::tick"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C053",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "shall": "Retries SHALL be bounded, jittered and limited to idempotent operations and retryable errors.",
+      "implementation": [
+        "resilience.py::RetryPolicy"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C054",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Wasm deployment manager failure cascades.",
+      "shall": "Admission control, priority shedding and circuit breaking SHALL prevent cascades.",
+      "implementation": [
+        "resilience.py::Admission",
+        "resilience.py::CircuitBreaker"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C055",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "shall": "Failover SHALL NOT violate isolation, residency or consistency (fenced leader; residency-constrained placement).",
+      "implementation": [
+        "store.py::Journal.acquire",
+        "service.py::_eligible"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C056",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "shall": "Non-critical dependency loss SHALL degrade (not fail) the service.",
+      "implementation": [
+        "service.py::reconcile_ns"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C057",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Wasm deployment manager state.",
+      "shall": "State SHALL be crash-consistent; restart SHALL replay the journal and truncate only torn tails.",
+      "implementation": [
+        "store.py::Journal._load",
+        "service.py::_recover"
+      ],
+      "design": [
+        "docs/architecture/STATE_AND_CONFIG.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C058",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "shall": "Stale controllers SHALL be fenced by epoch; concurrent writers SHALL be detected.",
+      "implementation": [
+        "store.py::Journal.append"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C059",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Wasm deployment manager behavior.",
+      "shall": "Operators SHALL be able to freeze, quarantine (workload/tenant/host) and emergency-disable automation.",
+      "implementation": [
+        "resilience.py::Controls",
+        "service.py::emergency_disable",
+        "service.py::quarantine_host"
+      ],
+      "design": [
+        "ops/runbooks/INCIDENT.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C060",
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Run fault-injection tests proving Wasm deployment manager recovery against documented objectives.",
+      "shall": "Fault-injection tests SHALL prove recovery objectives.",
+      "implementation": [
+        "adapter.py::InMemoryLattice"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C061",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Establish reproducible baselines for Wasm deployment manager latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "shall": "Reproducible baselines SHALL be recorded for latency, throughput, startup, memory and storage.",
+      "implementation": [
+        "perf/bench.py",
+        "perf/results.json"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C062",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Wasm deployment manager.",
+      "shall": "p50/p95/p99/max thresholds SHALL be defined.",
+      "implementation": [
+        "perf/thresholds.json"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C063",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure Wasm deployment manager under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "shall": "Steady, burst, overload, scale-out, scale-in and recovery SHALL be measured.",
+      "implementation": [
+        "perf/bench.py"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C064",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Wasm deployment manager.",
+      "shall": "Per-tenant and per-workload overhead SHALL be measured.",
+      "implementation": [
+        "perf/bench.py::per_tenant_overhead"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C065",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Wasm deployment manager.",
+      "shall": "Avoidable serialization, copies and duplicated state SHALL be identified.",
+      "implementation": [
+        "docs/requirements/PERF_ANALYSIS.md"
+      ],
+      "design": [
+        "docs/requirements/PERF_ANALYSIS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C066",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "shall": "Safe optimizations SHALL be applied with semantic-equivalence proof.",
+      "implementation": [
+        "manager.py::Manager.diff"
+      ],
+      "design": [
+        "docs/requirements/PERF_ANALYSIS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C067",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "shall": "Memory, queues, buffers, concurrency and fan-out SHALL be bounded.",
+      "implementation": [
+        "observability.py::Metrics",
+        "resilience.py::Admission",
+        "store.py::Journal.max_bytes"
+      ],
+      "design": [
+        "docs/interfaces/LIMITS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C068",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "shall": "Power and thermal impact SHALL be measured on constrained edge nodes.",
+      "implementation": [
+        "perf/EDGE_POWER_PLAN.md"
+      ],
+      "design": [
+        "perf/EDGE_POWER_PLAN.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C069",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define capacity models and saturation signals that predict when Wasm deployment manager needs more resources.",
+      "shall": "A capacity model and saturation signals SHALL predict resource needs.",
+      "implementation": [
+        "docs/requirements/CAPACITY_MODEL.md",
+        "observability/alerts.json"
+      ],
+      "design": [
+        "docs/requirements/CAPACITY_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C070",
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Block releases that regress approved Wasm deployment manager startup, density, throughput, or tail-latency thresholds.",
+      "shall": "Releases SHALL be blocked when performance regresses beyond approved thresholds.",
+      "implementation": [
+        "perf/bench.py::gate",
+        "gate.py"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C071",
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose Wasm deployment manager health, readiness, version, configuration, dependency status, and active capability set.",
+      "shall": "Health, readiness, version, config digest, dependency status and capabilities SHALL be exposed.",
+      "implementation": [
+        "service.py::status"
+      ],
+      "design": [
+        "ops/runbooks/DAY2_OPERATIONS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C072",
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "shall": "RED/USE metrics SHALL be emitted in Prometheus format.",
+      "implementation": [
+        "observability.py::Metrics"
+      ],
+      "design": [
+        "observability/dashboard.json"
+      ]
+    },
+    {
+      "check_id": "INV-63-C073",
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "shall": "Logs SHALL be structured with node, tenant, workload, component, operation and trace ids.",
+      "implementation": [
+        "observability.py::Logger"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C074",
+      "dimension": "Observability & Explainability",
+      "requirement": "Propagate trace context across all relevant Wasm deployment manager boundaries.",
+      "shall": "W3C trace context SHALL propagate across request, decision and adapter boundaries.",
+      "implementation": [
+        "observability.py::SpanContext",
+        "observability.py::Tracer"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C075",
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "shall": "Diagnostics SHALL be cardinality-bounded, redacted and tenant-pseudonymised when exported.",
+      "implementation": [
+        "observability.py::MAX_LABEL_SETS",
+        "observability.py::tenant_hash",
+        "security.py::redact"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C076",
+      "dimension": "Observability & Explainability",
+      "requirement": "Record the reason for every automated decision made by Wasm deployment manager.",
+      "shall": "Every automated decision SHALL record its reason, inputs, policies and constraints.",
+      "implementation": [
+        "observability.py::DecisionLog",
+        "service.py::_decide"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C077",
+      "dimension": "Observability & Explainability",
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "shall": "An explain view SHALL link decisions to inputs, policies, topology and constraints.",
+      "implementation": [
+        "observability.py::DecisionLog.explain",
+        "service.py::op_explain"
+      ],
+      "design": [
+        "ops/runbooks/DAY2_OPERATIONS.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C078",
+      "dimension": "Observability & Explainability",
+      "requirement": "Correlate Wasm deployment manager events with application release lineage and the live infrastructure graph.",
+      "shall": "Decisions SHALL carry release lineage and a topology digest.",
+      "implementation": [
+        "service.py::_decide",
+        "observability.py::topology_digest"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C079",
+      "dimension": "Observability & Explainability",
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "shall": "Telemetry retention, sampling, privacy and export SHALL be defined.",
+      "implementation": [
+        "docs/requirements/TELEMETRY_POLICY.md",
+        "config.py::SECURE_DEFAULTS"
+      ],
+      "design": [
+        "docs/requirements/TELEMETRY_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C080",
+      "dimension": "Observability & Explainability",
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "shall": "Dashboards and alerts SHALL distinguish load, degradation, policy rejection, dependency failure, security events and stalls.",
+      "implementation": [
+        "observability/alerts.json",
+        "observability/dashboard.json",
+        "observability.py::classify_alert"
+      ],
+      "design": [
+        "observability/alerts.json"
+      ]
+    },
+    {
+      "check_id": "INV-63-C081",
+      "dimension": "Testing & Certification",
+      "requirement": "Create unit tests for deterministic Wasm deployment manager logic and state transitions.",
+      "shall": "Unit tests SHALL cover core logic.",
+      "implementation": [
+        "tests/test_manager.py"
+      ],
+      "design": [
+        "README.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C082",
+      "dimension": "Testing & Certification",
+      "requirement": "Create contract tests for every public Wasm deployment manager interface.",
+      "shall": "Every public interface SHALL have contract tests.",
+      "implementation": [
+        "tests/test_contracts.py"
+      ],
+      "design": [
+        "docs/interfaces/VERSIONING.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C083",
+      "dimension": "Testing & Certification",
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "shall": "Integration tests SHALL exercise every adjacent layer and execution tier.",
+      "implementation": [
+        "tests/test_service.py"
+      ],
+      "design": [
+        "docs/architecture/BOUNDARIES.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C084",
+      "dimension": "Testing & Certification",
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Wasm deployment manager.",
+      "shall": "Compatibility SHALL be tested across CPU architectures, runtimes, providers and protocol versions.",
+      "implementation": [
+        "tests/test_contracts.py",
+        ".github/workflows/ci.yml"
+      ],
+      "design": [
+        "governance/COMPATIBILITY_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C085",
+      "dimension": "Testing & Certification",
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Wasm deployment manager.",
+      "shall": "Parsers, schemas and untrusted inputs SHALL be fuzzed.",
+      "implementation": [
+        "tests/test_contracts.py::FuzzTest"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C086",
+      "dimension": "Testing & Certification",
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Wasm deployment manager state.",
+      "shall": "Concurrency and race tests SHALL cover shared/distributed state.",
+      "implementation": [
+        "tests/test_platform.py::ConcurrencyTest"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C087",
+      "dimension": "Testing & Certification",
+      "requirement": "Create security tests derived directly from the Wasm deployment manager threat model.",
+      "shall": "Security tests SHALL derive directly from the threat model.",
+      "implementation": [
+        "tests/test_security.py"
+      ],
+      "design": [
+        "docs/architecture/THREAT_MODEL.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C088",
+      "dimension": "Testing & Certification",
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Wasm deployment manager.",
+      "shall": "Benchmark, soak, burst and fleet-scale tests SHALL exist.",
+      "implementation": [
+        "perf/bench.py"
+      ],
+      "design": [
+        "docs/requirements/NFR.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C089",
+      "dimension": "Testing & Certification",
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "shall": "Disaster, partition, reconnect and degraded-control-plane tests SHALL exist.",
+      "implementation": [
+        "tests/test_service.py"
+      ],
+      "design": [
+        "docs/architecture/FAILURE_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C090",
+      "dimension": "Testing & Certification",
+      "requirement": "Require machine-readable acceptance evidence before certifying a Wasm deployment manager release for production.",
+      "shall": "Machine-readable, signed acceptance evidence SHALL be required before production certification.",
+      "implementation": [
+        "audit.py",
+        "gate.py"
+      ],
+      "design": [
+        "release/GATE_POLICY.json"
+      ]
+    },
+    {
+      "check_id": "INV-63-C091",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define production SLOs, error budgets, and support commitments for Wasm deployment manager.",
+      "shall": "Production SLOs, error budgets and support commitments SHALL be defined.",
+      "implementation": [
+        "governance/SLO.md",
+        "contract.py::build"
+      ],
+      "design": [
+        "governance/SLO.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C092",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Wasm deployment manager.",
+      "shall": "Canary, staged rollout, rollback and emergency-disable procedures SHALL be defined and exercised.",
+      "implementation": [
+        "service.py::op_rollout",
+        "service.py::emergency_disable"
+      ],
+      "design": [
+        "ops/runbooks/CANARY_ROLLBACK.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C093",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Maintain a supported-version compatibility matrix for Wasm deployment manager and adjacent dependencies.",
+      "shall": "A supported-version compatibility matrix SHALL be maintained.",
+      "implementation": [
+        "governance/COMPATIBILITY_MATRIX.md"
+      ],
+      "design": [
+        "governance/COMPATIBILITY_MATRIX.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C094",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Wasm deployment manager.",
+      "shall": "Patching, vulnerability response and EOL SLAs SHALL be defined.",
+      "implementation": [
+        "governance/VULN_AND_EOL_POLICY.md"
+      ],
+      "design": [
+        "governance/VULN_AND_EOL_POLICY.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C095",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Wasm deployment manager state where applicable.",
+      "shall": "Backup, restore, migration and reconstruction procedures SHALL exist and be tested.",
+      "implementation": [
+        "store.py::Journal.backup",
+        "store.py::Journal.restore"
+      ],
+      "design": [
+        "ops/runbooks/BACKUP_RESTORE.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C096",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "shall": "Day-0/1/2 runbooks SHALL exist.",
+      "implementation": [
+        "ops/runbooks/DAY0_BOOTSTRAP.md",
+        "ops/runbooks/DAY1_DEPLOY.md",
+        "ops/runbooks/DAY2_OPERATIONS.md"
+      ],
+      "design": [
+        "ops/runbooks/"
+      ]
+    },
+    {
+      "check_id": "INV-63-C097",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "shall": "Incident severity, paging, escalation, containment and recovery SHALL be defined.",
+      "implementation": [
+        "ops/runbooks/INCIDENT.md"
+      ],
+      "design": [
+        "ops/runbooks/INCIDENT.md"
+      ]
+    },
+    {
+      "check_id": "INV-63-C098",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "shall": "Access, policy, dependency, configuration and architecture reviews SHALL recur on a schedule enforced by the gate.",
+      "implementation": [
+        "governance/REVIEWS.json",
+        "gate.py::check_reviews"
+      ],
+      "design": [
+        "governance/REVIEWS.json"
+      ]
+    },
+    {
+      "check_id": "INV-63-C099",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "shall": "Exceptions, waivers, debt and deprecations SHALL be tracked with owners and expiry, and expired waivers SHALL block release.",
+      "implementation": [
+        "governance/WAIVERS.json",
+        "gate.py::check_waivers"
+      ],
+      "design": [
+        "governance/WAIVERS.json"
+      ]
+    },
+    {
+      "check_id": "INV-63-C100",
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "shall": "A single signed production exit gate SHALL consume all evidence bound to the exact artifact/config/dependencies.",
+      "implementation": [
+        "gate.py::evaluate"
+      ],
+      "design": [
+        "release/GATE_POLICY.json"
+      ]
+    }
+  ]
+}

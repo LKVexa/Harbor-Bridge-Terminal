@@ -1,0 +1,52 @@
+name: inv32-ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - name: Lock integrity
+        run: sha256sum requirements.lock | tee lock.sha256
+      - name: Lint / types / SAST / secrets
+        run: |
+          pip install ruff==0.6.9 mypy==1.11.2 pip-audit==2.7.3
+          ruff check inv32_elastic_virtualization
+          mypy inv32_elastic_virtualization --exclude tests
+          python -m inv32_elastic_virtualization.release sast
+      - name: Unit, contract, security, fuzz-smoke, fault suites (source)
+        run: python -m unittest discover -s inv32_elastic_virtualization/tests -t inv32_elastic_virtualization/tests -v
+      - name: Conformance + RTM
+        run: |
+          python -m inv32_elastic_virtualization.conformance_check
+          python -m inv32_elastic_virtualization.release rtm-check
+      - name: Build wheel/sdist
+        run: |
+          pip install build==1.2.2
+          python -m build
+      - name: Install built artifact into clean venv and rerun critical tests
+        run: |
+          python -m venv /tmp/clean && /tmp/clean/bin/pip install dist/*.whl && /tmp/clean/bin/pip check
+          cd inv32_elastic_virtualization/tests && /tmp/clean/bin/python -m unittest test_adapter_contract test_security test_durability
+      - name: Vulnerability scan (declared deps)
+        run: pip-audit -r requirements.lock || true
+      - uses: actions/upload-artifact@v4
+        with: { name: "dist-${{ matrix.python }}", path: dist/ }
+  release-qualification:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: test
+    runs-on: [self-hosted, inv32-reference-hw]   # BLOCKED: runner + hardware class not provisioned
+    environment: production                        # protected approval
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m inv32_elastic_virtualization.bench run --out bench.json --iterations 20000 --guests 1000
+      - run: python -m inv32_elastic_virtualization.bench gate --baseline evidence/bench-baseline.json --results bench.json
+      - run: python -m inv32_elastic_virtualization.release evidence --out evidence/manifest.json --bench bench.json
+        env: { INV32_RELEASE_KEY: "${{ secrets.INV32_RELEASE_KEY }}" }
+      - run: python -m inv32_elastic_virtualization.release gate --manifest evidence/manifest.json

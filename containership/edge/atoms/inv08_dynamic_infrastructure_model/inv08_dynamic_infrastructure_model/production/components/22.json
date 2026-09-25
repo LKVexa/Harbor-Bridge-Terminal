@@ -1,0 +1,70 @@
+{
+ "component": 22,
+ "title": "Idempotency/retry/backpressure contract",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "operation and idempotency identifiers",
+   "state": "IMPLEMENTED",
+   "spec": "production/idempotency.py::__doc__",
+   "modules": [
+    "production/idempotency.py::new_op_id"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestIdempotency.test_operation_ids"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "deduplication storage/window semantics",
+   "state": "IMPLEMENTED",
+   "spec": "production/idempotency.py::__doc__",
+   "modules": [
+    "production/idempotency.py::IdempotencyStore"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestIdempotency.test_dedup_window",
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestIdempotency.test_in_progress_and_failure_caching"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "timeout and cancellation budgets",
+   "state": "IMPLEMENTED",
+   "spec": "production/idempotency.py::__doc__",
+   "modules": [
+    "production/idempotency.py::Budget"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestIdempotency.test_timeout_and_cancellation_budgets"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "retry classes with jitter/backoff",
+   "state": "IMPLEMENTED",
+   "spec": "production/idempotency.py::RETRY_CLASSES",
+   "modules": [
+    "production/idempotency.py::retry",
+    "production/idempotency.py::backoff"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestIdempotency.test_retry_classes_with_jitter"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "queue admission, backpressure, and overload responses",
+   "state": "IMPLEMENTED",
+   "spec": "production/idempotency.py::__doc__",
+   "modules": [
+    "production/idempotency.py::AdmissionQueue"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestIdempotency.test_admission_backpressure"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Dedup store is in-memory; a durable/replicated store is needed for multi-controller deployments."
+}

@@ -1,0 +1,113 @@
+{
+  "schema": "PK_GAP10_ALERTS/1",
+  "rules": [
+    {
+      "name": "Gap10NodeDerated",
+      "class": "ordinary-derating",
+      "expr": "gap10_ceiling_fraction < 1 and gap10_ceiling_fraction > 0",
+      "severity": "SEV4",
+      "for": "10m",
+      "runbook": "docs/RUNBOOK.md#derating",
+      "summary": "Node derated by thermal/power band; informational unless widespread."
+    },
+    {
+      "name": "Gap10NodeExcluded",
+      "class": "ordinary-derating",
+      "expr": "increase(gap10_thermal_exclusions_total[5m]) > 0",
+      "severity": "SEV3",
+      "for": "0m",
+      "runbook": "docs/RUNBOOK.md#exclusion",
+      "summary": "Node excluded (emergency)."
+    },
+    {
+      "name": "Gap10TelemetryStale",
+      "class": "stale-telemetry",
+      "expr": "gap10_telemetry_age_seconds > 30 or gap10_sensor_absent == 1",
+      "severity": "SEV3",
+      "for": "2m",
+      "runbook": "docs/RUNBOOK.md#stale-telemetry",
+      "summary": "No trusted telemetry; node held constrained."
+    },
+    {
+      "name": "Gap10CoolingDomainFailure",
+      "class": "cooling-failure",
+      "expr": "count by (site) (gap10_ceiling_fraction <= 0.25) / count by (site) (gap10_ceiling_fraction) > 0.5",
+      "severity": "SEV2",
+      "for": "2m",
+      "runbook": "docs/RUNBOOK.md#cooling-domain",
+      "summary": "Majority of a site/domain constrained: suspect shared cooling failure."
+    },
+    {
+      "name": "Gap10BatteryEmergency",
+      "class": "battery-emergency",
+      "expr": "gap10_battery_runtime_seconds < 900",
+      "severity": "SEV2",
+      "for": "1m",
+      "runbook": "docs/RUNBOOK.md#battery",
+      "summary": "Battery runtime above reserve under 15 minutes."
+    },
+    {
+      "name": "Gap10ForgedInput",
+      "class": "forged-input",
+      "expr": "increase(gap10_telemetry_samples_total{outcome=~\"telemetry_bad_signature|telemetry_unauthorized|telemetry_replayed\"}[5m]) > 0",
+      "severity": "SEV2",
+      "for": "0m",
+      "runbook": "docs/RUNBOOK.md#forged-input",
+      "summary": "Forged, unauthorized or replayed telemetry rejected."
+    },
+    {
+      "name": "Gap10EnforcementDivergence",
+      "class": "software-defect",
+      "expr": "gap10_enforcement_divergence == 1",
+      "severity": "SEV1",
+      "for": "1m",
+      "runbook": "docs/RUNBOOK.md#divergence",
+      "summary": "Downstream applied ceiling differs from GAP-10 desired ceiling."
+    },
+    {
+      "name": "Gap10NotSafeToEnforce",
+      "class": "software-defect",
+      "expr": "gap10_safe_to_enforce == 0",
+      "severity": "SEV2",
+      "for": "2m",
+      "runbook": "docs/RUNBOOK.md#not-safe",
+      "summary": "Controller reports unsafe to enforce (leader/clock/store/policy)."
+    },
+    {
+      "name": "Gap10DependencyFailures",
+      "class": "software-defect",
+      "expr": "increase(gap10_dependency_failures_total[5m]) > 3",
+      "severity": "SEV3",
+      "for": "5m",
+      "runbook": "docs/RUNBOOK.md#dependencies",
+      "summary": "Repeated dependency failures (store/policy/scheduler)."
+    },
+    {
+      "name": "Gap10DecisionLatency",
+      "class": "software-defect",
+      "expr": "histogram_quantile(0.99, rate(gap10_decision_latency_seconds_bucket[5m])) > 0.05",
+      "severity": "SEV3",
+      "for": "10m",
+      "runbook": "docs/RUNBOOK.md#latency",
+      "summary": "p99 decision latency over budget."
+    },
+    {
+      "name": "Gap10FleetWideDerating",
+      "class": "fleet-wide",
+      "expr": "count(gap10_ceiling_fraction < 1) / count(gap10_ceiling_fraction) > 0.3",
+      "severity": "SEV1",
+      "for": "5m",
+      "runbook": "docs/RUNBOOK.md#fleet-wide",
+      "summary": "More than 30% of fleet derated: heatwave, bad policy, or systemic defect."
+    },
+    {
+      "name": "Gap10ControlsActive",
+      "class": "ordinary-derating",
+      "expr": "gap10_controls_active > 0",
+      "severity": "SEV4",
+      "for": "60m",
+      "runbook": "docs/RUNBOOK.md#controls",
+      "summary": "Operator controls still active after an hour; review or release."
+    }
+  ]
+}

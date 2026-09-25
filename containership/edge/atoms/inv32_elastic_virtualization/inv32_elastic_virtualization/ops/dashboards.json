@@ -1,0 +1,99 @@
+{
+ "schema": "PK_DASHBOARDS/1",
+ "dashboards": [
+  {
+   "id": "inv32-safety",
+   "title": "Host resource safety / invariants",
+   "panels": [
+    {
+     "title": "Free vs reserved vs allocated MiB",
+     "expr": "inv32_memory_mib"
+    },
+    {
+     "title": "Reserve & floor refusals",
+     "expr": "sum by (reason)(rate(inv32_refusals_total{reason=~\"reserve_breach|floor_breach\"}[5m]))"
+    },
+    {
+     "title": "Invariant violations",
+     "expr": "rate(inv32_refusals_total{reason=\"other\"}[5m])"
+    }
+   ]
+  },
+  {
+   "id": "inv32-ops",
+   "title": "Operation rate / latency / errors / saturation",
+   "panels": [
+    {
+     "title": "Requests by outcome",
+     "expr": "sum by (operation,outcome)(rate(inv32_requests_total[5m]))"
+    },
+    {
+     "title": "E2E p99",
+     "expr": "histogram_quantile(0.99, sum by (le,operation)(rate(inv32_end_to_end_latency_seconds_bucket[5m])))"
+    },
+    {
+     "title": "Decision p99",
+     "expr": "histogram_quantile(0.99, sum by (le)(rate(inv32_decision_latency_seconds_bucket[5m])))"
+    },
+    {
+     "title": "In-flight",
+     "expr": "inv32_inflight_operations"
+    },
+    {
+     "title": "Queue wait p99",
+     "expr": "histogram_quantile(0.99, sum by (le,priority)(rate(inv32_queue_wait_seconds_bucket[5m])))"
+    }
+   ]
+  },
+  {
+   "id": "inv32-deps",
+   "title": "Provider / dependency health",
+   "panels": [
+    {
+     "title": "Provider latency p99",
+     "expr": "histogram_quantile(0.99, sum by (le)(rate(inv32_provider_latency_seconds_bucket[5m])))"
+    },
+    {
+     "title": "Circuit opens",
+     "expr": "rate(inv32_circuit_open_total[15m])"
+    },
+    {
+     "title": "Retries",
+     "expr": "rate(inv32_retries_total[5m])"
+    }
+   ]
+  },
+  {
+   "id": "inv32-ownership",
+   "title": "Controller ownership / failover",
+   "panels": [
+    {
+     "title": "Lease age",
+     "expr": "inv32_lease_age_seconds"
+    },
+    {
+     "title": "Not-owner / fencing rejections",
+     "expr": "rate(inv32_refusals_total{reason=~\"not_owner|fencing_rejected\"}[5m])"
+    }
+   ]
+  },
+  {
+   "id": "inv32-security",
+   "title": "Security denials / integrity / quarantine",
+   "panels": [
+    {
+     "title": "AuthN/AuthZ denials",
+     "expr": "rate(inv32_refusals_total{reason=~\"authentication_failed|authorization_denied\"}[5m])"
+    },
+    {
+     "title": "Audit integrity failures",
+     "expr": "inv32_refusals_total{reason=\"audit_integrity_error\"}"
+    },
+    {
+     "title": "Active quarantines",
+     "expr": "inv32_quarantines_active"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+# MC-088.  Local hooks call the same stdlib tools CI uses; ruff is optional and pinned.
+repos:
+  - repo: local
+    hooks:
+      - id: inv28-lint
+        name: inv28 stdlib lint
+        entry: python -B -m inv28_unikernel_implementations.tools.lint
+        language: system
+        pass_filenames: false
+      - id: inv28-secrets
+        name: inv28 secret scan
+        entry: python -B -m inv28_unikernel_implementations.tools.secret_scan
+        language: system
+        pass_filenames: false
+      - id: inv28-master
+        name: MASTER.md consistency
+        entry: python -B -m inv28_unikernel_implementations.tools.master --check
+        language: system
+        pass_filenames: false
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.11
+    hooks:
+      - id: ruff

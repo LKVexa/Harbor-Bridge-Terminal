@@ -1,0 +1,137 @@
+{
+  "title": "PLN-06 Data plane",
+  "schemaVersion": 39,
+  "tags": [
+    "pln06"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Admissions by tier",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (tier)(rate(pk06_admitted_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Inline p50/p99",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(pk06_transfer_seconds_bucket[5m])))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Saturation",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "pk06_inflight / pk06_inflight_limit"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Refusals by code",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (code)(rate(pk06_refusals_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Backlog oldest (s)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "pk06_backlog_oldest_seconds"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Bytes by tier",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (tier)(rate(pk06_bytes_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Process RSS",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "pk06_process_max_rss_bytes"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "CPU",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(pk06_process_cpu_user_s[5m]) + rate(pk06_process_cpu_sys_s[5m])"
+        }
+      ]
+    }
+  ]
+}

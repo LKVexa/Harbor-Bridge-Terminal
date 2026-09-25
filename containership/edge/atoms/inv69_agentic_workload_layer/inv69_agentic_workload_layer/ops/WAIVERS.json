@@ -1,0 +1,141 @@
+{
+  "schema": "PK_WAIVER_REGISTER/1",
+  "component": "INV-69",
+  "max_duration_days": {
+    "low": 180,
+    "medium": 90,
+    "high": 30,
+    "security": 30
+  },
+  "renewal_authority": {
+    "security": "inv69-security-owner + pk-architecture-board",
+    "other": "inv69-service-owner"
+  },
+  "expiry_behavior": "expired or unapproved entries block tools/release_gate.py (verdict NO_GO)",
+  "entries": [
+    {
+      "id": "W-001",
+      "category": "exception",
+      "controls": [
+        "INV-69-C090",
+        "INV-69-C100",
+        "INV-69-C031"
+      ],
+      "scope": "release 4.3.0",
+      "rationale": "pk_core conformance harness absent from candidate; cannot pin or run",
+      "risk": "high",
+      "compensating": "standalone runtime + v43 suites run in normal and -O",
+      "owner": "inv69-service-owner",
+      "approver": null,
+      "opened": "2026-09-22",
+      "expires": "2026-10-22",
+      "remediation": "supply pk_core with version+digest; pin in requirements.lock",
+      "status": "pending_approval"
+    },
+    {
+      "id": "W-002",
+      "category": "technical_debt",
+      "controls": [
+        "INV-69-C030",
+        "INV-69-C083"
+      ],
+      "scope": "4.3.x",
+      "rationale": "integration tier uses contract-faithful adapters, not real INV-57/59/70/71 binaries (not in archive)",
+      "risk": "high",
+      "compensating": "adapters implement the PK_AGENT_PEER/1 contract incl. faults; tests assert contract shapes",
+      "owner": "inv69-service-owner",
+      "approver": null,
+      "opened": "2026-09-22",
+      "expires": "2026-10-22",
+      "remediation": "certification-tier run against real peers",
+      "status": "pending_approval",
+      "test_coverage": "tests/test_v43.py::IntegrationTest"
+    },
+    {
+      "id": "W-003",
+      "category": "exception",
+      "controls": [
+        "INV-69-C045"
+      ],
+      "scope": "4.3.x",
+      "rationale": "stdlib-only build ships HMAC signatures; asymmetric (Sigstore/Ed25519) needs an approved crypto dependency",
+      "risk": "security",
+      "compensating": "digest pinning + HMAC trust root + pinned policy digest + generated code forced to heavy tier",
+      "owner": "inv69-security-owner",
+      "approver": null,
+      "opened": "2026-09-22",
+      "expires": "2026-10-22",
+      "remediation": "approve crypto lib in APPROVED_TECH.json; implement Signer",
+      "status": "pending_approval",
+      "test_coverage": "tests/test_v43.py::ArtifactTest"
+    },
+    {
+      "id": "W-004",
+      "category": "technical_debt",
+      "controls": [
+        "INV-69-C049",
+        "INV-69-C036"
+      ],
+      "scope": "4.3.x",
+      "rationale": "hash chains are process-local; external append-only anchor not available",
+      "risk": "high",
+      "compensating": "heads exported in backup bundles and status; config require_remote_anchor defaults true (capability flag)",
+      "owner": "inv69-security-owner",
+      "approver": null,
+      "opened": "2026-09-22",
+      "expires": "2026-10-22",
+      "remediation": "anchor heads to an external signed log",
+      "status": "pending_approval"
+    },
+    {
+      "id": "W-005",
+      "category": "not_applicable_candidate",
+      "controls": [
+        "INV-69-C068"
+      ],
+      "scope": "4.3.x",
+      "rationale": "power/thermal needs a physical constrained edge node; none available. far_edge profile is optional",
+      "risk": "low",
+      "compensating": "CPU-time per step measured as proxy; far_edge profile tightens budgets",
+      "owner": "inv69-service-owner",
+      "approver": null,
+      "opened": "2026-09-22",
+      "expires": "2027-03-21",
+      "remediation": "measure on reference far-edge hardware or keep far_edge unsupported",
+      "status": "pending_approval"
+    },
+    {
+      "id": "W-006",
+      "category": "technical_debt",
+      "controls": [
+        "INV-69-C084"
+      ],
+      "scope": "4.3.x",
+      "rationale": "only CPython 3.11.15 / Linux x86_64 executed; CI matrix declared but not run",
+      "risk": "medium",
+      "compensating": "stdlib-only, no native code, no endianness-sensitive encoding",
+      "owner": "inv69-service-owner",
+      "approver": null,
+      "opened": "2026-09-22",
+      "expires": "2026-12-21",
+      "remediation": "run .github/workflows/ci.yml matrix",
+      "status": "pending_approval"
+    }
+  ],
+  "deprecated_behaviors": [
+    {
+      "id": "D-001",
+      "behavior": "Agent.step result 'reason' as sole failure signal",
+      "replacement": "result['code']",
+      "removal_target": "5.0.0",
+      "doc": "ops/SPEC.md#c016c027"
+    },
+    {
+      "id": "D-002",
+      "behavior": "direct mutation of Agent.approvals",
+      "replacement": "Agent.approve()",
+      "removal_target": "5.0.0",
+      "doc": "ops/SPEC.md#c016c027"
+    }
+  ]
+}

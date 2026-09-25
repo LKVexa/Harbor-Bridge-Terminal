@@ -1,0 +1,380 @@
+{
+ "schema": "INV23_COMPATIBILITY/1",
+ "statuses": {
+  "verified": "hardware/VM-backed test evidence recorded",
+  "implemented-unverified": "backend path implemented and unit-tested with mocks; awaiting lab evidence - NOT production-supported",
+  "experimental": "implemented, platform code never executed on real hardware",
+  "unsupported": "fails explicitly with indeterminate"
+ },
+ "rows": [
+  {
+   "id": "LNX-BM-INTEL",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "Intel",
+   "technology": "VT-x+EPT",
+   "backend": "linux-kvm",
+   "nested": "no (L0)",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": true,
+    "nesting_depth": 0
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-BM-AMD",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "AMD",
+   "technology": "AMD-V+NPT",
+   "backend": "linux-kvm",
+   "nested": "no (L0)",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": true,
+    "nesting_depth": 0
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-GUEST-NOVT",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "any",
+   "technology": "none exposed",
+   "backend": "linux-kvm",
+   "nested": "L1 guest, VMX/SVM hidden",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "verified",
+   "expected": {
+    "state": "absent",
+    "reason": "capability_absent",
+    "bare_metal": false
+   },
+   "limitations": "depth reported null (unknown), never 0",
+   "last_verified": {
+    "date": "2026-09-23",
+    "environment": "Anthropic cloud sandbox, Linux 6.18 x86_64 GenuineIntel guest, Python 3.11.15",
+    "test": "tests/hardware/test_host_probe.py"
+   }
+  },
+  {
+   "id": "LNX-GUEST-NESTED",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "any",
+   "technology": "VT-x/AMD-V exposed",
+   "backend": "linux-kvm",
+   "nested": "L1 guest with nested virt",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": false
+   },
+   "limitations": "exact depth unobservable: nesting_depth null; claim requires allow_unknown_depth",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-NO-DEVKVM",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "any",
+   "technology": "VT-x/AMD-V",
+   "backend": "linux-kvm",
+   "nested": "any",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "present-disabled",
+    "reason": "device_absent",
+    "bare_metal": false
+   },
+   "limitations": "module not loaded or firmware-disabled; indistinguishable without dmesg",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-DEVKVM-EACCES",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "any",
+   "technology": "VT-x/AMD-V",
+   "backend": "linux-kvm",
+   "nested": "any",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "present-disabled",
+    "reason": "permission_denied",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-CTR-HIDDEN",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "any",
+   "technology": "container, device not passed",
+   "backend": "linux-kvm",
+   "nested": "any",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "present-disabled",
+    "reason": "device_absent",
+    "bare_metal": false
+   },
+   "limitations": "cpuinfo reflects host CPU",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-CTR-PASSTHRU",
+   "os": "linux",
+   "os_versions": ">=4.19",
+   "architecture": "x86_64",
+   "cpu_vendor": "any",
+   "technology": "container with /dev/kvm",
+   "backend": "linux-kvm",
+   "nested": "any",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock (per container unless state dir shared)",
+   "status": "implemented-unverified",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": true,
+    "nesting_depth": 0
+   },
+   "limitations": "claim namespace is per state directory",
+   "last_verified": null
+  },
+  {
+   "id": "LNX-ARM64",
+   "os": "linux",
+   "os_versions": "any",
+   "architecture": "aarch64",
+   "cpu_vendor": "any",
+   "technology": "KVM/arm64",
+   "backend": "none",
+   "nested": "n/a",
+   "probe_support": "not implemented",
+   "claim_provider": "posix-flock",
+   "status": "unsupported",
+   "expected": {
+    "state": "indeterminate",
+    "reason": "unsupported_architecture",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "WIN-X64-INTEL-HV",
+   "os": "windows",
+   "os_versions": "10 1803+, Server 2019+",
+   "architecture": "amd64",
+   "cpu_vendor": "Intel",
+   "technology": "VT-x+EPT, Hyper-V on",
+   "backend": "windows-whpx",
+   "nested": "root partition",
+   "probe_support": "implemented",
+   "claim_provider": "windows-lockfile",
+   "status": "experimental",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": false
+   },
+   "limitations": "depth unknown inside the root partition",
+   "last_verified": null
+  },
+  {
+   "id": "WIN-X64-AMD-HV",
+   "os": "windows",
+   "os_versions": "10 1803+, Server 2019+",
+   "architecture": "amd64",
+   "cpu_vendor": "AMD",
+   "technology": "AMD-V+NPT, Hyper-V on",
+   "backend": "windows-whpx",
+   "nested": "root partition",
+   "probe_support": "implemented",
+   "claim_provider": "windows-lockfile",
+   "status": "experimental",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "WIN-X64-HV-OFF",
+   "os": "windows",
+   "os_versions": "10 1803+",
+   "architecture": "amd64",
+   "cpu_vendor": "any",
+   "technology": "Hyper-V/WHPX feature off",
+   "backend": "windows-whpx",
+   "nested": "L0",
+   "probe_support": "implemented",
+   "claim_provider": "windows-lockfile",
+   "status": "experimental",
+   "expected": {
+    "state": "present-disabled",
+    "reason": "kernel_api_unavailable",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "WIN-GUEST-NESTED-OFF",
+   "os": "windows",
+   "os_versions": "10+",
+   "architecture": "amd64",
+   "cpu_vendor": "any",
+   "technology": "guest without nested",
+   "backend": "windows-whpx",
+   "nested": "L1",
+   "probe_support": "implemented",
+   "claim_provider": "windows-lockfile",
+   "status": "experimental",
+   "expected": {
+    "state": "indeterminate",
+    "reason": "firmware_disabled",
+    "bare_metal": false
+   },
+   "limitations": "public API cannot separate firmware-off from absent",
+   "last_verified": null
+  },
+  {
+   "id": "WIN-ARM64",
+   "os": "windows",
+   "os_versions": "any",
+   "architecture": "arm64",
+   "cpu_vendor": "any",
+   "technology": "n/a",
+   "backend": "none",
+   "nested": "n/a",
+   "probe_support": "not implemented",
+   "claim_provider": "windows-lockfile",
+   "status": "unsupported",
+   "expected": {
+    "state": "indeterminate",
+    "reason": "unsupported_architecture",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "MAC-ARM64-HVF",
+   "os": "darwin",
+   "os_versions": "11+",
+   "architecture": "arm64",
+   "cpu_vendor": "Apple",
+   "technology": "Hypervisor.framework",
+   "backend": "macos-hvf",
+   "nested": "L0",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "experimental",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": true,
+    "nesting_depth": 0
+   },
+   "limitations": "entitlement com.apple.security.hypervisor not verified by probe",
+   "last_verified": null
+  },
+  {
+   "id": "MAC-X64-HVF",
+   "os": "darwin",
+   "os_versions": "10.15+",
+   "architecture": "x86_64",
+   "cpu_vendor": "Intel",
+   "technology": "Hypervisor.framework",
+   "backend": "macos-hvf",
+   "nested": "L0",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "experimental",
+   "expected": {
+    "state": "usable",
+    "reason": "ok",
+    "bare_metal": true,
+    "nesting_depth": 0
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "MAC-VIRTUALIZED",
+   "os": "darwin",
+   "os_versions": "11+",
+   "architecture": "any",
+   "cpu_vendor": "any",
+   "technology": "macOS guest",
+   "backend": "macos-hvf",
+   "nested": "L1",
+   "probe_support": "implemented",
+   "claim_provider": "posix-flock",
+   "status": "experimental",
+   "expected": {
+    "state": "absent",
+    "reason": "capability_absent",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  },
+  {
+   "id": "OTHER-OS",
+   "os": "freebsd/other",
+   "os_versions": "any",
+   "architecture": "any",
+   "cpu_vendor": "any",
+   "technology": "bhyve/other",
+   "backend": "none",
+   "nested": "n/a",
+   "probe_support": "not implemented",
+   "claim_provider": "none",
+   "status": "unsupported",
+   "expected": {
+    "state": "indeterminate",
+    "reason": "unsupported_platform",
+    "bare_metal": false
+   },
+   "limitations": "",
+   "last_verified": null
+  }
+ ]
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:post-kubernetes:PK_FUNCTION_POOL:1",
+  "title": "PK_FUNCTION_POOL/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "ready", "configuration", "stats", "evicted", "instances"],
+  "properties": {
+    "schema": {"const": "PK_FUNCTION_POOL/1"},
+    "ready": {"type": "boolean"},
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concurrency_limit", "max_age", "max_instances"],
+      "properties": {
+        "concurrency_limit": {"type": "integer", "minimum": 1},
+        "max_age": {"type": "integer", "minimum": 1},
+        "max_instances": {"type": "integer", "minimum": 1}
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "invocations",
+        "cold_starts",
+        "warm_starts",
+        "warm_rate",
+        "state_clears",
+        "capacity_rejections",
+        "clock_rollback_evictions"
+      ],
+      "properties": {
+        "invocations": {"type": "integer", "minimum": 0},
+        "cold_starts": {"type": "integer", "minimum": 0},
+        "warm_starts": {"type": "integer", "minimum": 0},
+        "warm_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "state_clears": {"type": "integer", "minimum": 0},
+        "capacity_rejections": {"type": "integer", "minimum": 0},
+        "clock_rollback_evictions": {"type": "integer", "minimum": 0}
+      }
+    },
+    "evicted": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "maxLength": 256},
+      "uniqueItems": true
+    },
+    "instances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "tenant",
+          "version",
+          "created_at",
+          "last_used_at",
+          "age",
+          "in_flight",
+          "invocations",
+          "destroyed"
+        ],
+        "properties": {
+          "name": {"type": "string", "minLength": 1, "maxLength": 256},
+          "tenant": {"type": "string", "minLength": 1, "maxLength": 256},
+          "version": {"type": "string", "minLength": 1, "maxLength": 256},
+          "created_at": {"type": "integer", "minimum": 0},
+          "last_used_at": {"type": "integer", "minimum": 0},
+          "age": {"type": "integer"},
+          "in_flight": {"type": "integer", "minimum": 0},
+          "invocations": {"type": "integer", "minimum": 0},
+          "destroyed": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

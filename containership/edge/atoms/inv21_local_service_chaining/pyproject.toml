@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools==79.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv21-local-service-chaining"
+dynamic = ["version"]
+description = "INV-21 Local service chaining: authenticated, bounded, observable local/remote call path (Post-Kubernetes series)."
+readme = "inv21_local_service_chaining/README.md"
+requires-python = ">=3.10,<3.14"
+# Runtime is stdlib-only. The pk_core framework (conformance/assessment adapter) is
+# NOT resolvable from any declared index in this repository -- see [tool.inv21.pk_core].
+dependencies = []
+# LICENSE: owner decision pending (GAP-039). LicenseRef-INV21-Pending = no redistribution grant (see NOTICE).
+license = "LicenseRef-INV21-Pending"
+authors = [{name = "LinearFinance.org Research Division"}]
+classifiers = ["Programming Language :: Python :: 3", "Private :: Do Not Upload"]
+
+[project.optional-dependencies]
+test = []
+
+[tool.setuptools]
+packages = ["inv21_local_service_chaining", "inv21_local_service_chaining.tools"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+inv21_local_service_chaining = ["schemas/*.json", "VERSION", "CHECKLIST.json", "README.md"]
+
+[tool.setuptools.dynamic]
+version = {file = "inv21_local_service_chaining/VERSION"}
+
+[tool.inv21.pk_core]
+# Pinned requirement for the release gate. Source is UNRESOLVED: no index, wheel,
+# path or VCS reference for pk_core exists in the supplied archive. The gate fails
+# until `source` and `version` are filled with an immutable reference + sha256.
+required = true
+source = "UNRESOLVED"
+version = "UNRESOLVED"
+sha256 = "UNRESOLVED"
+api = ["pk_core.contract:Contract,Dependency,Slo", "pk_core.checklist:ChecklistItem,Finding", "pk_core.component:Component"]

@@ -1,0 +1,65 @@
+{
+  "$id": "urn:pk:inv65:audit_event:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "pattern": "^[a-z]+(\\.[a-z_]+)+$",
+      "type": "string"
+    },
+    "actor": {
+      "maxLength": 512,
+      "type": "string"
+    },
+    "digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "allow",
+        "deny",
+        "ok",
+        "error"
+      ]
+    },
+    "prev": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 256,
+      "type": "string"
+    },
+    "schema": {
+      "const": "PK_AUDIT_EVENT/1"
+    },
+    "seq": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "subject": {
+      "maxLength": 512,
+      "type": "string"
+    },
+    "ts": {
+      "minimum": 0,
+      "type": "number"
+    }
+  },
+  "required": [
+    "schema",
+    "seq",
+    "ts",
+    "action",
+    "outcome",
+    "actor",
+    "subject",
+    "prev",
+    "digest"
+  ],
+  "title": "PK audit event v1",
+  "type": "object",
+  "x-compat": "additive-only within v1; breaking changes require v2",
+  "x-version": "1.0"
+}

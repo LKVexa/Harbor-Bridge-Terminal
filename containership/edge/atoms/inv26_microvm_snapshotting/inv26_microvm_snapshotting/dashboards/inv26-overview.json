@@ -1,0 +1,62 @@
+{
+ "schema": "PK_SNAPSHOT_DASHBOARD/1",
+ "title": "INV-26 MicroVM snapshotting",
+ "status": "definition only - not deployed",
+ "rows": [
+  {
+   "title": "Traffic class separation",
+   "panels": [
+    {
+     "title": "Request rate by outcome",
+     "expr": "sum by (outcome)(rate(inv26_requests_total[5m]))"
+    },
+    {
+     "title": "Refusals by code (security vs policy)",
+     "expr": "sum by (code)(rate(inv26_refusals_total[5m]))"
+    },
+    {
+     "title": "Restore latency p50/p99 (ms)",
+     "expr": "histogram_quantile(0.99, sum by (le)(rate(inv26_restore_ms_bucket[5m])))"
+    },
+    {
+     "title": "Cross-tenant refusals",
+     "expr": "increase(inv26_cross_tenant_refusals_total[1h])"
+    }
+   ]
+  },
+  {
+   "title": "Safety invariants",
+   "panels": [
+    {
+     "title": "Reseeds vs READY restores",
+     "expr": "rate(inv26_reseeds_total[5m])"
+    }
+   ]
+  },
+  {
+   "title": "Saturation and dependencies",
+   "panels": [
+    {
+     "title": "Saturation: inflight / queue / admission rejects",
+     "expr": "inv26_inflight"
+    },
+    {
+     "title": "Dependency breakers",
+     "expr": "inv26_breaker_state"
+    },
+    {
+     "title": "Stalled operations",
+     "expr": "inv26_stalled_operations"
+    },
+    {
+     "title": "Audit buffered / dropped",
+     "expr": "inv26_audit_buffered"
+    },
+    {
+     "title": "Stored bytes",
+     "expr": "inv26_stored_bytes"
+    }
+   ]
+  }
+ ]
+}

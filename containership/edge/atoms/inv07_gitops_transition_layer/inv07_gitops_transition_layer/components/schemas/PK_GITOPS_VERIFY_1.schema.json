@@ -1,0 +1,91 @@
+{
+ "$id": "https://pk.example/schemas/PK_GITOPS_VERIFY_1.schema.json",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "at": {
+   "minimum": 0,
+   "type": "number"
+  },
+  "cid": {
+   "maxLength": 64,
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "error": {
+   "type": [
+    "object",
+    "null"
+   ]
+  },
+  "oid": {
+   "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+   "type": "string"
+  },
+  "provenance": {
+   "type": [
+    "object",
+    "null"
+   ]
+  },
+  "ref": {
+   "maxLength": 210,
+   "pattern": "^refs/(heads|tags)/[A-Za-z0-9._/-]{1,200}$",
+   "type": "string"
+  },
+  "result": {
+   "enum": [
+    "verified",
+    "refused"
+   ]
+  },
+  "schema": {
+   "const": "PK_GITOPS_VERIFY/1"
+  },
+  "signer": {
+   "additionalProperties": false,
+   "properties": {
+    "algorithm": {
+     "enum": [
+      "ed25519",
+      "openpgp"
+     ]
+    },
+    "identity": {
+     "maxLength": 128,
+     "type": "string"
+    },
+    "key_id": {
+     "maxLength": 128,
+     "type": "string"
+    }
+   },
+   "required": [
+    "key_id",
+    "algorithm",
+    "identity"
+   ],
+   "type": "object"
+  },
+  "tree": {
+   "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+   "type": "string"
+  },
+  "trust_digest": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  }
+ },
+ "required": [
+  "schema",
+  "ref",
+  "oid",
+  "result",
+  "trust_digest",
+  "at"
+ ],
+ "title": "PK_GITOPS_VERIFY/1",
+ "type": "object"
+}

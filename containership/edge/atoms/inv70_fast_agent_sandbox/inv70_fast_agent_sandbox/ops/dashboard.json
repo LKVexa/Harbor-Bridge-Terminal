@@ -1,0 +1,9 @@
+{"title": "INV-70 Fast agent sandbox", "version": 1,
+ "panels": [
+  {"title": "Runs by status", "expr": "sum by (status) (rate(inv70_runs_total[5m]))"},
+  {"title": "Terminations by reason code", "expr": "topk(10, sum by (reason) (rate(inv70_terminations_total[5m])))"},
+  {"title": "Latency p50/p99 (us)", "expr": ["histogram_quantile(0.5, sum by (le) (rate(inv70_latency_us_bucket[5m])))", "histogram_quantile(0.99, sum by (le) (rate(inv70_latency_us_bucket[5m])))"]},
+  {"title": "Fuel used distribution", "expr": "sum by (le) (rate(inv70_fuel_used_bucket[5m]))"},
+  {"title": "Shed ratio", "expr": "sum(rate(inv70_terminations_total{reason=\"FB-C001\"}[5m])) / sum(rate(inv70_runs_total[5m]))"},
+  {"title": "Security denials", "expr": "sum by (reason) (rate(inv70_terminations_total{reason=~\"FB-S0.*\"}[5m]))"}
+ ]}

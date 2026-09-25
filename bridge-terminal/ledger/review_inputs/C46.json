@@ -1,0 +1,1717 @@
+{
+"component": "C46",
+"items": [
+{
+"id": "C46-001",
+"task_class": "DOCUMENT",
+"area": "01. Configuration inventory",
+"req": "List every environment variable consumed by the server.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "table lists PORT + every VWS_* variable",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C46-002",
+"task_class": "SPECIFY",
+"area": "01. Configuration inventory",
+"req": "Identify PORT as the article's explicit required runtime example.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "PORT called out as the explicit required example",
+"prior_evidence": [
+"gateway/config.js:41",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C46-003",
+"task_class": "IMPLEMENT",
+"area": "01. Configuration inventory",
+"req": "Separate mandatory settings from optional settings.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "most vars have defaults (optional); VWS_PRINCIPALS_FILE enforced mandatory for static-file auth",
+"prior_evidence": [
+"gateway/config.js:41-82"
+]
+},
+{
+"id": "C46-004",
+"task_class": "IMPLEMENT",
+"area": "01. Configuration inventory",
+"req": "Separate secrets from non-secret configuration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "publicConfig() is an explicit non-secret allowlist, separate from full cfg",
+"prior_evidence": [
+"gateway/config.js:92-96"
+]
+},
+{
+"id": "C46-005",
+"task_class": "SPECIFY",
+"area": "01. Configuration inventory",
+"req": "Define types and units for numeric settings.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "intVar enforces integer type+range; var names carry units (Ms, Bytes)",
+"prior_evidence": [
+"gateway/config.js:11-18",
+"config/limits.json"
+]
+},
+{
+"id": "C46-006",
+"task_class": "SPECIFY",
+"area": "01. Configuration inventory",
+"req": "Define accepted values for enumerated settings.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_AUTH restricted to ['static-file','none-loopback-dev']; VWS_LOG enum documented",
+"prior_evidence": [
+"gateway/config.js:82"
+]
+},
+{
+"id": "C46-007",
+"task_class": "SPECIFY",
+"area": "01. Configuration inventory",
+"req": "Define approved defaults.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "defaults set in code and listed in docs table",
+"prior_evidence": [
+"gateway/config.js:41-81",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C46-008",
+"task_class": "SPECIFY",
+"area": "01. Configuration inventory",
+"req": "Define the configuration owner for each setting.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no per-setting configuration-owner assignment found in docs or config files",
+"prior_evidence": []
+},
+{
+"id": "C46-009",
+"task_class": "IMPLEMENT",
+"area": "01. Configuration inventory",
+"req": "Avoid inventing mandatory settings not selected by the architecture.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "only settings tied to documented architecture decisions are implemented; no invented mandatory fields",
+"prior_evidence": [
+"gateway/config.js:37-88"
+]
+},
+{
+"id": "C46-010",
+"task_class": "IMPLEMENT",
+"area": "01. Configuration inventory",
+"req": "Approve a runtime configuration schema.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "limits.json explicitly says values are PROPOSED, 'owner approval... still required before raising any of them'",
+"prior_evidence": [
+"config/limits.json:2"
+]
+},
+{
+"id": "C46-011",
+"task_class": "IMPLEMENT",
+"area": "02. Environment acquisition",
+"req": "Read settings from the running process environment.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "load(env = process.env)",
+"prior_evidence": [
+"gateway/config.js:37"
+]
+},
+{
+"id": "C46-012",
+"task_class": "IMPLEMENT",
+"area": "02. Environment acquisition",
+"req": "Avoid relying on local development profile files.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "zero third-party runtime dependencies; no dotenv/profile-file loading found",
+"prior_evidence": [
+"deploy/Dockerfile:20"
+]
+},
+{
+"id": "C46-013",
+"task_class": "SPECIFY",
+"area": "02. Environment acquisition",
+"req": "Define precedence for any supported local overrides.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no local-override mechanism (.env, profile file) exists or has a defined precedence",
+"prior_evidence": []
+},
+{
+"id": "C46-014",
+"task_class": "IMPLEMENT",
+"area": "02. Environment acquisition",
+"req": "Read startup-only settings during initialization.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "load(process.env) called once at process start, before listen()",
+"prior_evidence": [
+"gateway/server.js:248-250"
+]
+},
+{
+"id": "C46-015",
+"task_class": "SPECIFY",
+"area": "02. Environment acquisition",
+"req": "Identify settings intentionally reloadable during operation.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "principals file is explicitly the one setting re-read live; everything else is startup-only",
+"prior_evidence": [
+"docs/OPERATIONS.md#principals"
+]
+},
+{
+"id": "C46-016",
+"task_class": "IMPLEMENT",
+"area": "02. Environment acquisition",
+"req": "Preserve a validated immutable configuration object for workers.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Object.freeze(cfg) returned to callers, used to build worker env",
+"prior_evidence": [
+"gateway/config.js:88"
+]
+},
+{
+"id": "C46-017",
+"task_class": "IMPLEMENT",
+"area": "02. Environment acquisition",
+"req": "Avoid having workers independently reinterpret the same raw setting.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway passes already-validated values as strings, but worker re-parses them with its own int() bounds/defaults instead of trusting them as-is",
+"prior_evidence": [
+"worker/host.js:23-37",
+"gateway/connection.js:176-179"
+]
+},
+{
+"id": "C46-018",
+"task_class": "IMPLEMENT",
+"area": "02. Environment acquisition",
+"req": "Avoid logging the complete environment.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "logger only emits an explicit field allowlist, never process.env",
+"prior_evidence": [
+"gateway/log.js:10"
+]
+},
+{
+"id": "C46-019",
+"task_class": "TEST",
+"area": "02. Environment acquisition",
+"req": "Test startup with only mandatory settings present.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "load(base) with only VWS_PRINCIPALS_FILE set succeeds with all other defaults",
+"prior_evidence": [
+"tests/gateway/config.test.js:8-9"
+]
+},
+{
+"id": "C46-020",
+"task_class": "DOCUMENT",
+"area": "02. Environment acquisition",
+"req": "Document the environment acquisition boundary.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "heading states config is 'environment only'; malformed values stop startup",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C46-021",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate PORT through its dedicated resolver.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "PORT validated via intVar with its own bounds; test covers many malformed shapes",
+"prior_evidence": [
+"tests/gateway/config.test.js:8-11",
+"gateway/config.js:41"
+]
+},
+{
+"id": "C46-022",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate configured buffer and message-size limits.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "envelopeBytes/sendQueueBytes/ackWindowBytes bounded in code, but no dedicated boundary test found in config.test.js",
+"prior_evidence": [
+"gateway/config.js:52-57"
+]
+},
+{
+"id": "C46-023",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate configured worker and queue limits.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "VWS_MAX_SESSIONS boundary tested; fabric-slot/worker-specific limits not directly tested",
+"prior_evidence": [
+"tests/gateway/config.test.js:21",
+"gateway/config.js:50-51,72"
+]
+},
+{
+"id": "C46-024",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate configured keep-alive durations.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "heartbeat interval/window dependency validated and tested",
+"prior_evidence": [
+"tests/gateway/config.test.js:22",
+"gateway/config.js:87"
+]
+},
+{
+"id": "C46-025",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate approved endpoint and datastore URIs when applicable.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no shared datastore in the single-instance profile (D-004); no endpoint/datastore URI setting exists",
+"prior_evidence": [
+"docs/RECOVERY.md#retention"
+]
+},
+{
+"id": "C46-026",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate required origin-policy configuration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "origin-policy parsing validated: exact origins only, wildcards rejected",
+"prior_evidence": [
+"tests/gateway/config.test.js:17-19",
+"gateway/config.js:26-35"
+]
+},
+{
+"id": "C46-027",
+"task_class": "REVIEW",
+"area": "03. Validation",
+"req": "Validate selected authentication configuration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_AUTH enum and dependent-field checks validated and tested",
+"prior_evidence": [
+"tests/gateway/config.test.js:12-15",
+"gateway/config.js:82-84"
+]
+},
+{
+"id": "C46-028",
+"task_class": "IMPLEMENT",
+"area": "03. Validation",
+"req": "Reject unknown values where the schema requires a fixed set.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "unrecognized VWS_AUTH value throws ConfigError",
+"prior_evidence": [
+"gateway/config.js:82"
+]
+},
+{
+"id": "C46-029",
+"task_class": "IMPLEMENT",
+"area": "03. Validation",
+"req": "Report missing mandatory settings clearly.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "ConfigError message names the missing key; startup prints it and exits 78 [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/config.js:83",
+"gateway/server.js:249-250"
+]
+},
+{
+"id": "C46-030",
+"task_class": "IMPLEMENT",
+"area": "03. Validation",
+"req": "Reject invalid explicit values rather than silently inventing replacements.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "invalid present values throw rather than falling back to a default",
+"prior_evidence": [
+"gateway/config.js:11-18",
+"tests/gateway/config.test.js:8-11"
+]
+},
+{
+"id": "C46-031",
+"task_class": "DOCUMENT",
+"area": "04. Defaults",
+"req": "Document every default value and its rationale.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "defaults are listed but per-default rationale is thin (only a general PROPOSED-source note)",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference",
+"config/limits.json:2"
+]
+},
+{
+"id": "C46-032",
+"task_class": "IMPLEMENT",
+"area": "04. Defaults",
+"req": "Distinguish article examples from deployment-approved defaults.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "_status field explicitly flags values as PROPOSED, not yet owner-approved deployment defaults",
+"prior_evidence": [
+"config/limits.json:2"
+]
+},
+{
+"id": "C46-033",
+"task_class": "IMPLEMENT",
+"area": "04. Defaults",
+"req": "Apply defaults only under the schema's missing-value rules.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "intVar/boolVar apply the default only when raw is undefined or empty string",
+"prior_evidence": [
+"gateway/config.js:13,21"
+]
+},
+{
+"id": "C46-034",
+"task_class": "IMPLEMENT",
+"area": "04. Defaults",
+"req": "Avoid using a default secret.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "no default value is a secret; principalsFile default is null (must be set explicitly)",
+"prior_evidence": [
+"gateway/config.js:41-81"
+]
+},
+{
+"id": "C46-035",
+"task_class": "IMPLEMENT",
+"area": "04. Defaults",
+"req": "Keep development defaults from silently entering production.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "none-loopback-dev default-adjacent auth mode is refused unless VWS_HOST is loopback, preventing accidental prod exposure",
+"prior_evidence": [
+"gateway/config.js:84"
+]
+},
+{
+"id": "C46-036",
+"task_class": "TEST",
+"area": "04. Defaults",
+"req": "Test startup with all optional settings omitted.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "load(base) exercises startup with every optional setting omitted",
+"prior_evidence": [
+"tests/gateway/config.test.js:8-9"
+]
+},
+{
+"id": "C46-037",
+"task_class": "TEST",
+"area": "04. Defaults",
+"req": "Test startup with an empty optional value.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "code treats empty string as absent, but no test exercises an explicit empty-string optional value",
+"prior_evidence": [
+"gateway/config.js:13"
+]
+},
+{
+"id": "C46-038",
+"task_class": "TEST",
+"area": "04. Defaults",
+"req": "Test an invalid explicit value with a valid default available.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "malformed PORT with a valid default available still throws (never silently falls back)",
+"prior_evidence": [
+"tests/gateway/config.test.js:10"
+]
+},
+{
+"id": "C46-039",
+"task_class": "DOCUMENT",
+"area": "04. Defaults",
+"req": "Record which defaults were applied in safe diagnostics.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.listening log records a few effective values, not a full applied-defaults record",
+"prior_evidence": [
+"gateway/server.js:212"
+]
+},
+{
+"id": "C46-040",
+"task_class": "IMPLEMENT",
+"area": "04. Defaults",
+"req": "Require review for defaults affecting exposure or resource limits.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "explicit requirement that raising any limit needs owner approval and exact-host measurement",
+"prior_evidence": [
+"config/limits.json:2"
+]
+},
+{
+"id": "C46-041",
+"task_class": "SPECIFY",
+"area": "05. Secret handling",
+"req": "Identify runtime credentials used by authentication.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "bearer tokens and principals file identified as authentication credentials",
+"prior_evidence": [
+"docs/SECURITY.md#assets-and-trust-boundaries"
+]
+},
+{
+"id": "C46-042",
+"task_class": "SPECIFY",
+"area": "05. Secret handling",
+"req": "Identify runtime credentials used by session storage.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no shared session datastore in the single-instance profile, so no such credential exists",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C46-043",
+"task_class": "SPECIFY",
+"area": "05. Secret handling",
+"req": "Identify any other selected external-service credentials.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "asset table is exhaustive; no other external-service credentials are used (DF CLIs need none)",
+"prior_evidence": [
+"docs/SECURITY.md#assets-and-trust-boundaries"
+]
+},
+{
+"id": "C46-044",
+"task_class": "IMPLEMENT",
+"area": "05. Secret handling",
+"req": "Supply secrets through the approved runtime secret mechanism.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_PRINCIPALS_FILE points at a Render Secret File path, not baked into the image",
+"prior_evidence": [
+"gateway/config.js:48",
+"deploy/render.yaml:23"
+]
+},
+{
+"id": "C46-045",
+"task_class": "IMPLEMENT",
+"area": "05. Secret handling",
+"req": "Exclude secrets from generated configuration summaries.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "publicConfig() allowlist test confirms no secret/path leakage",
+"prior_evidence": [
+"gateway/config.js:92-96",
+"tests/gateway/config.test.js:25-28"
+]
+},
+{
+"id": "C46-046",
+"task_class": "IMPLEMENT",
+"area": "05. Secret handling",
+"req": "Redact credential-bearing URI components.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "app has no credential-bearing URIs (no datastore/service URIs with embedded creds)",
+"prior_evidence": [
+"docs/SECURITY.md#assets-and-trust-boundaries"
+]
+},
+{
+"id": "C46-047",
+"task_class": "IMPLEMENT",
+"area": "05. Secret handling",
+"req": "Avoid passing secret values to unrelated worker scopes.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "worker env is an explicit allowlist (PATH, VFS/fabric sizes, python); principals/tokens never included",
+"prior_evidence": [
+"gateway/connection.js:176-179"
+]
+},
+{
+"id": "C46-048",
+"task_class": "SPECIFY",
+"area": "05. Secret handling",
+"req": "Define rotation behavior for startup-only secrets.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no documented rotation behavior for any startup-only secret (only the live-reloadable principals file is addressed)",
+"prior_evidence": []
+},
+{
+"id": "C46-049",
+"task_class": "SPECIFY",
+"area": "05. Secret handling",
+"req": "Define behavior when a required secret is unavailable.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "missing required VWS_PRINCIPALS_FILE throws ConfigError, process exits 78",
+"prior_evidence": [
+"gateway/config.js:83",
+"gateway/server.js:249-250"
+]
+},
+{
+"id": "C46-050",
+"task_class": "TEST",
+"area": "05. Secret handling",
+"req": "Test diagnostics with synthetic secret markers.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "logger test injects token/cookie/authorization/ticket/secretKey markers and asserts redaction",
+"prior_evidence": [
+"tests/gateway/config.test.js:30-35"
+]
+},
+{
+"id": "C46-051",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Construct a validated configuration object before worker startup.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "frozen cfg validated at startup, used to build each worker's env at spawn time",
+"prior_evidence": [
+"gateway/config.js:88",
+"gateway/connection.js:176-181"
+]
+},
+{
+"id": "C46-052",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Pass only the fields needed by each worker.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "only PATH, VFS bytes/nodes, and conditional fabric/python fields are passed as VWS_W_*",
+"prior_evidence": [
+"gateway/connection.js:176-179"
+]
+},
+{
+"id": "C46-053",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Prevent workers from mutating shared configuration unexpectedly.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "cfg is frozen; workers are separate OS processes so no shared-memory mutation is possible",
+"prior_evidence": [
+"gateway/config.js:88"
+]
+},
+{
+"id": "C46-054",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Keep per-connection state separate from global configuration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "per-connection state (sid, epoch, seq) lives on Connection instances, separate from the global frozen cfg",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C46-055",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Include a safe configuration revision identifier when useful.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no configuration revision identifier field found anywhere",
+"prior_evidence": []
+},
+{
+"id": "C46-056",
+"task_class": "TEST",
+"area": "06. Worker distribution",
+"req": "Test equivalent worker configuration across several runspaces.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'runspaces' is a PowerShell/.NET concept; the Node worker model spawns OS processes, not runspaces",
+"prior_evidence": [
+"ledger/review_inputs/RUBRIC.md"
+]
+},
+{
+"id": "C46-057",
+"task_class": "TEST",
+"area": "06. Worker distribution",
+"req": "Test a new worker after configuration reload if reload is supported.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "configuration is startup-only (load() called once); there is no reload path to test a new worker against",
+"prior_evidence": [
+"gateway/config.js:37"
+]
+},
+{
+"id": "C46-058",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Reject incompatible live changes according to policy.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no live-config-change mechanism exists, so there is nothing to accept or reject at runtime",
+"prior_evidence": [
+"gateway/config.js:37"
+]
+},
+{
+"id": "C46-059",
+"task_class": "DOCUMENT",
+"area": "06. Worker distribution",
+"req": "Document how active sessions behave during configuration changes.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "active-session behavior during a config/deploy change is documented via the drain sequence",
+"prior_evidence": [
+"docs/RECOVERY.md#shutdown",
+"docs/OPERATIONS.md#rollback-and-migration"
+]
+},
+{
+"id": "C46-060",
+"task_class": "IMPLEMENT",
+"area": "06. Worker distribution",
+"req": "Mark live-reload checks N/A when configuration is startup-only.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "config is startup-only in practice, but docs do not explicitly state live-reload checks are N/A",
+"prior_evidence": [
+"gateway/config.js:37"
+]
+},
+{
+"id": "C46-061",
+"task_class": "IMPLEMENT",
+"area": "07. Deployment integration",
+"req": "Map runtime settings to the service configuration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "envVars block maps runtime settings into the Render service definition",
+"prior_evidence": [
+"deploy/render.yaml:15-26"
+]
+},
+{
+"id": "C46-062",
+"task_class": "IMPLEMENT",
+"area": "07. Deployment integration",
+"req": "Keep Blueprint references aligned with application variable names.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "Blueprint var names (VWS_SHUTDOWN_MS, VWS_MAX_SESSIONS, VWS_ALLOWED_ORIGINS, VWS_PRINCIPALS_FILE, VWS_FABRIC) match config.js exactly",
+"prior_evidence": [
+"deploy/render.yaml:17-26",
+"gateway/config.js:41-79"
+]
+},
+{
+"id": "C46-063",
+"task_class": "IMPLEMENT",
+"area": "07. Deployment integration",
+"req": "Distinguish Docker build arguments from runtime settings.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "ARG WITH_FABRIC (build-time) is explicitly distinct from ENV/runtime PORT and VWS_* variables",
+"prior_evidence": [
+"deploy/Dockerfile:12"
+]
+},
+{
+"id": "C46-064",
+"task_class": "TEST",
+"area": "07. Deployment integration",
+"req": "Test injected PORT inside the actual running container.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no Docker daemon available; container PORT injection never tested",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C46-065",
+"task_class": "TEST",
+"area": "07. Deployment integration",
+"req": "Test required secrets in a controlled hosted deployment.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no Render account authorization; hosted secret injection never tested",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run",
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C46-066",
+"task_class": "VERIFY",
+"area": "07. Deployment integration",
+"req": "Verify environment-specific settings point to the intended services.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no hosted deployment exists to verify environment-specific settings against",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C46-067",
+"task_class": "REVIEW",
+"area": "07. Deployment integration",
+"req": "Check that deployment configuration contains no duplicate conflicting definitions.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "manual read shows no duplicate envVars keys, but no automated check exists",
+"prior_evidence": [
+"deploy/render.yaml:15-26"
+]
+},
+{
+"id": "C46-068",
+"task_class": "DOCUMENT",
+"area": "07. Deployment integration",
+"req": "Record the effective non-secret configuration for the tested release.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.listening logs a few effective values at runtime; no fixed record artifact for 'the tested release'",
+"prior_evidence": [
+"gateway/server.js:212"
+]
+},
+{
+"id": "C46-069",
+"task_class": "SPECIFY",
+"area": "07. Deployment integration",
+"req": "Define how configuration changes are reviewed.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "only an informal 'owner approval required' note; no defined review process/workflow",
+"prior_evidence": [
+"config/limits.json:2"
+]
+},
+{
+"id": "C46-070",
+"task_class": "DOCUMENT",
+"area": "07. Deployment integration",
+"req": "Document rollback of a faulty configuration change.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "documents code/protocol rollback, not rollback of a specific bad runtime-config change",
+"prior_evidence": [
+"docs/OPERATIONS.md#rollback-and-migration"
+]
+},
+{
+"id": "C46-071",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with missing PORT according to the approved fallback policy.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "absent PORT falls back to 10000, tested",
+"prior_evidence": [
+"gateway/config.js:41",
+"tests/gateway/config.test.js:8"
+]
+},
+{
+"id": "C46-072",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with malformed PORT.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "malformed PORT values (multiple shapes) throw ConfigError",
+"prior_evidence": [
+"tests/gateway/config.test.js:10"
+]
+},
+{
+"id": "C46-073",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with a missing required secret.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "load({}) with no VWS_PRINCIPALS_FILE throws /VWS_PRINCIPALS_FILE/",
+"prior_evidence": [
+"tests/gateway/config.test.js:15"
+]
+},
+{
+"id": "C46-074",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with an invalid duration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_HEARTBEAT_WINDOW_MS exceeding VWS_HEARTBEAT_MS throws",
+"prior_evidence": [
+"tests/gateway/config.test.js:22"
+]
+},
+{
+"id": "C46-075",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with an excessive resource limit.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "upper bounds exist in intVar, but no test exercises an excessive (too-high) resource limit value",
+"prior_evidence": [
+"gateway/config.js:50-51"
+]
+},
+{
+"id": "C46-076",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with a malformed datastore endpoint when applicable.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no datastore endpoint setting exists in this single-instance profile",
+"prior_evidence": [
+"docs/ARCHITECTURE.md#2-recorded-decisions D-004"
+]
+},
+{
+"id": "C46-077",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with an empty required origin list according to policy.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "VWS_ALLOWED_ORIGINS is optional (empty list is valid, same-origin-only mode), not a required-nonempty setting",
+"prior_evidence": [
+"gateway/config.js:26-28"
+]
+},
+{
+"id": "C46-078",
+"task_class": "IMPLEMENT",
+"area": "08. Failure tests",
+"req": "Start with incompatible authentication settings.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "VWS_AUTH=none-loopback-dev off loopback and VWS_AUTH=oidc both throw",
+"prior_evidence": [
+"tests/gateway/config.test.js:14"
+]
+},
+{
+"id": "C46-079",
+"task_class": "REVIEW",
+"area": "08. Failure tests",
+"req": "Ensure invalid configuration prevents false readiness.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "config load failure exits before listen(); registry.ready only becomes true after a successful listen",
+"prior_evidence": [
+"gateway/server.js:248-257"
+]
+},
+{
+"id": "C46-080",
+"task_class": "REVIEW",
+"area": "08. Failure tests",
+"req": "Confirm corrected settings allow a clean subsequent startup.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "individual valid-config cases pass, but no test explicitly sequences a failed start followed by a corrected clean start",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C46-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Emit the configuration schema or application version at startup.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "gateway.listening logs some fields (host/port/auth/fabric/maxSessions) but not a full schema or version stamp",
+"prior_evidence": [
+"gateway/server.js:212"
+]
+},
+{
+"id": "C46-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Emit approved non-secret effective values.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "listening log line plus /config.json expose approved non-secret effective values",
+"prior_evidence": [
+"gateway/server.js:212",
+"gateway/config.js:92-96"
+]
+},
+{
+"id": "C46-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Emit missing-setting errors using key names.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "error message names the exact missing key, e.g. VWS_PRINCIPALS_FILE",
+"prior_evidence": [
+"gateway/config.js:83"
+]
+},
+{
+"id": "C46-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Limit diagnostic length for invalid untrusted values.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "clean() truncates strings to 300 chars; safePath truncates to 200",
+"prior_evidence": [
+"gateway/log.js:6",
+"gateway/log.js:16"
+]
+},
+{
+"id": "C46-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Avoid dumping secret-containing objects during exceptions.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "exception handlers log e.message only, never full request/env objects",
+"prior_evidence": [
+"gateway/server.js:141-144,249-250"
+]
+},
+{
+"id": "C46-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Track configuration changes by revision.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no configuration revision/hash tracking found anywhere in the codebase",
+"prior_evidence": []
+},
+{
+"id": "C46-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Provide a minimal documented development configuration.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "tools/start-local.js auto-creates a minimal local dev configuration",
+"prior_evidence": [
+"docs/OPERATIONS.md#run-it-locally-loopback"
+]
+},
+{
+"id": "C46-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Provide a production configuration checklist without real secrets.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "deployment checklist with placeholder values, no real secrets",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed",
+"deploy/render.yaml"
+]
+},
+{
+"id": "C46-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics and operations",
+"req": "Assign review ownership for schema changes.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no assigned review ownership for schema changes found",
+"prior_evidence": []
+},
+{
+"id": "C46-090",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics and operations",
+"req": "Record compatibility requirements between old and new configuration revisions.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "documents protocol/state compatibility, not config-schema revision compatibility specifically",
+"prior_evidence": [
+"docs/OPERATIONS.md#rollback-and-migration"
+]
+},
+{
+"id": "C46-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the configuration schema.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "schema published in both machine-readable and doc form",
+"prior_evidence": [
+"config/limits.json",
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C46-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish mandatory-optional-secret classifications.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "table distinguishes settings with defaults from the one required-no-default (VWS_PRINCIPALS_FILE) and secret-file handling",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference"
+]
+},
+{
+"id": "C46-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish approved defaults and units.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "defaults and units (Ms/Bytes suffixes) published",
+"prior_evidence": [
+"docs/OPERATIONS.md#configuration-reference",
+"config/limits.json"
+]
+},
+{
+"id": "C46-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link missing-malformed-boundary validation tests.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "listed in EVIDENCE_INDEX.md; covers missing/malformed/boundary cases directly",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C46-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link worker configuration distribution tests.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found that directly exercises worker configuration distribution (connection.js env allowlist)",
+"prior_evidence": []
+},
+{
+"id": "C46-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link hosted injection evidence when available.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "BLOCKED",
+"prior_note": "no hosted deployment; no injection evidence to link",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C46-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link secret-redaction tests.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "secret-redaction test in config.test.js",
+"prior_evidence": [
+"tests/gateway/config.test.js:30-35"
+]
+},
+{
+"id": "C46-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document configuration change and rollback behavior.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "general rollback documented; not specific to a faulty config-value change",
+"prior_evidence": [
+"docs/OPERATIONS.md#rollback-and-migration"
+]
+},
+{
+"id": "C46-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved platform injection assumptions.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "explicitly records unresolved platform assumptions (digest pin, RSS measurement, rehearsals BLOCKED)",
+"prior_evidence": [
+"docs/OPERATIONS.md#deployment-authored-not-executed"
+]
+},
+{
+"id": "C46-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve runtime configuration only after the actual process receives validated settings.",
+"ram_overlay": "Validate a typed immutable startup configuration for byte budgets, timers, deployment profile, and auth policy. Publish only redacted effective settings and a configuration hash.",
+"challenge": "Refuse invalid or overcommitted budgets; verify configuration changes invalidate cached plans.",
+"ref_work": [
+"R06",
+"R21"
+],
+"prior_status": "PASS",
+"prior_note": "process only reaches gateway.listening after cfg validated and frozen; backed by passing test suite",
+"prior_evidence": [
+"gateway/server.js:248-257",
+"tests/gateway/config.test.js"
+]
+}
+]
+}

@@ -1,0 +1,636 @@
+{
+  "schema": "PK_BRANCH_REMEDIATION/1",
+  "release": "4.3.0",
+  "date": "2026-09-23",
+  "statuses": {
+    "implemented": "exit criterion met by in-repo code and passing local tests",
+    "partial": "in-repo work done; named gap remains",
+    "blocked_external": "needs an artifact/service not in this repository",
+    "owner_decision": "needs a decision only the owner can make"
+  },
+  "items": {
+    "MC-01": {
+      "status": "blocked_external",
+      "implementation": [
+        "preflight.py",
+        "__init__.py"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "pk_core is not in the archive; preflight reports it, imports no longer break without it, release mode forbids PK_CORE_PATH"
+    },
+    "MC-02": {
+      "status": "blocked_external",
+      "implementation": [
+        "dependencies/adjacent.json",
+        "preflight.py"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "INV-13/11/12/10 and GAP-14 not supplied; manifest + fail-closed policy + status check in place, pins empty"
+    },
+    "MC-03": {
+      "status": "implemented",
+      "implementation": [
+        "pyproject.toml",
+        "VERSION",
+        "__init__.py"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "wheel+sdist build twice, identical manifests, clean-install smoke test"
+    },
+    "MC-04": {
+      "status": "partial",
+      "implementation": [
+        "requirements.lock"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "runtime lock with hashes for the crypto dependency; test/lint toolchain lock and registry policy still owner-side"
+    },
+    "MC-05": {
+      "status": "blocked_external",
+      "implementation": [
+        "baselines/manifest.json",
+        "matrix.py::check_baselines"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": "owner must supply approved WASI and WASIX repos, commit SHAs, digests and feature profile"
+    },
+    "MC-06": {
+      "status": "implemented",
+      "implementation": [
+        "schemas/pk_branch_matrix.v1.schema.json",
+        "matrix.py",
+        "canonical.py"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": ""
+    },
+    "MC-07": {
+      "status": "implemented",
+      "implementation": [
+        "schemas/pk_branch_shim.v1.schema.json",
+        "shim.py"
+      ],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": ""
+    },
+    "MC-08": {
+      "status": "implemented",
+      "implementation": [
+        "schemas/pk_branch_cert.v1.schema.json",
+        "cert.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-09": {
+      "status": "partial",
+      "implementation": [
+        "store.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "SQLite reference backend done (restart, races, corruption, backup); at-rest encryption and multi-node backend not done"
+    },
+    "MC-10": {
+      "status": "partial",
+      "implementation": [
+        "cert.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "Ed25519 profile, trust store, rotation, compromise, skew, stale revocation done; KMS/HSM signer adapter and second-library interop not done"
+    },
+    "MC-11": {
+      "status": "partial",
+      "implementation": [
+        "wit.py",
+        "matrix.py::completeness"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": "inventory + completeness gate over a WIT subset; runtime capability cross-check and real baselines outstanding"
+    },
+    "MC-12": {
+      "status": "partial",
+      "implementation": [
+        "wit.py",
+        "reference.py",
+        "data/overrides.json"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": "structural diff, needs_review, reviewed overrides, --check drift gate; full WIT grammar (resources/async/streams semantics) not covered"
+    },
+    "MC-13": {
+      "status": "partial",
+      "implementation": [
+        "proofs/fs-open-flags.json"
+      ],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": "proof record + exhaustive/mutation evidence; status pending_review (needs 2 reviewers) and not bound to pinned baselines"
+    },
+    "MC-14": {
+      "status": "partial",
+      "implementation": [
+        "shim.py"
+      ],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": "real bidirectional reference translator for filesystem open-flags/rights; remaining shimmable surfaces need pinned WIT"
+    },
+    "MC-15": {
+      "status": "implemented",
+      "implementation": [
+        "shim.py"
+      ],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": "finite domain proven exhaustively both directions; 5 mutants killed; applies to every registered translator today"
+    },
+    "MC-16": {
+      "status": "implemented",
+      "implementation": [
+        "errors.py",
+        "schemas/pk_branch_error.v1.schema.json"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": ""
+    },
+    "MC-17": {
+      "status": "partial",
+      "implementation": [
+        "shim.py"
+      ],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": "deadline/cancel/overload on translation; store busy timeout; no generic retry/backoff helper or streaming backpressure"
+    },
+    "MC-18": {
+      "status": "partial",
+      "implementation": [
+        "auth.py",
+        "ops.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "signed identity tokens with iss/aud/exp/nbf/replay checks; transport (mTLS) and IdP integration are deployment-side"
+    },
+    "MC-19": {
+      "status": "partial",
+      "implementation": [
+        "auth.py",
+        "ops.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "default-deny scoped grants, SoD, break-glass at the ops boundary; ShimService itself is not yet wrapped by authz"
+    },
+    "MC-20": {
+      "status": "implemented",
+      "implementation": [
+        "config.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-21": {
+      "status": "implemented",
+      "implementation": [
+        "store.py::activate_config",
+        "config.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-22": {
+      "status": "partial",
+      "implementation": [
+        "config.py",
+        "telemetry.py",
+        "errors.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py",
+        "tests/test_release.py"
+      ],
+      "gap": "secret references + redaction + repo secret scan; provider integration and rotation drill not done"
+    },
+    "MC-23": {
+      "status": "partial",
+      "implementation": [
+        "store.py",
+        "governance.py",
+        "ops.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "durable site branch with fencing, impact plan, admission, freeze; INV-10 link-time enforcement is external"
+    },
+    "MC-24": {
+      "status": "implemented",
+      "implementation": [
+        "lifecycle.py",
+        "store.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-25": {
+      "status": "implemented",
+      "implementation": [
+        "canonical.py"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": ""
+    },
+    "MC-26": {
+      "status": "partial",
+      "implementation": [
+        "canonical.py",
+        "shim.py",
+        "config.py"
+      ],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": "payload/depth/items/concurrency/matrix limits; CPU/storage/connection quotas not applicable until a server exists"
+    },
+    "MC-27": {
+      "status": "partial",
+      "implementation": [
+        "cert.py",
+        "config.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "revocation freshness bound and fail-closed offline; reconnect reconciliation not implemented"
+    },
+    "MC-28": {
+      "status": "implemented",
+      "implementation": [
+        "governance.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-29": {
+      "status": "implemented",
+      "implementation": [
+        "evidence.py",
+        "data/remediation.json"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "generated per run from CHECKLIST.json + this ledger"
+    },
+    "MC-30": {
+      "status": "blocked_external",
+      "implementation": [],
+      "tests": [],
+      "gap": "needs pk_core, adjacent elements and approved runtimes"
+    },
+    "MC-31": {
+      "status": "implemented",
+      "implementation": [
+        "fixtures/",
+        "fixtures_gen.py"
+      ],
+      "tests": [
+        "tests/test_contracts.py",
+        "tests/test_shim.py",
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-32": {
+      "status": "blocked_external",
+      "implementation": [],
+      "tests": [],
+      "gap": "needs approved standards-WASI and WASIX runtimes"
+    },
+    "MC-33": {
+      "status": "partial",
+      "implementation": [
+        ".github/workflows/inv22-ci.yml"
+      ],
+      "tests": [],
+      "gap": "CI matrix declared (3 OS x 3 Python); not executed here"
+    },
+    "MC-34": {
+      "status": "partial",
+      "implementation": [],
+      "tests": [
+        "tests/test_contracts.py",
+        "tests/test_shim.py"
+      ],
+      "gap": "seeded mutation fuzzing of matrix JSON, WIT and translator inputs; continuous coverage-guided fuzzing not set up"
+    },
+    "MC-35": {
+      "status": "partial",
+      "implementation": [
+        "docs/THREAT_MODEL.md"
+      ],
+      "tests": [
+        "tests/test_trust_state.py",
+        "tests/test_shim.py"
+      ],
+      "gap": "tamper/replay/escalation/SoD/resource tests; side-channel and supply-chain tests outstanding"
+    },
+    "MC-36": {
+      "status": "partial",
+      "implementation": [],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "latency budget smoke benchmarks; no stored baseline comparison"
+    },
+    "MC-37": {
+      "status": "partial",
+      "implementation": [],
+      "tests": [
+        "tests/test_shim.py"
+      ],
+      "gap": "overload rejection and recovery only"
+    },
+    "MC-38": {
+      "status": "partial",
+      "implementation": [],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "activation fault injection, restart, corruption, race tests; process/network chaos outstanding"
+    },
+    "MC-39": {
+      "status": "partial",
+      "implementation": [
+        "telemetry.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "bounded metrics + redacting JSONL exporter; no tracing/OTel exporter"
+    },
+    "MC-40": {
+      "status": "partial",
+      "implementation": [
+        "telemetry.py::health"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "readiness model; no network endpoint"
+    },
+    "MC-41": {
+      "status": "implemented",
+      "implementation": [
+        "store.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-42": {
+      "status": "partial",
+      "implementation": [
+        "telemetry.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "zero-budget SLO evaluation with actions; no alert routing/dashboards"
+    },
+    "MC-43": {
+      "status": "implemented",
+      "implementation": [
+        "store.py::record_drift"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-44": {
+      "status": "implemented",
+      "implementation": [
+        "governance.py::drift_findings"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-45": {
+      "status": "partial",
+      "implementation": [
+        "cli.py",
+        "ops.py"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "read-only CLI + authenticated ops API; mutations not yet on the CLI"
+    },
+    "MC-46": {
+      "status": "owner_decision",
+      "implementation": [],
+      "tests": [],
+      "gap": "target execution environment (container/VM/edge) not specified"
+    },
+    "MC-47": {
+      "status": "partial",
+      "implementation": [
+        "docs/RUNBOOKS.md"
+      ],
+      "tests": [],
+      "gap": "documented bootstrap; not automated"
+    },
+    "MC-48": {
+      "status": "partial",
+      "implementation": [
+        "store.py::rollback_config"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "config rollback tested; code/store rollback documented only"
+    },
+    "MC-49": {
+      "status": "partial",
+      "implementation": [
+        "store.py::migrate"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "versioned resumable migration framework at v1; newer-store refusal tested"
+    },
+    "MC-50": {
+      "status": "partial",
+      "implementation": [
+        ".github/workflows/inv22-ci.yml"
+      ],
+      "tests": [],
+      "gap": "pipeline written, never run"
+    },
+    "MC-51": {
+      "status": "partial",
+      "implementation": [
+        "pyproject.toml"
+      ],
+      "tests": [
+        "tests/test_release.py"
+      ],
+      "gap": "ruff/mypy config pinned; pyflakes-clean gate run in tests"
+    },
+    "MC-52": {
+      "status": "partial",
+      "implementation": [
+        "pyproject.toml"
+      ],
+      "tests": [],
+      "gap": "coverage threshold configured in CI; measured locally in the evidence bundle when coverage is installed"
+    },
+    "MC-53": {
+      "status": "partial",
+      "implementation": [
+        "evidence.py"
+      ],
+      "tests": [],
+      "gap": "file/dependency inventory bound to digests; not CycloneDX-validated"
+    },
+    "MC-54": {
+      "status": "blocked_external",
+      "implementation": [],
+      "tests": [],
+      "gap": "vulnerability database access required (pip-audit/OSV) in CI"
+    },
+    "MC-55": {
+      "status": "owner_decision",
+      "implementation": [],
+      "tests": [],
+      "gap": "release signing identity/key must be provisioned by owner"
+    },
+    "MC-56": {
+      "status": "owner_decision",
+      "implementation": [],
+      "tests": [],
+      "gap": "licence for this repository not stated anywhere; owner must choose"
+    },
+    "MC-57": {
+      "status": "partial",
+      "implementation": [
+        "SECURITY.md"
+      ],
+      "tests": [],
+      "gap": "policy written; intake contact is a placeholder for owner"
+    },
+    "MC-58": {
+      "status": "owner_decision",
+      "implementation": [
+        "CODEOWNERS"
+      ],
+      "tests": [],
+      "gap": "template only; owners must be named"
+    },
+    "MC-59": {
+      "status": "partial",
+      "implementation": [
+        "docs/RUNBOOKS.md"
+      ],
+      "tests": [],
+      "gap": "runbooks written; not drilled"
+    },
+    "MC-60": {
+      "status": "partial",
+      "implementation": [
+        "store.py::backup",
+        "docs/RUNBOOKS.md"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": "verified backup/restore; RPO/RTO not approved"
+    },
+    "MC-61": {
+      "status": "partial",
+      "implementation": [
+        "config.py",
+        "docs/DATA_POLICY.md"
+      ],
+      "tests": [],
+      "gap": "inventory and retention settings; deletion job not implemented"
+    },
+    "MC-62": {
+      "status": "partial",
+      "implementation": [
+        "matrix.py",
+        "lifecycle.py"
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "gap": "end-of-support enforced on matrix entries; translator/baseline deprecation registry not built"
+    },
+    "MC-63": {
+      "status": "implemented",
+      "implementation": [
+        "governance.py"
+      ],
+      "tests": [
+        "tests/test_trust_state.py"
+      ],
+      "gap": ""
+    },
+    "MC-64": {
+      "status": "blocked_external",
+      "implementation": [
+        "evidence.py"
+      ],
+      "tests": [],
+      "gap": "bundle generated but cannot be complete while MC-01 blocks the 100-control run"
+    }
+  }
+}

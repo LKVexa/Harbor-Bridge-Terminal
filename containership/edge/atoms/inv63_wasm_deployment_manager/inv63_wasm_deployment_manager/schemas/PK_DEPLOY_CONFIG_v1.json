@@ -1,0 +1,143 @@
+{
+  "$defs": {
+    "digest": {
+      "pattern": "sha256:[0-9a-f]{64}",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "[A-Za-z0-9][A-Za-z0-9._:@/+-]{0,255}",
+      "type": "string"
+    },
+    "instance": {
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "tenant": {
+      "pattern": "[a-z0-9][a-z0-9-]{0,62}",
+      "type": "string"
+    }
+  },
+  "$id": "urn:inv63:PK_DEPLOY_CONFIG/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allow_unauthenticated": {
+      "type": "boolean"
+    },
+    "circuit_failure_threshold": {
+      "maximum": 100,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "environment": {
+      "enum": [
+        "dev",
+        "staging",
+        "prod"
+      ]
+    },
+    "max_clock_skew_s": {
+      "maximum": 600,
+      "minimum": 0,
+      "type": "number"
+    },
+    "max_inflight": {
+      "maximum": 10000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "max_unavailable_default": {
+      "maximum": 100,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "offline_autonomy_s": {
+      "maximum": 604800,
+      "minimum": 0,
+      "type": "number"
+    },
+    "queue_depth": {
+      "maximum": 100000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "reconcile_interval_s": {
+      "maximum": 3600,
+      "minimum": 1,
+      "type": "number"
+    },
+    "request_timeout_ms": {
+      "maximum": 300000,
+      "minimum": 10,
+      "type": "integer"
+    },
+    "require_encryption_at_rest": {
+      "type": "boolean"
+    },
+    "require_signed_artifacts": {
+      "type": "boolean"
+    },
+    "residency_labels": {
+      "type": "object"
+    },
+    "retry_max_attempts": {
+      "maximum": 10,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "schema": {
+      "const": "PK_DEPLOY_CONFIG/1"
+    },
+    "secret_refs": {
+      "type": "object"
+    },
+    "site": {
+      "$ref": "#/$defs/id"
+    },
+    "stall_threshold_s": {
+      "maximum": 86400,
+      "minimum": 1,
+      "type": "number"
+    },
+    "telemetry_sampling": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "tenant_quotas": {
+      "type": "object"
+    },
+    "tier": {
+      "enum": [
+        "cloud",
+        "datacenter",
+        "near-edge",
+        "far-edge"
+      ]
+    },
+    "trusted_key_ids": {
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "maxItems": 32,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "environment",
+    "site"
+  ],
+  "title": "PK_DEPLOY_CONFIG/1",
+  "type": "object",
+  "x-inv63": {
+    "owner": "INV-63",
+    "stability": "stable"
+  }
+}

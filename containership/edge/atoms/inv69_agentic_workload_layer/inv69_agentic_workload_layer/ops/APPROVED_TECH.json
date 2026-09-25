@@ -1,0 +1,79 @@
+{
+  "schema": "PK_APPROVED_TECH/1",
+  "component": "INV-69",
+  "approval_criteria": [
+    "security posture",
+    "maintenance status",
+    "license",
+    "provenance",
+    "supported versions",
+    "determinism",
+    "compatibility obligations"
+  ],
+  "upgrade_policy": {
+    "major": "pk-architecture-board + inv69-security-owner",
+    "minor": "inv69-service-owner + inv69-security-owner",
+    "patch": "inv69-service-owner"
+  },
+  "inventory": [
+    {
+      "kind": "language runtime",
+      "name": "CPython",
+      "approved": ">=3.10,<3.14",
+      "pinned_for_evidence": "3.11.15",
+      "source": "python.org",
+      "license": "PSF-2.0"
+    },
+    {
+      "kind": "runtime dependencies",
+      "name": "(none)",
+      "approved": "stdlib only",
+      "note": "runtime imports are checked by tools/deps_check.py"
+    },
+    {
+      "kind": "schema spec",
+      "name": "JSON Schema",
+      "approved": "draft 2020-12",
+      "source": "https://json-schema.org/draft/2020-12"
+    },
+    {
+      "kind": "trace context spec",
+      "name": "W3C Trace Context",
+      "approved": "Level 1 (traceparent version 00)",
+      "source": "https://www.w3.org/TR/trace-context/"
+    },
+    {
+      "kind": "agent framework",
+      "name": "(none \u2014 INV-69 governs tool calls, does not host a model)",
+      "approved": "n/a"
+    },
+    {
+      "kind": "code generation mechanism",
+      "name": "(external)",
+      "approved": "only via artifacts.ArtifactVerifier class generated_code -> heavy tier"
+    },
+    {
+      "kind": "sandbox interface",
+      "name": "INV-70/INV-71 PK_AGENT_PEER/1",
+      "approved": "4.3.x"
+    },
+    {
+      "kind": "test-only dependency",
+      "name": "jsonschema",
+      "approved": "4.26.0",
+      "scope": "tests (schema validation lane; skipped visibly if absent)",
+      "license": "MIT"
+    },
+    {
+      "kind": "conformance harness",
+      "name": "pk_core",
+      "approved": "UNPINNED \u2014 BLOCKER W-001",
+      "scope": "tests/test_component.py"
+    }
+  ],
+  "prohibited": [
+    "any third-party import in runtime modules",
+    "asymmetric crypto libraries not approved by inv69-security-owner",
+    "network access from tests"
+  ]
+}

@@ -1,0 +1,13 @@
+# Security boundary and remaining risks
+
+The selected deployment is a single trusted local operator on numeric loopback. Do not expose the integrated ship gateway through a public reverse proxy, forwarded port, tunnel or shared hosting service. The launcher fixes the same-origin local URL, requires static-file authentication, disables query tickets and absent-Origin browser upgrades, and rejects public bind addresses or legacy DF bridge combination. This is not a hardened multi-user execution service.
+
+Bearer material is generated only on first launch or explicit `--new-token`, displayed once, and stored on disk only as SHA-256. Identity validity now binds the exact token digest, so a second credential for the same subject cannot keep a revoked first session valid. Active-session revocation follows the existing periodic revalidation interval (up to 30 seconds); every new ship request checks current validity. This is not instantaneous revocation of already committed native side effects.
+
+The new launcher publishes/rotates credentials only after successful port ownership. An address-in-use failure must leave existing credentials unchanged. POSIX credential file mode is owner-only; native Windows ACL inheritance was not exercised or changed. Keep the installation and `_runs` directory writable only by the intended operator. Another process running as that operator can modify the principal file or source code; application tokens do not defend against that OS account.
+
+Shell metacharacters, host paths, unknown verbs/options, missing/stale generations, excess ticks, cross-session cancellation, insufficient capabilities, concurrent jobs and over-budget output are refused. The broker reconstructs argv, fixes the interpreter/root, uses `shell:false`, strips credential/preload environment values, and observes child termination before resolving the normal completion path. This does not sandbox the existing engines or prove application semantics.
+
+Residual blockers include Python/native memory and CPU enforcement, Windows Job Objects and termination testing, OS-level network filtering, hostile-tenant separation, abrupt-parent-death cleanup, independent security review, public TLS/identity-provider enrollment, Windows/macOS/browser qualification and deployment staging. Local plain HTTP/WS is intentionally not a substitute for WSS over a public network.
+
+An interrupted UC mutation can leave an unresolved managed transaction. Do not auto-retry, auto-clear locks, or silently erase backups. Use local recovery inspection. Snapshot recovery covers managed files only; external/native side effects are not reversible. Checksums prove local byte consistency, not publisher identity or independent trust.

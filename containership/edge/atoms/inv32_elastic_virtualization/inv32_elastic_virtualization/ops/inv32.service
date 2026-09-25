@@ -1,0 +1,35 @@
+# Hardened systemd unit (least privilege / ambient authority removal, WS 13).  Paths are site-specific.
+[Unit]
+Description=INV-32 elastic virtualization controller
+After=network-online.target time-sync.target
+Wants=network-online.target time-sync.target
+
+[Service]
+User=inv32
+Group=inv32
+ExecStartPre=/usr/bin/python3 -m inv32_elastic_virtualization.bootstrap --check --layer site=/etc/inv32/site.json --layer node=/etc/inv32/node.json
+# ExecStart is supplied by the deployment's service wrapper that constructs ElasticController (BLOCKED: transport, ADR-0001).
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+# IPAddressAllow=<policy/lease/export endpoints only>
+ReadWritePaths=/var/lib/inv32
+ReadOnlyPaths=/etc/inv32
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

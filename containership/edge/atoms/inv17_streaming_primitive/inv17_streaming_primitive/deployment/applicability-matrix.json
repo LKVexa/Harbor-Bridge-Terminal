@@ -1,0 +1,174 @@
+{
+  "schema": "urn:pk:inv17:applicability:1",
+  "tiers": [
+    "cloud",
+    "datacenter",
+    "near-edge",
+    "far-edge"
+  ],
+  "concerns": [
+    {
+      "id": "APP-01",
+      "control": "C012/C018",
+      "concern": "bounded in-flight memory",
+      "disposition": {
+        "cloud": {
+          "status": "applicable",
+          "rationale": "core guarantee on every tier; limits vary via config/overlays"
+        },
+        "datacenter": {
+          "status": "applicable",
+          "rationale": "core guarantee on every tier; limits vary via config/overlays"
+        },
+        "near-edge": {
+          "status": "applicable",
+          "rationale": "core guarantee on every tier; limits vary via config/overlays"
+        },
+        "far-edge": {
+          "status": "applicable",
+          "rationale": "core guarantee on every tier; limits vary via config/overlays"
+        }
+      },
+      "evidence": [
+        "tests/test_adversarial.py"
+      ]
+    },
+    {
+      "id": "APP-02",
+      "control": "C055/C058",
+      "concern": "failover / distributed consensus",
+      "disposition": {
+        "cloud": {
+          "status": "not_applicable",
+          "rationale": "stream handles are instance-local by contract (contract.py boundaries.site); nothing to fail over"
+        },
+        "datacenter": {
+          "status": "not_applicable",
+          "rationale": "stream handles are instance-local by contract (contract.py boundaries.site); nothing to fail over"
+        },
+        "near-edge": {
+          "status": "not_applicable",
+          "rationale": "stream handles are instance-local by contract (contract.py boundaries.site); nothing to fail over"
+        },
+        "far-edge": {
+          "status": "not_applicable",
+          "rationale": "stream handles are instance-local by contract (contract.py boundaries.site); nothing to fail over"
+        }
+      },
+      "evidence": [
+        "resilience/distributed-applicability.md",
+        "tests/test_disaster.py"
+      ]
+    },
+    {
+      "id": "APP-03",
+      "control": "C089",
+      "concern": "network partition / reconnect",
+      "disposition": {
+        "cloud": {
+          "status": "delegated",
+          "rationale": "INV-17 never crosses the network; a partition surfaces as a dropped end from the adjacent transport layer",
+          "owner_element": "INV-19 OS asynchronous analogues / INV-20 HTTP component worlds"
+        },
+        "datacenter": {
+          "status": "delegated",
+          "rationale": "INV-17 never crosses the network; a partition surfaces as a dropped end from the adjacent transport layer",
+          "owner_element": "INV-19 OS asynchronous analogues / INV-20 HTTP component worlds"
+        },
+        "near-edge": {
+          "status": "delegated",
+          "rationale": "INV-17 never crosses the network; a partition surfaces as a dropped end from the adjacent transport layer",
+          "owner_element": "INV-19 OS asynchronous analogues / INV-20 HTTP component worlds"
+        },
+        "far-edge": {
+          "status": "delegated",
+          "rationale": "INV-17 never crosses the network; a partition surfaces as a dropped end from the adjacent transport layer",
+          "owner_element": "INV-19 OS asynchronous analogues / INV-20 HTTP component worlds"
+        }
+      },
+      "evidence": [
+        "tests/test_disaster.py"
+      ]
+    },
+    {
+      "id": "APP-04",
+      "control": "C095",
+      "concern": "state backup / restore",
+      "disposition": {
+        "cloud": {
+          "status": "not_applicable",
+          "rationale": "stream state is ephemeral; reconstruction is reopen + idempotent resend"
+        },
+        "datacenter": {
+          "status": "not_applicable",
+          "rationale": "stream state is ephemeral; reconstruction is reopen + idempotent resend"
+        },
+        "near-edge": {
+          "status": "not_applicable",
+          "rationale": "stream state is ephemeral; reconstruction is reopen + idempotent resend"
+        },
+        "far-edge": {
+          "status": "not_applicable",
+          "rationale": "stream state is ephemeral; reconstruction is reopen + idempotent resend"
+        }
+      },
+      "evidence": [
+        "operations/state-recovery.md",
+        "tests/test_disaster.py"
+      ]
+    },
+    {
+      "id": "APP-05",
+      "control": "C048",
+      "concern": "trust-service dependencies (keys, time)",
+      "disposition": {
+        "cloud": {
+          "status": "applicable",
+          "rationale": "capability verification depends on key ring and trusted clock; fails closed"
+        },
+        "datacenter": {
+          "status": "applicable",
+          "rationale": "capability verification depends on key ring and trusted clock; fails closed"
+        },
+        "near-edge": {
+          "status": "applicable",
+          "rationale": "capability verification depends on key ring and trusted clock; fails closed"
+        },
+        "far-edge": {
+          "status": "applicable",
+          "rationale": "capability verification depends on key ring and trusted clock; fails closed"
+        }
+      },
+      "evidence": [
+        "tests/test_security.py"
+      ]
+    },
+    {
+      "id": "APP-06",
+      "control": "C068",
+      "concern": "power/thermal",
+      "disposition": {
+        "cloud": {
+          "status": "not_applicable",
+          "rationale": "power is a host concern; per-element cost dominated by CPU time measured in tools/bench.py"
+        },
+        "datacenter": {
+          "status": "not_applicable",
+          "rationale": "as cloud"
+        },
+        "near-edge": {
+          "status": "applicable",
+          "rationale": "constrained devices; not measured, waiver WVR-001"
+        },
+        "far-edge": {
+          "status": "applicable",
+          "rationale": "constrained devices; not measured, waiver WVR-001"
+        }
+      },
+      "evidence": [
+        "benchmarks/power-thermal.md",
+        "governance/waivers.json"
+      ]
+    }
+  ]
+}

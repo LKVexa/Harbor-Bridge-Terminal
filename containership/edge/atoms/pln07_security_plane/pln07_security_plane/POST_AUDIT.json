@@ -1,0 +1,650 @@
+{
+  "element": "PLN-07",
+  "version": "4.2.0",
+  "audit_date": "2026-09-22",
+  "production_certification": false,
+  "framework_gate_executed": false,
+  "framework_gate_blocker": "pk_core and sibling components are not included in the uploaded archive",
+  "summary": {
+    "present": 9,
+    "partial": 30,
+    "missing": 61,
+    "total": 100
+  },
+  "validation": [
+    {
+      "check": "compileall",
+      "result": "pass"
+    },
+    {
+      "check": "tests/test_grants.py",
+      "result": "pass",
+      "tests": 12
+    },
+    {
+      "check": "tests/test_grants.py under python -O",
+      "result": "pass",
+      "tests": 12
+    },
+    {
+      "check": "deterministic invariant fuzz smoke",
+      "result": "pass",
+      "roots": 5000
+    },
+    {
+      "check": "local depth-5 verification smoke benchmark",
+      "result": "diagnostic",
+      "p99_ms": 0.1743,
+      "median_ms": 0.0301,
+      "iterations": 5000
+    },
+    {
+      "check": "tests/test_component.py",
+      "result": "skipped",
+      "tests": 3,
+      "reason": "pk_core absent"
+    }
+  ],
+  "requirements": [
+    {
+      "check_id": "PLN-07-C001",
+      "status": "Present",
+      "requirement": "Define the exact production responsibility of Security plane.",
+      "audit": "`contract.py` and README define the responsibility."
+    },
+    {
+      "check_id": "PLN-07-C002",
+      "status": "Present",
+      "requirement": "Document what Security plane owns and explicitly does not own.",
+      "audit": "`contract.py` defines `owns` and `not_owns`."
+    },
+    {
+      "check_id": "PLN-07-C003",
+      "status": "Present",
+      "requirement": "Identify upstream, downstream, and peer dependencies of Security plane.",
+      "audit": "`contract.py` enumerates upstream/downstream/peer dependencies."
+    },
+    {
+      "check_id": "PLN-07-C004",
+      "status": "Present",
+      "requirement": "Define the authoritative source of truth used by Security plane.",
+      "audit": "`contract.py` declares the issued, signature-verified grant as source of truth."
+    },
+    {
+      "check_id": "PLN-07-C005",
+      "status": "Partial",
+      "requirement": "Document assumptions Security plane makes about nodes, runtimes, networks, storage, and control planes.",
+      "audit": "Clock/revocation/holder assumptions exist, but node/runtime/network/storage/control-plane assumptions are incomplete."
+    },
+    {
+      "check_id": "PLN-07-C006",
+      "status": "Partial",
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Security plane.",
+      "audit": "Contract names tenant/environment/site/workload boundaries; runtime enforcement currently models tenant and subject only."
+    },
+    {
+      "check_id": "PLN-07-C007",
+      "status": "Present",
+      "requirement": "Separate mandatory Security plane capabilities from optional optimizations.",
+      "audit": "Mandatory and optional capabilities are separated in `contract.py`."
+    },
+    {
+      "check_id": "PLN-07-C008",
+      "status": "Partial",
+      "requirement": "Document unsupported deployment patterns and non-goals for Security plane.",
+      "audit": "Non-goals exist, but unsupported deployment patterns are not exhaustively specified."
+    },
+    {
+      "check_id": "PLN-07-C009",
+      "status": "Missing",
+      "requirement": "Assign an accountable owner and escalation path for Security plane.",
+      "audit": "No accountable owner or escalation path is supplied."
+    },
+    {
+      "check_id": "PLN-07-C010",
+      "status": "Missing",
+      "requirement": "Approve an architecture decision record for Security plane, its technologies (Source-derived architectural plane), and its function (WIT capabilities, explicit authority, hardware VM isolation, CHERI/SFI/Spectre mitigations, and workload-specific sandbox boundaries.).",
+      "audit": "No approved ADR is supplied for WIT capabilities, hardware VM isolation, CHERI/SFI/Spectre controls, or sandbox boundaries."
+    },
+    {
+      "check_id": "PLN-07-C011",
+      "status": "Partial",
+      "requirement": "Translate the source function of Security plane — WIT capabilities, explicit authority, hardware VM isolation, CHERI/SFI/Spectre mitigations, and workload-specific sandbox boundaries. — into testable SHALL-level requirements.",
+      "audit": "Mandatory capability statements exist, but the full source function is not translated into SHALL requirements with verification criteria."
+    },
+    {
+      "check_id": "PLN-07-C012",
+      "status": "Missing",
+      "requirement": "Define functional requirements for Security plane across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "audit": "No cloud/datacenter/near-edge/far-edge requirement profile exists."
+    },
+    {
+      "check_id": "PLN-07-C013",
+      "status": "Partial",
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "audit": "Some SLOs are defined, but availability/durability/consistency/isolation/determinism requirements are incomplete."
+    },
+    {
+      "check_id": "PLN-07-C014",
+      "status": "Missing",
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Security plane.",
+      "audit": "No complete success/partial/degraded/retryable/terminal failure state model exists."
+    },
+    {
+      "check_id": "PLN-07-C015",
+      "status": "Missing",
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Security plane.",
+      "audit": "No explicit lifecycle state machine or legal transition model exists."
+    },
+    {
+      "check_id": "PLN-07-C016",
+      "status": "Partial",
+      "requirement": "Define versioning and backward-compatibility requirements for Security plane.",
+      "audit": "Version files exist and legacy grant IDs are preserved, but no supported compatibility policy is defined."
+    },
+    {
+      "check_id": "PLN-07-C017",
+      "status": "Missing",
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Security plane.",
+      "audit": "No tenant quotas, fairness policy, or system capacity ceilings are defined."
+    },
+    {
+      "check_id": "PLN-07-C018",
+      "status": "Partial",
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "audit": "Disconnected operation is discussed and GAP-04 is referenced, but the dependency is absent and no standalone mechanism exists."
+    },
+    {
+      "check_id": "PLN-07-C019",
+      "status": "Missing",
+      "requirement": "Define precedence rules when Security plane requirements conflict with security, residency, SLO, or cost constraints.",
+      "audit": "No precedence rules for security/residency/SLO/cost conflicts are defined."
+    },
+    {
+      "check_id": "PLN-07-C020",
+      "status": "Present",
+      "requirement": "Maintain a requirements traceability matrix from each Security plane requirement to implementation and verification evidence.",
+      "audit": "This `POST_AUDIT.md` is the 100-item implementation/evidence traceability matrix."
+    },
+    {
+      "check_id": "PLN-07-C021",
+      "status": "Partial",
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Security plane.",
+      "audit": "Four logical interfaces are named, but transport/WIT/RPC/control-plane boundary details are not fully specified."
+    },
+    {
+      "check_id": "PLN-07-C022",
+      "status": "Present",
+      "requirement": "Use versioned typed schemas for all externally visible Security plane contracts.",
+      "audit": "Versioned JSON schemas now exist for `PK_GRANT/1`, `PK_GRANT_VERIFICATION/1`, and `PK_REVOCATION/1`."
+    },
+    {
+      "check_id": "PLN-07-C023",
+      "status": "Missing",
+      "requirement": "Define authentication requirements at each Security plane boundary.",
+      "audit": "Authentication requirements for each boundary are not defined or implemented."
+    },
+    {
+      "check_id": "PLN-07-C024",
+      "status": "Partial",
+      "requirement": "Define authorization and explicit capability requirements at each Security plane boundary.",
+      "audit": "Capability verification exists; issuance authorization still depends on the absent GAP-13 policy engine."
+    },
+    {
+      "check_id": "PLN-07-C025",
+      "status": "Missing",
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Security plane.",
+      "audit": "No timeout, cancellation, retry, idempotency, or backpressure contract exists."
+    },
+    {
+      "check_id": "PLN-07-C026",
+      "status": "Partial",
+      "requirement": "Define structured failure codes and machine-readable error details for Security plane.",
+      "audit": "Grant verification exposes machine-readable codes/results; other interface failure schemas remain incomplete."
+    },
+    {
+      "check_id": "PLN-07-C027",
+      "status": "Missing",
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "audit": "No peer-version negotiation or mixed-version behavior is specified."
+    },
+    {
+      "check_id": "PLN-07-C028",
+      "status": "Partial",
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Security plane interfaces.",
+      "audit": "Scope cardinality and delegation depth are bounded; transport payload, concurrency, queue, connection, and resource limits are not."
+    },
+    {
+      "check_id": "PLN-07-C029",
+      "status": "Partial",
+      "requirement": "Provide reference examples and conformance fixtures for Security plane.",
+      "audit": "Unit fixtures exist, but there is no complete reference-example/conformance-fixture set for all public interfaces."
+    },
+    {
+      "check_id": "PLN-07-C030",
+      "status": "Missing",
+      "requirement": "Create automated integration tests proving Security plane interoperates with adjacent architectural layers.",
+      "audit": "No executable integration suite covers every adjacent architectural layer."
+    },
+    {
+      "check_id": "PLN-07-C031",
+      "status": "Missing",
+      "requirement": "Select and pin approved implementations, versions, or specifications for Security plane: Source-derived architectural plane.",
+      "audit": "No pinned implementation/specification manifest is supplied for `pk_core` or sibling components."
+    },
+    {
+      "check_id": "PLN-07-C032",
+      "status": "Missing",
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Security plane.",
+      "audit": "No explicit immutable-artifact versus mutable-config/state model is documented."
+    },
+    {
+      "check_id": "PLN-07-C033",
+      "status": "Missing",
+      "requirement": "Define declarative configuration and secure defaults for Security plane.",
+      "audit": "No declarative configuration schema or secure-default configuration package exists."
+    },
+    {
+      "check_id": "PLN-07-C034",
+      "status": "Missing",
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "audit": "No configuration validation/activation path exists."
+    },
+    {
+      "check_id": "PLN-07-C035",
+      "status": "Missing",
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "audit": "No site/environment configuration overlay mechanism exists."
+    },
+    {
+      "check_id": "PLN-07-C036",
+      "status": "Missing",
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "audit": "No configuration provenance model records version, author, and activation time."
+    },
+    {
+      "check_id": "PLN-07-C037",
+      "status": "Missing",
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "audit": "No atomic/transactional configuration-update mechanism exists."
+    },
+    {
+      "check_id": "PLN-07-C038",
+      "status": "Missing",
+      "requirement": "Define automatic and operator-driven rollback for failed Security plane changes.",
+      "audit": "No automated/operator rollback mechanism for configuration changes exists."
+    },
+    {
+      "check_id": "PLN-07-C039",
+      "status": "Missing",
+      "requirement": "Keep credentials and secret material out of ordinary Security plane configuration and diagnostics.",
+      "audit": "No configuration/diagnostic redaction policy or enforcement exists."
+    },
+    {
+      "check_id": "PLN-07-C040",
+      "status": "Partial",
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Security plane operation.",
+      "audit": "README has bootstrap guidance and lazy import works without `pk_core`, but deterministic production bootstrap still needs pinned external dependencies."
+    },
+    {
+      "check_id": "PLN-07-C041",
+      "status": "Present",
+      "requirement": "Threat-model Security plane against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "audit": "`SECURITY.md` documents malicious tenants/workloads, hostile inputs, trust boundaries, signing, time, revocation, and residual dependencies."
+    },
+    {
+      "check_id": "PLN-07-C042",
+      "status": "Partial",
+      "requirement": "Apply least privilege to every identity and capability used by Security plane.",
+      "audit": "Grant scope/attenuation enforce least authority within the model; operational identities and sibling services are not covered."
+    },
+    {
+      "check_id": "PLN-07-C043",
+      "status": "Partial",
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Security plane permits.",
+      "audit": "The model removes ambient capability authority, but filesystem/network/device/kernel/secret enforcement belongs to missing runtime/sandbox components."
+    },
+    {
+      "check_id": "PLN-07-C044",
+      "status": "Missing",
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "audit": "No node/peer/artifact/provider/control-plane actor authentication implementation exists."
+    },
+    {
+      "check_id": "PLN-07-C045",
+      "status": "Partial",
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Security plane.",
+      "audit": "Canonical signature payloads and fail-closed signature hooks exist; concrete trust roots/provenance and GAP-07 are absent."
+    },
+    {
+      "check_id": "PLN-07-C046",
+      "status": "Partial",
+      "requirement": "Enforce tenant/workload isolation across Security plane execution, memory, state, network, and device boundaries as applicable.",
+      "audit": "Tenant crossing is rejected in grant chains, but execution/memory/state/network/device isolation is not implemented here."
+    },
+    {
+      "check_id": "PLN-07-C047",
+      "status": "Missing",
+      "requirement": "Encrypt sensitive Security plane data in transit and at rest with managed key rotation.",
+      "audit": "No encryption-at-rest/in-transit implementation or key-rotation integration exists."
+    },
+    {
+      "check_id": "PLN-07-C048",
+      "status": "Partial",
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "audit": "Signature enforcement can fail closed; unavailable identity/attestation/policy/key/time service behavior is otherwise incomplete."
+    },
+    {
+      "check_id": "PLN-07-C049",
+      "status": "Missing",
+      "requirement": "Emit tamper-evident audit events for security-sensitive Security plane operations.",
+      "audit": "No tamper-evident audit-event emitter or durable audit ledger exists."
+    },
+    {
+      "check_id": "PLN-07-C050",
+      "status": "Partial",
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "audit": "Security tests cover several grant threats, but injection/spoofing/escape/side-channel/resource-exhaustion coverage is incomplete."
+    },
+    {
+      "check_id": "PLN-07-C051",
+      "status": "Partial",
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Security plane.",
+      "audit": "Contract lists several grant failure modes, but component/process/VM/node/site/network/provider/control-plane failure enumeration is incomplete."
+    },
+    {
+      "check_id": "PLN-07-C052",
+      "status": "Missing",
+      "requirement": "Define automated health and stall detection thresholds for Security plane.",
+      "audit": "No automated health or stall detector exists."
+    },
+    {
+      "check_id": "PLN-07-C053",
+      "status": "Missing",
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "audit": "No bounded retry/backoff/jitter mechanism exists."
+    },
+    {
+      "check_id": "PLN-07-C054",
+      "status": "Missing",
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Security plane failure cascades.",
+      "audit": "No admission-control, load-shedding, or circuit-breaker implementation exists."
+    },
+    {
+      "check_id": "PLN-07-C055",
+      "status": "Missing",
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "audit": "No failover design or executable failover mechanism exists."
+    },
+    {
+      "check_id": "PLN-07-C056",
+      "status": "Partial",
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "audit": "GAP-04 integration describes a degraded disconnected case, but GAP-04 is absent and no local degraded-mode controller exists."
+    },
+    {
+      "check_id": "PLN-07-C057",
+      "status": "Missing",
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Security plane state.",
+      "audit": "No durable mutable-state crash/restart/resume/replay design exists; revocations are currently an in-memory set."
+    },
+    {
+      "check_id": "PLN-07-C058",
+      "status": "Missing",
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "audit": "No split-brain, stale-controller, duplicate-ownership, or duplicate-execution control exists."
+    },
+    {
+      "check_id": "PLN-07-C059",
+      "status": "Missing",
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Security plane behavior.",
+      "audit": "No quarantine/freeze/disable control surface exists."
+    },
+    {
+      "check_id": "PLN-07-C060",
+      "status": "Missing",
+      "requirement": "Run fault-injection tests proving Security plane recovery against documented objectives.",
+      "audit": "No persistent fault-injection test suite exists."
+    },
+    {
+      "check_id": "PLN-07-C061",
+      "status": "Missing",
+      "requirement": "Establish reproducible baselines for Security plane latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "audit": "No reproducible performance/resource/power baseline artifact exists."
+    },
+    {
+      "check_id": "PLN-07-C062",
+      "status": "Partial",
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Security plane.",
+      "audit": "A p99 depth-5 target exists and an audit-time local smoke benchmark passed; p50/p95/worst-case and release-grade thresholds are incomplete."
+    },
+    {
+      "check_id": "PLN-07-C063",
+      "status": "Missing",
+      "requirement": "Measure Security plane under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "audit": "No steady/burst/overload/scale/recovery benchmark suite exists."
+    },
+    {
+      "check_id": "PLN-07-C064",
+      "status": "Missing",
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Security plane.",
+      "audit": "No per-workload/per-tenant overhead measurements exist."
+    },
+    {
+      "check_id": "PLN-07-C065",
+      "status": "Missing",
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Security plane.",
+      "audit": "No serialization/copy/context-switch/network-hop/duplication analysis exists."
+    },
+    {
+      "check_id": "PLN-07-C066",
+      "status": "Missing",
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "audit": "No documented optimization implementation/decision record exists."
+    },
+    {
+      "check_id": "PLN-07-C067",
+      "status": "Partial",
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "audit": "Depth and scope cardinality are bounded; memory/queue/buffer/concurrency/fan-out limits are not."
+    },
+    {
+      "check_id": "PLN-07-C068",
+      "status": "Missing",
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "audit": "No edge power/thermal measurements exist."
+    },
+    {
+      "check_id": "PLN-07-C069",
+      "status": "Missing",
+      "requirement": "Define capacity models and saturation signals that predict when Security plane needs more resources.",
+      "audit": "No capacity model or saturation predictor exists."
+    },
+    {
+      "check_id": "PLN-07-C070",
+      "status": "Missing",
+      "requirement": "Block releases that regress approved Security plane startup, density, throughput, or tail-latency thresholds.",
+      "audit": "No automated release performance regression gate exists."
+    },
+    {
+      "check_id": "PLN-07-C071",
+      "status": "Missing",
+      "requirement": "Expose Security plane health, readiness, version, configuration, dependency status, and active capability set.",
+      "audit": "No health/readiness/config/dependency/active-capability endpoint exists."
+    },
+    {
+      "check_id": "PLN-07-C072",
+      "status": "Partial",
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "audit": "Metric names are declared in `contract.py`, but no metrics emitter/exporter is implemented."
+    },
+    {
+      "check_id": "PLN-07-C073",
+      "status": "Missing",
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "audit": "No structured logging implementation with stable correlation identifiers exists."
+    },
+    {
+      "check_id": "PLN-07-C074",
+      "status": "Missing",
+      "requirement": "Propagate trace context across all relevant Security plane boundaries.",
+      "audit": "No trace-context propagation exists."
+    },
+    {
+      "check_id": "PLN-07-C075",
+      "status": "Missing",
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "audit": "No high-cardinality diagnostic surface/redaction mechanism exists."
+    },
+    {
+      "check_id": "PLN-07-C076",
+      "status": "Partial",
+      "requirement": "Record the reason for every automated decision made by Security plane.",
+      "audit": "`verify_detailed` records verification reason/code; issue/attenuate/revoke and operational decisions are not uniformly reason-logged."
+    },
+    {
+      "check_id": "PLN-07-C077",
+      "status": "Missing",
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "audit": "No operator explain view exists."
+    },
+    {
+      "check_id": "PLN-07-C078",
+      "status": "Missing",
+      "requirement": "Correlate Security plane events with application release lineage and the live infrastructure graph.",
+      "audit": "No release-lineage/live-infrastructure-graph correlation exists."
+    },
+    {
+      "check_id": "PLN-07-C079",
+      "status": "Missing",
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "audit": "No telemetry retention/sampling/privacy/export policy exists."
+    },
+    {
+      "check_id": "PLN-07-C080",
+      "status": "Missing",
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "audit": "No dashboards or alert rules exist."
+    },
+    {
+      "check_id": "PLN-07-C081",
+      "status": "Present",
+      "requirement": "Create unit tests for deterministic Security plane logic and state transitions.",
+      "audit": "`tests/test_grants.py` provides framework-independent deterministic unit tests and passes under normal and optimized Python."
+    },
+    {
+      "check_id": "PLN-07-C082",
+      "status": "Partial",
+      "requirement": "Create contract tests for every public Security plane interface.",
+      "audit": "Grant/verification primitives are tested, but there are no complete contract tests for issue/attenuate/verify/revoke service interfaces and transports."
+    },
+    {
+      "check_id": "PLN-07-C083",
+      "status": "Missing",
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "audit": "No integration matrix tests every supported adjacent layer/tier."
+    },
+    {
+      "check_id": "PLN-07-C084",
+      "status": "Missing",
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Security plane.",
+      "audit": "No CPU/runtime/hypervisor/provider/protocol compatibility test matrix exists."
+    },
+    {
+      "check_id": "PLN-07-C085",
+      "status": "Missing",
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Security plane.",
+      "audit": "No committed fuzz target/corpus exists; only an audit-time deterministic invariant fuzz run was executed."
+    },
+    {
+      "check_id": "PLN-07-C086",
+      "status": "Missing",
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Security plane state.",
+      "audit": "No concurrency/race-condition test suite exists."
+    },
+    {
+      "check_id": "PLN-07-C087",
+      "status": "Partial",
+      "requirement": "Create security tests derived directly from the Security plane threat model.",
+      "audit": "Several tests are threat-derived, but the complete threat model is not covered by executable security tests."
+    },
+    {
+      "check_id": "PLN-07-C088",
+      "status": "Missing",
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Security plane.",
+      "audit": "No benchmark/soak/burst/fleet-scale test suite exists."
+    },
+    {
+      "check_id": "PLN-07-C089",
+      "status": "Missing",
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "audit": "No disaster/partition/reconnect/degraded-control-plane test suite exists."
+    },
+    {
+      "check_id": "PLN-07-C090",
+      "status": "Missing",
+      "requirement": "Require machine-readable acceptance evidence before certifying a Security plane release for production.",
+      "audit": "No machine-readable production acceptance evidence bundle is included."
+    },
+    {
+      "check_id": "PLN-07-C091",
+      "status": "Partial",
+      "requirement": "Define production SLOs, error budgets, and support commitments for Security plane.",
+      "audit": "Three SLOs/error budgets are declared; support commitments and a complete SLO set are absent."
+    },
+    {
+      "check_id": "PLN-07-C092",
+      "status": "Partial",
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Security plane.",
+      "audit": "README sketches rollback/emergency disable, but canary/staged rollout procedures and executable controls are absent."
+    },
+    {
+      "check_id": "PLN-07-C093",
+      "status": "Missing",
+      "requirement": "Maintain a supported-version compatibility matrix for Security plane and adjacent dependencies.",
+      "audit": "No supported-version compatibility matrix exists."
+    },
+    {
+      "check_id": "PLN-07-C094",
+      "status": "Missing",
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Security plane.",
+      "audit": "No patching, vulnerability-response, or end-of-life SLA exists."
+    },
+    {
+      "check_id": "PLN-07-C095",
+      "status": "Missing",
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Security plane state where applicable.",
+      "audit": "No backup/restore/migration/reconstruction procedure exists for revocation/evidence state."
+    },
+    {
+      "check_id": "PLN-07-C096",
+      "status": "Partial",
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "audit": "README gives a day-0/day-1/day-2 outline, but detailed executable runbooks are absent."
+    },
+    {
+      "check_id": "PLN-07-C097",
+      "status": "Missing",
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "audit": "No incident severity/paging/escalation/containment/recovery runbook exists."
+    },
+    {
+      "check_id": "PLN-07-C098",
+      "status": "Missing",
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "audit": "No recurring access/policy/dependency/configuration/architecture review schedule or evidence exists."
+    },
+    {
+      "check_id": "PLN-07-C099",
+      "status": "Missing",
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "audit": "No exception/waiver/technical-debt/deprecation ledger with owners and expiry dates exists."
+    },
+    {
+      "check_id": "PLN-07-C100",
+      "status": "Missing",
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "audit": "No formal production exit-gate result is included; `pk_core` is absent so the framework gate could not be run."
+    }
+  ]
+}

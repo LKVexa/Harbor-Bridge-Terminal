@@ -1,0 +1,21 @@
+# Unikernel Containership -- declared toolchain (checked by ./VERIFY)
+python3            Python 3.10+  (the ship layer, the hull, the hold's runtime and adapters)
+cc + make          C11 compiler and GNU make -- BUILD compiles three of the four engines and the hull's runner
+                   (Small, Medium, Large are C; without them those engines report SKIPPED, the QUORUM engine
+                   and the sort/seal/registry paths still work)
+openssl-dev        OpenSSL 3 libcrypto headers + library (the engines' signing paths; the hull signs images with it)
+Pillow             the Python imaging library (pip install Pillow): the hull's reversible TIFF fabric and therefore every
+                   container's own .tif fabric (uc run = tick, uc fabric, gates U8/B9/B10). Without it those are SKIPPED
+                   with that reason; `uc run --sealed` still runs the sealed bundles
+java               Java 21 runtime, optional: the QUORUM engine's LCTL 1.6.1-RC1 column verifier (without it,
+                   compiles say lctl_column_verify=SKIPPED_NO_JDK)
+sha256sum, sh      integrity checks and the launchers (BUILD.cmd/VERIFY.cmd/RUN.cmd/LOAD.cmd on Windows call python)
+# Offline-intended operation (NETWORK=deny, BACKEND=none); these declarations do not enforce OS network isolation.
+
+# UC-2.2.0 added safety/tests use the Python standard library; TIFF checks still need Pillow.
+# Audit host: CPython 3.13.5, Pillow 12.3.0, Linux x86_64. No claim of dependency CVE certification.
+# DOCTOR reports prerequisites; SELFTEST tests the ship layer; VERIFY tests the native assembly.
+
+# UC-2.5.0 TIFF/GIF runtime: Python 3.10+ with Pillow; tested Python 3.13.5 / Pillow 12.3.0.
+# Optional independent fixture tests: requirements-tiff-test.txt (Python 3.12+ together).
+# No runtime NumPy/tifffile import; no automatic dependency installation.

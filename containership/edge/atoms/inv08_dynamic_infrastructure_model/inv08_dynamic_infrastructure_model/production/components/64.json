@@ -1,0 +1,70 @@
+{
+ "component": 64,
+ "title": "Recurring governance review automation",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "scheduled access review",
+   "state": "PARTIAL",
+   "spec": "production/governance.py::CADENCE_DAYS",
+   "modules": [
+    "production/governance.py::status"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.GovernanceTest.test_access_review"
+   ],
+   "blocker": "no access inventory source and no reviewer; no review performed"
+  },
+  {
+   "name": "scheduled policy/configuration review",
+   "state": "IMPLEMENTED",
+   "spec": "production/governance.py::CADENCE_DAYS",
+   "modules": [
+    "production/governance.py::status"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.GovernanceTest.test_policy_config_review"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "scheduled dependency/SBOM review",
+   "state": "IMPLEMENTED",
+   "spec": "production/governance.py::status (current_subjects)",
+   "modules": [
+    "production/governance.py::status",
+    "production/provenance.py::sbom"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.GovernanceTest.test_dependency_sbom_review"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "scheduled architecture/ADR review",
+   "state": "IMPLEMENTED",
+   "spec": "production/governance.py::CADENCE_DAYS",
+   "modules": [
+    "production/governance.py::status"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.GovernanceTest.test_architecture_review"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "machine-readable evidence and overdue-review escalation",
+   "state": "IMPLEMENTED",
+   "spec": "production/governance.py::record_review",
+   "modules": [
+    "production/governance.py::record_review",
+    "production/governance.py::ESCALATE_TO"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.GovernanceTest.test_evidence_records"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Automation implemented; no human review has been performed - every kind is currently never_reviewed/overdue."
+}

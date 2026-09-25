@@ -1,0 +1,38 @@
+{
+ "schema": "INV41_OWNERS/1",
+ "component_id": "INV-41",
+ "component_name": "Capability security",
+ "status": "PROPOSED — requester named as proposed accountable owner; every other role is UNASSIGNED until the owner names people (BLOCKERS.json B-OWN-01)",
+ "roles": {
+  "accountable_owner": {"name": "David Paul Russell", "contact": "davidpaulrussell@linearfinance.org", "kind": "human", "confirmed": false},
+  "backup_owner": {"name": "UNASSIGNED", "contact": null, "kind": "human", "confirmed": false},
+  "technical_owner": {"name": "UNASSIGNED", "contact": null, "kind": "human", "confirmed": false},
+  "security_approver": {"name": "UNASSIGNED", "contact": null, "kind": "human", "confirmed": false},
+  "release_approver": {"name": "UNASSIGNED", "contact": null, "kind": "human", "confirmed": false},
+  "incident_commander": {"name": "UNASSIGNED", "contact": null, "kind": "human", "confirmed": false},
+  "policy_approver": {"name": "UNASSIGNED", "contact": null, "kind": "human", "confirmed": false},
+  "ci_bot": {"name": "inv41-ci", "contact": null, "kind": "service", "confirmed": false}
+ },
+ "human_only_roles": ["accountable_owner", "backup_owner", "security_approver", "release_approver", "incident_commander", "policy_approver"],
+ "artifact_ownership": {
+  "schemas/": "technical_owner", "requirements/": "accountable_owner", "docs/ADR-*": "security_approver",
+  "docs/THREAT_MODEL.md": "security_approver", "tests/": "technical_owner", "perf/": "technical_owner",
+  "docs/OPERATIONS.md": "incident_commander", "RELEASE_MANIFEST.json": "release_approver", "tools/estate_gate.py": "technical_owner"
+ },
+ "escalation": [
+  {"severity": "SEV1", "examples": ["authorization bypass", "cross-authority acceptance", "post-revocation use", "signing-key compromise"], "first": "incident_commander", "then": ["security_approver", "accountable_owner"], "ack_minutes": 15, "decision_minutes": 60},
+  {"severity": "SEV2", "examples": ["audit-chain failure", "release-gate failure on a candidate", "production outage"], "first": "technical_owner", "then": ["accountable_owner"], "ack_minutes": 60, "decision_minutes": 240},
+  {"severity": "SEV3", "examples": ["performance regression", "stale owner", "alert noise"], "first": "technical_owner", "then": ["accountable_owner"], "ack_minutes": 1440, "decision_minutes": 4320}
+ ],
+ "decision_authority": {
+  "emergency_mitigation": ["incident_commander", "security_approver"],
+  "emergency_revocation_or_quarantine": ["incident_commander", "security_approver"],
+  "release_rollback": ["release_approver", "incident_commander"],
+  "security_exception": ["security_approver"],
+  "dispute_resolution": "security_approver decides security-vs-availability; accountable_owner decides all other conflicts; precedence per REQ-PRC-001"
+ },
+ "transfer_procedure": "PR changing OWNERS.json + CODEOWNERS, approved by outgoing and incoming owner and security_approver; effective_date recorded; audit trail = VCS history.",
+ "review_cadence_days": 90,
+ "last_reviewed": "2026-09-22",
+ "security_critical_paths": ["capabilities.py", "audit.py", "config.py", "identity.py", "isolation.py", "broker.py", "errors.py", "schemas/", "requirements/", "docs/ADR-0001-explicit-capabilities.md", "docs/THREAT_MODEL.md", "tools/release_gate.py", "tools/build_release.py", ".github/workflows/"]
+}

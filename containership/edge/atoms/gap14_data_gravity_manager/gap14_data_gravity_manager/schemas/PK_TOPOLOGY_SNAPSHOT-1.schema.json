@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_TOPOLOGY_SNAPSHOT:1",
+  "title": "PK_TOPOLOGY_SNAPSHOT/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "snapshot_id",
+    "version",
+    "issued_at",
+    "routes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_TOPOLOGY_SNAPSHOT/1"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "issued_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "routes": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from",
+          "to",
+          "available",
+          "locality_multiplier",
+          "egress_per_gb"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "locality_multiplier": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "egress_per_gb": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bandwidth_gbps": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "congestion": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 0.99
+          }
+        }
+      }
+    }
+  }
+}

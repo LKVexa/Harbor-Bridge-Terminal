@@ -1,0 +1,32 @@
+name: inv05-ci
+on: [push, pull_request]
+permissions: {contents: read, id-token: write}
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        pk_core: ["absent"]          # add pinned pk_core versions here once EX-003 closes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - name: Install hash-locked dependencies (hermetic)
+        run: pip install --require-hashes --no-deps -r inv05_current_control_state_system/requirements.lock
+      - name: Lint / static
+        run: python -m compileall -q inv05_current_control_state_system && python -W error -c "import inv05_current_control_state_system.service"
+      - name: Vulnerability scan
+        run: pip install pip-audit==2.7.3 && pip-audit -r inv05_current_control_state_system/requirements.lock --strict
+      - name: Acceptance gate (unit, -O, conformance, compat, trace, master, exceptions, perf smoke, restore drill, SBOM, provenance)
+        env:
+          INV05_BUILD_COMMIT: ${{ github.sha }}
+          INV05_BUILDER_ID: github-actions/${{ github.repository }}
+          INV05_SIGNING_KEY: ${{ secrets.INV05_SIGNING_KEY }}
+        run: python inv05_current_control_state_system/tools/ci_gate.py
+      - name: Release gate (single-member topology)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: python inv05_current_control_state_system/tools/release_gate.py --topology single-member
+      - uses: actions/upload-artifact@v4
+        with: {name: "evidence-${{ matrix.python }}", path: inv05_current_control_state_system/evidence/, retention-days: 400}

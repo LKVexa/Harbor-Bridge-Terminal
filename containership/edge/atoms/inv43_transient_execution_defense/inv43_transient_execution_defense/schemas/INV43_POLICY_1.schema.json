@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "INV43_POLICY/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "version",
+    "baseline",
+    "trust_classes",
+    "isolation_tiers",
+    "digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "INV43_POLICY/1"
+    },
+    "version": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "baseline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "const": "spectre_v2"
+          }
+        },
+        {
+          "contains": {
+            "const": "l1tf"
+          }
+        },
+        {
+          "contains": {
+            "const": "mds"
+          }
+        },
+        {
+          "contains": {
+            "const": "mmio_stale_data"
+          }
+        }
+      ]
+    },
+    "trust_classes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "extra_mitigations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "no_cotenancy": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "isolation_tiers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "extra_mitigations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hardware_boundary_dedicated": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "legacy_cpu": {
+      "type": "object"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+name: inv39-ci
+on: [push, pull_request]
+jobs:
+  linux:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-24.04-arm]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+      - run: INV39_CERT_TARGET=1 sh ci/ci.sh
+        env: {PK_CORE_PATH: "${{ github.workspace }}/../pk"}
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -W ignore tests/run_all.py   # Seatbelt backend certification: MC-032 (BLOCKED until a macOS runner executes it)

@@ -1,0 +1,495 @@
+{
+ "$defs": {
+  "binding": {
+   "additionalProperties": false,
+   "properties": {
+    "effect": {
+     "enum": [
+      "allow",
+      "deny"
+     ]
+    },
+    "group": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+     "type": "string"
+    },
+    "role": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+     "type": "string"
+    },
+    "scope": {
+     "pattern": "^[A-Za-z0-9_.\\-]+(/[A-Za-z0-9_.\\-]+){0,2}$",
+     "type": "string"
+    },
+    "subject": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@/\\-]{0,255}$",
+     "type": "string"
+    }
+   },
+   "required": [
+    "role",
+    "scope",
+    "effect"
+   ],
+   "type": "object"
+  },
+  "quota": {
+   "additionalProperties": false,
+   "properties": {
+    "burst": {
+     "maximum": 1000000,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "max_inflight": {
+     "maximum": 100000,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "rate_per_s": {
+     "maximum": 100000,
+     "minimum": 0.001,
+     "type": "number"
+    }
+   },
+   "required": [
+    "burst",
+    "max_inflight",
+    "rate_per_s"
+   ],
+   "type": "object"
+  },
+  "rule": {
+   "additionalProperties": false,
+   "properties": {
+    "class": {
+     "enum": [
+      "security",
+      "residency",
+      "availability",
+      "slo",
+      "cost"
+     ]
+    },
+    "effect": {
+     "enum": [
+      "deny",
+      "require",
+      "exempt"
+     ]
+    },
+    "id": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+     "type": "string"
+    },
+    "message": {
+     "maxLength": 512,
+     "type": "string"
+    },
+    "priority": {
+     "maximum": 1000,
+     "minimum": 0,
+     "type": "integer"
+    },
+    "require_image_prefix": {
+     "maxLength": 2048,
+     "type": "string"
+    },
+    "targets": {
+     "items": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+      "type": "string"
+     },
+     "maxItems": 256,
+     "type": "array"
+    },
+    "when": {
+     "additionalProperties": false,
+     "properties": {
+      "component_name": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+       "type": "string"
+      },
+      "environment": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+       "type": "string"
+      },
+      "image_prefix": {
+       "maxLength": 2048,
+       "type": "string"
+      },
+      "lattice": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+       "type": "string"
+      },
+      "tenant": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+       "type": "string"
+      }
+     },
+     "required": [],
+     "type": "object"
+    }
+   },
+   "required": [
+    "id",
+    "effect",
+    "priority",
+    "class",
+    "when",
+    "message"
+   ],
+   "type": "object"
+  }
+ },
+ "$id": "urn:pk:inv66:PK_ECP_CONFIG/1",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "bindings": {
+   "items": {
+    "$ref": "#/$defs/binding"
+   },
+   "maxItems": 100000,
+   "type": "array"
+  },
+  "dependencies": {
+   "additionalProperties": {
+    "additionalProperties": false,
+    "properties": {
+     "endpoint": {
+      "maxLength": 2048,
+      "pattern": "^https?://[^\\s]+$",
+      "type": "string"
+     },
+     "required": {
+      "type": "boolean"
+     },
+     "timeout_ms": {
+      "maximum": 600000,
+      "minimum": 1,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "required"
+    ],
+    "type": "object"
+   },
+   "type": "object"
+  },
+  "dual_authorization": {
+   "additionalProperties": false,
+   "properties": {
+    "config_activate": {
+     "maximum": 5,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "quarantine_release": {
+     "maximum": 5,
+     "minimum": 1,
+     "type": "integer"
+    }
+   },
+   "required": [
+    "config_activate",
+    "quarantine_release"
+   ],
+   "type": "object"
+  },
+  "environment": {
+   "enum": [
+    "dev",
+    "staging",
+    "prod"
+   ]
+  },
+  "limits": {
+   "additionalProperties": false,
+   "properties": {
+    "audit_segment_records": {
+     "maximum": 10000000,
+     "minimum": 10,
+     "type": "integer"
+    },
+    "default_deadline_ms": {
+     "maximum": 600000,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "max_components": {
+     "maximum": 10000,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "max_inflight": {
+     "maximum": 100000,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "max_manifest_bytes": {
+     "maximum": 100000000,
+     "minimum": 1024,
+     "type": "integer"
+    },
+    "retention_days": {
+     "maximum": 3650,
+     "minimum": 1,
+     "type": "integer"
+    }
+   },
+   "required": [
+    "audit_segment_records",
+    "default_deadline_ms",
+    "max_components",
+    "max_inflight",
+    "max_manifest_bytes",
+    "retention_days"
+   ],
+   "type": "object"
+  },
+  "org": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+   "type": "string"
+  },
+  "policy": {
+   "additionalProperties": false,
+   "properties": {
+    "cache_ttl_s": {
+     "maximum": 3600,
+     "minimum": 0,
+     "type": "integer"
+    },
+    "engine": {
+     "enum": [
+      "local",
+      "external"
+     ]
+    },
+    "external_endpoint": {
+     "maxLength": 2048,
+     "pattern": "^https?://[^\\s]+$",
+     "type": "string"
+    },
+    "external_policy_version": {
+     "maxLength": 128,
+     "type": "string"
+    },
+    "on_unavailable": {
+     "enum": [
+      "deny",
+      "use_cached"
+     ]
+    },
+    "rules": {
+     "items": {
+      "$ref": "#/$defs/rule"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "engine",
+    "rules",
+    "on_unavailable"
+   ],
+   "type": "object"
+  },
+  "provenance": {
+   "additionalProperties": false,
+   "properties": {
+    "require_attestation": {
+     "type": "boolean"
+    },
+    "require_digest": {
+     "type": "boolean"
+    },
+    "require_signature": {
+     "type": "boolean"
+    },
+    "trusted_builders": {
+     "items": {
+      "maxLength": 512,
+      "type": "string"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "require_attestation",
+    "require_digest",
+    "require_signature",
+    "trusted_builders"
+   ],
+   "type": "object"
+  },
+  "quotas": {
+   "additionalProperties": false,
+   "properties": {
+    "default": {
+     "$ref": "#/$defs/quota"
+    },
+    "tenants": {
+     "additionalProperties": {
+      "$ref": "#/$defs/quota"
+     },
+     "type": "object"
+    }
+   },
+   "required": [
+    "default"
+   ],
+   "type": "object"
+  },
+  "registries": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "host": {
+      "pattern": "^[a-z0-9.\\-]+(:[0-9]{1,5})?$",
+      "type": "string"
+     },
+     "scope": {
+      "maxLength": 512,
+      "type": "string"
+     }
+    },
+    "required": [
+     "host",
+     "scope"
+    ],
+    "type": "object"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "roles": {
+   "additionalProperties": {
+    "items": {
+     "enum": [
+      "admit",
+      "admit.dry_run",
+      "rbac.admin",
+      "policy.admin",
+      "config.activate",
+      "config.approve",
+      "audit.read",
+      "audit.export",
+      "quarantine",
+      "inventory.read",
+      "explain.read"
+     ]
+    },
+    "type": "array",
+    "uniqueItems": true
+   },
+   "type": "object"
+  },
+  "schema": {
+   "const": "PK_ECP_CONFIG/1"
+  },
+  "secrets": {
+   "additionalProperties": {
+    "pattern": "^(env|file|kms|vault):.{1,1024}$",
+    "type": "string"
+   },
+   "type": "object"
+  },
+  "signers": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+      "type": "string"
+     },
+     "not_after": {
+      "type": "number"
+     },
+     "public_key": {
+      "maxLength": 64,
+      "minLength": 40,
+      "type": "string"
+     },
+     "revoked": {
+      "type": "boolean"
+     },
+     "scope": {
+      "maxLength": 512,
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "public_key",
+     "scope"
+    ],
+    "type": "object"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "site": {
+   "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@\\-]{0,127}$",
+   "type": "string"
+  },
+  "telemetry": {
+   "additionalProperties": false,
+   "properties": {
+    "log_level": {
+     "enum": [
+      "debug",
+      "info",
+      "warning",
+      "error"
+     ]
+    },
+    "log_retention_days": {
+     "maximum": 3650,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "metrics_retention_days": {
+     "maximum": 3650,
+     "minimum": 1,
+     "type": "integer"
+    },
+    "redact_subjects": {
+     "type": "boolean"
+    },
+    "trace_sample_ratio": {
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    }
+   },
+   "required": [
+    "log_level",
+    "log_retention_days",
+    "metrics_retention_days",
+    "redact_subjects",
+    "trace_sample_ratio"
+   ],
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema",
+  "environment",
+  "site",
+  "org",
+  "limits",
+  "quotas",
+  "roles",
+  "bindings",
+  "registries",
+  "signers",
+  "provenance",
+  "policy"
+ ],
+ "title": "PK_ECP_CONFIG/1",
+ "type": "object",
+ "x-compat": "additive-minor",
+ "x-version": "1.0.0"
+}

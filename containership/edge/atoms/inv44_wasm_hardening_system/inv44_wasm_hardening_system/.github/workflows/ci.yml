@@ -1,0 +1,54 @@
+# INV-44 CI / release pipeline (missing component 5).
+# Never run on a real runner as of 4.3.0 — see COMPONENTS_STATUS.json.
+name: inv44-ci
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv44_wasm_hardening_system }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - uses: actions/setup-node@v4          # NODE_WASM independent-validator lane
+        with: { node-version: "22" }
+      - name: unit + security tests
+        run: python -B inv44_wasm_hardening_system/tests/run_all.py
+      - name: tests under python -O (no assert-based security)
+        run: python -B -O inv44_wasm_hardening_system/tests/run_all.py
+      - name: repository audit
+        run: python -B inv44_wasm_hardening_system/tools/audit_repository.py
+  package:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python -m pip install --upgrade pip build
+      - run: python -m build --wheel --outdir dist .
+      - uses: actions/upload-artifact@v4
+        with: { name: wheel, path: dist/*.whl }
+  release-gate:
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv44_wasm_hardening_system }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      # Exits 3 (NO_GO) until pk_core gate results and a human approval are supplied.
+      # continue-on-error keeps the evidence artifact; the verdict itself is the gate.
+      - name: release gate
+        continue-on-error: true
+        run: python -B inv44_wasm_hardening_system/release_gate.py --out evidence
+      - uses: actions/upload-artifact@v4
+        with: { name: release-evidence, path: evidence/ }

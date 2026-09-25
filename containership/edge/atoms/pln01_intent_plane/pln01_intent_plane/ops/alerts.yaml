@@ -1,0 +1,38 @@
+groups:
+- name: pln01-intent-plane
+  rules:
+  - alert: PLN01PlanLatencySLO
+    expr: histogram_quantile(0.99, sum(rate(plan_emission_seconds_bucket[10m])) by (le)) > 2
+    for: 10m
+    labels: {severity: page}
+    annotations: {summary: "Plan p99 > 2 s", runbook: "docs/RUNBOOK.md#plan-latency"}
+  - alert: PLN01AdmissionErrorsHigh
+    expr: sum(rate(pln01_requests_total{outcome=~"PLN01-E9999|PLN01-E0020"}[5m])) > 0
+    for: 1m
+    labels: {severity: page}
+    annotations: {summary: "Internal or store-integrity errors", runbook: "docs/RUNBOOK.md#store-integrity"}
+  - alert: PLN01IdentityDown
+    expr: sum(rate(pln01_requests_total{outcome="PLN01-E0010"}[5m])) > 0
+    for: 2m
+    labels: {severity: page}
+    annotations: {summary: "Failing closed: identity unavailable", runbook: "docs/RUNBOOK.md#identity-down"}
+  - alert: PLN01Saturation
+    expr: max_over_time(pln01_bulkhead_saturation[10m]) > 0.7
+    for: 10m
+    labels: {severity: ticket}
+    annotations: {summary: "Bulkhead saturation > 70 %", runbook: "docs/RUNBOOK.md#overload"}
+  - alert: PLN01DriftOpen
+    expr: drift_open > 0
+    for: 30m
+    labels: {severity: ticket}
+    annotations: {summary: "Drift unresolved for one reconciliation interval+", runbook: "docs/RUNBOOK.md#drift"}
+  - alert: PLN01LeaseLost
+    expr: sum(rate(pln01_requests_total{outcome="PLN01-E0019"}[5m])) > 0
+    for: 1m
+    labels: {severity: page}
+    annotations: {summary: "Writer lost lease (possible split brain attempt)", runbook: "docs/RUNBOOK.md#failover"}
+  - alert: PLN01Stalled
+    expr: up{job="pln01"} == 0
+    for: 2m
+    labels: {severity: page}
+    annotations: {summary: "Liveness failing", runbook: "docs/RUNBOOK.md#stall"}

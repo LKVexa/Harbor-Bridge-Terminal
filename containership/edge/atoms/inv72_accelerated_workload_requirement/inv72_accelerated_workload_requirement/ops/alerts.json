@@ -1,0 +1,60 @@
+{
+ "schema": "PK_ALERTS/1",
+ "rules": [
+  {
+   "id": "A-ISOLATION",
+   "expr": "any audit event action=accel.reserve with cross-tenant partition (invariant test) OR ACCEL_STATE_CORRUPT",
+   "sev": "SEV1",
+   "class": "security"
+  },
+  {
+   "id": "A-STALE",
+   "expr": "accel_inventory_age_seconds > inventory_max_age_s + offline_grace_s for 2m",
+   "sev": "SEV2",
+   "class": "dependency"
+  },
+  {
+   "id": "A-SHED",
+   "expr": "rate(accel_shed_total[5m]) / rate(accel_*_total[5m]) > 0.2 for 15m",
+   "sev": "SEV2",
+   "class": "overload"
+  },
+  {
+   "id": "A-POLICY",
+   "expr": "rate(accel_errors_total{code=~\"ACCEL_FORBIDDEN|ACCEL_UNAUTHENTICATED|ACCEL_REPLAY\"}[5m]) > 1",
+   "sev": "SEV3",
+   "class": "policy-rejection"
+  },
+  {
+   "id": "A-LATENCY",
+   "expr": "histogram p99 accel_decision_latency_ms > 10 for 10m",
+   "sev": "SEV3",
+   "class": "degradation"
+  },
+  {
+   "id": "A-SATURATION",
+   "expr": "accel_saturation_ratio >= 0.9",
+   "sev": "SEV3",
+   "class": "capacity"
+  },
+  {
+   "id": "A-DEGRADED",
+   "expr": "decisions with outcome=degraded > 0 for 10m",
+   "sev": "SEV3",
+   "class": "degradation"
+  },
+  {
+   "id": "A-TELEMETRY",
+   "expr": "status.dependencies.telemetry_log_failures increasing",
+   "sev": "SEV4",
+   "class": "telemetry"
+  }
+ ],
+ "distinguishes": [
+  "ordinary load (no alert; rate up, shed 0)",
+  "degradation (A-LATENCY/A-DEGRADED)",
+  "policy rejection (A-POLICY)",
+  "dependency failure (A-STALE)",
+  "security (A-ISOLATION)"
+ ]
+}

@@ -1,0 +1,20 @@
+# MC-058 — compatibility test farm definition (GitHub Actions). Status: defined, NOT yet run.
+name: inv06-matrix
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python inv06_traditional_iac/tests/test_component.py
+      - run: python inv06_traditional_iac/tests/test_production.py
+      - run: python -O inv06_traditional_iac/tests/test_production.py
+      - uses: actions/upload-artifact@v4
+        with: {name: "evidence-${{ matrix.os }}-${{ matrix.python }}", path: inv06_traditional_iac/evidence/}

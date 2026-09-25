@@ -1,0 +1,143 @@
+{
+  "policy": "PLN05_CAPABILITIES",
+  "version": "1.0.0",
+  "default": "deny",
+  "actions": {
+    "demand.submit": "Submit PK_DEMAND/1 samples (data path)",
+    "limits.update": "Activate a PK_CAPACITY_LIMITS/1 envelope (authority change)",
+    "ceiling.lower": "Apply a stricter external ceiling (GAP-10 power/thermal)",
+    "status.read": "Read redacted health/status",
+    "status.read_admin": "Read administrative status detail",
+    "explain.read": "Read decision provenance for the caller's tenant",
+    "target.publish": "Internal: publish PK_CAPACITY_TARGET/1 downstream (held only by the plane itself)",
+    "config.change": "Activate a configuration overlay",
+    "config.rollback": "Roll back to last-known-good configuration",
+    "control.freeze": "Freeze / unfreeze a scope",
+    "control.quarantine": "Quarantine / release a source or scope",
+    "control.disable": "Disable / enable decision publication for a scope",
+    "control.resume": "Resume after freeze/quarantine/disable (two-step)",
+    "evidence.read": "Retrieve release/audit evidence"
+  },
+  "actor_classes": {
+    "demand_reporter": {
+      "capabilities": [
+        "demand.submit"
+      ],
+      "max_lifetime_s": 3600,
+      "tenant_scope": "single",
+      "requires_source_binding": true,
+      "trust_bootstrap": "workload identity (SPIFFE ID or equivalent) attested via GAP-09; token minted by the identity issuer"
+    },
+    "intent_plane": {
+      "capabilities": [
+        "limits.update",
+        "status.read"
+      ],
+      "max_lifetime_s": 900,
+      "tenant_scope": "single",
+      "trust_bootstrap": "PLN-01 service identity; mTLS"
+    },
+    "power_thermal": {
+      "capabilities": [
+        "ceiling.lower",
+        "status.read"
+      ],
+      "max_lifetime_s": 900,
+      "tenant_scope": "single",
+      "trust_bootstrap": "GAP-10 service identity; mTLS"
+    },
+    "operator": {
+      "capabilities": [
+        "status.read",
+        "status.read_admin",
+        "explain.read",
+        "control.freeze",
+        "control.quarantine",
+        "control.disable"
+      ],
+      "max_lifetime_s": 3600,
+      "tenant_scope": "single",
+      "trust_bootstrap": "human SSO -> short-lived token"
+    },
+    "policy_service": {
+      "capabilities": [
+        "status.read"
+      ],
+      "max_lifetime_s": 900,
+      "tenant_scope": "single",
+      "trust_bootstrap": "service identity"
+    },
+    "provider_adapter": {
+      "capabilities": [
+        "status.read"
+      ],
+      "max_lifetime_s": 900,
+      "tenant_scope": "single",
+      "trust_bootstrap": "service identity; consumes targets and enforces fencing tokens"
+    },
+    "sibling_plane": {
+      "capabilities": [
+        "status.read",
+        "explain.read"
+      ],
+      "max_lifetime_s": 900,
+      "tenant_scope": "single",
+      "trust_bootstrap": "service identity"
+    },
+    "telemetry_collector": {
+      "capabilities": [
+        "status.read"
+      ],
+      "max_lifetime_s": 3600,
+      "tenant_scope": "single",
+      "trust_bootstrap": "service identity"
+    },
+    "release_agent": {
+      "capabilities": [
+        "evidence.read",
+        "status.read"
+      ],
+      "max_lifetime_s": 900,
+      "tenant_scope": "single",
+      "trust_bootstrap": "CI OIDC identity in protected environment"
+    },
+    "emergency_admin": {
+      "capabilities": [
+        "control.freeze",
+        "control.quarantine",
+        "control.disable",
+        "control.resume",
+        "config.rollback",
+        "status.read",
+        "status.read_admin"
+      ],
+      "max_lifetime_s": 3600,
+      "tenant_scope": "any",
+      "requires_ticket": true,
+      "break_glass": true,
+      "trust_bootstrap": "break-glass issuance with two-person approval; always audited"
+    },
+    "platform_operator": {
+      "capabilities": [
+        "config.change",
+        "config.rollback",
+        "status.read",
+        "status.read_admin"
+      ],
+      "max_lifetime_s": 3600,
+      "tenant_scope": "any",
+      "trust_bootstrap": "human SSO in the platform-operations group -> short-lived token; plane-global configuration only"
+    }
+  },
+  "single_use_actions": [
+    "limits.update",
+    "ceiling.lower",
+    "config.change",
+    "config.rollback",
+    "control.freeze",
+    "control.quarantine",
+    "control.disable",
+    "control.resume"
+  ],
+  "max_clock_skew_s": 5
+}

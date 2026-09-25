@@ -1,0 +1,100 @@
+{"id": "C39-001", "status": "IN_PROGRESS", "evidence": ["gateway/config.js#L77-78"], "note": "Interval exists (VWS_HEARTBEAT_MS) as liveness detection but its purpose is not stated in a current top-level doc"}
+{"id": "C39-002", "status": "OPEN", "evidence": [], "note": "No 'article' or its 20s example referenced anywhere in current docs"}
+{"id": "C39-003", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-004", "status": "PASS", "evidence": ["gateway/config.js#L77-78,110"], "note": "VWS_HEARTBEAT_MS (interval) and VWS_HEARTBEAT_WINDOW_MS (peer-response timeout) are distinct settings, cross-validated"}
+{"id": "C39-005", "status": "PASS", "evidence": ["gateway/connection.js#L204-209", "gateway/ws.js#L135,268-272"], "note": "Node's own control mechanism: app heartbeat.ping/pong (JSON) plus RFC6455 PING/PONG opcode-level ping()"}
+{"id": "C39-006", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "intVar bounds VWS_HEARTBEAT_MS to [200, 600000] \u2014 an approved minimum of 200ms"}
+{"id": "C39-007", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "intVar bounds VWS_HEARTBEAT_MS to [200, 600000] \u2014 an approved maximum of 600000ms"}
+{"id": "C39-008", "status": "OPEN", "evidence": [], "note": "No config path or doc states whether disabling heartbeat entirely is permitted"}
+{"id": "C39-009", "status": "PASS", "evidence": ["gateway/config.js#L77-78"], "note": "Gateway config module (server) is the sole owner of the interval; no client-side override exists"}
+{"id": "C39-010", "status": "OPEN", "evidence": [], "note": "No documented interval-selection criteria/approval beyond the numeric default in code"}
+{"id": "C39-011", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-012", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-013", "status": "NOT_APPLICABLE", "evidence": [], "note": "No .NET overload exists in this Node stack (RD-03/D-001)"}
+{"id": "C39-014", "status": "NOT_APPLICABLE", "evidence": [], "note": "No .NET overload exists in this Node stack (RD-03/D-001)"}
+{"id": "C39-015", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-016", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Actual heartbeat behavior observed at configured interval via test (300ms/200ms window)"}
+{"id": "C39-017", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-018", "status": "OPEN", "evidence": [], "note": "No 'article' or its 20s example referenced anywhere in current docs"}
+{"id": "C39-019", "status": "OPEN", "evidence": [], "note": "No release verification gate tracks unresolved runtime behavior"}
+{"id": "C39-020", "status": "PASS", "evidence": ["tests/gateway/config.test.js#L22", "tests/chaos/lifecycle.test.js"], "note": "Automated tests (config.test.js, lifecycle.test.js) serve as an executable configuration probe, run in e/full-suite.tap"}
+{"id": "C39-021", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Single key VWS_HEARTBEAT_MS for the interval"}
+{"id": "C39-022", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "intVar parses milliseconds (integer) as the accepted unit"}
+{"id": "C39-023", "status": "PASS", "evidence": ["gateway/config.js#intVar"], "note": "intVar parses env string into validated numeric duration"}
+{"id": "C39-024", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-025", "status": "PASS", "evidence": ["tests/gateway/config.test.js#L22"], "note": "Malformed VWS_HEARTBEAT_MS values are rejected by intVar (ConfigError)"}
+{"id": "C39-026", "status": "IN_PROGRESS", "evidence": ["gateway/config.js#intVar"], "note": "intVar bounds reject out-of-range values including negative, but no test explicitly targets a negative VWS_HEARTBEAT_MS"}
+{"id": "C39-027", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Values outside [200,600000] rejected by intVar bounds"}
+{"id": "C39-028", "status": "NOT_APPLICABLE", "evidence": [], "note": "No TimeSpan conversion; overflow class does not apply to a bounded integer parse (RD-03/D-001)"}
+{"id": "C39-029", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Missing VWS_HEARTBEAT_MS falls back to documented default 20000"}
+{"id": "C39-030", "status": "PASS", "evidence": ["tests/gateway/config.test.js#L22"], "note": "VWS_HEARTBEAT_WINDOW_MS > VWS_HEARTBEAT_MS throws explicitly rather than silently defaulting"}
+{"id": "C39-031", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Default candidate interval is 20000ms (matches the article's example value, used independently as Node's own default)"}
+{"id": "C39-032", "status": "OPEN", "evidence": [], "note": "No documented rationale ties 20000ms specifically to the tested network path"}
+{"id": "C39-033", "status": "OPEN", "evidence": [], "note": "No 'article' or its 20s example referenced anywhere in current docs"}
+{"id": "C39-034", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Idle-session behavior measured with a candidate interval (test uses 300/200ms, not the 20000ms default, but demonstrates the mechanism)"}
+{"id": "C39-035", "status": "OPEN", "evidence": [], "note": "No measured traffic overhead for the 20000ms default is recorded"}
+{"id": "C39-036", "status": "OPEN", "evidence": [], "note": "No measured resource overhead for the 20000ms default is recorded"}
+{"id": "C39-037", "status": "OPEN", "evidence": [], "note": "No record of alternative candidates considered/compared"}
+{"id": "C39-038", "status": "IN_PROGRESS", "evidence": ["gateway/config.js#L77"], "note": "Value is recorded in code but not paired with evidence in a doc"}
+{"id": "C39-039", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js#48"], "note": "Tests override VWS_HEARTBEAT_MS for fast execution; not documented as a formal dev-override policy"}
+{"id": "C39-040", "status": "OPEN", "evidence": [], "note": "No review requirement documented for reducing the interval"}
+{"id": "C39-041", "status": "PASS", "evidence": ["gateway/config.js#L60-90"], "note": "Config is loaded and frozen at startup (load()) before connections are accepted"}
+{"id": "C39-042", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-043", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-044", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-045", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-046", "status": "OPEN", "evidence": [], "note": "cfg.heartbeatMs is on the Connection but not surfaced per-connection in telemetry()"}
+{"id": "C39-047", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Valid configured interval tested through startGateway()+real WS upgrade"}
+{"id": "C39-048", "status": "PASS", "evidence": ["tests/gateway/config.test.js#L22"], "note": "Invalid interval config rejected at load(), before any client can be accepted"}
+{"id": "C39-049", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Two connections (alice/bob) receive the same configured heartbeat behavior"}
+{"id": "C39-050", "status": "OPEN", "evidence": [], "note": "No documentation of whether interval updates affect only newly accepted connections vs. live ones"}
+{"id": "C39-051", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Smallest approved interval (200ms) accepted by intVar bounds"}
+{"id": "C39-052", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Largest approved interval (600000ms) accepted by intVar bounds"}
+{"id": "C39-053", "status": "IN_PROGRESS", "evidence": ["gateway/config.js#L77"], "note": "Default (20000ms) is accepted by construction; not separately asserted in a test"}
+{"id": "C39-054", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Value below 200 rejected by intVar bounds (per its general bound-check pattern)"}
+{"id": "C39-055", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Value above 600000 rejected by intVar bounds"}
+{"id": "C39-056", "status": "OPEN", "evidence": [], "note": "No test targets fractional VWS_HEARTBEAT_MS input specifically"}
+{"id": "C39-057", "status": "OPEN", "evidence": [], "note": "No test targets whitespace-padded VWS_HEARTBEAT_MS input specifically"}
+{"id": "C39-058", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Missing value uses documented default 20000 (intVar default arg)"}
+{"id": "C39-059", "status": "OPEN", "evidence": [], "note": "No test targets an extremely large duration beyond the bound"}
+{"id": "C39-060", "status": "OPEN", "evidence": [], "note": "No config path disables heartbeat entirely; disabling is not permitted/tested"}
+{"id": "C39-061", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Idle connection observed with configured interval; >=2 pings in 700ms window"}
+{"id": "C39-062", "status": "IN_PROGRESS", "evidence": ["tests/gateway/e2e.test.js"], "note": "Continuous-traffic tests exist (e2e slice) but not paired explicitly with heartbeat cadence assertions"}
+{"id": "C39-063", "status": "IN_PROGRESS", "evidence": ["tests/protocol/bridge.test.js"], "note": "Fragmented/large transfer tests exist; not paired with heartbeat-timing assertions"}
+{"id": "C39-064", "status": "OPEN", "evidence": [], "note": "No test measures heartbeat cadence during simultaneous inbound+outbound traffic"}
+{"id": "C39-065", "status": "PASS", "evidence": ["gateway/config.js#L78,110"], "note": "VWS_HEARTBEAT_WINDOW_MS is the separately supported timeout tested against an unresponsive peer (lifecycle.test.js)"}
+{"id": "C39-066", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Actual timing measured (Date.now() deltas), not assumed"}
+{"id": "C39-067", "status": "PASS", "evidence": ["gateway/connection.js#L52,L185-186,L204-209"], "note": "Single heartbeat loop (_every(cfg.heartbeatMs,...)); no duplicate loop found in code review"}
+{"id": "C39-068", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done"], "note": "No Render/WAN deployment available"}
+{"id": "C39-069", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js"], "note": "Reconnect-with-backoff exists in client but no dedicated test ties it to a heartbeat-triggered failure"}
+{"id": "C39-070", "status": "OPEN", "evidence": [], "note": "No doc separates interval-controlled vs other-setting-controlled behavior"}
+{"id": "C39-071", "status": "PASS", "evidence": ["gateway/connection.js#L52"], "note": "cfg.heartbeatMs applied via _every() at connection construction (acceptance time)"}
+{"id": "C39-072", "status": "OPEN", "evidence": [], "note": "No documented behavior for changing the interval on an already-active session (not supported)"}
+{"id": "C39-073", "status": "PASS", "evidence": ["gateway/ws.js"], "note": "No direct socket-internals manipulation; interval only drives app-level control messages / ws.ping()"}
+{"id": "C39-074", "status": "PASS", "evidence": ["gateway/connection.js#L52"], "note": "Each new Connection re-reads cfg.heartbeatMs, so redeploy/new connections pick up current config"}
+{"id": "C39-075", "status": "IN_PROGRESS", "evidence": ["gateway/config.js"], "note": "Config is process-wide env var; preserved across restart by deployment convention, not tested directly"}
+{"id": "C39-076", "status": "OPEN", "evidence": [], "note": "No test specifically redeploys with only the interval changed"}
+{"id": "C39-077", "status": "PASS", "evidence": ["gateway/connection.js#_clearTimers"], "note": "_clearTimers() on close/cleanup clears the heartbeat interval timer"}
+{"id": "C39-078", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "Shutdown tests exist (SIGTERM drain) but not paired specifically with an idle heartbeat-configured connection"}
+{"id": "C39-079", "status": "OPEN", "evidence": [], "note": "No doc on client coordination requirements for interval changes"}
+{"id": "C39-080", "status": "OPEN", "evidence": [], "note": "No documented rollback procedure for interval changes"}
+{"id": "C39-081", "status": "OPEN", "evidence": [], "note": "No log record of the configured duration/unit is emitted at startup"}
+{"id": "C39-082", "status": "OPEN", "evidence": [], "note": "No log distinguishes explicit vs default-sourced heartbeat interval"}
+{"id": "C39-083", "status": "PASS", "evidence": ["tests/gateway/config.test.js#L22"], "note": "ConfigError distinctly names VWS_HEARTBEAT_WINDOW_MS/VWS_HEARTBEAT_MS validation failures"}
+{"id": "C39-084", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-085", "status": "OPEN", "evidence": [], "note": "No tracking of disconnects correlated with interval changes"}
+{"id": "C39-086", "status": "OPEN", "evidence": [], "note": "No cross-revision stability comparison recorded"}
+{"id": "C39-087", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done"], "note": "RAMWS.md avoids overclaiming platform guarantees from settings, consistent with this requirement"}
+{"id": "C39-088", "status": "OPEN", "evidence": [], "note": "No troubleshooting example for heartbeat config exists in docs/OPERATIONS.md"}
+{"id": "C39-089", "status": "OPEN", "evidence": [], "note": "No runtime identity recorded in test records"}
+{"id": "C39-090", "status": "OPEN", "evidence": [], "note": "No named owner for periodic review of VWS_HEARTBEAT_MS"}
+{"id": "C39-091", "status": "PASS", "evidence": ["gateway/config.js#L77"], "note": "Interval-input contract (key, bounds, default) is expressed directly in code"}
+{"id": "C39-092", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-093", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no AcceptWebSocketAsync/.NET overload in this Node stack; ws.js has no such API"}
+{"id": "C39-094", "status": "PASS", "evidence": ["tests/gateway/config.test.js#L22"], "note": "Missing/malformed/boundary config tests linked (config.test.js)"}
+{"id": "C39-095", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Idle/active connection observations linked (lifecycle.test.js)"}
+{"id": "C39-096", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done"], "note": "No Render/WAN deployment available"}
+{"id": "C39-097", "status": "OPEN", "evidence": [], "note": "No separate timeout decision record beyond the code-level VWS_HEARTBEAT_WINDOW_MS"}
+{"id": "C39-098", "status": "OPEN", "evidence": [], "note": "No record of confirmed/unresolved source claims (no article referenced)"}
+{"id": "C39-099", "status": "OPEN", "evidence": [], "note": "No documented default/review rationale beyond the numeric value in code"}
+{"id": "C39-100", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58", "e/full-suite.tap"], "note": "Interval approved only to the extent measured by the passing lifecycle heartbeat test"}

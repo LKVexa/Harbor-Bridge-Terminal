@@ -1,0 +1,25 @@
+{
+  "schema": "PK_PACK_ALERTS/1",
+  "version": "1.0.0",
+  "note": "Each rule classifies a condition so responders can tell load from degradation, policy rejection, dependency failure, attack and software defect (C080). Expressions are evaluated by tools/drills.py against synthetic telemetry windows; PromQL equivalents are given for deployment.",
+  "rules": [
+    {"id": "INV68-A01", "class": "software_defect", "severity": "page", "when": {"code_rate": {"INTERNAL": 0.0}}, "op": ">", "for_s": 0,
+     "promql": "sum(rate(inv68_requests_total{code=\"INTERNAL\"}[5m])) > 0", "runbook": "RUNBOOK.md#7-software-defect"},
+    {"id": "INV68-A02", "class": "safety", "severity": "page", "when": {"gauge": "inv68_mem_overcommit_hosts"}, "op": ">", "threshold": 0, "for_s": 0,
+     "promql": "max(inv68_mem_overcommit_hosts) > 0", "runbook": "RUNBOOK.md#6-emergency-disable"},
+    {"id": "INV68-A03", "class": "dependency_failure", "severity": "page", "when": {"code_rate": {"CIRCUIT_OPEN": 0.05, "DEPENDENCY_UNAVAILABLE": 0.05, "STALE_CAPACITY": 0.05}}, "op": ">", "for_s": 120,
+     "promql": "sum(rate(inv68_requests_total{code=~\"CIRCUIT_OPEN|DEPENDENCY_UNAVAILABLE|STALE_CAPACITY\"}[5m])) / sum(rate(inv68_requests_total[5m])) > 0.05", "runbook": "RUNBOOK.md#5-capacity-source-outage"},
+    {"id": "INV68-A04", "class": "attack", "severity": "page", "when": {"code_rate": {"UNAUTHENTICATED": 0.2, "REPLAY_DETECTED": 0.01}}, "op": ">", "for_s": 60,
+     "promql": "sum(rate(inv68_requests_total{code=~\"UNAUTHENTICATED|REPLAY_DETECTED\"}[5m])) / sum(rate(inv68_requests_total[5m])) > 0.2", "runbook": "INCIDENT_RESPONSE.md#security"},
+    {"id": "INV68-A05", "class": "load", "severity": "ticket", "when": {"code_rate": {"OVERLOADED": 0.02}}, "op": ">", "for_s": 300,
+     "promql": "sum(rate(inv68_requests_total{code=\"OVERLOADED\"}[5m])) / sum(rate(inv68_requests_total[5m])) > 0.02", "runbook": "RUNBOOK.md#4-overload"},
+    {"id": "INV68-A06", "class": "policy_rejection", "severity": "ticket", "when": {"code_rate": {"QUOTA_EXCEEDED": 0.1, "FORBIDDEN": 0.1}}, "op": ">", "for_s": 600,
+     "promql": "sum(rate(inv68_requests_total{code=~\"QUOTA_EXCEEDED|FORBIDDEN\"}[15m])) / sum(rate(inv68_requests_total[15m])) > 0.1", "runbook": "RUNBOOK.md#8-policy-rejections"},
+    {"id": "INV68-A07", "class": "degradation", "severity": "page", "when": {"latency_p99_ms": 100}, "op": ">", "for_s": 600,
+     "promql": "histogram_quantile(0.99, sum by (le) (rate(inv68_request_latency_ms_bucket[10m]))) > 100", "runbook": "RUNBOOK.md#4-overload"},
+    {"id": "INV68-A08", "class": "degradation", "severity": "ticket", "when": {"gauge": "inv68_efficiency_ratio"}, "op": ">", "threshold": 1.10, "for_s": 1800,
+     "promql": "avg_over_time(inv68_efficiency_ratio[30m]) > 1.10", "runbook": "RUNBOOK.md#9-efficiency-regression"},
+    {"id": "INV68-A09", "class": "audit_integrity", "severity": "page", "when": {"counter": "inv68_audit_dropped_total"}, "op": ">", "threshold": 0, "for_s": 0,
+     "promql": "increase(inv68_audit_dropped_total[5m]) > 0", "runbook": "INCIDENT_RESPONSE.md#audit-loss"}
+  ]
+}

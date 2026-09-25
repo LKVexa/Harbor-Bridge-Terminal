@@ -1,0 +1,3 @@
+# Encryption at rest / provider key policy (checklist #45) — BLOCKED
+
+INV-55 persists no secret values: leases are memory-only (R-LEASE-03) and the audit chain carries no values (R-RED-01, enforced by an allow-list). At-rest protection of secret values is therefore the provider's: Vault barrier encryption (AES-256-GCM) with auto-unseal keys in a platform KMS/HSM, key rotation of the barrier keyring at least yearly, and seal-wrap for FIPS environments. **None of this is provisioned or verifiable here** — the requirement is BLOCKED on a real Vault + KMS (W-001, W-002). The audit file is created with mode 0600; its host-volume encryption is a platform control.

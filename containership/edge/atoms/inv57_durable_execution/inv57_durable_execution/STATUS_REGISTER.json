@@ -1,0 +1,1575 @@
+{
+ "schema": "INV57_STATUS_REGISTER/1",
+ "version": "4.3.0",
+ "counts": {
+  "BLOCKED": 21,
+  "PARTIAL": 38,
+  "IMPLEMENTED_LOCAL": 16,
+  "OPEN": 7
+ },
+ "components": [
+  {
+   "id": "MC-01",
+   "title": "Accountable ownership and escalation path",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C009"
+   ],
+   "status": "BLOCKED",
+   "evidence": [
+    "OWNERS.yaml",
+    "acceptance.py::unresolved_owners"
+   ],
+   "tests": [],
+   "done": "Ownership schema with roles, L1-L4 escalation, change-approval authorities; gate fails on every empty role.",
+   "remaining": "Fill roles with group identifiers; CODEOWNERS; RACI; service-catalog binding.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-02",
+   "title": "Approved architecture decision record",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C010"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [],
+   "done": "ADR-001 drafted (decision, alternatives, consequences).",
+   "remaining": "Approval record.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-03",
+   "title": "SHALL-level requirements and deployment-context matrix",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C011",
+    "C012"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_stale_owner_cannot_commit_after_takeover",
+    "tests.test_crash_boundaries::CrashBoundaryTests.test_every_boundary"
+   ],
+   "done": "R-01..R-10 SHALL requirements each bound to a test; deployment-context matrix enforced in config.validate.",
+   "remaining": "Stakeholder review/approval.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-04",
+   "title": "Complete non-functional requirements and measured acceptance criteria",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C013"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/ARCHITECTURE.md",
+    "evidence/benchmark/summary.json"
+   ],
+   "tests": [
+    "tests.test_performance::PerformanceGate.test_1000_event_replay_under_slo"
+   ],
+   "done": "NFR table with measured replay/append values on the build machine.",
+   "remaining": "Targets for append latency, availability, RPO/RTO; measurement on target hardware.",
+   "blockers": [
+    "no edge/target hardware available for measurement"
+   ]
+  },
+  {
+   "id": "MC-05",
+   "title": "Outcome semantics and workflow lifecycle state machine",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C014",
+    "C015"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "lifecycle.py",
+    "sqlite_store.py::SQLiteBackend.control"
+   ],
+   "tests": [
+    "tests.test_store::LifecycleTests.test_happy_path_and_log",
+    "tests.test_store::LifecycleTests.test_terminal_refuses_and_idempotent_repeat",
+    "tests.test_store::LifecycleTests.test_cas_version",
+    "tests.test_store::LifecycleTests.test_every_table_row_is_reachable_and_unknown_control_refused"
+   ],
+   "done": "Closed 11-state machine, idempotent controls, CAS versioning, durable transition log.",
+   "remaining": "Wire lifecycle into Worker.run automatically (currently driven by caller).",
+   "blockers": []
+  },
+  {
+   "id": "MC-06",
+   "title": "Backward-compatibility and versioning policy",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C016"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_newer_backend_schema_refused",
+    "tests.test_store::BackupRestoreAndFixtureTests.test_golden_fixture_replays"
+   ],
+   "done": "Versioning policy; backend refuses newer schema; golden history fixture is byte-stable.",
+   "remaining": "Migration tooling N-1\u2192N; policy approval.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-07",
+   "title": "Capacity, quotas, and fairness model",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C017"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "resilience.py::AdmissionController"
+   ],
+   "tests": [
+    "tests.test_components::ResilienceTests.test_admission_fairness"
+   ],
+   "done": "Global and per-tenant in-flight quotas with shedding.",
+   "remaining": "Capacity model, storage quotas, fairness under load.",
+   "blockers": []
+  },
+  {
+   "id": "MC-08",
+   "title": "Disconnected/intermittent network semantics",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C018"
+   ],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Disconnected/intermittent network semantics not designed; depends on INV-53 wire protocol.",
+   "blockers": [
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "MC-09",
+   "title": "Constraint-precedence policy",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C019"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [],
+   "done": "Precedence order drafted with examples.",
+   "remaining": "Approval.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-10",
+   "title": "Complete boundary inventory and versioned typed schemas",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C021",
+    "C022"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "schemas/identity.schema.json",
+    "schemas/history_event.schema.json",
+    "schemas/error.schema.json",
+    "schemas/status.schema.json",
+    "schemas/config.schema.json",
+    "tools/gen_schemas.py"
+   ],
+   "tests": [
+    "tests.test_contracts::ContractTests.test_no_schema_drift",
+    "tests.test_contracts::ContractTests.test_documents_conform",
+    "tests.test_contracts::ContractTests.test_validator_rejects_bad_documents"
+   ],
+   "done": "Boundary inventory + five versioned JSON Schemas generated from code with a drift check.",
+   "remaining": "Schemas for INV-50/INV-53 adapter boundaries (blocked with those layers).",
+   "blockers": []
+  },
+  {
+   "id": "MC-11",
+   "title": "Boundary authentication model",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C023"
+   ],
+   "status": "BLOCKED",
+   "evidence": [
+    "identity.py::bind_to_principal"
+   ],
+   "tests": [
+    "tests.test_components::IdentityTests.test_spoofing_rejected"
+   ],
+   "done": "Identity binding to an authenticated principal.",
+   "remaining": "Actual authentication (mTLS/tokens).",
+   "blockers": [
+    "platform identity provider not specified"
+   ]
+  },
+  {
+   "id": "MC-12",
+   "title": "Authorization/capability model",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C024"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py::SQLiteBackend.control",
+    "sqlite_store.py::SQLiteBackend.release_quarantine"
+   ],
+   "tests": [
+    "tests.test_store::LifecycleTests.test_operator_only_controls",
+    "tests.test_store::StoreTests.test_tampered_row_quarantines"
+   ],
+   "done": "Capability checks (workflow:control, operator) on lifecycle and quarantine release.",
+   "remaining": "Capability issuance/policy engine; per-tenant scoping of capabilities.",
+   "blockers": []
+  },
+  {
+   "id": "MC-13",
+   "title": "Timeout, cancellation, retry, idempotency, and backpressure contract",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C025"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "resilience.py",
+    "effects.py",
+    "sqlite_store.py"
+   ],
+   "tests": [
+    "tests.test_components::ResilienceTests.test_retry_only_after_backoff_class",
+    "tests.test_components::EffectTests.test_crash_after_provider_commit_reconciled_without_duplicate"
+   ],
+   "done": "Retry restricted to after_backoff; idempotency via effect ids; backpressure via admission; lease timeouts.",
+   "remaining": "Activity-level timeout enforcement and cooperative cancellation propagation.",
+   "blockers": []
+  },
+  {
+   "id": "MC-14",
+   "title": "Machine-readable error model",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C026"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "errors.py",
+    "schemas/error.schema.json"
+   ],
+   "tests": [
+    "tests.test_components::ErrorModelTests.test_codes_unique_and_unsafe_detail_hidden",
+    "tests.test_contracts::ContractTests.test_documents_conform"
+   ],
+   "done": "21 stable codes, category, retryability, safe-detail flag, HTTP mapping, JSON schema.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-15",
+   "title": "Cross-version peer compatibility behavior",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C027"
+   ],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "No peer wire protocol yet; cross-version peer behaviour undefined.",
+   "blockers": [
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "MC-16",
+   "title": "Complete interface resource limits",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C028"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "identity.py",
+    "config.py",
+    "durable.py"
+   ],
+   "tests": [
+    "tests.test_components::IdentityTests.test_rejects_bad_fields",
+    "tests.test_durable::DurableReplayTest.test_capacity_is_checked_before_user_code_runs"
+   ],
+   "done": "Identity field length/charset, history bound, config ranges, log field truncation.",
+   "remaining": "Payload size limits per event and per workflow byte budget.",
+   "blockers": []
+  },
+  {
+   "id": "MC-17",
+   "title": "Versioned reference examples and conformance fixtures",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C029"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "fixtures/history_v2_golden.json"
+   ],
+   "tests": [
+    "tests.test_store::BackupRestoreAndFixtureTests.test_golden_fixture_replays"
+   ],
+   "done": "Versioned golden history fixture replayed byte-stably.",
+   "remaining": "Fixtures for adapter protocols; published conformance kit.",
+   "blockers": []
+  },
+  {
+   "id": "MC-18",
+   "title": "Adjacent-layer integration harness and tests",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C030",
+    "C083"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Adjacent-layer harness (INV-50/53/56/69).",
+   "blockers": [
+    "INV-50 state abstraction not supplied",
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "MC-19",
+   "title": "Pinned production implementation/specification",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C031"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "pyproject.toml",
+    "VERSION"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_history_survives_process_restart_and_replays"
+   ],
+   "done": "Pinned package version with single version source; reference persistent backend.",
+   "remaining": "Pinned production backend.",
+   "blockers": [
+    "INV-50 state abstraction not supplied"
+   ]
+  },
+  {
+   "id": "MC-20",
+   "title": "Production artifact/configuration/state separation model",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C032"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "config.py",
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "done": "Artifact (wheel) / config (ledger dir) / state (state_path DB) are separate paths.",
+   "remaining": "Deployment-level enforcement (read-only artifact FS).",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-21",
+   "title": "Declarative configuration schema, secure defaults, and validation",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C033",
+    "C034"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "config.py::validate",
+    "schemas/config.schema.json"
+   ],
+   "tests": [
+    "tests.test_components::ConfigTests.test_defaults_valid_and_secure",
+    "tests.test_components::ConfigTests.test_rejections"
+   ],
+   "done": "Typed schema, unknown-key rejection, ranges, cross-field rules, secure defaults, prod rules.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-22",
+   "title": "Site/environment configuration overlays",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C035"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "config.py::merge_overlays"
+   ],
+   "tests": [
+    "tests.test_components::ConfigTests.test_overlays"
+   ],
+   "done": "Ordered overlays validated as a whole.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-23",
+   "title": "Configuration provenance ledger",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C036"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "config.py::ConfigManager"
+   ],
+   "tests": [
+    "tests.test_components::ConfigTests.test_activation_ledger_and_rollback"
+   ],
+   "done": "Hash-chained, fsynced provenance ledger; tamper detected on load.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-24",
+   "title": "Atomic configuration activation",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C037"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "config.py::ConfigManager.activate"
+   ],
+   "tests": [
+    "tests.test_components::ConfigTests.test_activation_ledger_and_rollback"
+   ],
+   "done": "Validate-before-write, fsync + os.replace atomic swap; rejected config never becomes active.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-25",
+   "title": "Executable configuration/deployment rollback",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C038"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "config.py::ConfigManager.rollback"
+   ],
+   "tests": [
+    "tests.test_components::ConfigTests.test_activation_ledger_and_rollback"
+   ],
+   "done": "Configuration rollback by digest, recorded in ledger.",
+   "remaining": "Deployment rollback.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-26",
+   "title": "Secret-provider integration and secret separation",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C039"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "config.py::validate"
+   ],
+   "tests": [
+    "tests.test_components::ConfigTests.test_rejections"
+   ],
+   "done": "Inline secrets rejected; secretref:// indirection required in prod.",
+   "remaining": "Secret provider integration.",
+   "blockers": [
+    "secret provider not specified"
+   ]
+  },
+  {
+   "id": "MC-27",
+   "title": "Deterministic bootstrap/deployment path",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C040"
+   ],
+   "status": "BLOCKED",
+   "evidence": [
+    "ci.sh"
+   ],
+   "tests": [],
+   "done": "Deterministic local build/install path.",
+   "remaining": "Deployment bootstrap.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-28",
+   "title": "Complete durable-execution threat model",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C041"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/ARCHITECTURE.md"
+   ],
+   "tests": [],
+   "done": "Threat table with controls and residual risk.",
+   "remaining": "Formal STRIDE review, sign-off.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-29",
+   "title": "Least privilege and ambient-authority elimination",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C042",
+    "C043"
+   ],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Least-privilege runtime identity; depends on deployment.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-30",
+   "title": "Trust bootstrap for nodes/peers/artifacts/providers/control plane",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C044"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Trust bootstrap for nodes/peers/artifacts.",
+   "blockers": [
+    "no release signing key / trust policy / KMS supplied",
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-31",
+   "title": "Artifact signature, digest, provenance, and approved-version verification",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C045"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Artifact signature/provenance verification.",
+   "blockers": [
+    "no release signing key / trust policy / KMS supplied"
+   ]
+  },
+  {
+   "id": "MC-32",
+   "title": "Tenant/workload isolation enforcement",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C046"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "identity.py",
+    "sqlite_store.py"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_tenants_isolated_by_key",
+    "tests.test_components::IdentityTests.test_spoofing_rejected",
+    "tests.test_components::IdentityTests.test_key_injective_and_roundtrip"
+   ],
+   "done": "Injective per-tenant keys; principal binding.",
+   "remaining": "Storage-level isolation / per-tenant encryption.",
+   "blockers": []
+  },
+  {
+   "id": "MC-33",
+   "title": "Encryption and managed key rotation",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C047"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Encryption at rest and key rotation.",
+   "blockers": [
+    "no release signing key / trust policy / KMS supplied"
+   ]
+  },
+  {
+   "id": "MC-34",
+   "title": "Safe behavior when trust/key/time dependencies fail",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C048"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "status.py"
+   ],
+   "tests": [
+    "tests.test_components::TelemetryStatusTests.test_status_transitions_and_probe_cache"
+   ],
+   "done": "Failed time/dependency probes drop readiness with reason codes.",
+   "remaining": "Key-service failure behaviour.",
+   "blockers": [
+    "no release signing key / trust policy / KMS supplied"
+   ]
+  },
+  {
+   "id": "MC-35",
+   "title": "Security-sensitive audit event pipeline",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C049"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py::SQLiteBackend.lifecycle_log",
+    "config.py::ConfigManager"
+   ],
+   "tests": [
+    "tests.test_store::LifecycleTests.test_happy_path_and_log",
+    "tests.test_components::ConfigTests.test_activation_ledger_and_rollback"
+   ],
+   "done": "Durable audit trails for lifecycle controls and config changes.",
+   "remaining": "Central tamper-evident audit sink.",
+   "blockers": []
+  },
+  {
+   "id": "MC-36",
+   "title": "Threat-derived adversarial/security test suite",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C050",
+    "C087"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_store.py",
+    "tests/test_property.py"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_tampered_row_quarantines",
+    "tests.test_store::StoreTests.test_stale_owner_cannot_commit_after_takeover",
+    "tests.test_components::IdentityTests.test_spoofing_rejected",
+    "tests.test_property::PropertyTests.test_any_single_byte_mutation_of_history_is_detected_or_harmless",
+    "tests.test_review_findings::R1EffectScoping.test_foreign_lease_cannot_mark_or_alias_effect",
+    "tests.test_review_findings::R2FrozenPayload.test_payload_cannot_be_mutated_through_events",
+    "tests.test_review_findings::R3GateHardening.test_symlinked_evidence_rejected"
+   ],
+   "done": "Tamper, stale-owner, spoofing, mutation-fuzz, cross-workflow effect, in-memory payload mutation, symlink-evidence tests.",
+   "remaining": "Tests for authn/authz once MC-11 exists.",
+   "blockers": []
+  },
+  {
+   "id": "MC-37",
+   "title": "Full failure taxonomy plus health/stall detection",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C051",
+    "C052"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "errors.py",
+    "status.py"
+   ],
+   "tests": [
+    "tests.test_components::ErrorModelTests.test_codes_unique_and_unsafe_detail_hidden"
+   ],
+   "done": "Failure taxonomy = error registry.",
+   "remaining": "Stalled-workflow detection.",
+   "blockers": []
+  },
+  {
+   "id": "MC-38",
+   "title": "Bounded retry, backoff/jitter, admission control, load shedding, circuit breaking",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C053",
+    "C054"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "resilience.py"
+   ],
+   "tests": [
+    "tests.test_components::ResilienceTests.test_retry_only_after_backoff_class",
+    "tests.test_components::ResilienceTests.test_retry_bounded",
+    "tests.test_components::ResilienceTests.test_circuit",
+    "tests.test_components::ResilienceTests.test_admission_fairness"
+   ],
+   "done": "Bounded full-jitter retry, circuit breaker with half-open, admission/shedding.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-39",
+   "title": "Failover and degraded-operation model",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C055",
+    "C056"
+   ],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Failover/degraded-operation model across sites.",
+   "blockers": []
+  },
+  {
+   "id": "MC-40",
+   "title": "Distributed ownership/fencing and split-brain protection",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C058"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_stale_owner_cannot_commit_after_takeover",
+    "tests.test_store::StoreTests.test_expired_lease_rejects_append_even_without_takeover",
+    "tests.test_store::StoreTests.test_concurrent_acquire_exactly_one_wins",
+    "tests.test_property::ConcurrencyTests.test_competing_workers_single_owner_no_lost_or_duplicate_appends"
+   ],
+   "done": "Lease + epoch fencing inside the append transaction on the reference store.",
+   "remaining": "Fencing in the production store and messaging adapters; multi-host clock skew.",
+   "blockers": [
+    "INV-50 state abstraction not supplied",
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "MC-41",
+   "title": "Quarantine/freeze/disable controls and fault-injection recovery suite",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C059",
+    "C060"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py::SQLiteBackend.quarantine",
+    "status.py"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_tampered_row_quarantines",
+    "tests.test_components::TelemetryStatusTests.test_status_transitions_and_probe_cache",
+    "tests.test_crash_boundaries::CrashBoundaryTests.test_every_boundary"
+   ],
+   "done": "Quarantine with operator release; freeze mode; crash-point fault injection.",
+   "remaining": "Tenant-wide disable switch.",
+   "blockers": []
+  },
+  {
+   "id": "MC-42",
+   "title": "Performance baselines, percentile thresholds, load matrix, and tenant overhead",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C061",
+    "C062",
+    "C063",
+    "C064"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "tools/benchmark.py",
+    "evidence/benchmark/summary.json"
+   ],
+   "tests": [
+    "tests.test_performance::PerformanceGate.test_1000_event_replay_under_slo"
+   ],
+   "done": "Replay/append baseline with percentiles on the build machine.",
+   "remaining": "Load matrix, tenant overhead, target hardware.",
+   "blockers": [
+    "no edge/target hardware available for measurement"
+   ]
+  },
+  {
+   "id": "MC-43",
+   "title": "Performance profiling, optimization, and comprehensive resource bounds",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C065",
+    "C066",
+    "C067"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "durable.py::InMemoryHistoryStore.validate"
+   ],
+   "tests": [
+    "tests.test_performance::PerformanceGate.test_replay_scales_linearly"
+   ],
+   "done": "Profiled and removed O(n^2) replay (3.7 s \u2192 5 ms p99 at 1000 events).",
+   "remaining": "Memory bounds per workflow.",
+   "blockers": []
+  },
+  {
+   "id": "MC-44",
+   "title": "Edge power and thermal measurement",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C068"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Edge power/thermal measurement.",
+   "blockers": [
+    "no edge/target hardware available for measurement"
+   ]
+  },
+  {
+   "id": "MC-45",
+   "title": "Capacity model and saturation signals",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C069"
+   ],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Capacity model and saturation signals.",
+   "blockers": []
+  },
+  {
+   "id": "MC-46",
+   "title": "Performance regression release gate",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C070"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "tools/benchmark.py",
+    "tests/test_performance.py"
+   ],
+   "tests": [
+    "tests.test_performance::PerformanceGate.test_replay_scales_linearly",
+    "tests.test_performance::PerformanceGate.test_1000_event_replay_under_slo"
+   ],
+   "done": "Regression gate in the test suite plus --baseline comparison in the benchmark.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-47",
+   "title": "Health/readiness/version/config/dependency/capability status surface",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C071"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "status.py",
+    "__main__.py",
+    "schemas/status.schema.json"
+   ],
+   "tests": [
+    "tests.test_components::TelemetryStatusTests.test_status_transitions_and_probe_cache",
+    "tests.test_contracts::ContractTests.test_documents_conform"
+   ],
+   "done": "Liveness/readiness split, reason codes, cached probes, capability set, CLI view.",
+   "remaining": "HTTP endpoint (deployment).",
+   "blockers": []
+  },
+  {
+   "id": "MC-48",
+   "title": "Metrics, structured logs, and distributed tracing implementation",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C072",
+    "C073",
+    "C074"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "telemetry.py"
+   ],
+   "tests": [
+    "tests.test_components::TelemetryStatusTests.test_metrics_logs_and_redaction"
+   ],
+   "done": "Counters/gauges with Prometheus exposition, JSON logs, W3C trace ids.",
+   "remaining": "Exporter to a real backend.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-49",
+   "title": "Privacy-safe diagnostics, decision reasons, explain view, and lineage/topology correlation",
+   "audit_status_4_2_0": "PARTIAL/MISSING",
+   "c_items": [
+    "C075",
+    "C076",
+    "C077",
+    "C078"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "telemetry.py",
+    "errors.py"
+   ],
+   "tests": [
+    "tests.test_components::TelemetryStatusTests.test_metrics_logs_and_redaction",
+    "tests.test_components::ErrorModelTests.test_codes_unique_and_unsafe_detail_hidden"
+   ],
+   "done": "Field allowlist, redaction, hashed tenant refs, error-code decision reasons.",
+   "remaining": "Explain view, lineage.",
+   "blockers": []
+  },
+  {
+   "id": "MC-50",
+   "title": "Telemetry governance plus dashboards/alerts",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C079",
+    "C080"
+   ],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Dashboards/alerts and telemetry governance.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-51",
+   "title": "Complete public-interface contract tests",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C082"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "tests/test_contracts.py"
+   ],
+   "tests": [
+    "tests.test_contracts::ContractTests.test_documents_conform",
+    "tests.test_contracts::ContractTests.test_validator_rejects_bad_documents",
+    "tests.test_contracts::ContractTests.test_no_schema_drift"
+   ],
+   "done": "Every public document validated against its schema.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-52",
+   "title": "Platform/protocol compatibility matrix and tests",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C084",
+    "C093"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "done": "CI matrix 3.10-3.12 declared; run here on 3.11 only.",
+   "remaining": "Matrix actually executed.",
+   "blockers": []
+  },
+  {
+   "id": "MC-53",
+   "title": "Fuzz/property testing",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C085"
+   ],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "tests/test_property.py"
+   ],
+   "tests": [
+    "tests.test_property::PropertyTests.test_encoding_roundtrip_is_exact_and_canonical",
+    "tests.test_property::PropertyTests.test_any_single_byte_mutation_of_history_is_detected_or_harmless",
+    "tests.test_property::PropertyTests.test_identity_fuzz_never_crashes_uncontrolled",
+    "tests.test_property::PropertyTests.test_random_divergence_always_detected",
+    "tests.test_property::PropertyTests.test_replay_equals_first_run_for_random_workflows",
+    "tests.test_review_findings::R4DecoderEscapes.test_wrong_typed_fields",
+    "tests.test_review_findings::R4DecoderEscapes.test_deep_nesting_and_bytes"
+   ],
+   "done": "Seeded property/fuzz suite plus review-derived decoder cases (found the baseline KeyError escape and, via review, 3 more escape paths).",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "MC-54",
+   "title": "Shared/distributed-state concurrency and race tests",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C086"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "tests/test_property.py",
+    "tests/test_store.py"
+   ],
+   "tests": [
+    "tests.test_property::ConcurrencyTests.test_competing_workers_single_owner_no_lost_or_duplicate_appends",
+    "tests.test_store::StoreTests.test_concurrent_acquire_exactly_one_wins"
+   ],
+   "done": "Multi-connection contention on the reference store.",
+   "remaining": "Distributed-state races.",
+   "blockers": [
+    "INV-50 state abstraction not supplied"
+   ]
+  },
+  {
+   "id": "MC-55",
+   "title": "Benchmark, soak, burst, and fleet-scale test suites",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C088"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Soak/burst/fleet suites.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable",
+    "no edge/target hardware available for measurement"
+   ]
+  },
+  {
+   "id": "MC-56",
+   "title": "Disaster, partition, reconnect, and degraded-control-plane tests",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C089"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Partition/reconnect/control-plane tests.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable",
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "MC-57",
+   "title": "Machine-readable production acceptance evidence and formal exit gate",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C090",
+    "C100"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "acceptance.py",
+    "__main__.py",
+    "tools/run_tests.py",
+    "TRUST_POLICY.json"
+   ],
+   "tests": [
+    "tests.test_components::GateTests.test_package_gate_is_no_go_with_reasons",
+    "tests.test_components::GateTests.test_gate_rejects_unresolved_evidence_and_skipped_tests",
+    "tests.test_components::GateTests.test_waivers",
+    "tests.test_review_findings::R3GateHardening.test_symlinked_evidence_rejected",
+    "tests.test_review_findings::R3GateHardening.test_forged_everything_with_untrusted_key_is_still_no_go"
+   ],
+   "done": "Executable fail-closed gate: evidence digests, skipped\u2260passed, waiver validity, owner check.",
+   "remaining": "Signed attestation.",
+   "blockers": [
+    "no release signing key / trust policy / KMS supplied"
+   ]
+  },
+  {
+   "id": "MC-58",
+   "title": "Measured production SLOs plus support commitments",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C091"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Measured production SLOs.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-59",
+   "title": "Canary/staged rollout, rollback, and emergency-disable procedures",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C092"
+   ],
+   "status": "BLOCKED",
+   "evidence": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "done": "",
+   "remaining": "Canary/rollout procedures rehearsed.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-60",
+   "title": "Patching, vulnerability-response, and EOL policy",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C094"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Patching/vulnerability/EOL policy.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-61",
+   "title": "Persistent backup/restore/migration/reconstruction procedures",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C095"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py::SQLiteBackend.backup",
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [
+    "tests.test_store::BackupRestoreAndFixtureTests.test_backup_restore_verifies_and_fences_old_workers",
+    "tests.test_store::BackupRestoreAndFixtureTests.test_restore_detects_truncated_backup"
+   ],
+   "done": "Online backup, verified restore with external tail manifest and epoch fencing.",
+   "remaining": "Production-store backup; rehearsal.",
+   "blockers": [
+    "INV-50 state abstraction not supplied"
+   ]
+  },
+  {
+   "id": "MC-62",
+   "title": "Complete day-0/day-1/day-2 operator runbooks",
+   "audit_status_4_2_0": "PARTIAL",
+   "c_items": [
+    "C096"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "done": "Day-0/1/2 runbook draft.",
+   "remaining": "Rehearsal.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "MC-63",
+   "title": "Incident severity, paging, escalation, containment, and recovery procedures",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C097"
+   ],
+   "status": "BLOCKED",
+   "evidence": [
+    "docs/OPERATIONS.md"
+   ],
+   "tests": [],
+   "done": "Severity table draft.",
+   "remaining": "Paging/escalation targets.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-64",
+   "title": "Recurring security/configuration/dependency/architecture review process",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C098"
+   ],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Recurring review process.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "MC-65",
+   "title": "Exception/waiver/technical-debt/deprecation ledger",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [
+    "C099"
+   ],
+   "status": "PARTIAL",
+   "evidence": [
+    "WAIVERS.json",
+    "acceptance.py::valid_waiver"
+   ],
+   "tests": [
+    "tests.test_components::GateTests.test_waivers"
+   ],
+   "done": "Waiver ledger schema and validity rules enforced by the gate (0 waivers granted).",
+   "remaining": "Debt/deprecation entries.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "SG-01",
+   "title": "Persistent production `HistoryStore` adapter",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_history_survives_process_restart_and_replays",
+    "tests.test_store::StoreTests.test_conditional_append_rejects_out_of_order",
+    "tests.test_store::StoreTests.test_tampered_row_quarantines",
+    "tests.test_crash_boundaries::CrashBoundaryTests.test_every_boundary"
+   ],
+   "done": "Backend contract implemented on SQLite: ordered read, conditional append, fencing txn, chain-on-read, quarantine, fsync semantics.",
+   "remaining": "Approved production store; encryption; retention hooks.",
+   "blockers": [
+    "INV-50 state abstraction not supplied"
+   ]
+  },
+  {
+   "id": "SG-02",
+   "title": "Workflow instance identity and namespace",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "identity.py",
+    "schemas/identity.schema.json"
+   ],
+   "tests": [
+    "tests.test_components::IdentityTests.test_rejects_bad_fields",
+    "tests.test_components::IdentityTests.test_key_injective_and_roundtrip",
+    "tests.test_components::IdentityTests.test_next_run_and_generated",
+    "tests.test_components::IdentityTests.test_spoofing_rejected",
+    "tests.test_property::PropertyTests.test_identity_fuzz_never_crashes_uncontrolled"
+   ],
+   "done": "Composite immutable identity, injective key, principal binding, run rollover, fuzzed parser.",
+   "remaining": "Tombstones against id reuse.",
+   "blockers": []
+  },
+  {
+   "id": "SG-03",
+   "title": "Distributed fencing/lease implementation",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py"
+   ],
+   "tests": [
+    "tests.test_store::StoreTests.test_stale_owner_cannot_commit_after_takeover",
+    "tests.test_crash_boundaries::CrashBoundaryTests.test_every_boundary"
+   ],
+   "done": "Fencing on every append/effect mutation in the reference store; multi-process takeover proven.",
+   "remaining": "Production store + messaging.",
+   "blockers": [
+    "INV-50 state abstraction not supplied",
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "SG-04",
+   "title": "External-effect protocol",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "effects.py"
+   ],
+   "tests": [
+    "tests.test_components::EffectTests.test_effect_id_stable_and_replay_does_not_resubmit",
+    "tests.test_components::EffectTests.test_crash_after_provider_commit_reconciled_without_duplicate",
+    "tests.test_components::EffectTests.test_unsafe_class_goes_to_operator",
+    "tests.test_components::EffectTests.test_request_change_is_nondeterminism",
+    "tests.test_review_findings::R1EffectScoping.test_foreign_lease_cannot_mark_or_alias_effect",
+    "tests.test_review_findings::R5EffectCrashBoundaries.test_kill_at_every_effect_ledger_commit"
+   ],
+   "done": "Effect classes, deterministic ids, prepared-before-dispatch, receipt reconciliation, operator path.",
+   "remaining": "Real provider adapters; receipt lookup timeouts.",
+   "blockers": []
+  },
+  {
+   "id": "SG-05",
+   "title": "INV-50 state adapter",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "INV-50 adapter.",
+   "blockers": [
+    "INV-50 state abstraction not supplied"
+   ]
+  },
+  {
+   "id": "SG-06",
+   "title": "INV-53 reliable messaging adapter",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "INV-53 adapter.",
+   "blockers": [
+    "INV-53 reliable messaging not supplied"
+   ]
+  },
+  {
+   "id": "SG-07",
+   "title": "History lifecycle tooling",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "OPEN",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Snapshots, compaction, archival.",
+   "blockers": []
+  },
+  {
+   "id": "SG-08",
+   "title": "Complete workflow lifecycle controls",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "PARTIAL",
+   "evidence": [
+    "lifecycle.py",
+    "sqlite_store.py::SQLiteBackend.control"
+   ],
+   "tests": [
+    "tests.test_store::LifecycleTests.test_operator_only_controls",
+    "tests.test_store::LifecycleTests.test_cas_version",
+    "tests.test_store::LifecycleTests.test_terminal_refuses_and_idempotent_repeat"
+   ],
+   "done": "Authorized, durable, idempotent controls with CAS.",
+   "remaining": "Cancellation propagation into running activities/timers.",
+   "blockers": []
+  },
+  {
+   "id": "SG-09",
+   "title": "Cross-process crash/commit-boundary semantics",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "PARTIAL",
+   "evidence": [
+    "sqlite_store.py::_crash_point",
+    "tests/test_crash_boundaries.py",
+    "tests/test_review_findings.py"
+   ],
+   "tests": [
+    "tests.test_crash_boundaries::CrashBoundaryTests.test_every_boundary",
+    "tests.test_review_findings::R5EffectCrashBoundaries.test_kill_at_every_effect_ledger_commit"
+   ],
+   "done": "Real subprocess killed before/after all 6 history commits and all 4 effect-ledger commits; exact recovered state and single real effect verified.",
+   "remaining": "Kill points at lease-renew/lifecycle/config boundaries; power-loss (torn WAL); production-store failover.",
+   "blockers": [
+    "INV-50 state abstraction not supplied"
+   ]
+  },
+  {
+   "id": "RG-01",
+   "title": "Pin or package `pk_core` conformance dependency",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "BLOCKED",
+   "evidence": [
+    "tests/test_component.py"
+   ],
+   "tests": [],
+   "done": "pk_core tests skip visibly; the gate never counts a skip.",
+   "remaining": "Pin pk_core.",
+   "blockers": [
+    "pk_core source, version and licence unknown"
+   ]
+  },
+  {
+   "id": "RG-02",
+   "title": "Build/package manifest",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "pyproject.toml",
+    "ci.sh",
+    "evidence/wheel.sha256"
+   ],
+   "tests": [
+    "tests.test_component::PackageMetadataTest.test_version"
+   ],
+   "done": "pyproject, single version source, byte-reproducible wheel (two builds compared), installed-wheel tests, clean uninstall.",
+   "remaining": "Supported-platform matrix beyond CPython 3.11/Linux.",
+   "blockers": []
+  },
+  {
+   "id": "RG-03",
+   "title": "CI/release workflow",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "PARTIAL",
+   "evidence": [
+    "ci.sh",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [],
+   "done": "Local CI script run end-to-end; hosted workflow checked in.",
+   "remaining": "Pin action SHAs; run on hosted CI; protected release.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  },
+  {
+   "id": "RG-04",
+   "title": "License and notices",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Choose licence; NOTICE.",
+   "blockers": [
+    "licence choice belongs to the owner"
+   ]
+  },
+  {
+   "id": "RG-05",
+   "title": "Deployment artifacts",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "Deployment manifests.",
+   "blockers": [
+    "target deployment environment (Kubernetes/Dapr/site) not specified or reachable"
+   ]
+  },
+  {
+   "id": "RG-06",
+   "title": "SBOM, provenance, signing",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "BLOCKED",
+   "evidence": [],
+   "tests": [],
+   "done": "",
+   "remaining": "SBOM/provenance/signing.",
+   "blockers": [
+    "no release signing key / trust policy / KMS supplied"
+   ]
+  },
+  {
+   "id": "RG-07",
+   "title": "Benchmark evidence bundle",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "IMPLEMENTED_LOCAL",
+   "evidence": [
+    "evidence/benchmark/BUNDLE.json",
+    "evidence/benchmark/raw_samples.json",
+    "evidence/benchmark/environment.json",
+    "evidence/benchmark/evaluation.json"
+   ],
+   "tests": [
+    "tests.test_performance::PerformanceGate.test_1000_event_replay_under_slo"
+   ],
+   "done": "Versioned bundle with raw samples, env, workload, evaluation and per-file hashes.",
+   "remaining": "",
+   "blockers": []
+  },
+  {
+   "id": "RG-08",
+   "title": "Missing original `MASTER.md` source artifact",
+   "audit_status_4_2_0": "MISSING",
+   "c_items": [],
+   "status": "PARTIAL",
+   "evidence": [
+    "acceptance.py::absent_artifact_claims"
+   ],
+   "tests": [
+    "tests.test_components::GateTests.test_rg08_claim_check"
+   ],
+   "done": "Validation check prevents docs claiming MASTER.md is present.",
+   "remaining": "Governed retirement decision.",
+   "blockers": [
+    "accountable owner/approver not named (OWNERS.yaml unresolved)"
+   ]
+  }
+ ]
+}

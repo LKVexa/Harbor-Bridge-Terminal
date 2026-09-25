@@ -1,0 +1,24 @@
+# G13-MC-041 — accountable ownership.  Roles and escalation are defined here;
+# the NAMES must be supplied by the organisation.  They are deliberately left
+# UNASSIGNED rather than invented, and the production gate fails while any
+# required role is UNASSIGNED.
+schema: PK_POLICY_OWNERS/1
+component: GAP-13 Policy engine
+review_cadence: every release and every organisational change
+roles:
+  service_owner:        {assignee: UNASSIGNED, backup: UNASSIGNED, accountable_for: [architecture, lifecycle, production release approval]}
+  operations_oncall:    {assignee: UNASSIGNED, backup: UNASSIGNED, rotation: UNASSIGNED, accountable_for: [SEV1-SEV3 response, rollback, freeze]}
+  security_owner:       {assignee: UNASSIGNED, backup: UNASSIGNED, accountable_for: [threat model, vulnerabilities, trust-boundary changes, quarantine, evaluation disable]}
+  architecture_authority: {assignee: UNASSIGNED, accountable_for: [ADR approval]}
+  trust_store_admin:    {assignee: UNASSIGNED, accountable_for: [GAP-07 trust store, key rotation]}
+approval_authorities:
+  production_release: [service_owner, security_owner]
+  rollback: [operations_oncall]
+  emergency_freeze_or_deny_only: [operations_oncall, security_owner]
+  evaluation_disable_or_quarantine: [security_owner]
+  waiver_or_exception: [service_owner, security_owner]
+escalation:
+  SEV1: [operations_oncall, security_owner, service_owner]     # page immediately, 15 min ack
+  SEV2: [operations_oncall, service_owner]                     # page, 30 min ack
+  SEV3: [operations_oncall]                                    # ticket, next business day
+  SEV4: [service_owner]                                        # backlog

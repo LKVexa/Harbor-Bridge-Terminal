@@ -1,0 +1,96 @@
+{
+ "title": "INV-30 Capability Hardware Sandbox",
+ "schemaVersion": 39,
+ "panels": [
+  {
+   "id": 1,
+   "title": "Ordinary load",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum by (op) (rate(inv30_requests_total{outcome=\"ok\"}[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "title": "Latency p50/p99 (ms)",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.99, sum by (le,op) (rate(inv30_latency_ms_bucket[5m])))"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "title": "Degradation: breaker/backend",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum(rate(inv30_requests_total{outcome=~\"CIRCUIT_OPEN|BACKEND_UNAVAILABLE\"}[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "title": "Policy rejections by code",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum by (outcome) (rate(inv30_requests_total{outcome!=\"ok\"}[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "title": "Dependency failure",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum(rate(inv30_requests_total{outcome=\"DEPENDENCY_INCOMPATIBLE\"}[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "title": "Overload shed",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum(rate(inv30_requests_total{outcome=\"OVERLOADED\"}[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "title": "Active capabilities",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "inv30_active_capabilities"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "title": "Contract signals",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum(rate(inv30_bounds_violations_total[5m])) , sum(rate(inv30_permission_violations_total[5m])), sum(rate(inv30_invalidated_uses_total[5m]))"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "title": "INVARIANT VIOLATIONS SERVED (must be 0)",
+   "type": "timeseries",
+   "targets": [
+    {
+     "expr": "sum(inv30_invariant_violation_served_total)"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,46 @@
+{
+  "$comment": "C009 accountable ownership. Team/service identifiers are authoritative; people are contacts. VACANT fields block the release gate (tools/gate.py check C009). Changes require review by the approving authority (CODEOWNERS) and are recorded in governance/OWNERS_HISTORY.json.",
+  "schema": "INV18_OWNERS/1",
+  "component": "INV-18",
+  "roles": {
+    "primary_technical_owner": {"team": "team:inv18-core", "contact": "David Paul Russell <davidpaulrussell@linearfinance.org>"},
+    "backup_owner": {"team": "VACANT", "contact": "VACANT"},
+    "security_owner": {"team": "VACANT", "contact": "VACANT"},
+    "operational_owner": {"team": "VACANT", "contact": "VACANT"},
+    "approving_authority": {"team": "team:linearfinance-research", "contact": "David Paul Russell <davidpaulrussell@linearfinance.org>"}
+  },
+  "required_roles": ["primary_technical_owner", "backup_owner", "security_owner", "operational_owner", "approving_authority"],
+  "areas": {
+    "future.py": "primary_technical_owner",
+    "runtime.py": "primary_technical_owner",
+    "errors.py": "primary_technical_owner",
+    "wire.py": "primary_technical_owner",
+    "schemas/": "primary_technical_owner",
+    "fixtures/": "primary_technical_owner",
+    "auth.py": "security_owner",
+    "adapters.py": "security_owner",
+    "config.py": "operational_owner",
+    "config/": "operational_owner",
+    "tests/": "primary_technical_owner",
+    "conformance/": "approving_authority",
+    "governance/": "approving_authority",
+    "docs/SECURITY.md": "security_owner",
+    "docs/OPERATIONS.md": "operational_owner"
+  },
+  "escalation": [
+    {"tier": 1, "role": "component owner", "who": "primary_technical_owner"},
+    {"tier": 2, "role": "platform/runtime owner", "who": "operational_owner"},
+    {"tier": 3, "role": "security / SRE", "who": "security_owner"},
+    {"tier": 4, "role": "incident commander", "who": "approving_authority"}
+  ],
+  "escalation_triggers": {
+    "concurrency_violation": {"start_tier": 1, "severity": "SEV1"},
+    "schema_incompatibility": {"start_tier": 1, "severity": "SEV2"},
+    "security_issue": {"start_tier": 3, "severity": "SEV1"},
+    "slo_breach": {"start_tier": 2, "severity": "SEV2"},
+    "corrupted_evidence": {"start_tier": 3, "severity": "SEV1"},
+    "release_gate_failure": {"start_tier": 1, "severity": "SEV3"}
+  },
+  "response_targets_minutes": {"SEV1": {"ack": 15, "update": 60}, "SEV2": {"ack": 60, "update": 240}, "SEV3": {"ack": 1440, "update": 4320}},
+  "after_hours": "No 24x7 on-call exists yet. Until operational_owner is assigned, INV-18 is supported business hours only (Mon-Fri 09:00-17:00 America/Los_Angeles) and MUST NOT be promoted to a production context that requires after-hours response."
+}

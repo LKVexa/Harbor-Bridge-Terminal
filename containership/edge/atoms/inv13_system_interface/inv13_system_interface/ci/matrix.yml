@@ -1,0 +1,22 @@
+# MC-020 certification matrix (GitHub Actions syntax). Only linux/x86_64/py3.11 has been executed
+# for this release (evidence/); the rest are declared targets and remain OPEN until CI evidence exists.
+name: inv13-certification
+on: [push, pull_request]
+jobs:
+  gate:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-14, windows-2022]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        node: ["18", "22"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ matrix.node }}" }
+      - run: python inv13_system_interface/tools/gate.py --out evidence/${{ matrix.os }}-py${{ matrix.python }}-node${{ matrix.node }}
+      - uses: actions/upload-artifact@v4
+        with: { name: "evidence-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.node }}", path: evidence/ }

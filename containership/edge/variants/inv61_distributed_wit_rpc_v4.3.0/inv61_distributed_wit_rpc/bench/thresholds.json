@@ -1,0 +1,15 @@
+{
+  "schema": "inv61-perf-thresholds/1",
+  "note": "SLO rows come from contract.py; regression rows are release-blocking ceilings set at ~1.6x the 4.3.0 reference baseline (2 vCPU x86-64 container, CPython 3.11).",
+  "gates": [
+    {"id": "SLO-overhead", "metric": "codec_roundtrip.p99_us", "max": 50.0, "kind": "slo"},
+    {"id": "REG-codec-p50", "metric": "codec_roundtrip.p50_us", "max": 30.0, "kind": "regression"},
+    {"id": "REG-pipeline-p99", "metric": "pipeline_inproc.p99_us", "max": 250.0, "kind": "regression"},
+    {"id": "REG-loopback-p99", "metric": "loopback_steady.p99_us", "max": 1500.0, "kind": "regression"},
+    {"id": "REG-loopback-tput", "metric": "loopback_steady.throughput_per_s", "min": 1500.0, "kind": "regression"},
+    {"id": "REG-overload-shed", "metric": "overload.shed_is_fast", "equals": true, "kind": "regression"},
+    {"id": "REG-tenant-fairness", "metric": "per_tenant.p99_spread_ratio", "max": 2.0, "kind": "regression"},
+    {"id": "REG-soak-errors", "metric": "soak.errors", "max": 0, "kind": "regression"},
+    {"id": "REG-soak-rss-plateau-mb", "metric": "soak.rss_second_half_growth_mb", "max": 8.0, "kind": "regression", "note": "bounded caches fill in the first window; the second half must plateau"}
+  ]
+}

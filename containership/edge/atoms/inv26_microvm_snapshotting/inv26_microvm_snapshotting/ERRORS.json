@@ -1,0 +1,396 @@
+{
+ "codes": [
+  {
+   "code": "SNAP_NOT_FOUND",
+   "http": 404,
+   "number": 1001,
+   "operator_action": "verify snapshot id; check deletion/quarantine audit trail",
+   "outcome": "terminal_failure",
+   "public_message": "snapshot not found",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_DUPLICATE",
+   "http": 409,
+   "number": 1002,
+   "operator_action": "use a new snapshot id or delete the existing one",
+   "outcome": "terminal_failure",
+   "public_message": "snapshot already exists",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_TENANT_MISMATCH",
+   "http": 403,
+   "number": 1101,
+   "operator_action": "investigate as possible cross-tenant attempt (SEV per INCIDENT_RESPONSE)",
+   "outcome": "policy_rejection",
+   "public_message": "restore refused by security boundary",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_WORKLOAD_MISMATCH",
+   "http": 403,
+   "number": 1102,
+   "operator_action": "check workload identity binding",
+   "outcome": "policy_rejection",
+   "public_message": "restore refused by security boundary",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_ENVIRONMENT_MISMATCH",
+   "http": 403,
+   "number": 1103,
+   "operator_action": "snapshots do not cross environments; re-capture",
+   "outcome": "policy_rejection",
+   "public_message": "restore refused by security boundary",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_MODEL_MISMATCH",
+   "http": 409,
+   "number": 1201,
+   "operator_action": "re-capture on the current device model",
+   "outcome": "integrity_rejection",
+   "public_message": "device model incompatible with snapshot",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_UNSUPPORTED_VERSION",
+   "http": 400,
+   "number": 1202,
+   "operator_action": "upgrade client or re-capture (COMPATIBILITY.md)",
+   "outcome": "terminal_failure",
+   "public_message": "unsupported schema version",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_SIGNATURE_INVALID",
+   "http": 422,
+   "number": 1301,
+   "operator_action": "quarantine snapshot; investigate tampering",
+   "outcome": "integrity_rejection",
+   "public_message": "snapshot integrity verification failed",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_CIPHERTEXT_INVALID",
+   "http": 422,
+   "number": 1302,
+   "operator_action": "quarantine snapshot; check storage corruption",
+   "outcome": "integrity_rejection",
+   "public_message": "snapshot integrity verification failed",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_STORAGE_CORRUPT",
+   "http": 422,
+   "number": 1303,
+   "operator_action": "quarantine; restore from backup or re-capture",
+   "outcome": "integrity_rejection",
+   "public_message": "snapshot integrity verification failed",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_KMS_UNAVAILABLE",
+   "http": 503,
+   "number": 1401,
+   "operator_action": "check KMS health; restores fail closed until it returns",
+   "outcome": "retryable_failure",
+   "public_message": "key service unavailable",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_KEY_REVOKED",
+   "http": 403,
+   "number": 1402,
+   "operator_action": "snapshot is cryptographically erased or key disabled; re-capture",
+   "outcome": "terminal_failure",
+   "public_message": "key revoked or disabled",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_ENTROPY_FAILED",
+   "http": 500,
+   "number": 1501,
+   "operator_action": "guest kept paused and destroyed; check guest agent/VMGenID",
+   "outcome": "retryable_failure",
+   "public_message": "guest entropy injection failed",
+   "retryable": true,
+   "security": true
+  },
+  {
+   "code": "SNAP_HYPERVISOR_FAILED",
+   "http": 502,
+   "number": 1502,
+   "operator_action": "check hypervisor adapter health",
+   "outcome": "retryable_failure",
+   "public_message": "hypervisor operation failed",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_STORAGE_UNAVAILABLE",
+   "http": 503,
+   "number": 1503,
+   "operator_action": "check storage backend",
+   "outcome": "retryable_failure",
+   "public_message": "snapshot storage unavailable",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_STORAGE_FULL",
+   "http": 507,
+   "number": 1504,
+   "operator_action": "free capacity or raise quota",
+   "outcome": "retryable_failure",
+   "public_message": "snapshot storage full",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_TIMEOUT",
+   "http": 504,
+   "number": 1601,
+   "operator_action": "inspect dependency latency; retry with same idempotency key",
+   "outcome": "retryable_failure",
+   "public_message": "operation deadline exceeded",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_CANCELLED",
+   "http": 499,
+   "number": 1602,
+   "operator_action": "none; cleanup already performed",
+   "outcome": "operator_aborted",
+   "public_message": "operation cancelled",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_OVERLOADED",
+   "http": 429,
+   "number": 1603,
+   "operator_action": "honour retry_after_s; check capacity (C069)",
+   "outcome": "retryable_failure",
+   "public_message": "service overloaded",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_QUOTA_EXCEEDED",
+   "http": 429,
+   "number": 1604,
+   "operator_action": "raise quota via config change or delete snapshots",
+   "outcome": "policy_rejection",
+   "public_message": "quota exceeded",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_CIRCUIT_OPEN",
+   "http": 503,
+   "number": 1605,
+   "operator_action": "wait for half-open probe; check dependency",
+   "outcome": "retryable_failure",
+   "public_message": "dependency circuit open",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_QUARANTINED",
+   "http": 423,
+   "number": 1701,
+   "operator_action": "security owner must review before release (RUNBOOK)",
+   "outcome": "operator_aborted",
+   "public_message": "snapshot quarantined",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_DISABLED",
+   "http": 503,
+   "number": 1702,
+   "operator_action": "emergency disable is active (RUNBOOK)",
+   "outcome": "operator_aborted",
+   "public_message": "snapshotting disabled by operator",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_UNAUTHENTICATED",
+   "http": 401,
+   "number": 1801,
+   "operator_action": "check caller credentials/audience/expiry",
+   "outcome": "policy_rejection",
+   "public_message": "authentication required",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_FORBIDDEN",
+   "http": 403,
+   "number": 1802,
+   "operator_action": "grant capability through policy change",
+   "outcome": "policy_rejection",
+   "public_message": "not authorized",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_GRANT_INVALID",
+   "http": 403,
+   "number": 1803,
+   "operator_action": "issue a new restore grant",
+   "outcome": "policy_rejection",
+   "public_message": "restore grant invalid",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_GRANT_REPLAYED",
+   "http": 409,
+   "number": 1804,
+   "operator_action": "possible replay; investigate (INCIDENT_RESPONSE)",
+   "outcome": "policy_rejection",
+   "public_message": "restore grant already consumed",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_RESIDENCY_VIOLATION",
+   "http": 403,
+   "number": 1805,
+   "operator_action": "restore only in permitted site/region",
+   "outcome": "policy_rejection",
+   "public_message": "placement violates residency policy",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_TIER_UNSUPPORTED",
+   "http": 403,
+   "number": 1806,
+   "operator_action": "see APPLICABILITY.md",
+   "outcome": "policy_rejection",
+   "public_message": "operation not supported in this deployment tier",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_INVALID_REQUEST",
+   "http": 400,
+   "number": 1901,
+   "operator_action": "fix request per schema",
+   "outcome": "terminal_failure",
+   "public_message": "invalid request",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_LIMIT_EXCEEDED",
+   "http": 413,
+   "number": 1902,
+   "operator_action": "see INTERFACES.md limits",
+   "outcome": "terminal_failure",
+   "public_message": "request exceeds interface limits",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_ILLEGAL_TRANSITION",
+   "http": 409,
+   "number": 1903,
+   "operator_action": "inspect lifecycle state",
+   "outcome": "terminal_failure",
+   "public_message": "snapshot not in a state that permits this operation",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_STALE_GENERATION",
+   "http": 409,
+   "number": 1904,
+   "operator_action": "re-read and retry",
+   "outcome": "retryable_failure",
+   "public_message": "concurrent modification",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_FENCED",
+   "http": 409,
+   "number": 1905,
+   "operator_action": "stale controller must stop; check split-brain alert",
+   "outcome": "terminal_failure",
+   "public_message": "controller lease lost",
+   "retryable": false,
+   "security": true
+  },
+  {
+   "code": "SNAP_CONFIG_INVALID",
+   "http": 400,
+   "number": 2001,
+   "operator_action": "fix fields listed in detail; last-known-good kept",
+   "outcome": "terminal_failure",
+   "public_message": "configuration invalid",
+   "retryable": false,
+   "security": false
+  },
+  {
+   "code": "SNAP_DEPENDENCY_UNAVAILABLE",
+   "http": 503,
+   "number": 2002,
+   "operator_action": "see outage policy (OFFLINE.md)",
+   "outcome": "retryable_failure",
+   "public_message": "required dependency unavailable",
+   "retryable": true,
+   "security": false
+  },
+  {
+   "code": "SNAP_AUDIT_UNAVAILABLE",
+   "http": 503,
+   "number": 2003,
+   "operator_action": "privileged operations refused until audit recovers",
+   "outcome": "retryable_failure",
+   "public_message": "audit sink unavailable",
+   "retryable": true,
+   "security": true
+  },
+  {
+   "code": "SNAP_INTERNAL",
+   "http": 500,
+   "number": 9999,
+   "operator_action": "file a defect with the correlation id",
+   "outcome": "terminal_failure",
+   "public_message": "internal error",
+   "retryable": false,
+   "security": false
+  }
+ ],
+ "outcomes": [
+  "success",
+  "partial_success",
+  "degraded_success",
+  "retryable_failure",
+  "terminal_failure",
+  "policy_rejection",
+  "integrity_rejection",
+  "operator_aborted"
+ ],
+ "reserved": {},
+ "schema": "PK_SNAPSHOT_ERRORS/1"
+}

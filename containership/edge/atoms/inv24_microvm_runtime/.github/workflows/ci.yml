@@ -1,0 +1,36 @@
+# MC-055: compile, unit (normal + -O), security/fuzz, compatibility, benchmark gate, artifact integrity, production gate.
+name: inv24-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy: {matrix: {python: ["3.10", "3.11", "3.12"]}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m compileall -q inv24_microvm_runtime tools
+      - run: python -m unittest discover -s inv24_microvm_runtime/tests -t . -v
+      - run: python -O -m unittest discover -s inv24_microvm_runtime/tests -t .
+      - run: INV24_FUZZ_ITERS=20000 python -m unittest inv24_microvm_runtime.tests.unit.test_property_fuzz_faults
+      - run: python tools/secret_scan.py
+  evidence-and-gate:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python tools/run_evidence.py
+      - run: python tools/production_gate.py --out evidence/production-gate.json || true   # NO_GO expected until blockers close
+      - run: python tools/production_gate.py --verify evidence/production-gate.json
+      - uses: actions/upload-artifact@v4
+        with: {name: inv24-evidence, path: evidence/}
+  real-host:
+    # MC-048/049/052: runs only on self-hosted KVM runners with approved artifacts
+    if: ${{ vars.INV24_REAL_HOST == '1' }}
+    runs-on: [self-hosted, kvm]
+    steps:
+      - uses: actions/checkout@v4
+      - run: INV24_REAL_HOST=1 python -m unittest discover -s inv24_microvm_runtime/tests/integration -t . -v

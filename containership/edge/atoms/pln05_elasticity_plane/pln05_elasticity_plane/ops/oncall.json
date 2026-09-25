@@ -1,0 +1,96 @@
+{
+ "schema": "PLN05_OWNERSHIP/1",
+ "last_reviewed": "2026-09-23",
+ "review_cadence_days": 90,
+ "note": "Role identifiers only; the person/team behind each role is held by the owner's directory, never in this repository. UNASSIGNED roles are release blockers (MC-02).",
+ "roles": {
+  "pln05.service-owner": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "accountable for PLN-05 in production; approves releases with release-approver"
+  },
+  "pln05.architecture-owner": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "approves ADRs (ADR-0001 pending)"
+  },
+  "pln05.technical-owner": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "code owner; reviews all changes"
+  },
+  "pln05.release-approver": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "signs the production exit gate"
+  },
+  "pln05.security-contact": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "vulnerability intake, security incidents, threat-model reviews"
+  },
+  "pln05.oncall-primary": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "first responder, 24x7 paging"
+  },
+  "pln05.oncall-secondary": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "escalation after 15 min"
+  },
+  "pln05.waiver-owner": {
+   "assignee": "UNASSIGNED",
+   "responsibility": "owns waiver/debt register and expiries"
+  }
+ },
+ "paging": {
+  "business_hours": "page oncall-primary; ack 15 min",
+  "after_hours": "page oncall-primary for SEV1/SEV2 only; ack 15 min; SEV3 next business day"
+ },
+ "escalation": {
+  "availability": [
+   "pln05.oncall-primary",
+   "pln05.oncall-secondary",
+   "pln05.service-owner"
+  ],
+  "security": [
+   "pln05.security-contact",
+   "pln05.service-owner"
+  ],
+  "data-integrity": [
+   "pln05.oncall-primary",
+   "pln05.technical-owner",
+   "pln05.service-owner"
+  ],
+  "dependency": [
+   "pln05.oncall-primary",
+   "owner of the failing sibling (see support_boundary)"
+  ]
+ },
+ "support_boundary": {
+  "demand authenticity": "GAP-09 owner",
+  "capacity-limit correctness": "PLN-01 owner",
+  "provider outages": "provider/SCH-01 owner",
+  "ceiling lowering": "GAP-10 owner",
+  "controller correctness": "pln05.technical-owner",
+  "coordination service": "platform coordination owner"
+ },
+ "approvals": {
+  "emergency disable/freeze/quarantine": "operator (tenant) or emergency_admin",
+  "resume": "two different emergency_admin principals",
+  "rollback": "platform_operator or emergency_admin",
+  "configuration override": "platform_operator",
+  "authority-ceiling change": "PLN-01 (raise) / GAP-10 (lower)",
+  "waivers": "pln05.waiver-owner + pln05.service-owner"
+ },
+ "severity_to_roles": {
+  "SEV1": [
+   "pln05.oncall-primary",
+   "pln05.oncall-secondary",
+   "pln05.service-owner"
+  ],
+  "SEV2": [
+   "pln05.oncall-primary",
+   "pln05.oncall-secondary"
+  ],
+  "SEV3": [
+   "pln05.oncall-primary"
+  ]
+ },
+ "handoff": "new maintainers need 10 business days notice, a joint on-call shift, and an updated last_reviewed date",
+ "outage_lookup": "a printed/offline copy of this file is part of the day-0 bundle; the release zip carries it at ops/oncall.json"
+}

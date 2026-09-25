@@ -1,0 +1,615 @@
+{
+  "count": 42,
+  "rows": [
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-001",
+      "source": "C011",
+      "statement": "The engine SHALL compute a plan against the current state serial before every change.",
+      "tests": [
+        "test_component.CoreStateTest.test_plan_apply_and_detached_snapshots"
+      ]
+    },
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-002",
+      "source": "C013",
+      "statement": "The engine SHALL NOT apply a plan whose serial differs from the state serial.",
+      "tests": [
+        "test_component.CoreStateTest.test_stale_plan_is_refused_atomically"
+      ]
+    },
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-003",
+      "source": "C014",
+      "statement": "The engine SHALL NOT apply or plan the destruction of a protected resource.",
+      "tests": [
+        "test_component.CoreStateTest.test_protection_is_read_only_and_invalidates_outstanding_plan"
+      ]
+    },
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-004",
+      "source": "C015",
+      "statement": "The engine SHALL refuse structurally invalid or digest-mismatched plans without mutating state.",
+      "tests": [
+        "test_production.AdversarialPropertyTest.test_fuzz_plan_validation_never_mutates_on_bad_input"
+      ]
+    },
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-005",
+      "source": "C016",
+      "statement": "Drift detection SHALL distinguish a missing resource from a present JSON null.",
+      "tests": [
+        "test_component.CoreStateTest.test_drift_distinguishes_missing_from_json_null"
+      ]
+    },
+    {
+      "code": [
+        "durable.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-006",
+      "source": "MC-010",
+      "statement": "The state backend SHALL publish revisions by compare-and-swap on the serial and SHALL NOT accept a stale writer.",
+      "tests": [
+        "test_production.DurableBackendTest.test_commit_load_roundtrip_and_cas",
+        "FaultSoakTest.test_concurrent_writers_to_backend_one_wins_per_serial"
+      ]
+    },
+    {
+      "code": [
+        "durable.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-007",
+      "source": "MC-010",
+      "statement": "The backend SHALL detect revision corruption before use.",
+      "tests": [
+        "test_production.DurableBackendTest.test_corruption_detected_before_use"
+      ]
+    },
+    {
+      "code": [
+        "durable.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-008",
+      "source": "MC-012",
+      "statement": "Interrupted commits SHALL be resolved deterministically on restart.",
+      "tests": [
+        "test_production.DurableBackendTest.test_crash_between_revision_and_head_rolls_back",
+        "test_crash_after_head_before_commit_rolls_forward"
+      ]
+    },
+    {
+      "code": [
+        "durable.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-009",
+      "source": "MC-013",
+      "statement": "Rollback SHALL create a new, higher serial and SHALL record actor, reason and source revision.",
+      "tests": [
+        "test_production.RollbackBackupTest.test_rollback_creates_new_serial"
+      ]
+    },
+    {
+      "code": [
+        "durable.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-010",
+      "source": "MC-014",
+      "statement": "Restore SHALL verify every revision digest and the revision chain and SHALL refuse a non-empty target.",
+      "tests": [
+        "test_production.RollbackBackupTest.test_backup_restore_verifies",
+        "test_restore_rejects_tampered_archive"
+      ]
+    },
+    {
+      "code": [
+        "locking.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-011",
+      "source": "MC-011",
+      "statement": "Only the current lease holder with the newest fencing token SHALL commit.",
+      "tests": [
+        "test_production.LockingTest.test_mutual_exclusion_and_fencing",
+        "test_cross_process_exclusion"
+      ]
+    },
+    {
+      "code": [
+        "config.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-012",
+      "source": "MC-016",
+      "statement": "The configuration parser SHALL refuse any construct outside `inv06-hcl-subset/1`.",
+      "tests": [
+        "test_production.ConfigGraphTest.test_parser_refuses_outside_subset",
+        "AdversarialPropertyTest.test_fuzz_hcl_parser_only_raises_config_error"
+      ]
+    },
+    {
+      "code": [
+        "config.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-013",
+      "source": "MC-024",
+      "statement": "Overlays SHALL apply in order global < environment < site and SHALL NOT introduce resources.",
+      "tests": [
+        "test_production.ConfigGraphTest.test_overlay_cannot_add_resources_or_unknown_layer"
+      ]
+    },
+    {
+      "code": [
+        "graph.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-014",
+      "source": "MC-017",
+      "statement": "The resource graph SHALL refuse cycles and dangling references and SHALL order destroys dependents-first.",
+      "tests": [
+        "test_production.ConfigGraphTest.test_graph_cycles_dangling_and_dependents"
+      ]
+    },
+    {
+      "code": [
+        "config.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-015",
+      "source": "MC-025",
+      "statement": "Every configuration activation SHALL record digest, source revision, actor, environment, approval and rollback link.",
+      "tests": [
+        "test_production.ConfigGraphTest.test_provenance_ledger"
+      ]
+    },
+    {
+      "code": [
+        "policy.py",
+        "service.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-016",
+      "source": "MC-022",
+      "statement": "Apply SHALL be refused unless the policy engine returns an allow decision bound to the plan digest and required policy version.",
+      "tests": [
+        "test_production.PolicyTest.test_fail_closed",
+        "test_deny_with_reasons"
+      ]
+    },
+    {
+      "code": [
+        "policy.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-017",
+      "source": "MC-009",
+      "statement": "Constraint resolution SHALL follow security > residency > consistency > availability > SLO > cost > operator override.",
+      "tests": [
+        "test_production.PolicyTest.test_constraint_precedence"
+      ]
+    },
+    {
+      "code": [
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-018",
+      "source": "MC-033",
+      "statement": "Every request SHALL carry an authenticated identity; expired, forged, wrong-audience or malformed credentials SHALL be refused.",
+      "tests": [
+        "test_production.SecurityTest.test_authn_rejects_forged_and_malformed"
+      ]
+    },
+    {
+      "code": [
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-019",
+      "source": "MC-034",
+      "statement": "Authorization SHALL be default-deny, tenant-scoped, and SHALL NOT let a plan author approve their own plan.",
+      "tests": [
+        "test_production.SecurityTest.test_authn_authz_tenant_and_sod"
+      ]
+    },
+    {
+      "code": [
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-020",
+      "source": "MC-036",
+      "statement": "Signed plans SHALL bind approver, digest and serial; revoked keys SHALL NOT verify.",
+      "tests": [
+        "test_production.SecurityTest.test_signed_plan_and_key_rotation"
+      ]
+    },
+    {
+      "code": [
+        "execution.py",
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-021",
+      "source": "MC-018, MC-036",
+      "statement": "Engine binaries and providers SHALL be verified against pinned SHA-256 digests before use.",
+      "tests": [
+        "test_production.ExecutionTest.test_runner_refuses_without_pinned_engine",
+        "test_provider_pins",
+        "SecurityTest.test_artifact_verification"
+      ]
+    },
+    {
+      "code": [
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-022",
+      "source": "MC-037",
+      "statement": "Tenants SHALL have separate state namespaces and quotas; path escapes SHALL be refused.",
+      "tests": [
+        "test_production.SecurityTest.test_tenant_isolation"
+      ]
+    },
+    {
+      "code": [
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-023",
+      "source": "MC-039",
+      "statement": "Mutations SHALL fail closed when identity, policy, key, audit, time or attestation services are unavailable.",
+      "tests": [
+        "test_production.SecurityTest.test_outage_policy"
+      ]
+    },
+    {
+      "code": [
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-024",
+      "source": "MC-040",
+      "statement": "Audit events SHALL be hash-chained, signed, fsync'd and redacted.",
+      "tests": [
+        "test_production.SecurityTest.test_signed_audit_log"
+      ]
+    },
+    {
+      "code": [
+        "observability.py",
+        "security.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-025",
+      "source": "MC-041",
+      "statement": "Secrets SHALL NOT appear in logs, audit events, metric labels or explanations.",
+      "tests": [
+        "test_production.SecurityTest.test_redaction",
+        "ObservabilityTest.test_logging_and_trace",
+        "test_metrics_exposition_and_guards"
+      ]
+    },
+    {
+      "code": [
+        "resilience.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-026",
+      "source": "MC-026",
+      "statement": "Fallible calls SHALL have deadlines, cancellation, bounded jittered retry of retryable errors only, and idempotency keys.",
+      "tests": [
+        "test_production.ResilienceTest.test_retry_backoff_and_classification",
+        "test_idempotency"
+      ]
+    },
+    {
+      "code": [
+        "resilience.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-027",
+      "source": "MC-027",
+      "statement": "Overload SHALL be shed with a typed error rather than queued without bound; failing dependencies SHALL trip a breaker.",
+      "tests": [
+        "test_production.ResilienceTest.test_admission_and_breaker",
+        "FaultSoakTest.test_burst_load_is_shed_not_queued_unboundedly"
+      ]
+    },
+    {
+      "code": [
+        "resilience.py",
+        "service.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-028",
+      "source": "MC-028",
+      "statement": "Loss of a critical dependency SHALL switch to read-only mode.",
+      "tests": [
+        "test_production.ResilienceTest.test_degraded_freeze_watchdog"
+      ]
+    },
+    {
+      "code": [
+        "resilience.py",
+        "service.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-029",
+      "source": "MC-030",
+      "statement": "Freeze SHALL block mutation while reads continue; unfreeze SHALL require a distinct second approver.",
+      "tests": [
+        "test_production.ResilienceTest.test_degraded_freeze_watchdog"
+      ]
+    },
+    {
+      "code": [
+        "observability.py",
+        "resilience.py",
+        "service.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-030",
+      "source": "MC-031, MC-043",
+      "statement": "Stalled operations SHALL be reported and SHALL make readiness false.",
+      "tests": [
+        "test_production.ResilienceTest.test_degraded_freeze_watchdog",
+        "ObservabilityTest.test_health"
+      ]
+    },
+    {
+      "code": [
+        "resilience.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-031",
+      "source": "MC-021",
+      "statement": "Offline-queued plans SHALL be reconciled by serial on reconnect; expired or conflicting plans SHALL NOT be forced.",
+      "tests": [
+        "test_production.ResilienceTest.test_offline_queue_and_failover"
+      ]
+    },
+    {
+      "code": [
+        "resilience.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-032",
+      "source": "MC-029",
+      "statement": "Failover SHALL select only a site within the residency set holding at least the committed serial.",
+      "tests": [
+        "test_production.ResilienceTest.test_offline_queue_and_failover"
+      ]
+    },
+    {
+      "code": [
+        "observability.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-033",
+      "source": "MC-044",
+      "statement": "Metrics SHALL be exported in Prometheus text format with an allowlisted, bounded label set.",
+      "tests": [
+        "test_production.ObservabilityTest.test_metrics_exposition_and_guards"
+      ]
+    },
+    {
+      "code": [
+        "observability.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-034",
+      "source": "MC-045, MC-046",
+      "statement": "Logs SHALL be JSON with schema, severity, component, tenant, operation and trace identifiers.",
+      "tests": [
+        "test_production.ObservabilityTest.test_logging_and_trace"
+      ]
+    },
+    {
+      "code": [
+        "observability.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-035",
+      "source": "MC-047",
+      "statement": "Every plan SHALL be explainable per resource with changed fields and policy decision.",
+      "tests": [
+        "test_production.ObservabilityTest.test_explain_and_lineage"
+      ]
+    },
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-036",
+      "source": "MC-019 contract",
+      "statement": "A partially executed provider run SHALL NOT be committed to state.",
+      "tests": [
+        "test_production.ExecutionTest.test_provider_contract_and_partial_failure"
+      ]
+    },
+    {
+      "code": [
+        "execution.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-037",
+      "source": "MC-035",
+      "statement": "Engine execution SHALL use a scrubbed environment and SHALL refuse ambient cloud credentials.",
+      "tests": [
+        "test_production.ExecutionTest.test_sandbox_env"
+      ]
+    },
+    {
+      "code": [
+        "release.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-038",
+      "source": "MC-052",
+      "statement": "Reference latency thresholds SHALL block release when exceeded.",
+      "tests": [
+        "test_production.ReleaseTest.test_bench_slo_capacity"
+      ]
+    },
+    {
+      "code": [
+        "release.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-039",
+      "source": "MC-062",
+      "statement": "Release evidence SHALL bind file digests, runtime and test results and SHALL be signed.",
+      "tests": [
+        "test_production.ReleaseTest.test_evidence_roundtrip"
+      ]
+    },
+    {
+      "code": [
+        "release.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-040",
+      "source": "MC-063",
+      "statement": "Rollout SHALL halt and roll back when a stage health gate fails.",
+      "tests": [
+        "test_production.ReleaseTest.test_canary"
+      ]
+    },
+    {
+      "code": [
+        "release.py",
+        "tools/build_status.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-041",
+      "source": "MC-069",
+      "statement": "The production gate SHALL NOT return GO while any owner, external or blocked item is open.",
+      "tests": [
+        "test_production.ReleaseTest.test_gate_never_go_with_open_items"
+      ]
+    },
+    {
+      "code": [
+        "state.py"
+      ],
+      "design": "governance/ARCHITECTURE.md",
+      "evidence": "evidence/test_results.json",
+      "gate": "evidence/PRODUCTION_GATE.json",
+      "requirement": "REQ-042",
+      "source": "MC-071",
+      "statement": "Package metadata SHALL declare version and zero runtime dependencies consistently.",
+      "tests": [
+        "test_production.ReleaseTest.test_packaging_metadata_consistent"
+      ]
+    }
+  ],
+  "schema": "PK_TRACEABILITY/1"
+}

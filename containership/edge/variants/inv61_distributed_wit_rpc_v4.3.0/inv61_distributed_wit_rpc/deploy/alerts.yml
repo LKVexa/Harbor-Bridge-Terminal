@@ -1,0 +1,43 @@
+groups:
+- name: inv61
+  rules:
+  - alert: INV61AvailabilityBurnFast
+    expr: |
+      sum(rate(inv61_requests_total{status=~"internal|unavailable"}[5m]))
+        / clamp_min(sum(rate(inv61_requests_total{status!~"unauthenticated|permission-denied|replay|malformed-frame"}[5m])), 1) > 14.4 * 0.001
+    for: 2m
+    labels: {severity: page, sev: "2"}
+    annotations: {summary: "INV-61 burning 30-day error budget >14x"}
+  - alert: INV61AvailabilityBurnSlow
+    expr: |
+      sum(rate(inv61_requests_total{status=~"internal|unavailable"}[6h]))
+        / clamp_min(sum(rate(inv61_requests_total[6h])), 1) > 1 * 0.001
+    for: 30m
+    labels: {severity: ticket, sev: "3"}
+  - alert: INV61DeadlineBreaches
+    expr: sum(rate(inv61_requests_total{status="deadline-exceeded"}[10m])) / clamp_min(sum(rate(inv61_requests_total[10m])),1) > 0.01
+    for: 10m
+    labels: {severity: ticket, sev: "3"}
+  - alert: INV61Saturation
+    expr: max(inv61_inflight) / 256 > 0.7
+    for: 10m
+    labels: {severity: ticket, sev: "3"}
+    annotations: {summary: "Scale out: in-flight above 70% of max_inflight"}
+  - alert: INV61ShedRising
+    expr: sum(rate(inv61_requests_total{status=~"overloaded|rate-limited"}[5m])) > 1
+    for: 5m
+    labels: {severity: ticket, sev: "3"}
+  - alert: INV61PolicyRejectionSpike
+    expr: sum(rate(inv61_requests_total{status=~"permission-denied|unauthenticated|replay"}[5m])) > 5
+    for: 5m
+    labels: {severity: page, sev: "2"}
+    annotations: {summary: "Possible attack or mis-rolled credentials/policy"}
+  - alert: INV61VersionDrift
+    expr: sum(rate(inv61_requests_total{status=~"version-mismatch|signature-mismatch"}[15m])) > 0
+    for: 15m
+    labels: {severity: ticket, sev: "3"}
+  - alert: INV61CircuitOpen
+    expr: sum(rate(inv61_requests_total{status="circuit-open"}[5m])) > 0
+    for: 5m
+    labels: {severity: ticket, sev: "3"}
+    annotations: {summary: "Dependency (callee) failure, not load"}

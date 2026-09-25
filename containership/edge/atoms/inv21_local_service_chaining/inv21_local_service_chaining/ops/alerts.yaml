@@ -1,0 +1,48 @@
+# Prometheus alerting rules for INV-21 (GAP-021). Metric names from Chainer.export_metrics().
+groups:
+- name: inv21-local-chain
+  rules:
+  - alert: INV21NotReady
+    expr: min by (instance) (inv21_ready) == 0
+    for: 2m
+    labels: {severity: sev2, class: availability}
+    annotations: {summary: "INV-21 not ready (quarantine, dependency or audit failure)", runbook: "docs/OPERATIONS.md#day-2-operation"}
+  - alert: INV21CrossTenantRefusalsSpike
+    expr: sum(rate(inv21_refused_total{reason="cross_tenant"}[5m])) > 0.1
+    for: 5m
+    labels: {severity: sev3, class: attack_or_defect}
+    annotations: {summary: "Cross-tenant attempts: probe (attack) if spread across callers; misplacement (defect) if one callee", runbook: "docs/INCIDENT_RESPONSE.md"}
+  - alert: INV21PolicyRejectionSurge
+    expr: sum(rate(inv21_refused_total{reason="capability"}[5m])) / clamp_min(sum(rate(inv21_hops_local_total[5m])) + sum(rate(inv21_hops_remote_total[5m])), 1) > 0.05
+    for: 10m
+    labels: {severity: sev3, class: policy_rejection}
+  - alert: INV21PolicyProviderFailing
+    expr: sum(rate(inv21_refused_total{reason="provider_unavailable"}[5m])) > 0
+    for: 3m
+    labels: {severity: sev2, class: dependency_failure}
+  - alert: INV21Saturation
+    expr: max by (instance) (inv21_saturation_ratio) > 0.9
+    for: 5m
+    labels: {severity: sev2, class: saturation}
+  - alert: INV21SaturationWarn
+    expr: max by (instance) (inv21_saturation_ratio) > 0.7
+    for: 15m
+    labels: {severity: sev3, class: ordinary_load}
+  - alert: INV21StaleResidency
+    expr: increase(inv21_residency_stale_hits[10m]) > 100
+    labels: {severity: sev3, class: dependency_failure}
+    annotations: {summary: "Lease renewals from INV-10 stopped; calls falling back to network"}
+  - alert: INV21RemoteFailures
+    expr: sum(rate(inv21_remote_failures_total[5m])) > 1
+    for: 5m
+    labels: {severity: sev3, class: dependency_failure}
+  - alert: INV21LocalDispatchLatencyP99
+    expr: histogram_quantile(0.99, sum by (le) (rate(inv21_local_dispatch_decision_us_bucket[5m]))) > 50
+    for: 15m
+    labels: {severity: sev3, class: degradation}
+  - alert: INV21InternalErrors
+    expr: sum(rate(inv21_remote_failures_total{code="PK_CHAIN_INTERNAL"}[5m])) > 0
+    labels: {severity: sev2, class: defect}
+  - alert: INV21HandlerStalls
+    expr: increase(inv21_handler_stalls_total[10m]) > 0
+    labels: {severity: sev3, class: degradation}

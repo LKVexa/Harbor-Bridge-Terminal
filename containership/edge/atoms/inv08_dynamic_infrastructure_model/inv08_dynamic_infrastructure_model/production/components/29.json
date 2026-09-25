@@ -1,0 +1,74 @@
+{
+ "component": 29,
+ "title": "Durable distributed lease store",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "distributed lease record schema",
+   "state": "IMPLEMENTED",
+   "spec": "production/leasestore.py::module docstring (PK_DYN_LEASE/1)",
+   "modules": [
+    "production/leasestore.py::LeaseRecord",
+    "production/leasestore.py::validate_record"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_record_schema_validation"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "transaction/compare-and-swap semantics",
+   "state": "IMPLEMENTED",
+   "spec": "production/leasestore.py::module docstring",
+   "modules": [
+    "production/leasestore.py::LeaseStore.cas"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_cas_semantics",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_durable_across_reopen_and_corruption_detected"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "replication and consistency model",
+   "state": "BLOCKED",
+   "spec": "production/leasestore.py::REPLICATION_MODEL",
+   "modules": [
+    "production/leasestore.py::REPLICATION_MODEL"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_replication_model_declared_blocked"
+   ],
+   "blocker": "a replicated consensus store (e.g. Raft/etcd cluster) to integrate and qualify against"
+  },
+  {
+   "name": "fencing token/epoch issuance",
+   "state": "IMPLEMENTED",
+   "spec": "production/leasestore.py::module docstring",
+   "modules": [
+    "production/leasestore.py::LeaseStore.issue_epoch",
+    "production/leasestore.py::LeaseStore.check_fence"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_fencing_epochs_monotonic"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "recovery, garbage collection, and orphaned-lease handling",
+   "state": "IMPLEMENTED",
+   "spec": "production/leasestore.py::LeaseStore.gc",
+   "modules": [
+    "production/leasestore.py::LeaseStore.gc",
+    "production/leasestore.py::LeaseStore._load"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_gc_and_orphans",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_durable_across_reopen_and_corruption_detected",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestLeaseStore.test_outage"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Single-node file store: fsync + os.replace + dir fsync; digest-checked on load; linearizable only within one process."
+}

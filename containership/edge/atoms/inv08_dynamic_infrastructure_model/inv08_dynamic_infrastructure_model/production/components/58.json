@@ -1,0 +1,70 @@
+{
+ "component": 58,
+ "title": "Concurrency/race test suite",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "concurrent lease acquisition tests",
+   "state": "IMPLEMENTED",
+   "spec": "production/concurrency.py::LeaseTable.acquire",
+   "modules": [
+    "production/concurrency.py::LeaseTable.acquire"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_concurrent_lease_acquisition"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "compare-and-swap/fencing race tests",
+   "state": "IMPLEMENTED",
+   "spec": "production/concurrency.py::LeaseTable.cas",
+   "modules": [
+    "production/concurrency.py::LeaseTable.cas"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_cas_and_fencing_race"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "dual-leader/stale-writer tests",
+   "state": "IMPLEMENTED",
+   "spec": "production/concurrency.py::LeaseTable.elect",
+   "modules": [
+    "production/concurrency.py::LeaseTable.elect"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_dual_leader_stale_writer"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "reconciliation versus expiry/reclaim races",
+   "state": "IMPLEMENTED",
+   "spec": "production/concurrency.py::LeaseTable.reclaim_expired",
+   "modules": [
+    "production/concurrency.py::LeaseTable.reclaim_expired"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_reconcile_vs_expiry_race"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "deterministic stress and model-check style invariant validation",
+   "state": "IMPLEMENTED",
+   "spec": "production/concurrency.py::LockedPool",
+   "modules": [
+    "production/concurrency.py::LockedPool"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_deterministic_stress_invariants",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_model_pool_not_thread_safe_lost_update",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ConcurrencyTest.test_locked_pool_serializes"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Races are tested against an in-process LeaseTable double; a distributed store is BLOCKED under component 10. model.Pool lost-update is demonstrated deterministically."
+}

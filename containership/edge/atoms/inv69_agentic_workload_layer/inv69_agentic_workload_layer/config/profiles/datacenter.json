@@ -1,0 +1,36 @@
+{
+  "schema": "PK_AGENT_PROFILE/1",
+  "context": "datacenter",
+  "applicability": "required",
+  "rationale": "Private datacenter: same guarantees as cloud; control plane may be site-local.",
+  "mandatory_capabilities": [
+    "allowlist",
+    "step_budget",
+    "cost_budget",
+    "transcript",
+    "approval_gate",
+    "heavy_sandbox",
+    "remote_audit_anchor_required"
+  ],
+  "prohibited_capabilities": [
+    "offline_cached_approval",
+    "offline_queue"
+  ],
+  "defaults": {
+    "trust": {
+      "max_time_skew_s": 5.0
+    }
+  },
+  "environment": {
+    "network": "reliable LAN; WAN may partition",
+    "control_plane": "site-local, HA",
+    "storage": "durable site storage",
+    "clock": "site NTP",
+    "hardware": "unconstrained",
+    "operator_access": "business hours + on-call"
+  },
+  "resource_envelope": {
+    "max_active_runs": 64
+  },
+  "security_posture": "fail-closed; site-local trust services must be HA"
+}

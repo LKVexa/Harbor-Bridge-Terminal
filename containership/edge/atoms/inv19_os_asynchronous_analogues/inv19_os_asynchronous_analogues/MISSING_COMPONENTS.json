@@ -1,0 +1,702 @@
+{
+ "audit_version": "5.0.0",
+ "scope": "Components MC-01..MC-28 from INV19_v4.2.0_Missing_Components_Comprehensive_Checklist.md after the 5.0.0 pass",
+ "status": "BLOCKED",
+ "gate": "evidence/gate_result.json",
+ "status_legend": {
+  "DONE": "implemented and evidenced",
+  "DONE_ON_THIS_HOST": "implemented and evidenced on Linux x86-64; other platforms unverified",
+  "PARTIAL": "implemented, with named external blockers",
+  "BLOCKED": "cannot complete without an external input named in the detail"
+ },
+ "components": [
+  {
+   "id": "MC-01",
+   "name": "Reproducible pk_core dependency",
+   "check_ids": [
+    "INV-19-C020",
+    "INV-19-C030",
+    "INV-19-C090",
+    "INV-19-C100"
+   ],
+   "status": "BLOCKED",
+   "detail": "Preflight, lock file, pyproject, fail-fast and dependency-vs-failure distinction implemented and tested (absent/wrong-version/corrupt -> BLOCKED; pinned -> GO). Remaining: authoritative pk_core source, exact version, digest, licence, mirror, transitive SBOM entries; the pk_core 100-item component gate still cannot execute."
+  },
+  {
+   "id": "MC-02",
+   "name": "Native io_uring adapter",
+   "check_ids": [
+    "INV-19-C011",
+    "INV-19-C021",
+    "INV-19-C031",
+    "INV-19-C083",
+    "INV-19-C084"
+   ],
+   "status": "DONE_ON_THIS_HOST",
+   "detail": "Raw-syscall io_uring backend with probe, ring validation, rollback, CLOEXEC, fork guard, exactly-once CQE delivery, stale-CQE drop, cancellation, bounded submit retry, CQ-overflow flush, shutdown drain; 17 real-kernel tests. Remaining: multiple kernel versions; arm64 memory ordering; explicit SQ-full stress (SQ drains per submit)."
+  },
+  {
+   "id": "MC-03",
+   "name": "Native Windows IOCP adapter",
+   "check_ids": [
+    "INV-19-C011",
+    "INV-19-C021",
+    "INV-19-C031",
+    "INV-19-C083",
+    "INV-19-C084"
+   ],
+   "status": "BLOCKED",
+   "detail": "IOCP adapter implemented (port, association, pinned OVERLAPPED, GetQueuedCompletionStatusEx, CancelIoEx/ERROR_NOT_FOUND, wake + bounded shutdown) and Win32/Winsock/NTSTATUS tables tested; never executed (no Windows runner) and not wired into AsyncHost's fd-based submit path."
+  },
+  {
+   "id": "MC-04",
+   "name": "Native epoll adapter",
+   "check_ids": [
+    "INV-19-C011",
+    "INV-19-C021",
+    "INV-19-C031",
+    "INV-19-C083"
+   ],
+   "status": "DONE_ON_THIS_HOST",
+   "detail": "epoll adapter: CLOEXEC, ADD/MOD/DEL, LT default / ET with drain, ONESHOT rejected, ERR/HUP/RDHUP preserved, generation tokens, bounded fair event arrays, wakeup; 11 real-kernel tests."
+  },
+  {
+   "id": "MC-05",
+   "name": "Native kqueue adapter",
+   "check_ids": [
+    "INV-19-C011",
+    "INV-19-C021",
+    "INV-19-C031",
+    "INV-19-C083",
+    "INV-19-C084"
+   ],
+   "status": "BLOCKED",
+   "detail": "kqueue adapter implemented (READ/WRITE filters, EV_EOF/EV_ERROR, generations, wakeup); never executed (no macOS/BSD runner)."
+  },
+  {
+   "id": "MC-06",
+   "name": "Portable fallback I/O implementation",
+   "check_ids": [
+    "INV-19-C011",
+    "INV-19-C031",
+    "INV-19-C040",
+    "INV-19-C056"
+   ],
+   "status": "DONE_ON_THIS_HOST",
+   "detail": "selectors-based fallback with real I/O, idempotent socketpair wakeup, generations, quotas; cannot be disabled; engagement counted. Threaded fallback not used (N/A). Other platforms unverified."
+  },
+  {
+   "id": "MC-07",
+   "name": "Host backend capability detection",
+   "check_ids": [
+    "INV-19-C011",
+    "INV-19-C034",
+    "INV-19-C040",
+    "INV-19-C071"
+   ],
+   "status": "DONE",
+   "detail": "Typed HostCapabilities, operational probes, reason codes, deterministic selection, admin disable, diagnostic-only override, capability snapshot without hostname. Windows/BSD probes are code-only."
+  },
+  {
+   "id": "MC-08",
+   "name": "Streaming credit integration",
+   "check_ids": [
+    "INV-19-C003",
+    "INV-19-C025",
+    "INV-19-C030",
+    "INV-19-C083"
+   ],
+   "status": "PARTIAL",
+   "detail": "Readiness->credit (coalesced, bounded pool, EAGAIN-safe, close returns credit) tested on epoll/portable. Blocked: authoritative INV-17 package; completion-backend streams (io_uring POLL_ADD) not implemented."
+  },
+  {
+   "id": "MC-09",
+   "name": "Completion/future integration",
+   "check_ids": [
+    "INV-19-C003",
+    "INV-19-C025",
+    "INV-19-C030",
+    "INV-19-C083"
+   ],
+   "status": "PARTIAL",
+   "detail": "Exactly-once futures, duplicate/stale detection, cancel/complete/shutdown races, unmapped-error quarantine all tested. Blocked: authoritative INV-18 package."
+  },
+  {
+   "id": "MC-10",
+   "name": "Async ABI / waitable-set integration",
+   "check_ids": [
+    "INV-19-C003",
+    "INV-19-C021",
+    "INV-19-C030",
+    "INV-19-C083"
+   ],
+   "status": "PARTIAL",
+   "detail": "Race-safe waitable set (no lost wakeups, coalescing, capacity, bounded reap). Blocked: authoritative INV-15 ABI; architecture-independence unverified (one arch)."
+  },
+  {
+   "id": "MC-11",
+   "name": "Versioned typed interface schemas",
+   "check_ids": [
+    "INV-19-C021",
+    "INV-19-C022",
+    "INV-19-C026",
+    "INV-19-C029"
+   ],
+   "status": "DONE",
+   "detail": "JSON Schema 2020-12 for BACKEND/ARM/REAP/ERROR, frozen v1, fixtures, malformed fixtures, round-trip, negotiation, breaking-change detector in CI tests."
+  },
+  {
+   "id": "MC-12",
+   "name": "Structured error translation taxonomy",
+   "check_ids": [
+    "INV-19-C014",
+    "INV-19-C026",
+    "INV-19-C051"
+   ],
+   "status": "DONE",
+   "detail": "Canonical codes with retry/transient/cancel/timeout classes; POSIX, io_uring, Win32, Winsock, NTSTATUS tables; UNKNOWN_HOST_ERROR counted; fixed messages. BSD golden table not generated (no BSD host)."
+  },
+  {
+   "id": "MC-13",
+   "name": "Operation timeout/retry/backpressure policy",
+   "check_ids": [
+    "INV-19-C025",
+    "INV-19-C053",
+    "INV-19-C054"
+   ],
+   "status": "DONE",
+   "detail": "Monotonic deadlines, bounded retry with budget/jitter/idempotency gate, admission with reason codes, per-tenant limits, circuit breaker with half-open probe."
+  },
+  {
+   "id": "MC-14",
+   "name": "Production configuration system",
+   "check_ids": [
+    "INV-19-C032",
+    "INV-19-C033",
+    "INV-19-C034",
+    "INV-19-C035",
+    "INV-19-C036",
+    "INV-19-C037",
+    "INV-19-C038",
+    "INV-19-C040"
+   ],
+   "status": "DONE",
+   "detail": "Typed schema, precedence, immutable candidate, atomic swap, hook rollback, operator rollback, restart-required classification, digest provenance, secrets refused."
+  },
+  {
+   "id": "MC-15",
+   "name": "Security identity/capability enforcement",
+   "check_ids": [
+    "INV-19-C023",
+    "INV-19-C024",
+    "INV-19-C041",
+    "INV-19-C042",
+    "INV-19-C043",
+    "INV-19-C044",
+    "INV-19-C046"
+   ],
+   "status": "DONE",
+   "detail": "HMAC capabilities (actions, resource scope, expiry, revocation), authorization before allocation, cross-tenant/workload denial audited, per-scope accounting incl. buffer bytes. Residual timing channel documented as accepted, not mitigated."
+  },
+  {
+   "id": "MC-16",
+   "name": "Supply-chain and artifact verification",
+   "check_ids": [
+    "INV-19-C045",
+    "INV-19-C094"
+   ],
+   "status": "PARTIAL",
+   "detail": "CycloneDX SBOM, content-addressed source revision, Ed25519-signed manifest with verifier (tamper detected). Blocked: KMS-bound release key, advisory feed (scan INDETERMINATE), pk_core pin, component licence."
+  },
+  {
+   "id": "MC-17",
+   "name": "Sensitive-data/key handling policy implementation",
+   "check_ids": [
+    "INV-19-C039",
+    "INV-19-C047",
+    "INV-19-C048"
+   ],
+   "status": "PARTIAL",
+   "detail": "Classification, central redaction (nested, value patterns, log injection), traceback-free diagnostics, key references with rotation/expiry/revocation/outage fail-closed. Blocked: approved KMS integration."
+  },
+  {
+   "id": "MC-18",
+   "name": "Tamper-evident security audit trail",
+   "check_ids": [
+    "INV-19-C049",
+    "INV-19-C073",
+    "INV-19-C079"
+   ],
+   "status": "DONE",
+   "detail": "Hash chain, signed checkpoints, offline verifier (modify/delete/reorder/truncate/forged signature caught), bounded buffering with fail-closed exhaustion, retention/access/minimisation policy."
+  },
+  {
+   "id": "MC-19",
+   "name": "Fault recovery and failover machinery",
+   "check_ids": [
+    "INV-19-C051",
+    "INV-19-C052",
+    "INV-19-C055",
+    "INV-19-C056",
+    "INV-19-C057",
+    "INV-19-C058",
+    "INV-19-C059",
+    "INV-19-C060"
+   ],
+   "status": "DONE_ON_THIS_HOST",
+   "detail": "Health states, stall detection, bounded recovery, exactly-once failure of in-flight ops, quarantine + failover, operator unquarantine, event-loss and init-failure injection."
+  },
+  {
+   "id": "MC-20",
+   "name": "Measured performance baseline and release thresholds",
+   "check_ids": [
+    "INV-19-C061",
+    "INV-19-C062",
+    "INV-19-C063",
+    "INV-19-C064",
+    "INV-19-C065",
+    "INV-19-C066",
+    "INV-19-C068",
+    "INV-19-C069",
+    "INV-19-C070"
+   ],
+   "status": "PARTIAL",
+   "detail": "Reproducible harness, env capture, p50..p99.9/max, single/multi-workload/multi-thread throughput, CPU/op, context switches, overload and recovery, baseline + regression decision. Linux x86-64 only; power/thermal not measurable here."
+  },
+  {
+   "id": "MC-21",
+   "name": "Comprehensive resource accounting",
+   "check_ids": [
+    "INV-19-C017",
+    "INV-19-C028",
+    "INV-19-C067"
+   ],
+   "status": "DONE",
+   "detail": "Global/tenant/workload/backend quotas, soft/hard thresholds, admin reserve, reserve-before-allocate with rollback, double-release and negative detection, leak detection, fairness under hot tenant."
+  },
+  {
+   "id": "MC-22",
+   "name": "Production observability stack",
+   "check_ids": [
+    "INV-19-C071",
+    "INV-19-C072",
+    "INV-19-C073",
+    "INV-19-C074",
+    "INV-19-C075",
+    "INV-19-C076",
+    "INV-19-C077",
+    "INV-19-C078",
+    "INV-19-C079",
+    "INV-19-C080"
+   ],
+   "status": "DONE",
+   "detail": "Metrics spec with label allow-lists and series caps, Prometheus exposition, histograms, structured redacted logs, W3C trace context through submit/resolve, decision explain log, alert rules, dashboard."
+  },
+  {
+   "id": "MC-23",
+   "name": "Adjacent-layer integration test suite",
+   "check_ids": [
+    "INV-19-C030",
+    "INV-19-C083"
+   ],
+   "status": "BLOCKED",
+   "detail": "End-to-end scenarios run against reference INV-17/18/15; INV-13 and SCH-01 have no reference or authoritative binding here."
+  },
+  {
+   "id": "MC-24",
+   "name": "Cross-platform compatibility certification",
+   "check_ids": [
+    "INV-19-C084",
+    "INV-19-C093"
+   ],
+   "status": "PARTIAL",
+   "detail": "Matrix generator with revision-bound evidence; Linux x86-64 (normal, io_uring admin-disabled, low-resource) recorded on this host. Windows, macOS, BSD, arm64: UNVERIFIED."
+  },
+  {
+   "id": "MC-25",
+   "name": "Fuzz/security/adversarial test suite",
+   "check_ids": [
+    "INV-19-C050",
+    "INV-19-C085",
+    "INV-19-C087"
+   ],
+   "status": "DONE_ON_THIS_HOST",
+   "detail": "Seeded state-machine and input fuzzing, 256-caller and race adversaries, abuse cases, regression corpus (6 entries, 2 found by this pass). Native sanitizers N/A (no C code)."
+  },
+  {
+   "id": "MC-26",
+   "name": "Soak/burst/fleet/disaster test suite",
+   "check_ids": [
+    "INV-19-C088",
+    "INV-19-C089"
+   ],
+   "status": "PARTIAL",
+   "detail": "900 s soak with slope-based leak detection, burst (submit/completion/cancel/retry storms, churn), 200-identity fleet, disaster (backend loss, audit loss, key outage, bad config, SIGKILL restart). Blocked: multi-hour release soak."
+  },
+  {
+   "id": "MC-27",
+   "name": "Machine-readable production evidence bundle",
+   "check_ids": [
+    "INV-19-C020",
+    "INV-19-C090",
+    "INV-19-C100"
+   ],
+   "status": "DONE",
+   "detail": "100 chained, signed evidence records; verifier with cross-validation; negative self-test (missing evidence, altered artifact, stale revision, failed-as-pass, forged result, pk_core absent, two known-bad mutants)."
+  },
+  {
+   "id": "MC-28",
+   "name": "Operational governance artifacts",
+   "check_ids": [
+    "INV-19-C009",
+    "INV-19-C010",
+    "INV-19-C091",
+    "INV-19-C092",
+    "INV-19-C093",
+    "INV-19-C094",
+    "INV-19-C095",
+    "INV-19-C096",
+    "INV-19-C097",
+    "INV-19-C098",
+    "INV-19-C099",
+    "INV-19-C100"
+   ],
+   "status": "BLOCKED",
+   "detail": "ADRs, requirements, threat model, release/canary/rollback, runbook, lifecycle, exception register, review plan, dashboard written. Blocked: named owners/approvers, ADR approval, staging rollback, recurring reviews, countersigned exit record."
+  }
+ ],
+ "previous": {
+  "audit_version": "4.2.0",
+  "scope": "Artifacts and executable evidence present in this repository archive only",
+  "status": "PARTIAL",
+  "blocking_dependency": "pk_core is not included, so the 100-item production gate cannot execute in this archive",
+  "missing_components": [
+   {
+    "id": "MC-01",
+    "name": "Reproducible pk_core dependency",
+    "check_ids": [
+     "INV-19-C020",
+     "INV-19-C030",
+     "INV-19-C090",
+     "INV-19-C100"
+    ],
+    "detail": "No vendored framework, lock/pin, install manifest, or other reproducible mechanism is included to provide pk_core; production conformance tests are therefore blocked."
+   },
+   {
+    "id": "MC-02",
+    "name": "Native io_uring adapter",
+    "check_ids": [
+     "INV-19-C011",
+     "INV-19-C021",
+     "INV-19-C031",
+     "INV-19-C083",
+     "INV-19-C084"
+    ],
+    "detail": "The repository models io_uring semantics by name but contains no Linux io_uring system-call adapter, submission/completion queue implementation, feature probing, or kernel-version compatibility tests."
+   },
+   {
+    "id": "MC-03",
+    "name": "Native Windows IOCP adapter",
+    "check_ids": [
+     "INV-19-C011",
+     "INV-19-C021",
+     "INV-19-C031",
+     "INV-19-C083",
+     "INV-19-C084"
+    ],
+    "detail": "The repository models IOCP semantics by name but contains no CreateIoCompletionPort/GetQueuedCompletionStatus integration, OVERLAPPED lifecycle handling, cancellation, or Windows compatibility tests."
+   },
+   {
+    "id": "MC-04",
+    "name": "Native epoll adapter",
+    "check_ids": [
+     "INV-19-C011",
+     "INV-19-C021",
+     "INV-19-C031",
+     "INV-19-C083"
+    ],
+    "detail": "No epoll_create/epoll_ctl/epoll_wait adapter or edge/level-trigger policy is implemented."
+   },
+   {
+    "id": "MC-05",
+    "name": "Native kqueue adapter",
+    "check_ids": [
+     "INV-19-C011",
+     "INV-19-C021",
+     "INV-19-C031",
+     "INV-19-C083",
+     "INV-19-C084"
+    ],
+    "detail": "No kqueue/kevent adapter or BSD/macOS compatibility coverage is implemented."
+   },
+   {
+    "id": "MC-06",
+    "name": "Portable fallback I/O implementation",
+    "check_ids": [
+     "INV-19-C011",
+     "INV-19-C031",
+     "INV-19-C040",
+     "INV-19-C056"
+    ],
+    "detail": "portable is an in-memory semantics label, not an implemented selector/poll/threaded fallback that can perform host I/O."
+   },
+   {
+    "id": "MC-07",
+    "name": "Host backend capability detection",
+    "check_ids": [
+     "INV-19-C011",
+     "INV-19-C034",
+     "INV-19-C040",
+     "INV-19-C071"
+    ],
+    "detail": "select() chooses from a caller-supplied set; the repository has no OS/kernel/runtime probe that constructs that set or records why a backend is unavailable."
+   },
+   {
+    "id": "MC-08",
+    "name": "Streaming credit integration",
+    "check_ids": [
+     "INV-19-C003",
+     "INV-19-C025",
+     "INV-19-C030",
+     "INV-19-C083"
+    ],
+    "detail": "No executable integration maps readiness events into INV-17 stream credit/backpressure semantics."
+   },
+   {
+    "id": "MC-09",
+    "name": "Completion/future integration",
+    "check_ids": [
+     "INV-19-C003",
+     "INV-19-C025",
+     "INV-19-C030",
+     "INV-19-C083"
+    ],
+    "detail": "No executable integration resolves INV-18 futures from completion events, including cancellation and terminal error propagation."
+   },
+   {
+    "id": "MC-10",
+    "name": "Async ABI / waitable-set integration",
+    "check_ids": [
+     "INV-19-C003",
+     "INV-19-C021",
+     "INV-19-C030",
+     "INV-19-C083"
+    ],
+    "detail": "The declared INV-15 dependency is not exercised by code or integration tests."
+   },
+   {
+    "id": "MC-11",
+    "name": "Versioned typed interface schemas",
+    "check_ids": [
+     "INV-19-C021",
+     "INV-19-C022",
+     "INV-19-C026",
+     "INV-19-C029"
+    ],
+    "detail": "PK_ASYNC_BACKEND/1, PK_ASYNC_ARM/1 and PK_ASYNC_REAP/1 are prose identifiers only; no machine-readable schema/WIT/protocol definitions or fixtures are present."
+   },
+   {
+    "id": "MC-12",
+    "name": "Structured error translation taxonomy",
+    "check_ids": [
+     "INV-19-C014",
+     "INV-19-C026",
+     "INV-19-C051"
+    ],
+    "detail": "Completion errors are passed through as arbitrary strings; no stable error codes, retryability classification, source errno/NTSTATUS mapping, or unknown-error quarantine exists."
+   },
+   {
+    "id": "MC-13",
+    "name": "Operation timeout/retry/backpressure policy",
+    "check_ids": [
+     "INV-19-C025",
+     "INV-19-C053",
+     "INV-19-C054"
+    ],
+    "detail": "Descriptor cancellation now exists, but operation deadlines, bounded retry/backoff/jitter, admission control, load shedding, and circuit breaking are not implemented."
+   },
+   {
+    "id": "MC-14",
+    "name": "Production configuration system",
+    "check_ids": [
+     "INV-19-C032",
+     "INV-19-C033",
+     "INV-19-C034",
+     "INV-19-C035",
+     "INV-19-C036",
+     "INV-19-C037",
+     "INV-19-C038",
+     "INV-19-C040"
+    ],
+    "detail": "No declarative config schema, provenance record, validation/activation transaction, environment/site override mechanism, or rollback implementation is present."
+   },
+   {
+    "id": "MC-15",
+    "name": "Security identity/capability enforcement",
+    "check_ids": [
+     "INV-19-C023",
+     "INV-19-C024",
+     "INV-19-C041",
+     "INV-19-C042",
+     "INV-19-C043",
+     "INV-19-C044",
+     "INV-19-C046"
+    ],
+    "detail": "No authentication, authorization, least-privilege capability boundary, or tenant/workload isolation enforcement exists beyond a local descriptor count."
+   },
+   {
+    "id": "MC-16",
+    "name": "Supply-chain and artifact verification",
+    "check_ids": [
+     "INV-19-C045",
+     "INV-19-C094"
+    ],
+    "detail": "No signed release manifest, digest/provenance verification, SBOM, dependency lock, vulnerability policy automation, or EOL enforcement is present."
+   },
+   {
+    "id": "MC-17",
+    "name": "Sensitive-data/key handling policy implementation",
+    "check_ids": [
+     "INV-19-C039",
+     "INV-19-C047",
+     "INV-19-C048"
+    ],
+    "detail": "No explicit secret-redaction path, encryption/key rotation mechanism, or defined executable behavior for identity/key/time-service outages exists."
+   },
+   {
+    "id": "MC-18",
+    "name": "Tamper-evident security audit trail",
+    "check_ids": [
+     "INV-19-C049",
+     "INV-19-C073",
+     "INV-19-C079"
+    ],
+    "detail": "No append-only/tamper-evident audit event stream, retention policy, privacy controls, or export mechanism is implemented."
+   },
+   {
+    "id": "MC-19",
+    "name": "Fault recovery and failover machinery",
+    "check_ids": [
+     "INV-19-C051",
+     "INV-19-C052",
+     "INV-19-C055",
+     "INV-19-C056",
+     "INV-19-C057",
+     "INV-19-C058",
+     "INV-19-C059",
+     "INV-19-C060"
+    ],
+    "detail": "Failure modes are listed in the contract, but health/stall detection, restart/replay semantics, failover, quarantine/disable control, and fault-injection recovery tests are absent."
+   },
+   {
+    "id": "MC-20",
+    "name": "Measured performance baseline and release thresholds",
+    "check_ids": [
+     "INV-19-C061",
+     "INV-19-C062",
+     "INV-19-C063",
+     "INV-19-C064",
+     "INV-19-C065",
+     "INV-19-C066",
+     "INV-19-C068",
+     "INV-19-C069",
+     "INV-19-C070"
+    ],
+    "detail": "No benchmark harness/results, percentile thresholds, overload/recovery measurements, per-tenant overhead results, power/thermal data, capacity model, or performance regression gate is included."
+   },
+   {
+    "id": "MC-21",
+    "name": "Comprehensive resource accounting",
+    "check_ids": [
+     "INV-19-C017",
+     "INV-19-C028",
+     "INV-19-C067"
+    ],
+    "detail": "max_descriptors bounds one resource dimension only; buffers, queue depth, memory, threads, handles, completion backlog, per-tenant quotas, and fairness are not modeled or enforced."
+   },
+   {
+    "id": "MC-22",
+    "name": "Production observability stack",
+    "check_ids": [
+     "INV-19-C071",
+     "INV-19-C072",
+     "INV-19-C073",
+     "INV-19-C074",
+     "INV-19-C075",
+     "INV-19-C076",
+     "INV-19-C077",
+     "INV-19-C078",
+     "INV-19-C079",
+     "INV-19-C080"
+    ],
+    "detail": "snapshot() provides a local bounded diagnostic view, but metrics export, structured logs, trace propagation, decision reasons, lineage correlation, retention/export policy, dashboards, and alerts are absent."
+   },
+   {
+    "id": "MC-23",
+    "name": "Adjacent-layer integration test suite",
+    "check_ids": [
+     "INV-19-C030",
+     "INV-19-C083"
+    ],
+    "detail": "No executable tests integrate INV-17, INV-18, INV-15, INV-13, or SCH-01."
+   },
+   {
+    "id": "MC-24",
+    "name": "Cross-platform compatibility certification",
+    "check_ids": [
+     "INV-19-C084",
+     "INV-19-C093"
+    ],
+    "detail": "No Linux/Windows/BSD/macOS CI matrix, architecture matrix, kernel/API support table, or supported-version compatibility matrix is present."
+   },
+   {
+    "id": "MC-25",
+    "name": "Fuzz/security/adversarial test suite",
+    "check_ids": [
+     "INV-19-C050",
+     "INV-19-C085",
+     "INV-19-C087"
+    ],
+    "detail": "No fuzzing or threat-model-derived tests cover malformed descriptors/events, privilege boundaries, spoofing, replay, side channels, or resource-exhaustion attacks."
+   },
+   {
+    "id": "MC-26",
+    "name": "Soak/burst/fleet/disaster test suite",
+    "check_ids": [
+     "INV-19-C088",
+     "INV-19-C089"
+    ],
+    "detail": "No long-running soak, burst, fleet-scale, partition, reconnect, degraded-control-plane, or disaster tests are present."
+   },
+   {
+    "id": "MC-27",
+    "name": "Machine-readable production evidence bundle",
+    "check_ids": [
+     "INV-19-C020",
+     "INV-19-C090",
+     "INV-19-C100"
+    ],
+    "detail": "CHECKLIST.json contains requirements, not completion evidence. No generated evidence ledger or gate result is shipped in this archive, and the external gate cannot run without pk_core."
+   },
+   {
+    "id": "MC-28",
+    "name": "Operational governance artifacts",
+    "check_ids": [
+     "INV-19-C009",
+     "INV-19-C010",
+     "INV-19-C091",
+     "INV-19-C092",
+     "INV-19-C093",
+     "INV-19-C094",
+     "INV-19-C095",
+     "INV-19-C096",
+     "INV-19-C097",
+     "INV-19-C098",
+     "INV-19-C099",
+     "INV-19-C100"
+    ],
+    "detail": "README contains a short day-0/day-1/day-2 note and SLO text, but no named owner/escalation, approved ADR artifact, canary procedure, compatibility matrix, patch/EOL SLA, incident runbook, recurring review records, exception register, or independently executable production exit record."
+   }
+  ]
+ }
+}

@@ -1,0 +1,17 @@
+{
+  "format": "PK_APP_ROLLOUT_POLICY/1",
+  "stages": [
+    {"name": "preprod", "cohort": "1 fixed pre-production target", "observe_minutes": 10, "rollback": "automatic"},
+    {"name": "canary-node", "cohort": "1 production node/site", "observe_minutes": 30, "rollback": "automatic"},
+    {"name": "canary-cohort", "cohort": "<=5% of targets (hash-ranked)", "observe_minutes": 60, "rollback": "automatic"},
+    {"name": "expanded", "cohort": "<=25% of targets", "observe_minutes": 120, "rollback": "automatic"},
+    {"name": "full", "cohort": "100%", "observe_minutes": 0, "rollback": "operator-confirmed"}
+  ],
+  "gates": {"validation_error_rate": "<=0.01", "internal_error_rate": "<=0.001", "p99_latency_ms": "<=5", "readiness_ratio": ">=0.999",
+            "dependency_error_rate": "<=0.01", "auth_anomaly_rate": "<=0.001", "saturation": "<=0.8", "audit_integrity": ">=1"},
+  "missing_signal": "blocks promotion (rollout.signal_missing) unless emergency_full with an independent approver",
+  "candidate_immutability": "artifact digest + config digest fixed per rollout; any change starts a new rollout",
+  "emergency_disable": "Separate from rollback: set the service blocked reason 'emergency.disabled' (status -> blocked, all submits refused) via the admin runbook; used when no known-good revision exists.",
+  "drill_cadence_days": 90,
+  "implementation": "rollout.py (Rollout, rollback_drill)"
+}

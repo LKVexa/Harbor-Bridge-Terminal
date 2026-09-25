@@ -1,0 +1,228 @@
+{
+ "manifest": "PLN05_FAULT_SCENARIOS/1",
+ "invariants": [
+  "INV-A target within [floor, ceiling] of the active envelope",
+  "INV-B nothing published without a valid lease",
+  "INV-C fencing tokens applied downstream are non-decreasing per scope",
+  "INV-D audit chain verifies after the scenario",
+  "INV-E no authority expansion (ceiling never above declared)"
+ ],
+ "scenarios": {
+  "FS01": {
+   "name": "process crash/restart",
+   "failures": [
+    "F01",
+    "F06"
+   ],
+   "injection": "kill plane mid-stream; restart from state dir",
+   "expected": "next decision continues hysteresis exactly; no duplicate effect",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS01"
+  },
+  "FS02": {
+   "name": "exception loop",
+   "failures": [
+    "F02"
+   ],
+   "injection": "sink raises internal errors repeatedly",
+   "expected": "decisions persisted; breaker opens; plane stays live",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS02"
+  },
+  "FS03": {
+   "name": "event-loop stall",
+   "failures": [
+    "F03"
+   ],
+   "injection": "queue items, advance monotonic clock without processing",
+   "expected": "health=stalled, ready=false within stall_after_s",
+   "max_detection_s": 60,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS03"
+  },
+  "FS04": {
+   "name": "memory growth",
+   "failures": [
+    "F05"
+   ],
+   "injection": "10k decisions with bounded stores",
+   "expected": "explain/seen/nonce/metrics stores stay at their caps",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS04"
+  },
+  "FS05": {
+   "name": "clock jump backwards",
+   "failures": [
+    "F07",
+    "F23"
+   ],
+   "injection": "wall clock steps back 10s",
+   "expected": "decisions refused; unready; recovers when clock catches up",
+   "max_detection_s": 0,
+   "max_recovery_s": 10,
+   "test": "tests/fault/test_faults.py::Faults.test_FS05"
+  },
+  "FS06": {
+   "name": "disk full on state save",
+   "failures": [
+    "F08"
+   ],
+   "injection": "state save raises OSError",
+   "expected": "no publish without persisted state; error surfaced",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS06"
+  },
+  "FS07": {
+   "name": "coordination loss / node loss",
+   "failures": [
+    "F09",
+    "F11",
+    "F13",
+    "F26"
+   ],
+   "injection": "lease service unavailable; time passes beyond lease",
+   "expected": "no publication after lease expiry; peer takes over after expiry",
+   "max_detection_s": 15,
+   "max_recovery_s": 15,
+   "test": "tests/fault/test_faults.py::Faults.test_FS07"
+  },
+  "FS08": {
+   "name": "slow sink",
+   "failures": [
+    "F10"
+   ],
+   "injection": "sink latency injected (simulated)",
+   "expected": "decision latency recorded; no unbounded queue",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS08"
+  },
+  "FS09": {
+   "name": "provider outage/throttling",
+   "failures": [
+    "F12",
+    "F15",
+    "F16"
+   ],
+   "injection": "sink raises retryable errors",
+   "expected": "breaker opens, recovers via half-open; decisions persisted",
+   "max_detection_s": 10,
+   "max_recovery_s": 12,
+   "test": "tests/fault/test_faults.py::Faults.test_FS09"
+  },
+  "FS10": {
+   "name": "split brain",
+   "failures": [
+    "F14"
+   ],
+   "injection": "two planes share lease service; old leader resurrected",
+   "expected": "stale epoch fenced downstream",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS10"
+  },
+  "FS11": {
+   "name": "duplicate re-emit",
+   "failures": [
+    "F17"
+   ],
+   "injection": "republish_last after restart",
+   "expected": "sink de-duplicates by decision_id",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS11"
+  },
+  "FS12": {
+   "name": "demand silence",
+   "failures": [
+    "F18"
+   ],
+   "injection": "no demand for > degraded_after_s",
+   "expected": "stale then degraded hold decisions; recovery on fresh sample",
+   "max_detection_s": 300,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS12"
+  },
+  "FS13": {
+   "name": "malformed demand burst",
+   "failures": [
+    "F19"
+   ],
+   "injection": "1000 malformed payloads",
+   "expected": "all rejected, state unchanged",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS13"
+  },
+  "FS14": {
+   "name": "contradictory sources",
+   "failures": [
+    "F20"
+   ],
+   "injection": "two sources alternate high/low",
+   "expected": "target stays in envelope; direction changes bounded",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS14"
+  },
+  "FS15": {
+   "name": "key expiry",
+   "failures": [
+    "F21"
+   ],
+   "injection": "all keys expire",
+   "expected": "unready; authn fails; nothing published",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS15"
+  },
+  "FS16": {
+   "name": "audit sink outage",
+   "failures": [
+    "F24"
+   ],
+   "injection": "audit sink down during control actions",
+   "expected": "buffered, then refused when full; chain verifies after recovery",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS16"
+  },
+  "FS17": {
+   "name": "telemetry failure",
+   "failures": [
+    "F25"
+   ],
+   "injection": "log stream raises",
+   "expected": "decisions unaffected",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS17"
+  },
+  "FS18": {
+   "name": "invalid config push",
+   "failures": [
+    "F27"
+   ],
+   "injection": "activate invalid overlay",
+   "expected": "rejected; active checksum unchanged",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS18"
+  },
+  "FS19": {
+   "name": "state corruption",
+   "failures": [
+    "F28"
+   ],
+   "injection": "truncate state file",
+   "expected": "unready; E_STATE_CORRUPT; no silent reset",
+   "max_detection_s": 0,
+   "max_recovery_s": 0,
+   "test": "tests/fault/test_faults.py::Faults.test_FS19"
+  }
+ }
+}

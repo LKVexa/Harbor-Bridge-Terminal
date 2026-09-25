@@ -1,0 +1,83 @@
+{
+  "schema": "urn:pk:inv17:alerts:1",
+  "format": "Prometheus alerting rules (JSON rendering)",
+  "groups": [
+    {
+      "name": "inv17",
+      "rules": [
+        {
+          "alert": "Inv17Disabled",
+          "expr": "max(inv17_disabled) == 1",
+          "for": "0m",
+          "labels": {
+            "severity": "sev1",
+            "class": "operator-action"
+          }
+        },
+        {
+          "alert": "Inv17CreditStallSurge",
+          "expr": "rate(inv17_credit_stalls_total[5m]) > 10 * rate(inv17_elements_transferred_total[5m])",
+          "for": "10m",
+          "labels": {
+            "severity": "sev2",
+            "class": "load"
+          }
+        },
+        {
+          "alert": "Inv17LoadShedding",
+          "expr": "rate(inv17_load_shed_total[5m]) > 0",
+          "for": "5m",
+          "labels": {
+            "severity": "sev2",
+            "class": "overload"
+          }
+        },
+        {
+          "alert": "Inv17BreakerOpen",
+          "expr": "max(inv17_breaker_open) == 1",
+          "for": "2m",
+          "labels": {
+            "severity": "sev1",
+            "class": "overload"
+          }
+        },
+        {
+          "alert": "Inv17DropStorm",
+          "expr": "sum(inv17_dropped_end_streams) > 100",
+          "for": "5m",
+          "labels": {
+            "severity": "sev2",
+            "class": "dependency-failure"
+          }
+        },
+        {
+          "alert": "Inv17ElementsDropped",
+          "expr": "rate(inv17_elements_dropped_total[5m]) > 1000",
+          "for": "10m",
+          "labels": {
+            "severity": "sev3",
+            "class": "dependency-failure"
+          }
+        },
+        {
+          "alert": "Inv17AuthDenials",
+          "expr": "rate(inv17_audit_events_total{kind=~\"auth.*|authz.*\"}[5m]) > 5",
+          "for": "5m",
+          "labels": {
+            "severity": "sev2",
+            "class": "attack"
+          }
+        },
+        {
+          "alert": "Inv17StreamsUnhealthy",
+          "expr": "inv17_health_status{status=\"unhealthy\"} == 1",
+          "for": "5m",
+          "labels": {
+            "severity": "sev2",
+            "class": "software-defect-or-load"
+          }
+        }
+      ]
+    }
+  ]
+}

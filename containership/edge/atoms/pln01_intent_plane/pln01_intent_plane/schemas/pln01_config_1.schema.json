@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PLN01_CONFIG/1",
+  "title": "PLN01_CONFIG/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema"],
+  "properties": {
+    "schema": {"const": "PLN01_CONFIG/1"},
+    "limits": {"type": "object", "additionalProperties": false, "properties": {
+      "max_nodes": {"type": "integer", "minimum": 1, "maximum": 1000000},
+      "max_dependencies_per_node": {"type": "integer", "minimum": 1, "maximum": 4096},
+      "max_spec_bytes": {"type": "integer", "minimum": 64, "maximum": 16777216},
+      "max_history": {"type": "integer", "minimum": 1, "maximum": 100000},
+      "replay_window": {"type": "integer", "minimum": 1, "maximum": 10000000},
+      "max_audit_events": {"type": "integer", "minimum": 1, "maximum": 10000000}
+    }},
+    "quotas": {"type": "object", "additionalProperties": false, "properties": {
+      "tenant_rate_per_second": {"type": "number", "exclusiveMinimum": 0},
+      "tenant_burst": {"type": "integer", "minimum": 1},
+      "tenant_max_nodes": {"type": "integer", "minimum": 1},
+      "max_concurrent_requests": {"type": "integer", "minimum": 1},
+      "max_queue_depth": {"type": "integer", "minimum": 0}
+    }},
+    "timeouts": {"type": "object", "additionalProperties": false, "properties": {
+      "request_deadline_seconds": {"type": "number", "exclusiveMinimum": 0},
+      "retry_max_attempts": {"type": "integer", "minimum": 1, "maximum": 10},
+      "retry_base_seconds": {"type": "number", "exclusiveMinimum": 0},
+      "retry_cap_seconds": {"type": "number", "exclusiveMinimum": 0},
+      "circuit_failure_threshold": {"type": "integer", "minimum": 1},
+      "circuit_reset_seconds": {"type": "number", "exclusiveMinimum": 0}
+    }},
+    "security": {"type": "object", "additionalProperties": false, "properties": {
+      "require_authentication": {"type": "boolean"},
+      "require_artifact_verification": {"type": "boolean"},
+      "reject_secrets": {"type": "boolean"}
+    }},
+    "sites": {"type": "object", "additionalProperties": {"type": "object", "additionalProperties": false,
+      "required": ["context"], "properties": {
+        "context": {"enum": ["cloud", "datacenter", "near-edge", "far-edge"]},
+        "staleness_seconds": {"type": "number", "exclusiveMinimum": 0}
+    }}},
+    "telemetry": {"type": "object", "additionalProperties": false, "properties": {
+      "log_level": {"enum": ["DEBUG", "INFO", "WARNING", "ERROR"]},
+      "audit_retention_days": {"type": "integer", "minimum": 1},
+      "trace_sample_ratio": {"type": "number", "minimum": 0, "maximum": 1}
+    }},
+    "storage": {"type": "object", "additionalProperties": false, "properties": {
+      "state_dir": {"type": "string", "minLength": 1},
+      "fsync": {"type": "boolean"},
+      "snapshot_every": {"type": "integer", "minimum": 1}
+    }}
+  }
+}

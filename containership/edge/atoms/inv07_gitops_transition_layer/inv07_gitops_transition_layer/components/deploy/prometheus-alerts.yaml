@@ -1,0 +1,58 @@
+groups:
+  - name: inv07-gitops
+    rules:
+      - alert: INV07UnsignedCommitRefused
+        expr: "increase(inv07_unsigned_refusals_total[5m]) > 0"
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: "A commit failed signature/trust/provenance verification (provenance SLO has no budget).", runbook: "docs/RUNBOOKS.md#inv07unsignedcommitrefused"}
+      - alert: INV07DriftReverted
+        expr: "increase(inv07_drift_reverts_total[15m]) > 0"
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Out-of-band changes were reverted; find who changed live state.", runbook: "docs/RUNBOOKS.md#inv07driftreverted"}
+      - alert: INV07SyncStalled
+        expr: "time() - inv07_last_sync_timestamp_seconds > 3 * 60"
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: "No successful sync for three sync intervals (convergence SLO burn).", runbook: "docs/RUNBOOKS.md#inv07syncstalled"}
+      - alert: INV07ConvergenceSLOBurn
+        expr: "sum(rate(inv07_syncs_total{outcome=~\"failed|refused\"}[1h])) / sum(rate(inv07_syncs_total[1h])) > 0.01"
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "More than 1% of reconciliations failing (error budget).", runbook: "docs/RUNBOOKS.md#inv07convergencesloburn"}
+      - alert: INV07PartialApplyFrozen
+        expr: "inv07_frozen == 1"
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: "Reconciliation frozen (manual or partial apply).", runbook: "docs/RUNBOOKS.md#inv07partialapplyfrozen"}
+      - alert: INV07GitCircuitOpen
+        expr: "inv07_circuit_open == 1"
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Git dependency circuit breaker open.", runbook: "docs/RUNBOOKS.md#inv07gitcircuitopen"}
+      - alert: INV07NoLeader
+        expr: "max(inv07_leader) == 0"
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: "No controller instance holds the lease.", runbook: "docs/RUNBOOKS.md#inv07noleader"}
+      - alert: INV07LeaderChurn
+        expr: "changes(inv07_leader[30m]) > 4"
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Leadership flapping.", runbook: "docs/RUNBOOKS.md#inv07leaderchurn"}
+      - alert: INV07QueueSaturated
+        expr: "inv07_queue_saturation > 0.8"
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Admission queue above 80%.", runbook: "docs/RUNBOOKS.md#inv07queuesaturated"}
+      - alert: INV07PolicyDenials
+        expr: "increase(inv07_policy_denials_total[15m]) > 0"
+        for: 2m
+        labels: {severity: info}
+        annotations: {summary: "Policy denied desired state.", runbook: "docs/RUNBOOKS.md#inv07policydenials"}
+      - alert: INV07LogDrops
+        expr: "increase(inv07_log_drops_total[15m]) > 0"
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Structured log sink failing.", runbook: "docs/RUNBOOKS.md#inv07logdrops"}

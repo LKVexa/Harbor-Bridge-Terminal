@@ -1,0 +1,45 @@
+{
+  "format": "PK_APP_COMPATIBILITY/1",
+  "release": "4.3.0",
+  "note": "Single source of truth for supported combinations. README, pyproject (requires-python, classifiers), CI matrix and tools/preflight.py are validated against this file by tools/governance_check.py. States: required | supported | experimental | deprecated | unsupported.",
+  "python": {"min": "3.10", "max": "3.13", "tested_in_ci": ["3.10", "3.11", "3.12", "3.13"], "tested_in_this_build": ["3.11"]},
+  "platforms": {
+    "linux-x86_64": "required",
+    "linux-aarch64": "supported",
+    "windows-amd64": "supported",
+    "darwin-arm64": "supported",
+    "darwin-x86_64": "experimental"
+  },
+  "schemas": {"app/v1": {"state": "required", "first": "4.0.0", "deprecated": null, "eol": null}},
+  "protocols": {
+    "PK_APP_SUBMIT/1": {"state": "deprecated", "first": "4.3.0", "deprecated": "4.3.0", "eol": "5.0.0", "note": "lacks channel binding and trace context; accepted only because it still carries authn/authz"},
+    "PK_APP_SUBMIT/2": {"state": "required", "first": "4.3.0", "deprecated": null, "eol": null}
+  },
+  "contracts": {
+    "PK_APP_MANIFEST/1": "required", "PK_APP_VALIDATE/1": "required", "PK_APP_CANONICAL/1": "required",
+    "PK_APP_ERROR/1": "required", "PK_APP_SUBMIT_REQUEST/1": "required", "PK_APP_SUBMIT_RESPONSE/1": "required",
+    "PK_APP_STATUS/1": "required", "PK_APP_OVERLAY/1": "required", "PK_APP_AUTHZ_POLICY/1": "required",
+    "PK_APP_AUDIT/1": "required", "PK_APP_DECISION/1": "required", "PK_APP_TELEMETRY/1": "required"
+  },
+  "pk_core": {
+    "state": "required-for-conformance",
+    "distribution": "workspace sibling or PK_CORE_PATH (chosen model: pinned release artifact once supplied; see DEPENDENCIES.md)",
+    "pin_version": null,
+    "pin_sha256": null,
+    "status": "BLOCKED_EXTERNAL: pk_core source/version/digest not supplied with this archive"
+  },
+  "oam": {"baseline": "oam-dev/spec", "tag": "v0.3.0", "commit": "3104d27a0ecb55cac84755950e53371aa3e1d2b2", "level": "schema-level (components, traits); conceptual (providers, links)"},
+  "adjacent": {
+    "INV-10": {"contract": "PK_COMPOSE_RESOLVE", "min": 1, "max": 2, "tested_against": "emulator", "real_implementation": "BLOCKED_EXTERNAL"},
+    "INV-63": {"contract": "PK_DEPLOY_HANDOFF", "min": 1, "max": 1, "tested_against": "emulator", "real_implementation": "BLOCKED_EXTERNAL"},
+    "INV-65": {"contract": "PK_PROVIDER_BIND", "min": 1, "max": 1, "tested_against": "emulator", "real_implementation": "BLOCKED_EXTERNAL"},
+    "INV-66": {"contract": "PK_GUARDRAIL", "min": 1, "max": 2, "tested_against": "emulator", "real_implementation": "BLOCKED_EXTERNAL"}
+  },
+  "optional_dependencies": {"cryptography": {"min": "42", "tested": "46.0.7", "used_for": "EdDSA tokens, Ed25519 release signatures, AES-256-GCM sealed storage"}},
+  "support_lines": {
+    "4.3.x": {"state": "supported", "security_fixes_until": "EOL of 5.0.0 + 6 months"},
+    "4.2.x": {"state": "deprecated", "security_fixes_until": "2026-12-31", "note": "no authn/authz/audit; upgrade"},
+    "4.1.x": {"state": "unsupported"}, "4.0.x": {"state": "unsupported"}
+  },
+  "history": ["4.2.0: no machine-readable matrix existed", "4.3.0: first matrix"]
+}

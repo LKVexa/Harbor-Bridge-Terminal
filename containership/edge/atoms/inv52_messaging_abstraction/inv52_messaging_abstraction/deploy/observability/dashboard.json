@@ -1,0 +1,101 @@
+{
+  "title": "INV-52 Messaging abstraction",
+  "schemaVersion": 39,
+  "status": "PROPOSED - not loaded into a live Grafana",
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "type": "query",
+        "query": "label_values(inv52_published_total, node)"
+      },
+      {
+        "name": "release",
+        "type": "query",
+        "query": "label_values(inv52_published_total, release)"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Publish rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv52_published_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Outcomes",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (outcome) (rate(inv52_publish_outcome_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Publish latency p99",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(inv52_publish_latency_seconds_bucket[5m])))"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Dead-letter reasons",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (reason) (rate(inv52_dead_letter_reason_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Dead-letter backlog",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "inv52_dead_letter_backlog"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Shed (overload)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv52_shed_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Denied (policy/attack)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv52_denied_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Route/sink errors",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(inv52_route_errors_total[5m]) + rate(inv52_sink_errors_total[5m])"
+        }
+      ]
+    }
+  ]
+}

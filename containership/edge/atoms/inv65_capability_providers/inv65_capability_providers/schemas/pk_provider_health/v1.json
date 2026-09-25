@@ -1,0 +1,73 @@
+{
+  "$id": "urn:pk:inv65:pk_provider_health:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "active_capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "checked_at": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "contract_id": {
+      "type": "string"
+    },
+    "dependencies": {
+      "additionalProperties": {
+        "enum": [
+          "ok",
+          "degraded",
+          "down",
+          "unknown"
+        ]
+      },
+      "type": "object"
+    },
+    "live": {
+      "type": "boolean"
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "reasons": {
+      "items": {
+        "pattern": "^[A-Z0-9_]{2,64}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array"
+    },
+    "schema": {
+      "const": "PK_PROVIDER_HEALTH/1"
+    },
+    "state": {
+      "enum": [
+        "starting",
+        "ready",
+        "degraded",
+        "draining",
+        "disabled",
+        "failed",
+        "stopped"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "contract_id",
+    "state",
+    "ready",
+    "live",
+    "reasons",
+    "dependencies",
+    "checked_at"
+  ],
+  "title": "PK_PROVIDER_HEALTH/1",
+  "type": "object",
+  "x-compat": "additive-only within v1; breaking changes require v2",
+  "x-version": "1.0"
+}

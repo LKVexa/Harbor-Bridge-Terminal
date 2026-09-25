@@ -1,0 +1,146 @@
+{
+ "$id": "PK_UNIKERNEL_SEAL_MANIFEST/1",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "architecture": {
+   "enum": [
+    "x86_64",
+    "aarch64"
+   ]
+  },
+  "boot": {
+   "additionalProperties": false,
+   "properties": {
+    "cmdline": {
+     "pattern": "^[A-Za-z0-9 =_.,:/+-]{0,512}$",
+     "type": "string"
+    },
+    "entry_symbol": {
+     "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,63}$",
+     "type": "string"
+    },
+    "memory_mib": {
+     "maximum": 4096,
+     "minimum": 8,
+     "type": "integer"
+    },
+    "ready_marker": {
+     "pattern": "^[ -~]{4,64}$",
+     "type": "string"
+    },
+    "vcpus": {
+     "maximum": 8,
+     "minimum": 1,
+     "type": "integer"
+    }
+   },
+   "required": [
+    "memory_mib",
+    "vcpus",
+    "cmdline",
+    "ready_marker"
+   ],
+   "type": "object"
+  },
+  "image": {
+   "additionalProperties": false,
+   "properties": {
+    "digest": {
+     "pattern": "^sha256:[0-9a-f]{64}$",
+     "type": "string"
+    },
+    "name": {
+     "pattern": "^[a-z0-9][a-z0-9._-]{0,62}$",
+     "type": "string"
+    }
+   },
+   "required": [
+    "name",
+    "digest"
+   ],
+   "type": "object"
+  },
+  "isolation": {
+   "additionalProperties": false,
+   "properties": {
+    "devices": {
+     "items": {
+      "enum": [
+       "serial",
+       "virtio-net",
+       "virtio-blk",
+       "virtio-rng"
+      ]
+     },
+     "maxItems": 8,
+     "type": "array",
+     "uniqueItems": true
+    },
+    "network": {
+     "enum": [
+      "none",
+      "tap"
+     ]
+    },
+    "network_bridge": {
+     "type": "string"
+    },
+    "storage": {
+     "items": {
+      "additionalProperties": false,
+      "properties": {
+       "digest": {
+        "pattern": "^sha256:[0-9a-f]{64}$",
+        "type": "string"
+       },
+       "read_only": {
+        "const": true
+       }
+      },
+      "required": [
+       "digest",
+       "read_only"
+      ],
+      "type": "object"
+     },
+     "maxItems": 4,
+     "type": "array"
+    }
+   },
+   "required": [
+    "network",
+    "devices",
+    "storage"
+   ],
+   "type": "object"
+  },
+  "schema": {
+   "const": "PK_UNIKERNEL_SEAL_MANIFEST/1"
+  },
+  "syscalls": {
+   "items": {
+    "pattern": "^(solo5\\.)?[a-z0-9_]{1,40}$",
+    "type": "string"
+   },
+   "maxItems": 512,
+   "type": "array",
+   "uniqueItems": true
+  },
+  "toolchain": {
+   "pattern": "^[a-z0-9][a-z0-9._-]{0,62}$",
+   "type": "string"
+  }
+ },
+ "required": [
+  "schema",
+  "image",
+  "toolchain",
+  "architecture",
+  "syscalls",
+  "boot",
+  "isolation"
+ ],
+ "title": "INV-27 seal manifest (a claim, verified against the binary)",
+ "type": "object"
+}

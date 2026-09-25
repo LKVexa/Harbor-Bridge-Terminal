@@ -1,0 +1,45 @@
+# MC-003 / MC-083 / MC-086 / MC-087
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv28-unikernel-implementations"
+version = "4.3.0"
+description = "INV-28 unikernel toolchain register and requirement-driven selection (PK series)"
+requires-python = ">=3.10"
+dependencies = []            # stdlib only; pk_core is vendored under _vendor/ (see _vendor/PK_CORE_PROVENANCE.json)
+license = { file = "LICENSE" }
+authors = [{ name = "David Paul Russell" }]
+
+[project.scripts]
+inv28 = "inv28_unikernel_implementations.cli:main"
+
+[tool.setuptools]
+package-dir = { "inv28_unikernel_implementations" = "." }
+packages = ["inv28_unikernel_implementations"]
+
+[tool.setuptools.package-data]
+inv28_unikernel_implementations = ["VERSION", "CHECKLIST.json", "MASTER.md", "schemas/*.json", "config/*.json",
+  "catalog/*.json", "ops/*", "docs/*", "_vendor/**/*"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py310"
+extend-exclude = ["_vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "S", "UP"]
+ignore = ["S101", "E731"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B", "E501", "UP031"]
+"tools/*" = ["S603", "S311"]          # tools run sys.executable with fixed argv; soak uses seeded non-crypto RNG
+"contract.py" = ["E501"]              # generated contract prose (see tools/lint.py)
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+exclude = ["_vendor/", "tests/"]
+check_untyped_defs = true
+warn_unused_ignores = true

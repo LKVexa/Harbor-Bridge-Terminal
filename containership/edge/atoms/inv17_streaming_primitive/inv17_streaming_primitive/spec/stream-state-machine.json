@@ -1,0 +1,264 @@
+{
+  "schema": "urn:pk:inv17:state-machine:1",
+  "doc": "spec/stream-state-machine.md",
+  "state_precedence": [
+    "reader_dropped",
+    "writer_dropped",
+    "ended",
+    "frozen",
+    "credit_stalled",
+    "open"
+  ],
+  "terminal": {
+    "reader_dropped": "absorbing",
+    "writer_dropped": "terminal for writing; buffered values drain first",
+    "ended": "terminal for writing; reader drains then gets None"
+  },
+  "setup": {
+    "credit_stalled": [],
+    "open": [
+      [
+        "grant",
+        1
+      ]
+    ],
+    "frozen": [
+      [
+        "grant",
+        1
+      ],
+      [
+        "freeze",
+        "x"
+      ]
+    ],
+    "ended": [
+      [
+        "end"
+      ]
+    ],
+    "writer_dropped": [
+      [
+        "drop_writer"
+      ]
+    ],
+    "reader_dropped": [
+      [
+        "drop_reader"
+      ]
+    ]
+  },
+  "transitions": [
+    {
+      "from": "credit_stalled",
+      "op": "grant",
+      "expect": "open"
+    },
+    {
+      "from": "credit_stalled",
+      "op": "write",
+      "expect": "CreditExhausted"
+    },
+    {
+      "from": "credit_stalled",
+      "op": "read",
+      "expect": "NOT_READY"
+    },
+    {
+      "from": "credit_stalled",
+      "op": "end",
+      "expect": "ended"
+    },
+    {
+      "from": "credit_stalled",
+      "op": "drop_reader",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "credit_stalled",
+      "op": "drop_writer",
+      "expect": "writer_dropped"
+    },
+    {
+      "from": "credit_stalled",
+      "op": "freeze",
+      "expect": "frozen"
+    },
+    {
+      "from": "open",
+      "op": "grant",
+      "expect": "open"
+    },
+    {
+      "from": "open",
+      "op": "write",
+      "expect": "credit_stalled"
+    },
+    {
+      "from": "open",
+      "op": "read",
+      "expect": "NOT_READY"
+    },
+    {
+      "from": "open",
+      "op": "end",
+      "expect": "ended"
+    },
+    {
+      "from": "open",
+      "op": "drop_reader",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "open",
+      "op": "drop_writer",
+      "expect": "writer_dropped"
+    },
+    {
+      "from": "open",
+      "op": "freeze",
+      "expect": "frozen"
+    },
+    {
+      "from": "frozen",
+      "op": "grant",
+      "expect": "StreamFrozen"
+    },
+    {
+      "from": "frozen",
+      "op": "write",
+      "expect": "StreamFrozen"
+    },
+    {
+      "from": "frozen",
+      "op": "read",
+      "expect": "NOT_READY"
+    },
+    {
+      "from": "frozen",
+      "op": "end",
+      "expect": "ended"
+    },
+    {
+      "from": "frozen",
+      "op": "drop_reader",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "frozen",
+      "op": "drop_writer",
+      "expect": "writer_dropped"
+    },
+    {
+      "from": "frozen",
+      "op": "unfreeze",
+      "expect": "open"
+    },
+    {
+      "from": "ended",
+      "op": "grant",
+      "expect": "StreamClosed"
+    },
+    {
+      "from": "ended",
+      "op": "write",
+      "expect": "StreamClosed"
+    },
+    {
+      "from": "ended",
+      "op": "read",
+      "expect": "EOF"
+    },
+    {
+      "from": "ended",
+      "op": "end",
+      "expect": "ended"
+    },
+    {
+      "from": "ended",
+      "op": "drop_reader",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "ended",
+      "op": "drop_writer",
+      "expect": "writer_dropped"
+    },
+    {
+      "from": "ended",
+      "op": "freeze",
+      "expect": "ended"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "grant",
+      "expect": "StreamClosed"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "write",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "read",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "end",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "drop_reader",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "drop_writer",
+      "expect": "writer_dropped"
+    },
+    {
+      "from": "writer_dropped",
+      "op": "freeze",
+      "expect": "writer_dropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "grant",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "write",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "read",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "end",
+      "expect": "EndDropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "drop_reader",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "drop_writer",
+      "expect": "reader_dropped"
+    },
+    {
+      "from": "reader_dropped",
+      "op": "freeze",
+      "expect": "reader_dropped"
+    }
+  ],
+  "note": "'write' uses element 1 (valid type); 'grant' uses 1; states reached from a fresh Stream(int, max_credit=4, max_buffer=4) via 'setup'. Verified mechanically by tests/test_artifacts.py::StateMachineTest."
+}

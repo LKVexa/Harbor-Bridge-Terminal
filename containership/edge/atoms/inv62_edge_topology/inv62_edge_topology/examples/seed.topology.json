@@ -1,0 +1,18 @@
+{
+  "nodes": {
+    "cloud":  {"tier": "cloud",  "caps": ["control", "gpu"], "residency": "eu"},
+    "r1":     {"tier": "region", "parent": "cloud", "residency": "eu"},
+    "s1-gw":  {"tier": "site",   "site": "s1", "parent": "r1", "caps": ["cache", "coordinator"], "residency": "eu"},
+    "s1-gw2": {"tier": "site",   "site": "s1", "parent": "r1", "caps": ["coordinator"], "residency": "eu"},
+    "s1-d1":  {"tier": "device", "site": "s1", "parent": "s1-gw", "residency": "eu"},
+    "s1-d2":  {"tier": "device", "site": "s1", "parent": "s1-gw", "caps": ["gpu"], "residency": "eu"}
+  },
+  "links": [
+    {"a": "cloud", "b": "r1", "latency_ms": 20},
+    {"a": "r1", "b": "s1-gw", "latency_ms": 60},
+    {"a": "r1", "b": "s1-gw2", "latency_ms": 70},
+    {"a": "s1-gw", "b": "s1-gw2", "latency_ms": 1},
+    {"a": "s1-gw", "b": "s1-d1", "latency_ms": 2},
+    {"a": "s1-gw", "b": "s1-d2", "latency_ms": 3}
+  ]
+}

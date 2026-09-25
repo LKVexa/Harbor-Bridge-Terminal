@@ -1,0 +1,38 @@
+{
+ "schema": "RAMWS/TASK_EVIDENCE/1",
+ "task_id": "R06",
+ "title": "Compute the effective memory allowance",
+ "status": "PASS",
+ "applicability": "NODE-WEB profile",
+ "applicability_approval": "owner decisions RD-01..RD-05 (2026-09-21)",
+ "selected_profile": "LOCAL_VOLATILE",
+ "source_identity": "ledger/ramws_source.json",
+ "runtime_identity": "Linux 6.18.44 x86_64, 2 vCPU, Node v22.22.2, Chromium 1194; loopback only",
+ "configuration_identity": "gateway/config.js defaults; e/R28/experiment.frozen.json for R28",
+ "predecessor_evidence": [
+  "e/native/R02.json",
+  "e/native/R05.json"
+ ],
+ "decision_or_code_delta": "ram/allowance.js: L/F/G/H/s allowance computed at startup, enforced by the ledger; verified with a 2-session boundary test.",
+ "command": "node --test \"tests/*/*.test.js\" (e/full-suite.tap)",
+ "started_at": "2026-09-21T20:30:00Z",
+ "finished_at": "2026-09-21T22:23:36Z",
+ "expected": "Admission never relies on host RAM alone inside a smaller container; reservations are atomic and every retained allocation belongs to one nonoverlapping budget bucket.",
+ "observed": "1 linked tests, all ok",
+ "raw_result_paths": [
+  "e/full-suite.tap"
+ ],
+ "memory_scope": "gateway process (+ worker threads) and worker processes",
+ "allocation_change_bytes": null,
+ "cpu_scope": null,
+ "cpu_change_seconds": null,
+ "residency_status": "UNKNOWN",
+ "residual_risks": [
+  "s measured on one host",
+  "self-reviewed by the implementer; no independent verification"
+ ],
+ "rollback": "delete ram/, gateway/worker-link.js, worker/core.js, worker/thread.js; restore the v1 files from hermit-vws 1.1.0-vws.1 (hashes in ledger/ramws_source.json)",
+ "linked_tests": [
+  "memory admission: sessions are refused (503 / LIMIT_EXCEEDED) when the ledger allowance is exhausted; no worker is created; capacity returns on close"
+ ]
+}

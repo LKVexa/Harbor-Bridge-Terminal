@@ -1,0 +1,44 @@
+# INV-21 CI (GAP-038). Mandatory checks fail the build; nothing is allowed to skip.
+name: inv21-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4          # pk_core: source must be pinned in pyproject [tool.inv21.pk_core]
+        with: {repository: "${{ vars.PK_CORE_REPO }}", ref: "${{ vars.PK_CORE_REF }}", path: pk}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - name: Fetch pinned build backend (hash-checked)
+        run: pip download --no-deps --require-hashes -r constraints.txt -d wheels
+      - name: Unit / contract / adversarial / fuzz / race / fault / equivalence / packaging
+        env: {PK_CORE_PATH: "${{ github.workspace }}/pk", INV21_BACKEND_WHEEL: "wheels/setuptools-79.0.1-py3-none-any.whl"}
+        working-directory: inv21_local_service_chaining
+        run: python -B -m unittest discover -s tests -t tests
+      - name: python -O parity
+        env: {PK_CORE_PATH: "${{ github.workspace }}/pk"}
+        working-directory: inv21_local_service_chaining
+        run: python -B -O -m unittest discover -s tests -t tests
+  gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: {repository: "${{ vars.PK_CORE_REPO }}", ref: "${{ vars.PK_CORE_REF }}", path: pk}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip download --no-deps --require-hashes -r constraints.txt -d wheels
+      - name: Production exit gate (fuzz 5000, schema compat, reproducible build, SBOM, bench regression, traceability)
+        env: {PK_CORE_PATH: "${{ github.workspace }}/pk", INV21_BACKEND_WHEEL: "wheels/setuptools-79.0.1-py3-none-any.whl"}
+        run: python -B -m inv21_local_service_chaining.tools.release_gate --out-dir gate-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: gate-evidence, path: gate-evidence}

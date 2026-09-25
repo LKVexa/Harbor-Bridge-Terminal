@@ -1,0 +1,1051 @@
+{
+  "element": "INV-04",
+  "version": "4.3.0",
+  "semantics": "No component is PASS: PASS requires green CI evidence on the supported matrix (tools/evidence_gate.py).",
+  "summary": {
+    "status": {
+      "port_with_reference": 7,
+      "reference_implemented": 52,
+      "open": 2,
+      "tooling": 13,
+      "documented": 6
+    },
+    "exit_gate": {
+      "OPEN_EXTERNAL": 32,
+      "OPEN_REVIEW": 41,
+      "OPEN_GOVERNANCE": 7
+    }
+  },
+  "components": [
+    {
+      "id": 1,
+      "name": "Kubernetes API client adapter",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/api.py::ClusterAPI",
+        "runtime/api.py::check_discovery",
+        "runtime/objects.py::from_k8s_pod"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::AdapterBoundaryTest",
+        "tests/test_runtime_interface.py::ServiceTest"
+      ],
+      "limitations": "Port, discovery fail-closed and wire-object conversion exist; no official-client adapter, kubeconfig/SA auth or server-version matrix run."
+    },
+    {
+      "id": 2,
+      "name": "Informer/watch cache subsystem",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/store.py::Informer"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::InformerTest"
+      ],
+      "limitations": "Semantics proven against VersionedStore; needs binding to real list/watch."
+    },
+    {
+      "id": 3,
+      "name": "Controller work queue",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/workqueue.py::WorkQueue",
+        "runtime/workqueue.py::run_workers"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::WorkQueueTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 4,
+      "name": "ResourceVersion / optimistic-concurrency layer",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/store.py::VersionedStore",
+        "runtime/api.py::InMemoryClusterAPI"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::StoreTest",
+        "tests/test_properties.py::StoreConcurrencyTest"
+      ],
+      "limitations": "Real API-server conflict path untested."
+    },
+    {
+      "id": 5,
+      "name": "Leader election / active-controller fencing",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/lease.py::LeaderElector",
+        "runtime/lease.py::FencingGuard"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::LeaseTest",
+        "tests/test_runtime_drain.py::DrainTest"
+      ],
+      "limitations": "Lease lives in VersionedStore; production must use coordination.k8s.io/v1 Lease and enforce the fencing token on the server-side write path."
+    },
+    {
+      "id": 6,
+      "name": "Durable desired-state adapter",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/store.py::VersionedStore"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::StoreTest"
+      ],
+      "limitations": "Authoritative desired state in production is the controller objects in the API server."
+    },
+    {
+      "id": 7,
+      "name": "Crash/restart recovery",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/drain.py::DrainCoordinator"
+      ],
+      "tests": [
+        "tests/test_runtime_drain.py::CrashRecoveryTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 8,
+      "name": "Drain transaction coordinator",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/drain.py::DrainCoordinator"
+      ],
+      "tests": [
+        "tests/test_runtime_drain.py::DrainTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 9,
+      "name": "Native Kubernetes Eviction API integration",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/api.py::InMemoryClusterAPI",
+        "runtime/policy.py::eviction_allowed"
+      ],
+      "tests": [
+        "tests/test_runtime_drain.py::DrainTest"
+      ],
+      "limitations": "Eviction subresource semantics emulated; real policy/v1 eviction not exercised."
+    },
+    {
+      "id": 10,
+      "name": "Full PodDisruptionBudget evaluator",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/policy.py::pdb_status",
+        "runtime/policy.py::eviction_allowed"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::PdbTest"
+      ],
+      "limitations": "Needs conformance comparison against a real API server's PDB status."
+    },
+    {
+      "id": 11,
+      "name": "Unmanaged/static/mirror pod policy",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/policy.py::classify_for_drain"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::PodPolicyTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 12,
+      "name": "Node health/unreachable semantics",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/policy.py::node_state",
+        "runtime/policy.py::may_evict_from"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::NodeHealthTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 13,
+      "name": "Pod termination lifecycle model",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/policy.py::termination_state"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::PodPolicyTest"
+      ],
+      "limitations": "Force-delete intentionally not automated (operator-only per runbook); kubelet behaviour not observed."
+    },
+    {
+      "id": 14,
+      "name": "Stateful workload semantics",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/policy.py::stateful_order",
+        "runtime/policy.py::quorum_safe"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::PodPolicyTest"
+      ],
+      "limitations": "quorum_safe is not yet wired into DrainCoordinator preflight (needs per-set quorum config)."
+    },
+    {
+      "id": 15,
+      "name": "DaemonSet semantics",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/policy.py::classify_for_drain"
+      ],
+      "tests": [
+        "tests/test_runtime_drain.py::DrainTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 16,
+      "name": "Job/CronJob semantics",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/policy.py::job_needs_replacement",
+        "runtime/policy.py::classify_for_drain"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::PodPolicyTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 17,
+      "name": "Persistent-volume drain constraints",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/policy.py::volume_blockers"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::PodPolicyTest"
+      ],
+      "limitations": "CSI health not modelled."
+    },
+    {
+      "id": 18,
+      "name": "Preflight capacity engine",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/scheduling.py::plan_drain_capacity",
+        "runtime/scheduling.py::filter_node"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::SchedulingTest",
+        "tests/test_runtime_drain.py::DrainTest"
+      ],
+      "limitations": "Hugepages/GPU use generic resource keys; not enumerated."
+    },
+    {
+      "id": 19,
+      "name": "Scheduling constraint evaluator",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/scheduling.py::filter_node",
+        "runtime/scheduling.py::place"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::SchedulingTest"
+      ],
+      "limitations": "Subset of kube-scheduler required predicates; preferred (soft) affinity not scored."
+    },
+    {
+      "id": 20,
+      "name": "Priority/preemption semantics",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/scheduling.py::preemption_candidates"
+      ],
+      "tests": [
+        "tests/test_runtime_policy.py::SchedulingTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 21,
+      "name": "Atomic multi-object operation journal",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/journal.py::Journal"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::JournalTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 22,
+      "name": "Idempotency keys / operation identity",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/journal.py::IdempotencyRegistry"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::JournalTest",
+        "tests/test_runtime_interface.py::ServiceTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 23,
+      "name": "Runtime schema validation",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/validation.py::parse_and_validate"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SchemaFixtureTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 24,
+      "name": "Transport/API implementation",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/service.py::Service",
+        "runtime/service.py::serve"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::ServiceTest"
+      ],
+      "limitations": "HTTP/JSON only; gRPC/WIT/event bindings absent."
+    },
+    {
+      "id": 25,
+      "name": "Protocol compatibility negotiation",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/validation.py::negotiate"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::NegotiationAndMappingTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 26,
+      "name": "Stable transport error mapping",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/errors.py::TRANSPORT_MAP",
+        "runtime/service.py::problem"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::NegotiationAndMappingTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 27,
+      "name": "Authentication layer",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/security.py::TokenAuthenticator"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SecurityTest"
+      ],
+      "limitations": "HS256 only; production IdP (OIDC/JWKS, TokenReview) not integrated."
+    },
+    {
+      "id": 28,
+      "name": "Authorization/RBAC layer",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/security.py::Authorizer"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SecurityTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 29,
+      "name": "mTLS/service identity",
+      "status": "open",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [],
+      "tests": [],
+      "limitations": "Delegated to deployment (mesh/sidecar) by ADR-0001; no in-package implementation."
+    },
+    {
+      "id": 30,
+      "name": "Admission/policy integration",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/security.py::AdmissionPolicy"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SecurityTest"
+      ],
+      "limitations": "External policy engine not integrated."
+    },
+    {
+      "id": 31,
+      "name": "Tenant/environment/site isolation enforcement",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/security.py::scope_filter",
+        "runtime/service.py::Orchestrator"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SecurityTest",
+        "tests/test_runtime_interface.py::ServiceTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 32,
+      "name": "Quota and fairness controller",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/security.py::FairQueue"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SecurityTest"
+      ],
+      "limitations": "Not yet wired into the service dispatch path."
+    },
+    {
+      "id": 33,
+      "name": "Timeout/deadline/cancellation semantics",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/resilience.py::Context"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ResilienceTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 34,
+      "name": "Retry/backoff/jitter policy",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/resilience.py::retry_call",
+        "runtime/resilience.py::Backoff",
+        "runtime/resilience.py::RetryBudget"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ResilienceTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 35,
+      "name": "Backpressure/rate limiting",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/resilience.py::TokenBucket",
+        "runtime/workqueue.py::WorkQueue"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ResilienceTest",
+        "tests/test_runtime_core.py::WorkQueueTest",
+        "tests/test_runtime_interface.py::ServiceTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 36,
+      "name": "Inventory snapshot identity",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/handoff.py::take_snapshot"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::HandoffTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 37,
+      "name": "Handoff checkpoint/acknowledgement protocol",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/handoff.py::HandoffSession",
+        "runtime/handoff.py::Receiver"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::HandoffTest"
+      ],
+      "limitations": "Needs SCH-01 successor integration."
+    },
+    {
+      "id": 38,
+      "name": "Handoff diff/change stream",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/handoff.py::ChangeStream"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::HandoffTest"
+      ],
+      "limitations": "Needs SCH-01 successor integration."
+    },
+    {
+      "id": 39,
+      "name": "Cross-controller ownership resolution",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/handoff.py::OwnershipRegistry"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::HandoffTest"
+      ],
+      "limitations": "Registry is in-process; needs a durable shared authority."
+    },
+    {
+      "id": 40,
+      "name": "Configuration schema and loader",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/config.py::load_config"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ConfigTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 41,
+      "name": "Configuration provenance/activation record",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/config.py::ConfigManager"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ConfigTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 42,
+      "name": "Transactional configuration rollback",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/config.py::ConfigManager"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ConfigTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 43,
+      "name": "Secret-management integration",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/security.py::SecretResolver",
+        "runtime/journal.py::redact"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SecurityTest",
+        "tests/test_runtime_ops.py::ObservabilityTest"
+      ],
+      "limitations": "Env/file providers only; no external secret manager."
+    },
+    {
+      "id": 44,
+      "name": "Metrics implementation",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/observability.py::Registry",
+        "runtime/observability.py::standard_metrics"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ObservabilityTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 45,
+      "name": "Structured logging",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/observability.py::JsonFormatter",
+        "runtime/observability.py::log_event"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ObservabilityTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 46,
+      "name": "Distributed tracing",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/observability.py::Tracer"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ObservabilityTest"
+      ],
+      "limitations": "No OTLP exporter; W3C traceparent only."
+    },
+    {
+      "id": 47,
+      "name": "Health/readiness/startup endpoints",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/observability.py::Health",
+        "runtime/service.py::Service"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ObservabilityTest",
+        "tests/test_runtime_interface.py::ServiceTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 48,
+      "name": "SLO measurement engine",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/observability.py::ConvergenceSLO"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ObservabilityTest"
+      ],
+      "limitations": "In-memory window; needs a durable time-series backend."
+    },
+    {
+      "id": 49,
+      "name": "Alerting and error-budget policy",
+      "status": "port_with_reference",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "runtime/observability.py::evaluate_alerts"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ObservabilityTest"
+      ],
+      "limitations": "Paging routes/escalation owners unassigned (docs/OWNERS.md)."
+    },
+    {
+      "id": 50,
+      "name": "Durable audit trail",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/journal.py::AuditTrail"
+      ],
+      "tests": [
+        "tests/test_runtime_core.py::JournalTest"
+      ],
+      "limitations": "Hash-chained, not externally anchored or signed."
+    },
+    {
+      "id": 51,
+      "name": "Reconcile-stall detector",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/resilience.py::StallDetector"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ResilienceTest"
+      ],
+      "limitations": "Not yet wired into the worker loop."
+    },
+    {
+      "id": 52,
+      "name": "Network-partition behavior",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/store.py::Informer",
+        "runtime/policy.py::node_state"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ResilienceTest",
+        "tests/test_runtime_policy.py::NodeHealthTest"
+      ],
+      "limitations": "Needs real partition testing."
+    },
+    {
+      "id": 53,
+      "name": "Dependency circuit breakers",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "runtime/resilience.py::CircuitBreaker"
+      ],
+      "tests": [
+        "tests/test_runtime_ops.py::ResilienceTest"
+      ],
+      "limitations": "Not yet wrapped around every dependency call."
+    },
+    {
+      "id": 54,
+      "name": "Chaos/fault-injection suite",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "runtime/api.py::InMemoryClusterAPI"
+      ],
+      "tests": [
+        "tests/test_runtime_drain.py::ChaosTest"
+      ],
+      "limitations": "In-memory faults only; no real-cluster chaos."
+    },
+    {
+      "id": 55,
+      "name": "Property-based/state-machine testing",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [],
+      "tests": [
+        "tests/test_properties.py::ModelStateMachineTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 56,
+      "name": "Fuzz testing",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [],
+      "tests": [
+        "tests/test_properties.py::FuzzTest"
+      ],
+      "limitations": "Seeded mutation fuzzing; no coverage-guided fuzzer."
+    },
+    {
+      "id": 57,
+      "name": "Concurrency/race tests",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [],
+      "tests": [
+        "tests/test_properties.py::StoreConcurrencyTest",
+        "tests/test_runtime_core.py::WorkQueueTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 58,
+      "name": "Real-cluster integration tests",
+      "status": "open",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [],
+      "tests": [],
+      "limitations": "Requires a kind/k3s matrix in owner CI; not runnable in this package."
+    },
+    {
+      "id": 59,
+      "name": "Migration parity test harness",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [],
+      "tests": [
+        "tests/test_properties.py::ParityHarnessTest"
+      ],
+      "limitations": "Compares v4.2 model vs v4.3 runtime; SCH-01 successor side not available."
+    },
+    {
+      "id": 60,
+      "name": "Scale/performance benchmarks",
+      "status": "tooling",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "tools/bench.py"
+      ],
+      "tests": [],
+      "limitations": "Results are environment-specific; not release evidence until run on target hardware."
+    },
+    {
+      "id": 61,
+      "name": "Soak/endurance tests",
+      "status": "tooling",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "tests/test_properties.py"
+      ],
+      "tests": [],
+      "limitations": "Soak mode = INV04_ITERATIONS long property runs; no long-duration environment run."
+    },
+    {
+      "id": 62,
+      "name": "Recovery/RTO/RPO tests",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "tools/bench.py"
+      ],
+      "tests": [
+        "tests/test_runtime_drain.py::CrashRecoveryTest"
+      ],
+      "limitations": "Process-level RPO=0 (fsynced journal) shown; node/control-plane recovery untested."
+    },
+    {
+      "id": 63,
+      "name": "Packaging metadata (pyproject.toml)",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "pyproject.toml"
+      ],
+      "tests": [
+        "tests/test_artifacts.py::ArtifactIntegrityTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 64,
+      "name": "Pinned dependency manifest/lock strategy",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "pyproject.toml",
+        "constraints.txt"
+      ],
+      "tests": [],
+      "limitations": "Runtime has zero third-party dependencies; dev tools pinned."
+    },
+    {
+      "id": 65,
+      "name": "SBOM generation",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "tools/sbom.py"
+      ],
+      "tests": [],
+      "limitations": ""
+    },
+    {
+      "id": 66,
+      "name": "Artifact signing and provenance",
+      "status": "tooling",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "tools/release.py"
+      ],
+      "tests": [],
+      "limitations": "Provenance statement generated; signing needs the owner's key / cosign identity."
+    },
+    {
+      "id": 67,
+      "name": "Vulnerability/license scanning gates",
+      "status": "tooling",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "tools/lint_gate.py"
+      ],
+      "tests": [],
+      "limitations": "Secret/unsafe-pattern scan in-package; dependency CVE scan needs pip-audit/OSV in CI."
+    },
+    {
+      "id": 68,
+      "name": "CI matrix",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        ".github/workflows/ci.yml"
+      ],
+      "tests": [],
+      "limitations": "Workflow written, never executed in owner CI."
+    },
+    {
+      "id": 69,
+      "name": "Static type checking",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "pyproject.toml"
+      ],
+      "tests": [],
+      "limitations": "mypy clean on the runtime in this build."
+    },
+    {
+      "id": 70,
+      "name": "Lint/security static analysis",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "pyproject.toml",
+        "tools/lint_gate.py"
+      ],
+      "tests": [],
+      "limitations": "ruff E,F,W,B,S clean in this build."
+    },
+    {
+      "id": 71,
+      "name": "Release rollback package",
+      "status": "documented",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "docs/ROLLBACK.md",
+        "tools/release.py"
+      ],
+      "tests": [],
+      "limitations": "Rollback to 4.2.0 documented; not rehearsed."
+    },
+    {
+      "id": 72,
+      "name": "Architecture Decision Record",
+      "status": "documented",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "docs/ADR-0001-runtime-architecture.md"
+      ],
+      "tests": [],
+      "limitations": "Status Proposed; needs approvers."
+    },
+    {
+      "id": 73,
+      "name": "Threat model",
+      "status": "documented",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "docs/THREAT_MODEL.md"
+      ],
+      "tests": [],
+      "limitations": "Needs review by someone other than the author."
+    },
+    {
+      "id": 74,
+      "name": "Operator runbook",
+      "status": "documented",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "docs/RUNBOOK.md"
+      ],
+      "tests": [],
+      "limitations": "Needs game-day validation."
+    },
+    {
+      "id": 75,
+      "name": "Ownership/RACI and escalation path",
+      "status": "documented",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "docs/OWNERS.md"
+      ],
+      "tests": [],
+      "limitations": "All named roles are UNASSIGNED - the owner must fill them."
+    },
+    {
+      "id": 76,
+      "name": "Evidence traceability matrix",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "tools/evidence_gate.py",
+        "docs/TRACEABILITY.md"
+      ],
+      "tests": [],
+      "limitations": ""
+    },
+    {
+      "id": 77,
+      "name": "Evidence-quality gate",
+      "status": "tooling",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "tools/evidence_gate.py"
+      ],
+      "tests": [
+        "tests/test_artifacts.py::ArtifactIntegrityTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 78,
+      "name": "pk_core integration pin/test fixture",
+      "status": "tooling",
+      "exit_gate": "OPEN_EXTERNAL",
+      "implementation": [
+        "tools/pk_core_gate.py"
+      ],
+      "tests": [],
+      "limitations": "Gate fails when pk_core is absent; pk_core itself is not in this archive."
+    },
+    {
+      "id": 79,
+      "name": "Conformance fixtures for all v1 schemas",
+      "status": "reference_implemented",
+      "exit_gate": "OPEN_REVIEW",
+      "implementation": [
+        "fixtures/index.json"
+      ],
+      "tests": [
+        "tests/test_runtime_interface.py::SchemaFixtureTest"
+      ],
+      "limitations": ""
+    },
+    {
+      "id": 80,
+      "name": "Master prompt/workflow corpus restoration (conditional)",
+      "status": "documented",
+      "exit_gate": "OPEN_GOVERNANCE",
+      "implementation": [
+        "docs/ADR-0002-master-corpus.md"
+      ],
+      "tests": [],
+      "limitations": "Decision pending owner; no historical text fabricated."
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+ "$id": "https://pk.example/schemas/PK_GITOPS_SYNC_1.schema.json",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "actions": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "op": {
+      "enum": [
+       "create",
+       "update",
+       "delete"
+      ]
+     },
+     "rid": {
+      "maxLength": 600,
+      "type": "string"
+     }
+    },
+    "required": [
+     "op",
+     "rid"
+    ],
+    "type": "object"
+   },
+   "maxItems": 100000,
+   "type": "array"
+  },
+  "at": {
+   "minimum": 0,
+   "type": "number"
+  },
+  "decision_id": {
+   "maxLength": 128,
+   "type": "string"
+  },
+  "drift": {
+   "items": {
+    "maxLength": 600,
+    "type": "string"
+   },
+   "maxItems": 100000,
+   "type": "array"
+  },
+  "epoch": {
+   "minimum": 0,
+   "type": "integer"
+  },
+  "error": {
+   "type": [
+    "object",
+    "null"
+   ]
+  },
+  "mode": {
+   "enum": [
+    "initial",
+    "fast_forward",
+    "signed_revert",
+    "rollback_exception",
+    "unchanged"
+   ]
+  },
+  "oid": {
+   "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+   "type": "string"
+  },
+  "outcome": {
+   "enum": [
+    "applied",
+    "no_change",
+    "refused",
+    "failed",
+    "frozen",
+    "read_only",
+    "duplicate"
+   ]
+  },
+  "policy_digest": {
+   "maxLength": 64,
+   "type": "string"
+  },
+  "previous": {
+   "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "ref": {
+   "maxLength": 210,
+   "pattern": "^refs/(heads|tags)/[A-Za-z0-9._/-]{1,200}$",
+   "type": "string"
+  },
+  "schema": {
+   "const": "PK_GITOPS_SYNC/1"
+  },
+  "trace_id": {
+   "maxLength": 32,
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "trust_digest": {
+   "pattern": "^[0-9a-f]{64}$",
+   "type": "string"
+  }
+ },
+ "required": [
+  "schema",
+  "decision_id",
+  "ref",
+  "outcome",
+  "at"
+ ],
+ "title": "PK_GITOPS_SYNC/1",
+ "type": "object"
+}

@@ -1,0 +1,16 @@
+{
+ "title": "INV-19 OS asynchronous analogues",
+ "schemaVersion": 39,
+ "panels": [
+  {"title": "Selected backend", "type": "stat", "targets": [{"expr": "max by (backend,semantics)(inv19_backend_selected) == 1"}]},
+  {"title": "Fallback engagements by reason", "type": "timeseries", "targets": [{"expr": "sum by (reason)(rate(inv19_fallback_engagements_total[5m]))"}]},
+  {"title": "Error rate by canonical code", "type": "timeseries", "targets": [{"expr": "sum by (code)(rate(inv19_errors_total[5m]))"}]},
+  {"title": "Unknown host errors (must be 0)", "type": "stat", "targets": [{"expr": "sum(inv19_untranslatable_errors_total)"}]},
+  {"title": "Reap latency p50/p99", "type": "timeseries", "targets": [{"expr": "histogram_quantile(0.5, sum by (le,backend)(rate(inv19_reap_latency_seconds_bucket[5m])))"}, {"expr": "histogram_quantile(0.99, sum by (le,backend)(rate(inv19_reap_latency_seconds_bucket[5m])))"}]},
+  {"title": "Quota utilisation", "type": "bargauge", "targets": [{"expr": "inv19_quota_utilisation_ratio"}]},
+  {"title": "Queue depth", "type": "timeseries", "targets": [{"expr": "inv19_queue_depth"}]},
+  {"title": "Backend health", "type": "state-timeline", "targets": [{"expr": "inv19_backend_health == 1"}]},
+  {"title": "Policy rejections vs load (overload / tenant quota / circuit)", "type": "timeseries", "targets": [{"expr": "sum by (code)(rate(inv19_errors_total{code=~\"OVERLOADED|UNAUTHORIZED\"}[5m]))"}]},
+  {"title": "Audit export failures", "type": "stat", "targets": [{"expr": "increase(inv19_audit_export_failures_total[1h])"}]}
+ ]
+}

@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\x00-\\x1f\\x7f\\s]([^\\x00-\\x1f\\x7f]*[^\\x00-\\x1f\\x7f\\s])?$",
+      "type": "string"
+    },
+    "identity": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/id"
+        },
+        "environment": {
+          "$ref": "#/$defs/id"
+        },
+        "site": {
+          "$ref": "#/$defs/id"
+        },
+        "tenant": {
+          "$ref": "#/$defs/id"
+        },
+        "workload": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "tenant",
+        "environment",
+        "site",
+        "workload",
+        "component"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:pk:inv65:authz_decision:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "link.create",
+        "link.update",
+        "link.revoke",
+        "call"
+      ]
+    },
+    "decision_id": {
+      "$ref": "#/$defs/id"
+    },
+    "effect": {
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "expires_at": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "issued_at": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "policy_version": {
+      "$ref": "#/$defs/id"
+    },
+    "resource": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_id": {
+          "$ref": "#/$defs/id"
+        },
+        "link_name": {
+          "$ref": "#/$defs/id"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "contract_id",
+        "link_name"
+      ],
+      "type": "object"
+    },
+    "schema": {
+      "const": "PK_AUTHZ_DECISION/1"
+    },
+    "signature": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "subject": {
+      "$ref": "#/$defs/identity"
+    }
+  },
+  "required": [
+    "schema",
+    "decision_id",
+    "subject",
+    "action",
+    "resource",
+    "effect",
+    "issued_at",
+    "expires_at",
+    "policy_version",
+    "signature"
+  ],
+  "title": "PK authz decision v1",
+  "type": "object",
+  "x-compat": "additive-only within v1; breaking changes require v2",
+  "x-version": "1.0"
+}

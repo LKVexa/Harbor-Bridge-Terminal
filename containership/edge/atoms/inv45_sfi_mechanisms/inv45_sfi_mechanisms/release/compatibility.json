@@ -1,0 +1,37 @@
+{
+  "schema": "PK_SFI_COMPATIBILITY/1",
+  "component": "inv45_sfi_mechanisms",
+  "version": "4.3.0",
+  "policy": "explicit-match: every peer boundary requires an exact supported schema/profile id; anything else is SFI_UNSUPPORTED_VERSION (docs/architecture/COMPATIBILITY.md)",
+  "profiles": ["PK-SFI-WASM32-MVP-1"],
+  "wasm_binary_versions": [1],
+  "schemas": {
+    "proof": ["PK_SFI_PROOF/1"],
+    "descriptor": ["PK_SFI_SEALED_DESCRIPTOR/1"],
+    "config": ["PK_SFI_CONFIG/1"],
+    "error": ["PK_SFI_ERROR/1"],
+    "audit": ["PK_SFI_AUDIT/1"],
+    "health": ["PK_SFI_HEALTH/1"],
+    "artifact_statement": ["PK_SFI_ARTIFACT_STATEMENT/1"],
+    "reference_model_reports": ["PK_SFI_MODULE/1", "PK_SFI_MASK/1"]
+  },
+  "runtimes": {
+    "cpython": {"supported": ["3.10", "3.11", "3.12", "3.13"], "tested_in_this_release": ["3.11.15"]},
+    "node_v8_engine": {"supported_majors": [20, 22, 24], "pinned_major": 22, "tested_in_this_release": ["v22.22.2"]},
+    "cryptography": {"constraint": ">=41,<47", "tested_in_this_release": ["46.0.7"]},
+    "jsonschema": {"constraint": ">=4.18,<5", "role": "test/contract lane only", "tested_in_this_release": ["4.26.0"]}
+  },
+  "platforms": {
+    "tested_in_this_release": ["linux-x86_64"],
+    "declared_untested": ["linux-aarch64", "macos-arm64", "windows-x86_64"],
+    "unsupported": ["32-bit hosts", "big-endian hosts", "engines without the Node permission model"]
+  },
+  "adjacent": {
+    "pk_core": {"required_for": "100-item checklist gate", "pinned": "UNRESOLVED - no published version/digest available to this release", "tested_in_this_release": "NOT RUN (absent)"},
+    "INV-30 capability hardware sandbox": "no interface available; not tested",
+    "INV-39 process sandbox tier": "exercised via node --permission subprocess isolation only",
+    "INV-44 Wasm hardening system": "exercised via V8 engine adapter; the INV-44 component itself is not present",
+    "GAP-02 hardware capability discovery": "no interface available; not tested"
+  },
+  "downgrade": "older descriptor/config/proof schema ids are refused; anti-rollback floors refuse older artifact versions per workload"
+}

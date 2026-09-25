@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:PK_ADMISSION_DECISION:1",
+  "title": "PK_ADMISSION_DECISION/1",
+  "type": "object",
+  "required": [
+    "schema",
+    "request_id",
+    "outcome",
+    "runnable",
+    "code"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_ADMISSION_DECISION/1"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "allow",
+        "deny",
+        "defer",
+        "error"
+      ]
+    },
+    "runnable": {
+      "type": "boolean"
+    },
+    "code": {
+      "type": "string"
+    },
+    "digest": {
+      "type": "string"
+    },
+    "trust_generation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "trust_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "decision_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "runnable": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "outcome": {
+            "const": "allow"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "PK_AGENT_COMPATIBILITY_MATRIX/1",
+  "component": "INV-69",
+  "version": "4.3.0",
+  "owner_role": "inv69-service-owner",
+  "support_states": [
+    "fully_supported",
+    "transitional",
+    "deprecated",
+    "security_fix_only",
+    "unsupported"
+  ],
+  "update_trigger": "any release of INV-69 or an adjacent component; reviewed in the quarterly dependency review (ops/REVIEWS.json)",
+  "rolling_upgrade": {
+    "window": "peers must share protocol major PK_AGENT_PEER/1; INV-69 N and N-1 minor may coexist",
+    "order": [
+      "INV-57 durable execution",
+      "INV-59 authorization",
+      "INV-70/INV-71 sandboxes",
+      "INV-69 (this)"
+    ],
+    "rollback_points": [
+      "after each component; INV-69 config generations roll back via ConfigStore.rollback"
+    ]
+  },
+  "rows": [
+    {
+      "component": "INV-69",
+      "min": "4.3.0",
+      "max": "4.3.99",
+      "state": "fully_supported",
+      "evidence": "tests/run_all.py"
+    },
+    {
+      "component": "INV-69",
+      "min": "4.2.0",
+      "max": "4.2.99",
+      "state": "transitional",
+      "evidence": "tests/test_v43.py::CompatTest (kernel v1 schemas unchanged)"
+    },
+    {
+      "component": "INV-69",
+      "min": "0.0.0",
+      "max": "4.1.99",
+      "state": "unsupported",
+      "evidence": "no adapter"
+    },
+    {
+      "component": "INV-59",
+      "min": "4.3.0",
+      "max": "4.99.99",
+      "state": "fully_supported",
+      "evidence": "adapter-tier only: tests/test_v43.py::IntegrationTest"
+    },
+    {
+      "component": "INV-59",
+      "min": "0.0.0",
+      "max": "4.2.99",
+      "state": "unsupported",
+      "evidence": "lacks error_codes.v1"
+    },
+    {
+      "component": "INV-57",
+      "min": "4.3.0",
+      "max": "4.99.99",
+      "state": "fully_supported",
+      "evidence": "adapter-tier only"
+    },
+    {
+      "component": "INV-57",
+      "min": "0.0.0",
+      "max": "4.2.99",
+      "state": "unsupported",
+      "evidence": "lacks fencing_tokens"
+    },
+    {
+      "component": "INV-70",
+      "min": "4.3.0",
+      "max": "4.99.99",
+      "state": "fully_supported",
+      "evidence": "adapter-tier only"
+    },
+    {
+      "component": "INV-71",
+      "min": "4.3.0",
+      "max": "4.99.99",
+      "state": "fully_supported",
+      "evidence": "adapter-tier only"
+    },
+    {
+      "component": "python",
+      "min": "3.10.0",
+      "max": "3.13.99",
+      "state": "fully_supported",
+      "evidence": "CPython 3.11.15 executed; 3.10/3.12/3.13 declared in CI matrix, NOT executed in this pass"
+    },
+    {
+      "component": "pk_core",
+      "min": "0.0.0",
+      "max": "0.0.0",
+      "state": "unsupported",
+      "evidence": "unpinned and absent; BLOCKER W-001"
+    }
+  ],
+  "schemas": {
+    "PK_AGENT_STEP": "1",
+    "PK_AGENT_APPROVAL": "1",
+    "PK_AGENT_TRANSCRIPT": "1",
+    "PK_AGENT_RUN_EVENT": "1",
+    "PK_AGENT_ERROR": "1",
+    "PK_AGENT_CONFIG": "1",
+    "PK_AGENT_STATUS": "1",
+    "PK_AGENT_BACKUP": "1",
+    "PK_AGENT_PEER": "1"
+  }
+}

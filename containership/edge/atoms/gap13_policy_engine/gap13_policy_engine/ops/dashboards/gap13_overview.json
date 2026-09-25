@@ -1,0 +1,203 @@
+{
+  "title": "GAP-13 Policy Engine",
+  "schemaVersion": 39,
+  "uid": "gap13-overview",
+  "tags": [
+    "gap13",
+    "policy"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Verdicts by effect",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (effect)(rate(g13_verdicts_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Default-deny ratio",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(g13_default_denies_total[5m]) / rate(g13_verdicts_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "p50/p99 latency (ms)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, rate(g13_evaluate_latency_ms_bucket[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Bundle age vs thresholds",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "g13_bundle_age_seconds"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Active generation",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 8,
+        "y": 8,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "g13_bundle_generation"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Verification outcomes",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 16,
+        "y": 8,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (state)(increase(g13_bundle_verifications_total[1h]))"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Stale refusals",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "increase(g13_stale_refusals_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Overload sheds",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 8,
+        "y": 16,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(g13_overload_shed_total[5m])"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Auth denials",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 16,
+        "y": 16,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (capability)(increase(g13_auth_denied_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Errors by code",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (code)(rate(g13_errors_total[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Control state",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 8,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "g13_control_state"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Top rules",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 16,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "topk(10, rate(g13_rule_hits_total[5m]))"
+        }
+      ]
+    }
+  ]
+}

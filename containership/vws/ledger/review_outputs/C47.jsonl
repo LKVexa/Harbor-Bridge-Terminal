@@ -1,0 +1,100 @@
+{"id": "C47-001", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics", "gateway/server.js:322-325"], "note": "SIGTERM (and SIGINT) explicitly handled and documented"}
+{"id": "C47-002", "status": "PASS", "evidence": ["deploy/Dockerfile:38-39"], "note": "ENTRYPOINT node as PID 1, 'node is PID 1 and receives SIGTERM directly'"}
+{"id": "C47-003", "status": "PASS", "evidence": ["gateway/server.js:286-310"], "note": "shutdown(): admission off -> notify -> drain -> close listener -> resolve"}
+{"id": "C47-004", "status": "PASS", "evidence": ["gateway/server.js:322-325"], "note": "onSignal handler only flips a flag and calls gw.shutdown(); heavy work is in shutdown(), not inline in the OS signal callback"}
+{"id": "C47-005", "status": "PASS", "evidence": ["gateway/server.js:322-325"], "note": "onSignal(sig) calls gw.shutdown(reason) which is the lifecycle coordinator"}
+{"id": "C47-006", "status": "PASS", "evidence": ["gateway/server.js:322-323", "tests/chaos/lifecycle.test.js:132-141"], "note": "signalled flag + shutdownPromise memoization; test 'repeated and mixed termination signals run shutdown exactly once'"}
+{"id": "C47-007", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:326-328"], "note": "comment claims termination during startup is safe, but no dedicated test fires SIGTERM before listen() resolves"}
+{"id": "C47-008", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:293-296"], "note": "shutdown() with registry.conns.size===0 resolves immediately regardless of listener state, but behavior when server.listen() was never called is not explicitly tested"}
+{"id": "C47-009", "status": "PASS", "evidence": ["deploy/Dockerfile:38"], "note": "exec-form ENTRYPOINT avoids a shell swallowing the signal; Node signal handling documented"}
+{"id": "C47-010", "status": "OPEN", "evidence": [], "note": "no explicit sign-off/approval record for the signal-to-shutdown contract beyond code+docs"}
+{"id": "C47-011", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "Render/Docker hosting not run (RD-03/D-001)"}
+{"id": "C47-012", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "hosted grace period not verified; VWS_SHUTDOWN_MS is our own budget, not a confirmed platform one"}
+{"id": "C47-013", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions"], "note": "RD-03: PowerShell/.NET items stay NOT_APPLICABLE; Node profile only"}
+{"id": "C47-014", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions"], "note": "same as above, no PowerShell runtime in this candidate"}
+{"id": "C47-015", "status": "PASS", "evidence": ["gateway/server.js:322-325", "tests/chaos/lifecycle.test.js:100-113"], "note": "onSignal runs on the Node event loop (async, non-blocking); real-process test confirms callback executes under actual runtime"}
+{"id": "C47-016", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-113"], "note": "'real process: SIGTERM drains within budget, notifies the client, exits 0' confirms the mechanism handles SIGTERM"}
+{"id": "C47-017", "status": "IN_PROGRESS", "evidence": ["deploy/Dockerfile:8"], "note": "FROM node:22-bookworm-slim (digest not pinned yet, per Dockerfile's own comment); actual test runs use process.execPath (dev host Node), not the pinned image"}
+{"id": "C47-018", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-113"], "note": "observed: exit 0, service.draining sent, session.exit{shutdown}, close 1001 \u2014 matches documented generic contract"}
+{"id": "C47-019", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-113"], "note": "test spawns a real process and asserts observed exit/close behavior, not just that .on(SIGTERM) was called"}
+{"id": "C47-020", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-113,132-146"], "note": "real child-process kill() probes in two tests give a controlled, repeatable signal-delivery probe"}
+{"id": "C47-021", "status": "PASS", "evidence": ["gateway/server.js:320-325"], "note": "process.on(SIGTERM/SIGINT) registered synchronously right after createGateway(), before gw.listen()"}
+{"id": "C47-022", "status": "PASS", "evidence": ["gateway/server.js:320-328"], "note": "handlers registered before gw.listen() is even called"}
+{"id": "C47-023", "status": "NOT_APPLICABLE", "evidence": [], "note": "Node's process.on() returns no registration object that must be retained (unlike some runtimes)"}
+{"id": "C47-024", "status": "PASS", "evidence": ["gateway/server.js:320-325"], "note": "handlers are registered exactly once per process (module top-level, only under require.main===module)"}
+{"id": "C47-025", "status": "OPEN", "evidence": [], "note": "process.on() failures (it does not throw in Node) are not explicitly captured/tested"}
+{"id": "C47-026", "status": "OPEN", "evidence": [], "note": "no policy defined for readiness if signal registration somehow failed"}
+{"id": "C47-027", "status": "PASS", "evidence": ["deploy/Dockerfile:38"], "note": "exec-form ENTRYPOINT with no shell/interactive console dependency"}
+{"id": "C47-028", "status": "PASS", "evidence": ["gateway/server.js:322-325"], "note": "onSignal is separate from connection.js message dispatch; only calls gw.shutdown()"}
+{"id": "C47-029", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:320-325"], "note": "registration lives in the module entry-point block; no named \"owner\" documented beyond the code location"}
+{"id": "C47-030", "status": "OPEN", "evidence": [], "note": "no test simulates a partially-initialized handler state"}
+{"id": "C47-031", "status": "PASS", "evidence": ["gateway/server.js:290,323"], "note": "registry.draining boolean flag (single JS thread, no races) and shutdownPromise memoization set shutdown intent"}
+{"id": "C47-032", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:288,291"], "note": "t0=Date.now() captured at first shutdown() call and logged as drainMs on completion, but the shutdown-REQUEST timestamp itself is not separately emitted as a field"}
+{"id": "C47-033", "status": "PASS", "evidence": ["gateway/server.js:287,291,323"], "note": "shutdown(reason) with reason='deploy' for SIGTERM vs 'shutdown' for SIGINT, logged in gateway.draining"}
+{"id": "C47-034", "status": "PASS", "evidence": ["gateway/server.js:288"], "note": "if (shutdownPromise) return shutdownPromise \u2014 single coordinator instance"}
+{"id": "C47-035", "status": "PASS", "evidence": ["gateway/server.js:322-323", "tests/chaos/lifecycle.test.js:138-141"], "note": "signalled flag + shutdownPromise memoization tested to run exactly once across 3 repeated/mixed signals"}
+{"id": "C47-036", "status": "PASS", "evidence": ["gateway/log.js:10"], "note": "logger drops token/cookie/secret/authorization/ticket-like fields; shutdown log fields are reason/connections/budgetMs only"}
+{"id": "C47-037", "status": "PASS", "evidence": ["gateway/server.js:322-323"], "note": "repeated signals after the first are no-ops (signalled flag), so no repeated logging occurs"}
+{"id": "C47-038", "status": "PASS", "evidence": ["gateway/server.js:286-310"], "note": "no remote datastore exists in LOCAL_VOLATILE; shutdown path touches only in-process registry/sockets"}
+{"id": "C47-039", "status": "PASS", "evidence": ["gateway/server.js:323"], "note": "onSignal calls gw.shutdown(reason) \u2014 the defined coordinator interface"}
+{"id": "C47-040", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-113"], "note": "real spawned Node process test exercises the callback under the actual runtime execution model"}
+{"id": "C47-041", "status": "PASS", "evidence": ["gateway/server.js:290,215"], "note": "registry.draining=true; admit() checks registry.draining and rejects new upgrades with 503"}
+{"id": "C47-042", "status": "PASS", "evidence": ["gateway/server.js:298-299", "tests/gateway/e2e.test.js"], "note": "server.close() plus closeAllConnections(); e2e test 'health flips to 503 while draining'"}
+{"id": "C47-043", "status": "PASS", "evidence": ["gateway/server.js:306"], "note": "c._control({type:'service.draining', payload:{deadlineMs, reason}}) sent to every live connection"}
+{"id": "C47-044", "status": "PASS", "evidence": ["gateway/server.js:307", "gateway/connection.js"], "note": "c.end(\"shutdown\", 1001, \"service draining\") starts the per-connection drain/close sequence"}
+{"id": "C47-045", "status": "PASS", "evidence": ["gateway/server.js:301", "gateway/config.js:89"], "note": "hard=setTimeout(finish(true), cfg.shutdownMs); shutdownMs bounded 100..290000"}
+{"id": "C47-046", "status": "PASS", "evidence": ["gateway/server.js:295"], "note": "registry.onEmpty fires finish(false) when registry.conns reaches zero normally"}
+{"id": "C47-047", "status": "PASS", "evidence": ["gateway/server.js:294,301"], "note": "finish(forced) \u2014 forced=true path from the hard timeout kills remaining c.link and terminates sockets"}
+{"id": "C47-048", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "lease/account release happens in connection close paths invoked by c.end(), before the ledger reports zero"}
+{"id": "C47-049", "status": "PASS", "evidence": ["gateway/server.js:298-299,323"], "note": "finish() resolves {forced, drainMs}; process.exit(r.forced ? 1 : 0) is the final result"}
+{"id": "C47-050", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics", "gateway/server.js:286-296"], "note": "handler (signal capture) vs coordinator (shutdown()) split documented and implemented as described"}
+{"id": "C47-051", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "no real container to inspect (Docker not run)"}
+{"id": "C47-052", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-108"], "note": "tests spawn node directly (no wrapper); no container wrapper process exists to inspect since Docker was never built"}
+{"id": "C47-053", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:111"], "note": "p.kill('SIGTERM') sent to the actual spawned child process in a controlled test"}
+{"id": "C47-054", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:111-113"], "note": "observed exit code 0 and drainage effects confirm handler ran"}
+{"id": "C47-055", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "no container/orchestrator wrapper tested (Docker not run)"}
+{"id": "C47-056", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions"], "note": "no pwsh/PowerShell entry point in this candidate"}
+{"id": "C47-057", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:139-146", "deploy/Dockerfile:38"], "note": "exec-form entrypoint (no shell) plus direct spawn tests confirm node itself receives and handles the signal"}
+{"id": "C47-058", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:147-149"], "note": "abrupt TCP loss / real-process tests assert 'no orphan process' / clean exit"}
+{"id": "C47-059", "status": "PASS", "evidence": ["deploy/Dockerfile:38-39", "tests/chaos/lifecycle.test.js:102"], "note": "ENTRYPOINT [\"node\",\"gateway/server.js\"] matches the test's spawn(process.execPath, ['gateway/server.js'])"}
+{"id": "C47-060", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "Render/Docker/Windows/Electron explicitly still marked NOT_RUN, not assumed to work"}
+{"id": "C47-061", "status": "OPEN", "evidence": [], "note": "no separate measurement isolates signal-receipt-to-intent latency (registry.draining=true happens synchronously in the same handler call, but not separately timed)"}
+{"id": "C47-062", "status": "OPEN", "evidence": [], "note": "no separate measurement isolates intent-to-ingress-stop latency"}
+{"id": "C47-063", "status": "OPEN", "evidence": [], "note": "no separate measurement isolates intent-to-worker-notification latency"}
+{"id": "C47-064", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:111-113"], "note": "real-process test measures total drain (ms<shutdownMs) but no isolated connection-drain-only measurement artifact exists; docs/vws200/RESOURCE_MODEL.md#L29 cites e/I049/drain-measure.json which is NOT present in this candidate's e/ tree (only e/I055, e/R28 exist)"}
+{"id": "C47-065", "status": "OPEN", "evidence": [], "note": "no measurement isolates backend (worker link) cleanup duration specifically"}
+{"id": "C47-066", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:111-113"], "note": "total shutdown time IS measured in the real-process test (ms<8000) but as a live test assertion, not an archived e/ measurement file; the historical e/I049/drain-measure.json does not exist here"}
+{"id": "C47-067", "status": "PASS", "evidence": ["gateway/server.js:295"], "note": "if (registry.conns.size===0) return registry.onEmpty() \u2014 immediate finish path is the zero-client timing case, exercised by lifecycle.test.js:132-146 (spawn then immediate kill with no ws client)"}
+{"id": "C47-068", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-113"], "note": "one connected client is exercised (not clearly \"representative\" multi-session load); no e/I049 measurement artifact backs this for the current candidate"}
+{"id": "C47-069", "status": "OPEN", "evidence": [], "note": "no test drives SIGTERM against an unresponsive/non-reading client"}
+{"id": "C47-070", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#restart-semantics"], "note": "own VWS_SHUTDOWN_MS budget is respected in tests, but there is no verified hosting-platform grace period to compare against (BLOCKED elsewhere)"}
+{"id": "C47-071", "status": "OPEN", "evidence": [], "note": "no test sends SIGTERM strictly during listener initialization (before listen() resolves)"}
+{"id": "C47-072", "status": "OPEN", "evidence": [], "note": "no test sends SIGTERM strictly during worker backend (thread/process) initialization"}
+{"id": "C47-073", "status": "OPEN", "evidence": [], "note": "no test sends SIGTERM strictly during the post-101 connection hand-off window"}
+{"id": "C47-074", "status": "OPEN", "evidence": [], "note": "no test sends SIGTERM mid a large inbound receive"}
+{"id": "C47-075", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js"], "note": "shutdown terminates sockets outright (ws.terminate) which would interrupt a large send, but no dedicated test targets this specific race"}
+{"id": "C47-076", "status": "PASS", "evidence": ["gateway/server.js:322-323", "tests/chaos/lifecycle.test.js:138-141"], "note": "test sends q.kill(SIGTERM) twice plus SIGINT and asserts shutdown ran exactly once"}
+{"id": "C47-077", "status": "PASS", "evidence": ["gateway/connection.js", "tests/chaos/lifecycle.test.js"], "note": "'worker killed (-9) -> exactly one session.exit{worker_failure}' covers worker failure independent of shutdown ordering"}
+{"id": "C47-078", "status": "OPEN", "evidence": [], "note": "no test simulates process.on() registration itself failing"}
+{"id": "C47-079", "status": "OPEN", "evidence": [], "note": "no isolated-environment test exceeds the shutdown budget deliberately to observe forced-path telemetry beyond the hard-timeout unit path"}
+{"id": "C47-080", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-113"], "note": "exit code and close codes recorded and asserted to match intended policy (exit 0, close 1001)"}
+{"id": "C47-081", "status": "PASS", "evidence": ["gateway/server.js:291"], "note": "log.info('gateway.draining', {reason, connections, budgetMs}) is the single shutdown-requested event"}
+{"id": "C47-082", "status": "PASS", "evidence": ["gateway/server.js:291,323"], "note": "reason ('deploy' for SIGTERM, 'shutdown' for SIGINT/other) included in the log"}
+{"id": "C47-083", "status": "OPEN", "evidence": ["gateway/log.js"], "note": "no release version or instance identity field is included in any shutdown log record"}
+{"id": "C47-084", "status": "PASS", "evidence": ["gateway/server.js:298"], "note": "log.info('gateway.stopped', {forced, drainMs}) records timing with no payload/private data"}
+{"id": "C47-085", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:298"], "note": "'forced' boolean distinguishes graceful vs forced completion, but does not enumerate WHICH categories (which connections/workers) were force-cleaned"}
+{"id": "C47-086", "status": "PASS", "evidence": ["gateway/connection.js:262-266"], "note": "session.exit{reason:'shutdown'} sent to clients marks this as an intended/expected end, not an unexplained crash path"}
+{"id": "C47-087", "status": "PASS", "evidence": ["gateway/server.js:294-299"], "note": "finish(forced) distinguishes forced=true (hard timeout) from forced=false (registry.onEmpty naturally)"}
+{"id": "C47-088", "status": "OPEN", "evidence": [], "note": "no mechanism captures/preserves the earliest failure if multiple things fail during shutdown"}
+{"id": "C47-089", "status": "PASS", "evidence": ["docs/OPERATIONS.md#run-it-locally-loopback", "tests/chaos/lifecycle.test.js:100-113"], "note": "loopback run instructions plus a runnable real-process signal test provide a reproducible local procedure"}
+{"id": "C47-090", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done-not-claimed", "docs/OPERATIONS.md"], "note": "Render/Docker/hosted observations explicitly documented as not run"}
+{"id": "C47-091", "status": "PASS", "evidence": ["gateway/server.js:320-325", "docs/OPERATIONS.md#restart-semantics"], "note": "process.on(SIGTERM/SIGINT) mechanism and restart semantics documented"}
+{"id": "C47-092", "status": "PASS", "evidence": ["docs/OPERATIONS.md#restart-semantics", "gateway/server.js:286-296"], "note": "'Draining (SIGTERM) works as before: admission off, service.draining, workers stopped, listener closed, exit 0' documents the contract"}
+{"id": "C47-093", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "no real container signal-delivery evidence (Docker not run)"}
+{"id": "C47-094", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-149"], "note": "direct-process topology is tested; no wrapped/containerized topology evidence exists to link"}
+{"id": "C47-095", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:100-113,132-146"], "note": "startup-signal-before-handlers and active-client signal tests exist in lifecycle.test.js; idle-listener-only case not isolated as its own named test; no e/I049 artifact"}
+{"id": "C47-096", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:132-141"], "note": "'repeated and mixed termination signals run shutdown exactly once and exit 0' \u2014 this directly is the repeated-signal idempotence test (linkable), contradicting prior OPEN"}
+{"id": "C47-097", "status": "OPEN", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "no verified platform (Render) shutdown budget exists; only our own VWS_SHUTDOWN_MS is set"}
+{"id": "C47-098", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js:111-113"], "note": "current candidate's own test measures and asserts drain time (ms<8000), but the frozen/reported RESOURCE_MODEL.md figures (e/I049/drain-measure.json) are historical v1 data, not re-measured for this candidate"}
+{"id": "C47-099", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done-not-claimed"], "note": "unresolved platform/signal items (Render/Docker/hosted budget) listed as not run"}
+{"id": "C47-100", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js:100-149"], "note": "real spawned-process tests confirm SIGTERM triggers the full intended shutdown sequence (drain, notify, exit 0) and idempotence under repeats"}

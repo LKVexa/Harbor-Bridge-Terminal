@@ -1,0 +1,65 @@
+name: ci
+on: [push, pull_request]
+permissions: { contents: read }
+defaults: { run: { working-directory: inv23_hardware_virtualization_primitive } }
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e ".[dev,test]"
+      - run: python -m compileall -q .
+      - run: ruff check . && ruff format --check .
+      - run: cd .. && mypy --config-file inv23_hardware_virtualization_primitive/pyproject.toml -p inv23_hardware_virtualization_primitive
+      - run: python tools/check_version.py && python tools/gen_compat.py --check && python tools/waivers.py
+      - run: pip-audit --strict --progress-spinner off || true   # advisory; release job enforces
+      - uses: gitleaks/gitleaks-action@v2                       # secret scanning
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    env: { INV23_CONFORMANCE: release }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install ".[test]"
+      - name: suites (normal and -O)
+        shell: bash
+        run: |
+          for s in unit schema property integration multiprocess conformance; do
+            python tools/run_suite.py $s | tee -a suites.jsonl
+            python -O tools/run_suite.py $s | tee -a suites.jsonl
+          done
+          python - <<'PY'
+          import json, sys
+          allowed = {"tests.unit.test_ownership.PosixDurabilityTest.test_read_only_storage_fails_without_split_brain"}
+          bad = [(r["suite"], s["id"]) for r in map(json.loads, open("suites.jsonl")) for s in r["skipped"]
+                 if s["id"] not in allowed and not ("win32" in s["reason"].lower() or "windows" in s["reason"].lower())]
+          fails = [r["suite"] for r in map(json.loads, open("suites.jsonl")) if not r["ok"]]
+          print("skips:", bad, "fails:", fails); sys.exit(1 if bad or fails else 0)
+          PY
+      - uses: actions/upload-artifact@v4
+        with: { name: "suites-${{ matrix.os }}-${{ matrix.python }}", path: inv23_hardware_virtualization_primitive/suites.jsonl }
+  wheel:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install build && python -m build --outdir dist .
+      - name: clean-venv install + tests from the installed wheel, outside the repo
+        run: |
+          python -m venv /tmp/v && /tmp/v/bin/pip install dist/*.whl
+          cd /tmp && INV23_FROM_INSTALLED=1 INV23_CONFORMANCE=release /tmp/v/bin/python -m unittest discover \
+            -s "$(/tmp/v/bin/python -c 'import inv23_hardware_virtualization_primitive as m,os;print(os.path.dirname(m.__file__))')/tests/unit" \
+            -t "$(/tmp/v/bin/python -c 'import inv23_hardware_virtualization_primitive as m,os;print(os.path.dirname(m.__file__))')"
+          /tmp/v/bin/inv23-probe || test $? -eq 3
+      - name: archive inspection
+        run: python -m zipfile -l dist/*.whl | grep -E "schemas/PK_VIRT_CLAIM-2|MASTER.md|VENDORED.json"

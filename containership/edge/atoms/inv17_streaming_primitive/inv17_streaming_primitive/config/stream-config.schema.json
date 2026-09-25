@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:inv17:stream-config:1",
+  "title": "INV-17 streaming primitive configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "environment", "stream", "tenants", "health", "overload"],
+  "properties": {
+    "schema_version": {"type": "integer", "enum": [1]},
+    "environment": {"type": "string", "enum": ["dev", "test", "staging", "production"]},
+    "site": {"type": "string", "pattern": "[a-z0-9-]{1,64}"},
+    "tier": {"type": "string", "enum": ["cloud", "datacenter", "near-edge", "far-edge"]},
+    "stream": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_credit", "max_buffer"],
+      "properties": {
+        "max_credit": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "max_buffer": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "idempotency_window": {"type": "integer", "minimum": 1, "maximum": 1048576}
+      }
+    },
+    "tenants": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["max_streams", "max_buffered"],
+        "properties": {
+          "max_streams": {"type": "integer", "minimum": 1, "maximum": 1000000},
+          "max_buffered": {"type": "integer", "minimum": 1, "maximum": 1073741824},
+          "weight": {"type": "integer", "minimum": 1, "maximum": 1000}
+        }
+      }
+    },
+    "health": {
+      "type": "object", "additionalProperties": false,
+      "required": ["stall_ratio_degraded", "stall_ratio_unhealthy", "stall_seconds_unhealthy"],
+      "properties": {
+        "stall_ratio_degraded": {"type": "number", "minimum": 0, "maximum": 1},
+        "stall_ratio_unhealthy": {"type": "number", "minimum": 0, "maximum": 1},
+        "stall_seconds_unhealthy": {"type": "number", "minimum": 1, "maximum": 86400},
+        "min_attempts": {"type": "integer", "minimum": 1, "maximum": 1000000}
+      }
+    },
+    "overload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["global_buffer_budget", "breaker_threshold", "breaker_cooldown_s"],
+      "properties": {
+        "global_buffer_budget": {"type": "integer", "minimum": 1, "maximum": 1073741824},
+        "breaker_threshold": {"type": "integer", "minimum": 1, "maximum": 10000},
+        "breaker_cooldown_s": {"type": "number", "minimum": 0.1, "maximum": 3600}
+      }
+    }
+  }
+}

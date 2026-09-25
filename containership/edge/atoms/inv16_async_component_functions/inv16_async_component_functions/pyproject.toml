@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=65"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv16-async-component-functions"
+version = "4.3.0"
+description = "INV-16 async component functions: build-time async declaration, sync/async bridge, re-entrancy admission, per-call state and exactly-once delivery"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = { file = "LICENSE" }
+authors = [{ name = "David Paul Russell", email = "davidpaulrussell@linearfinance.org" }]
+dependencies = []                      # runtime is stdlib-only (see sbom.cdx.json)
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: Other/Proprietary License",
+]
+
+[project.optional-dependencies]
+# pk_core is NOT on any index reachable from this archive; its coordinates must be pinned
+# (version + sha256 or immutable VCS revision) before certification - see docs/CLOSURE_LEDGER.md #1.
+certify = []
+
+[tool.setuptools]
+package-dir = { "inv16_async_component_functions" = "." }
+packages = ["inv16_async_component_functions", "inv16_async_component_functions.fixtures",
+            "inv16_async_component_functions.compat"]
+
+[tool.setuptools.package-data]
+inv16_async_component_functions = ["VERSION", "CHECKLIST.json", "fixtures/interfaces/*.pkif",
+                                   "fixtures/golden_demo_descriptor.json"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+files = ["runtime.py", "bridge.py", "abi.py", "declare.py", "lowering.py", "observability.py", "preflight.py"]
+exclude = ["component.py", "contract.py"]   # typed against pk_core, checked only when pk_core is resolvable
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "B", "S", "UP", "BLE", "T20", "ANN"]
+ignore = ["ANN401"]
+per-file-ignores = { "tests/*" = ["S101", "ANN", "T20"], "bench/*" = ["T20", "ANN"], "tools/*" = ["T20", "ANN", "S603"] }
+
+[tool.bandit]
+exclude_dirs = ["tests", "bench"]
+
+[tool.coverage.run]
+branch = true
+source = ["."]
+omit = ["tests/*", "bench/*", "tools/*", "compat/*", "component.py", "contract.py"]
+
+[tool.coverage.report]
+fail_under = 90
+exclude_lines = ["pragma: no cover"]

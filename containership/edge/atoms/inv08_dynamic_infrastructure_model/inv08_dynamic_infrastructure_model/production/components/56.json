@@ -1,0 +1,74 @@
+{
+ "component": 56,
+ "title": "Contract/interface test suite",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "schema/serialization contract tests",
+   "state": "PARTIAL",
+   "spec": "production/tests/test_govops.py::ContractTest; production/fixtures/govops_golden.json",
+   "modules": [
+    "production/core.py::canonical",
+    "production/schemas.py"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_serialization_contract_core",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_schema_contract_if_present"
+   ],
+   "blocker": "wire-schema module is owned by a parallel builder; generic tests skip if absent"
+  },
+  {
+   "name": "authentication/authorization interface tests",
+   "state": "PARTIAL",
+   "spec": "production/tests/test_govops.py::ContractTest.test_authz_contract_if_present",
+   "modules": [
+    "production/authz.py",
+    "production/authn.py"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_authz_contract_if_present"
+   ],
+   "blocker": "authn/authz modules owned by a parallel builder; only generic deny-by-default contract checked"
+  },
+  {
+   "name": "idempotency/retry/error contract tests",
+   "state": "IMPLEMENTED",
+   "spec": "production/core.py::Inv08Error / RESULT_CODE_POLICY",
+   "modules": [
+    "production/core.py::Inv08Error",
+    "production/idempotency.py"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_error_contract",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_idempotency_retry_contract"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "provider adapter contract tests",
+   "state": "PARTIAL",
+   "spec": "production/adapters.py::ProviderAdapter",
+   "modules": [
+    "production/adapters.py"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_provider_adapter_contract_if_present"
+   ],
+   "blocker": "only in-memory provider doubles exist; no real provider"
+  },
+  {
+   "name": "golden compatibility fixtures for public interfaces",
+   "state": "IMPLEMENTED",
+   "spec": "production/fixtures/govops_golden.json",
+   "modules": [
+    "production/fixtures/govops_golden.json"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_golden_pool_fixture",
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.ContractTest.test_error_contract"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Contract tests are import-guarded against other builders' modules."
+}

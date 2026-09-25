@@ -1,0 +1,194 @@
+{
+  "schema": "INV52_THREATS/1",
+  "method": "STRIDE per boundary (docs/INTERFACES.md B1-B11)",
+  "status": "PROPOSED - independent security review required",
+  "threats": [
+    {
+      "id": "T01",
+      "threat": "Spoofed publisher identity (source field forged)",
+      "stride": "S",
+      "control": "TenantBus token identity; source==app check",
+      "tests": [
+        "test_security.py::test_source_must_match_token_identity",
+        "test_runtime.py::test_authorization_and_source_spoofing"
+      ],
+      "external": false
+    },
+    {
+      "id": "T02",
+      "threat": "Publishing to a topic the app does not own",
+      "stride": "E",
+      "control": "fail-closed allow-list; explicit capabilities",
+      "tests": [
+        "test_security.py::test_least_privilege_nothing_by_default_and_revocation"
+      ],
+      "external": false
+    },
+    {
+      "id": "T03",
+      "threat": "Malicious tenant reads/writes another tenant's topic or dead letters",
+      "stride": "I",
+      "control": "tenant-namespaced topics; separator injection refused",
+      "tests": [
+        "test_security.py::test_tenants_cannot_cross",
+        "test_security.py::test_dead_letters_are_tenant_scoped"
+      ],
+      "external": false
+    },
+    {
+      "id": "T04",
+      "threat": "Token forgery, expiry abuse, replay",
+      "stride": "S",
+      "control": "HMAC-SHA256, TTL<=3600, nonce cache, fail closed when cache full",
+      "tests": [
+        "test_security.py::test_forged_expired_replayed_malformed_tokens_denied",
+        "test_adversarial.py::test_replay_of_captured_token_and_cross_tenant_token"
+      ],
+      "external": false
+    },
+    {
+      "id": "T05",
+      "threat": "Identity/key/time service outage used to bypass checks",
+      "stride": "E",
+      "control": "deny on provider/clock failure; security dependency blocks publish",
+      "tests": [
+        "test_security.py::test_key_provider_or_clock_outage_denies",
+        "test_resilience_config.py::LifecycleTest::test_security_dependency_outage_fails_closed_noncritical_degrades"
+      ],
+      "external": false
+    },
+    {
+      "id": "T06",
+      "threat": "Message silently dropped",
+      "stride": "R",
+      "control": "dead-letter every zero-delivery message with reason; bounded & counted eviction",
+      "tests": [
+        "test_runtime.py::test_dead_letter_reasons_for_no_route_and_handler_failure",
+        "test_runtime.py::test_dead_letter_is_bounded"
+      ],
+      "external": false
+    },
+    {
+      "id": "T07",
+      "threat": "Compromised subscriber mutates another subscriber's view / policy",
+      "stride": "T",
+      "control": "deep copies; read-only predicate view",
+      "tests": [
+        "test_adversarial.py::test_predicate_cannot_escalate_by_mutating_policy_through_message",
+        "test_runtime_ext.py::CompatTest::test_frozen_view_prevents_predicate_mutation"
+      ],
+      "external": false
+    },
+    {
+      "id": "T08",
+      "threat": "Resource exhaustion (huge/deep payload, route/topic flood, publish flood)",
+      "stride": "D",
+      "control": "size/depth/route/topic limits; token-bucket admission; bounded tables",
+      "tests": [
+        "test_adversarial.py::test_json_nesting_bomb_rejected_without_recursion_error",
+        "test_resilience_config.py::AdmissionTest::test_per_app_fairness"
+      ],
+      "external": false
+    },
+    {
+      "id": "T09",
+      "threat": "Parser crash on untrusted bytes",
+      "stride": "D",
+      "control": "size before parse; structured errors only",
+      "tests": [
+        "test_adversarial.py::FuzzTest::test_parse_publish_request_bytes",
+        "test_adversarial.py::FuzzTest::test_validate_envelope_only_raises_structured_errors"
+      ],
+      "external": false
+    },
+    {
+      "id": "T10",
+      "threat": "Secrets leaked via config, logs, audit or error details",
+      "stride": "I",
+      "control": "config secret rejection; redaction; payload never logged; exception text never copied",
+      "tests": [
+        "test_security.py::test_audit_redacts_secrets",
+        "test_adversarial.py::test_error_details_do_not_echo_payload"
+      ],
+      "external": false
+    },
+    {
+      "id": "T11",
+      "threat": "Tampering with or truncating the audit trail",
+      "stride": "T",
+      "control": "SHA-256 hash chain with externally recorded head",
+      "tests": [
+        "test_security.py::test_tamper_reorder_and_truncation_detected"
+      ],
+      "external": false
+    },
+    {
+      "id": "T12",
+      "threat": "Unapproved or tampered adapter artifact",
+      "stride": "T",
+      "control": "digest allow-list with provenance",
+      "tests": [
+        "test_security.py::test_artifact_admission"
+      ],
+      "external": false
+    },
+    {
+      "id": "T13",
+      "threat": "Stale controller / split brain double-owns a subscription",
+      "stride": "T",
+      "control": "fencing tokens with leases",
+      "tests": [
+        "test_resilience_config.py::BreakerFencingTest::test_fencing_refuses_stale_owner"
+      ],
+      "external": false
+    },
+    {
+      "id": "T14",
+      "threat": "Cross-tenant telemetry leak / high-cardinality label abuse",
+      "stride": "I",
+      "control": "fixed label set; tenant field only from namespace",
+      "tests": [
+        "test_integration.py::ObservabilityTest::test_prometheus_labels_are_bounded",
+        "test_integration.py::ObservabilityTest::test_logs_carry_stable_ids_release_and_no_payload"
+      ],
+      "external": false
+    },
+    {
+      "id": "T15",
+      "threat": "Log injection via topic names",
+      "stride": "T",
+      "control": "JSON-encoded structured logs; length limits",
+      "tests": [
+        "test_adversarial.py::test_log_injection_in_topic_names_is_contained"
+      ],
+      "external": false
+    },
+    {
+      "id": "T16",
+      "threat": "Hostile config change (wildcard publishers, secret, bad limits)",
+      "stride": "E",
+      "control": "validation before activation; author provenance; rollback",
+      "tests": [
+        "test_resilience_config.py::ConfigTest::test_validation_catches_every_class",
+        "test_resilience_config.py::ConfigTest::test_activation_is_atomic_and_invalid_keeps_previous"
+      ],
+      "external": false
+    },
+    {
+      "id": "T17",
+      "threat": "Transport eavesdropping / MITM between app, sidecar and broker",
+      "stride": "I",
+      "control": "EXTERNAL: Dapr Sentry mTLS, broker TLS (deploy/dapr enableTLS)",
+      "tests": [],
+      "external": true
+    },
+    {
+      "id": "T18",
+      "threat": "Hostile node / host compromise, side channels",
+      "stride": "E",
+      "control": "EXTERNAL: platform isolation (INV-40/INV-45 series); out of scope of a library",
+      "tests": [],
+      "external": true
+    }
+  ]
+}

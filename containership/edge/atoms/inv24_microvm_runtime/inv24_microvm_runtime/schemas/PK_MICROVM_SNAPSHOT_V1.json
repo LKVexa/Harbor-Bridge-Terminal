@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PK_MICROVM_SNAPSHOT/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "snapshot_id",
+    "runtime_version",
+    "firecracker_version",
+    "arch",
+    "cpu_features",
+    "kernel_sha256",
+    "rootfs_sha256",
+    "devices",
+    "tenant",
+    "workload",
+    "memory_sha256",
+    "state_sha256",
+    "ownership_epoch",
+    "created_at",
+    "complete"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_MICROVM_SNAPSHOT/1"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "runtime_version": {
+      "type": "string"
+    },
+    "firecracker_version": {
+      "type": "string"
+    },
+    "arch": {
+      "enum": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "cpu_features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 256
+    },
+    "kernel_sha256": {
+      "type": "string",
+      "pattern": "[0-9a-f]{64}"
+    },
+    "rootfs_sha256": {
+      "type": "string",
+      "pattern": "[0-9a-f]{64}"
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "virtio-net",
+          "virtio-block",
+          "virtio-vsock",
+          "serial",
+          "rtc"
+        ]
+      },
+      "uniqueItems": true,
+      "maxItems": 5
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "workload": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "memory_sha256": {
+      "type": "string",
+      "pattern": "[0-9a-f]{64}"
+    },
+    "state_sha256": {
+      "type": "string",
+      "pattern": "[0-9a-f]{64}"
+    },
+    "ownership_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "created_at": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "complete": {
+      "const": true
+    }
+  }
+}

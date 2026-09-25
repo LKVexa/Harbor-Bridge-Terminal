@@ -1,0 +1,51 @@
+# MC75 — release automation / CI.  Place the package directory at the repo root
+# (or adjust `working-directory`).  Runtime integration needs a self-hosted runner.
+name: inv02-ci
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * *"   # nightly long fuzz
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv02_container_substrate }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - name: compile
+        run: python -m compileall -q inv02_container_substrate
+      - name: unit (normal)
+        env: { INV02_SKIP_INTEGRATION: "1" }
+        run: python -m unittest discover -s inv02_container_substrate/tests -t . -v
+      - name: unit (optimized)
+        env: { INV02_SKIP_INTEGRATION: "1" }
+        run: python -O -m unittest discover -s inv02_container_substrate/tests -t . -v
+      - name: nightly fuzz
+        if: github.event_name == 'schedule'
+        env: { INV02_FUZZ_ITERS: "50000", INV02_SKIP_INTEGRATION: "1" }
+        run: python -m unittest inv02_container_substrate.tests.test_fuzz_stress -v
+  runtime-integration:
+    runs-on: [self-hosted, linux, runc]
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv02_container_substrate }
+      - run: sudo -E python3 -m unittest inv02_container_substrate.tests.integration.test_runc -v
+  release-evidence:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv02_container_substrate }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: python -m inv02_container_substrate.tools.release_evidence --skip-integration
+      - uses: actions/upload-artifact@v4
+        with: { name: release-evidence, path: inv02_container_substrate/evidence/ }

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PK_READBACK/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "node",
+    "observations",
+    "smt_enabled",
+    "smt_reason",
+    "core_scheduling",
+    "core_scheduling_reason",
+    "kernel",
+    "machine",
+    "collector_id",
+    "observed_at_unix",
+    "ttl_s"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_READBACK/1"
+    },
+    "node": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "node",
+          "mitigation",
+          "status",
+          "raw",
+          "reason",
+          "source",
+          "collector_id",
+          "observed_at_unix",
+          "ttl_s"
+        ],
+        "properties": {
+          "node": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mitigation": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^/.][^/]*$"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "inactive",
+              "unknown",
+              "not_affected"
+            ]
+          },
+          "raw": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4096
+          },
+          "reason": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "collector_id": {
+            "type": "string"
+          },
+          "observed_at_unix": {
+            "type": "number"
+          },
+          "observed_monotonic": {
+            "type": "number"
+          },
+          "ttl_s": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 86400
+          }
+        }
+      }
+    },
+    "smt_enabled": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "smt_reason": {
+      "type": "string"
+    },
+    "core_scheduling": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "core_scheduling_reason": {
+      "type": "string"
+    },
+    "kernel": {
+      "type": "string"
+    },
+    "machine": {
+      "type": "string"
+    },
+    "collector_id": {
+      "type": "string"
+    },
+    "observed_at_unix": {
+      "type": "number"
+    },
+    "observed_monotonic": {
+      "type": "number"
+    },
+    "ttl_s": {
+      "type": "number"
+    }
+  }
+}

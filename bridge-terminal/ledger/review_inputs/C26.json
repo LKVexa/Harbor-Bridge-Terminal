@@ -1,0 +1,1682 @@
+{
+"component": "C26",
+"items": [
+{
+"id": "C26-001",
+"task_class": "IMPLEMENT",
+"area": "01. Receive-loop contract",
+"req": "Assign one receive-loop owner per socket.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "comment: one receive path ('data'->_parse) per connection",
+"prior_evidence": [
+"gateway/ws.js:8-11"
+]
+},
+{
+"id": "C26-002",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define the loop's start and stop conditions.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "state OPEN/CLOSING/CLOSED gates _onData/_parse",
+"prior_evidence": [
+"gateway/ws.js:53,144-153"
+]
+},
+{
+"id": "C26-003",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define the buffer supplied to each receive operation.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "this.buf grows via Buffer.concat per chunk",
+"prior_evidence": [
+"gateway/ws.js:50,144-149"
+]
+},
+{
+"id": "C26-004",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define the result interpreter invoked after completion.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_parse() is the result interpreter invoked per frame",
+"prior_evidence": [
+"gateway/ws.js:151-202"
+]
+},
+{
+"id": "C26-005",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define the accumulator invoked for incomplete messages.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "this.frag accumulates CONT chunks for incomplete messages",
+"prior_evidence": [
+"gateway/ws.js:186,192-193"
+]
+},
+{
+"id": "C26-006",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define the completed-message handoff.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_message() emits 'text' as completed-message handoff",
+"prior_evidence": [
+"gateway/ws.js:204-209"
+]
+},
+{
+"id": "C26-007",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define close-message handling.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_onClose() defines close-message handling",
+"prior_evidence": [
+"gateway/ws.js:211-225"
+]
+},
+{
+"id": "C26-008",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define cancellation ownership.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "owning Connection calls close()/terminate(); Node analog of cancellation ownership",
+"prior_evidence": [
+"gateway/ws.js:105-121",
+"gateway/connection.js:286-301"
+]
+},
+{
+"id": "C26-009",
+"task_class": "SPECIFY",
+"area": "01. Receive-loop contract",
+"req": "Define receive-error handling.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_fail() + socket 'error' handler define receive-error handling",
+"prior_evidence": [
+"gateway/ws.js:123-127,63-65"
+]
+},
+{
+"id": "C26-010",
+"task_class": "IMPLEMENT",
+"area": "01. Receive-loop contract",
+"req": "Approve the receive-loop state model.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "OPEN->CLOSING->CLOSED documented as the state model in code",
+"prior_evidence": [
+"gateway/ws.js:53"
+]
+},
+{
+"id": "C26-011",
+"task_class": "DOCUMENT",
+"area": "02. Runtime invocation",
+"req": "Record the selected ReceiveAsync overload.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no ReceiveAsync overload concept in Node (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-012",
+"task_class": "REVIEW",
+"area": "02. Runtime invocation",
+"req": "Validate the ArraySegment before calling the API.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no ArraySegment API in Node (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-013",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Supply the selected cancellation input.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET cancellation-token input has no Node analog (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-014",
+"task_class": "MEASURE",
+"area": "02. Runtime invocation",
+"req": "Observe completion through the approved PowerShell task bridge.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "PowerShell task bridge does not exist (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-015",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Capture the WebSocketReceiveResult.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "no WebSocketReceiveResult object in Node (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-016",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Preserve the underlying error when the task faults.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "socket 'error' handler discards the Error object, only logs a fixed reason string",
+"prior_evidence": [
+"gateway/ws.js:63"
+]
+},
+{
+"id": "C26-017",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Distinguish a pending operation from a completed empty message.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "len=0 payload still flows through normal fin-gated path",
+"prior_evidence": [
+"gateway/ws.js:151-177"
+]
+},
+{
+"id": "C26-018",
+"task_class": "TEST",
+"area": "02. Runtime invocation",
+"req": "Test the call inside a worker rather than only on the master runspace.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "PowerShell runspace concept has no Node analog (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-019",
+"task_class": "VERIFY",
+"area": "02. Runtime invocation",
+"req": "Verify at most one receive operation is outstanding per socket.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "single-threaded single 'data' handler makes this true by construction; no dedicated test found",
+"prior_evidence": [
+"gateway/ws.js:60-65"
+]
+},
+{
+"id": "C26-020",
+"task_class": "IMPLEMENT",
+"area": "02. Runtime invocation",
+"req": "Save a minimal receive-operation compatibility test.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET receive-operation compatibility test has no meaning in Node (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-021",
+"task_class": "REVIEW",
+"area": "03. Loop sequencing",
+"req": "Check the socket and shutdown state before starting a receive.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'data after our close is ignored' test; destroyed/state guard checked before parsing",
+"prior_evidence": [
+"gateway/ws.js:153",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-022",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Start the receive operation through one controlled path.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "single socket.on('data') is the only path into the loop",
+"prior_evidence": [
+"gateway/ws.js:60-61"
+]
+},
+{
+"id": "C26-023",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Wait or schedule completion using the approved strategy.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "event-driven scheduling via Node's event loop (no explicit wait needed)",
+"prior_evidence": [
+"gateway/ws.js:144-149"
+]
+},
+{
+"id": "C26-024",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Interpret the result before reusing the buffer.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "header/result interpreted before buf/payload reused",
+"prior_evidence": [
+"gateway/ws.js:154-177"
+]
+},
+{
+"id": "C26-025",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Append valid data before scheduling the next receive.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_onData appends chunk to this.buf before _parse runs",
+"prior_evidence": [
+"gateway/ws.js:144-149"
+]
+},
+{
+"id": "C26-026",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Deliver only a completed logical message.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_message only called once fin reached / whole reassembled",
+"prior_evidence": [
+"gateway/ws.js:184,194"
+]
+},
+{
+"id": "C26-027",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Reset per-message state after successful delivery.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments() resets frag/timer after delivery",
+"prior_evidence": [
+"gateway/ws.js:194,129"
+]
+},
+{
+"id": "C26-028",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Handle Close before ordinary payload decoding.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "switch handles OP.CLOSE via _onClose before any UTF-8 payload decode",
+"prior_evidence": [
+"gateway/ws.js:180-199"
+]
+},
+{
+"id": "C26-029",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Exit deliberately after cancellation or terminal failure.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_fail/_destroy set destroyed flag; loop stops deliberately",
+"prior_evidence": [
+"gateway/ws.js:131-140,123-127"
+]
+},
+{
+"id": "C26-030",
+"task_class": "IMPLEMENT",
+"area": "03. Loop sequencing",
+"req": "Avoid an unconditional retry loop on an unusable socket.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "destroyed guard prevents any retry once socket is unusable",
+"prior_evidence": [
+"gateway/ws.js:145,153"
+]
+},
+{
+"id": "C26-031",
+"task_class": "SPECIFY",
+"area": "04. Application handoff",
+"req": "Define whether handlers receive bytes or decoded values.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "ws emits raw validated UTF-8 bytes; connection.js decodes the envelope separately",
+"prior_evidence": [
+"gateway/ws.js:208",
+"gateway/connection.js:38,103-116"
+]
+},
+{
+"id": "C26-032",
+"task_class": "IMPLEMENT",
+"area": "04. Application handoff",
+"req": "Preserve the completed message's type.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "text-only protocol; binary explicitly rejected 1003, so type is trivially preserved",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C26-033",
+"task_class": "IMPLEMENT",
+"area": "04. Application handoff",
+"req": "Preserve message ordering required by the application.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut queue + single-threaded parse preserve ordering",
+"prior_evidence": [
+"gateway/connection.js:71-77"
+]
+},
+{
+"id": "C26-034",
+"task_class": "IMPLEMENT",
+"area": "04. Application handoff",
+"req": "Bound the work performed before the next receive when necessary.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_flow() pauses the worker under socket/ack-window congestion",
+"prior_evidence": [
+"gateway/connection.js:79-83"
+]
+},
+{
+"id": "C26-035",
+"task_class": "IMPLEMENT",
+"area": "04. Application handoff",
+"req": "Avoid handing a mutable reusable buffer to an asynchronous consumer unsafely.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "payload buffer freshly allocated per frame, not a shared reusable buffer",
+"prior_evidence": [
+"gateway/ws.js:173"
+]
+},
+{
+"id": "C26-036",
+"task_class": "SPECIFY",
+"area": "04. Application handoff",
+"req": "Define behavior when application processing fails.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "encode/decode failures caught and turned into error envelopes",
+"prior_evidence": [
+"gateway/connection.js:59-63,110-116"
+]
+},
+{
+"id": "C26-037",
+"task_class": "SPECIFY",
+"area": "04. Application handoff",
+"req": "Define whether further messages are accepted after an application error.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "strike counter allows further messages up to 20 before fatal close",
+"prior_evidence": [
+"gateway/connection.js:106-108"
+]
+},
+{
+"id": "C26-038",
+"task_class": "IMPLEMENT",
+"area": "04. Application handoff",
+"req": "Keep application exceptions distinguishable from transport errors.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "decode errors -> BAD_MESSAGE/etc, distinct from worker.bridge_error / ws transport fail codes",
+"prior_evidence": [
+"gateway/connection.js:112-116,186"
+]
+},
+{
+"id": "C26-039",
+"task_class": "TEST",
+"area": "04. Application handoff",
+"req": "Test a slow application handler.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'slow consumer' chaos test exercises a slow application handler",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-040",
+"task_class": "TEST",
+"area": "04. Application handoff",
+"req": "Test a failed handler without corrupting the next message boundary.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found isolating a failed handler from corrupting the next message boundary",
+"prior_evidence": []
+},
+{
+"id": "C26-041",
+"task_class": "MEASURE",
+"area": "05. Task and cancellation handling",
+"req": "Observe every receive task that can fault.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "socket 'error' listener always registered in constructor",
+"prior_evidence": [
+"gateway/ws.js:63"
+]
+},
+{
+"id": "C26-042",
+"task_class": "IMPLEMENT",
+"area": "05. Task and cancellation handling",
+"req": "Request cancellation through the owning lifecycle component.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Connection.end()/_closeSocket owns cancellation of the receive path",
+"prior_evidence": [
+"gateway/connection.js:286-301,303-310"
+]
+},
+{
+"id": "C26-043",
+"task_class": "TEST",
+"area": "05. Task and cancellation handling",
+"req": "Test cancellation while no data is arriving.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'no session.open within the open deadline...idle session expires' tests cancellation with no data arriving",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-044",
+"task_class": "TEST",
+"area": "05. Task and cancellation handling",
+"req": "Test cancellation during a large fragmented message.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'stalled fragment assembly hits the deadline -> 1008' during a large fragmented message",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-045",
+"task_class": "TEST",
+"area": "05. Task and cancellation handling",
+"req": "Test cancellation immediately after task completion.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for cancellation immediately after task/receive completion",
+"prior_evidence": []
+},
+{
+"id": "C26-046",
+"task_class": "IMPLEMENT",
+"area": "05. Task and cancellation handling",
+"req": "Handle races between peer close and local cancellation.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "weInitiated flag in _onClose resolves peer-close vs local-close race",
+"prior_evidence": [
+"gateway/ws.js:219-224"
+]
+},
+{
+"id": "C26-047",
+"task_class": "REVIEW",
+"area": "05. Task and cancellation handling",
+"req": "Ensure cancellation does not deliver a partial message as complete.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_fail clears buf/frag so a partial message is never delivered on cancellation",
+"prior_evidence": [
+"gateway/ws.js:123-127"
+]
+},
+{
+"id": "C26-048",
+"task_class": "IMPLEMENT",
+"area": "05. Task and cancellation handling",
+"req": "Avoid disposing dependencies while the task may still access them.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "generation fence (this.gen) blocks late callbacks from touching disposed state",
+"prior_evidence": [
+"gateway/connection.js:9,54-56,329"
+]
+},
+{
+"id": "C26-049",
+"task_class": "DOCUMENT",
+"area": "05. Task and cancellation handling",
+"req": "Record the final receive-loop outcome.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "session.exit + conn.closed logs record the final outcome [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:274-283,312-315"
+]
+},
+{
+"id": "C26-050",
+"task_class": "DOCUMENT",
+"area": "05. Task and cancellation handling",
+"req": "Document the exact runtime behavior observed under cancellation.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "failure experiments documented generally; no entry specific to cancellation runtime behavior found",
+"prior_evidence": [
+"docs/RECOVERY.md"
+]
+},
+{
+"id": "C26-051",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test peer disappearance during an idle receive.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'abrupt TCP loss: worker is stopped, session released, no orphan process'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-052",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test peer disappearance during message accumulation.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for peer disappearance specifically during message accumulation/fragmentation",
+"prior_evidence": []
+},
+{
+"id": "C26-053",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test a protocol error reported by the runtime.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "multiple 1002/1007/1009 protocol-error tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-054",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test an application message exceeding the approved size limit.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'declared 64-bit length over the cap -> 1009' and fragmented-over-cap tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-055",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test an invalid result interpretation through a controlled unit fixture.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "bridge.test.js unit fixtures for invalid records (unknown type/property/bad utf8 etc.)",
+"prior_evidence": [
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C26-056",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test a worker exception after receive completion.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'worker killed (-9) -> exactly one session.exit{worker_failure}' [downgraded on manual spot-check: worker kill test approximates, not a handler exception after ",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-057",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test listener shutdown while the worker is receiving.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "SIGTERM drain test + 'health flips to 503 while draining'",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C26-058",
+"task_class": "TEST",
+"area": "06. Failure scenarios",
+"req": "Test local socket disposal through the approved cleanup path.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "idempotent _destroy() plus close-handshake conformance tests",
+"prior_evidence": [
+"gateway/ws.js:131-140",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-059",
+"task_class": "REVIEW",
+"area": "06. Failure scenarios",
+"req": "Ensure terminal errors do not trigger unbounded retries.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "destroyed flag prevents any retry after a terminal error",
+"prior_evidence": [
+"gateway/ws.js:145,153"
+]
+},
+{
+"id": "C26-060",
+"task_class": "IMPLEMENT",
+"area": "06. Failure scenarios",
+"req": "Preserve enough diagnostic information to classify the failure.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "log.warn('worker.failed', {{code, sig, tail}}) preserves classification detail",
+"prior_evidence": [
+"gateway/connection.js:263"
+]
+},
+{
+"id": "C26-061",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Run one receive and one send concurrently on a socket.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'health stays responsive... while a session streams bulk output and large inbound messages arrive'",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C26-062",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Prevent two workers from receiving from the same socket.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "exactly one worker per connection; no other reader of the socket",
+"prior_evidence": [
+"gateway/connection.js:181-195"
+]
+},
+{
+"id": "C26-063",
+"task_class": "IMPLEMENT",
+"area": "07. Concurrency",
+"req": "Prevent a helper from starting a second hidden receive loop.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "single socket.on('data') registration; no secondary hidden loop",
+"prior_evidence": [
+"gateway/ws.js:60-61"
+]
+},
+{
+"id": "C26-064",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test many sockets receiving simultaneously.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'slow consumer...a fast tenant is unaffected'; four-node fabric run over sockets simultaneously",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"tests/fabric/fabric-ws.test.js"
+]
+},
+{
+"id": "C26-065",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test one slow sender among active clients.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'one slow sender among active clients' equivalent: slow consumer test, fast tenant unaffected",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-066",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test a receive loop while health requests are being served.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'health stays responsive (< 250 ms) while a session streams bulk output'",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C26-067",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test message delivery while outbound work is queued.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'output resumes losslessly' while outbound work is queued under socket budget",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-068",
+"task_class": "TEST",
+"area": "07. Concurrency",
+"req": "Test shutdown racing with a newly scheduled receive.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for shutdown racing with a newly scheduled receive/connection",
+"prior_evidence": []
+},
+{
+"id": "C26-069",
+"task_class": "MEASURE",
+"area": "07. Concurrency",
+"req": "Measure worker occupancy during idle receive waits.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'worker thread occupancy while awaiting' is a .NET thread-pool concept; Node is single-threaded event-loop (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-070",
+"task_class": "DOCUMENT",
+"area": "07. Concurrency",
+"req": "Document any scalability limitation of the selected PowerShell waiting model.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "PowerShell waiting model does not exist in this candidate (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-071",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test a small text message.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "vertical slice hello->open->...->input->output tests a small text message",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C26-072",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test a small binary message when supported.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "binary messages are not supported by hermit.vws.v1 (closes 1003), so 'when supported' does not apply",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport"
+]
+},
+{
+"id": "C26-073",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test an empty logical message.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found specifically for an empty logical message",
+"prior_evidence": []
+},
+{
+"id": "C26-074",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test a message exactly equal to buffer capacity.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found for a message exactly equal to buffer/maxMessageBytes capacity",
+"prior_evidence": []
+},
+{
+"id": "C26-075",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test a message larger than buffer capacity.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'declared 64-bit length over the cap -> 1009'; 'fragmented message over the cap -> 1009'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-076",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test multibyte text crossing receive boundaries.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'split UTF-8 character across fragments is reassembled before strict decoding'",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-077",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test several back-to-back messages.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'many records in one read' exercises several back-to-back messages",
+"prior_evidence": [
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C26-078",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test alternating message sizes.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "no test found alternating message sizes",
+"prior_evidence": []
+},
+{
+"id": "C26-079",
+"task_class": "TEST",
+"area": "08. Data validation",
+"req": "Test a close result after ordinary data.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "vertical slice: ...output -> close -> single exit (close after ordinary data)",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C26-080",
+"task_class": "IMPLEMENT",
+"area": "08. Data validation",
+"req": "Compare delivered messages with the sent sequence.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'150000 lines delivered gap-free after catch-up' compares delivered vs sent",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track receive bytes using actual Count values.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "stats.rxBytes += chunk.length uses actual byte counts",
+"prior_evidence": [
+"gateway/ws.js:146"
+]
+},
+{
+"id": "C26-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track completed messages separately from receive operations.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "stats.rxMessages incremented in _message(), separate from rxBytes",
+"prior_evidence": [
+"gateway/ws.js:205"
+]
+},
+{
+"id": "C26-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track receive errors by category.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_fail codes vary by category (1002/1003/1007/1009) but no aggregated error-category counter/log found",
+"prior_evidence": [
+"gateway/ws.js:123-127"
+]
+},
+{
+"id": "C26-084",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track cancellation separately from unexpected disconnects.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_destroy 'initiator' distinguishes local/peer/transport vs cancellation",
+"prior_evidence": [
+"gateway/ws.js:63-65,121"
+]
+},
+{
+"id": "C26-085",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record incomplete-message discard events without payload contents.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "fragments discarded without payload on _fail, but no explicit log record of the discard event",
+"prior_evidence": [
+"gateway/ws.js:123-127"
+]
+},
+{
+"id": "C26-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate receive-loop lifetime with worker lifetime.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_onSocketClose stops the worker and fences callbacks, tying loop lifetime to worker lifetime",
+"prior_evidence": [
+"gateway/connection.js:312-334"
+]
+},
+{
+"id": "C26-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging every byte or buffer dump.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "structured logger redacts secret-like fields; ws.js never logs payload bytes",
+"prior_evidence": [
+"gateway/log.js"
+]
+},
+{
+"id": "C26-088",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record slow or stalled processing using approved thresholds.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_pingWorker logs 'worker.unresponsive' when workerStallMs threshold exceeded [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/connection.js:243-252"
+]
+},
+{
+"id": "C26-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a procedure for diagnosing a blocked worker.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "unresponsive-worker log exists; no explicit diagnosis runbook found in OPERATIONS.md",
+"prior_evidence": [
+"gateway/connection.js:246-249",
+"docs/OPERATIONS.md"
+]
+},
+{
+"id": "C26-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Include runtime version in compatibility failure evidence.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'.NET runtime version in compatibility failure evidence' has no analog documented for Node (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the receive-loop state model.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "connection state machine published; ws frame state (OPEN/CLOSING/CLOSED) in code",
+"prior_evidence": [
+"docs/PROTOCOL.md#State-machine",
+"gateway/ws.js:53"
+]
+},
+{
+"id": "C26-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the result and accumulator interfaces.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "result/accumulator behavior documented in prose (fragmentation, size caps, records)",
+"prior_evidence": [
+"docs/PROTOCOL.md#Transport",
+"docs/PROTOCOL.md#Local-bridge"
+]
+},
+{
+"id": "C26-093",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link representative payload-integrity tests.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "linked in EVIDENCE_INDEX.md as payload-integrity tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js",
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C26-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link cancellation and disconnect tests.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "chaos/lifecycle.test.js linked as cancellation/disconnect tests",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link full-duplex and multi-client tests.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "e2e + lifecycle tests cover full-duplex and multi-client behavior",
+"prior_evidence": [
+"tests/gateway/e2e.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C26-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link size-limit rejection tests.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "oversize/1009 tests linked as size-limit rejection tests",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C26-097",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document task waiting and worker occupancy.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "'.NET task waiting' has no Node analog; worker occupancy not measured this way (D-001)",
+"prior_evidence": []
+},
+{
+"id": "C26-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document application-handler failure behavior.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Errors section documents error codes, retryable semantics, application-handler failure behavior",
+"prior_evidence": [
+"docs/PROTOCOL.md#Errors"
+]
+},
+{
+"id": "C26-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved runtime limitations.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Residual risks section records unresolved limitations (e.g. no independent review, TLS expectations)",
+"prior_evidence": [
+"docs/SECURITY.md#Residual-risks"
+]
+},
+{
+"id": "C26-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve the loop only when message boundaries and cleanup remain correct.",
+"ram_overlay": "Give each socket one receive owner and a bounded receive/reassembly path. Await readiness and backpressure rather than spinning; bound waits so close and heartbeat progress cannot be starved forever.",
+"challenge": "Inject disconnects and a stalled consumer mid-message; prove timeout, cancellation, and all leases settle.",
+"ref_work": [
+"R10",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "95/95 tests pass incl. full ws-conformance + chaos suites covering boundaries and cleanup",
+"prior_evidence": [
+"e/_runs/full-suite.tap",
+"tests/gateway/ws-conformance.test.js",
+"tests/chaos/lifecycle.test.js"
+]
+}
+]
+}

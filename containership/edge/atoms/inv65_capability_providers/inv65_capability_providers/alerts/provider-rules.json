@@ -1,0 +1,74 @@
+{
+ "schema": "PK_ALERT_RULES/1",
+ "groups": [
+  {
+   "name": "inv65",
+   "rules": [
+    {
+     "alert": "ProviderIsolationViolation",
+     "expr": "increase(pk_isolation_violation_total[5m]) > 0",
+     "for": "0m",
+     "severity": "SEV1",
+     "metrics": [
+      "pk_isolation_violation_total"
+     ]
+    },
+    {
+     "alert": "ProviderNotReady",
+     "expr": "probe_readyz_ok == 0",
+     "for": "5m",
+     "severity": "SEV2",
+     "metrics": [],
+     "note": "probe metric comes from the blackbox prober hitting /readyz"
+    },
+    {
+     "alert": "ProviderCircuitOpen",
+     "expr": "rate(pk_denied_total{code=\"PK_PROVIDER_CIRCUIT_OPEN\"}[5m]) > 0",
+     "for": "5m",
+     "severity": "SEV2",
+     "metrics": [
+      "pk_denied_total"
+     ]
+    },
+    {
+     "alert": "ProviderSaturation",
+     "expr": "sum(rate(pk_denied_total{code=\"PK_PROVIDER_OVERLOADED\"}[10m])) / sum(rate(pk_calls_total[10m])) > 0.01",
+     "for": "10m",
+     "severity": "SEV3",
+     "metrics": [
+      "pk_denied_total",
+      "pk_calls_total"
+     ]
+    },
+    {
+     "alert": "ProviderPolicyRejectSpike",
+     "expr": "rate(pk_denied_total{code=\"PK_PROVIDER_FORBIDDEN\"}[5m]) > 5",
+     "for": "10m",
+     "severity": "SEV3",
+     "metrics": [
+      "pk_denied_total"
+     ]
+    },
+    {
+     "alert": "ProviderAuthFailureSpike",
+     "expr": "rate(pk_denied_total{code=\"PK_PROVIDER_UNAUTHENTICATED\"}[5m]) > 5",
+     "for": "5m",
+     "severity": "SEV2",
+     "metrics": [
+      "pk_denied_total"
+     ]
+    },
+    {
+     "alert": "ProviderErrorBudgetBurn",
+     "expr": "(sum(rate(pk_dispatch_seconds_count[1h])) - sum(rate(pk_dispatch_seconds_bucket{le=\"0.001\"}[1h]))) / sum(rate(pk_dispatch_seconds_count[1h])) > 0.01",
+     "for": "30m",
+     "severity": "SEV3",
+     "metrics": [
+      "pk_dispatch_seconds_count",
+      "pk_dispatch_seconds_bucket"
+     ]
+    }
+   ]
+  }
+ ]
+}

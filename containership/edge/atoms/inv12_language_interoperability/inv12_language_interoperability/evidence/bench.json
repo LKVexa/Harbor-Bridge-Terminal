@@ -1,0 +1,200 @@
+{
+ "environment": {
+  "python": "3.11.15",
+  "machine": "x86_64",
+  "processor": "x86_64",
+  "cpus": 2,
+  "system": "Linux 6.18.44-fc-v37",
+  "timestamp": "2026-09-23T01:59:23Z"
+ },
+ "python_reference": {
+  "u32-max": {
+   "n": 50000,
+   "p50_ns": 5879,
+   "p95_ns": 8317,
+   "p99_ns": 21625,
+   "allocations": 1,
+   "copied_bytes": 4
+  },
+  "record-point": {
+   "n": 50000,
+   "p50_ns": 17092,
+   "p95_ns": 25648,
+   "p99_ns": 48692,
+   "allocations": 1,
+   "copied_bytes": 8
+  },
+  "list-string": {
+   "n": 50000,
+   "p50_ns": 27384,
+   "p95_ns": 45919,
+   "p99_ns": 67348,
+   "allocations": 5,
+   "copied_bytes": 35
+  },
+  "record-doc": {
+   "n": 12500,
+   "p50_ns": 259181,
+   "p95_ns": 392557,
+   "p99_ns": 464751,
+   "allocations": 8,
+   "copied_bytes": 150
+  }
+ },
+ "native": {
+  "rust": {
+   "u32-max": {
+    "n": 200000,
+    "p50_ns": 103,
+    "p95_ns": 132,
+    "p99_ns": 160
+   },
+   "list-string": {
+    "n": 200000,
+    "p50_ns": 273,
+    "p95_ns": 303,
+    "p99_ns": 412
+   },
+   "record-point": {
+    "n": 200000,
+    "p50_ns": 1229,
+    "p95_ns": 1724,
+    "p99_ns": 2001
+   },
+   "record-doc": {
+    "n": 50000,
+    "p50_ns": 47893,
+    "p95_ns": 78229,
+    "p99_ns": 112488
+   }
+  },
+  "go": {
+   "list-string": {
+    "n": 200000,
+    "p50_ns": 557,
+    "p95_ns": 829,
+    "p99_ns": 1216
+   },
+   "record-doc": {
+    "n": 50000,
+    "p50_ns": 22096,
+    "p95_ns": 39302,
+    "p99_ns": 116498
+   },
+   "record-point": {
+    "n": 200000,
+    "p50_ns": 1400,
+    "p95_ns": 1923,
+    "p99_ns": 4805
+   },
+   "u32-max": {
+    "n": 200000,
+    "p50_ns": 189,
+    "p95_ns": 286,
+    "p99_ns": 409
+   }
+  }
+ },
+ "dos": [
+  {
+   "case": "list<u8> 100k valid",
+   "result": "ok",
+   "seconds": 1.1722,
+   "peak_bytes": 1602119,
+   "expected": null,
+   "pass": true
+  },
+  {
+   "case": "string 16 MiB valid",
+   "result": "ok",
+   "seconds": 0.0505,
+   "peak_bytes": 67110252,
+   "expected": null,
+   "pass": true
+  },
+  {
+   "case": "string 16 MiB + 1 refused",
+   "result": "PK_INTEROP_LIMIT",
+   "seconds": 0.0009,
+   "peak_bytes": 16780380,
+   "expected": "PK_INTEROP_LIMIT",
+   "pass": true
+  },
+  {
+   "case": "list 5M items refused before iteration",
+   "result": "PK_INTEROP_LIMIT",
+   "seconds": 0.0002,
+   "peak_bytes": 3489,
+   "expected": "PK_INTEROP_LIMIT",
+   "pass": true
+  },
+  {
+   "case": "nesting depth 60 valid",
+   "result": "ok",
+   "seconds": 0.0201,
+   "peak_bytes": 65536,
+   "expected": null,
+   "pass": true
+  },
+  {
+   "case": "node budget exceeded",
+   "result": "PK_INTEROP_LIMIT",
+   "seconds": 1.1813,
+   "peak_bytes": 1785450,
+   "expected": "PK_INTEROP_LIMIT",
+   "pass": true
+  },
+  {
+   "case": "total-bytes budget exceeded",
+   "result": "PK_INTEROP_LIMIT",
+   "seconds": 0.0044,
+   "peak_bytes": 2003185,
+   "expected": "PK_INTEROP_LIMIT",
+   "pass": true
+  },
+  {
+   "case": "tight per-interface limit",
+   "result": "PK_INTEROP_LIMIT",
+   "seconds": 0.0001,
+   "peak_bytes": 4450,
+   "expected": "PK_INTEROP_LIMIT",
+   "pass": true
+  },
+  {
+   "case": "hostile list length (lift)",
+   "result": "PK_INTEROP_MEMORY_BOUNDS",
+   "seconds": 0.0001,
+   "peak_bytes": 3342,
+   "expected": "PK_INTEROP_MEMORY_BOUNDS",
+   "pass": true
+  },
+  {
+   "case": "hostile list length overflow (lift)",
+   "result": "PK_INTEROP_MEMORY_OVERFLOW",
+   "seconds": 0.0001,
+   "peak_bytes": 3207,
+   "expected": "PK_INTEROP_MEMORY_OVERFLOW",
+   "pass": true
+  },
+  {
+   "case": "hostile string length (lift)",
+   "result": "PK_INTEROP_MEMORY_BOUNDS",
+   "seconds": 0.0001,
+   "peak_bytes": 3437,
+   "expected": "PK_INTEROP_MEMORY_BOUNDS",
+   "pass": true
+  }
+ ],
+ "slo_boundary_cost_scalar_p99_lt_2us": {
+  "python_reference": false,
+  "rust": true,
+  "go": true
+ },
+ "regressions": [],
+ "dos_pass": true,
+ "verdict": {
+  "benchmark_regression_gate": "PASS",
+  "dos_gate": "PASS",
+  "slo_certification": "PROXY_PASS_NATIVE_ONLY"
+ }
+}

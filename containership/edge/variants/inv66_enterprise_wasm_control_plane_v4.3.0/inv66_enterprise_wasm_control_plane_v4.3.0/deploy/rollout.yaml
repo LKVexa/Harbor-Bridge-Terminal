@@ -1,0 +1,31 @@
+# Staged rollout plan consumed by the release pipeline (MC-061).  Stages advance only when the
+# promotion checks hold for the soak window; any failed check triggers automated rollback to the
+# previous signed artifact + previous config revision (inv66 config rollback).
+schema: PK_ECP_ROLLOUT/1
+artifact: inv66-enterprise-wasm-control-plane==4.3.0
+stages:
+  - name: dev
+    sites: [dev-1]
+    soak_minutes: 30
+  - name: staging
+    sites: [stg-1]
+    soak_minutes: 120
+  - name: prod-canary
+    sites: [prod-eu-1]          # one site, leader lease prevents a second writer
+    soak_minutes: 240
+  - name: prod
+    sites: [prod-eu-2, prod-us-1]
+    soak_minutes: 0
+promotion_checks:
+  - readyz == 200 on every node for the whole soak window
+  - rate(inv66_admissions_total{outcome="INTERNAL"}[10m]) == 0
+  - histogram_quantile(0.99, inv66_admission_latency_ms_bucket) < 50
+  - inv66 verify --store <site store> exits 0 (chain + anchors)
+  - no new unacknowledged Sev1/Sev2 alerts
+rollback:
+  trigger: any promotion check fails, or operator runs `inv66 freeze org:<org>` during the window
+  steps:
+    - freeze affected scope (POST /v1/freeze) so nothing new is delivered
+    - redeploy previous signed artifact digest
+    - POST /v1/config/rollback to the last known-good revision if config changed in this release
+    - verify chain/anchors, unfreeze, record incident per INCIDENT_RESPONSE.md

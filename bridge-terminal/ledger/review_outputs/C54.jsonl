@@ -1,0 +1,100 @@
+{"id": "C54-001", "status": "PASS", "evidence": ["gateway/server.js"], "note": "Responses enumerated in server.js: /health, /live, /config.json, /api/ws-ticket."}
+{"id": "C54-002", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md", "protocol/protocol-meta.json"], "note": "v2 control JSON + binary data messages are the full public message set."}
+{"id": "C54-003", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#Restart-semantics", "client/ws-adapter.js"], "note": "session.reset and reconnect-with-backoff exist (client/ws-adapter.js), but no explicit reconnect-traffic measurement plan is written."}
+{"id": "C54-004", "status": "PASS", "evidence": ["ram/traffic.js"], "note": "STAGES separates rx_* (inbound) from tx_*/bridge_out_* (outbound) explicitly."}
+{"id": "C54-005", "status": "IN_PROGRESS", "evidence": ["ram/traffic.js"], "note": "traffic.js counts software copy bytes per stage but is explicitly NOT a transport/wire-level byte counter (TLS/TCP excluded, 'outsideLedger')."}
+{"id": "C54-006", "status": "OPEN", "evidence": [], "note": "No document restates an outbound-bandwidth cost warning like the source article's Render concern."}
+{"id": "C54-007", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-008", "status": "OPEN", "evidence": [], "note": "No operating-budget owner is named."}
+{"id": "C54-009", "status": "IN_PROGRESS", "evidence": ["e/R28/experiment.frozen.json", "docs/EXPERIMENT.md"], "note": "W1/W2/W3 workloads are defined for the CPU experiment, but not framed as a bandwidth-estimate workload."}
+{"id": "C54-010", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-011", "status": "PASS", "evidence": ["gateway/connection.js:90"], "note": "this.sentBytes accumulates payload bytes actually written (sentBytes += item.bytes.length) at the point of send."}
+{"id": "C54-012", "status": "OPEN", "evidence": [], "note": "No counter exists for outbound HTTP response bytes (/health, /live, /config.json responses are not counted)."}
+{"id": "C54-013", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:81-90"], "note": "pendingOut (queued/admitted) vs sentBytes (written to socket) are distinct, but 'completed send' still means handed to the OS, not confirmed on the wire."}
+{"id": "C54-014", "status": "NOT_APPLICABLE", "evidence": [], "note": "TCP retransmission is below the application/Node socket API; not visible to app-level code by construction."}
+{"id": "C54-015", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js"], "note": "Control-frame handling (ping/pong/close) is implemented but not fed into ram/traffic.js byte counters."}
+{"id": "C54-016", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-017", "status": "OPEN", "evidence": [], "note": "No aggregation interval is defined; /live is a point-in-time snapshot only (docs/OPERATIONS.md#Telemetry)."}
+{"id": "C54-018", "status": "PASS", "evidence": ["ram/traffic.js"], "note": "All figures are bytes (STAGES bytes/ops); consistent units, explicitly labelled 'software_estimate'."}
+{"id": "C54-019", "status": "PASS", "evidence": ["ram/traffic.js"], "note": "Docstring: estimates 'are not hardware memory-bandwidth counters' and lists outsideLedger (libuv, kernel, V8, TLS)."}
+{"id": "C54-020", "status": "PASS", "evidence": ["ram/traffic.js"], "note": "kind: 'software_estimate' label prevents presenting counts as billed transfer."}
+{"id": "C54-021", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md#Main-result"], "note": "W1/W2/W3 define keystroke/bulk/paste message types, but only for CPU experiment, not a bandwidth baseline doc."}
+{"id": "C54-022", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md"], "note": "~2.9MB bulk (W2), 3000-char paste (W3), 1-byte keystrokes (W1) sizes are recorded, but framed as CPU workload not bandwidth baseline."}
+{"id": "C54-023", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-024", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-025", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-026", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-027", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-028", "status": "NOT_APPLICABLE", "evidence": ["gateway/server.js"], "note": "/health is unauthenticated constant-work JSON; volume is operator-controlled (probe interval), not app-estimated."}
+{"id": "C54-029", "status": "PASS", "evidence": ["e/R28/experiment.frozen.json"], "note": "Preregistered/frozen config vs raw.jsonl observed runs keeps assumptions and measured data in separate files."}
+{"id": "C54-030", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md"], "note": "Workload rationale given for the CPU experiment (kit R28) but source of e.g. session-count assumptions for bandwidth is not recorded."}
+{"id": "C54-031", "status": "PASS", "evidence": ["protocol/codec.js", "gateway/connection.js"], "note": "Control messages are strict JSON text encoded then measured as codec.encode() output length before send."}
+{"id": "C54-032", "status": "PASS", "evidence": ["gateway/connection.js:90", "protocol/codec.js"], "note": "decodeData/writeDataHeader use actual payload.length (uint48 header), not buffer capacity."}
+{"id": "C54-033", "status": "OPEN", "evidence": [], "note": "No byte counter wraps the plain HTTP responses (/health,/live,/config.json) in server.js."}
+{"id": "C54-034", "status": "PASS", "evidence": ["ram/ledger.js", "ram/traffic.js"], "note": "Ledger charges capacity by requested/actual length; traffic.add() is called with actual payload.length, not allocated buffer size."}
+{"id": "C54-035", "status": "PASS", "evidence": ["gateway/connection.js:81-90"], "note": "pendingOut items move to sentBytes only once ws.sendBinary succeeds; distinguishes admitted vs completed."}
+{"id": "C54-036", "status": "PASS", "evidence": ["gateway/connection.js:296-298"], "note": "On teardown, un-sent pendingOut bytes are counted into counters.undeliveredOutputBytes rather than silently dropped."}
+{"id": "C54-037", "status": "IN_PROGRESS", "evidence": ["ram/traffic.js"], "note": "Distinct stages (tx_encode vs tx_frame_copy vs tx_wire) avoid double counting within traffic.js, but there is no single canonical 'bytes sent' summary reconciling them."}
+{"id": "C54-038", "status": "PASS", "evidence": ["ram/ledger.js", "tests/ram/ledger.test.js"], "note": "Ledger admission is synchronous/all-or-nothing per scope; randomized concurrent acquire/retain/release test reconciles to zero (tests/ram/ledger.test.js)."}
+{"id": "C54-039", "status": "PASS", "evidence": ["ram/traffic.js"], "note": "Counters are fixed-size per STAGE (11 stages), not per-message retained history; bounded by construction."}
+{"id": "C54-040", "status": "IN_PROGRESS", "evidence": ["tests/protocol/codec.test.js", "tests/ram/v2-e2e.test.js"], "note": "Codec header round-trip tests cover sizes/boundaries, but no dedicated test asserts ram/traffic.js totals for known message sizes."}
+{"id": "C54-041", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-042", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-043", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-044", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-045", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-046", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-047", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-048", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-049", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-050", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-051", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md", "protocol/envelope.schema.json"], "note": "Message shapes are schema-defined (15 shapes) but no explicit inventory of repeated fields for trimming was performed."}
+{"id": "C54-052", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-053", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:298"], "note": "Deduping is implicit (no ack-per-message anymore, replaced by coalesced credits, docs/PROTOCOL_V2.md#Credits) but not framed as a duplicate-notification audit."}
+{"id": "C54-054", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#Main-result"], "note": "Baseline (v1 JSON+base64) payload sizes measured: e.g. W2 149ms/MiB baseline bytes."}
+{"id": "C54-055", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#Main-result"], "note": "Candidate (v2 binary) sizes/rates measured post-optimization: W2 71% CPU reduction, W3 99%."}
+{"id": "C54-056", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#Main-result"], "note": "Fidelity: all 60 runs delivered exactly 400000 lines ('exact'); required info preserved."}
+{"id": "C54-057", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#Ordering-and-single-exit", "tests/ram/v2-e2e.test.js"], "note": "Output seq is contiguous and credit-gated; ordering/recovery semantics tested (SESSION_RESET, credits never exceed window)."}
+{"id": "C54-058", "status": "PASS", "evidence": ["docs/RAMWS.md", "docs/OPERATIONS.md"], "note": "No compression (e.g. permessage-deflate) is added anywhere in the protocol; binary framing only."}
+{"id": "C54-059", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/ui/browser.test.js"], "note": "v2 codec/framing tested against helpers.js client and a real Chromium client (tests/ui/browser.test.js)."}
+{"id": "C54-060", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#Main-result"], "note": "Reduction percentages are reported with 95% cluster-bootstrap CIs, not assumed figures."}
+{"id": "C54-061", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-062", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md"], "note": "W1 measures an active session's keystroke rate but not an idle-connection heartbeat traffic baseline."}
+{"id": "C54-063", "status": "NOT_APPLICABLE", "evidence": [], "note": "No broadcast/fan-out feature exists (one worker per session, no pub/sub)."}
+{"id": "C54-064", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-065", "status": "IN_PROGRESS", "evidence": ["tests/security/authz.test.js"], "note": "Failed-auth rate limiting is tested (per-address bump()) but not measured for resulting bandwidth."}
+{"id": "C54-066", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#Main-result", "tests/gateway/ws-conformance.test.js"], "note": "W2 (~2.9MB bulk output) and the 64-bit-length-over-cap conformance test cover unusually large messages."}
+{"id": "C54-067", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "'failed ticket attempts are limited per address without blocking a valid principal' \u2014 rate-limited, bounding traffic; no credentials logged (docs/SECURITY.md)."}
+{"id": "C54-068", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "No heartbeat/ping-pong loop or redirect exists that could self-trigger; not explicitly analyzed as a loop risk though."}
+{"id": "C54-069", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js"], "note": "Client reconnect uses full-jitter backoff bounded to 30s (tests/ui/client-units.test.js), but no server-side retry-traffic policy is documented."}
+{"id": "C54-070", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-071", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-072", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-073", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-074", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-075", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-076", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-077", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-078", "status": "PASS", "evidence": ["tests/chaos/review-fixes.test.js", "tests/security/authz.test.js"], "note": "S4 ping flood -> 1008; per-principal/global capacity caps refuse admission before allocation (excessive traffic gets a safe, bounded response)."}
+{"id": "C54-079", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-080", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-081", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "/live exposes traffic.snapshot() by stage, an aggregate category, but not organized as a 'report' artifact."}
+{"id": "C54-082", "status": "PASS", "evidence": ["ram/traffic.js"], "note": "snapshot() returns {stage, bytes, operations} pairs \u2014 counts alongside byte totals."}
+{"id": "C54-083", "status": "OPEN", "evidence": [], "note": "No average/min/max message-size reporting exists; only cumulative bytes+ops per stage."}
+{"id": "C54-084", "status": "PASS", "evidence": ["gateway/server.js"], "note": "counters.sessionResets is reported separately from ordinary traffic in /live."}
+{"id": "C54-085", "status": "PASS", "evidence": ["docs/OPERATIONS.md#Telemetry"], "note": "/live is explicitly 'no payloads or identities'; traffic.snapshot() carries only byte/op counts."}
+{"id": "C54-086", "status": "PASS", "evidence": ["gateway/connection.js:296-298"], "note": "undeliveredOutputBytes is exposed precisely to record bytes that could not be sent on teardown."}
+{"id": "C54-087", "status": "IN_PROGRESS", "evidence": ["gateway/server.js"], "note": "/live includes uptimeS (process uptime) but not an explicit 'observation window' for the traffic counters themselves (they are cumulative since start)."}
+{"id": "C54-088", "status": "OPEN", "evidence": [], "note": "/live does not include an application version/revision field."}
+{"id": "C54-089", "status": "OPEN", "evidence": [], "note": "No troubleshooting procedure for unexpected outbound growth is documented."}
+{"id": "C54-090", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-091", "status": "PASS", "evidence": ["docs/OPERATIONS.md#Telemetry", "ram/traffic.js"], "note": "Measurement boundary (software estimate, excludes TLS/kernel/libuv/V8) and units (bytes) are documented."}
+{"id": "C54-092", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-093", "status": "IN_PROGRESS", "evidence": ["tests/protocol/codec.test.js"], "note": "Codec size/boundary tests exist but aren't linked as counter-verification evidence in any handover doc."}
+{"id": "C54-094", "status": "PASS", "evidence": ["tests/ram/ledger.test.js"], "note": "4000-step randomized concurrent acquire/retain/release reconciliation test is the closest equivalent and passes."}
+{"id": "C54-095", "status": "BLOCKED", "evidence": ["RD-03"], "note": "No Render account/deployment or platform usage dashboard available in this environment."}
+{"id": "C54-096", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md"], "note": "W2 bulk output and 60-run measurements exist, but not framed/linked as bandwidth acceptance evidence."}
+{"id": "C54-097", "status": "PASS", "evidence": ["docs/EXPERIMENT.md#Attribution"], "note": "Table names each optimization (binary frames, transferred buffers, cork writes, streaming seq, credit coalescing) with measured effect."}
+{"id": "C54-098", "status": "OPEN", "evidence": [], "note": "No document or code addresses this item."}
+{"id": "C54-099", "status": "IN_PROGRESS", "evidence": ["docs/EXPERIMENT.md#Gates"], "note": "H4 traffic model explicitly 'NOT RUN: no hardware counter to compare against' \u2014 a listed but not itemized unresolved assumption."}
+{"id": "C54-100", "status": "OPEN", "evidence": [], "note": "No monitoring-approval record exists; several counters/limitations above remain undocumented or untested."}

@@ -1,0 +1,59 @@
+{
+ "schema": "PK_SNAPSHOT_PRIVILEGE/1",
+ "status": "specification; enforcement is the deployer's (systemd/k8s) -- not verifiable in this repository",
+ "identities": [
+  {
+   "identity": "inv26-worker (uid inv26, no login shell)",
+   "linux_capabilities": [],
+   "no_new_privileges": true,
+   "seccomp": "default + deny ptrace/mount/bpf/keyctl",
+   "filesystem_rw": [
+    "/var/lib/inv26/meta",
+    "/var/lib/inv26/blobs",
+    "/run/inv26/work (tmpfs 0700)"
+   ],
+   "filesystem_ro": [
+    "installed package"
+   ],
+   "sockets": [
+    "per-VM VMM API sockets (group vmm-api, 0660)",
+    "per-VM vsock UDS"
+   ],
+   "devices": [],
+   "network_egress": [
+    "KMS endpoint",
+    "object store endpoint",
+    "audit sink"
+   ],
+   "kms": [
+    "Encrypt/Decrypt on key alias inv26-kek only, scoped by encryption context"
+   ],
+   "storage": [
+    "tenant-prefix scoped get/put/delete; no bucket list"
+   ]
+  },
+  {
+   "identity": "VMM (jailer-owned per VM)",
+   "notes": "owned by INV-24; holds /dev/kvm; INV-26 never does",
+   "devices": [
+    "/dev/kvm"
+   ]
+  },
+  {
+   "identity": "inv26-admin (human, break-glass)",
+   "capabilities": [
+    "snapshot.admin"
+   ],
+   "max_lifetime_s": 900,
+   "requires": [
+    "bg_reason",
+    "security_owner approval",
+    "critical audit"
+   ]
+  }
+ ],
+ "separation": {
+  "capture/restore workers": "no snapshot.delete/admin/KMS-admin/policy-edit",
+  "config activation": "service_owner only; cannot approve own release"
+ }
+}

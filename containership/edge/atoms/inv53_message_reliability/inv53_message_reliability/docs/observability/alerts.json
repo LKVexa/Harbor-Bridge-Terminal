@@ -1,0 +1,62 @@
+{
+ "schema": "inv53.alerts/1",
+ "status": "PROPOSED \u2014 not deployed; no Prometheus/Alertmanager is bound",
+ "alerts": [
+  {
+   "alert": "INV53DeadLetterGrowth",
+   "expr": "increase(inv53_dead_lettered[15m]) > 0",
+   "for": "15m",
+   "severity": "SEV3",
+   "runbook": "docs/ops/RUNBOOKS.md#dlq-growth"
+  },
+  {
+   "alert": "INV53Stalled",
+   "expr": "inv53_ready > 0 and increase(inv53_ops_total{op=\"ack\"}[10m]) == 0",
+   "for": "10m",
+   "severity": "SEV2",
+   "runbook": "docs/ops/RUNBOOKS.md#stall"
+  },
+  {
+   "alert": "INV53StorageErrors",
+   "expr": "increase(inv53_refusals_total{code=~\"E_STORAGE|E_CIRCUIT_OPEN|E_CORRUPT\"}[5m]) > 0",
+   "for": "0m",
+   "severity": "SEV1",
+   "runbook": "docs/ops/RUNBOOKS.md#storage"
+  },
+  {
+   "alert": "INV53SecurityDependency",
+   "expr": "increase(inv53_refusals_total{code=\"E_SECURITY_DEPENDENCY\"}[5m]) > 0",
+   "for": "0m",
+   "severity": "SEV1",
+   "runbook": "docs/ops/RUNBOOKS.md#security-dependency"
+  },
+  {
+   "alert": "INV53AuthFailuresSpike",
+   "expr": "rate(inv53_refusals_total{code=~\"E_UNAUTHENTICATED|E_FORBIDDEN\"}[5m]) > 1",
+   "for": "5m",
+   "severity": "SEV2",
+   "runbook": "docs/ops/RUNBOOKS.md#auth-spike"
+  },
+  {
+   "alert": "INV53Shedding",
+   "expr": "increase(inv53_refusals_total{code=\"E_SHED\"}[5m]) > 0",
+   "for": "10m",
+   "severity": "SEV3",
+   "runbook": "docs/ops/RUNBOOKS.md#shedding"
+  },
+  {
+   "alert": "INV53LatencyP99",
+   "expr": "histogram_quantile(0.99, sum by (le,op) (rate(inv53_op_seconds_bucket[5m]))) > 0.005",
+   "for": "10m",
+   "severity": "SEV3",
+   "runbook": "docs/ops/RUNBOOKS.md#latency"
+  },
+  {
+   "alert": "INV53MetricsDropped",
+   "expr": "increase(inv53_metrics_dropped_series[1h]) > 0",
+   "for": "0m",
+   "severity": "SEV4",
+   "runbook": "docs/ops/RUNBOOKS.md#cardinality"
+  }
+ ]
+}

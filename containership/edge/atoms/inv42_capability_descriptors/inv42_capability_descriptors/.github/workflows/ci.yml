@@ -1,0 +1,56 @@
+# MC-008 / MC-031 / MC-032 / MC-033 - mandatory checks. Mark "gate" as a required status check.
+name: inv42-ci
+on:
+  push: {branches: [main]}
+  pull_request:
+  release: {types: [created]}
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2 pinned by SHA
+        with: {path: inv42_capability_descriptors}
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
+        with: {python-version: "${{ matrix.python }}"}
+      - name: unit + security + integration (dev profile)
+        run: python inv42_capability_descriptors/tools/certify.py --profile dev
+      - name: optimized mode
+        run: python -O -m unittest discover -s inv42_capability_descriptors/tests
+      - name: extended fuzz
+        env: {INV42_FUZZ_ITERATIONS: "200000", INV42_FUZZ_SEED: "${{ github.run_id }}"}
+        run: python -m unittest inv42_capability_descriptors/tests/test_hardening_v43.py -k Fuzz
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08  # v4.6.0
+        with: {name: "evidence-${{ matrix.os }}-${{ matrix.python }}", path: inv42_capability_descriptors/evidence/}
+  gate:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {path: inv42_capability_descriptors}
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38
+        with: {python-version: "3.12"}
+      - name: install pinned tooling (hash-checked)
+        run: python -m pip install --require-hashes --no-deps -r inv42_capability_descriptors/requirements-release.txt
+      - name: traceability
+        run: python inv42_capability_descriptors/tools/traceability.py --check
+      - name: coverage gate
+        run: python inv42_capability_descriptors/tools/coverage_gate.py
+      - name: performance regression gate
+        run: python inv42_capability_descriptors/tools/bench.py --soak 30
+      - name: certification profile (pk_core required, zero skips)
+        env: {PK_CORE_PATH: "${{ github.workspace }}/pk"}
+        run: python inv42_capability_descriptors/tools/certify.py --profile certification
+      - name: build + verify release
+        env: {INV42_BUILDER_ID: "github-actions:${{ github.repository }}@${{ github.workflow_ref }}"}
+        run: |
+          python inv42_capability_descriptors/tools/release.py build --out dist
+          python inv42_capability_descriptors/tools/release.py verify --dist dist --pubkey dist/release-pub.pem
+      - name: production exit gate (release events only)
+        if: github.event_name == 'release'
+        run: python inv42_capability_descriptors/tools/exit_gate.py

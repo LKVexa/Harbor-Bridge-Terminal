@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:gap13:PK_POLICY_SIGNED_BUNDLE/1",
+  "title": "PK_POLICY_SIGNED_BUNDLE/1",
+  "description": "Envelope. Signature is Ed25519 over b'PK_POLICY_BUNDLE/1\\x00' || payload bytes. The algorithm is only honoured if it is in the verifier's local allowlist AND equals the trust-store key's registered algorithm.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "payload_b64", "digest", "signature"],
+  "properties": {
+    "schema": {"const": "PK_POLICY_SIGNED_BUNDLE/1"},
+    "payload_b64": {"type": "string", "contentEncoding": "base64"},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "signature": {
+      "type": "object", "additionalProperties": false, "required": ["alg", "key_id", "value_b64"],
+      "properties": {"alg": {"const": "ed25519"}, "key_id": {"type": "string", "minLength": 1, "maxLength": 128}, "value_b64": {"type": "string"}}
+    }
+  }
+}

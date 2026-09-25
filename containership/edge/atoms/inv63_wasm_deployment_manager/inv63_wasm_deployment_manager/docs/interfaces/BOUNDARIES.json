@@ -1,0 +1,216 @@
+{
+  "schema": "INV63_BOUNDARIES/1",
+  "boundaries": [
+    {
+      "id": "B-01",
+      "name": "Deployment API (request envelope)",
+      "kind": "API",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_REQUEST/1",
+      "authn": "HMAC bearer token (TokenAuthority): iss/aud/exp/nbf/jti",
+      "authz": "capability per op (security.OP_CAPABILITY), tenant-scoped",
+      "timeout": "request_timeout_ms (default 5000, max 300000); deadline_ms may only shorten",
+      "limits": "64 KiB payload, depth 8, max_inflight, per-tenant token bucket",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-02",
+      "name": "Desired state record",
+      "kind": "API/body",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_DESIRED/1",
+      "authn": "via B-01",
+      "authz": "desired:write",
+      "timeout": "via B-01",
+      "limits": "count<=1000, ids<=256 chars",
+      "owner": "service-owner",
+      "status": "deprecated 2027-09-30; rejected in prod (unsigned)"
+    },
+    {
+      "id": "B-03",
+      "name": "Desired state record with signed artifact",
+      "kind": "API/body",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_DESIRED/2",
+      "authn": "via B-01 + Ed25519 artifact signature",
+      "authz": "desired:write",
+      "timeout": "via B-01",
+      "limits": "count<=1000, residency<=16",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-04",
+      "name": "Reconciliation plan",
+      "kind": "internal/event",
+      "direction": "internal",
+      "contract": "PK_DEPLOY_DIFF/1",
+      "authn": "n/a (in-process)",
+      "authz": "reconcile:run",
+      "timeout": "via caller deadline",
+      "limits": "<=2000 start / <=2000 stop",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-05",
+      "name": "Rollout request",
+      "kind": "API/body",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_ROLLOUT/1",
+      "authn": "via B-01 + artifact signature",
+      "authz": "rollout:run",
+      "timeout": "via B-01",
+      "limits": "max_unavailable 1..1000",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-06",
+      "name": "Structured error",
+      "kind": "API/response",
+      "direction": "outbound",
+      "contract": "PK_DEPLOY_ERROR/1",
+      "authn": "n/a",
+      "authz": "n/a",
+      "timeout": "n/a",
+      "limits": "message<=512 chars",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-07",
+      "name": "Audit / decision event",
+      "kind": "event",
+      "direction": "outbound",
+      "contract": "PK_DEPLOY_EVENT/1",
+      "authn": "exporter-side mTLS (deployment)",
+      "authz": "audit:read",
+      "timeout": "async",
+      "limits": "reason<=1024",
+      "owner": "sre"
+    },
+    {
+      "id": "B-08",
+      "name": "Configuration",
+      "kind": "file",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_CONFIG/1",
+      "authn": "file ownership + activation author",
+      "authz": "config:activate",
+      "timeout": "n/a",
+      "limits": "schema-bounded",
+      "owner": "config-admin"
+    },
+    {
+      "id": "B-09",
+      "name": "Production exit gate verdict",
+      "kind": "file",
+      "direction": "outbound",
+      "contract": "PK_DEPLOY_GATE/1",
+      "authn": "Ed25519 signature",
+      "authz": "release approver",
+      "timeout": "n/a",
+      "limits": "n/a",
+      "owner": "release-approver"
+    },
+    {
+      "id": "B-10",
+      "name": "Lattice adapter (INV-60 / Wadm)",
+      "kind": "control-plane",
+      "direction": "outbound",
+      "contract": null,
+      "protocol": "Wadm OAM core.oam.dev/v1beta1 over injected transport (NATS in production)",
+      "authn": "transport credentials via secret_refs (NATS nkey/JWT)",
+      "authz": "lattice account scoped to this manager",
+      "timeout": "per-call deadline, retry<=retry_max_attempts, circuit breaker",
+      "limits": "one call per action; batch by max_unavailable",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-11",
+      "name": "State journal",
+      "kind": "file",
+      "direction": "internal",
+      "contract": "journal record (store.py)",
+      "authn": "filesystem ACL (0700 state dir)",
+      "authz": "leader epoch fencing",
+      "timeout": "fsync",
+      "limits": "256 MiB before compaction",
+      "owner": "service-owner"
+    },
+    {
+      "id": "B-12",
+      "name": "Status / health",
+      "kind": "API",
+      "direction": "outbound",
+      "contract": "INV63_STATUS/1",
+      "authn": "deployment ingress",
+      "authz": "explain:read",
+      "timeout": "n/a",
+      "limits": "n/a",
+      "owner": "sre"
+    },
+    {
+      "id": "B-13",
+      "name": "Metrics exposition",
+      "kind": "API",
+      "direction": "outbound",
+      "contract": "Prometheus text 0.0.4",
+      "authn": "deployment ingress",
+      "authz": "scrape identity",
+      "timeout": "n/a",
+      "limits": "<=2000 label sets per store (counters/gauges/histograms)",
+      "owner": "sre"
+    },
+    {
+      "id": "B-14",
+      "name": "Upstream application model (INV-64)",
+      "kind": "API",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_DESIRED/2",
+      "authn": "node/peer principal",
+      "authz": "desired:write",
+      "timeout": "via B-01",
+      "limits": "via B-01",
+      "owner": "INV-64 owner"
+    },
+    {
+      "id": "B-15",
+      "name": "Enterprise control plane (INV-66)",
+      "kind": "control-plane",
+      "direction": "inbound",
+      "contract": "PK_DEPLOY_REQUEST/1",
+      "authn": "controller principal",
+      "authz": "reconciler / sre-operator roles",
+      "timeout": "via B-01",
+      "limits": "via B-01",
+      "owner": "INV-66 owner"
+    }
+  ],
+  "not_exposed": [
+    {
+      "kind": "WIT",
+      "present": false
+    },
+    {
+      "kind": "RPC (non-JSON)",
+      "present": false
+    },
+    {
+      "kind": "device",
+      "present": false
+    },
+    {
+      "kind": "hypervisor",
+      "present": false
+    }
+  ],
+  "operations": [
+    "set_desired",
+    "reconcile",
+    "rollout",
+    "freeze",
+    "unfreeze",
+    "quarantine",
+    "release_quarantine",
+    "explain",
+    "rollback"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+ "schema": "RAMWS/TASK_EVIDENCE/1",
+ "task_id": "R13",
+ "title": "Preserve byte-exact representations",
+ "status": "PASS",
+ "applicability": "NODE-WEB profile",
+ "applicability_approval": "owner decisions RD-01..RD-05 (2026-09-21)",
+ "selected_profile": "LOCAL_VOLATILE",
+ "source_identity": "ledger/ramws_source.json",
+ "runtime_identity": "Linux 6.18.44 x86_64, 2 vCPU, Node v22.22.2, Chromium 1194; loopback only",
+ "configuration_identity": "gateway/config.js defaults; e/R28/experiment.frozen.json for R28",
+ "predecessor_evidence": [
+  "e/native/R10.json",
+  "e/native/R03.json"
+ ],
+ "decision_or_code_delta": "protocol/codec.js: Binary frames, uint48 seq, no base64, incremental UTF-8; zero-length refused; fidelity exact in 60 runs.",
+ "command": "node --test \"tests/*/*.test.js\" (e/full-suite.tap)",
+ "started_at": "2026-09-21T20:30:00Z",
+ "finished_at": "2026-09-21T22:23:36Z",
+ "expected": "No accepted terminal input/output is quantized, truncated, silently replaced, reordered, or mapped to a privileged opcode.",
+ "observed": "3 linked tests, all ok",
+ "raw_result_paths": [
+  "e/full-suite.tap"
+ ],
+ "memory_scope": "gateway process (+ worker threads) and worker processes",
+ "allocation_change_bytes": null,
+ "cpu_scope": null,
+ "cpu_change_seconds": null,
+ "residency_status": "UNKNOWN",
+ "residual_risks": [
+  "self-reviewed by the implementer; no independent verification"
+ ],
+ "rollback": "delete ram/, gateway/worker-link.js, worker/core.js, worker/thread.js; restore the v1 files from hermit-vws 1.1.0-vws.1 (hashes in ledger/ramws_source.json)",
+ "linked_tests": [
+  "binary data frames: header round-trip for every uint48 boundary, no payload copy, caps and direction enforced",
+  "binary data discipline: zero-length payload, unknown kind, output kind from the client, wrong seq, oversize input are rejected; a 8192-byte input is accepted in one message",
+  "parser state persists across arbitrary chunk boundaries (every split point of a mixed stream)"
+ ]
+}

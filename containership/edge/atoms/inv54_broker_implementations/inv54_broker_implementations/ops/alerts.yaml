@@ -1,0 +1,26 @@
+# Prometheus alerting rules (component 81). Status: authored, NOT deployed or rule-tested.
+groups:
+- name: inv54
+  rules:
+  - alert: INV54ConsumerLagHigh
+    expr: max by (tenant, consumer) (inv54_consumer_lag) > 10000
+    for: 10m
+    labels: {severity: sev3}
+    annotations: {summary: "consumer lag above 10k", runbook: "docs/RUNBOOKS.md#day-2--operate"}
+  - alert: INV54BacklogRejects
+    expr: increase(inv54_backlog_rejects[5m]) > 0
+    for: 5m
+    labels: {severity: sev2}
+    annotations: {summary: "fan-out publishes refused for full backlog"}
+  - alert: INV54AuthzDeniedSpike
+    expr: sum(increase(inv54_authz_denied[5m])) > 100
+    labels: {severity: sev2}
+    annotations: {summary: "authorization denials spike (possible abuse)"}
+  - alert: INV54Degraded
+    expr: max(inv54_lifecycle_transitions{to="degraded"}) > 0 and on() (time() - process_start_time_seconds) > 300
+    labels: {severity: sev3}
+    annotations: {summary: "broker entered degraded mode", runbook: "docs/DEGRADED_MODES.md"}
+  - alert: INV54Quarantined
+    expr: max(inv54_lifecycle_transitions{to="quarantined"}) > 0
+    labels: {severity: sev1}
+    annotations: {summary: "broker quarantined", runbook: "docs/INCIDENT_RESPONSE.md"}

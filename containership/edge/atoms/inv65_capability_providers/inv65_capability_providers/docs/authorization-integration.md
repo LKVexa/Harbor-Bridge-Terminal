@@ -1,0 +1,3 @@
+# Authorization integration (M08)
+
+INV-65 enforces, it does not decide. The policy plane issues PK_AUTHZ_DECISION/1, signed with a key selected by the `kid:` prefix of `policy_version`. Enforcement requires: authenticated identity, schema-valid decision, valid signature, optional minimum policy version, `issued_at ≤ now ≤ expires_at`, validity ≤ 900 s, `effect == allow`, subject == caller five-tuple, action ∈ {link.create, link.update, link.revoke, call} exactly matching, contract and link name matching, and for calls the operation listed. Anything else → PK_PROVIDER_FORBIDDEN, audited. A decision for link A cannot be replayed for link B (`tests/security/test_adversarial.py`).

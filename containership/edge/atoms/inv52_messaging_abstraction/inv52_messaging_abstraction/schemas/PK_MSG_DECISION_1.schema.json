@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:msg:decision:1",
+  "title": "PK_MSG_DECISION/1",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "app",
+    "topic",
+    "ts",
+    "outcome",
+    "reason",
+    "routes"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string"
+    },
+    "message_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "app": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "number",
+      "description": "unix epoch seconds"
+    },
+    "topic_state": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "FROZEN",
+        "QUARANTINED",
+        "DISABLED"
+      ]
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "success",
+        "partial_success",
+        "dead_lettered",
+        "duplicate_suppressed",
+        "quarantined",
+        "retryable_failure",
+        "terminal_failure"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "delivered": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "latency_ns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "traceparent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": "string"
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "route",
+          "matched",
+          "delivered",
+          "reason"
+        ],
+        "properties": {
+          "route": {
+            "type": "string"
+          },
+          "matched": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "delivered": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

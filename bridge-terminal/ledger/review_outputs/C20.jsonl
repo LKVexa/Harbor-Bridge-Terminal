@@ -1,0 +1,100 @@
+{"id": "C20-001", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L110-131"], "note": "only /api/ws-ticket has OPTIONS handling; no written inventory table of routes needing it"}
+{"id": "C20-002", "status": "PASS", "evidence": ["gateway/server.js#L95-101", "gateway/server.js#L112"], "note": "/health (platform readiness) is a distinct branch from the /api/ws-ticket OPTIONS/preflight branch"}
+{"id": "C20-003", "status": "PASS", "evidence": ["gateway/server.js#L152-185", "gateway/server.js#L112"], "note": "server.on('upgrade',...) handles WS upgrades separately from the HTTP OPTIONS branch in the request handler"}
+{"id": "C20-004", "status": "IN_PROGRESS", "evidence": ["docs/vws200/BASELINE.md#Q01"], "note": "BASELINE.md Q01: OBSERVED in Chromium the WS upgrade carries Origin with no preflight [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C20-005", "status": "PASS", "evidence": ["docs/vws200/PROTOCOL.md#admission-order"], "note": "PROTOCOL.md admission order gates the WS upgrade on Origin policy directly, not on any preflight result"}
+{"id": "C20-006", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L112-116"], "note": "only one OPTIONS shape (ticket preflight) is implemented; no design doc enumerating supported shapes"}
+{"id": "C20-007", "status": "PASS", "evidence": ["gateway/origin.js#L1-9", "gateway/server.js#L111"], "note": "OPTIONS branch calls corsHeaders(), the same function used for the HTTP CORS component"}
+{"id": "C20-008", "status": "PASS", "evidence": ["gateway/server.js#L112-117"], "note": "OPTIONS branch runs before req.method!=='POST' 405 check and before identity.authenticate(), i.e. ahead of ordinary route authorization"}
+{"id": "C20-009", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L139"], "note": "unmatched paths fall through to a generic 404 json response; no OPTIONS-specific \"unsupported target\" design note"}
+{"id": "C20-010", "status": "OPEN", "evidence": [], "note": "no approved applicability/routing table document found for OPTIONS handling"}
+{"id": "C20-011", "status": "PASS", "evidence": ["gateway/server.js#L112"], "note": "req.method === 'OPTIONS' checked via Node's parsed HTTP method"}
+{"id": "C20-012", "status": "PASS", "evidence": ["gateway/server.js#L91-144"], "note": "OPTIONS requests are handled inside the same http.createServer request callback as GET/POST, not a separate path"}
+{"id": "C20-013", "status": "PASS", "evidence": ["gateway/server.js#L92,110"], "note": "safePath(req.url) computed once and matched against p==='/api/ws-ticket' before the OPTIONS branch runs"}
+{"id": "C20-014", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L112-115"], "note": "any OPTIONS to /api/ws-ticket is treated as a preflight; no separate check of Access-Control-Request-Method presence to distinguish a bare OPTIONS probe"}
+{"id": "C20-015", "status": "OPEN", "evidence": [], "note": "no code found reading Access-Control-Request-Method from the request"}
+{"id": "C20-016", "status": "OPEN", "evidence": [], "note": "no code found reading Access-Control-Request-Headers from the request"}
+{"id": "C20-017", "status": "PASS", "evidence": ["gateway/server.js#L111", "gateway/origin.js#L27-32"], "note": "corsHeaders(req,cfg) reads req.headers.origin through the origin-policy module"}
+{"id": "C20-018", "status": "OPEN", "evidence": [], "note": "no deliberate handling found for a preflight missing Access-Control-Request-Method/Headers (they are never read)"}
+{"id": "C20-019", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L92", "gateway/log.js"], "note": "safePath/query stripping and header-count/size server limits (maxHeadersCount, requestTimeout) bound malformed requests generally, not OPTIONS-specific parsing"}
+{"id": "C20-020", "status": "PASS", "evidence": ["gateway/server.js#L91-144", "gateway/server.js#L152"], "note": "the OPTIONS branch runs inside http.createServer's request handler; WS upgrades only happen via the separate server.on('upgrade') listener, never from this path"}
+{"id": "C20-021", "status": "PASS", "evidence": ["gateway/origin.js#L27-32", "tests/security/authz.test.js#L25-27"], "note": "corsHeaders validates req.headers.origin against cfg.origins allowlist; authz.test.js confirms allow/deny"}
+{"id": "C20-022", "status": "OPEN", "evidence": [], "note": "no requested-method validation exists (Access-Control-Request-Method is never read/validated); Allow-Methods is a fixed constant"}
+{"id": "C20-023", "status": "OPEN", "evidence": [], "note": "no requested-header validation exists (Access-Control-Request-Headers is never read/validated); Allow-Headers is a fixed constant"}
+{"id": "C20-024", "status": "PASS", "evidence": ["gateway/origin.js#L31"], "note": "Allow-Credentials:'true' applied whenever origin is approved, consistent with the credentials policy"}
+{"id": "C20-025", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L110-131"], "note": "the only cross-origin route (/api/ws-ticket) has its own inline policy; no generalized route-specific restriction mechanism for other routes"}
+{"id": "C20-026", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L112-113"], "note": "unapproved origin -> 403; but there is no rejection of unsupported method/header combinations since those are never evaluated"}
+{"id": "C20-027", "status": "PASS", "evidence": ["gateway/server.js#L112-125"], "note": "OPTIONS branch returns before reaching req.method!=='POST' / identity.authenticate() (the actual application execution)"}
+{"id": "C20-028", "status": "PASS", "evidence": ["gateway/server.js#L112-116"], "note": "OPTIONS branch returns res.end() immediately after corsHeaders check; it never calls identity.authenticate or tickets.issue"}
+{"id": "C20-029", "status": "PASS", "evidence": ["gateway/server.js#L112-116"], "note": "exactly one of {403, 204} is returned per OPTIONS request based on cors.ok"}
+{"id": "C20-030", "status": "IN_PROGRESS", "evidence": ["tests/security/authz.test.js#L25-27"], "note": "only 2 of the branch outcomes (approved-origin 204, unapproved-origin 403) are unit-tested; other combinations are untested since request/header validation does not exist"}
+{"id": "C20-031", "status": "PASS", "evidence": ["gateway/server.js#L114"], "note": "204 No Content selected for an accepted OPTIONS/preflight request"}
+{"id": "C20-032", "status": "PASS", "evidence": ["gateway/server.js#L113"], "note": "403 with {error:\"origin\"} selected for a disallowed preflight (unapproved origin)"}
+{"id": "C20-033", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L113-115"], "note": "headers are the same fixed set regardless of decision nuance (only Vary/Allow-Origin/Allow-Credentials differ by cors.ok); no evidence of per-decision header pruning beyond that"}
+{"id": "C20-034", "status": "PASS", "evidence": ["gateway/server.js#L114"], "note": "Access-Control-Allow-Methods: 'POST' emitted consistently on every accepted OPTIONS response for this route"}
+{"id": "C20-035", "status": "PASS", "evidence": ["gateway/server.js#L114"], "note": "Access-Control-Allow-Headers: 'Authorization, Content-Type' emitted consistently"}
+{"id": "C20-036", "status": "PASS", "evidence": ["gateway/server.js#L114"], "note": "Access-Control-Max-Age: '600' emitted on every accepted OPTIONS response"}
+{"id": "C20-037", "status": "PASS", "evidence": ["gateway/server.js#L114-115"], "note": "Content-Length: '0' set and res.end() called with no body"}
+{"id": "C20-038", "status": "PASS", "evidence": ["gateway/server.js#L114-115"], "note": "res.writeHead(204,...); res.end() finalizes the ordinary HTTP response"}
+{"id": "C20-039", "status": "PASS", "evidence": ["gateway/server.js#L114"], "note": "headers are built with one object spread (...cors.headers plus fixed keys), not layered through separate middleware that could conflict"}
+{"id": "C20-040", "status": "PASS", "evidence": ["tests/security/authz.test.js#L25-27"], "note": "authz.test.js asserts exact status (204/403) and exact access-control-allow-origin header value"}
+{"id": "C20-041", "status": "OPEN", "evidence": [], "note": "no test found for OPTIONS to an unknown path (falls through to generic 404, untested for OPTIONS specifically)"}
+{"id": "C20-042", "status": "PASS", "evidence": ["tests/security/authz.test.js#L27"], "note": "authz.test.js: OPTIONS to /api/ws-ticket with origin https://evil.example -> 403"}
+{"id": "C20-043", "status": "OPEN", "evidence": [], "note": "no test found for OPTIONS requesting a prohibited method (Access-Control-Request-Method is not read at all)"}
+{"id": "C20-044", "status": "OPEN", "evidence": [], "note": "no test found for OPTIONS requesting an unapproved header (Access-Control-Request-Headers is not read)"}
+{"id": "C20-045", "status": "OPEN", "evidence": [], "note": "no test found for OPTIONS missing required preflight metadata (none is required by the current implementation)"}
+{"id": "C20-046", "status": "OPEN", "evidence": [], "note": "no test found for malformed header-list text since no header-list is parsed"}
+{"id": "C20-047", "status": "OPEN", "evidence": [], "note": "no oversized-header-list test and no such limit implemented for OPTIONS specifically"}
+{"id": "C20-048", "status": "OPEN", "evidence": [], "note": "no test for unsupported credential-policy combinations (only true is ever emitted)"}
+{"id": "C20-049", "status": "PASS", "evidence": ["gateway/server.js#L112-116", "tests/security/authz.test.js#L25-27"], "note": "rejection (403) returns before identity.authenticate()/tickets.issue(), so no business logic runs; confirmed by authz.test.js status assertions"}
+{"id": "C20-050", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L112-116"], "note": "OPTIONS handling never spawns a worker/session, so no persistent connection is created, but no explicit test asserts zero registry/worker side effects after an OPTIONS call"}
+{"id": "C20-051", "status": "PASS", "evidence": ["gateway/server.js#L110-131"], "note": "the OPTIONS preflight and the POST ticket request are handled in the same route block, pairing accepted preflight with the permitted POST"}
+{"id": "C20-052", "status": "PASS", "evidence": ["gateway/server.js#L122-123", "tests/security/authz.test.js#L1-30"], "note": "the POST path still calls identity.authenticate() regardless of a prior OPTIONS; authz.test.js exercises auth on the POST path"}
+{"id": "C20-053", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L117"], "note": "non-POST methods to /api/ws-ticket still get 405 even after an OPTIONS preflight would have been accepted [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C20-054", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L111,117-130"], "note": "both OPTIONS and POST branches call the same corsHeaders(req,cfg) function, so policy stays compatible [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C20-055", "status": "OPEN", "evidence": [], "note": "no test found that changes the origin/method policy and checks both the preflight and the actual POST response afterward"}
+{"id": "C20-056", "status": "OPEN", "evidence": [], "note": "no test found for HTTP error responses (e.g. 401/429/503 on POST) specifically following an accepted OPTIONS preflight"}
+{"id": "C20-057", "status": "PASS", "evidence": ["gateway/server.js#L95-101"], "note": "/health has its own explicit method check (405 for non-GET/HEAD) with no OPTIONS/CORS branch \u2014 OPTIONS on /health falls to generic 404, which is explicit code behavior"}
+{"id": "C20-058", "status": "PASS", "evidence": ["gateway/server.js#L92,110,133"], "note": "routes are matched by exact string equality (p===...) or an exact-key assets Map; no prefix matching is used"}
+{"id": "C20-059", "status": "OPEN", "evidence": [], "note": "no document found describing route-specific OPTIONS differences (e.g. /health vs /api/ws-ticket)"}
+{"id": "C20-060", "status": "IN_PROGRESS", "evidence": ["tests/security/authz.test.js#L25-27"], "note": "only /api/ws-ticket (the one route supporting OPTIONS) is linked to a test; there is only one such route so coverage is total for what exists, but no explicit linking document"}
+{"id": "C20-061", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "browser.test.js drives the WS terminal connection independently in real Chromium"}
+{"id": "C20-062", "status": "PASS", "evidence": ["docs/vws200/BASELINE.md#Q01"], "note": "BASELINE.md Q01 explicitly observes no preflight occurs on that WS path in Chromium"}
+{"id": "C20-063", "status": "PASS", "evidence": ["docs/vws200/VALIDATION.md#environment"], "note": "VALIDATION.md records 'Chromium 1194 via Playwright 1.56'"}
+{"id": "C20-064", "status": "PASS", "evidence": ["gateway/server.js#L161-162", "gateway/origin.js#L22-26"], "note": "server.on('upgrade') calls checkWsOrigin(req,cfg) on every upgrade request"}
+{"id": "C20-065", "status": "PASS", "evidence": ["gateway/server.js#L167-177"], "note": "upgrade handler performs identity/ticket checks (principal resolution) on every upgrade request"}
+{"id": "C20-066", "status": "PASS", "evidence": ["gateway/server.js#L152-185"], "note": "the upgrade handler has no reference to any prior OPTIONS state; it re-validates Origin and identity from scratch on each upgrade request"}
+{"id": "C20-067", "status": "PASS", "evidence": ["gateway/server.js#L91-144"], "note": "the ordinary HTTP request handler (where OPTIONS is processed) never touches WsConnection/socket state; that is only created in the upgrade listener"}
+{"id": "C20-068", "status": "OPEN", "evidence": [], "note": "no test found sending OPTIONS with Upgrade/Connection:Upgrade-like headers to confirm it stays on the ordinary HTTP path"}
+{"id": "C20-069", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L91-144"], "note": "code structurally keeps OPTIONS as ordinary HTTP (separate from server.on('upgrade')), but no explicit test verifies this for an OPTIONS request carrying upgrade headers"}
+{"id": "C20-070", "status": "PASS", "evidence": ["docs/vws200/BASELINE.md#Q01"], "note": "BASELINE.md documents the corrected conclusion (no WS preflight) distinctly from an unverified source claim"}
+{"id": "C20-071", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L110-131"], "note": "the OPTIONS branch does O(1) allowlist lookup and fixed header construction (bounded), but no explicit bound/test documents this"}
+{"id": "C20-072", "status": "PASS", "evidence": ["gateway/server.js#L112-116"], "note": "the OPTIONS handler makes no external/network calls; it only reads cfg and writes a response"}
+{"id": "C20-073", "status": "IN_PROGRESS", "evidence": ["gateway/origin.js#L17"], "note": "origin length is capped at 300 chars in allowed(); no bound found on header-list lengths since none are parsed"}
+{"id": "C20-074", "status": "OPEN", "evidence": [], "note": "no load/burst test found for repeated OPTIONS requests"}
+{"id": "C20-075", "status": "OPEN", "evidence": [], "note": "no test found confirming WS acceptance responsiveness during an OPTIONS burst"}
+{"id": "C20-076", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js#health-latency"], "note": "e2e.test.js verifies /health stays responsive (<250ms) under bulk output load, though not specifically during an OPTIONS burst"}
+{"id": "C20-077", "status": "OPEN", "evidence": [], "note": "no rate limiting specific to OPTIONS/diagnostic messages found (allowTicket() rate limiting applies only to POST ticket issuance, not OPTIONS)"}
+{"id": "C20-078", "status": "OPEN", "evidence": [], "note": "no test found checking that repeated OPTIONS responses do not accumulate retained state"}
+{"id": "C20-079", "status": "OPEN", "evidence": [], "note": "no operational visibility (metrics/alerting) defined for unusual OPTIONS volume"}
+{"id": "C20-080", "status": "OPEN", "evidence": [], "note": "no record found listing a missing admission/rate-control decision for OPTIONS as an open task"}
+{"id": "C20-081", "status": "OPEN", "evidence": [], "note": "no per-route counter for accepted OPTIONS requests found (counters object tracks upgrades/rejected/tickets/sessions/healthProbes only)"}
+{"id": "C20-082", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L155"], "note": "ws.rejected logging exists for upgrade rejections with a reason string, but there is no equivalent logged category for rejected OPTIONS preflights"}
+{"id": "C20-083", "status": "PASS", "evidence": ["gateway/log.js"], "note": "log.js redacts secret-like fields from all structured logs, including any OPTIONS-path logging"}
+{"id": "C20-084", "status": "IN_PROGRESS", "evidence": ["gateway/log.js"], "note": "general logger avoids logging arbitrary header values by design (redaction), but there is no OPTIONS-specific log statement to evaluate"}
+{"id": "C20-085", "status": "OPEN", "evidence": [], "note": "no examples found distinguishing preflight rejection from actual-request rejection in logs or docs"}
+{"id": "C20-086", "status": "OPEN", "evidence": [], "note": "no record found of policy revisions during relevant tests"}
+{"id": "C20-087", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md"], "note": "OPERATIONS.md documents general run/health/log procedures but no specific OPTIONS-reproduction procedure"}
+{"id": "C20-088", "status": "IN_PROGRESS", "evidence": ["e/I055"], "note": "browser.test.js/e/I055 records some browser console observations generally, not for OPTIONS specifically"}
+{"id": "C20-089", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L112-116"], "note": "the code path deterministically ties each outcome to one status code, but no correlated diagnostic log/metric is emitted for it"}
+{"id": "C20-090", "status": "OPEN", "evidence": [], "note": "no ownership assignment record found for preflight-policy failures"}
+{"id": "C20-091", "status": "IN_PROGRESS", "evidence": ["docs/vws200/BASELINE.md#Q01"], "note": "BASELINE.md Q01 records the applicability finding (no WS preflight) but there is no single published OPTIONS-component verdict document"}
+{"id": "C20-092", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L110-131"], "note": "the route/policy exists only as code, not as a published table (only one route: /api/ws-ticket)"}
+{"id": "C20-093", "status": "PASS", "evidence": ["tests/security/authz.test.js#L25-26"], "note": "authz.test.js links the accepted-OPTIONS response test (204 + allow-origin)"}
+{"id": "C20-094", "status": "PASS", "evidence": ["tests/security/authz.test.js#L27"], "note": "authz.test.js links the origin-rejection test (evil.example -> 403)"}
+{"id": "C20-095", "status": "OPEN", "evidence": [], "note": "no test links a preflight OPTIONS to its subsequent actual POST request in one integration scenario"}
+{"id": "C20-096", "status": "PASS", "evidence": ["tests/ui/browser.test.js", "docs/vws200/BASELINE.md#Q01"], "note": "the separate WS behavior observation (no preflight) is linked via browser.test.js + BASELINE.md Q01"}
+{"id": "C20-097", "status": "OPEN", "evidence": [], "note": "no load/response-completion test specific to OPTIONS is linked (bench.js measures W1/W2/W3, none involve OPTIONS)"}
+{"id": "C20-098", "status": "OPEN", "evidence": [], "note": "no document found describing unsupported OPTIONS behavior (e.g. OPTIONS to routes other than /api/ws-ticket)"}
+{"id": "C20-099", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L91-144"], "note": "OPTIONS is implemented for one real route rather than marked N/A, which is consistent with the requirement, but no explicit \"N/A only if absent\" rationale doc exists"}
+{"id": "C20-100", "status": "IN_PROGRESS", "evidence": ["gateway/server.js#L110-131", "tests/security/authz.test.js#L25-27"], "note": "only the /api/ws-ticket accept/reject-by-origin behavior is implemented and tested; broader OPTIONS behavior (methods/headers negotiation) is not implemented, so full approval is not warranted"}

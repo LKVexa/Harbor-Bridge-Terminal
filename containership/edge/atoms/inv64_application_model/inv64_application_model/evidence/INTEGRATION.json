@@ -1,0 +1,163 @@
+{
+  "schema": "PK_APP_INTEGRATION/1",
+  "profile": "emulated",
+  "contracts": {
+    "INV-10": {
+      "contract": "PK_COMPOSE_RESOLVE",
+      "supported": [
+        1,
+        2
+      ]
+    },
+    "INV-65": {
+      "contract": "PK_PROVIDER_BIND",
+      "supported": [
+        1,
+        1
+      ]
+    },
+    "INV-66": {
+      "contract": "PK_GUARDRAIL",
+      "supported": [
+        1,
+        2
+      ]
+    },
+    "INV-63": {
+      "contract": "PK_DEPLOY_HANDOFF",
+      "supported": [
+        1,
+        1
+      ]
+    }
+  },
+  "adjacent_versions": {
+    "INV-10": "emulator (contract PK_COMPOSE_RESOLVE v1..v2)",
+    "INV-65": "emulator (contract PK_PROVIDER_BIND v1..v1)",
+    "INV-66": "emulator (contract PK_GUARDRAIL v1..v2)",
+    "INV-63": "emulator (contract PK_DEPLOY_HANDOFF v1..v1)"
+  },
+  "scenarios": [
+    {
+      "id": "happy-path",
+      "layer": "all",
+      "expected": null,
+      "observed": null,
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv10-unresolved-type",
+      "layer": "INV-10",
+      "expected": "manifest.invalid",
+      "observed": "manifest.invalid",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv10-unavailable",
+      "layer": "INV-10",
+      "expected": "admission.overloaded",
+      "observed": "admission.overloaded",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv10-version-too-new",
+      "layer": "INV-10",
+      "expected": "version.unsupported",
+      "observed": "version.unsupported",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv66-guardrail-deny",
+      "layer": "INV-66",
+      "expected": "authz.denied",
+      "observed": "authz.denied",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv66-malformed",
+      "layer": "INV-66",
+      "expected": "internal",
+      "observed": "internal",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv65-provider-not-granted",
+      "layer": "INV-65",
+      "expected": "authz.denied",
+      "observed": "authz.denied",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv65-slow-past-deadline",
+      "layer": "INV-65",
+      "expected": "deadline.exceeded",
+      "observed": "deadline.exceeded",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv63-unavailable-no-partial",
+      "layer": "INV-63",
+      "expected": "admission.overloaded",
+      "observed": "admission.overloaded",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv63-malformed-no-partial",
+      "layer": "INV-63",
+      "expected": "internal",
+      "observed": "internal",
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv63-min-version",
+      "layer": "INV-63",
+      "expected": null,
+      "observed": null,
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    },
+    {
+      "id": "inv10-min-version",
+      "layer": "INV-10",
+      "expected": null,
+      "observed": null,
+      "trace_propagated": true,
+      "tenant_context_preserved": true,
+      "partial_activation": false,
+      "pass": true
+    }
+  ],
+  "result": "PASS"
+}

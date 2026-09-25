@@ -1,0 +1,24 @@
+# PLN-04 production gate pipeline (M28).  Provider-agnostic YAML; adapt to the CI system in use.
+# Every job is required; none may be marked allow-failure.  The certification lane must not silently skip.
+stages: [static, test, assurance, gate]
+jobs:
+  static:
+    run:
+      - python -m compileall -q pln04_execution_plane
+      - python pln04_execution_plane/tools/gen_error_doc.py --check
+      - python pln04_execution_plane/tools/rtm.py --check
+      - python pln04_execution_plane/tools/sbom.py --check-imports
+  unit:
+    matrix: {python: ["3.10", "3.11", "3.12", "3.13"]}
+    run:
+      - python -m unittest discover -s pln04_execution_plane/tests -v
+      - python -O -m unittest discover -s pln04_execution_plane/tests
+  fuzz:
+    run: [python pln04_execution_plane/tools/fuzz.py --iterations 5000 --seed $CI_PIPELINE_ID]
+  perf:
+    run: [python pln04_execution_plane/tools/perf.py --mode quick --gate --out evidence/perf.json]
+  certification:          # M02/M48: requires pk_core; job FAILS (not skips) when absent
+    run: [python -c "import pk_core", python -m pk_core gate PLN-04 --out conformance/PK_GATE_RESULTS.json]
+  release_gate:
+    needs: [static, unit, fuzz, perf, certification]
+    run: [python pln04_execution_plane/tools/release_gate.py --out evidence/RELEASE_GATE.json]

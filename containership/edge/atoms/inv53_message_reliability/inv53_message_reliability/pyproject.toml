@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv53-message-reliability"
+version = "5.1.0"
+description = "INV-53 message reliability: at-least-once delivery with fenced leases, bounded attempts, dead-lettering and a durable journal."
+requires-python = ">=3.10"
+dependencies = []
+readme = "README.md"
+license = { text = "UNLICENSED - owner has not chosen a license (see NOTICE)" }
+classifiers = ["Programming Language :: Python :: 3", "Private :: Do Not Upload"]
+
+[project.optional-dependencies]
+# pk_core is not on PyPI; it is pinned by content digest in requirements/pk_core.lock.json and supplied by path.
+conformance = []
+
+[project.scripts]
+inv53 = "inv53_message_reliability.__main__:main"
+
+[tool.setuptools]
+packages = ["inv53_message_reliability"]
+package-dir = { "inv53_message_reliability" = "." }
+
+[tool.setuptools.package-data]
+inv53_message_reliability = ["schemas/*.json", "fixtures/wire/*.json", "CHECKLIST.json", "VERSION", "MASTER.md"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "S", "UP"]
+ignore = ["S101"]  # tests use assert; library assert is refused by tools/lint.py R1
+
+[tool.mypy]
+python_version = "3.10"
+strict_optional = true
+warn_unused_ignores = true

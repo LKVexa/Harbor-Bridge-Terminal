@@ -1,0 +1,22 @@
+name: inv62-ci
+on: [push, pull_request]
+jobs:
+  gates:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {path: inv62_edge_topology}
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python -m pip install "ruff>=0.5" "mypy>=1.10" "cryptography>=42,<47"
+      - name: gates (INCOMPLETE = exit 3 is expected until pk_core and a licence exist)
+        run: python inv62_edge_topology/tools/ci.py --out evidence
+        continue-on-error: false
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: "evidence-${{ matrix.os }}-${{ matrix.python }}", path: evidence}

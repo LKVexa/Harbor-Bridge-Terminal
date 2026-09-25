@@ -1,0 +1,1052 @@
+{
+  "repository": "inv32_elastic_virtualization",
+  "version": "4.2.0",
+  "audit_date": "2026-09-22",
+  "scope": "Repository-local evidence only; external pk_core defaults are not treated as implementation proof.",
+  "validation": {
+    "compileall": "pass",
+    "standalone_model_tests": {
+      "status": "pass",
+      "tests": 18
+    },
+    "component_adapter_tests": {
+      "status": "partial",
+      "passed": 1,
+      "skipped": 2,
+      "reason": "pk_core not bundled in archive"
+    }
+  },
+  "summary": {
+    "present": 9,
+    "partial": 34,
+    "missing": 57
+  },
+  "consolidated_missing_components": [
+    {
+      "component": "Real HyperFlux/hypervisor integration adapter",
+      "why": "The reference model changes Python objects only; it does not issue microsecond-scale vCPU/core reassignment to a real runtime/hypervisor.",
+      "check_ids": [
+        "INV-32-C010",
+        "INV-32-C011",
+        "INV-32-C030",
+        "INV-32-C031",
+        "INV-32-C083"
+      ]
+    },
+    {
+      "component": "Bundled/pinned pk_core dependency or install manifest",
+      "why": "The archive does not include pk_core and has no pyproject/requirements lock describing a compatible version; full adapter tests skip.",
+      "check_ids": [
+        "INV-32-C031",
+        "INV-32-C040",
+        "INV-32-C084",
+        "INV-32-C093"
+      ]
+    },
+    {
+      "component": "Formal external schema artifacts",
+      "why": "SCHEMAS.md documents Python mappings, but no JSON Schema/WIT/protobuf/OpenAPI or generated validators exist.",
+      "check_ids": [
+        "INV-32-C021",
+        "INV-32-C022",
+        "INV-32-C027",
+        "INV-32-C082"
+      ]
+    },
+    {
+      "component": "Authentication, authorization and capability model",
+      "why": "No actor/node identity, capability, least-privilege or authorization enforcement exists.",
+      "check_ids": [
+        "INV-32-C023",
+        "INV-32-C024",
+        "INV-32-C042",
+        "INV-32-C044"
+      ]
+    },
+    {
+      "component": "Declarative configuration lifecycle",
+      "why": "No versioned config schema, activation transaction, provenance, overlays, rollback package or secret-handling policy exists.",
+      "check_ids": [
+        "INV-32-C032",
+        "INV-32-C033",
+        "INV-32-C034",
+        "INV-32-C035",
+        "INV-32-C036",
+        "INV-32-C037",
+        "INV-32-C038",
+        "INV-32-C039"
+      ]
+    },
+    {
+      "component": "Durable state/audit persistence and external anchoring",
+      "why": "The hash chain is in-memory only; restart reconstruction, durable audit storage, timestamps, signing/attestation, rotation and export are absent.",
+      "check_ids": [
+        "INV-32-C049",
+        "INV-32-C057",
+        "INV-32-C079",
+        "INV-32-C095"
+      ]
+    },
+    {
+      "component": "Distributed controller fencing/ownership",
+      "why": "Local replay/stale-record protection does not implement leases, epochs, split-brain protection or duplicate-owner fencing across controllers.",
+      "check_ids": [
+        "INV-32-C058"
+      ]
+    },
+    {
+      "component": "Health, stall detection, quarantine and emergency controls",
+      "why": "No watchdog thresholds, readiness endpoint, quarantine/freeze state or production kill switch exists.",
+      "check_ids": [
+        "INV-32-C052",
+        "INV-32-C059",
+        "INV-32-C071",
+        "INV-32-C092"
+      ]
+    },
+    {
+      "component": "Retry/backoff/backpressure/load-shedding framework",
+      "why": "Operation idempotency exists, but there is no retry policy, jitter, timeout/cancellation, queue/backpressure model, circuit breaker or overload shedding.",
+      "check_ids": [
+        "INV-32-C025",
+        "INV-32-C053",
+        "INV-32-C054",
+        "INV-32-C067"
+      ]
+    },
+    {
+      "component": "Complete failure/degraded/failover model",
+      "why": "Network/site/provider/dependency/control-plane failures, failover and reconnect semantics are not implemented or documented.",
+      "check_ids": [
+        "INV-32-C014",
+        "INV-32-C018",
+        "INV-32-C048",
+        "INV-32-C051",
+        "INV-32-C055",
+        "INV-32-C056",
+        "INV-32-C089"
+      ]
+    },
+    {
+      "component": "Performance benchmark and capacity program",
+      "why": "No latency/throughput/startup/resource/power baselines, percentile targets, load profiles, density model or regression gate exists.",
+      "check_ids": [
+        "INV-32-C013",
+        "INV-32-C061",
+        "INV-32-C062",
+        "INV-32-C063",
+        "INV-32-C064",
+        "INV-32-C065",
+        "INV-32-C066",
+        "INV-32-C068",
+        "INV-32-C069",
+        "INV-32-C070",
+        "INV-32-C088"
+      ]
+    },
+    {
+      "component": "Metrics, logging, tracing, explainability, dashboards and alerts",
+      "why": "Contract signal names and structured audit events are not an observability implementation; exporters, traces, redaction policy, explain view, lineage correlation and alerting are absent.",
+      "check_ids": [
+        "INV-32-C071",
+        "INV-32-C072",
+        "INV-32-C073",
+        "INV-32-C074",
+        "INV-32-C075",
+        "INV-32-C076",
+        "INV-32-C077",
+        "INV-32-C078",
+        "INV-32-C079",
+        "INV-32-C080"
+      ]
+    },
+    {
+      "component": "Comprehensive security program",
+      "why": "A short threat list and several hostile-input tests exist, but no full threat model, trust-service outage rules, artifact verification, encryption/key lifecycle or full adversarial suite exists.",
+      "check_ids": [
+        "INV-32-C041",
+        "INV-32-C043",
+        "INV-32-C045",
+        "INV-32-C047",
+        "INV-32-C048",
+        "INV-32-C050",
+        "INV-32-C087"
+      ]
+    },
+    {
+      "component": "Integration/compatibility/fuzz/fault/disaster test suites",
+      "why": "Only local unit/concurrency tests exist in this archive; adjacent-layer, cross-runtime, fuzz, fault-injection and disaster suites are absent.",
+      "check_ids": [
+        "INV-32-C030",
+        "INV-32-C083",
+        "INV-32-C084",
+        "INV-32-C085",
+        "INV-32-C060",
+        "INV-32-C089"
+      ]
+    },
+    {
+      "component": "Requirements traceability and acceptance evidence",
+      "why": "There is no requirement-to-code/test/evidence traceability matrix and no machine-readable release acceptance result bundled with the component.",
+      "check_ids": [
+        "INV-32-C020",
+        "INV-32-C090",
+        "INV-32-C100"
+      ]
+    },
+    {
+      "component": "Ownership, ADR and production governance set",
+      "why": "No accountable owner/escalation, approved ADR, incident process, review cadence, exception register, vulnerability/EOL SLA or full release governance package exists.",
+      "check_ids": [
+        "INV-32-C009",
+        "INV-32-C010",
+        "INV-32-C094",
+        "INV-32-C097",
+        "INV-32-C098",
+        "INV-32-C099",
+        "INV-32-C100"
+      ]
+    },
+    {
+      "component": "Version/dependency compatibility matrix",
+      "why": "The package has a version and limited v1 rollback compatibility, but no supported version matrix, negotiation policy or dependency compatibility certification.",
+      "check_ids": [
+        "INV-32-C016",
+        "INV-32-C027",
+        "INV-32-C084",
+        "INV-32-C093"
+      ]
+    },
+    {
+      "component": "Tenant quota/fairness policy",
+      "why": "Per-guest floors/ceilings do not define tenant quotas, fairness under contention or floor-change authorization.",
+      "check_ids": [
+        "INV-32-C017",
+        "INV-32-C046"
+      ]
+    },
+    {
+      "component": "Complete day-0/day-1/day-2 and incident runbooks",
+      "why": "README bullets are a baseline, not operational procedures with prerequisites, checks, commands, containment, escalation and recovery.",
+      "check_ids": [
+        "INV-32-C040",
+        "INV-32-C096",
+        "INV-32-C097"
+      ]
+    },
+    {
+      "component": "Repository release hygiene",
+      "why": "No LICENSE, pyproject/build metadata, dependency lock/SBOM, CI workflow, static-analysis configuration, coverage gate, signed release manifest or provenance attestation is included.",
+      "check_ids": [
+        "INV-32-C031",
+        "INV-32-C045",
+        "INV-32-C070",
+        "INV-32-C090",
+        "INV-32-C094",
+        "INV-32-C100"
+      ]
+    }
+  ],
+  "checklist": [
+    {
+      "check_id": "INV-32-C001",
+      "ordinal": 1,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the exact production responsibility of Elastic virtualization.",
+      "status": "present",
+      "evidence_or_gap": "contract.py responsibility; README.md Responsibility"
+    },
+    {
+      "check_id": "INV-32-C002",
+      "ordinal": 2,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document what Elastic virtualization owns and explicitly does not own.",
+      "status": "present",
+      "evidence_or_gap": "contract.py owns/not_owns; README.md Owns/Explicitly does not own"
+    },
+    {
+      "check_id": "INV-32-C003",
+      "ordinal": 3,
+      "dimension": "Architecture & Scope",
+      "requirement": "Identify upstream, downstream, and peer dependencies of Elastic virtualization.",
+      "status": "present",
+      "evidence_or_gap": "contract.py dependencies"
+    },
+    {
+      "check_id": "INV-32-C004",
+      "ordinal": 4,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define the authoritative source of truth used by Elastic virtualization.",
+      "status": "present",
+      "evidence_or_gap": "contract.py source_of_truth"
+    },
+    {
+      "check_id": "INV-32-C005",
+      "ordinal": 5,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document assumptions Elastic virtualization makes about nodes, runtimes, networks, storage, and control planes.",
+      "status": "partial",
+      "evidence_or_gap": "contract.py lists three assumptions, but does not cover the full node/runtime/network/storage/control-plane assumption set."
+    },
+    {
+      "check_id": "INV-32-C006",
+      "ordinal": 6,
+      "dimension": "Architecture & Scope",
+      "requirement": "Define tenant, environment, site, and workload boundaries relevant to Elastic virtualization.",
+      "status": "present",
+      "evidence_or_gap": "contract.py boundaries"
+    },
+    {
+      "check_id": "INV-32-C007",
+      "ordinal": 7,
+      "dimension": "Architecture & Scope",
+      "requirement": "Separate mandatory Elastic virtualization capabilities from optional optimizations.",
+      "status": "present",
+      "evidence_or_gap": "contract.py mandatory/optional"
+    },
+    {
+      "check_id": "INV-32-C008",
+      "ordinal": 8,
+      "dimension": "Architecture & Scope",
+      "requirement": "Document unsupported deployment patterns and non-goals for Elastic virtualization.",
+      "status": "present",
+      "evidence_or_gap": "contract.py non_goals; README.md Non-goals"
+    },
+    {
+      "check_id": "INV-32-C009",
+      "ordinal": 9,
+      "dimension": "Architecture & Scope",
+      "requirement": "Assign an accountable owner and escalation path for Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C010",
+      "ordinal": 10,
+      "dimension": "Architecture & Scope",
+      "requirement": "Approve an architecture decision record for Elastic virtualization, its technologies (HyperFlux), and its function (Microsecond-scale vCPU/core reassignment).",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C011",
+      "ordinal": 11,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Translate the source function of Elastic virtualization — Microsecond-scale vCPU/core reassignment — into testable SHALL-level requirements.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C012",
+      "ordinal": 12,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define functional requirements for Elastic virtualization across cloud, datacenter, near-edge, and far-edge contexts where applicable.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C013",
+      "ordinal": 13,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define non-functional requirements for latency, availability, durability, consistency, isolation, or determinism as applicable.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C014",
+      "ordinal": 14,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define success, partial success, degraded operation, retryable failure, and terminal failure semantics for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "model.py has success records and typed failures, but no formal success/partial/degraded/retryable/terminal outcome taxonomy."
+    },
+    {
+      "check_id": "INV-32-C015",
+      "ordinal": 15,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define lifecycle states and legal state transitions managed or exposed by Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "model.py implements add/remove/adjust/revert transitions, but no explicit lifecycle state machine or legal-transition specification."
+    },
+    {
+      "check_id": "INV-32-C016",
+      "ordinal": 16,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define versioning and backward-compatibility requirements for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "VERSION/__version__ and v1 rollback compatibility exist, but no supported-version/backward-compatibility policy or matrix exists."
+    },
+    {
+      "check_id": "INV-32-C017",
+      "ordinal": 17,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define capacity ceilings, quotas, and fairness semantics relevant to Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Per-guest floors/ceilings and host reserve exist; tenant quotas, fairness and contention policy do not."
+    },
+    {
+      "check_id": "INV-32-C018",
+      "ordinal": 18,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define behavior when network connectivity is intermittent or absent.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C019",
+      "ordinal": 19,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Define precedence rules when Elastic virtualization requirements conflict with security, residency, SLO, or cost constraints.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C020",
+      "ordinal": 20,
+      "dimension": "Requirements & Semantics",
+      "requirement": "Maintain a requirements traceability matrix from each Elastic virtualization requirement to implementation and verification evidence.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C021",
+      "ordinal": 21,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Enumerate every API, WIT contract, RPC, event, file, device, hypervisor, or control-plane boundary exposed by Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "contract.py lists logical adjust/host/audit interfaces, but there is no exhaustive API/WIT/RPC/device/hypervisor/control-plane boundary inventory."
+    },
+    {
+      "check_id": "INV-32-C022",
+      "ordinal": 22,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Use versioned typed schemas for all externally visible Elastic virtualization contracts.",
+      "status": "partial",
+      "evidence_or_gap": "SCHEMAS.md names/defines Python mapping fields, but there is no formal JSON Schema, WIT, protobuf/OpenAPI, or equivalent typed external schema artifact."
+    },
+    {
+      "check_id": "INV-32-C023",
+      "ordinal": 23,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authentication requirements at each Elastic virtualization boundary.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C024",
+      "ordinal": 24,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define authorization and explicit capability requirements at each Elastic virtualization boundary.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C025",
+      "ordinal": 25,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define timeout, cancellation, retry, idempotency, and backpressure semantics for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "operation_id provides idempotency/replay semantics; timeout, cancellation, retry, and backpressure behavior are unspecified."
+    },
+    {
+      "check_id": "INV-32-C026",
+      "ordinal": 26,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define structured failure codes and machine-readable error details for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Resource-policy exceptions expose codes/details, but validation failures remain ordinary TypeError/ValueError and there is no complete failure-code catalog/schema."
+    },
+    {
+      "check_id": "INV-32-C027",
+      "ordinal": 27,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Define compatibility behavior when peers use different supported versions.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C028",
+      "ordinal": 28,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Document payload, concurrency, queue, connection, or resource limits at Elastic virtualization interfaces.",
+      "status": "partial",
+      "evidence_or_gap": "Guest bounds, reserve, and identifier limits exist; queue, connection, request payload, concurrency and fan-out limits are not specified."
+    },
+    {
+      "check_id": "INV-32-C029",
+      "ordinal": 29,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Provide reference examples and conformance fixtures for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Unit tests demonstrate API usage, but there are no versioned reference fixtures/conformance vectors for external consumers."
+    },
+    {
+      "check_id": "INV-32-C030",
+      "ordinal": 30,
+      "dimension": "Interfaces & Integration",
+      "requirement": "Create automated integration tests proving Elastic virtualization interoperates with adjacent architectural layers.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C031",
+      "ordinal": 31,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Select and pin approved implementations, versions, or specifications for Elastic virtualization: HyperFlux.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C032",
+      "ordinal": 32,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Separate immutable artifacts from mutable configuration and state for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Pure model code is separated from runtime objects conceptually, but there is no immutable artifact/mutable configuration/state deployment model."
+    },
+    {
+      "check_id": "INV-32-C033",
+      "ordinal": 33,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define declarative configuration and secure defaults for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "A safe reserve default exists, but there is no declarative configuration schema/file format or complete secure-default profile."
+    },
+    {
+      "check_id": "INV-32-C034",
+      "ordinal": 34,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Validate configuration before activation and fail closed on security-critical errors.",
+      "status": "partial",
+      "evidence_or_gap": "Constructor/input validation fails closed locally, but there is no configuration activation pipeline or security-critical config gate."
+    },
+    {
+      "check_id": "INV-32-C035",
+      "ordinal": 35,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Support site- and environment-specific configuration without rebuilding immutable artifacts.",
+      "status": "partial",
+      "evidence_or_gap": "reserve_fraction is runtime-configurable, but no site/environment overlay mechanism or external config source exists."
+    },
+    {
+      "check_id": "INV-32-C036",
+      "ordinal": 36,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Record configuration provenance, version, author, and activation time.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C037",
+      "ordinal": 37,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Apply atomic or transactional configuration updates where partial application is unsafe.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C038",
+      "ordinal": 38,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Define automatic and operator-driven rollback for failed Elastic virtualization changes.",
+      "status": "partial",
+      "evidence_or_gap": "Resource adjustments can be validated/reverted, but configuration/deployment rollback is absent."
+    },
+    {
+      "check_id": "INV-32-C039",
+      "ordinal": 39,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Keep credentials and secret material out of ordinary Elastic virtualization configuration and diagnostics.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C040",
+      "ordinal": 40,
+      "dimension": "Implementation & Configuration",
+      "requirement": "Provide a deterministic bootstrap path from an empty node/environment to healthy Elastic virtualization operation.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C041",
+      "ordinal": 41,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Threat-model Elastic virtualization against malicious tenants, compromised workloads, hostile inputs, supply-chain compromise, and control-plane abuse.",
+      "status": "partial",
+      "evidence_or_gap": "contract.py contains a short threat list and model tests cover some hostile records; there is no full threat model with assets, trust boundaries, actors and mitigations."
+    },
+    {
+      "check_id": "INV-32-C042",
+      "ordinal": 42,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Apply least privilege to every identity and capability used by Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C043",
+      "ordinal": 43,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Eliminate ambient filesystem, network, device, kernel, and secret authority wherever Elastic virtualization permits.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C044",
+      "ordinal": 44,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Authenticate nodes, peers, artifacts, providers, and control-plane actors before trust is granted.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C045",
+      "ordinal": 45,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Verify signatures, digests, provenance, and approved versions for executable or policy artifacts consumed by Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C046",
+      "ordinal": 46,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Enforce tenant/workload isolation across Elastic virtualization execution, memory, state, network, and device boundaries as applicable.",
+      "status": "partial",
+      "evidence_or_gap": "Resource accounting protects floors/reserve; execution, memory isolation, network, device and hypervisor isolation are not implemented or verified here."
+    },
+    {
+      "check_id": "INV-32-C047",
+      "ordinal": 47,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Encrypt sensitive Elastic virtualization data in transit and at rest with managed key rotation.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C048",
+      "ordinal": 48,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Define safe behavior when identity, attestation, policy, key, or time services are unavailable.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C049",
+      "ordinal": 49,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Emit tamper-evident audit events for security-sensitive Elastic virtualization operations.",
+      "status": "partial",
+      "evidence_or_gap": "Successful mutations are SHA-256 hash-chained and corruption is detected; rejected operations are not audited and there is no durable/external anchor, signing or retention."
+    },
+    {
+      "check_id": "INV-32-C050",
+      "ordinal": 50,
+      "dimension": "Security, Trust & Isolation",
+      "requirement": "Run adversarial tests for privilege escalation, injection, replay, spoofing, escape, side channels, and resource exhaustion.",
+      "status": "partial",
+      "evidence_or_gap": "Tests cover forged rollback, audit tampering, replay conflicts and resource-bound violations, but not the full privilege/injection/spoofing/escape/side-channel/exhaustion set."
+    },
+    {
+      "check_id": "INV-32-C051",
+      "ordinal": 51,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Enumerate component, process, VM, node, site, network, provider, dependency, and control-plane failures affecting Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "contract.py lists six local failure modes; process/VM/node/site/network/provider/dependency/control-plane failure catalog is missing."
+    },
+    {
+      "check_id": "INV-32-C052",
+      "ordinal": 52,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define automated health and stall detection thresholds for Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C053",
+      "ordinal": 53,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement bounded retry with backoff and jitter only where operations are safe to retry.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C054",
+      "ordinal": 54,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Implement admission control, load shedding, or circuit breaking to prevent Elastic virtualization failure cascades.",
+      "status": "partial",
+      "evidence_or_gap": "Reserve/floor enforcement acts as local admission control, but there is no overload load-shedding or circuit-breaker subsystem."
+    },
+    {
+      "check_id": "INV-32-C055",
+      "ordinal": 55,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define failover behavior without violating isolation, residency, or consistency requirements.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C056",
+      "ordinal": 56,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide degraded operation when noncritical dependencies are unavailable.",
+      "status": "partial",
+      "evidence_or_gap": "A non-cooperative guest degrades safely by leaving memory unchanged, but dependency-level degraded-mode behavior is unspecified."
+    },
+    {
+      "check_id": "INV-32-C057",
+      "ordinal": 57,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Define crash-consistency, restart, resume, or replay semantics for mutable Elastic virtualization state.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C058",
+      "ordinal": 58,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Protect against split-brain, duplicate ownership, stale controllers, or duplicate execution where relevant.",
+      "status": "partial",
+      "evidence_or_gap": "Replay-safe operation IDs and stale rollback fencing exist locally; distributed controller ownership, leases/epochs and split-brain fencing are absent."
+    },
+    {
+      "check_id": "INV-32-C059",
+      "ordinal": 59,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Provide quarantine, freeze, disable, or isolation controls for unsafe Elastic virtualization behavior.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C060",
+      "ordinal": 60,
+      "dimension": "Resilience & Failure Handling",
+      "requirement": "Run fault-injection tests proving Elastic virtualization recovery against documented objectives.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C061",
+      "ordinal": 61,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Establish reproducible baselines for Elastic virtualization latency, throughput, startup, CPU, memory, storage, network, and power overhead.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C062",
+      "ordinal": 62,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define p50, p95, p99, and worst-case performance thresholds for Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C063",
+      "ordinal": 63,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure Elastic virtualization under steady load, burst load, overload, scale-out, scale-in, and recovery.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C064",
+      "ordinal": 64,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure per-workload and per-tenant overhead introduced by Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C065",
+      "ordinal": 65,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Identify avoidable serialization, copies, context switches, network hops, duplicated images, or duplicated state in Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C066",
+      "ordinal": 66,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Apply locality, caching, direct composition, batching, zero-copy, or kernel-bypass optimizations where semantics permit.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C067",
+      "ordinal": 67,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Bound memory growth, queue depth, buffer size, concurrency, and resource fan-out.",
+      "status": "partial",
+      "evidence_or_gap": "Guest allocations and several identifiers are bounded; audit history is unbounded and queue/buffer/concurrency/fan-out limits are not modeled."
+    },
+    {
+      "check_id": "INV-32-C068",
+      "ordinal": 68,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Measure power and thermal impact on constrained edge nodes where relevant.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C069",
+      "ordinal": 69,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Define capacity models and saturation signals that predict when Elastic virtualization needs more resources.",
+      "status": "partial",
+      "evidence_or_gap": "host_snapshot exposes free/reserved/allocated memory, but there is no capacity forecast/density model or defined saturation alert thresholds."
+    },
+    {
+      "check_id": "INV-32-C070",
+      "ordinal": 70,
+      "dimension": "Performance & Resource Efficiency",
+      "requirement": "Block releases that regress approved Elastic virtualization startup, density, throughput, or tail-latency thresholds.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C071",
+      "ordinal": 71,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose Elastic virtualization health, readiness, version, configuration, dependency status, and active capability set.",
+      "status": "partial",
+      "evidence_or_gap": "Version metadata and host resource snapshot exist; health/readiness, configuration, dependency status and active-capability endpoints are absent."
+    },
+    {
+      "check_id": "INV-32-C072",
+      "ordinal": 72,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured metrics for rate, errors, latency, saturation, backlog, and resource use.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C073",
+      "ordinal": 73,
+      "dimension": "Observability & Explainability",
+      "requirement": "Emit structured logs with stable node, tenant, workload, component, and operation identifiers.",
+      "status": "partial",
+      "evidence_or_gap": "Audit events are structured and carry host/tenant/guest/operation identifiers, but there is no structured logging pipeline, severity model, timestamps or export."
+    },
+    {
+      "check_id": "INV-32-C074",
+      "ordinal": 74,
+      "dimension": "Observability & Explainability",
+      "requirement": "Propagate trace context across all relevant Elastic virtualization boundaries.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C075",
+      "ordinal": 75,
+      "dimension": "Observability & Explainability",
+      "requirement": "Expose high-cardinality diagnostic detail safely without leaking tenant or secret data.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C076",
+      "ordinal": 76,
+      "dimension": "Observability & Explainability",
+      "requirement": "Record the reason for every automated decision made by Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Successful mutation events carry reason strings; not every rejection/automated decision is persisted with structured decision inputs."
+    },
+    {
+      "check_id": "INV-32-C077",
+      "ordinal": 77,
+      "dimension": "Observability & Explainability",
+      "requirement": "Provide an operator-readable explain view linking decisions to input state, policies, topology, and constraints.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C078",
+      "ordinal": 78,
+      "dimension": "Observability & Explainability",
+      "requirement": "Correlate Elastic virtualization events with application release lineage and the live infrastructure graph.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C079",
+      "ordinal": 79,
+      "dimension": "Observability & Explainability",
+      "requirement": "Define telemetry retention, sampling, privacy, and export policy.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C080",
+      "ordinal": 80,
+      "dimension": "Observability & Explainability",
+      "requirement": "Create dashboards and alerts distinguishing ordinary load, degradation, policy rejection, dependency failure, attack, and software defect.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C081",
+      "ordinal": 81,
+      "dimension": "Testing & Certification",
+      "requirement": "Create unit tests for deterministic Elastic virtualization logic and state transitions.",
+      "status": "present",
+      "evidence_or_gap": "tests/test_model.py: 18 stdlib unit tests covering deterministic state transitions"
+    },
+    {
+      "check_id": "INV-32-C082",
+      "ordinal": 82,
+      "dimension": "Testing & Certification",
+      "requirement": "Create contract tests for every public Elastic virtualization interface.",
+      "status": "partial",
+      "evidence_or_gap": "Public model methods have unit coverage, but no separate contract-test suite validates every schema and compatibility rule at an external boundary."
+    },
+    {
+      "check_id": "INV-32-C083",
+      "ordinal": 83,
+      "dimension": "Testing & Certification",
+      "requirement": "Create integration tests with every supported adjacent layer and execution tier.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C084",
+      "ordinal": 84,
+      "dimension": "Testing & Certification",
+      "requirement": "Create compatibility tests across supported CPU architectures, runtimes, hypervisors, providers, and protocol versions relevant to Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C085",
+      "ordinal": 85,
+      "dimension": "Testing & Certification",
+      "requirement": "Fuzz parsers, schemas, protocol handlers, WIT/RPC boundaries, or untrusted inputs handled by Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C086",
+      "ordinal": 86,
+      "dimension": "Testing & Certification",
+      "requirement": "Create concurrency and race-condition tests for shared/distributed Elastic virtualization state.",
+      "status": "present",
+      "evidence_or_gap": "tests/test_model.py concurrent mutation test with RLock serialization and audit-chain validation"
+    },
+    {
+      "check_id": "INV-32-C087",
+      "ordinal": 87,
+      "dimension": "Testing & Certification",
+      "requirement": "Create security tests derived directly from the Elastic virtualization threat model.",
+      "status": "partial",
+      "evidence_or_gap": "Several tests are security-oriented, but they are not generated from a complete threat model and do not cover all required attack classes."
+    },
+    {
+      "check_id": "INV-32-C088",
+      "ordinal": 88,
+      "dimension": "Testing & Certification",
+      "requirement": "Create benchmark, soak, burst, and fleet-scale tests appropriate to Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C089",
+      "ordinal": 89,
+      "dimension": "Testing & Certification",
+      "requirement": "Create disaster, partition, reconnect, and degraded-control-plane tests.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C090",
+      "ordinal": 90,
+      "dimension": "Testing & Certification",
+      "requirement": "Require machine-readable acceptance evidence before certifying a Elastic virtualization release for production.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C091",
+      "ordinal": 91,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define production SLOs, error budgets, and support commitments for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Contract defines four invariant SLOs, but measured latency/availability/durability objectives, error budgets and support commitments are absent."
+    },
+    {
+      "check_id": "INV-32-C092",
+      "ordinal": 92,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define canary, staged rollout, rollback, and emergency-disable procedures for Elastic virtualization.",
+      "status": "partial",
+      "evidence_or_gap": "Validated resource rollback and a high-level README baseline exist; canary/staged rollout and emergency-disable operator procedures are not implemented."
+    },
+    {
+      "check_id": "INV-32-C093",
+      "ordinal": 93,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Maintain a supported-version compatibility matrix for Elastic virtualization and adjacent dependencies.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C094",
+      "ordinal": 94,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define patching, vulnerability response, and end-of-life SLAs for Elastic virtualization.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C095",
+      "ordinal": 95,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Provide backup, restore, migration, or reconstruction procedures for Elastic virtualization state where applicable.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C096",
+      "ordinal": 96,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Create day-0 bootstrap, day-1 deployment, and day-2 operation runbooks.",
+      "status": "partial",
+      "evidence_or_gap": "README has day-0/day-1/day-2 bullets, but not complete executable/operator runbooks with prerequisites, decision points and recovery steps."
+    },
+    {
+      "check_id": "INV-32-C097",
+      "ordinal": 97,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Define incident severity, paging, escalation, containment, and recovery procedures.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C098",
+      "ordinal": 98,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Perform recurring access, policy, dependency, configuration, and architecture reviews.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C099",
+      "ordinal": 99,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Track exceptions, waivers, technical debt, and deprecated behaviors with owners and expiry dates.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    },
+    {
+      "check_id": "INV-32-C100",
+      "ordinal": 100,
+      "dimension": "Operations, Release & Governance",
+      "requirement": "Require a formal production exit gate confirming architecture, requirements, interfaces, implementation, security, resilience, performance, observability, testing, rollback, and ownership readiness.",
+      "status": "missing",
+      "evidence_or_gap": "No package-local implementation, artifact, test, or production evidence was found for this requirement in v4.2.0."
+    }
+  ]
+}

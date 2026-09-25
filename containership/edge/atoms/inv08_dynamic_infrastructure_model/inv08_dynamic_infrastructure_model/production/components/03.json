@@ -1,0 +1,70 @@
+{
+ "component": 3,
+ "title": "Production acceptance evidence bundle",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "machine-readable production gate results",
+   "state": "IMPLEMENTED",
+   "spec": "production/evidence.py (PK_DYN_EVIDENCE/1)",
+   "modules": [
+    "production/evidence.py::build_bundle",
+    "production/evidence.py::overall"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.EvidenceTest.test_gate_results_machine_readable"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "a test/evidence manifest keyed by control ID",
+   "state": "IMPLEMENTED",
+   "spec": "production/evidence.py (manifest)",
+   "modules": [
+    "production/evidence.py::build_bundle"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.EvidenceTest.test_manifest_keyed_by_control"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "cryptographic digests for every evidence artifact",
+   "state": "IMPLEMENTED",
+   "spec": "production/evidence.py::verify_bundle",
+   "modules": [
+    "production/evidence.py::verify_bundle",
+    "production/evidence.py::sign_bundle"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.EvidenceTest.test_digests_detect_tamper"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "reviewer/approver identity and timestamps",
+   "state": "BLOCKED",
+   "spec": "production/evidence.py (approvals)",
+   "modules": [
+    "production/evidence.py::APPROVER_ROLES"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.EvidenceTest.test_approvers_unassigned_block"
+   ],
+   "blocker": "no accountable human approver exists; approval slots UNASSIGNED"
+  },
+  {
+   "name": "a deterministic verification command that replays the gate",
+   "state": "IMPLEMENTED",
+   "spec": "production/evidence.py::main (verify CLI)",
+   "modules": [
+    "production/evidence.py::main"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_govops.EvidenceTest.test_verify_command_replays"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Gate result inputs are supplied by callers (placeholder input); the bundle is HMAC-signable with a nonproduction key only."
+}

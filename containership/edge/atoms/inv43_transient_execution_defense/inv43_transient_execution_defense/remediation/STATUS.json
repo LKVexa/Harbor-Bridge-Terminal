@@ -1,0 +1,971 @@
+{
+  "schema": "INV43_REMEDIATION_STATUS/1",
+  "version": "4.3.0",
+  "generated": "2026-09-22",
+  "states": {
+    "LOCAL_IMPLEMENTED": [
+      "04",
+      "08",
+      "10",
+      "12",
+      "14",
+      "20",
+      "21",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "32",
+      "37",
+      "38",
+      "39",
+      "40",
+      "45",
+      "46",
+      "50"
+    ],
+    "PARTIAL": [
+      "03",
+      "05",
+      "06",
+      "09",
+      "11",
+      "13",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "22",
+      "23",
+      "24",
+      "31",
+      "33",
+      "34",
+      "35",
+      "36",
+      "41",
+      "42",
+      "43",
+      "44",
+      "47",
+      "48",
+      "49",
+      "51"
+    ],
+    "BLOCKED": [
+      "01",
+      "02",
+      "07",
+      "52"
+    ]
+  },
+  "items": {
+    "01": {
+      "title": "Original `MASTER.md` / master-prompt provenance artifact",
+      "severity": "BLOCKER",
+      "controls": [
+        "C020",
+        "C045",
+        "C090",
+        "C100"
+      ],
+      "state": "BLOCKED",
+      "evidence": [
+        "provenance/PROVENANCE.json",
+        "tools/verify_governance.py",
+        "governance/EXCEPTIONS.json#EXC-001",
+        "tests/test_governance.py::ProvenanceTest"
+      ],
+      "blocked_on": [
+        "original MASTER.md (not in any supplied source)",
+        "approval of EXC-001 by accountable owner (governance/OWNERS.json is unassigned)"
+      ],
+      "independently_reviewed": false
+    },
+    "02": {
+      "title": "`pk_core` runtime source/package plus an approved version pin",
+      "severity": "BLOCKER",
+      "controls": [
+        "C016",
+        "C027",
+        "C031",
+        "C093",
+        "C100"
+      ],
+      "state": "BLOCKED",
+      "evidence": [
+        "deps/pk_core.lock.json",
+        "verify.py (PK_REQUIRE_CORE=1 fails closed)"
+      ],
+      "blocked_on": [
+        "pk_core package + approved pin"
+      ],
+      "independently_reviewed": false
+    },
+    "03": {
+      "title": "Machine-readable conformance/evidence outputs (`evidence/`, `conformance/`, sealed gate result)",
+      "severity": "BLOCKER",
+      "controls": [
+        "C020",
+        "C090",
+        "C100"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "tools/build_release.py",
+        "evidence/ledger.jsonl",
+        "conformance/INV43_LOCAL_GATE.json"
+      ],
+      "blocked_on": [
+        "pk_core gate output (item 02)",
+        "independent reproduction"
+      ],
+      "independently_reviewed": false
+    },
+    "04": {
+      "title": "Reproducible package/build metadata (`pyproject.toml` or equivalent), dependency lock, and supported Python declaration",
+      "severity": "HIGH",
+      "controls": [
+        "C016",
+        "C031",
+        "C032",
+        "C040",
+        "C045"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "pyproject.toml",
+        "requirements-dev.lock",
+        "sbom.cdx.json"
+      ],
+      "blocked_on": [
+        "wheel hashes in the lock (item 23)"
+      ],
+      "independently_reviewed": false
+    },
+    "05": {
+      "title": "Approved architecture decision record for transient-execution defense",
+      "severity": "HIGH",
+      "controls": [
+        "C010"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/adr/ADR-0001-transient-execution-defense.md"
+      ],
+      "blocked_on": [
+        "ADR approval by accountable owner (governance/OWNERS.json is unassigned)"
+      ],
+      "independently_reviewed": false
+    },
+    "06": {
+      "title": "Resolution of the checklist's **Software Fault Isolation (SFI)** requirement versus the implemented mitigation-state/co-tenancy model",
+      "severity": "HIGH",
+      "controls": [
+        "C010",
+        "C031"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/adr/ADR-0002-sfi-resolution.md",
+        "governance/EXCEPTIONS.json#EXC-002"
+      ],
+      "blocked_on": [
+        "PLN-04 SFI ADR",
+        "approval by accountable owner (governance/OWNERS.json is unassigned)"
+      ],
+      "independently_reviewed": false
+    },
+    "07": {
+      "title": "Accountable owner, escalation path, support commitment, and on-call responsibility",
+      "severity": "HIGH",
+      "controls": [
+        "C009",
+        "C091",
+        "C097"
+      ],
+      "state": "BLOCKED",
+      "evidence": [
+        "governance/OWNERS.json",
+        "tools/verify_governance.py"
+      ],
+      "blocked_on": [
+        "named owner, team, on-call, escalation"
+      ],
+      "independently_reviewed": false
+    },
+    "08": {
+      "title": "Requirements traceability matrix from all 100 requirements to concrete implementation and verification evidence",
+      "severity": "HIGH",
+      "controls": [
+        "C020"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "TRACEABILITY.json",
+        "tools/status_table.py",
+        "tests/test_governance.py::TraceabilityTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "09": {
+      "title": "Hardware/kernel/microcode mitigation read-back collector",
+      "severity": "BLOCKER",
+      "controls": [
+        "C004",
+        "C021",
+        "C029",
+        "C030",
+        "C040"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "collector.py",
+        "tests/test_signal_path.py::CollectorTest",
+        "evidence/host_readback.json"
+      ],
+      "blocked_on": [
+        "core-scheduling observability (per-task prctl state lives in SCH-01)",
+        "non-Linux read-back sources"
+      ],
+      "independently_reviewed": false
+    },
+    "10": {
+      "title": "Freshness/evidence metadata for node observations (source, timestamp/monotonic age, collector identity, stale-data TTL)",
+      "severity": "HIGH",
+      "controls": [
+        "C004",
+        "C014",
+        "C015",
+        "C018",
+        "C036",
+        "C057",
+        "C071"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "collector.py::Observation",
+        "registry.py::_fresh_entry",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "11": {
+      "title": "Node/collector authentication or attestation chain",
+      "severity": "BLOCKER",
+      "controls": [
+        "C023",
+        "C044",
+        "C048"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "attestation.py",
+        "tests/test_signal_path.py::AttestationTest",
+        "governance/EXCEPTIONS.json#EXC-003"
+      ],
+      "blocked_on": [
+        "hardware-rooted attestation (TPM/SEV-SNP/TDX) service"
+      ],
+      "independently_reviewed": false
+    },
+    "12": {
+      "title": "Authorization and least-privilege capability model for recording/querying posture",
+      "severity": "HIGH",
+      "controls": [
+        "C024",
+        "C042",
+        "C043"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "authz.py",
+        "tests/test_signal_path.py::AuthzTest"
+      ],
+      "blocked_on": [
+        "identity-provider binding for principals"
+      ],
+      "independently_reviewed": false
+    },
+    "13": {
+      "title": "Workload trust-class policy source and authoritative mapping to required mitigations",
+      "severity": "HIGH",
+      "controls": [
+        "C006",
+        "C011",
+        "C019",
+        "C046"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "policy.py",
+        "policy/default_policy.json",
+        "schemas/INV43_POLICY_1.schema.json",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "blocked_on": [
+        "policy content approval by a policy owner"
+      ],
+      "independently_reviewed": false
+    },
+    "14": {
+      "title": "Declarative configuration format, schema, secure defaults, site/environment overrides, provenance, activation transaction, and rollback",
+      "severity": "HIGH",
+      "controls": [
+        "C033",
+        "C034",
+        "C035",
+        "C036",
+        "C037",
+        "C038"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "config.py",
+        "schemas/INV43_CONFIG_1.schema.json",
+        "tests/test_signal_path.py::ConfigTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "15": {
+      "title": "Scheduler/placement integration adapter and refusal propagation",
+      "severity": "HIGH",
+      "controls": [
+        "C003",
+        "C021",
+        "C030",
+        "C083"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "placement.py",
+        "tests/test_decision_plane.py::PlacementTest"
+      ],
+      "blocked_on": [
+        "SCH-01 implementation to integrate against"
+      ],
+      "independently_reviewed": false
+    },
+    "16": {
+      "title": "Hardware capability discovery integration (`GAP-02`)",
+      "severity": "HIGH",
+      "controls": [
+        "C003",
+        "C021",
+        "C030",
+        "C083"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "policy.py::gap02_contradictions",
+        "tests/test_decision_plane.py::RegistryTest.test_gap02_contradiction_downgrades"
+      ],
+      "blocked_on": [
+        "GAP-02 implementation / real capability records"
+      ],
+      "independently_reviewed": false
+    },
+    "17": {
+      "title": "Execution-plane / isolation-tier integration (`PLN-04`)",
+      "severity": "HIGH",
+      "controls": [
+        "C003",
+        "C021",
+        "C030",
+        "C083"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "policy/default_policy.json#isolation_tiers",
+        "tests/test_signal_path.py::PolicyTest"
+      ],
+      "blocked_on": [
+        "PLN-04 implementation"
+      ],
+      "independently_reviewed": false
+    },
+    "18": {
+      "title": "Legacy CPU expansion-path peer integration (`INV-34`)",
+      "severity": "MEDIUM",
+      "controls": [
+        "C003",
+        "C030",
+        "C083"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "policy/default_policy.json#legacy_cpu",
+        "tests/test_decision_plane.py::IntegrationTest"
+      ],
+      "blocked_on": [
+        "INV-34 implementation"
+      ],
+      "independently_reviewed": false
+    },
+    "19": {
+      "title": "Explicit external API/RPC/WIT/event/control-plane transport, if this component is intended to run as a service",
+      "severity": "HIGH",
+      "controls": [
+        "C021",
+        "C022",
+        "C023",
+        "C024",
+        "C025",
+        "C026",
+        "C027",
+        "C028"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "service.py",
+        "tests/test_decision_plane.py::ServiceTest"
+      ],
+      "blocked_on": [
+        "TLS certificate issuance/rotation (deployment)"
+      ],
+      "independently_reviewed": false
+    },
+    "20": {
+      "title": "Interface version negotiation and backward/forward compatibility tests",
+      "severity": "MEDIUM",
+      "controls": [
+        "C016",
+        "C027",
+        "C093"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "negotiation.py",
+        "docs/COMPATIBILITY.md",
+        "tests/test_decision_plane.py::NegotiationTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "21": {
+      "title": "Full schema-conformance test runner using a standards validator",
+      "severity": "MEDIUM",
+      "controls": [
+        "C022",
+        "C029",
+        "C082"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "schemas/*.json",
+        "tests/test_hardening.py::SchemaConformanceTest",
+        "requirements-dev.lock"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "22": {
+      "title": "Tamper-evident security audit log / append-only event chain",
+      "severity": "HIGH",
+      "controls": [
+        "C049"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "auditlog.py",
+        "tests/test_decision_plane.py::AuditChainTest"
+      ],
+      "blocked_on": [
+        "WORM/remote retention sink"
+      ],
+      "independently_reviewed": false
+    },
+    "23": {
+      "title": "Supply-chain integrity package: SBOM, artifact digest/signature, provenance/attestation, approved dependency policy",
+      "severity": "HIGH",
+      "controls": [
+        "C045"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "sbom.cdx.json",
+        "SHA256SUMS.txt",
+        "release/provenance.intoto.json",
+        "release/signature.json",
+        "tools/verify_release.py"
+      ],
+      "blocked_on": [
+        "release signing key (current signature is an ephemeral dev key)",
+        "approved dependency policy"
+      ],
+      "independently_reviewed": false
+    },
+    "24": {
+      "title": "Formal threat-model document covering malicious tenants, compromised workloads, hostile inputs, supply chain, and control-plane abuse",
+      "severity": "MEDIUM",
+      "controls": [
+        "C041"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/THREAT_MODEL.md"
+      ],
+      "blocked_on": [
+        "independent security review"
+      ],
+      "independently_reviewed": false
+    },
+    "25": {
+      "title": "Adversarial security test suite (privilege escalation, injection, replay, spoofing, escape, side-channel misuse, exhaustion)",
+      "severity": "HIGH",
+      "controls": [
+        "C050",
+        "C087"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "tests/test_hardening.py::AdversarialTest",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "26": {
+      "title": "Fuzzing/property-based testing for identifiers, schemas, required-set handling, and untrusted boundary inputs",
+      "severity": "HIGH",
+      "controls": [
+        "C085"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "tests/test_hardening.py::PropertyFuzzTest (INV43_FUZZ_SEED/INV43_FUZZ_N)"
+      ],
+      "blocked_on": [
+        "coverage-guided fuzzing infrastructure (optional)"
+      ],
+      "independently_reviewed": false
+    },
+    "27": {
+      "title": "Concurrency model, synchronization/thread-safety guarantee, and race tests",
+      "severity": "HIGH",
+      "controls": [
+        "C086"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "docs/CONCURRENCY.md",
+        "tests/test_hardening.py::ConcurrencyTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "28": {
+      "title": "Failure taxonomy plus health/stall detection",
+      "severity": "HIGH",
+      "controls": [
+        "C051",
+        "C052",
+        "C071"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "resilience.py::FailureClass/HealthMonitor",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "29": {
+      "title": "Retry/backoff/jitter policy for future read-back/control-plane operations",
+      "severity": "MEDIUM",
+      "controls": [
+        "C025",
+        "C053"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "resilience.py::RetryPolicy",
+        "tests/test_hardening.py::ResilienceTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "30": {
+      "title": "Admission control, load shedding/circuit breaking, and bounded resource model",
+      "severity": "HIGH",
+      "controls": [
+        "C017",
+        "C054",
+        "C067",
+        "C069"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "resilience.py::TokenBucket/ConcurrencyLimiter/CircuitBreaker",
+        "service.py"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "31": {
+      "title": "Failover/degraded/restart/replay/split-brain semantics",
+      "severity": "HIGH",
+      "controls": [
+        "C014",
+        "C018",
+        "C055",
+        "C056",
+        "C057",
+        "C058"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/RECOVERY.md",
+        "registry.py",
+        "tests/test_decision_plane.py::RegistryTest"
+      ],
+      "blocked_on": [
+        "multi-replica HA (declared unsupported)"
+      ],
+      "independently_reviewed": false
+    },
+    "32": {
+      "title": "Quarantine/freeze/disable/emergency-control implementation",
+      "severity": "HIGH",
+      "controls": [
+        "C059",
+        "C092"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "registry.py::quarantine/release/freeze",
+        "tests/test_decision_plane.py::RegistryTest.test_freeze_and_kill_switch"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "33": {
+      "title": "Fault-injection and disaster/partition/reconnect tests",
+      "severity": "HIGH",
+      "controls": [
+        "C060",
+        "C089"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "tests/test_hardening.py::FaultInjectionTest"
+      ],
+      "blocked_on": [
+        "real network-partition / disaster lab"
+      ],
+      "independently_reviewed": false
+    },
+    "34": {
+      "title": "Reproducible performance benchmark harness and measured baseline",
+      "severity": "HIGH",
+      "controls": [
+        "C061",
+        "C063",
+        "C064",
+        "C088"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "bench/run_bench.py",
+        "evidence/perf/baseline.json"
+      ],
+      "blocked_on": [
+        "per-mitigation cost attribution via A/B boots on target hardware"
+      ],
+      "independently_reviewed": false
+    },
+    "35": {
+      "title": "Approved p50/p95/p99/worst-case thresholds plus performance-regression release gate",
+      "severity": "HIGH",
+      "controls": [
+        "C062",
+        "C070"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "perf/thresholds.json",
+        "evidence/perf/gate.json"
+      ],
+      "blocked_on": [
+        "threshold approval by accountable owner (governance/OWNERS.json is unassigned)"
+      ],
+      "independently_reviewed": false
+    },
+    "36": {
+      "title": "CPU/memory/storage/network/power/thermal capacity model, including edge-node measurements",
+      "severity": "MEDIUM",
+      "controls": [
+        "C061",
+        "C067",
+        "C068",
+        "C069"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/CAPACITY.md",
+        "evidence/perf/baseline.json"
+      ],
+      "blocked_on": [
+        "power/thermal and edge-node measurements"
+      ],
+      "independently_reviewed": false
+    },
+    "37": {
+      "title": "Runtime metrics emitter for rate/errors/latency/saturation/backlog/resources",
+      "severity": "HIGH",
+      "controls": [
+        "C071",
+        "C072"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "telemetry.py::Metrics",
+        "service.py /metrics"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "38": {
+      "title": "Structured logs with stable node/tenant/workload/operation IDs and redaction/privacy policy",
+      "severity": "HIGH",
+      "controls": [
+        "C073",
+        "C075",
+        "C079"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "telemetry.py::StructuredLogger",
+        "tests/test_hardening.py::SecretLeakageTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "39": {
+      "title": "Distributed trace propagation/correlation",
+      "severity": "MEDIUM",
+      "controls": [
+        "C074",
+        "C078"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "telemetry.py::parse_traceparent",
+        "tests/test_decision_plane.py::ServiceTest"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "40": {
+      "title": "Operator explain surface linking a decision to inputs, policy, topology, and release lineage",
+      "severity": "MEDIUM",
+      "controls": [
+        "C076",
+        "C077",
+        "C078"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "registry.py::explain",
+        "service.py /v1/explain"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "41": {
+      "title": "Dashboards and alerts separating load, degradation, policy rejection, dependency failure, attack, and software defect",
+      "severity": "MEDIUM",
+      "controls": [
+        "C080"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "ops/alerts.yaml",
+        "ops/dashboard.json"
+      ],
+      "blocked_on": [
+        "deployment and validation on live monitoring"
+      ],
+      "independently_reviewed": false
+    },
+    "42": {
+      "title": "Integration tests with all supported adjacent layers",
+      "severity": "HIGH",
+      "controls": [
+        "C030",
+        "C083"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "tests/test_decision_plane.py::IntegrationTest"
+      ],
+      "blocked_on": [
+        "real SCH-01/GAP-02/PLN-04/INV-34 components"
+      ],
+      "independently_reviewed": false
+    },
+    "43": {
+      "title": "Compatibility test matrix across supported CPU architectures, kernels/runtimes, hypervisors, providers, and protocol versions",
+      "severity": "HIGH",
+      "controls": [
+        "C084",
+        "C093"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/COMPATIBILITY.md",
+        "tests/fixtures/kernel_strings.json"
+      ],
+      "blocked_on": [
+        "hypervisor/provider/kernel lab runs"
+      ],
+      "independently_reviewed": false
+    },
+    "44": {
+      "title": "Soak, burst, overload, scale-out/scale-in, and fleet-scale tests",
+      "severity": "MEDIUM",
+      "controls": [
+        "C063",
+        "C088"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "tests/test_hardening.py::SoakBurstTest (INV43_SOAK_*)"
+      ],
+      "blocked_on": [
+        "fleet-scale soak environment"
+      ],
+      "independently_reviewed": false
+    },
+    "45": {
+      "title": "Canary/staged rollout implementation and rollback automation",
+      "severity": "MEDIUM",
+      "controls": [
+        "C038",
+        "C092"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "rollout.py",
+        "tests/test_hardening.py::RolloutTest"
+      ],
+      "blocked_on": [
+        "approver identity verification (platform IdP)"
+      ],
+      "independently_reviewed": false
+    },
+    "46": {
+      "title": "Backup/restore/migration/reconstruction decision and procedure",
+      "severity": "MEDIUM",
+      "controls": [
+        "C095"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "docs/RECOVERY.md",
+        "tests/test_decision_plane.py::RegistryTest.test_controls_survive_restart_via_audit_chain"
+      ],
+      "blocked_on": [],
+      "independently_reviewed": false
+    },
+    "47": {
+      "title": "Complete day-0/day-1/day-2 runbook with dependency checks and failure procedures",
+      "severity": "MEDIUM",
+      "controls": [
+        "C096"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/RUNBOOK.md"
+      ],
+      "blocked_on": [
+        "on-call names (accountable owner (governance/OWNERS.json is unassigned))"
+      ],
+      "independently_reviewed": false
+    },
+    "48": {
+      "title": "Incident response plan: severity model, paging, containment, recovery, post-incident evidence",
+      "severity": "HIGH",
+      "controls": [
+        "C097"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "docs/INCIDENT_RESPONSE.md"
+      ],
+      "blocked_on": [
+        "paging targets (accountable owner (governance/OWNERS.json is unassigned))"
+      ],
+      "independently_reviewed": false
+    },
+    "49": {
+      "title": "Recurring access/policy/dependency/configuration/architecture review schedule and evidence",
+      "severity": "MEDIUM",
+      "controls": [
+        "C098"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "governance/REVIEW_SCHEDULE.json",
+        "tools/verify_governance.py"
+      ],
+      "blocked_on": [
+        "reviews actually held and recorded"
+      ],
+      "independently_reviewed": false
+    },
+    "50": {
+      "title": "Exception/waiver/technical-debt/deprecation ledger with owners and expirations",
+      "severity": "MEDIUM",
+      "controls": [
+        "C099"
+      ],
+      "state": "LOCAL_IMPLEMENTED",
+      "evidence": [
+        "governance/EXCEPTIONS.json",
+        "tools/verify_governance.py",
+        "tests/test_governance.py::ExceptionLedgerTest"
+      ],
+      "blocked_on": [
+        "approval of each PROPOSED entry"
+      ],
+      "independently_reviewed": false
+    },
+    "51": {
+      "title": "Vulnerability response, patching, and end-of-life SLA",
+      "severity": "HIGH",
+      "controls": [
+        "C094"
+      ],
+      "state": "PARTIAL",
+      "evidence": [
+        "SECURITY.md"
+      ],
+      "blocked_on": [
+        "security contact and SLA approval (accountable owner (governance/OWNERS.json is unassigned))"
+      ],
+      "independently_reviewed": false
+    },
+    "52": {
+      "title": "Licensing/NOTICE metadata for redistribution",
+      "severity": "MEDIUM",
+      "controls": [],
+      "state": "BLOCKED",
+      "evidence": [
+        "NOTICE",
+        "pyproject.toml (no license field)",
+        "tools/verify_governance.py"
+      ],
+      "blocked_on": [
+        "license decision by accountable owner (governance/OWNERS.json is unassigned)"
+      ],
+      "independently_reviewed": false
+    }
+  }
+}

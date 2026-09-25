@@ -1,0 +1,30 @@
+{
+  "baselines": "UNPINNED - proof is bound to the synthetic domain above, not yet to pinned WIT (MC-05)",
+  "domain": {
+    "fork": "oflags ∈ [0,2^16) with bits ⊆ 0x000F, rights_base ∈ [0,2^64) with bits ⊆ 0x42",
+    "standards": "open ⊆ {create,directory,exclusive,truncate}, rights ⊆ {read,write}"
+  },
+  "evidence": [
+    "tests/test_shim.py::ExhaustiveRoundTrip",
+    "tests/test_shim.py::MutationDetection",
+    "tests/test_shim.py::PropertyFuzz"
+  ],
+  "exclusions": [
+    "descriptor-flags beyond read/write",
+    "path-flags (symlink-follow)",
+    "rights_inheriting"
+  ],
+  "interface": "wasi:filesystem/types",
+  "invariants": [
+    "fork_to_std(std_to_fork(x)) == canonical(x) for every x in the standards domain",
+    "std_to_fork(fork_to_std(y)) == y for every y in the fork domain",
+    "rights(out) ⊆ rights(in) in both directions (no capability amplification)",
+    "inputs outside the domain are refused with INV22.TRANSLATE.NOT_REPRESENTABLE and no output"
+  ],
+  "required_reviewers": 2,
+  "reviewers": [],
+  "schema": "PK_BRANCH_PROOF/1",
+  "shim_id": "fs-open-flags",
+  "status": "pending_review",
+  "translator_version": "1.0.0"
+}

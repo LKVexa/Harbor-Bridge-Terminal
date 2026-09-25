@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_RECONCILIATION_RECORD/2",
+  "title": "PK Reconciliation Record v2 (durable runtime)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema",
+    "site",
+    "partition_epoch",
+    "partitioned_since",
+    "reconnected_at",
+    "lease_granted_at",
+    "lease_expires_at",
+    "decisions",
+    "decision_count",
+    "max_policy_age",
+    "txn_id",
+    "outcomes",
+    "audit_anchor",
+    "audit_head",
+    "generation",
+    "authority_epoch",
+    "conflicts"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_RECONCILIATION_RECORD/2"
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "partition_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "partitioned_since": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reconnected_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lease_granted_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lease_expires_at": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "decision_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_policy_age": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "renewed_until": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "at",
+          "authority_epoch",
+          "code_version",
+          "config_version",
+          "decision_id",
+          "generation",
+          "kind",
+          "lease_expires_at",
+          "lease_fingerprint",
+          "lease_granted_at",
+          "lease_id",
+          "partition_epoch",
+          "policy_age",
+          "policy_digest",
+          "policy_version",
+          "reason",
+          "request_id",
+          "sequence",
+          "subject",
+          "tier",
+          "trace_id",
+          "request_hash"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "partition_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "at": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tier": {
+            "enum": [
+              "full",
+              "sustain",
+              "freeze"
+            ]
+          },
+          "policy_age": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "lease_granted_at": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "lease_expires_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "decision_id": {
+            "type": "string",
+            "pattern": "^d-[0-9a-f]{32}$"
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "lease_id": {
+            "type": "string"
+          },
+          "lease_fingerprint": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "authority_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "policy_version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "policy_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "generation": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "config_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "code_version": {
+            "type": "string"
+          },
+          "grant_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "trace_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "request_hash": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "txn_id": {
+      "type": "string",
+      "pattern": "^tx-[0-9a-f]{32}$"
+    },
+    "outcomes": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "accepted",
+          "compensated",
+          "quarantined",
+          "conflict",
+          "rejected"
+        ]
+      }
+    },
+    "audit_anchor": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "audit_head": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "authority_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "conflicts": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

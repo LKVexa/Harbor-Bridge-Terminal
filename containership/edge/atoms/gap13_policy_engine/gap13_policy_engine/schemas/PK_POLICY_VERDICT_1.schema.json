@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:gap13:PK_POLICY_VERDICT/1",
+  "title": "PK_POLICY_VERDICT/1",
+  "description": "Compatibility: consumers MUST ignore unknown fields; producers MUST NOT remove or retype listed fields within /1. 'effect' is closed: any value other than 'allow' MUST be enforced as deny (EXT-02).",
+  "type": "object",
+  "required": ["schema", "effect", "rule", "reason", "version", "stale", "tie_break", "considered", "bundle"],
+  "properties": {
+    "schema": {"const": "PK_POLICY_VERDICT/1"},
+    "effect": {"enum": ["allow", "deny"]},
+    "rule": {"type": ["string", "null"]},
+    "reason": {"type": "string"},
+    "version": {"type": "string"},
+    "stale": {"type": "boolean"},
+    "tie_break": {"type": "boolean"},
+    "considered": {"type": "array", "items": {"type": "string"}},
+    "bundle": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["bundle_id", "generation", "digest"],
+      "properties": {"bundle_id": {"type": "string"}, "generation": {"type": "integer"}, "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}}}]},
+    "mode": {"enum": ["normal", "deny-only", "stale-freeze_last_known_good", "stale-deny_only"]},
+    "lineage": {"type": "object"},
+    "trace_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"}
+  }
+}

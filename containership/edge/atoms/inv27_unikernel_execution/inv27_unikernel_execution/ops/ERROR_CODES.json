@@ -1,0 +1,319 @@
+{
+ "schema": "PK_UNIKERNEL_ERROR_CODES/1",
+ "version": "4.3.0",
+ "policy": "append-only; see docs/VERSIONING.md",
+ "codes": {
+  "UK_PARSE_TOO_LARGE": {
+   "code": "UK_PARSE_TOO_LARGE",
+   "outcome": "terminal",
+   "http_like": 413,
+   "summary": "image exceeds the admission byte budget"
+  },
+  "UK_PARSE_BAD_MAGIC": {
+   "code": "UK_PARSE_BAD_MAGIC",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "not an ELF image"
+  },
+  "UK_PARSE_UNSUPPORTED_FORMAT": {
+   "code": "UK_PARSE_UNSUPPORTED_FORMAT",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "ELF class/endianness/version/machine not supported"
+  },
+  "UK_PARSE_TRUNCATED": {
+   "code": "UK_PARSE_TRUNCATED",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "a structure extends past the end of the image"
+  },
+  "UK_PARSE_MALFORMED": {
+   "code": "UK_PARSE_MALFORMED",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "a structure is internally inconsistent"
+  },
+  "UK_PARSE_OVERLAP": {
+   "code": "UK_PARSE_OVERLAP",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "sections or segments overlap illegally"
+  },
+  "UK_PARSE_LIMIT": {
+   "code": "UK_PARSE_LIMIT",
+   "outcome": "terminal",
+   "http_like": 413,
+   "summary": "a structure count exceeds the parser budget"
+  },
+  "UK_PARSE_BUDGET": {
+   "code": "UK_PARSE_BUDGET",
+   "outcome": "terminal",
+   "http_like": 413,
+   "summary": "parser CPU/work budget exhausted"
+  },
+  "UK_SEAL_NOT_SAS": {
+   "code": "UK_SEAL_NOT_SAS",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "single-address-space could not be positively proven"
+  },
+  "UK_SEAL_DYNAMIC": {
+   "code": "UK_SEAL_DYNAMIC",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "image is dynamically linked or carries a program interpreter"
+  },
+  "UK_SEAL_MULTIPROCESS": {
+   "code": "UK_SEAL_MULTIPROCESS",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "image links process-creation or exec capability"
+  },
+  "UK_SEAL_DYNLOAD": {
+   "code": "UK_SEAL_DYNLOAD",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "image links a runtime code loader"
+  },
+  "UK_SEAL_DEBUG_SURFACE": {
+   "code": "UK_SEAL_DEBUG_SURFACE",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "image links a shell/debugger/ptrace surface"
+  },
+  "UK_SEAL_WX": {
+   "code": "UK_SEAL_WX",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "image has a writable+executable segment"
+  },
+  "UK_SEAL_UNKNOWN_TOOLCHAIN": {
+   "code": "UK_SEAL_UNKNOWN_TOOLCHAIN",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "no verifier profile for the image's toolchain"
+  },
+  "UK_SEAL_NO_EVIDENCE": {
+   "code": "UK_SEAL_NO_EVIDENCE",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "binary carries no evidence the verifier can use (stripped?)"
+  },
+  "UK_SEAL_DRIFT": {
+   "code": "UK_SEAL_DRIFT",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "manifest syscall set differs from the binary-derived set"
+  },
+  "UK_SEAL_SYSCALL_FORBIDDEN": {
+   "code": "UK_SEAL_SYSCALL_FORBIDDEN",
+   "outcome": "refused",
+   "http_like": 403,
+   "summary": "binary-derived syscall outside the environment's permitted set"
+  },
+  "UK_SEAL_ARCH": {
+   "code": "UK_SEAL_ARCH",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "image architecture not supported at this site"
+  },
+  "UK_DIGEST_MISMATCH": {
+   "code": "UK_DIGEST_MISMATCH",
+   "outcome": "terminal",
+   "http_like": 409,
+   "summary": "image bytes do not match the bound digest"
+  },
+  "UK_SIG_MISSING": {
+   "code": "UK_SIG_MISSING",
+   "outcome": "refused",
+   "http_like": 401,
+   "summary": "no signature envelope supplied"
+  },
+  "UK_SIG_INVALID": {
+   "code": "UK_SIG_INVALID",
+   "outcome": "terminal",
+   "http_like": 401,
+   "summary": "signature does not verify"
+  },
+  "UK_SIG_UNTRUSTED_KEY": {
+   "code": "UK_SIG_UNTRUSTED_KEY",
+   "outcome": "refused",
+   "http_like": 401,
+   "summary": "signing key not in the trust root, revoked or expired"
+  },
+  "UK_PROVENANCE_INVALID": {
+   "code": "UK_PROVENANCE_INVALID",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "provenance statement malformed or does not bind the image"
+  },
+  "UK_PROVENANCE_POLICY": {
+   "code": "UK_PROVENANCE_POLICY",
+   "outcome": "refused",
+   "http_like": 403,
+   "summary": "builder/toolchain/source not approved by policy"
+  },
+  "UK_TRUST_UNAVAILABLE": {
+   "code": "UK_TRUST_UNAVAILABLE",
+   "outcome": "retryable",
+   "http_like": 503,
+   "summary": "trust root unavailable or stale; admission fails closed"
+  },
+  "UK_UNAUTHENTICATED": {
+   "code": "UK_UNAUTHENTICATED",
+   "outcome": "terminal",
+   "http_like": 401,
+   "summary": "caller identity not established"
+  },
+  "UK_FORBIDDEN": {
+   "code": "UK_FORBIDDEN",
+   "outcome": "terminal",
+   "http_like": 403,
+   "summary": "caller lacks the capability or tenant scope"
+  },
+  "UK_REPLAY": {
+   "code": "UK_REPLAY",
+   "outcome": "terminal",
+   "http_like": 409,
+   "summary": "request token already used"
+  },
+  "UK_MANIFEST_INVALID": {
+   "code": "UK_MANIFEST_INVALID",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "seal manifest failed strict schema validation"
+  },
+  "UK_UNSUPPORTED_VERSION": {
+   "code": "UK_UNSUPPORTED_VERSION",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "schema version not supported"
+  },
+  "UK_CONFIG_INVALID": {
+   "code": "UK_CONFIG_INVALID",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "configuration failed validation"
+  },
+  "UK_LIMIT_EXCEEDED": {
+   "code": "UK_LIMIT_EXCEEDED",
+   "outcome": "terminal",
+   "http_like": 413,
+   "summary": "payload exceeds a documented bound"
+  },
+  "UK_BOOT_CONTRACT": {
+   "code": "UK_BOOT_CONTRACT",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "entry point / boot contract violated"
+  },
+  "UK_ISOLATION_POLICY": {
+   "code": "UK_ISOLATION_POLICY",
+   "outcome": "refused",
+   "http_like": 403,
+   "summary": "device/network/storage request outside the isolation policy"
+  },
+  "UK_VMM_UNSUPPORTED": {
+   "code": "UK_VMM_UNSUPPORTED",
+   "outcome": "refused",
+   "http_like": 409,
+   "summary": "no supported VMM backend available or version not approved"
+  },
+  "UK_VMM_LAUNCH_FAILED": {
+   "code": "UK_VMM_LAUNCH_FAILED",
+   "outcome": "retryable",
+   "http_like": 503,
+   "summary": "VMM failed to start the guest"
+  },
+  "UK_VMM_TIMEOUT": {
+   "code": "UK_VMM_TIMEOUT",
+   "outcome": "retryable",
+   "http_like": 504,
+   "summary": "guest did not reach ready within the boot deadline"
+  },
+  "UK_INSTANCE_DUPLICATE": {
+   "code": "UK_INSTANCE_DUPLICATE",
+   "outcome": "terminal",
+   "http_like": 409,
+   "summary": "an instance with this idempotency key already exists"
+  },
+  "UK_UNKNOWN_INSTANCE": {
+   "code": "UK_UNKNOWN_INSTANCE",
+   "outcome": "terminal",
+   "http_like": 404,
+   "summary": "no such instance"
+  },
+  "UK_ILLEGAL_TRANSITION": {
+   "code": "UK_ILLEGAL_TRANSITION",
+   "outcome": "terminal",
+   "http_like": 409,
+   "summary": "lifecycle transition not permitted"
+  },
+  "UK_STALE_FENCE": {
+   "code": "UK_STALE_FENCE",
+   "outcome": "terminal",
+   "http_like": 409,
+   "summary": "controller fencing token is stale"
+  },
+  "UK_QUARANTINED": {
+   "code": "UK_QUARANTINED",
+   "outcome": "refused",
+   "http_like": 423,
+   "summary": "image digest or tenant quarantined by an operator"
+  },
+  "UK_DISABLED": {
+   "code": "UK_DISABLED",
+   "outcome": "terminal",
+   "http_like": 503,
+   "summary": "component emergency-disabled by an operator"
+  },
+  "UK_QUOTA_EXCEEDED": {
+   "code": "UK_QUOTA_EXCEEDED",
+   "outcome": "refused",
+   "http_like": 429,
+   "summary": "tenant instance quota would be exceeded"
+  },
+  "UK_STATE_CORRUPT": {
+   "code": "UK_STATE_CORRUPT",
+   "outcome": "terminal",
+   "http_like": 500,
+   "summary": "journal or snapshot failed integrity checks"
+  },
+  "UK_DEADLINE_EXCEEDED": {
+   "code": "UK_DEADLINE_EXCEEDED",
+   "outcome": "retryable",
+   "http_like": 504,
+   "summary": "deadline passed before a decision"
+  },
+  "UK_CANCELLED": {
+   "code": "UK_CANCELLED",
+   "outcome": "retryable",
+   "http_like": 499,
+   "summary": "caller cancelled"
+  },
+  "UK_OVERLOADED": {
+   "code": "UK_OVERLOADED",
+   "outcome": "retryable",
+   "http_like": 503,
+   "summary": "admission control shed the request"
+  },
+  "UK_CIRCUIT_OPEN": {
+   "code": "UK_CIRCUIT_OPEN",
+   "outcome": "retryable",
+   "http_like": 503,
+   "summary": "dependency circuit open"
+  },
+  "UK_DEPENDENCY_UNAVAILABLE": {
+   "code": "UK_DEPENDENCY_UNAVAILABLE",
+   "outcome": "retryable",
+   "http_like": 503,
+   "summary": "a security-critical dependency is unavailable"
+  },
+  "UK_INVALID_REQUIREMENT": {
+   "code": "UK_INVALID_REQUIREMENT",
+   "outcome": "terminal",
+   "http_like": 400,
+   "summary": "request malformed or unsafe"
+  }
+ }
+}

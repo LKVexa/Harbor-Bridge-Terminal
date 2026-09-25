@@ -1,0 +1,100 @@
+{"id": "C16-001", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md", "gateway/server.js:212"], "note": "exact path /ws/terminal is the only approved route"}
+{"id": "C16-002", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "path->draining->Origin->handshake->identity->capacity sequence documented"}
+{"id": "C16-003", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "no HttpListenerContext exists; Node http.IncomingMessage/socket used instead (D-001)"}
+{"id": "C16-004", "status": "PASS", "evidence": ["gateway/ws.js:1-11"], "note": "comment documents ownership: one receive path, one send path, single idempotent _destroy()"}
+{"id": "C16-005", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "AcceptWebSocketAsync is a .NET API not used under D-001"}
+{"id": "C16-006", "status": "PASS", "evidence": ["gateway/server.js:206-233"], "note": "checkUpgrade() (RFC6455 validity) is separate from identity.authenticate()"}
+{"id": "C16-007", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md", "gateway/ws.js:22"], "note": "subprotocol hermit.vws.v2 required, defined as PROTOCOL const"}
+{"id": "C16-008", "status": "PASS", "evidence": ["docs/RAMWS.md", "gateway/config.js:61-65"], "note": "heartbeat/ping intervals are the keep-alive config input"}
+{"id": "C16-009", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md", "gateway/ws.js:324-329"], "note": "rejections are ordinary HTTP responses with Connection: close"}
+{"id": "C16-010", "status": "OPEN", "evidence": [], "note": "no formal approval record of the upgrade adapter contract found"}
+{"id": "C16-011", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/ARCHITECTURE.md"], "note": "no AcceptWebSocketAsync; hand-written RFC 6455 endpoint used (D-001)"}
+{"id": "C16-012", "status": "NOT_APPLICABLE", "evidence": [], "note": ".NET overload/parameter types do not apply to the Node implementation"}
+{"id": "C16-013", "status": "NOT_APPLICABLE", "evidence": ["docs/vws200/VALIDATION.md"], "note": "PowerShell/.NET matrix explicitly NOT_APPLICABLE for NODE-WEB (D-001)"}
+{"id": "C16-014", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js:13"], "note": "null subprotocol tested (->400) but the .NET null-overload concept has no analogue"}
+{"id": "C16-015", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:11"], "note": "101 with Sec-WebSocket-Protocol: hermit.vws.v2 tested"}
+{"id": "C16-016", "status": "NOT_APPLICABLE", "evidence": [], "note": "buffer-size overload arguments are .NET-specific (D-001)"}
+{"id": "C16-017", "status": "NOT_APPLICABLE", "evidence": [], "note": "TimeSpan conversion is .NET-specific (D-001)"}
+{"id": "C16-018", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:207"], "note": "ws.rejected logs status/reason, not an original exception object (no exceptions thrown in normal reject path)"}
+{"id": "C16-019", "status": "OPEN", "evidence": [], "note": "no probe record of Node-runtime-specific restrictions found"}
+{"id": "C16-020", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "vertical slice proves the full upgrade->session path works end to end"}
+{"id": "C16-021", "status": "PASS", "evidence": ["gateway/ws.js:21-34", "tests/gateway/ws-conformance.test.js"], "note": "checkUpgrade validates Upgrade/Connection headers, version, key, subprotocol"}
+{"id": "C16-022", "status": "PASS", "evidence": ["gateway/server.js:212", "tests/gateway/ws-conformance.test.js:14"], "note": "path /ws/other -> 404 tested"}
+{"id": "C16-023", "status": "PASS", "evidence": ["gateway/origin.js", "tests/security/authz.test.js"], "note": "Origin: unlisted -> 403 tested"}
+{"id": "C16-024", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "no credential / wrong credential / malformed header -> 401 tested"}
+{"id": "C16-025", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js"], "note": "session metadata (sid/epoch) is validated post-upgrade in connection.js, not as a pre-upgrade check"}
+{"id": "C16-026", "status": "PASS", "evidence": ["gateway/ws.js:31-32"], "note": "offered subprotocols filtered; must include hermit.vws.v2 or 400"}
+{"id": "C16-027", "status": "PASS", "evidence": ["gateway/server.js:214", "tests/gateway/e2e.test.js"], "note": "draining checked before upgrade; tested via 503 while draining"}
+{"id": "C16-028", "status": "PASS", "evidence": ["gateway/server.js:231-233", "tests/security/authz.test.js"], "note": "capacity: per-principal and global caps tested"}
+{"id": "C16-029", "status": "PASS", "evidence": ["gateway/server.js:206-244", "docs/PROTOCOL_V2.md"], "note": "capacity reserved before a worker is spawned"}
+{"id": "C16-030", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/security/authz.test.js"], "note": "each rejection path individually tested; no single adversarial fallthrough test"}
+{"id": "C16-031", "status": "PASS", "evidence": ["gateway/server.js:242"], "note": "acceptUpgrade() invoked exactly once for an eligible context"}
+{"id": "C16-032", "status": "PASS", "evidence": ["gateway/ws.js:318-321"], "note": "handshake write completes synchronously before Connection is constructed"}
+{"id": "C16-033", "status": "PASS", "evidence": ["gateway/ws.js:18-19,318-321"], "note": "acceptUpgrade computes accept key and writes the 101 response itself"}
+{"id": "C16-034", "status": "PASS", "evidence": ["gateway/server.js:242"], "note": "single acceptUpgrade call; no second 101 written"}
+{"id": "C16-035", "status": "PASS", "evidence": ["gateway/ws.js:18"], "note": "acceptKey() computed once via crypto sha1"}
+{"id": "C16-036", "status": "PASS", "evidence": ["gateway/ws.js:318-321"], "note": "acceptUpgrade writes only headers, no HTTP body after upgrade"}
+{"id": "C16-037", "status": "NOT_APPLICABLE", "evidence": [], "note": "HttpListenerWebSocketContext is a .NET type not used (D-001)"}
+{"id": "C16-038", "status": "PASS", "evidence": ["gateway/server.js:245"], "note": "new WsConnection(socket,...) extracts/wraps the usable connection"}
+{"id": "C16-039", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "hello->open->opened->output vertical slice proves usability before processing"}
+{"id": "C16-040", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:248-249"], "note": "log.info('ws.accepted', {conn,tenant,sub,origin}) has no secret headers [downgraded: RECORD item without a written record]"}
+{"id": "C16-041", "status": "PASS", "evidence": ["gateway/server.js:245-247"], "note": "PROTOCOL constant is the only negotiated subprotocol, carried through Connection"}
+{"id": "C16-042", "status": "PASS", "evidence": ["gateway/server.js:247", "gateway/auth.js"], "note": "principal object (identity) passed to Connection, distinct from raw bearer/ticket"}
+{"id": "C16-043", "status": "PASS", "evidence": ["gateway/server.js:248-249"], "note": "conn.id used as the safe correlation id in logs"}
+{"id": "C16-044", "status": "PASS", "evidence": ["gateway/server.js:247"], "note": "origin and remote address preserved as non-sensitive metadata"}
+{"id": "C16-045", "status": "PASS", "evidence": ["gateway/server.js:206-243"], "note": "only specific fields (bearer, ticket, origin) extracted; full header object not retained"}
+{"id": "C16-046", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:247"], "note": "origin is passed to Connection but no explicit documented decision on whether the worker needs it"}
+{"id": "C16-047", "status": "OPEN", "evidence": [], "note": "no explicit decision on whether original session-lookup info is needed by the worker"}
+{"id": "C16-048", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:206-243"], "note": "identity/capacity/origin checks all precede Connection/worker creation [downgraded: VERIFY item without a test or measurement citation]"}
+{"id": "C16-049", "status": "PASS", "evidence": ["gateway/server.js:242-247"], "note": "Connection only constructed after a successful synchronous accept; no null socket path"}
+{"id": "C16-050", "status": "OPEN", "evidence": [], "note": "no document defines the exact handoff object shape/schema"}
+{"id": "C16-051", "status": "PASS", "evidence": ["gateway/server.js:177", "gateway/ws.js:324-329"], "note": "401 rejectUpgrade completes before any upgrade on auth failure"}
+{"id": "C16-052", "status": "PASS", "evidence": ["gateway/server.js:212"], "note": "404 reject for unsupported route, no upgrade attempted"}
+{"id": "C16-053", "status": "PASS", "evidence": ["gateway/ws.js:32"], "note": "400 'subprotocol' when no acceptable subprotocol is offered"}
+{"id": "C16-054", "status": "PASS", "evidence": ["gateway/server.js:197"], "note": "socket.on('error', ()=>{}) registered at start of upgrade handling"}
+{"id": "C16-055", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:196-251"], "note": "reject paths return early on sync failures; no top-level try/catch wraps the whole upgrade handler"}
+{"id": "C16-056", "status": "PASS", "evidence": ["gateway/server.js:206-244"], "note": "no resources are allocated before a successful accept, so there is nothing to leak on failure"}
+{"id": "C16-057", "status": "PASS", "evidence": ["gateway/ws.js:324-329"], "note": "rejectUpgrade sets a single cleanup timeout, one path only"}
+{"id": "C16-058", "status": "PASS", "evidence": ["gateway/ws.js:324-329"], "note": "rejection body is a fixed {error:reason} string, no stack trace"}
+{"id": "C16-059", "status": "PASS", "evidence": ["gateway/server.js:158-178"], "note": "protocol failures (400/404/426) are distinct status codes from credential failures (401/403)"}
+{"id": "C16-060", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js:10-16"], "note": "several failed-handshake variants and a successful one are tested, but not explicitly sequenced as fail-then-succeed"}
+{"id": "C16-061", "status": "PASS", "evidence": ["gateway/server.js:196-251"], "note": "upgrade handler performs only bounded synchronous checks before accept"}
+{"id": "C16-062", "status": "PASS", "evidence": ["gateway/connection.js"], "note": "worker is spawned promptly on session.open after upgrade"}
+{"id": "C16-063", "status": "PASS", "evidence": ["gateway/server.js:65-71"], "note": "registry.reserve()/activate() coordinate admission with worker registration"}
+{"id": "C16-064", "status": "PASS", "evidence": ["gateway/server.js:285-330"], "note": "shutdown() races task completion via registry.onEmpty and a hard timer"}
+{"id": "C16-065", "status": "PASS", "evidence": ["gateway/server.js:231-233"], "note": "capacity re-checked synchronously immediately before accept"}
+{"id": "C16-066", "status": "OPEN", "evidence": [], "note": "no explicit design for cleanup if an upgraded socket cannot be handed to a worker"}
+{"id": "C16-067", "status": "PASS", "evidence": ["gateway/server.js:247-248"], "note": "exactly one Connection created and added to registry per accepted socket"}
+{"id": "C16-068", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RESOURCE_MODEL.md"], "note": "W3 measures 8 concurrent session opens but is a benchmark, not a correctness test"}
+{"id": "C16-069", "status": "OPEN", "evidence": [], "note": "no dedicated test mixes successful and rejected upgrades concurrently"}
+{"id": "C16-070", "status": "IN_PROGRESS", "evidence": ["tests/load/bench.js", "docs/vws200/RESOURCE_MODEL.md"], "note": "bench.js (W3) can measure concurrent-open latency but no v2 e/ result is recorded; only historical v1 numbers exist"}
+{"id": "C16-071", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:11"], "note": "101 verified with a raw-socket peer"}
+{"id": "C16-072", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:11"], "note": "Sec-WebSocket-Protocol header asserted"}
+{"id": "C16-073", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js:12-15"], "note": "wrong subprotocol/version/key/path all rejected without upgrade"}
+{"id": "C16-074", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "malformed handshake cases tested in isolation"}
+{"id": "C16-075", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "GET /ws/terminal returns 426 without upgrading"}
+{"id": "C16-076", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "no TLS edge / public WSS available to test against"}
+{"id": "C16-077", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "loopback raw-socket test is the direct development upgrade"}
+{"id": "C16-078", "status": "PASS", "evidence": ["tests/gateway/e2e.test.js"], "note": "hello->open->input->output proves immediate bidirectional messaging"}
+{"id": "C16-079", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "close-handshake tests cover orderly closure right after upgrade"}
+{"id": "C16-080", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/security/authz.test.js"], "note": "protocol conformance and app-authz live in separate test files"}
+{"id": "C16-081", "status": "PASS", "evidence": ["gateway/server.js:198"], "note": "counters.upgrades++ tracks every upgrade attempt"}
+{"id": "C16-082", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:65-71"], "note": "counters.sessions counts opened sessions, but there is no counter distinct for successful upgrades vs sessions"}
+{"id": "C16-083", "status": "PASS", "evidence": ["gateway/server.js:207"], "note": "counters.rejected++ plus log.info('ws.rejected',{status,reason}) categorizes rejections"}
+{"id": "C16-084", "status": "IN_PROGRESS", "evidence": ["gateway/server.js:207"], "note": "rejections logged by reason string; no distinct exception-category taxonomy since reject path rarely throws"}
+{"id": "C16-085", "status": "OPEN", "evidence": [], "note": "no metric captures time spent waiting for upgrade completion"}
+{"id": "C16-086", "status": "PASS", "evidence": ["gateway/server.js:248-249"], "note": "conn.id links ws.accepted to later connection/worker lifecycle log lines"}
+{"id": "C16-087", "status": "PASS", "evidence": ["gateway/log.js:10"], "note": "logger drops token/cookie/secret/authorization/ticket fields"}
+{"id": "C16-088", "status": "PASS", "evidence": ["gateway/log.js:16"], "note": "safePath strips the query string entirely from logged paths"}
+{"id": "C16-089", "status": "IN_PROGRESS", "evidence": ["docs/vws200/VALIDATION.md"], "note": "environment records Node v22.22.2 generally, not tied to specific compatibility failures"}
+{"id": "C16-090", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js", "tests/security/authz.test.js"], "note": "separate test suites implicitly isolate handshake vs post-handshake failures; no written runbook"}
+{"id": "C16-091", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "pre-upgrade decision sequence published"}
+{"id": "C16-092", "status": "NOT_APPLICABLE", "evidence": [], "note": "'selected overload signature' is a .NET/C# concept; no overload exists in the Node implementation (D-001)"}
+{"id": "C16-093", "status": "IN_PROGRESS", "evidence": ["docs/PROTOCOL_V2.md"], "note": "connection.js state machine documented but no explicit handoff-object-shape contract published"}
+{"id": "C16-094", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js", "docs/vws200/VALIDATION.md"], "note": "target-runtime (Node) handshake evidence linked"}
+{"id": "C16-095", "status": "BLOCKED", "evidence": ["docs/vws200/VALIDATION.md"], "note": "no public-edge upgrade evidence exists; WAN/TLS edge unavailable"}
+{"id": "C16-096", "status": "PASS", "evidence": ["tests/security/authz.test.js"], "note": "origin and credential rejection tests linked"}
+{"id": "C16-097", "status": "IN_PROGRESS", "evidence": ["docs/vws200/RESOURCE_MODEL.md"], "note": "concurrent-upgrade benchmark exists; no dedicated handoff-failure test linked"}
+{"id": "C16-098", "status": "PASS", "evidence": ["docs/vws200/RELEASE.md", "docs/vws200/VALIDATION.md"], "note": "known/observed compatibility limitations documented"}
+{"id": "C16-099", "status": "OPEN", "evidence": [], "note": "unresolved protocol assumptions not compiled into a record"}
+{"id": "C16-100", "status": "OPEN", "evidence": [], "note": "no formal approval record demonstrating upgrade and rejection paths were both signed off"}

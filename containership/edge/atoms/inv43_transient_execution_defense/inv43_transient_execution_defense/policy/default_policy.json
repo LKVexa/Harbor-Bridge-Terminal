@@ -1,0 +1,86 @@
+{
+  "baseline": [
+    "spectre_v2",
+    "l1tf",
+    "mds",
+    "mmio_stale_data"
+  ],
+  "digest": "f1bdee8878cf9e3251550ab5ebc42f0d7d31331a9002bcfbc7d262ae46d63301",
+  "isolation_tiers": {
+    "container": {
+      "description": "shared kernel, namespaces",
+      "extra_mitigations": [
+        "spectre_v1"
+      ]
+    },
+    "dedicated-host": {
+      "description": "single tenant per host",
+      "hardware_boundary_dedicated": true
+    },
+    "microvm": {
+      "description": "hypervisor boundary",
+      "extra_mitigations": [
+        "itlb_multihit",
+        "srbds"
+      ]
+    },
+    "process": {
+      "description": "shared kernel, process boundary",
+      "extra_mitigations": [
+        "spectre_v1",
+        "spec_store_bypass"
+      ]
+    }
+  },
+  "legacy_cpu": {
+    "lineages": {
+      "arm64": {
+        "note": "arm64 lineage"
+      },
+      "x86-eol-no-microcode": {
+        "no_cotenancy": true,
+        "note": "INV-34: vendor stopped microcode; cross-tenant forbidden"
+      },
+      "x86-legacy-inv34": {
+        "extra_mitigations": [
+          "tsx_async_abort",
+          "itlb_multihit"
+        ],
+        "note": "INV-34 legacy path: stricter set"
+      },
+      "x86-modern": {
+        "note": "current microcode lineage"
+      }
+    },
+    "unknown_lineage": "deny"
+  },
+  "schema": "INV43_POLICY/1",
+  "status": "PROPOSED \u2014 not yet approved by an accountable policy owner (see OWNERS.json)",
+  "trust_classes": {
+    "platform-internal": {
+      "description": "first-party services",
+      "extra_mitigations": []
+    },
+    "public-untrusted": {
+      "description": "arbitrary third-party code",
+      "extra_mitigations": [
+        "spec_store_bypass",
+        "retbleed",
+        "gather_data_sampling",
+        "reg_file_data_sampling"
+      ]
+    },
+    "regulated-secret": {
+      "description": "key material / regulated data: never co-located across tenants",
+      "extra_mitigations": [],
+      "no_cotenancy": true
+    },
+    "tenant-standard": {
+      "description": "customer workloads under contract",
+      "extra_mitigations": [
+        "retbleed"
+      ]
+    }
+  },
+  "version": "2026.09.22-1"
+}

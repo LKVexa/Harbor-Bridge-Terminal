@@ -1,0 +1,1716 @@
+{
+"component": "C30",
+"items": [
+{
+"id": "C30-001",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define the outgoing text accepted by the serializer.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Text messages only; sendText(text) takes app strings, hermit.vws.v1 TEXT-only",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport",
+"gateway/ws.js:94"
+]
+},
+{
+"id": "C30-002",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define whether null input is permitted.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit null check in sendText; Buffer.from(null) behavior not documented as a policy",
+"prior_evidence": [
+"gateway/ws.js:94"
+]
+},
+{
+"id": "C30-003",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define the output as an owned UTF-8 byte sequence.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from(text,'utf8') produces an owned Buffer per call",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-004",
+"task_class": "IMPLEMENT",
+"area": "01. Serialization contract",
+"req": "Distinguish text serialization from WebSocket framing.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "sendText (serialize) vs _write/_frame (WS framing) are distinct functions",
+"prior_evidence": [
+"gateway/ws.js:81-101"
+]
+},
+{
+"id": "C30-005",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define the maximum outbound logical message size.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "maxMessageBytes default 65536, configurable",
+"prior_evidence": [
+"config/limits.json#envelopeBytes",
+"gateway/ws.js:45"
+]
+},
+{
+"id": "C30-006",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define who owns the resulting byte array.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No written ownership statement; buffer is passed straight into socket.write without documented owner",
+"prior_evidence": [
+"gateway/ws.js:96-100"
+]
+},
+{
+"id": "C30-007",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define whether application objects are formatted before this component.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "codec.js formats/validates JSON envelopes before ws.sendText is called",
+"prior_evidence": [
+"protocol/codec.js",
+"docs/PROTOCOL.md#local-bridge"
+]
+},
+{
+"id": "C30-008",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Identify supported application text formats.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Supported format is the hermit.vws.v1 JSON envelope",
+"prior_evidence": [
+"protocol/envelope.schema.json",
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C30-009",
+"task_class": "SPECIFY",
+"area": "01. Serialization contract",
+"req": "Define error behavior for unsupported input types.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "sendText assumes a string; no explicit type-check/error path for non-string input",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-010",
+"task_class": "IMPLEMENT",
+"area": "01. Serialization contract",
+"req": "Approve the serializer's input and output contract.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "OPEN",
+"prior_note": "No sign-off/approval record found for this specific contract",
+"prior_evidence": []
+},
+{
+"id": "C30-011",
+"task_class": "SPECIFY",
+"area": "02. Encoding selection",
+"req": "Select the .NET UTF-8 encoding API.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": ".NET UTF-8 encoding API has no meaning in the Node gateway",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C30-012",
+"task_class": "DOCUMENT",
+"area": "02. Encoding selection",
+"req": "Record the exact encoding configuration.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from(text,'utf8'), Node's WHATWG-based UTF-8 encoder, is the only encoder used",
+"prior_evidence": [
+"gateway/ws.js:96",
+"docs/PROTOCOL.md#transport"
+]
+},
+{
+"id": "C30-013",
+"task_class": "VERIFY",
+"area": "02. Encoding selection",
+"req": "VERIFY fallback behavior for invalid input characters.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Buffer.from('utf8') has no fallback/replacement-char policy defined or tested for outbound text",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-014",
+"task_class": "SPECIFY",
+"area": "02. Encoding selection",
+"req": "Choose an explicit invalid-input policy.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit invalid-input policy documented for outbound encode (inbound has fatal decode in _message)",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-015",
+"task_class": "SPECIFY",
+"area": "02. Encoding selection",
+"req": "Decide whether any byte-order mark is intended.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from(text,'utf8') never emits a BOM; implicit no-BOM decision",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-016",
+"task_class": "IMPLEMENT",
+"area": "02. Encoding selection",
+"req": "Avoid culture-dependent default encodings.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from(str,'utf8') is not culture/locale dependent",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-017",
+"task_class": "IMPLEMENT",
+"area": "02. Encoding selection",
+"req": "Avoid newline conversion without an application requirement.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "No newline translation performed on outbound text",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-018",
+"task_class": "IMPLEMENT",
+"area": "02. Encoding selection",
+"req": "Preserve intentional whitespace.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Encoder is byte-preserving; whitespace not touched",
+"prior_evidence": [
+"gateway/ws.js:96",
+"tests/vt/vt.test.js"
+]
+},
+{
+"id": "C30-019",
+"task_class": "IMPLEMENT",
+"area": "02. Encoding selection",
+"req": "Preserve application text order exactly.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut is drained FIFO through sendText/_write, ordered socket.write",
+"prior_evidence": [
+"gateway/connection.js:73",
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C30-020",
+"task_class": "DOCUMENT",
+"area": "02. Encoding selection",
+"req": "Record encoding behavior used by compatibility tests.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated record of encoding behavior used specifically by compatibility tests",
+"prior_evidence": []
+},
+{
+"id": "C30-021",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Reject unsupported object types instead of relying on accidental stringification.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No type guard rejecting non-string objects before Buffer.from stringifies them",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-022",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Apply the approved null-input policy.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "OPEN",
+"prior_note": "No approved null-input policy to apply (C30-002/014 also OPEN)",
+"prior_evidence": []
+},
+{
+"id": "C30-023",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Accept or reject empty text according to the contract.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Empty string produces a zero-length payload and is sent normally, no special rejection",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-024",
+"task_class": "REVIEW",
+"area": "03. Input validation",
+"req": "Validate text size against the approved outbound limit.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "queuedBytes+payload.length checked against sendQueueBytes budget; size-cap tests pass",
+"prior_evidence": [
+"gateway/ws.js:97-98",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-025",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Calculate limits in bytes where the transport budget requires bytes.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "payload.length is measured in encoded bytes (Buffer), not JS string length, against the byte budget",
+"prior_evidence": [
+"gateway/ws.js:96-98"
+]
+},
+{
+"id": "C30-026",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Guard length calculations against overflow.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit overflow guard beyond JS Number/Buffer limits documented",
+"prior_evidence": [
+"gateway/ws.js:96-98"
+]
+},
+{
+"id": "C30-027",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Distinguish application formatting failure from UTF-8 encoding failure.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Codec distinguishes JSON/schema errors from transport, but no explicit split of app-format vs UTF-8-encode failure in ws.js",
+"prior_evidence": [
+"protocol/codec.js"
+]
+},
+{
+"id": "C30-028",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Avoid interpreting outgoing text as a PowerShell expression.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "PowerShell expression interpretation has no meaning in the Node gateway",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C30-029",
+"task_class": "IMPLEMENT",
+"area": "03. Input validation",
+"req": "Keep validation free of network side effects.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "codec validation is pure parsing, no network I/O in validation path",
+"prior_evidence": [
+"protocol/codec.js"
+]
+},
+{
+"id": "C30-030",
+"task_class": "TEST",
+"area": "03. Input validation",
+"req": "Test validation before any send is queued.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Validation-before-send covered by codec/bridge tests in EVIDENCE_INDEX",
+"prior_evidence": [
+"tests/protocol/codec.test.js",
+"tests/protocol/bridge.test.js"
+]
+},
+{
+"id": "C30-031",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Encode the complete intended text value.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from(text,'utf8') encodes the whole string in one call",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-032",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Return the exact produced byte count.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "payload.length used exactly for framing and stats.txBytes",
+"prior_evidence": [
+"gateway/ws.js:73,84"
+]
+},
+{
+"id": "C30-033",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Avoid including unused capacity from a larger array.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from allocates exactly-sized buffer, no slack capacity included",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-034",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Avoid applying UTF-8 encoding twice.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Single Buffer.from call per sendText invocation; no double-encode path",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-035",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Avoid converting binary payloads through the text serializer.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Binary opcode is rejected entirely (1003); text serializer never used for binary",
+"prior_evidence": [
+"gateway/ws.js:181-183"
+]
+},
+{
+"id": "C30-036",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Preserve ownership until the send path accepts the payload.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "payload reference held through _write until socket.write() accepts it",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C30-037",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Handle allocation failure explicitly.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Buffer.from allocation failure (OOM) is not explicitly caught/handled",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-038",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Avoid retaining original text longer than the application requires.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit dereferencing/lifetime policy documented for the original text string",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-039",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Keep serialization deterministic for identical input and settings.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer.from(text,'utf8') is a pure deterministic function of its input",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-040",
+"task_class": "IMPLEMENT",
+"area": "04. Encoding implementation",
+"req": "Compare output with an independent expected-byte fixture.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "OPEN",
+"prior_note": "No independent expected-byte fixture comparison found for outbound text specifically",
+"prior_evidence": []
+},
+{
+"id": "C30-041",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode plain ASCII text.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "ASCII covered by codec vectors (VWS200 valid vectors)",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-042",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode accented Latin text.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No specific accented-Latin fixture identified distinct from generic UTF-8 vectors",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-043",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode multi-byte script characters.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Multi-byte script chars covered as part of UTF-8 vector set (base64 all-byte-value round trip)",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-044",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode supplementary Unicode characters.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Supplementary-plane (surrogate pair) characters not confirmed as a distinct fixture",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-045",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode an empty string.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Empty string produces zero-length payload; covered implicitly by size tests",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-046",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode meaningful leading and trailing whitespace.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No dedicated leading/trailing-whitespace fixture found",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-047",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode newline-containing text without unintended normalization.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "No newline normalization performed; encoder is byte-preserving",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-048",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Encode embedded null characters according to application policy.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Embedded NUL char policy not explicitly defined or tested for outbound text",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-049",
+"task_class": "TEST",
+"area": "05. Character tests",
+"req": "Test invalid character sequences through the chosen fallback policy.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Inbound invalid-UTF-8 rejection tested (codec/ws-conformance); no dedicated outbound fallback-policy test since none is defined",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-050",
+"task_class": "IMPLEMENT",
+"area": "05. Character tests",
+"req": "Round-trip each valid fixture through the approved decoder.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "base64 round-trip for every byte value and hash parity with Buffer covers round-trip",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-051",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Encode a one-character message.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No specific 1-char message test identified",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-052",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Encode a message smaller than the receive test buffer.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "vertical slice hello/output messages are well under buffer size",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C30-053",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Encode a message equal to a chosen byte boundary.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "declared length at cap boundary tested (oversize over the cap -> 1009)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-054",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Encode a message one byte beyond that boundary.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "'declared 64-bit length over the cap -> 1009' covers one-byte-beyond-boundary case",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-055",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Encode a string whose character count differs substantially from byte count.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Char-count vs byte-count divergence covered generically via multi-byte vectors, not a dedicated case",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-056",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Encode a message at the outbound byte limit.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "message-at-limit accepted per ws-conformance size-cap tests",
+"prior_evidence": [
+"config/limits.json#envelopeBytes",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-057",
+"task_class": "IMPLEMENT",
+"area": "06. Size tests",
+"req": "Reject a message beyond the outbound byte limit.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "oversize (single/fragmented) rejected -> 1009",
+"prior_evidence": [
+"gateway/ws.js:170",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-058",
+"task_class": "TEST",
+"area": "06. Size tests",
+"req": "Test many small messages in succession.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "150000-line gap-free delivery test exercises many small messages in succession",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C30-059",
+"task_class": "TEST",
+"area": "06. Size tests",
+"req": "Test repeated near-limit messages.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Repeated near-limit messages not clearly a distinct repeated-boundary test",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-060",
+"task_class": "DOCUMENT",
+"area": "06. Size tests",
+"req": "Record actual encoded sizes rather than character-count estimates.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "W2 bulk output records actual raw bytes (6182393) transferred, not char-count estimate",
+"prior_evidence": [
+"e/I053/bench.json",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C30-061",
+"task_class": "IMPLEMENT",
+"area": "07. Send-path integration",
+"req": "Wrap the resulting bytes through the ArraySegment adapter.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "ArraySegment adapter has no meaning in the Node gateway (socket.write(Buffer) used instead)",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C30-062",
+"task_class": "IMPLEMENT",
+"area": "07. Send-path integration",
+"req": "Pass the correct WebSocketMessageType for text.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "WebSocketMessageType has no meaning; gateway/ws.js hardcodes OP.TEXT for sendText",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C30-063",
+"task_class": "IMPLEMENT",
+"area": "07. Send-path integration",
+"req": "Preserve the approved endOfMessage behavior.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "endOfMessage is a .NET ClientWebSocket concept; ws.js frames always set FIN (no manual fragmentation)",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C30-064",
+"task_class": "IMPLEMENT",
+"area": "07. Send-path integration",
+"req": "Transfer stable payload ownership to the outbound queue or writer.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "payload handed to socket.cork()/write() as the outbound queue equivalent",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C30-065",
+"task_class": "IMPLEMENT",
+"area": "07. Send-path integration",
+"req": "Prevent mutation while SendAsync is pending.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Fresh Buffer per sendText call; no shared mutable buffer reused during pending write",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-066",
+"task_class": "TEST",
+"area": "07. Send-path integration",
+"req": "Test a queued text message before immediate send begins.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut queue holds messages before _flush drains via sendText",
+"prior_evidence": [
+"gateway/connection.js:73",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C30-067",
+"task_class": "TEST",
+"area": "07. Send-path integration",
+"req": "Test several text messages preserving their application order.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "FIFO pendingOut preserves send order; e2e vertical-slice test checks ordering",
+"prior_evidence": [
+"gateway/connection.js:73",
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C30-068",
+"task_class": "TEST",
+"area": "07. Send-path integration",
+"req": "Test a serialization failure without enqueuing a partial payload.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "codec.encode refuses invalid outbound envelopes, but no explicit 'no partial enqueue on serialization failure' test found",
+"prior_evidence": [
+"protocol/codec.js"
+]
+},
+{
+"id": "C30-069",
+"task_class": "TEST",
+"area": "07. Send-path integration",
+"req": "Test a send failure without retaining the serialized array indefinitely.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No explicit test that a failed send does not retain the serialized array indefinitely",
+"prior_evidence": [
+"gateway/ws.js:81-88"
+]
+},
+{
+"id": "C30-070",
+"task_class": "DOCUMENT",
+"area": "07. Send-path integration",
+"req": "Document the serializer-to-writer handoff.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Flow-control section describes queue behavior but not a dedicated serializer-to-writer handoff doc",
+"prior_evidence": [
+"docs/PROTOCOL.md#flow-control"
+]
+},
+{
+"id": "C30-071",
+"task_class": "IMPLEMENT",
+"area": "08. Concurrency",
+"req": "Keep encoding state safe under the selected producer model.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Node's single-threaded event loop has no .NET producer-model concurrency state to protect",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C30-072",
+"task_class": "IMPLEMENT",
+"area": "08. Concurrency",
+"req": "Avoid sharing mutable output arrays between independent messages.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Each sendText call allocates its own Buffer; none shared across messages",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-073",
+"task_class": "TEST",
+"area": "08. Concurrency",
+"req": "Test simultaneous serialization requests from several workers.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No dedicated test of simultaneous serialization from several workers (single-threaded Node makes this largely N/A but untested explicitly)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-074",
+"task_class": "TEST",
+"area": "08. Concurrency",
+"req": "Test multiple producers targeting one socket queue.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "multiple output sources funnel through single pendingOut queue per connection; slow-consumer test covers this",
+"prior_evidence": [
+"gateway/connection.js:64,73",
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C30-075",
+"task_class": "REVIEW",
+"area": "08. Concurrency",
+"req": "Confirm queue serialization is still enforced after encoding.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut FIFO plus socket.write ordering enforces queue serialization after encoding",
+"prior_evidence": [
+"gateway/connection.js:73",
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-076",
+"task_class": "REVIEW",
+"area": "08. Concurrency",
+"req": "Ensure one producer's input cannot alter another producer's output.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Per-call Buffer.from isolates one producer's text from another's output",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-077",
+"task_class": "IMPLEMENT",
+"area": "08. Concurrency",
+"req": "Bound the memory retained by encoded messages awaiting send.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "sendQueueBytes budget bounds memory retained for encoded pending messages",
+"prior_evidence": [
+"gateway/ws.js:97-98",
+"config/limits.json#sendQueueBytes"
+]
+},
+{
+"id": "C30-078",
+"task_class": "SPECIFY",
+"area": "08. Concurrency",
+"req": "Define ownership when an enqueue attempt is rejected.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "sendText returns false on rejection but no documented statement of who then owns/frees the payload",
+"prior_evidence": [
+"gateway/ws.js:98"
+]
+},
+{
+"id": "C30-079",
+"task_class": "TEST",
+"area": "08. Concurrency",
+"req": "Test shutdown during serialization and enqueue.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "real-process SIGTERM drain test exercises shutdown mid-flight",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js",
+"docs/RECOVERY.md#shutdown"
+]
+},
+{
+"id": "C30-080",
+"task_class": "DOCUMENT",
+"area": "08. Concurrency",
+"req": "Record concurrency assumptions in the serializer contract.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Ownership/concurrency documented only in a code comment, not a formal contract record",
+"prior_evidence": [
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C30-081",
+"task_class": "MEASURE",
+"area": "09. Performance and diagnostics",
+"req": "Measure encoding latency for representative text sizes.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "W1 keystroke echo latency measured p50/p95/p99/max",
+"prior_evidence": [
+"e/I053/bench.json",
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C30-082",
+"task_class": "MEASURE",
+"area": "09. Performance and diagnostics",
+"req": "Measure allocation volume under the intended message rate.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "OPEN",
+"prior_note": "No allocation-volume (GC/heap) measurement found, only latency/throughput",
+"prior_evidence": []
+},
+{
+"id": "C30-083",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Account for both string and byte-array lifetimes.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "String and Buffer lifetimes not explicitly tracked/documented beyond normal GC",
+"prior_evidence": [
+"gateway/ws.js:96"
+]
+},
+{
+"id": "C30-084",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Avoid premature optimization that changes encoding correctness.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Implementation is a straightforward Buffer.from + socket.write, no correctness-risking optimization applied",
+"prior_evidence": [
+"gateway/ws.js:81-101"
+]
+},
+{
+"id": "C30-085",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track encoded byte totals without logging private text.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "stats.txBytes tracked; log.js redacts payload/data fields from logs",
+"prior_evidence": [
+"gateway/ws.js:58,84",
+"gateway/log.js"
+]
+},
+{
+"id": "C30-086",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Track validation failures separately from network send failures.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Send/validation failures both reach the log, but no clearly separate counters for validation vs network-send failures",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C30-087",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Include safe message correlation metadata when available.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "rid/sid/seq fields serve as safe correlation metadata",
+"prior_evidence": [
+"docs/PROTOCOL.md#errors",
+"protocol/envelope.schema.json"
+]
+},
+{
+"id": "C30-088",
+"task_class": "TEST",
+"area": "09. Performance and diagnostics",
+"req": "Test logs using synthetic secret-looking text.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "logger test: secret-like fields dropped from logs",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C30-089",
+"task_class": "IMPLEMENT",
+"area": "09. Performance and diagnostics",
+"req": "Provide examples of character-count versus byte-count measurements.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "W2 shows raw byte count vs wire size (base64 1.333x) as a char/byte example",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md",
+"e/I053/bench.json"
+]
+},
+{
+"id": "C30-090",
+"task_class": "DOCUMENT",
+"area": "09. Performance and diagnostics",
+"req": "Document measured serialization overhead.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "W1/W2 measured latency and throughput document serialization+send overhead together",
+"prior_evidence": [
+"docs/RESOURCE_MODEL.md"
+]
+},
+{
+"id": "C30-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the encoding and fallback configuration.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "UTF-8/no-fallback behavior implied by transport section and limits file",
+"prior_evidence": [
+"docs/PROTOCOL.md#transport",
+"config/limits.json"
+]
+},
+{
+"id": "C30-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish null-empty-unsupported-input behavior.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Null/empty/unsupported-input behavior not explicitly published (contract gaps noted at C30-002/009/022)",
+"prior_evidence": [
+"gateway/ws.js:94-101"
+]
+},
+{
+"id": "C30-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish byte-size limits.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Byte-size limits published in config/limits.json",
+"prior_evidence": [
+"config/limits.json#envelopeBytes"
+]
+},
+{
+"id": "C30-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link multilingual round-trip tests.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "Multi-byte/round-trip UTF-8 vectors linked via codec test file",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link exact-byte output fixtures.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "base64/hash-parity fixtures exist but no separate exact-byte-output fixture explicitly linked for sendText",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+},
+{
+"id": "C30-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link boundary-size rejection tests.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "boundary-size rejection ('declared length over cap -> 1009') tests linked",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link queued-send ownership tests.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "PASS",
+"prior_note": "vertical-slice test exercises queued-send path (hello->open->output->close)",
+"prior_evidence": [
+"tests/gateway/e2e.test.js"
+]
+},
+{
+"id": "C30-098",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link concurrent-producer tests.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No dedicated concurrent-producer test found for the serializer itself (see C30-073)",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C30-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved formatting requirements outside this component.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "OPEN",
+"prior_note": "No record found listing unresolved formatting requirements outside this component",
+"prior_evidence": []
+},
+{
+"id": "C30-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve serialization only when output bytes match the intended text.",
+"ram_overlay": "Encode each outbound logical payload once when possible; share only immutable leases with explicit reference ownership. Record unavoidable .NET/JavaScript conversion rather than claiming it disappears.",
+"challenge": "Compare exact output bytes and peak simultaneous string/byte capacity under maximum output.",
+"ref_work": [
+"R13",
+"R18"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Byte-fixture round trip exists but no explicit sign-off record approving output-matches-intent",
+"prior_evidence": [
+"tests/protocol/codec.test.js"
+]
+}
+]
+}

@@ -1,0 +1,428 @@
+[
+ {
+  "name": "ctx ok",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": []
+  },
+  "valid": true
+ },
+ {
+  "name": "ctx with deadline",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": [],
+   "deadline_ms": 10,
+   "idempotency_key": "k1"
+  },
+  "valid": true
+ },
+ {
+  "name": "ctx future field rejected",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": [],
+   "future": 1
+  },
+  "valid": false
+ },
+ {
+  "name": "ctx missing tenant",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "subject": "svc-a",
+   "path": []
+  },
+  "valid": false
+ },
+ {
+  "name": "ctx bad trace",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "a b",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": []
+  },
+  "valid": false
+ },
+ {
+  "name": "ctx path too long",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": [
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p",
+    "p"
+   ]
+  },
+  "valid": false
+ },
+ {
+  "name": "ctx wrong major",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/2",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": []
+  },
+  "valid": false
+ },
+ {
+  "name": "ctx negative deadline",
+  "schema": "call_context",
+  "instance": {
+   "schema": "PK_CALL_CONTEXT/1",
+   "trace_id": "t-1",
+   "operation": "invoke",
+   "tenant": "acme",
+   "subject": "svc-a",
+   "path": [],
+   "deadline_ms": -1
+  },
+  "valid": false
+ },
+ {
+  "name": "req ok",
+  "schema": "local_chain_request",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "callee": "svc",
+   "context": {
+    "schema": "PK_CALL_CONTEXT/1",
+    "trace_id": "t-1",
+    "operation": "invoke",
+    "tenant": "acme",
+    "subject": "svc-a",
+    "path": []
+   },
+   "payload": {
+    "x": 1
+   }
+  },
+  "valid": true
+ },
+ {
+  "name": "req bad callee",
+  "schema": "local_chain_request",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "callee": "../etc",
+   "context": {
+    "schema": "PK_CALL_CONTEXT/1",
+    "trace_id": "t-1",
+    "operation": "invoke",
+    "tenant": "acme",
+    "subject": "svc-a",
+    "path": []
+   },
+   "payload": {
+    "x": 1
+   }
+  },
+  "valid": false
+ },
+ {
+  "name": "req missing payload",
+  "schema": "local_chain_request",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "callee": "svc",
+   "context": {
+    "schema": "PK_CALL_CONTEXT/1",
+    "trace_id": "t-1",
+    "operation": "invoke",
+    "tenant": "acme",
+    "subject": "svc-a",
+    "path": []
+   }
+  },
+  "valid": false
+ },
+ {
+  "name": "req nested ctx invalid",
+  "schema": "local_chain_request",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "callee": "svc",
+   "context": {
+    "schema": "PK_CALL_CONTEXT/1",
+    "trace_id": "t-1",
+    "operation": "invoke",
+    "tenant": "",
+    "subject": "svc-a",
+    "path": []
+   },
+   "payload": {
+    "x": 1
+   }
+  },
+  "valid": false
+ },
+ {
+  "name": "resp ok",
+  "schema": "local_chain_response",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "ok": true,
+   "route": "local",
+   "result": [
+    1
+   ]
+  },
+  "valid": true
+ },
+ {
+  "name": "resp err ok",
+  "schema": "local_chain_response",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "ok": false,
+   "route": "refused",
+   "error": {
+    "schema": "PK_CHAIN_ERROR/1",
+    "code": "PK_CHAIN_CYCLE",
+    "category": "bounds",
+    "retriable": false,
+    "origin": "chain",
+    "message": "x",
+    "correlation_id": null,
+    "details": {}
+   }
+  },
+  "valid": true
+ },
+ {
+  "name": "resp bad route",
+  "schema": "local_chain_response",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "ok": true,
+   "route": "teleport"
+  },
+  "valid": false
+ },
+ {
+  "name": "resp err bad category",
+  "schema": "local_chain_response",
+  "instance": {
+   "schema": "PK_LOCAL_CHAIN/1",
+   "ok": false,
+   "route": "refused",
+   "error": {
+    "schema": "PK_CHAIN_ERROR/1",
+    "code": "PK_CHAIN_CYCLE",
+    "category": "magic",
+    "retriable": false,
+    "origin": "chain",
+    "message": "x",
+    "correlation_id": null,
+    "details": {}
+   }
+  },
+  "valid": false
+ },
+ {
+  "name": "res ok",
+  "schema": "residency",
+  "instance": {
+   "schema": "PK_RESIDENCY/1",
+   "host": "h1",
+   "revision": 3,
+   "placements": [
+    {
+     "callee": "a",
+     "tenant": "t",
+     "epoch": 0,
+     "source": "inv10"
+    }
+   ]
+  },
+  "valid": true
+ },
+ {
+  "name": "res negative epoch",
+  "schema": "residency",
+  "instance": {
+   "schema": "PK_RESIDENCY/1",
+   "host": "h1",
+   "revision": 3,
+   "placements": [
+    {
+     "callee": "a",
+     "tenant": "t",
+     "epoch": -1,
+     "source": "s"
+    }
+   ]
+  },
+  "valid": false
+ },
+ {
+  "name": "depth ok",
+  "schema": "chain_depth",
+  "instance": {
+   "schema": "PK_CHAIN_DEPTH/1",
+   "depth": 2,
+   "max_depth": 4,
+   "path": [
+    "a",
+    "b"
+   ]
+  },
+  "valid": true
+ },
+ {
+  "name": "depth zero bound",
+  "schema": "chain_depth",
+  "instance": {
+   "schema": "PK_CHAIN_DEPTH/1",
+   "depth": 0,
+   "max_depth": 0,
+   "path": []
+  },
+  "valid": false
+ },
+ {
+  "name": "cap ok",
+  "schema": "capability_decision",
+  "instance": {
+   "schema": "PK_CAPABILITY/1",
+   "allow": true,
+   "policy_revision": 1,
+   "reason": "g",
+   "correlation_id": "dc-1"
+  },
+  "valid": true
+ },
+ {
+  "name": "cap allow string",
+  "schema": "capability_decision",
+  "instance": {
+   "schema": "PK_CAPABILITY/1",
+   "allow": "yes",
+   "policy_revision": 1,
+   "reason": "g",
+   "correlation_id": "dc-1"
+  },
+  "valid": false
+ },
+ {
+  "name": "cfg ok",
+  "schema": "chain_config",
+  "instance": {
+   "schema": "PK_CHAIN_CONFIG/1",
+   "mode": "production",
+   "max_depth": 8
+  },
+  "valid": true
+ },
+ {
+  "name": "cfg depth too big",
+  "schema": "chain_config",
+  "instance": {
+   "schema": "PK_CHAIN_CONFIG/1",
+   "max_depth": 1000
+  },
+  "valid": false
+ },
+ {
+  "name": "cfg unknown knob",
+  "schema": "chain_config",
+  "instance": {
+   "schema": "PK_CHAIN_CONFIG/1",
+   "turbo": true
+  },
+  "valid": false
+ }
+]

@@ -1,0 +1,117 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:pk:inv72:PK_ACCEL_CONFIG-1",
+ "title": "PK_ACCEL_CONFIG/1",
+ "x-version": "1.0.0",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema",
+  "profile",
+  "limits",
+  "quotas",
+  "inventory_max_age_s",
+  "admission"
+ ],
+ "properties": {
+  "schema": {
+   "const": "PK_ACCEL_CONFIG/1"
+  },
+  "profile": {
+   "enum": [
+    "cloud",
+    "datacenter",
+    "near_edge",
+    "far_edge"
+   ]
+  },
+  "limits": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "max_inventory",
+    "max_count"
+   ],
+   "properties": {
+    "max_inventory": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 4096
+    },
+    "max_count": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 64
+    }
+   }
+  },
+  "quotas": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "default_devices_per_tenant"
+   ],
+   "properties": {
+    "default_devices_per_tenant": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4096
+    },
+    "per_tenant": {
+     "type": "object"
+    }
+   }
+  },
+  "inventory_max_age_s": {
+   "type": "number",
+   "exclusiveMinimum": 0,
+   "maximum": 86400
+  },
+  "offline_grace_s": {
+   "type": "number",
+   "minimum": 0,
+   "maximum": 86400
+  },
+  "admission": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rate_per_s",
+    "burst",
+    "max_inflight"
+   ],
+   "properties": {
+    "rate_per_s": {
+     "type": "number",
+     "exclusiveMinimum": 0,
+     "maximum": 100000
+    },
+    "burst": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 100000
+    },
+    "max_inflight": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 10000
+    }
+   }
+  },
+  "require_authentication": {
+   "type": "boolean"
+  },
+  "require_inventory_mac": {
+   "type": "boolean"
+  },
+  "allow_shared_partitions": {
+   "type": "boolean"
+  },
+  "telemetry": {
+   "type": "object"
+  },
+  "description": {
+   "type": "string"
+  }
+ }
+}

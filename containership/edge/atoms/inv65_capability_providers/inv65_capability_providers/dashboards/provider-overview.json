@@ -1,0 +1,36 @@
+{
+ "schema": "PK_DASHBOARD/1",
+ "title": "INV-65 Capability providers",
+ "panels": [
+  {
+   "title": "Call rate by outcome",
+   "query": "sum by (outcome) (rate(pk_calls_total[5m]))",
+   "distinguishes": "ordinary load"
+  },
+  {
+   "title": "Denials by code",
+   "query": "sum by (code) (rate(pk_denied_total[5m]))",
+   "distinguishes": "policy rejection (FORBIDDEN) vs attack indicators (UNAUTHENTICATED) vs overload (OVERLOADED)"
+  },
+  {
+   "title": "Dispatch p99",
+   "query": "histogram_quantile(0.99, sum by (le) (rate(pk_dispatch_seconds_bucket[5m])))",
+   "distinguishes": "degradation"
+  },
+  {
+   "title": "Backend circuit / unavailable",
+   "query": "sum(rate(pk_denied_total{code=~\"PK_PROVIDER_(CIRCUIT_OPEN|UNAVAILABLE)\"}[5m]))",
+   "distinguishes": "dependency failure"
+  },
+  {
+   "title": "Isolation violations",
+   "query": "sum(increase(pk_isolation_violation_total[1h]))",
+   "distinguishes": "software defect / attack"
+  },
+  {
+   "title": "Links",
+   "query": "pk_links",
+   "distinguishes": "state size"
+  }
+ ]
+}

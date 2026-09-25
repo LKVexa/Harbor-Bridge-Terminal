@@ -1,0 +1,77 @@
+{
+ "component": 27,
+ "title": "Real infrastructure reconciliation controller",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "desired-versus-observed reconciliation loop",
+   "state": "IMPLEMENTED",
+   "spec": "production/controller.py::module docstring (PK_DYN_RECONCILE/1)",
+   "modules": [
+    "production/controller.py::Controller.reconcile"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_scale_up_converges",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_not_leader_takes_no_action",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_conflict_reported"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "create/drain/delete operation orchestration",
+   "state": "IMPLEMENTED",
+   "spec": "production/controller.py::module docstring",
+   "modules": [
+    "production/controller.py::Controller._run"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_scale_down_drains_then_deletes",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestControls.test_quarantine_api"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "idempotent operation journal",
+   "state": "IMPLEMENTED",
+   "spec": "production/journal.py::module docstring (PK_DYN_WAL/1)",
+   "modules": [
+    "production/journal.py::Journal",
+    "production/controller.py::Controller._op_id"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_idempotent_rounds_no_duplicate_ops",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_lost_response_no_duplicate"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "convergence and drift detection",
+   "state": "IMPLEMENTED",
+   "spec": "production/controller.py::module docstring (Convergence)",
+   "modules": [
+    "production/controller.py::Controller.reconcile"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_drift_out_of_band_delete_recreated",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_foreign_node_reported_not_deleted"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "reconcile conflict, timeout, and rollback semantics",
+   "state": "IMPLEMENTED",
+   "spec": "production/controller.py::module docstring (Conflict/rollback)",
+   "modules": [
+    "production/controller.py::Controller._rollback_create",
+    "production/controller.py::Controller._resolve_pending"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_terminal_create_failure_rolls_back_desired",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_pending_create_times_out_and_rolls_back",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestController.test_foreign_node_reported_not_deleted"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Loop is real but runs only against provider doubles; real infrastructure is BLOCKED under component 28."
+}

@@ -1,0 +1,700 @@
+{
+ "call_context": {
+  "$id": "urn:pk:inv21:call_context",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "deadline_ms": {
+    "anyOf": [
+     {
+      "maximum": 3600000,
+      "minimum": 0,
+      "type": "integer"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   },
+   "idempotency_key": {
+    "anyOf": [
+     {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+      "type": "string"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   },
+   "operation": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+    "type": "string"
+   },
+   "path": {
+    "items": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+     "type": "string"
+    },
+    "maxItems": 64,
+    "type": "array"
+   },
+   "schema": {
+    "const": "PK_CALL_CONTEXT/1"
+   },
+   "subject": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+    "type": "string"
+   },
+   "tenant": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+    "type": "string"
+   },
+   "trace_id": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._\\-]{0,63}$",
+    "type": "string"
+   }
+  },
+  "required": [
+   "schema",
+   "trace_id",
+   "operation",
+   "tenant",
+   "subject",
+   "path"
+  ],
+  "title": "PK_CALL_CONTEXT/1",
+  "type": "object",
+  "x-version": "PK_CALL_CONTEXT/1"
+ },
+ "capability_decision": {
+  "$id": "urn:pk:inv21:capability_decision",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "allow": {
+    "type": "boolean"
+   },
+   "correlation_id": {
+    "maxLength": 64,
+    "type": "string"
+   },
+   "policy_revision": {
+    "minimum": 0,
+    "type": "integer"
+   },
+   "reason": {
+    "maxLength": 128,
+    "type": "string"
+   },
+   "schema": {
+    "const": "PK_CAPABILITY/1"
+   }
+  },
+  "required": [
+   "schema",
+   "allow",
+   "policy_revision",
+   "reason",
+   "correlation_id"
+  ],
+  "title": "PK_CAPABILITY/1",
+  "type": "object",
+  "x-version": "PK_CAPABILITY/1"
+ },
+ "chain_config": {
+  "$id": "urn:pk:inv21:chain_config",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "breaker_failure_threshold": {
+    "maximum": 1000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "breaker_reset_s": {
+    "maximum": 600,
+    "minimum": 0.01,
+    "type": "number"
+   },
+   "handler_stall_s": {
+    "maximum": 600,
+    "minimum": 0.001,
+    "type": "number"
+   },
+   "max_depth": {
+    "maximum": 64,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "max_in_flight": {
+    "maximum": 1000000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "max_in_flight_per_tenant": {
+    "maximum": 1000000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "max_telemetry_events": {
+    "maximum": 1000000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "mode": {
+    "enum": [
+     "development",
+     "production"
+    ]
+   },
+   "overrides": {
+    "additionalProperties": false,
+    "properties": {
+     "environment": {
+      "type": "object"
+     },
+     "site": {
+      "type": "object"
+     }
+    },
+    "type": "object"
+   },
+   "policy_cache_ttl_s": {
+    "maximum": 300,
+    "minimum": 0,
+    "type": "number"
+   },
+   "policy_timeout_s": {
+    "maximum": 30,
+    "minimum": 0.001,
+    "type": "number"
+   },
+   "remote_timeout_s": {
+    "maximum": 600,
+    "minimum": 0.001,
+    "type": "number"
+   },
+   "require_remote_transport": {
+    "type": "boolean"
+   },
+   "residency_lease_s": {
+    "anyOf": [
+     {
+      "maximum": 3600,
+      "minimum": 0.001,
+      "type": "number"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   },
+   "retry_max_attempts": {
+    "maximum": 5,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "schema": {
+    "const": "PK_CHAIN_CONFIG/1"
+   },
+   "telemetry_sample_rate": {
+    "maximum": 1,
+    "minimum": 0,
+    "type": "number"
+   },
+   "tenant_rate": {
+    "anyOf": [
+     {
+      "maximum": 1000000.0,
+      "minimum": 0.001,
+      "type": "number"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   }
+  },
+  "required": [
+   "schema"
+  ],
+  "title": "PK_CHAIN_CONFIG/1",
+  "type": "object",
+  "x-version": "PK_CHAIN_CONFIG/1"
+ },
+ "chain_config_override": {
+  "$id": "urn:pk:inv21:chain_config_override",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "breaker_failure_threshold": {
+    "maximum": 1000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "breaker_reset_s": {
+    "maximum": 600,
+    "minimum": 0.01,
+    "type": "number"
+   },
+   "handler_stall_s": {
+    "maximum": 600,
+    "minimum": 0.001,
+    "type": "number"
+   },
+   "max_depth": {
+    "maximum": 64,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "max_in_flight": {
+    "maximum": 1000000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "max_in_flight_per_tenant": {
+    "maximum": 1000000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "max_telemetry_events": {
+    "maximum": 1000000,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "mode": {
+    "enum": [
+     "development",
+     "production"
+    ]
+   },
+   "policy_cache_ttl_s": {
+    "maximum": 300,
+    "minimum": 0,
+    "type": "number"
+   },
+   "policy_timeout_s": {
+    "maximum": 30,
+    "minimum": 0.001,
+    "type": "number"
+   },
+   "remote_timeout_s": {
+    "maximum": 600,
+    "minimum": 0.001,
+    "type": "number"
+   },
+   "require_remote_transport": {
+    "type": "boolean"
+   },
+   "residency_lease_s": {
+    "anyOf": [
+     {
+      "maximum": 3600,
+      "minimum": 0.001,
+      "type": "number"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   },
+   "retry_max_attempts": {
+    "maximum": 5,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "telemetry_sample_rate": {
+    "maximum": 1,
+    "minimum": 0,
+    "type": "number"
+   },
+   "tenant_rate": {
+    "anyOf": [
+     {
+      "maximum": 1000000.0,
+      "minimum": 0.001,
+      "type": "number"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   }
+  },
+  "title": "PK_CHAIN_CONFIG/1#override",
+  "type": "object",
+  "x-version": "PK_CHAIN_CONFIG/1#override"
+ },
+ "chain_depth": {
+  "$id": "urn:pk:inv21:chain_depth",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "depth": {
+    "maximum": 64,
+    "minimum": 0,
+    "type": "integer"
+   },
+   "max_depth": {
+    "maximum": 64,
+    "minimum": 1,
+    "type": "integer"
+   },
+   "path": {
+    "items": {
+     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+     "type": "string"
+    },
+    "maxItems": 64,
+    "type": "array"
+   },
+   "schema": {
+    "const": "PK_CHAIN_DEPTH/1"
+   }
+  },
+  "required": [
+   "schema",
+   "depth",
+   "max_depth",
+   "path"
+  ],
+  "title": "PK_CHAIN_DEPTH/1",
+  "type": "object",
+  "x-version": "PK_CHAIN_DEPTH/1"
+ },
+ "error": {
+  "$id": "urn:pk:inv21:error",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "category": {
+    "enum": [
+     "validation",
+     "authentication",
+     "authorization",
+     "isolation",
+     "residency",
+     "bounds",
+     "overload",
+     "deadline",
+     "cancelled",
+     "handler",
+     "provider",
+     "transport",
+     "protocol",
+     "lifecycle",
+     "internal"
+    ]
+   },
+   "code": {
+    "maxLength": 64,
+    "pattern": "^PK_CHAIN_[A-Z_]+$",
+    "type": "string"
+   },
+   "correlation_id": {
+    "anyOf": [
+     {
+      "maxLength": 128,
+      "type": "string"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   },
+   "details": {
+    "type": "object"
+   },
+   "message": {
+    "maxLength": 256,
+    "type": "string"
+   },
+   "origin": {
+    "enum": [
+     "chain",
+     "handler",
+     "policy",
+     "transport"
+    ]
+   },
+   "retriable": {
+    "type": "boolean"
+   },
+   "schema": {
+    "const": "PK_CHAIN_ERROR/1"
+   }
+  },
+  "required": [
+   "schema",
+   "code",
+   "category",
+   "retriable",
+   "origin",
+   "message"
+  ],
+  "title": "PK_CHAIN_ERROR/1",
+  "type": "object",
+  "x-version": "PK_CHAIN_ERROR/1"
+ },
+ "local_chain_request": {
+  "$defs": {
+   "context": {
+    "additionalProperties": false,
+    "properties": {
+     "deadline_ms": {
+      "anyOf": [
+       {
+        "maximum": 3600000,
+        "minimum": 0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "idempotency_key": {
+      "anyOf": [
+       {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "operation": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+      "type": "string"
+     },
+     "path": {
+      "items": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+       "type": "string"
+      },
+      "maxItems": 64,
+      "type": "array"
+     },
+     "schema": {
+      "const": "PK_CALL_CONTEXT/1"
+     },
+     "subject": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+      "type": "string"
+     },
+     "tenant": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+      "type": "string"
+     },
+     "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._\\-]{0,63}$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "schema",
+     "trace_id",
+     "operation",
+     "tenant",
+     "subject",
+     "path"
+    ],
+    "type": "object"
+   }
+  },
+  "$id": "urn:pk:inv21:local_chain_request",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "callee": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+    "type": "string"
+   },
+   "context": {
+    "$ref": "#/$defs/context"
+   },
+   "payload": {},
+   "schema": {
+    "const": "PK_LOCAL_CHAIN/1"
+   }
+  },
+  "required": [
+   "schema",
+   "callee",
+   "context",
+   "payload"
+  ],
+  "title": "PK_LOCAL_CHAIN/1#request",
+  "type": "object",
+  "x-version": "PK_LOCAL_CHAIN/1#request"
+ },
+ "local_chain_response": {
+  "$defs": {
+   "error": {
+    "additionalProperties": false,
+    "properties": {
+     "category": {
+      "enum": [
+       "validation",
+       "authentication",
+       "authorization",
+       "isolation",
+       "residency",
+       "bounds",
+       "overload",
+       "deadline",
+       "cancelled",
+       "handler",
+       "provider",
+       "transport",
+       "protocol",
+       "lifecycle",
+       "internal"
+      ]
+     },
+     "code": {
+      "maxLength": 64,
+      "pattern": "^PK_CHAIN_[A-Z_]+$",
+      "type": "string"
+     },
+     "correlation_id": {
+      "anyOf": [
+       {
+        "maxLength": 128,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "details": {
+      "type": "object"
+     },
+     "message": {
+      "maxLength": 256,
+      "type": "string"
+     },
+     "origin": {
+      "enum": [
+       "chain",
+       "handler",
+       "policy",
+       "transport"
+      ]
+     },
+     "retriable": {
+      "type": "boolean"
+     },
+     "schema": {
+      "const": "PK_CHAIN_ERROR/1"
+     }
+    },
+    "required": [
+     "schema",
+     "code",
+     "category",
+     "retriable",
+     "origin",
+     "message"
+    ],
+    "type": "object"
+   }
+  },
+  "$id": "urn:pk:inv21:local_chain_response",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "error": {
+    "$ref": "#/$defs/error"
+   },
+   "ok": {
+    "type": "boolean"
+   },
+   "result": {},
+   "route": {
+    "enum": [
+     "local",
+     "remote",
+     "refused"
+    ]
+   },
+   "schema": {
+    "const": "PK_LOCAL_CHAIN/1"
+   },
+   "trace_id": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._\\-]{0,63}$",
+    "type": "string"
+   }
+  },
+  "required": [
+   "schema",
+   "ok",
+   "route"
+  ],
+  "title": "PK_LOCAL_CHAIN/1#response",
+  "type": "object",
+  "x-version": "PK_LOCAL_CHAIN/1#response"
+ },
+ "residency": {
+  "$id": "urn:pk:inv21:residency",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+   "host": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+    "type": "string"
+   },
+   "placements": {
+    "items": {
+     "additionalProperties": false,
+     "properties": {
+      "callee": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+       "type": "string"
+      },
+      "epoch": {
+       "minimum": 0,
+       "type": "integer"
+      },
+      "source": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+       "type": "string"
+      },
+      "tenant": {
+       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,127}$",
+       "type": "string"
+      }
+     },
+     "required": [
+      "callee",
+      "tenant",
+      "epoch",
+      "source"
+     ],
+     "type": "object"
+    },
+    "maxItems": 10000,
+    "type": "array"
+   },
+   "revision": {
+    "minimum": 0,
+    "type": "integer"
+   },
+   "schema": {
+    "const": "PK_RESIDENCY/1"
+   }
+  },
+  "required": [
+   "schema",
+   "host",
+   "revision",
+   "placements"
+  ],
+  "title": "PK_RESIDENCY/1",
+  "type": "object",
+  "x-version": "PK_RESIDENCY/1"
+ }
+}

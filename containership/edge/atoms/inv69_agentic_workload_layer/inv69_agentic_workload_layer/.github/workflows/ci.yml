@@ -1,0 +1,45 @@
+# C020/C031/C070/C084/C085: declared CI. NOT EXECUTED in this pass (W-006) — the local evidence was produced with
+# the same commands on CPython 3.11.15 / Linux x86_64.
+name: inv69
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, windows-2022, macos-14]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv69_agentic_workload_layer }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -r inv69_agentic_workload_layer/requirements.lock
+      - run: python -B inv69_agentic_workload_layer/tests/run_all.py
+      - run: python -O -B inv69_agentic_workload_layer/tests/run_all.py
+      - run: python -B -m inv69_agentic_workload_layer.tools.deps_check
+      - run: python -B -m inv69_agentic_workload_layer.tools.gen_spec --check
+      - run: python -B -m inv69_agentic_workload_layer.tools.rtm --check
+  fuzz-long:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv69_agentic_workload_layer }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: INV69_FUZZ_ITERS=20000 python -B inv69_agentic_workload_layer/tests/test_fuzz.py
+  perf-gate:
+    runs-on: [self-hosted, perf-reference]   # hardware consistency requirement (C070)
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv69_agentic_workload_layer }
+      - run: python -B inv69_agentic_workload_layer/bench/perf_suite.py
+      - run: python -B -m inv69_agentic_workload_layer.tools.perf_gate
+  release-gate:
+    needs: [test, perf-gate]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv69_agentic_workload_layer }
+      - run: python -B -m inv69_agentic_workload_layer.tools.release_gate --skip-perf-run

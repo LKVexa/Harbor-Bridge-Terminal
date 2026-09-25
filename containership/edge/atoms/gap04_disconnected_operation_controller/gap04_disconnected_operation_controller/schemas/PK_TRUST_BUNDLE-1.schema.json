@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PK_TRUST_BUNDLE/1",
+  "title": "Trust bundle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "trust_domain",
+    "bundle_version",
+    "keys"
+  ],
+  "properties": {
+    "version": {
+      "const": "PK_TRUST_BUNDLE/1"
+    },
+    "trust_domain": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "bundle_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "keys": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "key",
+        "title": "key",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key_id",
+          "issuer",
+          "alg",
+          "public_key",
+          "not_before",
+          "not_after",
+          "purposes",
+          "revoked"
+        ],
+        "properties": {
+          "key_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "issuer": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "alg": {
+            "const": "Ed25519"
+          },
+          "public_key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "not_before": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "not_after": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "purposes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "lease",
+                "policy",
+                "time",
+                "heartbeat",
+                "grant",
+                "quarantine",
+                "config"
+              ]
+            }
+          },
+          "revoked": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

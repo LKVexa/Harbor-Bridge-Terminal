@@ -1,0 +1,100 @@
+{"id": "C32-001", "status": "PASS", "evidence": ["gateway/connection.js:1-14,249-267"], "note": "Only the worker's 'output' records reach _output(); it is the sole producer per connection"}
+{"id": "C32-002", "status": "PASS", "evidence": ["gateway/connection.js:32,78-110"], "note": "Per-connection pendingOut array + single _flush drain function chosen (no explicit lock needed: single-threaded JS)"}
+{"id": "C32-003", "status": "PASS", "evidence": ["gateway/connection.js:1-14"], "note": "header comment ties the design to ledgered leases and the one-worker-per-session model"}
+{"id": "C32-004", "status": "PASS", "evidence": ["gateway/connection.js:78-93"], "note": "_flush processes pendingOut sequentially; JS event loop plus this loop serializes sends"}
+{"id": "C32-005", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#ordering-and-single-exit"], "note": "'Output seq is contiguous from 1'"}
+{"id": "C32-006", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:77"], "note": "maxOutstandingMessages (1024) bounds sent-but-unconsumed messages; pendingOut itself has no separate message-count cap, only a byte ledger cap"}
+{"id": "C32-007", "status": "PASS", "evidence": ["gateway/connection.js:106-107", "docs/OPERATIONS.md#configuration"], "note": "'queued_out' ledger bucket enforces a byte budget per session (VWS_* quotas)"}
+{"id": "C32-008", "status": "PASS", "evidence": ["gateway/connection.js:106-107"], "note": "lease acquire throws -> LIMIT_EXCEEDED error and end('quota') on capacity exhaustion"}
+{"id": "C32-009", "status": "OPEN", "evidence": [], "note": "No document found stating whether prioritization is in scope; not implemented and not explicitly ruled out"}
+{"id": "C32-010", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:76-110"], "note": "Admission behavior is implemented; no explicit sign-off record found"}
+{"id": "C32-011", "status": "PASS", "evidence": ["gateway/connection.js:78-93"], "note": "_flush is the single drain routine per Connection instance"}
+{"id": "C32-012", "status": "PASS", "evidence": ["gateway/connection.js:108"], "note": "pendingOut items are {bytes, lease}; lease is the ownership token for queued bytes"}
+{"id": "C32-013", "status": "PASS", "evidence": ["gateway/connection.js:106-108"], "note": "lease acquired in _output() before push onto pendingOut: ownership transfers at that point"}
+{"id": "C32-014", "status": "PASS", "evidence": ["gateway/connection.js:107"], "note": "on acquire failure the catch block ends the session before anything is pushed; ownership never transfers"}
+{"id": "C32-015", "status": "PASS", "evidence": ["gateway/worker-link.js:24"], "note": "deliver() builds a fresh Buffer.from(m.buf) per output record; no shared mutable buffer handed to multiple owners"}
+{"id": "C32-016", "status": "PASS", "evidence": ["gateway/connection.js:319-331"], "note": "_onSocketClose iterates this.pendingOut directly (a field on the Connection) during cleanup"}
+{"id": "C32-017", "status": "PASS", "evidence": ["gateway/connection.js:296-298,326"], "note": "pendingOut is drained/released both in _finalExit (normal exit) and _onSocketClose (socket teardown)"}
+{"id": "C32-018", "status": "PASS", "evidence": ["gateway/connection.js:32"], "note": "pendingOut is a per-instance field created in the constructor, never shared across Connection objects"}
+{"id": "C32-019", "status": "NOT_APPLICABLE", "evidence": ["gateway/connection.js:249-267"], "note": "No broadcast producer exists in this design; the worker's 'output' record is the only producer path"}
+{"id": "C32-020", "status": "PASS", "evidence": ["gateway/connection.js:1-14,95-110"], "note": "producer-consumer handoff documented in header comment and _output/_flush code"}
+{"id": "C32-021", "status": "PASS", "evidence": ["gateway/connection.js:103"], "note": "_output checks discardOutput and connection state before acquiring a lease/enqueueing"}
+{"id": "C32-022", "status": "PASS", "evidence": ["protocol/codec.js", "worker/output-gate.js"], "note": "output chunk sizes are bounded by the worker's output gate before reaching the connection"}
+{"id": "C32-023", "status": "PASS", "evidence": ["gateway/connection.js:103"], "note": "state !== 'ACTIVE' && state !== 'DRAINING' guard before enqueue"}
+{"id": "C32-024", "status": "OPEN", "evidence": ["gateway/connection.js:76-110"], "note": "No explicit message-count limit is applied to pendingOut itself (only the byte ledger and maxOutstandingMessages apply)"}
+{"id": "C32-025", "status": "PASS", "evidence": ["gateway/connection.js:106-107"], "note": "account.acquire('queued_out', bytes.length, ...) enforces the configured byte limit"}
+{"id": "C32-026", "status": "PASS", "evidence": ["gateway/connection.js:106-109"], "note": "synchronous JS execution; ledger update and push happen without interleaving"}
+{"id": "C32-027", "status": "PASS", "evidence": ["gateway/connection.js:106-109"], "note": "either a lease is acquired and the item pushed, or the catch path ends the session with an explicit error"}
+{"id": "C32-028", "status": "PASS", "evidence": ["gateway/connection.js:296-299"], "note": "undeliveredOutputBytes counter explicitly records any discarded queued output; never silent"}
+{"id": "C32-029", "status": "PASS", "evidence": ["gateway/connection.js:273", "docs/PROTOCOL_V2.md#credits"], "note": "VWS_MAX_PAUSE_MS (120s) bounds how long a paused/congested producer can be held"}
+{"id": "C32-030", "status": "OPEN", "evidence": [], "note": "No test specifically named for admission racing with drain-loop startup"}
+{"id": "C32-031", "status": "PASS", "evidence": ["gateway/connection.js:78-93"], "note": "_flush is a single re-entrant-safe function, not a spawned/duplicated loop per socket"}
+{"id": "C32-032", "status": "PASS", "evidence": ["gateway/connection.js:80,89"], "note": "pendingOut.shift() removes items in FIFO order matching outSeq ordering"}
+{"id": "C32-033", "status": "PASS", "evidence": ["gateway/connection.js:88"], "note": "one item's sendBinary is invoked per loop iteration before considering the next"}
+{"id": "C32-034", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:78-93"], "note": "loop advances once ws.sendBinary() has queued the write (returns true), not after the underlying socket write callback fires"}
+{"id": "C32-035", "status": "PASS", "evidence": ["gateway/ws.js:79", "gateway/connection.js:43-46"], "note": "ws 'text'/'binary' receive events are wired independently of _flush/_flow"}
+{"id": "C32-036", "status": "PASS", "evidence": ["gateway/connection.js:91", "gateway/ws.js:109"], "note": "admission.complete(op) drops the producer reference; lease itself is released in the ws.js write callback"}
+{"id": "C32-037", "status": "PASS", "evidence": ["gateway/connection.js:90"], "note": "sentBytes and outstanding[] updated immediately after a successful send"}
+{"id": "C32-038", "status": "PASS", "evidence": ["gateway/connection.js:78-79"], "note": "while(pendingOut.length) loop simply exits when empty; re-entry is event-driven (drain/credit/_output), not polled"}
+{"id": "C32-039", "status": "PASS", "evidence": ["gateway/connection.js:108-109"], "note": "_output calls this._flush() directly after pushing, so a new item is never left unprocessed"}
+{"id": "C32-040", "status": "OPEN", "evidence": [], "note": "No test specifically named for drain startup racing the first enqueue"}
+{"id": "C32-041", "status": "PASS", "evidence": ["gateway/connection.js:106-107"], "note": "full queue (ledger exhausted) -> LIMIT_EXCEEDED error + end('quota')"}
+{"id": "C32-042", "status": "PASS", "evidence": ["gateway/connection.js:96-101"], "note": "producer (worker) is paused via _flow(), not left blocked waiting on the queue itself"}
+{"id": "C32-043", "status": "PASS", "evidence": ["gateway/connection.js:273", "docs/PROTOCOL_V2.md#credits"], "note": "VWS_MAX_PAUSE_MS bounds the pause"}
+{"id": "C32-044", "status": "PASS", "evidence": ["gateway/connection.js:273"], "note": "'slow consumer' path ends the session with quota after maxPauseMs"}
+{"id": "C32-045", "status": "PASS", "evidence": ["gateway/connection.js:296-299"], "note": "undelivered output on session end is discarded and explicitly counted, the only permitted discard"}
+{"id": "C32-046", "status": "NOT_APPLICABLE", "evidence": [], "note": "No message-priority classes exist; all terminal output is uniform, so nothing to distinguish"}
+{"id": "C32-047", "status": "PASS", "evidence": ["gateway/connection.js:106-107,273"], "note": "ledger budget plus maxPauseMs together bound backlog for an unresponsive client"}
+{"id": "C32-048", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'slow consumer (no credit): worker paused, gateway memory bounded by the ledger ... catch-up is lossless'"}
+{"id": "C32-049", "status": "PASS", "evidence": "tests/chaos/lifecycle.test.js", "note": "'a fast tenant unaffected'"}
+{"id": "C32-050", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#credits", "docs/SECURITY.md#changed-boundaries"], "note": "backpressure/flow-control outcome documented in both docs"}
+{"id": "C32-051", "status": "NOT_APPLICABLE", "evidence": ["gateway/connection.js:249-267"], "note": "Only one producer (worker output) exists per connection; no multi-producer enqueue path to test"}
+{"id": "C32-052", "status": "NOT_APPLICABLE", "evidence": ["gateway/connection.js:249-267"], "note": "Same single-producer architecture; 'many producers' scenario does not apply"}
+{"id": "C32-053", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js:102-116"], "note": "Single _write path architecturally guarantees this; no test explicitly named 'only one SendAsync active'"}
+{"id": "C32-054", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#ordering-and-single-exit"], "note": "contiguous outSeq is the tested ordering guarantee (tests/ram/v2-e2e.test.js credits tests)"}
+{"id": "C32-055", "status": "OPEN", "evidence": [], "note": "No test specifically named for enqueue racing a successful send completion"}
+{"id": "C32-056", "status": "OPEN", "evidence": [], "note": "No test specifically named for enqueue racing a send failure"}
+{"id": "C32-057", "status": "IN_PROGRESS", "evidence": "tests/chaos/review-fixes.test.js", "note": "C1 e2e (slow consumer vs bridge assembly deadline) is close but not an exact enqueue-vs-closure race test"}
+{"id": "C32-058", "status": "PASS", "evidence": "tests/fabric/fabric-ws.test.js", "note": "independent per-connection queues implied by 'each VM node executes a bundle through the WebSocket'"}
+{"id": "C32-059", "status": "NOT_APPLICABLE", "evidence": [], "note": "No broadcast feature exists (see C32-019/051/052), so there is no broadcast-alongside-direct-reply case"}
+{"id": "C32-060", "status": "OPEN", "evidence": [], "note": "Ordering is deterministic FIFO by design; no nondeterministic ordering is permitted or documented as such"}
+{"id": "C32-061", "status": "PASS", "evidence": ["gateway/connection.js:88"], "note": "op.fail('socket budget') breaks the drain loop on send failure and resumes on the next 'drain' event"}
+{"id": "C32-062", "status": "PASS", "evidence": ["gateway/connection.js:296-299"], "note": "undeliveredOutputBytes explicitly accounts for messages never sent after terminal failure/session end"}
+{"id": "C32-063", "status": "PASS", "evidence": ["gateway/connection.js:297,326"], "note": "pendingOut leases released in both _finalExit and _onSocketClose"}
+{"id": "C32-064", "status": "PASS", "evidence": "tests/ram/ledger.test.js", "note": "'randomized acquire/retain/release/close never breaks reconciliation and ends at zero'"}
+{"id": "C32-065", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#session-open-and-epochs"], "note": "'nothing is replayed' on session.reset"}
+{"id": "C32-066", "status": "PASS", "evidence": ["gateway/connection.js:106-107"], "note": "try/catch around lease acquire handles a failure before the item is pushed (ownership never transferred)"}
+{"id": "C32-067", "status": "PASS", "evidence": ["gateway/connection.js:83,88"], "note": "op.fail paths in _flush handle failure after the item was already admitted/pushed"}
+{"id": "C32-068", "status": "NOT_APPLICABLE", "evidence": [], "note": "No mutex/lock primitive is used (single-threaded JS), so there is no synchronization-primitive failure mode to route to a fatal path"}
+{"id": "C32-069", "status": "PASS", "evidence": ["gateway/connection.js:108-109"], "note": "_flush is re-invoked from _output/_flow/_credit/'drain', so a faulted iteration does not leave the queue permanently stuck"}
+{"id": "C32-070", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:300"], "note": "session.exit log line records outSeq/inSeq/executedSeq but not a distinct 'queue status' field"}
+{"id": "C32-071", "status": "PASS", "evidence": ["gateway/connection.js:103"], "note": "state check in _output blocks new admissions once DRAINING/CLOSED"}
+{"id": "C32-072", "status": "PASS", "evidence": ["gateway/connection.js:296-299"], "note": "Already-queued undeliverable output is discarded and counted at final exit, not silently dropped"}
+{"id": "C32-073", "status": "PASS", "evidence": ["gateway/worker-link.js:42,67", "gateway/connection.js:313"], "note": "link.stop(1500, ...) bounds worker drain time; ws.js closeWaitMs (3000ms) bounds the close handshake"}
+{"id": "C32-074", "status": "PASS", "evidence": ["gateway/connection.js:305-317"], "note": "end()/_closeSocket sequence the closing handshake after _finalExit drains pendingOut"}
+{"id": "C32-075", "status": "PASS", "evidence": ["gateway/connection.js:312"], "note": "link.send({t:'close', ...}) notifies the worker (the producer) that shutdown has begun"}
+{"id": "C32-076", "status": "NOT_APPLICABLE", "evidence": [], "note": "No producer blocks waiting on queue capacity (pause/resume model instead), so there is nothing to release"}
+{"id": "C32-077", "status": "PASS", "evidence": ["gateway/connection.js:62,325"], "note": "_clearTimers() clears all timers on close/generation bump; leases released as described elsewhere"}
+{"id": "C32-078", "status": "IN_PROGRESS", "evidence": "tests/chaos/lifecycle.test.js", "note": "SIGTERM/shutdown tests cover the general path; an empty-queue-specific case is not separately named"}
+{"id": "C32-079", "status": "PASS", "evidence": "tests/chaos/review-fixes.test.js", "note": "'C1 e2e: a consumer slower than the bridge assembly deadline keeps its session and later receives everything, gap-free'"}
+{"id": "C32-080", "status": "PASS", "evidence": "tests/ram/ledger.test.js", "note": "reconciliation tests assert the ledger 'ends at zero', i.e. no leaked payload references"}
+{"id": "C32-081", "status": "PASS", "evidence": ["gateway/connection.js:336"], "note": "telemetry() exposes pendingOutMessages"}
+{"id": "C32-082", "status": "PASS", "evidence": ["gateway/connection.js:337"], "note": "telemetry() exposes session.snapshot() (ledger bytes including queued_out)"}
+{"id": "C32-083", "status": "PASS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "'/live' exposes 'memoryRefusals' counter"}
+{"id": "C32-084", "status": "OPEN", "evidence": [], "note": "No per-item enqueue timestamp / wait-time metric found"}
+{"id": "C32-085", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "workerHeapCapHits/exit reasons are tracked; the drain loop itself has no separate liveness metric"}
+{"id": "C32-086", "status": "NOT_APPLICABLE", "evidence": [], "note": "The drain function (_flush) has no independent lifecycle from the event loop, so a 'drainer died while queue nonempty' state cannot occur architecturally"}
+{"id": "C32-087", "status": "PASS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "'/live' documented as carrying 'no payloads or identities'"}
+{"id": "C32-088", "status": "PASS", "evidence": ["docs/OPERATIONS.md#telemetry"], "note": "'/live' ledger snapshot exposes high-water marks; no dedicated peak-queue-memory experiment beyond this"}
+{"id": "C32-089", "status": "IN_PROGRESS", "evidence": ["docs/OPERATIONS.md#sizing"], "note": "Sizing section documents plan/ceiling but no explicit operator-attention thresholds for queue state"}
+{"id": "C32-090", "status": "OPEN", "evidence": [], "note": "No dedicated slow-client queue investigation procedure document found"}
+{"id": "C32-091", "status": "PASS", "evidence": ["gateway/connection.js:1-14,76-110"], "note": "queue/ownership design published in connection.js header comment"}
+{"id": "C32-092", "status": "PASS", "evidence": ["docs/PROTOCOL_V2.md#credits", "docs/PROTOCOL_V2.md#ordering-and-single-exit"], "note": "ordering and capacity (credit window) guarantees published"}
+{"id": "C32-093", "status": "PASS", "evidence": ["docs/RAMWS.md#eight-descriptor-fields-and-six-invariants"], "note": "Aliasing/Lifetime rows document producer ownership rules"}
+{"id": "C32-094", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "ram/v2-e2e.test.js credit-ordering tests are indexed and listed passing"}
+{"id": "C32-095", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "chaos/lifecycle.test.js slow-consumer saturation test is indexed"}
+{"id": "C32-096", "status": "IN_PROGRESS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "worker-killed cleanup test is indexed, but no test is named specifically for a faulted drainer leaving state"}
+{"id": "C32-097", "status": "PASS", "evidence": ["ledger/review_inputs/EVIDENCE_INDEX.md"], "note": "review-fixes.test.js C1 e2e (full queue vs slow consumer) is indexed"}
+{"id": "C32-098", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#not-done--not-claimed"], "note": "Discard (undeliveredOutputBytes) is documented; prioritization is neither implemented nor explicitly ruled out in the docs"}
+{"id": "C32-099", "status": "PASS", "evidence": ["docs/OPERATIONS.md#configuration"], "note": "VWS_MAX_OUTSTANDING_MESSAGES and VWS_CREDIT_WINDOW_BYTES recorded with defaults"}
+{"id": "C32-100", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js:76-110"], "note": "Serialization behavior is implemented and structurally sound; no explicit approval/sign-off record found"}

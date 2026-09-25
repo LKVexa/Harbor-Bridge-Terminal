@@ -1,0 +1,166 @@
+{
+ "model": "PLN05_THREATS/1",
+ "method": "STRIDE per trust boundary + attacker classes",
+ "threats": [
+  {
+   "id": "T01",
+   "stride": "Spoofing",
+   "severity": "critical",
+   "threat": "Forged demand signal from an unauthenticated or unbound reporter drives scale-up (tenant bill) or scale-down (peer starvation)",
+   "mitigation": "HMAC credential + source binding (iam, plane._decide_msg); default deny",
+   "test": "tests/security/test_adversarial.py::test_T01_forged_and_spoofed_demand"
+  },
+  {
+   "id": "T02",
+   "stride": "Elevation",
+   "severity": "critical",
+   "threat": "Ceiling bypass: crafted limits declaration or token claiming extra capabilities raises authority",
+   "mitigation": "limits.update capability held only by intent_plane; issuer must equal principal; token caps subset of class; schema ranges",
+   "test": "tests/security/test_adversarial.py::test_T02_ceiling_bypass"
+  },
+  {
+   "id": "T03",
+   "stride": "Elevation",
+   "severity": "high",
+   "threat": "Floor lowering / lower_ceiling abuse used to push capacity below declared floor",
+   "mitigation": "lower_ceiling monotonic within [floor, active ceiling]; ceiling.lower separate capability",
+   "test": "tests/security/test_adversarial.py::test_T03_floor_decrease_and_ceiling_raise"
+  },
+  {
+   "id": "T04",
+   "stride": "Tampering",
+   "severity": "high",
+   "threat": "Replay of previously valid demand / limits / control requests",
+   "mitigation": "message_id idempotency + per-source seq; single-use nonces for control; revision monotonicity",
+   "test": "tests/security/test_adversarial.py::test_T04_replay"
+  },
+  {
+   "id": "T05",
+   "stride": "Tampering",
+   "severity": "high",
+   "threat": "Reordering / duplication of messages to induce oscillation",
+   "mitigation": "seq ordering + duplicate rejection; hysteresis grace",
+   "test": "tests/security/test_adversarial.py::test_T05_reorder_and_oscillation_induction"
+  },
+  {
+   "id": "T06",
+   "stride": "Information disclosure",
+   "severity": "critical",
+   "threat": "Cross-tenant or cross-site state access via tenant-controlled identifiers",
+   "mitigation": "credential tenant/site scope checked before scope lookup; explain/status filtered by tenant",
+   "test": "tests/security/test_adversarial.py::test_T06_cross_tenant_and_site"
+  },
+  {
+   "id": "T07",
+   "stride": "Denial of service",
+   "severity": "high",
+   "threat": "Parser exhaustion: oversized, deeply nested, huge-integer, NaN/Infinity payloads",
+   "mitigation": "byte ceiling, depth pre-scan, field cap, strict JSON, schema ranges",
+   "test": "tests/security/test_adversarial.py::test_T07_parser_exhaustion"
+  },
+  {
+   "id": "T08",
+   "stride": "Tampering",
+   "severity": "medium",
+   "threat": "Log/template/path injection through identifiers",
+   "mitigation": "identifier patterns [a-z0-9._-]; state file names hashed; structured logs; error detail sanitised",
+   "test": "tests/security/test_adversarial.py::test_T08_injection_surfaces"
+  },
+  {
+   "id": "T09",
+   "stride": "Elevation",
+   "severity": "critical",
+   "threat": "Privilege escalation from read-only to control/admin operations",
+   "mitigation": "capability table default deny; admin detail behind status.read_admin",
+   "test": "tests/security/test_adversarial.py::test_T09_read_only_escalation"
+  },
+  {
+   "id": "T10",
+   "stride": "Spoofing",
+   "severity": "high",
+   "threat": "Expired / revoked credentials or keys, or stale policy, still accepted",
+   "mitigation": "token exp, key window + revocation, max lifetime per class",
+   "test": "tests/security/test_adversarial.py::test_T10_expired_and_revoked"
+  },
+  {
+   "id": "T11",
+   "stride": "Spoofing",
+   "severity": "high",
+   "threat": "Transport downgrade or wrong peer identity accepted by an adapter",
+   "mitigation": "TransportPolicy min TLS1.2, approved ciphers, mTLS identity match, expiry/revocation",
+   "test": "tests/security/test_adversarial.py::test_T11_transport_downgrade"
+  },
+  {
+   "id": "T12",
+   "stride": "Tampering",
+   "severity": "critical",
+   "threat": "Unsigned / tampered package, config, state or evidence artifacts accepted",
+   "mitigation": "supplychain.verify_artifact digest+approved version; HMAC envelopes on config/state; audit chain+anchor",
+   "test": "tests/security/test_adversarial.py::test_T12_tampered_artifacts"
+  },
+  {
+   "id": "T13",
+   "stride": "Elevation",
+   "severity": "medium",
+   "threat": "Dependency confusion / unsupported dependency version",
+   "mitigation": "approved-versions policy; zero runtime third-party deps; pk_core optional and unresolved -> gate fails",
+   "test": "tests/security/test_adversarial.py::test_T13_dependency_policy"
+  },
+  {
+   "id": "T14",
+   "stride": "Denial of service",
+   "severity": "high",
+   "threat": "Request flood / queue exhaustion / telemetry label explosion",
+   "mitigation": "admission bounds with control reserve; series cap; label allowlist",
+   "test": "tests/security/test_adversarial.py::test_T14_exhaustion"
+  },
+  {
+   "id": "T15",
+   "stride": "Denial of service",
+   "severity": "high",
+   "threat": "Retry amplification under attacker-controlled failures",
+   "mitigation": "retry budget, max attempts, deadline, breaker",
+   "test": "tests/security/test_adversarial.py::test_T15_retry_amplification"
+  },
+  {
+   "id": "T16",
+   "stride": "Information disclosure",
+   "severity": "medium",
+   "threat": "Tenant information leakage via metrics labels, errors or timing",
+   "mitigation": "no tenant/workload labels; error detail allowlist; constant-time MAC compare",
+   "test": "tests/security/test_adversarial.py::test_T16_leakage"
+  },
+  {
+   "id": "T17",
+   "stride": "Elevation",
+   "severity": "critical",
+   "threat": "Bypass of freeze/quarantine controls by lower-privilege actors",
+   "mitigation": "controls require dedicated caps + reason + ticket; limits/config cannot clear; two-person resume",
+   "test": "tests/security/test_adversarial.py::test_T17_control_bypass"
+  },
+  {
+   "id": "T18",
+   "stride": "Denial of service",
+   "severity": "high",
+   "threat": "Stale/resurrected controller (split brain) publishes authority",
+   "mitigation": "lease + epoch fencing; downstream rejects lower tokens; epoch persisted",
+   "test": "tests/security/test_adversarial.py::test_T18_stale_controller"
+  },
+  {
+   "id": "T19",
+   "stride": "Elevation",
+   "severity": "high",
+   "threat": "Security-service outage (keys, time, audit, coordination) implicitly expands authority",
+   "mitigation": "fail-closed/fail-static table; degraded mode forbids scale-up; audit-full refuses",
+   "test": "tests/security/test_adversarial.py::test_T19_security_outage_never_expands"
+  },
+  {
+   "id": "T20",
+   "stride": "Tampering",
+   "severity": "medium",
+   "threat": "Scale-to-zero used to suppress a security-relevant workload",
+   "mitigation": "floor is declared authority (intent plane only); freeze holds target; audit of limits changes",
+   "test": "tests/security/test_adversarial.py::test_T20_scale_to_zero_suppression"
+  }
+ ]
+}

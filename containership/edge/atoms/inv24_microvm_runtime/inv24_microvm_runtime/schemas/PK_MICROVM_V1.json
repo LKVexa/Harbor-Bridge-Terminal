@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PK_MICROVM/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "instance",
+    "tenant",
+    "vcpus",
+    "memory_mib",
+    "devices",
+    "state"
+  ],
+  "properties": {
+    "schema": {
+      "const": "PK_MICROVM/1"
+    },
+    "instance": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "[^\\x00-\\x1f]+"
+    },
+    "vcpus": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32
+    },
+    "memory_mib": {
+      "type": "integer",
+      "minimum": 32,
+      "maximum": 131072
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "virtio-net",
+          "virtio-block",
+          "virtio-vsock",
+          "serial",
+          "rtc"
+        ]
+      },
+      "uniqueItems": true,
+      "maxItems": 5
+    },
+    "state": {
+      "const": "created"
+    }
+  }
+}

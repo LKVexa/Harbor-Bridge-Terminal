@@ -1,0 +1,74 @@
+{
+ "description": "unconfined apparmor",
+ "expect": {
+  "admit": false,
+  "failed": [
+   "mac-profile"
+  ]
+ },
+ "pod": {
+  "containers": [
+   {
+    "image": "registry.example/app@sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "name": "app",
+    "resources": {
+     "limits": {
+      "cpu": "500m",
+      "ephemeral-storage": "1Gi",
+      "memory": "256Mi"
+     }
+    },
+    "securityContext": {
+     "allowPrivilegeEscalation": false,
+     "capabilities": {
+      "add": [],
+      "drop": [
+       "ALL"
+      ]
+     },
+     "privileged": false,
+     "readOnlyRootFilesystem": true
+    },
+    "volumeMounts": [
+     {
+      "mountPath": "/tmp",
+      "name": "tmp"
+     },
+     {
+      "mountPath": "/etc/app",
+      "name": "cfg",
+      "readOnly": true
+     }
+    ]
+   }
+  ],
+  "hostUsers": false,
+  "runtimeClassName": "gvisor",
+  "securityContext": {
+   "appArmorProfile": {
+    "type": "Unconfined"
+   },
+   "runAsGroup": 10001,
+   "runAsNonRoot": true,
+   "runAsUser": 10001,
+   "seccompProfile": {
+    "type": "RuntimeDefault"
+   }
+  },
+  "volumes": [
+   {
+    "emptyDir": {
+     "sizeLimit": "64Mi"
+    },
+    "name": "tmp"
+   },
+   {
+    "configMap": {
+     "name": "app"
+    },
+    "name": "cfg"
+   }
+  ]
+ },
+ "schema": "INV03_FIXTURE/1"
+}

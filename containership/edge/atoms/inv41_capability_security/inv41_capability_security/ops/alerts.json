@@ -1,0 +1,111 @@
+{
+ "schema": "INV41_ALERTS/1",
+ "status": "DEFINED \u2014 not wired to a backend (B-DEPLOY-01); thresholds PROPOSED",
+ "alerts": [
+  {
+   "id": "ALT-01",
+   "expr": "inv41_cross_authority_total rate > 0 over 5m",
+   "severity": "critical",
+   "signal": "cross-authority attempt",
+   "window": "see expr",
+   "owner": "incident_commander",
+   "runbook": "docs/OPERATIONS.md#runbook-cross-authority"
+  },
+  {
+   "id": "ALT-02",
+   "expr": "inv41_invalid_references_total rate > 1/min over 10m",
+   "severity": "high",
+   "signal": "forgery / invalid reference attempts",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-forgery"
+  },
+  {
+   "id": "ALT-03",
+   "expr": "uses_denied/uses_allowed ratio shifts > 3x vs 7-day baseline (15m window)",
+   "severity": "high",
+   "signal": "unexpected deny shift",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-deny-shift"
+  },
+  {
+   "id": "ALT-04",
+   "expr": "uses_allowed rate rises > 3x while denied falls to 0 (15m)",
+   "severity": "critical",
+   "signal": "unexpected allow shift (possible policy widening)",
+   "window": "see expr",
+   "owner": "incident_commander",
+   "runbook": "docs/OPERATIONS.md#runbook-allow-shift"
+  },
+  {
+   "id": "ALT-05",
+   "expr": "inv41_auth_failures_total rate > 10/min (5m)",
+   "severity": "high",
+   "signal": "authentication failures",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-auth-failures"
+  },
+  {
+   "id": "ALT-06",
+   "expr": "audit verify_chain valid=false OR audit buffered > 80% of max_buffer",
+   "severity": "critical",
+   "signal": "audit-chain failure / sink outage",
+   "window": "see expr",
+   "owner": "incident_commander",
+   "runbook": "docs/OPERATIONS.md#runbook-audit"
+  },
+  {
+   "id": "ALT-07",
+   "expr": "config.rollback event observed",
+   "severity": "high",
+   "signal": "configuration rollback",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-config-rollback"
+  },
+  {
+   "id": "ALT-08",
+   "expr": "health.ready == false for > 2m",
+   "severity": "high",
+   "signal": "dependency outage / degraded",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-degraded"
+  },
+  {
+   "id": "ALT-09",
+   "expr": "inv41_overload_rejections_total rate > 1% of requests (10m) OR in_flight at limit (5m)",
+   "severity": "medium",
+   "signal": "resource saturation",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-overload"
+  },
+  {
+   "id": "ALT-10",
+   "expr": "bench gate blocking == true on release candidate",
+   "severity": "medium",
+   "signal": "performance regression",
+   "window": "see expr",
+   "owner": "technical_owner",
+   "runbook": "docs/OPERATIONS.md#runbook-perf-regression"
+  }
+ ],
+ "dashboards": [
+  {
+   "id": "DASH-01",
+   "title": "INV-41 authorization",
+   "panels": [
+    "allow/deny rate by outcome",
+    "invalid + cross-authority attempts",
+    "revocations and references killed",
+    "p50/p95/p99 operation latency",
+    "active authorities / in-flight checks",
+    "dependency health + degraded reason",
+    "overload rejections"
+   ]
+  }
+ ]
+}

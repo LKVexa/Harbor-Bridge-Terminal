@@ -1,0 +1,55 @@
+{
+ "format": "GAP05_COMPAT/1",
+ "release": "4.3.0",
+ "python": {
+  "3.10": "supported",
+  "3.11": "tested",
+  "3.12": "supported",
+  "3.13": "experimental",
+  "3.9": "unsupported"
+ },
+ "os": {
+  "linux-x86_64": "tested",
+  "macos": "supported (fcntl locking)",
+  "windows": "unsupported (CounterAllocator uses fcntl)"
+ },
+ "wire_schemas": {
+  "PK_REPLICATED_WRITE": [
+   1
+  ],
+  "PK_MERGE_RESULT": [
+   1
+  ],
+  "PK_CONFLICT_SET": [
+   1
+  ]
+ },
+ "persistence": {
+  "GAP05_WAL/1": "read+write",
+  "GAP05_SNAPSHOT/2": "read+write",
+  "state_format 1 (v4.2.x shape)": "read via one-way migration",
+  "GAP05_AUDIT/1": "read+write",
+  "GAP05_MEMBERSHIP/1": "read+write",
+  "GAP05_BACKUP/1": "read+write"
+ },
+ "crypto_provider": {
+  "cryptography": {
+   "tested": [
+    "46.0.7"
+   ],
+   "required": ">=42 (Ed25519, AESGCM)"
+  }
+ },
+ "adjacent": {
+  "pk_core": "UNTESTED in this build (not supplied)",
+  "GAP-13 policy engine": "adapter contract only; no live engine tested",
+  "PLN-06 data plane": "transport adapter contract only"
+ },
+ "rolling_upgrade": {
+  "4.2.0->4.3.0": "UNTESTED as a mixed cluster: 4.2.0 has no wire format; 4.3.0 introduces the first. Upgrade = deploy 4.3.0 to all replicas, migrate snapshots (format 1->2) per tenant/environment."
+ },
+ "tested_on": {
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "python": "3.11.15"
+ }
+}

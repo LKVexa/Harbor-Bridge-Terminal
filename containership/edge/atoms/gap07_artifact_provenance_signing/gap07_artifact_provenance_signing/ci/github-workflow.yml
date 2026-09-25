@@ -1,0 +1,43 @@
+# Copy to .github/workflows/gap07.yml in the estate repository (#46).
+name: gap07
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install -r gap07_artifact_provenance_signing/requirements.txt hypothesis
+      - run: python -m unittest discover -s gap07_artifact_provenance_signing/tests -p "test_*.py" -v
+      - run: python -O -m unittest discover -s gap07_artifact_provenance_signing/tests -p "test_*.py"
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r gap07_artifact_provenance_signing/requirements.txt
+      - run: for s in 1 2 3 4 5 6 7 8; do GAP07_SEED=$s GAP07_ITER=5000 python -m unittest gap07_artifact_provenance_signing.tests.test_v6_assurance.Fuzz gap07_artifact_provenance_signing.tests.test_v6_assurance.Properties || exit 1; done
+  supply-chain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r gap07_artifact_provenance_signing/requirements.txt pip-audit
+      - run: pip-audit -r gap07_artifact_provenance_signing/requirements.txt --strict
+      - run: python gap07_artifact_provenance_signing/tools/release.py evidence --bench
+      - run: python gap07_artifact_provenance_signing/tools/traceability.py --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gap07-release-evidence
+          path: |
+            gap07_artifact_provenance_signing/RELEASE_EVIDENCE.json
+            gap07_artifact_provenance_signing/SBOM.cdx.json
+            gap07_artifact_provenance_signing/MANIFEST.sha256

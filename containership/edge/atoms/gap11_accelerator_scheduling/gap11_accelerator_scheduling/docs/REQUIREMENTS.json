@@ -1,0 +1,1533 @@
+{
+ "schema": "GAP11_REQUIREMENTS/1",
+ "requirements": [
+  {
+   "id": "GAP11-P0-01-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Transactional persistence for allocations, releases, scrub state, quarantine state, and tenant security epochs across process/node restarts.",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-R01",
+   "level": "MUST",
+   "text": "INV-STORE-1 a commit is visible iff its WAL line is complete and checksummed",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-R02",
+   "level": "MUST",
+   "text": "INV-STORE-2 every write is CAS on explicit revisions",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-R03",
+   "level": "MUST",
+   "text": "INV-STORE-3 corruption anywhere but a torn tail refuses to open",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `STORE_CORRUPT` on the relevant path",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `STORE_UNAVAILABLE` on the relevant path",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-S03",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `STALE_REVISION` on the relevant path",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "test_state.StoreTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-01-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P0-01",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-02-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Monotonic ownership epochs or fencing tokens preventing two controllers from allocating the same physical accelerator after failover or partition.",
+   "component": "GAP11-P0-02",
+   "verified_by": [
+    "test_state.FencingElectionTests",
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-02-R01",
+   "level": "MUST",
+   "text": "INV-FENCE-1 token for a resource never decreases",
+   "component": "GAP11-P0-02",
+   "verified_by": [
+    "test_state.FencingElectionTests",
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-02-R02",
+   "level": "MUST",
+   "text": "INV-FENCE-2 a write with a lower token is refused atomically",
+   "component": "GAP11-P0-02",
+   "verified_by": [
+    "test_state.FencingElectionTests",
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-02-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `STALE_FENCE` on the relevant path",
+   "component": "GAP11-P0-02",
+   "verified_by": [
+    "test_state.FencingElectionTests",
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-03-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Explicit active-controller authority and failover behavior, integrated with fencing rather than best-effort locks.",
+   "component": "GAP11-P0-03",
+   "verified_by": [
+    "test_state.FencingElectionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-03-R01",
+   "level": "MUST",
+   "text": "INV-LEAD-1 at most one controller believes it leads outside its safety margin",
+   "component": "GAP11-P0-03",
+   "verified_by": [
+    "test_state.FencingElectionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-03-R02",
+   "level": "MUST",
+   "text": "INV-LEAD-2 epochs strictly increase across holders",
+   "component": "GAP11-P0-03",
+   "verified_by": [
+    "test_state.FencingElectionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-03-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `NOT_LEADER` on the relevant path",
+   "component": "GAP11-P0-03",
+   "verified_by": [
+    "test_state.FencingElectionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-03-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `leader_change` on the relevant path",
+   "component": "GAP11-P0-03",
+   "verified_by": [
+    "test_state.FencingElectionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-03-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P0-03",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-04-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Reclaim or quarantine resources after workload/controller death without prematurely releasing live workloads.",
+   "component": "GAP11-P0-04",
+   "verified_by": [
+    "test_state.TTLAndReconcileTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-04-R01",
+   "level": "MUST",
+   "text": "INV-TTL-1 unknown liveness never reclaims before grace",
+   "component": "GAP11-P0-04",
+   "verified_by": [
+    "test_state.TTLAndReconcileTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-04-R02",
+   "level": "MUST",
+   "text": "INV-TTL-2 reclaim leaves the device DIRTY",
+   "component": "GAP11-P0-04",
+   "verified_by": [
+    "test_state.TTLAndReconcileTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-04-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `AMBIGUOUS_EVIDENCE` on the relevant path",
+   "component": "GAP11-P0-04",
+   "verified_by": [
+    "test_state.TTLAndReconcileTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-04-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `LEASE_EXPIRED` on the relevant path",
+   "component": "GAP11-P0-04",
+   "verified_by": [
+    "test_state.TTLAndReconcileTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-05-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Request IDs and durable deduplication for allocate/release/scrub calls.",
+   "component": "GAP11-P0-05",
+   "verified_by": [
+    "test_state.IdempotencyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-05-R01",
+   "level": "MUST",
+   "text": "INV-IDEM-1 same id + same payload -> same result, no second effect",
+   "component": "GAP11-P0-05",
+   "verified_by": [
+    "test_state.IdempotencyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-05-R02",
+   "level": "MUST",
+   "text": "INV-IDEM-2 same id + different payload -> refused",
+   "component": "GAP11-P0-05",
+   "verified_by": [
+    "test_state.IdempotencyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-05-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `IDEMPOTENCY_CONFLICT` on the relevant path",
+   "component": "GAP11-P0-05",
+   "verified_by": [
+    "test_state.IdempotencyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-05-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `DUPLICATE_REQUEST` on the relevant path",
+   "component": "GAP11-P0-05",
+   "verified_by": [
+    "test_state.IdempotencyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-06-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Integration with GAP-02 and vendor APIs for device identity, memory, features, health, and hot-plug changes.",
+   "component": "GAP11-P0-06",
+   "verified_by": [
+    "test_hardware.InventoryTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-06-R01",
+   "level": "MUST",
+   "text": "INV-INV-1 identity keyed by stable_id, never PCI address",
+   "component": "GAP11-P0-06",
+   "verified_by": [
+    "test_hardware.InventoryTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-06-R02",
+   "level": "MUST",
+   "text": "INV-INV-2 provider outage never implies removal",
+   "component": "GAP11-P0-06",
+   "verified_by": [
+    "test_hardware.InventoryTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-06-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `DEADLINE_EXCEEDED` on the relevant path",
+   "component": "GAP11-P0-06",
+   "verified_by": [
+    "test_hardware.InventoryTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-06-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `SCHEMA_INVALID` on the relevant path",
+   "component": "GAP11-P0-06",
+   "verified_by": [
+    "test_hardware.InventoryTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-06-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P0-06",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-07-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Representation of mutually compatible partition profiles and creation/destruction/drain operations for MIG/SR-IOV/vendor slices.",
+   "component": "GAP11-P0-07",
+   "verified_by": [
+    "test_hardware.PartitionTopologyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-07-R01",
+   "level": "MUST",
+   "text": "INV-PART-1 a profile never oversubscribes memory",
+   "component": "GAP11-P0-07",
+   "verified_by": [
+    "test_hardware.PartitionTopologyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-07-R02",
+   "level": "MUST",
+   "text": "INV-PART-2 no reconfigure with active leases",
+   "component": "GAP11-P0-07",
+   "verified_by": [
+    "test_hardware.PartitionTopologyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-07-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `ILLEGAL_TRANSITION` on the relevant path",
+   "component": "GAP11-P0-07",
+   "verified_by": [
+    "test_hardware.PartitionTopologyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-07-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `CONFIG_INVALID` on the relevant path",
+   "component": "GAP11-P0-07",
+   "verified_by": [
+    "test_hardware.PartitionTopologyTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-07-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P0-07",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-08-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Actual VRAM/HBM/state zeroization or reset with timeout, retry policy, health verification, and evidence.",
+   "component": "GAP11-P0-08",
+   "verified_by": [
+    "test_hardware.ScrubTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-08-R01",
+   "level": "MUST",
+   "text": "INV-SCRUB-1 a device crosses tenants only after a verified scrub",
+   "component": "GAP11-P0-08",
+   "verified_by": [
+    "test_hardware.ScrubTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-08-R02",
+   "level": "MUST",
+   "text": "INV-SCRUB-2 timeout/partial/unknown -> QUARANTINED",
+   "component": "GAP11-P0-08",
+   "verified_by": [
+    "test_hardware.ScrubTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-08-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `SCRUB_FAILED` on the relevant path",
+   "component": "GAP11-P0-08",
+   "verified_by": [
+    "test_hardware.ScrubTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-08-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `SCRUB_TIMEOUT` on the relevant path",
+   "component": "GAP11-P0-08",
+   "verified_by": [
+    "test_hardware.ScrubTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-08-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P0-08",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-09-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Cryptographic binding between discovered accelerator identity/capabilities, node identity, driver/firmware state, and GAP-06 attestation evidence.",
+   "component": "GAP11-P0-09",
+   "verified_by": [
+    "test_security.AttestationTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-09-R01",
+   "level": "MUST",
+   "text": "INV-ATT-1 capability used for placement equals the attested digest",
+   "component": "GAP11-P0-09",
+   "verified_by": [
+    "test_security.AttestationTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-09-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `ATTESTATION_INVALID` on the relevant path",
+   "component": "GAP11-P0-09",
+   "verified_by": [
+    "test_security.AttestationTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-09-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-PKI; BLK-ADJ",
+   "component": "GAP11-P0-09",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-10-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: mTLS/workload identity or equivalent authentication for inventory, allocate, release, and scrub APIs.",
+   "component": "GAP11-P0-10",
+   "verified_by": [
+    "test_security.AuthnTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-10-R01",
+   "level": "MUST",
+   "text": "INV-AUTHN-1 no state change without a verified principal",
+   "component": "GAP11-P0-10",
+   "verified_by": [
+    "test_security.AuthnTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-10-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `UNAUTHENTICATED` on the relevant path",
+   "component": "GAP11-P0-10",
+   "verified_by": [
+    "test_security.AuthnTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-10-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `REPLAY_DETECTED` on the relevant path",
+   "component": "GAP11-P0-10",
+   "verified_by": [
+    "test_security.AuthnTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-10-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-PKI",
+   "component": "GAP11-P0-10",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-11-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Tenant/workload permissions for device classes, partitions, administrative scrub, quarantine overrides, and sensitive inventory.",
+   "component": "GAP11-P0-11",
+   "verified_by": [
+    "test_security.AuthzTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-11-R01",
+   "level": "MUST",
+   "text": "INV-AUTHZ-1 tenant comes from the principal, never the body",
+   "component": "GAP11-P0-11",
+   "verified_by": [
+    "test_security.AuthzTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-11-R02",
+   "level": "MUST",
+   "text": "INV-AUTHZ-2 no rule -> deny",
+   "component": "GAP11-P0-11",
+   "verified_by": [
+    "test_security.AuthzTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-11-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `POLICY_DENIED` on the relevant path",
+   "component": "GAP11-P0-11",
+   "verified_by": [
+    "test_security.AuthzTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-12-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Concrete JSON/Protobuf/WIT/RPC schema files for accelerator inventory, allocation, release, and scrub interfaces, including compatibility rules.",
+   "component": "GAP11-P0-12",
+   "verified_by": [
+    "test_wire.SchemaTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-12-R01",
+   "level": "MUST",
+   "text": "INV-WIRE-1 no business logic on an unvalidated message",
+   "component": "GAP11-P0-12",
+   "verified_by": [
+    "test_wire.SchemaTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-12-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `SCHEMA_INVALID` on the relevant path",
+   "component": "GAP11-P0-12",
+   "verified_by": [
+    "test_wire.SchemaTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-12-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `MESSAGE_TOO_LARGE` on the relevant path",
+   "component": "GAP11-P0-12",
+   "verified_by": [
+    "test_wire.SchemaTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-13-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Bounded request queues, deadlines, cancellation, backpressure, connection limits, and structured failure mapping.",
+   "component": "GAP11-P0-13",
+   "verified_by": [
+    "test_wire.TransportTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-13-R01",
+   "level": "MUST",
+   "text": "INV-SVC-1 bounded in-flight; excess -> OVERLOADED",
+   "component": "GAP11-P0-13",
+   "verified_by": [
+    "test_wire.TransportTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-13-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `OVERLOADED` on the relevant path",
+   "component": "GAP11-P0-13",
+   "verified_by": [
+    "test_wire.TransportTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-13-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `DEADLINE_EXCEEDED` on the relevant path",
+   "component": "GAP11-P0-13",
+   "verified_by": [
+    "test_wire.TransportTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-13-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-PKI",
+   "component": "GAP11-P0-13",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-14-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Per-tenant/project caps, reservation classes, starvation prevention, queue discipline, and capacity ceilings.",
+   "component": "GAP11-P0-14",
+   "verified_by": [
+    "test_scheduler"
+   ]
+  },
+  {
+   "id": "GAP11-P0-14-R01",
+   "level": "MUST",
+   "text": "INV-Q-1 no quota -> no access",
+   "component": "GAP11-P0-14",
+   "verified_by": [
+    "test_scheduler"
+   ]
+  },
+  {
+   "id": "GAP11-P0-14-R02",
+   "level": "MUST",
+   "text": "INV-Q-2 any queued request is served within 2*aging_s of reaching the head class",
+   "component": "GAP11-P0-14",
+   "verified_by": [
+    "test_scheduler"
+   ]
+  },
+  {
+   "id": "GAP11-P0-14-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `QUOTA_EXCEEDED` on the relevant path",
+   "component": "GAP11-P0-14",
+   "verified_by": [
+    "test_scheduler"
+   ]
+  },
+  {
+   "id": "GAP11-P0-14-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `OVERLOADED` on the relevant path",
+   "component": "GAP11-P0-14",
+   "verified_by": [
+    "test_scheduler"
+   ]
+  },
+  {
+   "id": "GAP11-P0-15-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Authoritative hooks for workload start, exit, crash, eviction, and restart so leases cannot leak or be released too early.",
+   "component": "GAP11-P0-15",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-15-R01",
+   "level": "MUST",
+   "text": "INV-LC-1 a late event never resurrects or double-releases a lease",
+   "component": "GAP11-P0-15",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-15-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `ILLEGAL_TRANSITION` on the relevant path",
+   "component": "GAP11-P0-15",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-15-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `LEASE_NOT_FOUND` on the relevant path",
+   "component": "GAP11-P0-15",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-15-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ADJ",
+   "component": "GAP11-P0-15",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P0-16-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Multi-controller fault tests proving fencing under delayed messages, network partitions, failover, and replay.",
+   "component": "GAP11-P0-16",
+   "verified_by": [
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-16-R01",
+   "level": "MUST",
+   "text": "INV-SB-1 at most one lease per whole device under any interleaving",
+   "component": "GAP11-P0-16",
+   "verified_by": [
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-16-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `STALE_FENCE` on the relevant path",
+   "component": "GAP11-P0-16",
+   "verified_by": [
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P0-16-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P0-16",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-17-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: NUMA/PCIe/NVLink/fabric locality, gang allocation, atomic multi-device reservation, and rollback.",
+   "component": "GAP11-P1-17",
+   "verified_by": [
+    "test_scheduler.TopologyGangTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-17-R01",
+   "level": "MUST",
+   "text": "INV-GANG-1 no partial gang is ever persisted",
+   "component": "GAP11-P1-17",
+   "verified_by": [
+    "test_scheduler.TopologyGangTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-17-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `CAPACITY_EXHAUSTED` on the relevant path",
+   "component": "GAP11-P1-17",
+   "verified_by": [
+    "test_scheduler.TopologyGangTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-17-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P1-17",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-18-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Profile compatibility and placement minimizing unusable residual accelerator capacity.",
+   "component": "GAP11-P1-18",
+   "verified_by": [
+    "test_scheduler.FragmentationTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-18-R01",
+   "level": "MUST",
+   "text": "INV-FRAG-1 slice placement never lands on a whole-device lease",
+   "component": "GAP11-P1-18",
+   "verified_by": [
+    "test_scheduler.FragmentationTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-19-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Live constraint integration with GAP-10 so thermally unavailable devices cannot be leased.",
+   "component": "GAP11-P1-19",
+   "verified_by": [
+    "test_hardware.ThermalHealthTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-19-R01",
+   "level": "MUST",
+   "text": "INV-THERM-1 missing or stale reading => not admissible",
+   "component": "GAP11-P1-19",
+   "verified_by": [
+    "test_hardware.ThermalHealthTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-19-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `THERMAL_UNAVAILABLE` on the relevant path",
+   "component": "GAP11-P1-19",
+   "verified_by": [
+    "test_hardware.ThermalHealthTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-19-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ADJ",
+   "component": "GAP11-P1-19",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-20-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: ECC, Xid/device faults, link degradation, reset storms, predictive failure, and automatic quarantine/drain.",
+   "component": "GAP11-P1-20",
+   "verified_by": [
+    "test_hardware.ThermalHealthTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-20-R01",
+   "level": "MUST",
+   "text": "INV-RAS-1 failed health => QUARANTINED, excluded",
+   "component": "GAP11-P1-20",
+   "verified_by": [
+    "test_hardware.ThermalHealthTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-20-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `HARDWARE_FAULT` on the relevant path",
+   "component": "GAP11-P1-20",
+   "verified_by": [
+    "test_hardware.ThermalHealthTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-20-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P1-20",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-21-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Safely handle device disappearance, replacement, renumbering, and changed capabilities while leases exist.",
+   "component": "GAP11-P1-21",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-21-R01",
+   "level": "MUST",
+   "text": "INV-HP-1 a returning device is never directly placeable",
+   "component": "GAP11-P1-21",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-21-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `DEVICE_MISSING` on the relevant path",
+   "component": "GAP11-P1-21",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-21-S02",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `AMBIGUOUS_EVIDENCE` on the relevant path",
+   "component": "GAP11-P1-21",
+   "verified_by": [
+    "test_state.LifecycleAndHotplugTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-22-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Priority classes or reserved accelerators, including safe preemption semantics where enabled.",
+   "component": "GAP11-P1-22",
+   "verified_by": [
+    "test_scheduler.PreemptionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-22-R01",
+   "level": "MUST",
+   "text": "INV-PRE-1 never preempt equal or higher priority",
+   "component": "GAP11-P1-22",
+   "verified_by": [
+    "test_scheduler.PreemptionTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-22-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ADJ",
+   "component": "GAP11-P1-22",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-23-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Precedence for security, residency, workload class, generation, feature, cost, power, and SLO constraints, with deterministic decision reasons.",
+   "component": "GAP11-P1-23",
+   "verified_by": [
+    "test_scheduler.ConstraintTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-23-R01",
+   "level": "MUST",
+   "text": "INV-CON-1 scoring never overrides a hard constraint",
+   "component": "GAP11-P1-23",
+   "verified_by": [
+    "test_scheduler.ConstraintTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-23-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `CONSTRAINT_UNSATISFIED` on the relevant path",
+   "component": "GAP11-P1-23",
+   "verified_by": [
+    "test_scheduler.ConstraintTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-24-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Signed/chained events for allocation, release, scrub, quarantine, policy decisions, overrides, and controller leadership changes.",
+   "component": "GAP11-P1-24",
+   "verified_by": [
+    "test_observability.AuditLedgerTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-24-R01",
+   "level": "MUST",
+   "text": "INV-AUD-1 any edit/reorder/delete fails verify; truncation fails against witness",
+   "component": "GAP11-P1-24",
+   "verified_by": [
+    "test_observability.AuditLedgerTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-24-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `STORE_CORRUPT` on the relevant path",
+   "component": "GAP11-P1-24",
+   "verified_by": [
+    "test_observability.AuditLedgerTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-24-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-KMS",
+   "component": "GAP11-P1-24",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-25-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Allocation latency, refusal reason, active leases, saturation, scrub latency/failure, queue depth, fragmentation, and reconciliation state.",
+   "component": "GAP11-P1-25",
+   "verified_by": [
+    "test_observability.MetricsLogsTraceTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-25-R01",
+   "level": "MUST",
+   "text": "INV-MET-1 label values come from closed sets",
+   "component": "GAP11-P1-25",
+   "verified_by": [
+    "test_observability.MetricsLogsTraceTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-25-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P1-25",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-26-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Stable operation/request/lease/device IDs, trace context, privacy controls, and correlation to release lineage.",
+   "component": "GAP11-P1-26",
+   "verified_by": [
+    "test_observability.MetricsLogsTraceTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-26-R01",
+   "level": "MUST",
+   "text": "INV-LOG-1 secrets never reach a sink",
+   "component": "GAP11-P1-26",
+   "verified_by": [
+    "test_observability.MetricsLogsTraceTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-26-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P1-26",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-27-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Version, configuration digest, dependency health, controller role, reconciliation lag, and safe explain output.",
+   "component": "GAP11-P1-27",
+   "verified_by": [
+    "test_observability.HealthAlertTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-27-R01",
+   "level": "MUST",
+   "text": "INV-HEALTH-1 not leader or store read-only => not ready",
+   "component": "GAP11-P1-27",
+   "verified_by": [
+    "test_observability.HealthAlertTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-28-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Separate capacity exhaustion, policy rejection, scrub failure, device health failure, attack indicators, and software defects.",
+   "component": "GAP11-P1-28",
+   "verified_by": [
+    "test_observability.HealthAlertTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-28-R01",
+   "level": "MUST",
+   "text": "INV-ALERT-1 every rule names a runbook",
+   "component": "GAP11-P1-28",
+   "verified_by": [
+    "test_observability.HealthAlertTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-28-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P1-28",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-29-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Validation, secure defaults, site/environment overlays, provenance, atomic activation, and rollback.",
+   "component": "GAP11-P1-29",
+   "verified_by": [
+    "test_observability.ConfigTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-29-R01",
+   "level": "MUST",
+   "text": "INV-CFG-1 an invalid candidate is never partially active",
+   "component": "GAP11-P1-29",
+   "verified_by": [
+    "test_observability.ConfigTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-29-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `CONFIG_INVALID` on the relevant path",
+   "component": "GAP11-P1-29",
+   "verified_by": [
+    "test_observability.ConfigTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-30-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Certificate/key retrieval, rotation, redaction, and fail-closed behavior when key or identity services are unavailable.",
+   "component": "GAP11-P1-30",
+   "verified_by": [
+    "test_security.SecretsTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-30-R01",
+   "level": "MUST",
+   "text": "INV-SEC-1 a secret value never appears in config, logs or audit",
+   "component": "GAP11-P1-30",
+   "verified_by": [
+    "test_security.SecretsTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-30-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `DEPENDENCY_UNAVAILABLE` on the relevant path",
+   "component": "GAP11-P1-30",
+   "verified_by": [
+    "test_security.SecretsTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-30-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-KMS",
+   "component": "GAP11-P1-30",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P1-31-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Durable device/partition occupancy records suitable for capacity analytics, chargeback/showback, and audit without trusting ephemeral process memory.",
+   "component": "GAP11-P1-31",
+   "verified_by": [
+    "test_observability.UsageAccountingTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-31-R01",
+   "level": "MUST",
+   "text": "INV-USE-1 every lease has exactly one usage record, closed on release/reclaim",
+   "component": "GAP11-P1-31",
+   "verified_by": [
+    "test_observability.UsageAccountingTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-32-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Explicit freeze, drain, unquarantine, force-reconcile, and maintenance workflows with authorization and audit.",
+   "component": "GAP11-P1-32",
+   "verified_by": [
+    "test_observability.ConfigTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-32-R01",
+   "level": "MUST",
+   "text": "INV-OP-1 the only exit from QUARANTINED is a verified scrub",
+   "component": "GAP11-P1-32",
+   "verified_by": [
+    "test_observability.ConfigTests"
+   ]
+  },
+  {
+   "id": "GAP11-P1-32-S01",
+   "level": "SHOULD",
+   "text": "emit stable reason/event `MAINTENANCE_MODE` on the relevant path",
+   "component": "GAP11-P1-32",
+   "verified_by": [
+    "test_observability.ConfigTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-33-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Golden requests/responses/error cases for every wire interface.",
+   "component": "GAP11-P2-33",
+   "verified_by": [
+    "test_wire.SchemaTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-33-R01",
+   "level": "MUST",
+   "text": "INV-FIX-1 every fixture decodes to its expected outcome",
+   "component": "GAP11-P2-33",
+   "verified_by": [
+    "test_wire.SchemaTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-34-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: GAP-02, GAP-06, GAP-09, GAP-10, workload placement, runtime, and workload lifecycle integration tests.",
+   "component": "GAP11-P2-34",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-34-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ADJ",
+   "component": "GAP11-P2-34",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-35-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Request parsing, schema handling, state-machine sequences, lease replay, and malformed inventory.",
+   "component": "GAP11-P2-35",
+   "verified_by": [
+    "test_wire.SchemaTests",
+    "test_scheduler.AdversarialTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-35-R01",
+   "level": "MUST",
+   "text": "INV-FUZZ-1 decoder raises only typed ControlError",
+   "component": "GAP11-P2-35",
+   "verified_by": [
+    "test_wire.SchemaTests",
+    "test_scheduler.AdversarialTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-36-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Release-vs-scrub, allocate-vs-inventory-change, controller failover, multi-device transactions, and long-running race/soak tests.",
+   "component": "GAP11-P2-36",
+   "verified_by": [
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-36-R01",
+   "level": "MUST",
+   "text": "INV-CONC-1 invariants hold under every tested interleaving",
+   "component": "GAP11-P2-36",
+   "verified_by": [
+    "test_verification.SplitBrainTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-36-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P2-36",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-37-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Spoofed identity, capability escalation, stale lease replay, denial of service, side-channel assumptions, audit tampering, and malicious device metadata.",
+   "component": "GAP11-P2-37",
+   "verified_by": [
+    "test_security"
+   ]
+  },
+  {
+   "id": "GAP11-P2-37-R01",
+   "level": "MUST",
+   "text": "INV-ADV-1 every adversarial case is refused with a typed code",
+   "component": "GAP11-P2-37",
+   "verified_by": [
+    "test_security"
+   ]
+  },
+  {
+   "id": "GAP11-P2-37-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P2-37",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-38-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Store loss, partial write, process kill, node loss, network partition, time skew, dependency outage, and reconnect.",
+   "component": "GAP11-P2-38",
+   "verified_by": [
+    "test_verification.FaultMatrixTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-38-R01",
+   "level": "MUST",
+   "text": "INV-FAULT-1 retry after restart converges to exactly one effect",
+   "component": "GAP11-P2-38",
+   "verified_by": [
+    "test_verification.FaultMatrixTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-38-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV",
+   "component": "GAP11-P2-38",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-39-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: p50/p95/p99/worst-case latency, burst/overload, fleet size, queue depth, memory/CPU overhead, and regression gates.",
+   "component": "GAP11-P2-39",
+   "verified_by": [
+    "test_verification.BenchmarkTests"
+   ]
+  },
+  {
+   "id": "GAP11-P2-39-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV; BLK-HUMAN",
+   "component": "GAP11-P2-39",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-40-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Supported Python/pk_core versions, API schema versions, architectures, drivers, firmware, hypervisors, accelerator families, and providers.",
+   "component": "GAP11-P2-40",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-40-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HW",
+   "component": "GAP11-P2-40",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-41-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: pyproject/build metadata, explicit pk_core compatibility range, reproducible wheel/sdist or repository packaging, and installation tests.",
+   "component": "GAP11-P2-41",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-42-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Compile, unit, contract, integration, security, fuzz, benchmark, provenance, and artifact verification before release.",
+   "component": "GAP11-P2-42",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-42-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-SIGN",
+   "component": "GAP11-P2-42",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-43-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Signed release artifacts, dependency inventory, source/build attestations, and verification policy.",
+   "component": "GAP11-P2-43",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-43-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-SIGN",
+   "component": "GAP11-P2-43",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-44-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Attacker classes, trust boundaries, residual-data threat analysis, stale-controller threats, side-channel assumptions, and mitigations.",
+   "component": "GAP11-P2-44",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-44-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HUMAN",
+   "component": "GAP11-P2-44",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-45-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Approved technology/state-store/API/fencing choices and explicit tradeoffs.",
+   "component": "GAP11-P2-45",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-45-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HUMAN",
+   "component": "GAP11-P2-45",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-46-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Owner, on-call/escalation route, incident severity policy, and support commitment.",
+   "component": "GAP11-P2-46",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-46-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HUMAN",
+   "component": "GAP11-P2-46",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-47-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Bootstrap, rollout, rollback, emergency disable, store recovery, orphan reconciliation, failed scrub, device replacement, and incident containment.",
+   "component": "GAP11-P2-47",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-47-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-ENV; BLK-HUMAN",
+   "component": "GAP11-P2-47",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-48-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Owners, expiry dates, rationale, migration plan, and review cadence.",
+   "component": "GAP11-P2-48",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-48-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HUMAN",
+   "component": "GAP11-P2-48",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-49-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Restore the authoritative master prompt/workflow source or remove all downstream assumptions that require it.",
+   "component": "GAP11-P2-49",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-49-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-MASTER; BLK-HUMAN",
+   "component": "GAP11-P2-49",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  },
+  {
+   "id": "GAP11-P2-50-R00",
+   "level": "MUST",
+   "text": "GAP-11 MUST provide: Machine-readable acceptance results covering architecture, security, resilience, performance, observability, rollback, ownership, and all unresolved exceptions.",
+   "component": "GAP11-P2-50",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-50-R01",
+   "level": "MUST",
+   "text": "INV-EXIT-1 any open P0 item or unapproved exception => NO_GO",
+   "component": "GAP11-P2-50",
+   "verified_by": []
+  },
+  {
+   "id": "GAP11-P2-50-M01",
+   "level": "MAY",
+   "text": "operate under a time-bounded APPROVED exception while blockers remain: BLK-HUMAN",
+   "component": "GAP11-P2-50",
+   "verified_by": [
+    "docs/EXCEPTIONS.json"
+   ]
+  }
+ ]
+}

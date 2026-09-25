@@ -1,0 +1,1730 @@
+{
+ "schema": "PK_MC_STATUS_SOURCE/1",
+ "component": "INV-27",
+ "version": "4.3.0",
+ "status_values": {
+  "verified_local": "implemented, with executable verification in this archive; not independently reviewed",
+  "partial": "implemented in part; named waivers cover the rest",
+  "blocked": "cannot close without a named human/external input"
+ },
+ "components": {
+  "MC-001": {
+   "title": "Real unikernel binary parser/inspector",
+   "priority": "P0",
+   "requirements": [
+    "C034",
+    "C045",
+    "C081",
+    "C082"
+   ],
+   "status": "partial",
+   "implementation": [
+    "image/elf.py::parse",
+    "image/facts.py::derive_syscalls",
+    "docs/FORMATS.md",
+    "tests/fixtures/build_fixtures.sh"
+   ],
+   "tests": [
+    "tests/test_parser.py",
+    "tests/test_seal.py"
+   ],
+   "blockers": [
+    "W-TOOLCHAIN"
+   ],
+   "note": "bounded ELF64 parser on real gcc-built images; fixtures follow Unikraft/Solo5 conventions but are not upstream toolchain builds"
+  },
+  "MC-002": {
+   "title": "Independent single-address-space proof",
+   "priority": "P0",
+   "requirements": [
+    "C011",
+    "C034",
+    "C041",
+    "C046"
+   ],
+   "status": "partial",
+   "implementation": [
+    "image/facts.py::prove_sas",
+    "admission.py::admit"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [
+    "W-TOOLCHAIN"
+   ],
+   "note": "positive clause-by-clause proof; the caller boolean is gone from the trust boundary"
+  },
+  "MC-003": {
+   "title": "Independent dynamic-loading / fork / exec detection",
+   "priority": "P0",
+   "requirements": [
+    "C041",
+    "C042",
+    "C043",
+    "C044",
+    "C045",
+    "C046"
+   ],
+   "status": "partial",
+   "implementation": [
+    "image/facts.py::detect_capabilities",
+    "admission.py::admit"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_parser.py"
+   ],
+   "blockers": [
+    "W-TOOLCHAIN"
+   ],
+   "note": "symbol/interp/DT_NEEDED detection; inlined raw syscall instructions are a recorded limitation (THREAT_MODEL T-11)"
+  },
+  "MC-004": {
+   "title": "Cryptographic image identity",
+   "priority": "P0",
+   "requirements": [
+    "C044",
+    "C045"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "image/blob.py::ImageBlob",
+    "vmm.py::Supervisor.launch"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": "sha256 bound at A1, re-hashed on disk before exec"
+  },
+  "MC-005": {
+   "title": "Signature and provenance verification",
+   "priority": "P0",
+   "requirements": [
+    "C044",
+    "C045"
+   ],
+   "status": "partial",
+   "implementation": [
+    "trust/signing.py::verify_envelope",
+    "trust/ed25519.py"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [
+    "W-KMS"
+   ],
+   "note": "DSSE-style Ed25519 + provenance policy; production trust root / signing service not supplied"
+  },
+  "MC-006": {
+   "title": "Seal-manifest parser and schema implementation",
+   "priority": "P0",
+   "requirements": [
+    "C021",
+    "C022",
+    "C026",
+    "C029"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "manifest.py::loads",
+    "schemas/PK_UNIKERNEL_SEAL_MANIFEST-1.schema.json"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-007": {
+   "title": "Actual unikernel boot/execution adapter",
+   "priority": "P0",
+   "requirements": [
+    "C011",
+    "C021",
+    "C030",
+    "C031",
+    "C040"
+   ],
+   "status": "partial",
+   "implementation": [
+    "vmm.py::QemuBackend",
+    "vmm.py::FirecrackerBackend",
+    "vmm.py::Supervisor"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-VMM"
+   ],
+   "note": "supervisor exercised end-to-end against tests/fake_vmm.py; a real VMM boot could not be run here (package mirror 403)"
+  },
+  "MC-008": {
+   "title": "Entry-point/boot-contract enforcement",
+   "priority": "P0",
+   "requirements": [
+    "C021",
+    "C022",
+    "C034"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "bootcontract.py::enforce"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-009": {
+   "title": "Hypervisor isolation integration",
+   "priority": "P0",
+   "requirements": [
+    "C030",
+    "C046",
+    "C083",
+    "C084"
+   ],
+   "status": "partial",
+   "implementation": [
+    "vmm.py::QEMU_SANDBOX",
+    "vmm.py::QemuBackend.plan"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-VMM"
+   ],
+   "note": "hardened argv + seccomp sandbox flags planned; not observed under a real hypervisor"
+  },
+  "MC-010": {
+   "title": "Device/network/storage boundary enforcement",
+   "priority": "P0",
+   "requirements": [
+    "C042",
+    "C043",
+    "C046"
+   ],
+   "status": "partial",
+   "implementation": [
+    "isolation.py::plan",
+    "isolation.py::IsolationPolicy"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-VMM"
+   ],
+   "note": "deny-by-default plan is the only attach input; enforcement proof needs a real VMM"
+  },
+  "MC-011": {
+   "title": "Upstream master prompt corpus `MASTER.md`",
+   "priority": "P2",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "MASTER.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": "restored verbatim from the owner's PK_Master_Applied_All_Batches.zip (UC270)"
+  },
+  "MC-012": {
+   "title": "Accountable owner and escalation record",
+   "priority": "P2",
+   "requirements": [
+    "C009"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "ops/OWNERS.json",
+    "ops/OWNERS.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-OWNERS"
+   ],
+   "note": "roles defined; holders UNASSIGNED - governance_check fails until named"
+  },
+  "MC-013": {
+   "title": "Approved architecture decision record (ADR)",
+   "priority": "P2",
+   "requirements": [
+    "C010"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "docs/ADR-0001-unikernel-seal-verification.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-APPROVALS"
+   ],
+   "note": "ADR written, status Proposed"
+  },
+  "MC-014": {
+   "title": "Normative SHALL-level requirements specification",
+   "priority": "P1",
+   "requirements": [
+    "C011",
+    "C012",
+    "C013",
+    "C014",
+    "C015",
+    "C016",
+    "C017",
+    "C018",
+    "C019"
+   ],
+   "status": "partial",
+   "implementation": [
+    "docs/SPEC.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-APPROVALS"
+   ],
+   "note": "SHALL spec with test links; not approved"
+  },
+  "MC-015": {
+   "title": "Requirements traceability matrix (RTM)",
+   "priority": "P1",
+   "requirements": [
+    "C020"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tools/rtm.py::build",
+    "evidence/RTM.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-016": {
+   "title": "Formal lifecycle/state-transition specification",
+   "priority": "P1",
+   "requirements": [
+    "C014",
+    "C015"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "lifecycle.py::TRANSITIONS",
+    "docs/LIFECYCLE.md"
+   ],
+   "tests": [
+    "tests/test_platform.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-017": {
+   "title": "Versioning/backward-compatibility policy",
+   "priority": "P2",
+   "requirements": [
+    "C016",
+    "C027",
+    "C093"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "docs/VERSIONING.md",
+    "ops/ERROR_CODES.json"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-018": {
+   "title": "Capacity/quota/fairness policy",
+   "priority": "P1",
+   "requirements": [
+    "C017",
+    "C028",
+    "C067",
+    "C069"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.run",
+    "resilience.py::Admission",
+    "docs/CAPACITY.md"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-019": {
+   "title": "Disconnected/intermittent-network behavior specification",
+   "priority": "P1",
+   "requirements": [
+    "C018"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "precedence.py::disconnected_decision",
+    "docs/DISCONNECTED.md"
+   ],
+   "tests": [
+    "tests/test_platform.py",
+    "tests/test_seal.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-020": {
+   "title": "Security/residency/SLO/cost precedence rules",
+   "priority": "P1",
+   "requirements": [
+    "C019"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "precedence.py::resolve",
+    "docs/SPEC.md"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-021": {
+   "title": "Pinned `pk_core` dependency or vendored core",
+   "priority": "P0",
+   "requirements": [
+    "C031",
+    "C040",
+    "C083",
+    "C090",
+    "C100"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "_vendor/pk_core/__init__.py",
+    "_vendor/PK_CORE_PROVENANCE.json",
+    "__init__.py::_ensure_pk_core"
+   ],
+   "tests": [
+    "tests/test_component.py",
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": "vendored unchanged; digests checked by test"
+  },
+  "MC-022": {
+   "title": "Python packaging/install metadata",
+   "priority": "P1",
+   "requirements": [
+    "C031",
+    "C040",
+    "C093"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "pyproject.toml",
+    "requirements.lock"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-023": {
+   "title": "Typed external interface definitions",
+   "priority": "P1",
+   "requirements": [
+    "C021",
+    "C022"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "schemas/PK_UNIKERNEL_IMAGE-1.schema.json",
+    "schemas/PK_UNIKERNEL_INSTANCE-1.schema.json",
+    "docs/INTERFACES.md"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-024": {
+   "title": "Authentication implementation",
+   "priority": "P0",
+   "requirements": [
+    "C023",
+    "C044"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "authz.py::Authenticator"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": "HMAC tokens; the host supplies keys"
+  },
+  "MC-025": {
+   "title": "Authorization/capability model",
+   "priority": "P0",
+   "requirements": [
+    "C024",
+    "C042"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "authz.py::authorize",
+    "authz.py::CAPS"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-026": {
+   "title": "Timeout/cancellation/retry/idempotency/backpressure contract",
+   "priority": "P1",
+   "requirements": [
+    "C025"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "resilience.py::retry",
+    "resilience.py::Deadline",
+    "service.py::UnikernelService.run",
+    "docs/INTERFACES.md"
+   ],
+   "tests": [
+    "tests/test_platform.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-027": {
+   "title": "Structured machine-readable failure model",
+   "priority": "P1",
+   "requirements": [
+    "C026"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "errors.py::REGISTRY",
+    "schemas/PK_UNIKERNEL_ERROR-1.schema.json",
+    "ops/ERROR_CODES.json"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-028": {
+   "title": "Reference fixtures and adjacent-layer integration harnesses",
+   "priority": "P1",
+   "requirements": [
+    "C029",
+    "C030",
+    "C083"
+   ],
+   "status": "partial",
+   "implementation": [
+    "tests/fixtures/build_fixtures.sh",
+    "tests/harness.py",
+    "tests/fake_vmm.py"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-VMM",
+    "W-TOOLCHAIN"
+   ],
+   "note": "real-ELF fixtures + VMM test double; INV-28/INV-23/PLN-04 harnesses need those layers"
+  },
+  "MC-029": {
+   "title": "Declarative runtime configuration model",
+   "priority": "P1",
+   "requirements": [
+    "C032",
+    "C033",
+    "C034",
+    "C035"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "config.py::validate",
+    "schemas/PK_UNIKERNEL_CONFIG-1.schema.json",
+    "config/example.dev.json"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-030": {
+   "title": "Configuration provenance/history",
+   "priority": "P1",
+   "requirements": [
+    "C036"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "config.py::ConfigStore.verify_history"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-031": {
+   "title": "Atomic configuration update mechanism",
+   "priority": "P1",
+   "requirements": [
+    "C037"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "config.py::ConfigStore.apply"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-032": {
+   "title": "Configuration rollback mechanism",
+   "priority": "P1",
+   "requirements": [
+    "C038",
+    "C092"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "config.py::ConfigStore.rollback"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-033": {
+   "title": "Secrets integration and diagnostics redaction",
+   "priority": "P1",
+   "requirements": [
+    "C039",
+    "C047"
+   ],
+   "status": "partial",
+   "implementation": [
+    "redaction.py::redact",
+    "config.py::validate"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [
+    "W-KMS"
+   ],
+   "note": "secret_ref only + inline-secret refusal; secret-store adapter is the host's"
+  },
+  "MC-034": {
+   "title": "Deterministic bootstrap/install path",
+   "priority": "P1",
+   "requirements": [
+    "C040"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tools/bootstrap.py",
+    "verify_repo.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-035": {
+   "title": "Canary/staged rollout/emergency-disable implementation",
+   "priority": "P1",
+   "requirements": [
+    "C092"
+   ],
+   "status": "partial",
+   "implementation": [
+    "service.py::UnikernelService.disable",
+    "ops/ROLLOUT.md"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-DRILLS"
+   ],
+   "note": "emergency disable implemented; canary stages documented, not exercised in a fleet"
+  },
+  "MC-036": {
+   "title": "Patch/vulnerability/EOL policy",
+   "priority": "P2",
+   "requirements": [
+    "C094"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "ops/EOL.json",
+    "SECURITY.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-037": {
+   "title": "Backup/restore/migration/reconstruction procedure",
+   "priority": "P1",
+   "requirements": [
+    "C095"
+   ],
+   "status": "partial",
+   "implementation": [
+    "service.py::Journal",
+    "ops/BACKUP_RESTORE.md"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-DRILLS"
+   ],
+   "note": "journal replay/reconstruction tested; restore drill not run"
+  },
+  "MC-038": {
+   "title": "Incident response runbook",
+   "priority": "P2",
+   "requirements": [
+    "C097"
+   ],
+   "status": "partial",
+   "implementation": [
+    "ops/INCIDENT.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-OWNERS",
+    "W-DRILLS"
+   ],
+   "note": ""
+  },
+  "MC-039": {
+   "title": "Recurring review process",
+   "priority": "P2",
+   "requirements": [
+    "C098"
+   ],
+   "status": "partial",
+   "implementation": [
+    "ops/REVIEWS.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-OWNERS"
+   ],
+   "note": "cadence defined, no review held"
+  },
+  "MC-040": {
+   "title": "Exception/waiver/technical-debt registry",
+   "priority": "P2",
+   "requirements": [
+    "C099"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "ops/WAIVERS.json",
+    "tools/governance_check.py"
+   ],
+   "tests": [
+    "tests/test_repository.py",
+    "tests/test_gates.py"
+   ],
+   "blockers": [],
+   "note": "registry exists; every waiver is PROPOSED"
+  },
+  "MC-041": {
+   "title": "Self-contained formal production exit gate",
+   "priority": "P0",
+   "requirements": [
+    "C100"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tools/release_gate.py::evaluate"
+   ],
+   "tests": [
+    "tests/test_gates.py"
+   ],
+   "blockers": [],
+   "note": "gate implemented; its verdict is NO_GO"
+  },
+  "MC-042": {
+   "title": "Complete threat model artifact",
+   "priority": "P0",
+   "requirements": [
+    "C041"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "docs/THREAT_MODEL.md"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-043": {
+   "title": "Tenant/workload memory isolation proof",
+   "priority": "P0",
+   "requirements": [
+    "C046"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "docs/THREAT_MODEL.md",
+    "vmm.py::QemuBackend.plan"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-VMM",
+    "W-HW"
+   ],
+   "note": "one instance per VMM process by construction; memory isolation proof needs a real hypervisor"
+  },
+  "MC-044": {
+   "title": "Network isolation proof",
+   "priority": "P0",
+   "requirements": [
+    "C046"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "isolation.py::plan",
+    "vmm.py::QemuBackend.plan"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [
+    "W-VMM"
+   ],
+   "note": "per-tenant bridge ownership enforced in the plan; packet-level proof not possible here"
+  },
+  "MC-045": {
+   "title": "Device isolation/IOMMU policy and proof",
+   "priority": "P0",
+   "requirements": [
+    "C046"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "isolation.py",
+    "manifest.py::DEVICE_KINDS"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [
+    "W-HW"
+   ],
+   "note": "passthrough is unrepresentable; IOMMU proof needs hardware"
+  },
+  "MC-046": {
+   "title": "Encryption in transit/at rest and key rotation",
+   "priority": "P0",
+   "requirements": [
+    "C047"
+   ],
+   "status": "partial",
+   "implementation": [
+    "sealed_store.py::seal",
+    "sealed_store.py::KeyRing"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [
+    "W-KMS"
+   ],
+   "note": "AES-256-GCM at rest with rotation; transit is the host API layer's (ops/BOUNDARIES.md)"
+  },
+  "MC-047": {
+   "title": "Safe degraded trust-service behavior",
+   "priority": "P0",
+   "requirements": [
+    "C048"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "trust/signing.py::TrustRoot.check_fresh",
+    "service.py::UnikernelService.health"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-048": {
+   "title": "Tamper-evident security audit log",
+   "priority": "P0",
+   "requirements": [
+    "C049"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "audit.py::AuditLog"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-049": {
+   "title": "Adversarial security test suite",
+   "priority": "P0",
+   "requirements": [
+    "C050",
+    "C087"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tests/test_seal.py",
+    "tests/test_parser.py"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_parser.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-050": {
+   "title": "Fuzzing harness/corpus",
+   "priority": "P0",
+   "requirements": [
+    "C085"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tests/test_parser.py::Fuzz"
+   ],
+   "tests": [
+    "tests/test_parser.py"
+   ],
+   "blockers": [],
+   "note": "seeded mutation fuzzer; long run in CI"
+  },
+  "MC-051": {
+   "title": "Health/readiness/stall detector",
+   "priority": "P1",
+   "requirements": [
+    "C052"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.health",
+    "vmm.py::Supervisor._await_ready"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-052": {
+   "title": "Bounded retry/backoff/jitter mechanism",
+   "priority": "P1",
+   "requirements": [
+    "C053"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "resilience.py::retry",
+    "resilience.py::backoff_delays"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-053": {
+   "title": "Admission control/load shedding/circuit breaker",
+   "priority": "P1",
+   "requirements": [
+    "C054"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "resilience.py::Admission",
+    "resilience.py::CircuitBreaker"
+   ],
+   "tests": [
+    "tests/test_service.py",
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-054": {
+   "title": "Failover/residency-aware recovery",
+   "priority": "P1",
+   "requirements": [
+    "C055"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "precedence.py::resolve",
+    "docs/DISCONNECTED.md"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [
+    "W-FLEET"
+   ],
+   "note": "precedence rules exist; multi-site failover needs PLN-04/placement"
+  },
+  "MC-055": {
+   "title": "Defined degraded operation",
+   "priority": "P1",
+   "requirements": [
+    "C056"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "telemetry.py::Logger.log",
+    "precedence.py::disconnected_decision",
+    "docs/SPEC.md"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-056": {
+   "title": "Crash consistency/restart/resume/replay semantics",
+   "priority": "P1",
+   "requirements": [
+    "C057"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::Journal.replay",
+    "service.py::UnikernelService._reconcile"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-057": {
+   "title": "Duplicate execution/split-brain protection",
+   "priority": "P0",
+   "requirements": [
+    "C058"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.set_fence",
+    "service.py::UnikernelService.run"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-058": {
+   "title": "Quarantine/freeze/disable control",
+   "priority": "P0",
+   "requirements": [
+    "C059"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.quarantine",
+    "service.py::UnikernelService.disable"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-059": {
+   "title": "Fault-injection suite",
+   "priority": "P1",
+   "requirements": [
+    "C060",
+    "C089"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tests/fake_vmm.py"
+   ],
+   "tests": [
+    "tests/test_service.py",
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": "hang/crash/flood/ignore-TERM, torn journal, stale trust, open circuit"
+  },
+  "MC-060": {
+   "title": "Reproducible performance baseline suite",
+   "priority": "P1",
+   "requirements": [
+    "C061"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "bench/perf_suite.py",
+    "evidence/PERF_RESULTS.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-061": {
+   "title": "p50/p95/p99/worst-case thresholds",
+   "priority": "P1",
+   "requirements": [
+    "C062"
+   ],
+   "status": "partial",
+   "implementation": [
+    "ops/PERF_THRESHOLDS.json",
+    "tools/perf_gate.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-PERF",
+    "W-APPROVALS"
+   ],
+   "note": "thresholds PROPOSED; 20k-symbol image misses p99 (TD-1)"
+  },
+  "MC-062": {
+   "title": "Steady/burst/overload/scale/recovery load tests",
+   "priority": "P1",
+   "requirements": [
+    "C063",
+    "C088"
+   ],
+   "status": "partial",
+   "implementation": [
+    "bench/perf_suite.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-PERF"
+   ],
+   "note": "burst/overload measured in-process; scale/recovery load needs a host"
+  },
+  "MC-063": {
+   "title": "Per-tenant/per-workload overhead accounting",
+   "priority": "P1",
+   "requirements": [
+    "C064"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.run",
+    "telemetry.py::Metrics"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": "per-run latency histogram + per-tenant instance gauge"
+  },
+  "MC-064": {
+   "title": "Copy/hop/context-switch/duplication analysis",
+   "priority": "P1",
+   "requirements": [
+    "C065",
+    "C066"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "docs/COPY_ANALYSIS.md",
+    "bench/perf_suite.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-065": {
+   "title": "Resource bounds enforcement",
+   "priority": "P1",
+   "requirements": [
+    "C067"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "image/elf.py::Limits",
+    "vmm.py::Supervisor",
+    "authz.py::Authenticator"
+   ],
+   "tests": [
+    "tests/test_parser.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-066": {
+   "title": "Edge power/thermal measurement",
+   "priority": "P2",
+   "requirements": [
+    "C068"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "docs/CAPACITY.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-HW"
+   ],
+   "note": "edge power/thermal needs instrumented hardware"
+  },
+  "MC-067": {
+   "title": "Capacity model and saturation signals",
+   "priority": "P1",
+   "requirements": [
+    "C069"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "docs/CAPACITY.md",
+    "evidence/PERF_RESULTS.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-068": {
+   "title": "Performance regression release gate",
+   "priority": "P2",
+   "requirements": [
+    "C070"
+   ],
+   "status": "partial",
+   "implementation": [
+    "tools/perf_gate.py"
+   ],
+   "tests": [
+    "tests/test_gates.py"
+   ],
+   "blockers": [
+    "W-PERF"
+   ],
+   "note": "gate implemented; quick results never pass it"
+  },
+  "MC-069": {
+   "title": "Runtime health/readiness/version/config/dependency endpoint",
+   "priority": "P1",
+   "requirements": [
+    "C071"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.health",
+    "schemas/PK_UNIKERNEL_STATUS-1.schema.json"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-070": {
+   "title": "Metrics implementation",
+   "priority": "P1",
+   "requirements": [
+    "C072"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "telemetry.py::Metrics"
+   ],
+   "tests": [
+    "tests/test_service.py",
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-071": {
+   "title": "Structured logging implementation",
+   "priority": "P1",
+   "requirements": [
+    "C073"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "telemetry.py::Logger"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-072": {
+   "title": "Distributed trace propagation",
+   "priority": "P1",
+   "requirements": [
+    "C074"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "telemetry.py::TraceContext"
+   ],
+   "tests": [
+    "tests/test_service.py",
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-073": {
+   "title": "Safe high-cardinality diagnostics",
+   "priority": "P1",
+   "requirements": [
+    "C075"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "redaction.py::pseudonym",
+    "telemetry.py::Metrics"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-074": {
+   "title": "Decision-reason recording for every automated action",
+   "priority": "P1",
+   "requirements": [
+    "C076"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "admission.py::Decision",
+    "schemas/PK_UNIKERNEL_DECISION-1.schema.json"
+   ],
+   "tests": [
+    "tests/test_seal.py",
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-075": {
+   "title": "Operator explain view",
+   "priority": "P1",
+   "requirements": [
+    "C077"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "explain.py::render"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-076": {
+   "title": "Release-lineage/infrastructure-graph correlation",
+   "priority": "P1",
+   "requirements": [
+    "C078"
+   ],
+   "status": "partial",
+   "implementation": [
+    "admission.py::admit",
+    "tools/manifest.py"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [
+    "W-FLEET"
+   ],
+   "note": "seal carries parser/verifier/config revision/provenance key; infra-graph correlation is external"
+  },
+  "MC-077": {
+   "title": "Telemetry retention/sampling/privacy/export policy",
+   "priority": "P2",
+   "requirements": [
+    "C079"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "ops/TELEMETRY_POLICY.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-078": {
+   "title": "Dashboards and differentiated alerts",
+   "priority": "P2",
+   "requirements": [
+    "C080"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "ops/dashboards.json",
+    "ops/alerts.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": "definitions only; not deployed"
+  },
+  "MC-079": {
+   "title": "Full unit-state coverage",
+   "priority": "P1",
+   "requirements": [
+    "C081"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tools/coverage_check.py"
+   ],
+   "tests": [
+    "tests/test_platform.py",
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-080": {
+   "title": "Public contract tests",
+   "priority": "P1",
+   "requirements": [
+    "C082"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tests/test_seal.py",
+    "schemas/PK_UNIKERNEL_SEAL_MANIFEST-1.schema.json"
+   ],
+   "tests": [
+    "tests/test_seal.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-081": {
+   "title": "Adjacent-layer integration tests",
+   "priority": "P1",
+   "requirements": [
+    "C083"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "tests/fake_vmm.py"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [
+    "W-VMM",
+    "W-TOOLCHAIN"
+   ],
+   "note": "INV-28/INV-23/PLN-04/INV-29 not available here"
+  },
+  "MC-082": {
+   "title": "Architecture/runtime/hypervisor/provider/protocol compatibility matrix tests",
+   "priority": "P1",
+   "requirements": [
+    "C084"
+   ],
+   "status": "partial",
+   "implementation": [
+    "ops/COMPATIBILITY_MATRIX.json",
+    ".github/workflows/ci.yml"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-CI",
+    "W-VMM"
+   ],
+   "note": "one cell verified (CPython 3.11 / Linux x86_64)"
+  },
+  "MC-083": {
+   "title": "Concurrency/race tests",
+   "priority": "P1",
+   "requirements": [
+    "C086"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "service.py::UnikernelService.run"
+   ],
+   "tests": [
+    "tests/test_service.py"
+   ],
+   "blockers": [],
+   "note": "parallel idempotency/quota race test"
+  },
+  "MC-084": {
+   "title": "Benchmark/soak/fleet-scale certification",
+   "priority": "P1",
+   "requirements": [
+    "C088"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "bench/perf_suite.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-PERF"
+   ],
+   "note": ""
+  },
+  "MC-085": {
+   "title": "Disaster/partition/reconnect/degraded-control-plane certification",
+   "priority": "P1",
+   "requirements": [
+    "C089"
+   ],
+   "status": "blocked",
+   "implementation": [
+    "docs/DISCONNECTED.md"
+   ],
+   "tests": [
+    "tests/test_platform.py"
+   ],
+   "blockers": [
+    "W-FLEET"
+   ],
+   "note": ""
+  },
+  "MC-086": {
+   "title": "Machine-readable release acceptance evidence generated locally",
+   "priority": "P0",
+   "requirements": [
+    "C090"
+   ],
+   "status": "verified_local",
+   "implementation": [
+    "tools/release_gate.py",
+    "evidence/RELEASE_EVIDENCE.json"
+   ],
+   "tests": [
+    "tests/test_gates.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-087": {
+   "title": "Optimized-mode 100-check conformance proof in this archive",
+   "priority": "P0",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "tools/pk_gate.py",
+    "evidence/PK_GATE_RESULTS.json"
+   ],
+   "tests": [
+    "tests/test_component.py"
+   ],
+   "blockers": [],
+   "note": "100/100 under python and python -O; declaration conformance only"
+  },
+  "MC-088": {
+   "title": "Source manifest/SBOM",
+   "priority": "P1",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "tools/sbom.py",
+    "evidence/SBOM.json",
+    "tools/manifest.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-089": {
+   "title": "Reproducible build/lock data",
+   "priority": "P1",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "requirements.lock",
+    "tests/fixtures/FIXTURES.json"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": "stdlib-only runtime; fixture bytes pinned by sha256"
+  },
+  "MC-090": {
+   "title": "CI workflow",
+   "priority": "P1",
+   "requirements": [],
+   "status": "partial",
+   "implementation": [
+    ".github/workflows/ci.yml",
+    "tools/ci.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-CI"
+   ],
+   "note": "declared and run locally; hosted CI not executed"
+  },
+  "MC-091": {
+   "title": "Static analysis/type checking configuration",
+   "priority": "P1",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "tools/lint.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": "AST security lint; no third-party type checker vendored"
+  },
+  "MC-092": {
+   "title": "Coverage measurement and threshold",
+   "priority": "P1",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "tools/coverage_check.py"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  },
+  "MC-093": {
+   "title": "License/NOTICE files",
+   "priority": "P2",
+   "requirements": [],
+   "status": "blocked",
+   "implementation": [
+    "NOTICE",
+    "THIRD-PARTY-NOTICES.md"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [
+    "W-LICENSE"
+   ],
+   "note": "licence choice is the owner's"
+  },
+  "MC-094": {
+   "title": "Contribution/security disclosure policy",
+   "priority": "P2",
+   "requirements": [],
+   "status": "verified_local",
+   "implementation": [
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    ".github/CODEOWNERS"
+   ],
+   "tests": [
+    "tests/test_repository.py"
+   ],
+   "blockers": [],
+   "note": ""
+  }
+ }
+}

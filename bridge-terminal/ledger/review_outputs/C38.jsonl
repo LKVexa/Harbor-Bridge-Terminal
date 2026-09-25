@@ -1,0 +1,100 @@
+{"id": "C38-001", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L204-209", "tests/chaos/lifecycle.test.js"], "note": "Heartbeat implemented and tested but no current top-level doc states the stability problem explicitly (docs/vws200/RECOVERY.md is historical only)"}
+{"id": "C38-002", "status": "PASS", "evidence": ["gateway/connection.js#L185-186", "gateway/ws.js#L268-272"], "note": "heartbeat.ping/pong (JSON control) distinct from RFC6455 PING/PONG opcode handling"}
+{"id": "C38-003", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L204-209"], "note": "Unresponsive-peer detection implemented (heartbeatWindowMs) and tested, but not stated as a requirement in current top-level docs"}
+{"id": "C38-004", "status": "OPEN", "evidence": [], "note": "No current doc states what heartbeat success does/does not demonstrate about app responsiveness"}
+{"id": "C38-005", "status": "OPEN", "evidence": [], "note": "No current doc states what heartbeat success does/does not demonstrate about app responsiveness"}
+{"id": "C38-006", "status": "PASS", "evidence": ["docs/RAMWS.md#decisions", "gateway/ws.js", "client/ws-adapter.js"], "note": "Node gateway (ws.js) and browser/undici client (client/ws-adapter.js) are the runtimes in scope per RD-03"}
+{"id": "C38-007", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "Loopback/dev network path tested (TCP loss, worker kill); no public-edge/WAN path available (BLOCKED items below)"}
+{"id": "C38-008", "status": "OPEN", "evidence": [], "note": "No 'article' or its Ping/Pong description is referenced anywhere in current docs"}
+{"id": "C38-009", "status": "OPEN", "evidence": [], "note": "No document enumerates which source claims need runtime-specific verification"}
+{"id": "C38-010", "status": "PASS", "evidence": ["docs/RAMWS.md#decisions"], "note": "RD-01..RD-05 recorded as owner-approved decisions 2026-09-21, including keep-alive/heartbeat design (RD-02, RD-05 context)"}
+{"id": "C38-011", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no pwsh/.NET runtime available; Node ws.js is the only runtime in scope"}
+{"id": "C38-012", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js", "gateway/connection.js#L204-277"], "note": "Node-specific control behavior implemented (opcode PING/PONG in ws.js; app heartbeat + worker ping in connection.js) but not all sub-claims separately verified/documented"}
+{"id": "C38-013", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js", "gateway/connection.js#L204-277"], "note": "Node-specific control behavior implemented (opcode PING/PONG in ws.js; app heartbeat + worker ping in connection.js) but not all sub-claims separately verified/documented"}
+{"id": "C38-014", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js", "gateway/connection.js#L204-277"], "note": "Node-specific control behavior implemented (opcode PING/PONG in ws.js; app heartbeat + worker ping in connection.js) but not all sub-claims separately verified/documented"}
+{"id": "C38-015", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js", "gateway/connection.js#L204-277"], "note": "Node-specific control behavior implemented (opcode PING/PONG in ws.js; app heartbeat + worker ping in connection.js) but not all sub-claims separately verified/documented"}
+{"id": "C38-016", "status": "IN_PROGRESS", "evidence": ["gateway/ws.js#L268-272", "gateway/connection.js#L204-209"], "note": "Node ws.js (custom RFC6455) + app heartbeat used; not separately named/versioned as a doc record"}
+{"id": "C38-017", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58", "e/full-suite.tap"], "note": "heartbeat behavior observed via protocol-aware test client (tests/helpers.js) in lifecycle.test.js"}
+{"id": "C38-018", "status": "OPEN", "evidence": [], "note": "No 'article' or its Ping/Pong description is referenced anywhere in current docs"}
+{"id": "C38-019", "status": "OPEN", "evidence": [], "note": "No document compares observed Node behavior against the .NET article's description (D-001: article is out of scope)"}
+{"id": "C38-020", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done", "gateway/connection.js#L204-209"], "note": "Dead-peer detection is demonstrated by test (peer that never answers closed 1008), not merely claimed"}
+{"id": "C38-021", "status": "PASS", "evidence": ["gateway/config.js#L77-78"], "note": "VWS_HEARTBEAT_MS / VWS_HEARTBEAT_WINDOW_MS are gateway-owned config (server interval owner)"}
+{"id": "C38-022", "status": "IN_PROGRESS", "evidence": ["client/ws-adapter.js#L112"], "note": "Client answers heartbeat.ping but has no independent client-initiated keep-alive interval config"}
+{"id": "C38-023", "status": "PASS", "evidence": ["gateway/connection.js#L204-209"], "note": "Server initiates heartbeat.ping periodically; client only responds (and may itself ping, answered at L185)"}
+{"id": "C38-024", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L185-186,204-209"], "note": "Both sides can send heartbeat.ping and both answer with pong, but no doc states this as an intentional dual-support policy"}
+{"id": "C38-025", "status": "OPEN", "evidence": [], "note": "No documented process for how VWS_HEARTBEAT_MS default (20000) was selected"}
+{"id": "C38-026", "status": "PASS", "evidence": ["gateway/config.js#L78,110"], "note": "VWS_HEARTBEAT_WINDOW_MS is a separate timeout parameter, validated <= interval"}
+{"id": "C38-027", "status": "OPEN", "evidence": [], "note": "No config path to disable heartbeat entirely; behavior when disabled is undefined/untested"}
+{"id": "C38-028", "status": "PASS", "evidence": ["gateway/connection.js#L52,204-209"], "note": "Heartbeat timer (_every) is separate from application message scheduling (_flush/_flow)"}
+{"id": "C38-029", "status": "PASS", "evidence": ["gateway/config.js#L110", "tests/gateway/config.test.js#L22"], "note": "VWS_HEARTBEAT_WINDOW_MS > VWS_HEARTBEAT_MS rejected at config load, before any connection is accepted"}
+{"id": "C38-030", "status": "IN_PROGRESS", "evidence": ["gateway/config.js#L77-78"], "note": "Defaults present in code (20000/10000ms) but not documented in docs/OPERATIONS.md"}
+{"id": "C38-031", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "startGateway({heartbeatMs, heartbeatWindowMs}) establishes connection with chosen config"}
+{"id": "C38-032", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#55"], "note": "Idle connection observed for 700ms, >=2 heartbeat.ping observed"}
+{"id": "C38-033", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#55", "tests/helpers.js"], "note": "Emitted heartbeat.ping control traffic verified via test client message capture"}
+{"id": "C38-034", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#56-57"], "note": "heartbeat.ping/pong round trip observed with matching rid"}
+{"id": "C38-035", "status": "IN_PROGRESS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "Raw-socket 'native' test peer exercises handshake/control frames; not a distinct OS-native client"}
+{"id": "C38-036", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "Chromium browser client tested end to end (sign-in, terminal, reconnect), including protocol traffic"}
+{"id": "C38-037", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no pwsh/.NET runtime available; Node ws.js is the only runtime in scope"}
+{"id": "C38-038", "status": "PASS", "evidence": ["gateway/ws.js#L268-272", "protocol/envelope.schema.json"], "note": "PING/PONG at opcode level never surfaces as a 'text' event to application code"}
+{"id": "C38-039", "status": "PASS", "evidence": ["tests/gateway/ws-conformance.test.js"], "note": "ping interleaved inside a fragmented text message that still assembles correctly (ws-conformance test)"}
+{"id": "C38-040", "status": "IN_PROGRESS", "evidence": ["gateway/log.js"], "note": "Logger redacts secret-like fields but no dedicated redacted protocol-observation record is preserved"}
+{"id": "C38-041", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#slow-consumer", "tests/ram/v2-e2e.test.js"], "note": "Heartbeat timers are independent of output flow (_every vs _flush); slow-consumer test exercises large-message receive concurrently"}
+{"id": "C38-042", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "No dedicated test sends a large message while asserting heartbeat cadence is unaffected"}
+{"id": "C38-043", "status": "IN_PROGRESS", "evidence": [], "note": "No test exercises simultaneous send+receive specifically against heartbeat timing"}
+{"id": "C38-044", "status": "OPEN", "evidence": [], "note": "No test simulates a slow application handler against heartbeat cadence"}
+{"id": "C38-045", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#slow-consumer"], "note": "Control traffic (heartbeat) has reserved send budget so it is not trapped behind queue pressure (gateway/connection.js _control comment)"}
+{"id": "C38-046", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Two connections (alice/bob) with different activity are tested together but not a systematic multi-connection matrix"}
+{"id": "C38-047", "status": "OPEN", "evidence": [], "note": "No measurement of Node timer drift under load is recorded"}
+{"id": "C38-048", "status": "OPEN", "evidence": [], "note": "No deviation-from-nominal-timing record exists"}
+{"id": "C38-049", "status": "PASS", "evidence": ["gateway/connection.js#L69"], "note": "_control has reserved budget so heartbeat/acks cannot be trapped behind terminal data sends (comment + code)"}
+{"id": "C38-050", "status": "OPEN", "evidence": [], "note": "No document records this interaction with a named 'send owner'"}
+{"id": "C38-051", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "dead=new Client(...,{pong:false}) simulates a client that never answers heartbeat"}
+{"id": "C38-052", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "Stopped application data covered indirectly by slow-consumer test; not a dedicated 'stops sending' case"}
+{"id": "C38-053", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "dead client that never answers heartbeat.ping simulates missing control response"}
+{"id": "C38-054", "status": "BLOCKED", "evidence": [], "note": "No tool to simulate a broken client-side network path (needs real network fault injection)"}
+{"id": "C38-055", "status": "BLOCKED", "evidence": [], "note": "Half-open connection over TLS edge/WAN not available in this environment"}
+{"id": "C38-056", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "close observed within interval+window (<1500ms) and code 1008"}
+{"id": "C38-057", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions", "docs/vws200/ARCHITECTURE.md#D-001"], "note": "RD-03/D-001: no pwsh/.NET runtime available; Node ws.js is the only runtime in scope"}
+{"id": "C38-058", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#abrupt-tcp-loss"], "note": "abrupt TCP loss test: worker stopped, session released, no orphan process"}
+{"id": "C38-059", "status": "IN_PROGRESS", "evidence": [], "note": "Test suite distinguishes executed vs skipped tests via test runner output (e/full-suite.tap) but no explicit simulation/pass distinction doc exists for this class"}
+{"id": "C38-060", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Actual detection time asserted (< 1500ms), not an assumed constant"}
+{"id": "C38-061", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js", "tests/gateway/e2e.test.js"], "note": "Direct loopback dev connection tested throughout the suite"}
+{"id": "C38-062", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done"], "note": "No Render/WAN deployment available in this environment"}
+{"id": "C38-063", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done"], "note": "No Render/WAN deployment available in this environment"}
+{"id": "C38-064", "status": "PASS", "evidence": ["tests/ui/browser.test.js"], "note": "Chromium browser client tested as the intended browser environment"}
+{"id": "C38-065", "status": "NOT_APPLICABLE", "evidence": ["docs/RAMWS.md#decisions"], "note": "No managed platform (Azure/.NET host) idle-timeout documentation applies to this Node deployment"}
+{"id": "C38-066", "status": "OPEN", "evidence": [], "note": "No 'article' or its Ping/Pong description is referenced anywhere in current docs"}
+{"id": "C38-067", "status": "IN_PROGRESS", "evidence": ["tests/chaos/lifecycle.test.js"], "note": "Test code states network conditions (loopback, simulated TCP loss) inline, not in a separate record"}
+{"id": "C38-068", "status": "OPEN", "evidence": [], "note": "No measurement of false disconnects during transient network delay exists"}
+{"id": "C38-069", "status": "IN_PROGRESS", "evidence": ["docs/RAMWS.md#not-done"], "note": "RAMWS.md lists Render/Docker/Windows as NOT_RUN but does not enumerate keep-alive-specific unverified paths"}
+{"id": "C38-070", "status": "OPEN", "evidence": [], "note": "No documented evidence bar for changing VWS_HEARTBEAT_MS"}
+{"id": "C38-071", "status": "OPEN", "evidence": [], "note": "No estimate of control-traffic volume at target connection count is recorded"}
+{"id": "C38-072", "status": "OPEN", "evidence": [], "note": "No measured heartbeat traffic volume in e/ or docs"}
+{"id": "C38-073", "status": "OPEN", "evidence": [], "note": "No CPU-overhead-while-idle measurement recorded"}
+{"id": "C38-074", "status": "IN_PROGRESS", "evidence": ["e/R28/result.json", "docs/EXPERIMENT.md"], "note": "R28 measures worker memory for interactive sessions generally, not specifically idle-heartbeat overhead"}
+{"id": "C38-075", "status": "PASS", "evidence": ["gateway/connection.js#L185-186,204-209"], "note": "Single heartbeat.ping loop; no separate polling loop duplicating it"}
+{"id": "C38-076", "status": "PASS", "evidence": ["gateway/connection.js#L52,204-209"], "note": "Single _every timer per concern (heartbeat, idle check, worker ping); no extraneous polling"}
+{"id": "C38-077", "status": "OPEN", "evidence": [], "note": "No documented acceptable idle-traffic overhead threshold"}
+{"id": "C38-078", "status": "BLOCKED", "evidence": [], "note": "No test run at the target connection count (capacity/scale test not present for heartbeat specifically)"}
+{"id": "C38-079", "status": "OPEN", "evidence": [], "note": "No before/after resource comparison recorded for heartbeat config changes"}
+{"id": "C38-080", "status": "OPEN", "evidence": [], "note": "No documented stability-cost tradeoff rationale for the chosen interval"}
+{"id": "C38-081", "status": "PASS", "evidence": ["gateway/config.js", "docs/OPERATIONS.md"], "note": "publicConfig() allowlists heartbeatMs and excludes secrets (tests/gateway/config.test.js)"}
+{"id": "C38-082", "status": "OPEN", "evidence": [], "note": "No safe-category log of observed heartbeat-related failures"}
+{"id": "C38-083", "status": "PASS", "evidence": ["gateway/connection.js#L206-207,L41-42"], "note": "heartbeat_timeout (expired/1008) is a distinct log/reason from UNAUTHORIZED credential checks"}
+{"id": "C38-084", "status": "PASS", "evidence": ["gateway/connection.js#L206-207", "gateway/connection.js#end()"], "note": "'expired' (timeout) vs 'logout'/'closed' (deliberate) are distinct end reasons"}
+{"id": "C38-085", "status": "OPEN", "evidence": [], "note": "No correlation of stability failures with client runtime/version is implemented"}
+{"id": "C38-086", "status": "PASS", "evidence": ["gateway/connection.js#L209"], "note": "heartbeat.ping/pong payload is only a random nonce, never application data"}
+{"id": "C38-087", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L206"], "note": "conn.heartbeat_timeout is logged per event but no aggregate rate counter exists"}
+{"id": "C38-088", "status": "OPEN", "evidence": [], "note": "No documented reproduction procedure for idle-session failure"}
+{"id": "C38-089", "status": "OPEN", "evidence": [], "note": "No documentation of Node ws.js control-frame visibility limits"}
+{"id": "C38-090", "status": "OPEN", "evidence": [], "note": "No named owner for stability configuration changes"}
+{"id": "C38-091", "status": "IN_PROGRESS", "evidence": ["gateway/connection.js#L204-209", "tests/chaos/lifecycle.test.js"], "note": "Mechanism implemented and tested; not separately 'published' as an acceptance record"}
+{"id": "C38-092", "status": "PASS", "evidence": ["gateway/config.js#L77-78"], "note": "VWS_HEARTBEAT_MS and VWS_HEARTBEAT_WINDOW_MS published as separate config keys"}
+{"id": "C38-093", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Idle-session heartbeat test linked in evidence index"}
+{"id": "C38-094", "status": "IN_PROGRESS", "evidence": [], "note": "No dedicated active-traffic-vs-heartbeat test is linked (see area 05 findings)"}
+{"id": "C38-095", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58"], "note": "Unresponsive-peer test (dead client) linked"}
+{"id": "C38-096", "status": "BLOCKED", "evidence": ["docs/RAMWS.md#not-done"], "note": "No Render/WAN deployment available in this environment"}
+{"id": "C38-097", "status": "OPEN", "evidence": [], "note": "No record distinguishing confirmed vs unverified source claims (no 'article' referenced at all)"}
+{"id": "C38-098", "status": "PASS", "evidence": ["docs/RAMWS.md#not-done"], "note": "RAMWS.md documents that residency/guarantees are OBSERVED not guaranteed, consistent with not overclaiming peer-detection"}
+{"id": "C38-099", "status": "OPEN", "evidence": [], "note": "No measured resource/traffic overhead for heartbeat is recorded"}
+{"id": "C38-100", "status": "PASS", "evidence": ["tests/chaos/lifecycle.test.js#47-58", "e/full-suite.tap"], "note": "Heartbeat behavior approved only to the extent demonstrated: passing test in the 125/125 suite"}

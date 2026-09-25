@@ -1,0 +1,348 @@
+{
+  "schema": "urn:pk:inv17:release-manifest:1",
+  "component": "INV-17",
+  "version": "4.3.0",
+  "generated_at": "2026-09-23T17:04:53Z",
+  "source_revision": "unrecorded (no VCS in this build)",
+  "source_tree_sha256": "6267bebab2fd862538044d23d71c213e18e92000796f3f3542b34ed1239644be",
+  "environment": {
+    "python": "3.11.15",
+    "system": "Linux",
+    "machine": "x86_64"
+  },
+  "versions": {
+    "pk_core": "4.0.0",
+    "config_schema": 1,
+    "interfaces": {
+      "PK_STREAM": 1,
+      "PK_STREAM_CREDIT": 1,
+      "PK_STREAM_CLOSE": 1
+    }
+  },
+  "schema_manifest_sha256": "dca1b26a1e43abc9c09b7bfb2820db18eb956925465250ebfbf6655fa4cd551c",
+  "steps": [
+    {
+      "step": "compile",
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "compileall",
+        "-q",
+        "-x",
+        "vendor|benchmarks/reference",
+        "."
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.1,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": []
+    },
+    {
+      "step": "unit suite",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/run_tests.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 4.98,
+      "output_sha256": "de75f771825942cd721a13d484677ba2594bf8a6fa2e3e6abfb0ab0e40738be2",
+      "tail": [
+        "Ran 141 tests in 4.866s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "step": "unit suite (python -O)",
+      "argv": [
+        "/usr/bin/python3",
+        "-O",
+        "./tools/run_tests.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 4.43,
+      "output_sha256": "7fd9d44384100133a069f3ab5c045d7bf08ffa9d479600c8f86aceeacb659582",
+      "tail": [
+        "Ran 141 tests in 4.224s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "step": "pk_core workflow + gate + ledger verify",
+      "argv": [
+        "/usr/bin/python3",
+        "-c",
+        "\nimport json, sys, pathlib\nroot = pathlib.Path(sys.argv[1]); sys.path[:0] = [str(root / \"vendor\"), str(root.parent)]\nfrom pk_core.evidence import EvidenceLedger\nfrom pk_core.workflow import WorkflowEngine\nfrom pk_core.gate import ConformanceGate\nimport importlib\npkg = importlib.import_module(root.name)\nev = root / \"evidence\" / \"pk_evidence.jsonl\"\nif ev.exists(): ev.unlink()\nledger = EvidenceLedger(ev)\nres = WorkflowEngine(ledger).run(pkg.COMPONENT())\ngate = ConformanceGate().evaluate([res])\n(root / \"conformance\" / \"PK_GATE_RESULTS.json\").write_text(json.dumps(gate.to_dict(), indent=2) + \"\\n\")\n(root / \"conformance\" / \"pk_workflow_report.json\").write_text(json.dumps(res.to_dict(), indent=2) + \"\\n\")\nprint(gate.verdict, res.certified, len(ledger), \"verify:\", ledger.verify() or \"intact\")\nsys.exit(0 if gate.verdict != \"NO_GO\" and not ledger.verify() else 1)\n",
+        "."
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.06,
+      "output_sha256": "a8d61ed163cc6dbbcfa62cd028b8a345233b0a7ce93463508e46b24b3a708fe3",
+      "tail": [
+        "GO True 10 verify: intact"
+      ]
+    },
+    {
+      "step": "coverage",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/coverage_run.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 6.17,
+      "output_sha256": "81236d7501aaba8a8a11ce961541624cd42078213b11efb79938a31853e798e3",
+      "tail": [
+        "{\"total\": {\"line_pct\": 99.9, \"branch_pct\": 97.8}, \"verdict\": \"PASS\", \"tests\": 141, \"modules\": {\"stream.py\": [100.0, 100.0], \"control.py\": [99.7, 98.0], \"security.py\": [100.0, 100.0], \"configuration.py\": [100.0, 100.0], \"observability.py\": [100.0, 85.2], \"adapters.py\": [100.0, 100.0], \"wire.py\": [100.0, 100.0]}}"
+      ]
+    },
+    {
+      "step": "lint (ruff)",
+      "argv": [
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.01,
+      "output_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "tail": [
+        "All checks passed!"
+      ]
+    },
+    {
+      "step": "types (mypy)",
+      "argv": [
+        "mypy"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.1,
+      "output_sha256": "050c52a2b0c61e8b681ef5c485e0bc03340b8d55148e0acef27d744c8be42033",
+      "tail": [
+        "Success: no issues found in 7 source files"
+      ]
+    },
+    {
+      "step": "schema manifest",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/gen_schema_manifest.py",
+        "--check"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.03,
+      "output_sha256": "c07c52cf44ed2d0633acb98f80e3ed27e7f3161b3711e05112236e0e4334da99",
+      "tail": [
+        "schema manifest OK"
+      ]
+    },
+    {
+      "step": "benchmark",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/bench.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 1.5,
+      "output_sha256": "26ae744a2c0608b09485be525ea7ff0ee8d0a839eeaec0d0ed86a46dda5dfa91",
+      "tail": [
+        "  }",
+        " }",
+        "}"
+      ]
+    },
+    {
+      "step": "perf gate",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/perf_gate.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.04,
+      "output_sha256": "a3d64a0a1a600a3d7330ad81529a462d5fc6eaa89130030682633a033d249829",
+      "tail": [
+        "  }",
+        " }",
+        "}"
+      ]
+    },
+    {
+      "step": "version compare",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/compare_versions.py",
+        "7"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.64,
+      "output_sha256": "724d79418a8f24b12e37f6360b3b6a5b23d431badbc4136e4560d0f3a4e2e874",
+      "tail": [
+        "{\"4.2.0\": {\"median_p50_ns\": 559, \"median_p99_ns\": 852}, \"4.3.0\": {\"median_p50_ns\": 690, \"median_p99_ns\": 1076}, \"p50_ratio_new_over_old\": 1.234, \"runs\": 7}"
+      ]
+    },
+    {
+      "step": "profile",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/profile_copies.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.23,
+      "output_sha256": "23245a2c037ef8511570b219fbb9ca0847c6a809249d32d688f9480613045b7a",
+      "tail": [
+        "{\"zero_copy_in_instance\": true, \"lock_acquisitions_per_element\": 2.0, \"serialized_bytes_at_inv12_seam\": {\"int\": 9, \"bytes4k\": 4097, \"str\": 6}}"
+      ]
+    },
+    {
+      "step": "capacity model",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/capacity.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.05,
+      "output_sha256": "6137bf331cd642b2e9ed46906adfc2b71a10bbc9f4884f8e86c0b9131ce97daf",
+      "tail": [
+        "  \"stall_expected_when\": \"sustained writer arrival rate > reader grant rate or > saturation rate\"",
+        " }",
+        "}"
+      ]
+    },
+    {
+      "step": "rollout (clean)",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/rollout.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.16,
+      "output_sha256": "7b0390294100ff90ac45aca91f807701376965957beae448af62a9839d8c97b8",
+      "tail": [
+        "{\"outcome\": \"completed\", \"stages\": [{\"stage\": \"canary\", \"instances\": 1, \"worst_error_rate\": 0.0, \"healthy\": true}, {\"stage\": \"10%\", \"instances\": 2, \"worst_error_rate\": 0.0, \"healthy\": true}, {\"stage\": \"50%\", \"instances\": 10, \"worst_error_rate\": 0.0, \"healthy\": true}, {\"stage\": \"100%\", \"instances\": 20, \"worst_error_rate\": 0.0, \"healthy\": true}]}"
+      ]
+    },
+    {
+      "step": "rollout (forced rollback)",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/rollout.py",
+        "--fail-at",
+        "10%"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.07,
+      "output_sha256": "447778d44ab0bc315ffa5073b80dbf2b8951f7887200968aa8e93d2722f8744f",
+      "tail": [
+        "{\"outcome\": \"rolled_back\", \"stages\": [{\"stage\": \"canary\", \"instances\": 1, \"worst_error_rate\": 0.0, \"healthy\": true}, {\"stage\": \"10%\", \"instances\": 2, \"worst_error_rate\": 0.875, \"healthy\": false}, {\"action\": \"rollback\", \"instances\": 2, \"restored_digests\": [\"sha256:c12fc57adee1ddd59321fb6a0a2258e38fd55486290a5eb9ebb972603f1a68a0\"]}]}"
+      ]
+    },
+    {
+      "step": "sev1 drill (simulated)",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/drill.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.04,
+      "output_sha256": "df45537091e6f990766f8a49e5f7b35cbdbbef49148357405149dac2944b589c",
+      "tail": [
+        "{\"verdict\": \"PASS_WITH_GAPS\", \"gaps\": [\"pager target unresolved: OWNERS.json paging_target is UNASSIGNED\"], \"steps\": [\"detect\", \"page\", \"diagnose\", \"contain\", \"recover\", \"close\"]}"
+      ]
+    },
+    {
+      "step": "governance validation",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/validate_governance.py"
+      ],
+      "exit": 1,
+      "ok": true,
+      "expected_nonzero": true,
+      "seconds": 0.03,
+      "output_sha256": "c38e66a528d655bc3db56a9b7c006a870bce20383f59e56362fb3d85ce9ccc39",
+      "tail": [
+        "{\"production_ready\": false, \"problems\": 14, \"warnings\": 7}"
+      ]
+    },
+    {
+      "step": "sbom",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/sbom.py"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.05,
+      "output_sha256": "8a9f633a82f7da5b2aff5452574ff93283398e15b8de8dde8b51a7966c411831",
+      "tail": [
+        "{\"files\": 159, \"subject\": \"ebe20c1bb4fbd0b3\", \"signed\": false}"
+      ]
+    },
+    {
+      "step": "sbom verify",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/sbom.py",
+        "--verify"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.05,
+      "output_sha256": "02bd9483a233b661244fe0cc280ff5b537ec533b6a0b5f33edaececdaf091f0c",
+      "tail": [
+        "{\"verified\": true, \"mismatches\": []}"
+      ]
+    },
+    {
+      "step": "traceability",
+      "argv": [
+        "/usr/bin/python3",
+        "./tools/gen_traceability.py",
+        "--check"
+      ],
+      "exit": 0,
+      "ok": true,
+      "expected_nonzero": false,
+      "seconds": 0.05,
+      "output_sha256": "1e8b55464e9ba6ea62aebdf8fe3ccb16aece852aca0b1454519851b2baa0ce98",
+      "tail": [
+        "{\"checks\": 100, \"with_pk_finding\": 100, \"with_closure_component\": 84, \"with_spec_requirement\": 9} problems: 0"
+      ]
+    }
+  ],
+  "all_ok": true
+}

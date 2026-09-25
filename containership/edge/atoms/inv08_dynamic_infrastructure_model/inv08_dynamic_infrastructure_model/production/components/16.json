@@ -1,0 +1,70 @@
+{
+ "component": 16,
+ "title": "Quota and fairness engine",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "tenant/workload quota data model",
+   "state": "IMPLEMENTED",
+   "spec": "production/quota.py::Quota",
+   "modules": [
+    "production/quota.py::Quota",
+    "production/quota.py::QuotaEngine"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestQuota.test_quota_model_validation"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "priority and reservation semantics",
+   "state": "IMPLEMENTED",
+   "spec": "production/quota.py::__doc__",
+   "modules": [
+    "production/quota.py::QuotaEngine.allocate"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestQuota.test_priority_and_reservation"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "fair-share scheduling algorithm",
+   "state": "IMPLEMENTED",
+   "spec": "production/quota.py::__doc__",
+   "modules": [
+    "production/quota.py::QuotaEngine._waterfill"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestQuota.test_weighted_fair_share"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "starvation detection and prevention",
+   "state": "IMPLEMENTED",
+   "spec": "production/quota.py::__doc__",
+   "modules": [
+    "production/quota.py::QuotaEngine.starving"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestQuota.test_starvation_detection_and_aging"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "quota admission, burst, and enforcement telemetry",
+   "state": "IMPLEMENTED",
+   "spec": "production/quota.py::__doc__",
+   "modules": [
+    "production/quota.py::QuotaEngine.admit",
+    "production/quota.py::QuotaEngine.telemetry"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_semantics.TestQuota.test_admission_burst_and_telemetry"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Engine is standalone; model.Pool has only pool-wide min/max and is not quota-aware. Telemetry is in-process counters (no exporter)."
+}

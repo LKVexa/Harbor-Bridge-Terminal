@@ -1,0 +1,30 @@
+[build-system]
+# Pinned, approved backend (component 26). Offline builds: pip wheel --no-build-isolation .
+requires = ["setuptools==68.1.2", "wheel==0.42.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv20-http-component-worlds"
+version = "4.3.0"          # must equal _version.__version__ (CI + tests/test_ops.py enforce)
+description = "INV-20 HTTP component worlds: explicit handler export, capability-scoped egress, streaming bodies, trailer completions."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "UNDECLARED - owner must select before release (see docs/governance/OWNERSHIP.md)" }
+authors = [{ name = "LinearFinance.org Research Division" }]
+dependencies = []          # runtime primitives are stdlib-only by design
+
+[project.optional-dependencies]
+# Release-gate dependency (component 1). Range mirrored in pk_compat.PK_CORE_MIN/MAX.
+conformance = ["pk_core>=1.0.0,<2.0.0"]
+
+[tool.setuptools]
+package-dir = { "inv20_http_component_worlds" = "." }
+packages = ["inv20_http_component_worlds", "inv20_http_component_worlds.tests", "inv20_http_component_worlds.tools",
+            "inv20_http_component_worlds.fuzz", "inv20_http_component_worlds.bench"]
+
+[tool.setuptools.package-data]
+inv20_http_component_worlds = ["wit/*.wit", "wit/*.lock", "wit/fixtures/*.wit", "CHECKLIST.json",
+                               "VERSION", "components.json", "README.md", "CHANGELOG.md", "pyproject.toml", "SHA256SUMS.txt", "config/*.json", "docs/governance/waivers.json", "fuzz/corpus/*", "bench/baseline.json"]
+
+[tool.setuptools.exclude-package-data]
+inv20_http_component_worlds = ["evidence/*", "dist/*", "*.pyc"]

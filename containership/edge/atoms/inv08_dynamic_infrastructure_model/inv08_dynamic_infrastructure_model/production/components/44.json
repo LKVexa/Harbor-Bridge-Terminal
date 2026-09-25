@@ -1,0 +1,72 @@
+{
+ "component": 44,
+ "title": "Crash-consistent recovery/replay",
+ "priority": "P0",
+ "subparts": [
+  {
+   "name": "durable operation journal",
+   "state": "IMPLEMENTED",
+   "spec": "production/journal.py::module docstring (PK_DYN_WAL/1)",
+   "modules": [
+    "production/journal.py::Journal.append"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestJournal.test_durable_journal_replay"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "periodic consistent snapshots",
+   "state": "IMPLEMENTED",
+   "spec": "production/journal.py::module docstring (PK_DYN_SNAPSHOT/1)",
+   "modules": [
+    "production/journal.py::Journal.snapshot"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestJournal.test_snapshots_and_compaction"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "replay cursor/checkpoint model",
+   "state": "IMPLEMENTED",
+   "spec": "production/journal.py::Journal._recover",
+   "modules": [
+    "production/journal.py::Journal._recover"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestJournal.test_replay_cursor"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "restart reconciliation against providers",
+   "state": "IMPLEMENTED",
+   "spec": "production/controller.py::Controller.recover",
+   "modules": [
+    "production/controller.py::Controller.recover",
+    "production/controller.py::Controller._resolve_pending"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestJournal.test_restart_reconciliation_against_provider",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestFaults.test_process_crash_restart_injection"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "corrupt/incomplete journal and snapshot recovery",
+   "state": "IMPLEMENTED",
+   "spec": "production/journal.py::module docstring (Recovery)",
+   "modules": [
+    "production/journal.py::Journal._read_wal",
+    "production/journal.py::Journal._recover"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestJournal.test_torn_tail_truncated_and_mid_corruption_refused",
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestJournal.test_corrupt_snapshot_falls_back"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "Restart reconciliation qualified against provider doubles only. Pool busy flags are not journaled; they must be re-learned from INV-68 after restart."
+}

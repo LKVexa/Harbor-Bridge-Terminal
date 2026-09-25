@@ -1,0 +1,26 @@
+# MC73 — ownership and escalation metadata.
+# OWNER ACTION: replace every "UNASSIGNED" with a named person/team (G-01).
+# The release gate treats UNASSIGNED as an open owner-action, not a failure of the code.
+component: INV-02 Container substrate
+version: 5.0.0
+lifecycle_status: implemented        # planned | in-progress | implemented | certified | deferred-with-waiver
+owners:
+  service_owner: UNASSIGNED
+  security_owner: UNASSIGNED
+  operational_owner: UNASSIGNED
+  release_manager: UNASSIGNED
+escalation:
+  - level: 1
+    who: operational_owner
+    response: 30m (P0 incidents) / next business day otherwise
+  - level: 2
+    who: service_owner
+    response: 2h
+  - level: 3
+    who: security_owner
+    when: any suspected isolation escape, registry compromise, signing-key compromise
+review_cadence:
+  architecture: quarterly
+  threat_model: every minor release or after any security incident
+  waivers: monthly (expired waivers fail the release gate)
+  dependencies_sbom: every release

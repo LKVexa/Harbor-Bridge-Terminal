@@ -1,0 +1,18 @@
+{
+ "schema": "INV41_SUPPORT_MATRIX/1",
+ "definitions": {
+  "supported": "CI-certified on every release; security fixes backported to supported release lines",
+  "best_effort": "expected to work; not CI-gated; bugs fixed when practical",
+  "deprecated": "supported until the announced end-of-support date; at least 180 days notice (security emergencies may shorten to 30 days)",
+  "unsupported": "refused by preflight where detectable"
+ },
+ "python": {"supported": ["3.10", "3.11", "3.12", "3.13"], "best_effort": [], "unsupported": ["<=3.9", "PyPy", "GraalPy"], "implementations": ["CPython"]},
+ "os": {"supported": ["Linux", "Windows", "Darwin"]},
+ "arch": {"supported": ["x86_64", "aarch64"]},
+ "packaging": ["source tree", "deterministic zip (tools/build_release.py)"],
+ "dependencies": {"runtime": "Python standard library only", "optional": {"pk_core": "estate/pk_core.pin.json"}},
+ "isolation_profiles": {"logical (in-process)": "supported", "process (isolation.run_isolated)": "supported on POSIX; Windows without rlimits = best_effort", "namespaces/seccomp/Wasm/microVM": "unsupported (B-ISO-01)"},
+ "schemas": {"PK_REFERENCE": ["1"], "PK_MEMBRANE": ["1"], "INV41_CONFIG": ["0 (deprecated, migrated)", "1"], "INV41_AUDIT_EVENT": ["1"], "INV41-ERR": ["1"]},
+ "mixed_version": "Minor versions within one MAJOR interoperate; references never cross processes so mixed versions share only config/audit/evidence schemas, which are versioned and refused when unsupported.",
+ "downgrade": "Allowed within the same MAJOR if the active config schema is supported by the target; config rollback uses ConfigStore.rollback."
+}

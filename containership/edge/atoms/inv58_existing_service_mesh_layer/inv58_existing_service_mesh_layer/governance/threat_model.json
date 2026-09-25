@@ -1,0 +1,276 @@
+{
+  "schema": "PK_MESH_THREAT_MODEL/1",
+  "element": "INV-58",
+  "version": "4.3.0",
+  "method": "STRIDE per trust boundary + abuse cases",
+  "assets": [
+    "retry budgets / dependent-service availability",
+    "runtime identities",
+    "tenant route policy",
+    "bypass evidence",
+    "configuration & keys",
+    "audit trail",
+    "release artifacts"
+  ],
+  "actors": [
+    "malicious tenant",
+    "compromised workload",
+    "compromised node agent",
+    "stale/partitioned controller",
+    "insider operator",
+    "compromised CI publisher",
+    "network attacker",
+    "supply-chain attacker"
+  ],
+  "trust_boundaries": [
+    "mesh data plane -> node agent (mTLS SPIFFE)",
+    "controller -> INV-58 (mTLS SPIFFE)",
+    "operator/CI -> INV-58 (signed token)",
+    "INV-58 -> key/identity/policy/time services",
+    "INV-58 -> audit sink",
+    "artifact intake"
+  ],
+  "threats": [
+    {
+      "id": "T-01",
+      "title": "Retry storm from multiplied retries",
+      "asset": "dependent services",
+      "actor": "misconfigured app+mesh retry",
+      "boundary": "data plane",
+      "mitigations": "mesh_logic.reconcile; service._budget; resilience.CircuitBreaker; resilience.AdmissionController",
+      "tests": [
+        "test_service.DataPlaneTest.test_budget_above_configured_max_is_refused",
+        "test_resilience.BreakerTest.test_breaker_stops_retry_storm",
+        "test_fixtures_and_fuzz.FuzzTest.test_reconcile_invariants_hold_for_all_inputs"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-02",
+      "title": "Identity spoofing via ambiguous SPIFFE URI",
+      "asset": "runtime identity",
+      "actor": "compromised workload / hostile input",
+      "boundary": "identity boundary",
+      "mitigations": "mesh_logic.map_identity (strict, no normalisation)",
+      "tests": [
+        "test_security_regression.RegressionTest.test_R01_uppercase_scheme",
+        "test_security_regression.RegressionTest.test_R02_empty_query_fragment",
+        "test_security_regression.RegressionTest.test_R03_non_spiffe_segment_chars",
+        "test_fixtures_and_fuzz.FuzzTest.test_map_identity_never_crashes_and_output_is_canonical"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-03",
+      "title": "Cross-tenant identity mapping",
+      "asset": "tenant isolation",
+      "actor": "malicious tenant",
+      "boundary": "identity boundary",
+      "mitigations": "service.map_identity tenant-owner check",
+      "tests": [
+        "test_service.DataPlaneTest.test_identity_mapping_is_tenant_scoped"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-04",
+      "title": "Workload quietly bypassing mTLS",
+      "asset": "confidentiality",
+      "actor": "compromised workload",
+      "boundary": "data plane",
+      "mitigations": "mesh_logic.BypassDetector; service.report_flow audit",
+      "tests": [
+        "test_service.DataPlaneTest.test_bypass_is_tenant_scoped",
+        "test_adjacent_integration.AdjacentIntegrationTest.test_pln07_foreign_domain_never_reaches_inv59"
+      ],
+      "residual": "medium: detection depends on node reporting (RR-04)"
+    },
+    {
+      "id": "T-05",
+      "title": "Privilege escalation / confused deputy",
+      "asset": "control plane",
+      "actor": "compromised node or controller",
+      "boundary": "all boundaries",
+      "mitigations": "authz.BOUNDARY_MATRIX; Authorizer actor-type + mechanism checks",
+      "tests": [
+        "test_authz.AuthorizationTest.test_confused_deputy_and_privilege_escalation",
+        "test_authz.AuthorizationTest.test_deny_by_default"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-06",
+      "title": "Cross-tenant read/write of route policy",
+      "asset": "tenant state",
+      "actor": "malicious tenant",
+      "boundary": "control plane",
+      "mitigations": "authz tenant scope; per-tenant registries",
+      "tests": [
+        "test_service.IsolationTest.test_cross_tenant_reads_and_writes_denied_before_state_access",
+        "test_service.IsolationTest.test_undeclared_tenant_indistinguishable_from_forbidden"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-07",
+      "title": "Token replay / forged / expired credentials",
+      "asset": "operator actions",
+      "actor": "network attacker",
+      "boundary": "signed-token boundary",
+      "mitigations": "authz.Authenticator.from_token (HMAC, aud, exp, skew, nonce cache)",
+      "tests": [
+        "test_authz.AuthenticationTest.test_replay_is_refused",
+        "test_authz.AuthenticationTest.test_expired_not_yet_valid_ttl_audience_signature",
+        "test_authz.AuthenticationTest.test_replay_cache_saturation_fails_closed"
+      ],
+      "residual": "medium: symmetric token key (RR-02)"
+    },
+    {
+      "id": "T-08",
+      "title": "Malicious configuration / security downgrade",
+      "asset": "policy",
+      "actor": "compromised CI or operator",
+      "boundary": "config boundary",
+      "mitigations": "config.validate; separation of duties (publisher vs operator)",
+      "tests": [
+        "test_config.ValidationTest.test_security_downgrades_are_rejected",
+        "test_service.ConfigLifecycleTest.test_activate_requires_publisher_and_rejects_invalid"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-09",
+      "title": "Secret leakage via config, logs, status, errors",
+      "asset": "keys",
+      "actor": "insider / log reader",
+      "boundary": "diagnostics",
+      "mitigations": "secret_refs; telemetry pseudonymization; errors._sanitise",
+      "tests": [
+        "test_config.ValidationTest.test_literal_secret_anywhere_is_rejected",
+        "test_service.StatusExplainTest.test_status_surface",
+        "test_telemetry.TelemetryTest.test_logs_have_stable_ids_and_pseudonymize_workloads",
+        "test_config.SecretRefTest.test_provider_error_text_does_not_leak"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-10",
+      "title": "Audit tampering / repudiation",
+      "asset": "audit trail",
+      "actor": "insider",
+      "boundary": "audit sink",
+      "mitigations": "audit.AuditLog hash chain + HMAC seal; external head",
+      "tests": [
+        "test_audit_trail.AuditTrailTest.test_edit_delete_insert_reorder_are_detected",
+        "test_audit_trail.AuditTrailTest.test_recomputed_hash_without_key_is_detected",
+        "test_audit_trail.AuditTrailTest.test_truncated_tail_is_caught_by_external_head"
+      ],
+      "residual": "medium: tail truncation needs externally recorded head (RR-05)"
+    },
+    {
+      "id": "T-11",
+      "title": "Supply-chain: tampered policy/executable artifact",
+      "asset": "artifacts",
+      "actor": "supply-chain attacker",
+      "boundary": "artifact intake",
+      "mitigations": "integrity.Verifier",
+      "tests": [
+        "test_integrity.IntegrityTest.test_every_failure_mode_fails_closed",
+        "test_integrity.IntegrityTest.test_signer_outage_and_revocation"
+      ],
+      "residual": "medium: HMAC not asymmetric signing (RR-03)"
+    },
+    {
+      "id": "T-12",
+      "title": "Resource exhaustion / noisy tenant",
+      "asset": "availability",
+      "actor": "malicious tenant",
+      "boundary": "all boundaries",
+      "mitigations": "AdmissionController fair share; bounded registries, evidence, journals, idempotency cache, label cardinality",
+      "tests": [
+        "test_resilience.AdmissionTest.test_inflight_ceiling_and_fair_share",
+        "test_fault_injection.BurstSoakFleetTest.test_burst_overload_sheds_and_recovers",
+        "test_service.IsolationTest.test_per_tenant_route_quota",
+        "test_telemetry.TelemetryTest.test_label_cardinality_is_bounded"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-13",
+      "title": "Stale controller / split brain",
+      "asset": "route policy",
+      "actor": "partitioned controller",
+      "boundary": "control plane",
+      "mitigations": "resilience.FencingGuard",
+      "tests": [
+        "test_fault_injection.FaultInjectionTest.test_split_brain_two_controllers",
+        "test_service.MutationSafetyTest.test_stale_controller_is_fenced"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-14",
+      "title": "Duplicate execution via idempotency race",
+      "asset": "route policy",
+      "actor": "concurrent retries",
+      "boundary": "control plane",
+      "mitigations": "service.migrate_route key reservation",
+      "tests": [
+        "test_concurrency.ConcurrencyTest.test_idempotency_key_race_executes_once",
+        "test_service.MutationSafetyTest.test_idempotent_replay_and_conflict"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-15",
+      "title": "Trust-service outage leads to fail-open",
+      "asset": "all",
+      "actor": "outage / DoS on trust services",
+      "boundary": "dependencies",
+      "mitigations": "trust_outage_policy fail_closed; readiness",
+      "tests": [
+        "test_service.TrustOutageTest.test_security_dependencies_fail_closed",
+        "test_service.TrustOutageTest.test_audit_sink_outage_fails_closed_for_audited_ops",
+        "test_fault_injection.FaultInjectionTest.test_key_service_partition_and_reconnect"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-16",
+      "title": "Snapshot tampering on restore",
+      "asset": "route policy",
+      "actor": "insider with storage access",
+      "boundary": "restore",
+      "mitigations": "HMAC-sealed snapshot, invariant re-validation, atomic swap",
+      "tests": [
+        "test_service.SnapshotRestoreTest.test_tampered_snapshot_rejected_atomically"
+      ],
+      "residual": "low"
+    },
+    {
+      "id": "T-17",
+      "title": "Tenant existence probing (side channel)",
+      "asset": "tenant metadata",
+      "actor": "unauthenticated caller",
+      "boundary": "all tenant-scoped boundaries",
+      "mitigations": "authenticate before tenant lookup; identical denial codes",
+      "tests": [
+        "test_service.IsolationTest.test_undeclared_tenant_indistinguishable_from_forbidden"
+      ],
+      "residual": "medium: timing side channels not measured (RR-06)"
+    },
+    {
+      "id": "T-18",
+      "title": "Break-glass abuse",
+      "asset": "control plane",
+      "actor": "insider",
+      "boundary": "emergency control",
+      "mitigations": "dedicated role, armed time window, audited",
+      "tests": [
+        "test_authz.AuthorizationTest.test_break_glass_requires_arming_and_expires",
+        "test_service.MutationSafetyTest.test_break_glass_requires_armed_window"
+      ],
+      "residual": "low-medium: two-person rule enforced by subject (armer != invoker) (RR-07)"
+    }
+  ]
+}

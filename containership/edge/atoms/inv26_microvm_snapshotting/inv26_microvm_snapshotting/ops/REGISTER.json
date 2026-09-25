@@ -1,0 +1,60 @@
+{
+ "schema": "PK_SNAPSHOT_REGISTER/1",
+ "note": "Waivers need approver + expiry; none may be approved by the implementer. All approvers null => every waiver is PENDING.",
+ "entries": [
+  {
+   "id": "WAIVER-1",
+   "type": "waiver",
+   "control": "X001/C030/C083/C084",
+   "statement": "No real Firecracker/Cloud Hypervisor run (no /dev/kvm in build env); adapters tested against protocol fakes only.",
+   "risk": "API drift or snapshot semantics differ from fakes",
+   "remediation_owner": "inv26-eng",
+   "approver": null,
+   "expiry": null,
+   "status": "PENDING"
+  },
+  {
+   "id": "WAIVER-2",
+   "type": "waiver",
+   "control": "X006/C047",
+   "statement": "LocalKeyService in-process KEKs; no managed KMS adapter.",
+   "risk": "KEK exposure on node compromise",
+   "remediation_owner": "inv26-security",
+   "approver": null,
+   "expiry": null,
+   "status": "PENDING"
+  },
+  {
+   "id": "DEBT-1",
+   "type": "debt",
+   "control": "C065/C066",
+   "statement": "restore decrypts the whole image into memory (peak ~3x image) before VMM load",
+   "remediation": "stream verified chunks into the tmpfs memory file; UFFD backend",
+   "owner": "inv26-eng",
+   "due": null
+  },
+  {
+   "id": "DEBT-2",
+   "type": "debt",
+   "control": "X002",
+   "statement": "in-guest reseed agent not in this repository",
+   "owner": "guest image owner",
+   "due": null
+  },
+  {
+   "id": "DEBT-3",
+   "type": "debt",
+   "control": "C047",
+   "statement": "KEK rotation rewrap changes manifest digest and invalidates outstanding grants (by design, fail-closed); control plane must re-issue",
+   "owner": "control plane",
+   "due": null
+  },
+  {
+   "id": "DEPRECATION-1",
+   "type": "deprecation",
+   "control": "C016",
+   "statement": "PK_SNAPSHOT/1 and PK_SNAPSHOT_RESTORE/1 (v4.x) are refused; v5 PK_SNAPSHOT/2 in-memory SnapshotStore kept as a reference model only",
+   "removal": "7.0.0"
+  }
+ ]
+}

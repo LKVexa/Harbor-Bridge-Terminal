@@ -1,0 +1,336 @@
+{
+ "schema": "INV41_THREATS/1",
+ "version": "1.0.0",
+ "threats": [
+  {
+   "id": "T-FORGE",
+   "title": "Capability forgery (direct construction, fabricated seal/signature)",
+   "severity": "critical",
+   "requirements": [
+    "REQ-FUN-002",
+    "REQ-FUN-003"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_direct_reference_construction_is_refused",
+    "tests/test_properties.py::test_PR001_non_forgeability"
+   ],
+   "mutants": [
+    "M01",
+    "M02"
+   ],
+   "residual_risk": "low (logical boundary)",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-WIDEN",
+   "title": "Authority widening via grant or attenuation",
+   "severity": "critical",
+   "requirements": [
+    "REQ-FUN-001",
+    "REQ-FUN-004"
+   ],
+   "tests": [
+    "tests/test_properties.py::test_PR002_monotonic_attenuation"
+   ],
+   "mutants": [
+    "M03",
+    "M04"
+   ],
+   "residual_risk": "low",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-XAUTH",
+   "title": "Cross-authority substitution incl. same-textual-id impostor",
+   "severity": "critical",
+   "requirements": [
+    "REQ-FUN-005"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_same_id_impostor_authority_is_refused",
+    "tests/test_properties.py::test_PR003_cross_authority_isolation"
+   ],
+   "mutants": [
+    "M05"
+   ],
+   "residual_risk": "low",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-DEPUTY",
+   "title": "Confused deputy: holder resolves authority by name",
+   "severity": "high",
+   "requirements": [
+    "REQ-FUN-007"
+   ],
+   "tests": [
+    "tests/test_primitives.py::test_unheld_alias_is_refused"
+   ],
+   "mutants": [
+    "M01"
+   ],
+   "residual_risk": "low",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-REVOKE",
+   "title": "Revocation escape via nesting, attenuation, re-wrap, races",
+   "severity": "critical",
+   "requirements": [
+    "REQ-FUN-006",
+    "REQ-TST-001"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT007_revoked_everywhere",
+    "tests/test_races.py::test_RC001_use_vs_revoke",
+    "tests/test_properties.py::test_PR006_state_machine_against_model"
+   ],
+   "mutants": [
+    "M06",
+    "M07"
+   ],
+   "residual_risk": "low",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-SERIAL",
+   "title": "Reference theft via serialization/copy",
+   "severity": "high",
+   "requirements": [
+    "REQ-FUN-008"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT009_nonserializable_all_capability_objects"
+   ],
+   "mutants": [
+    "M09"
+   ],
+   "residual_risk": "low",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-LEAK",
+   "title": "Secret leakage via repr/errors/logs/audit/metrics/traces",
+   "severity": "high",
+   "requirements": [
+    "REQ-FUN-009",
+    "REQ-DAT-001",
+    "REQ-AUD-003"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT010_repr_redacts_all_secret_material",
+    "tests/test_subsystems.py::test_BT002_nothing_secret_in_logs_audit_reasons_health_metrics",
+    "tests/test_subsystems.py::test_BT007_log_schema_redaction_and_sampling"
+   ],
+   "mutants": [
+    "M08",
+    "M19"
+   ],
+   "residual_risk": "medium: crash dumps/core files are a deployment control",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-INPUT",
+   "title": "Hostile identifiers (control chars, huge, confusables) and pathological __hash__ objects",
+   "severity": "medium",
+   "requirements": [
+    "REQ-FUN-010"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT002_operation_set_limits_and_types",
+    "tests/test_properties.py::test_PR004_identifier_fuzz_deterministic_denial"
+   ],
+   "mutants": [
+    "M11"
+   ],
+   "residual_risk": "low; Unicode confusables are allowed and must be handled by callers that display ids",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-DOS",
+   "title": "Resource exhaustion: reference/holder floods, deep nesting, huge op sets, queue saturation",
+   "severity": "high",
+   "requirements": [
+    "REQ-LIM-001",
+    "REQ-LIM-002"
+   ],
+   "tests": [
+    "tests/test_contracts.py::test_CT004_membrane_depth_limit",
+    "tests/test_subsystems.py::test_RS004_admission_rejects_early_and_priority_lane"
+   ],
+   "mutants": [
+    "M10"
+   ],
+   "residual_risk": "medium: total live references per process is bounded only by config limit + memory",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-AUDIT",
+   "title": "Audit tampering: modify/delete/reorder/truncate; audit outage used to hide actions",
+   "severity": "high",
+   "requirements": [
+    "REQ-AUD-001",
+    "REQ-AUD-002",
+    "REQ-AUD-004"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_AU002_tamper_modify_delete_dup_reorder_truncate",
+    "tests/test_subsystems.py::test_AU006_verifier_checks_prev_link_independently",
+    "tests/test_subsystems.py::test_BT009_audit_outage_turns_allow_into_denial"
+   ],
+   "mutants": [
+    "M12",
+    "M13",
+    "M18"
+   ],
+   "residual_risk": "medium until external anchor (B-KEY-01)",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-CFG",
+   "title": "Unauthorized/stale/rolled-back configuration activation",
+   "severity": "high",
+   "requirements": [
+    "REQ-CFG-002",
+    "REQ-CFG-004"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_CF001_rejects_bad_configs",
+    "tests/test_subsystems.py::test_CF002_revoked_key_rejected"
+   ],
+   "mutants": [
+    "M14",
+    "M15"
+   ],
+   "residual_risk": "medium until KMS signer (B-SIGN-01)",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-REPLAY",
+   "title": "Credential replay",
+   "severity": "high",
+   "requirements": [
+    "REQ-IDN-001"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_ID002_replay_and_revocation"
+   ],
+   "mutants": [
+    "M16"
+   ],
+   "residual_risk": "low for in-memory nonce window; cross-process replay needs shared nonce store",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-AUTHN",
+   "title": "Spoofed identity (wrong issuer/audience/expired)",
+   "severity": "high",
+   "requirements": [
+    "REQ-IDN-001",
+    "REQ-IDN-002"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_ID001_valid_then_rejections"
+   ],
+   "mutants": [
+    "M17"
+   ],
+   "residual_risk": "medium until production adapters (B-IDN-01)",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-RETRY",
+   "title": "Retry storm / retrying a denial",
+   "severity": "medium",
+   "requirements": [
+    "REQ-RES-001"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_RS001_retry_bounded_and_terminal_never_retried"
+   ],
+   "mutants": [
+    "M20"
+   ],
+   "residual_risk": "low",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-INTROSPECT",
+   "title": "Same-interpreter hostile code: reflection, gc.get_objects, object.__setattr__, monkey patching, module replacement, ctypes, debugger",
+   "severity": "critical",
+   "requirements": [
+    "REQ-ISO-001",
+    "REQ-ISO-003"
+   ],
+   "tests": [
+    "tests/test_isolation.py::test_IS001_child_cannot_import_trusted_implementation",
+    "tests/test_isolation.py::test_IS007_profile_status_is_honest"
+   ],
+   "mutants": [],
+   "residual_risk": "HIGH \u2014 cannot be mitigated in pure Python; requires process/Wasm/VM isolation (WVR-001)",
+   "requires_external_isolation": true
+  },
+  {
+   "id": "T-ESCAPE",
+   "title": "Isolated child reaching filesystem/network/processes without grants",
+   "severity": "high",
+   "requirements": [
+    "REQ-ISO-001",
+    "REQ-ISO-003"
+   ],
+   "tests": [
+    "tests/test_isolation.py::test_IS002_child_gets_empty_environment",
+    "tests/test_isolation.py::test_IS003_cpu_quota_terminates_runaway",
+    "tests/test_isolation.py::test_IS006_file_size_quota"
+   ],
+   "mutants": [],
+   "residual_risk": "HIGH \u2014 no fs/net namespaces or syscall filter (B-ISO-01)",
+   "requires_external_isolation": true
+  },
+  {
+   "id": "T-SIDE",
+   "title": "Timing/cache side channels on seal comparison",
+   "severity": "low",
+   "requirements": [
+    "REQ-FUN-003"
+   ],
+   "tests": [
+    "tests/test_properties.py::test_PR001_non_forgeability"
+   ],
+   "mutants": [],
+   "residual_risk": "low: hmac.compare_digest used; micro-architectural channels out of scope (needs hardware isolation)",
+   "requires_external_isolation": true
+  },
+  {
+   "id": "T-SUPPLY",
+   "title": "Supply-chain compromise of source/build/release/policy bundle",
+   "severity": "high",
+   "requirements": [
+    "REQ-SUP-001",
+    "REQ-SUP-002",
+    "REQ-SUP-004"
+   ],
+   "tests": [
+    "tests/test_governance.py::test_GV003_stdlib_only"
+   ],
+   "mutants": [],
+   "residual_risk": "medium until signed provenance (B-SIGN-01)",
+   "requires_external_isolation": false
+  },
+  {
+   "id": "T-CLOCK",
+   "title": "Clock manipulation affecting credential freshness/audit ordering",
+   "severity": "medium",
+   "requirements": [
+    "REQ-IDN-001",
+    "REQ-AUD-001"
+   ],
+   "tests": [
+    "tests/test_subsystems.py::test_ID001_valid_then_rejections"
+   ],
+   "mutants": [],
+   "residual_risk": "medium: wall clock trusted for exp/nbf; audit uses monotonic ordering",
+   "requires_external_isolation": false
+  }
+ ]
+}

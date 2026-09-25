@@ -1,0 +1,170 @@
+{
+ "applicability": {
+  "cloud": {
+   "capture": "supported",
+   "delete": "supported",
+   "emergency_disable": "supported",
+   "kvm": true,
+   "max_kms_outage_s": 0,
+   "min_kernel": "5.10",
+   "replicate": "prohibited",
+   "restore": "supported",
+   "restore_p99_ms": 10.0,
+   "tpm_required": false
+  },
+  "datacenter": {
+   "capture": "supported",
+   "delete": "supported",
+   "emergency_disable": "supported",
+   "kvm": true,
+   "max_kms_outage_s": 0,
+   "min_kernel": "5.10",
+   "replicate": "prohibited",
+   "restore": "supported",
+   "restore_p99_ms": 10.0,
+   "tpm_required": false
+  },
+  "far-edge": {
+   "capture": "degraded",
+   "delete": "supported",
+   "emergency_disable": "supported",
+   "kvm": true,
+   "max_kms_outage_s": 3600,
+   "min_kernel": "5.10",
+   "replicate": "prohibited",
+   "restore": "supported",
+   "restore_p99_ms": 50.0,
+   "tpm_required": true
+  },
+  "near-edge": {
+   "capture": "supported",
+   "delete": "supported",
+   "emergency_disable": "supported",
+   "kvm": true,
+   "max_kms_outage_s": 300,
+   "min_kernel": "5.10",
+   "replicate": "prohibited",
+   "restore": "supported",
+   "restore_p99_ms": 25.0,
+   "tpm_required": true
+  }
+ },
+ "conflicts": [
+  {
+   "action": "refuse restore (SNAP_KMS_UNAVAILABLE); never restore without key unwrap",
+   "conflict": "restore SLO vs KMS unavailable",
+   "id": "PC-01",
+   "winner": "isolation_security"
+  },
+  {
+   "action": "shed load (SNAP_OVERLOADED); never share snapshots across tenants",
+   "conflict": "capacity pressure vs tenant isolation",
+   "id": "PC-02",
+   "winner": "isolation_security"
+  },
+  {
+   "action": "refuse restore outside allowed sites/regions (SNAP_RESIDENCY_VIOLATION)",
+   "conflict": "failover vs residency",
+   "id": "PC-03",
+   "winner": "legal_residency"
+  },
+  {
+   "action": "never resume a guest without entropy ack, even past budget",
+   "conflict": "restore latency vs entropy reseed",
+   "id": "PC-04",
+   "winner": "isolation_security"
+  },
+  {
+   "action": "privileged ops (delete/quarantine/config/break-glass) refused; capture/restore buffered-audited",
+   "conflict": "availability vs audit sink down",
+   "id": "PC-05",
+   "winner": "isolation_security"
+  },
+  {
+   "action": "all capture/restore refused (SNAP_DISABLED)",
+   "conflict": "operator emergency disable vs SLO",
+   "id": "PC-06",
+   "winner": "operator_safety"
+  }
+ ],
+ "outage": {
+  "audit": {
+   "cache_ttl_s": 0,
+   "mode": "buffer_then_fail_closed",
+   "note": "bounded buffer for capture/restore; privileged ops fail closed"
+  },
+  "control_plane": {
+   "cache_ttl_s": 900,
+   "mode": "degrade",
+   "note": "already-issued restore grants honoured until exp; no new grants offline"
+  },
+  "entropy": {
+   "cache_ttl_s": 0,
+   "mode": "fail_closed",
+   "note": "guest destroyed; never resumed"
+  },
+  "hypervisor": {
+   "cache_ttl_s": 0,
+   "mode": "fail_closed",
+   "note": "guest destroyed on any load/resume failure"
+  },
+  "identity": {
+   "cache_ttl_s": 0,
+   "mode": "fail_closed",
+   "note": "trust store is local; revocation list must be current"
+  },
+  "kms": {
+   "cache_ttl_s": 0,
+   "mode": "fail_closed",
+   "note": "no DEK caching; restore/capture refused"
+  },
+  "storage": {
+   "cache_ttl_s": 0,
+   "mode": "fail_closed",
+   "note": "retryable failure; nothing committed"
+  },
+  "telemetry": {
+   "cache_ttl_s": null,
+   "mode": "degrade",
+   "note": "best-effort; never blocks operations"
+  },
+  "time": {
+   "cache_ttl_s": 0,
+   "mode": "fail_closed",
+   "note": "credential validity uses +/-30 s skew; beyond it tokens are refused"
+  }
+ },
+ "precedence": [
+  [
+   1,
+   "isolation_security",
+   "tenant/workload/environment binding, authn/authz, integrity, entropy"
+  ],
+  [
+   2,
+   "legal_residency",
+   "site/region residency constraints"
+  ],
+  [
+   3,
+   "integrity_consistency",
+   "lifecycle, fencing, generation checks"
+  ],
+  [
+   4,
+   "operator_safety",
+   "quarantine, emergency disable, freeze"
+  ],
+  [
+   5,
+   "slo_availability",
+   "restore latency, retries, degraded operation"
+  ],
+  [
+   6,
+   "cost_efficiency",
+   "caching, pooling, compression"
+  ]
+ ],
+ "schema": "PK_SNAPSHOT_POLICY/1.0.0"
+}

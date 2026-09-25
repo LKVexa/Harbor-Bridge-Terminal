@@ -1,0 +1,26 @@
+# MC-046: each alert names the class it distinguishes: overload | policy | dependency | attack | defect
+groups:
+- name: inv24
+  rules:
+  - alert: INV24DeviceModelViolationAttempt   # attack
+    expr: sum(increase(microvm_device_refusals_total[5m])) > 0
+    labels: {severity: sev2, class: attack}
+  - alert: INV24BootBudgetBurnFast            # defect/perf
+    expr: sum(rate(microvm_boot_budget_breaches_total[1h])) / sum(rate(microvm_boot_seconds_count[1h])) > 0.144
+    labels: {severity: sev2, class: defect}
+  - alert: INV24AdmissionOverload             # overload
+    expr: sum(rate(microvm_admission_decisions_total{code="OVERLOADED"}[5m])) > 1
+    labels: {severity: sev3, class: overload}
+  - alert: INV24PolicyRejectionSpike          # policy
+    expr: sum(rate(microvm_admission_decisions_total{code=~"UNAUTHORIZED|QUOTA_EXCEEDED|QUARANTINED"}[15m])) > 5
+    labels: {severity: sev3, class: policy}
+  - alert: INV24AuthFailureSpike              # attack
+    expr: sum(rate(microvm_admission_decisions_total{code=~"UNAUTHENTICATED|REPLAY_DETECTED"}[5m])) > 1
+    labels: {severity: sev2, class: attack}
+  - alert: INV24DependencyDown                # dependency
+    expr: min(microvm_dependency_up) == 0
+    for: 2m
+    labels: {severity: sev2, class: dependency}
+  - alert: INV24CleanupFailed                 # defect / isolation risk
+    expr: sum(increase(microvm_cleanup_total{outcome="failed"}[10m])) > 0
+    labels: {severity: sev1, class: defect}

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv68:PK_PACK_REQUEST:1",
+  "title": "PK_PACK/1 request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workloads"
+  ],
+  "properties": {
+    "host_capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpu",
+        "mem"
+      ],
+      "properties": {
+        "cpu": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "mem": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "headroom": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.1
+    },
+    "workloads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/workload"
+      },
+      "maxItems": 1000000
+    },
+    "protocol": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      ],
+      "description": "acceptable protocol versions; default [\"PK_PACK/1\"]"
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "default": "default"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "correlation_id": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "lineage": {
+      "type": "object",
+      "description": "app release / infrastructure identifiers carried into the explain view",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "workload": {
+      "type": "object",
+      "required": [
+        "name",
+        "cpu",
+        "mem"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "cpu": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mem": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "description": "PK_PACK/1 request. 4.3.0 adds optional service-boundary fields; a 4.2.0 request (host_capacity/headroom/workloads only) remains valid."
+}

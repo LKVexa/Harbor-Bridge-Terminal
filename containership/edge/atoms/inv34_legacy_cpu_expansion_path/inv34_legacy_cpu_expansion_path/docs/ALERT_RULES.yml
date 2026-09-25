@@ -1,0 +1,26 @@
+# INV-34 Prometheus alert rules (MC-058). Thresholds PROPOSED; no alertmanager/dashboard backend bound.
+groups:
+- name: inv34
+  rules:
+  - alert: Inv34CapacityRejections        # normal pressure, not a defect
+    expr: sum(rate(inv34_http_errors_total{code=~"HOST_CAPACITY_EXCEEDED|QUOTA_EXCEEDED"}[10m])) > 0.2
+    labels: {severity: ticket, class: capacity}
+  - alert: Inv34DependencyDegraded        # dependency failure
+    expr: sum(rate(inv34_http_errors_total{code="DEGRADED_MODE"}[5m])) > 0
+    labels: {severity: page, class: dependency}
+  - alert: Inv34AdapterUnknownOutcomes    # hypervisor ambiguity
+    expr: sum(rate(inv34_adapter_calls_total{outcome="unknown"}[10m])) > 0.05
+    labels: {severity: page, class: dependency}
+  - alert: Inv34StalledConvergence        # stalled guest online
+    expr: inv34_stalled_vms > 0
+    for: 10m
+    labels: {severity: page, class: convergence}
+  - alert: Inv34AuthFailuresSpike         # possible attack
+    expr: sum(rate(inv34_http_errors_total{code=~"UNAUTHENTICATED|FORBIDDEN"}[5m])) > 1
+    labels: {severity: page, class: security}
+  - alert: Inv34ObservationRejected       # spoofing / replay / software defect
+    expr: sum(rate(inv34_observations_total{outcome=~"OBS_BAD_SIGNATURE|OBS_REPLAY|OBS_SOURCE_NOT_BOUND"}[5m])) > 0
+    labels: {severity: page, class: security}
+  - alert: Inv34InternalErrors            # software defect
+    expr: sum(rate(inv34_http_errors_total{code=~"STORE_ERROR|INTERNAL"}[5m])) > 0
+    labels: {severity: page, class: defect}

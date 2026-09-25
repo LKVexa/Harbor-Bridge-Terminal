@@ -1,0 +1,358 @@
+{
+  "schema": "pk.conformance/1",
+  "interfaces": [
+    "PK_STATE/1",
+    "PK_MESSAGE/1",
+    "PK_SECRET/1",
+    "PK_INVOKE/1"
+  ],
+  "tokens": {
+    "$TOKEN": {
+      "workload": "api",
+      "tenant": "t1",
+      "capabilities": [
+        "state",
+        "messaging",
+        "secrets",
+        "invoke"
+      ]
+    },
+    "$TOKEN_T2": {
+      "workload": "api",
+      "tenant": "t2",
+      "capabilities": [
+        "state",
+        "messaging",
+        "secrets",
+        "invoke"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "name": "state set",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "set",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "key": "k",
+        "value": "djE="
+      },
+      "expect": {
+        "ok": true,
+        "result": {}
+      }
+    },
+    {
+      "name": "state get",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "key": "k"
+      },
+      "expect": {
+        "ok": true,
+        "result": {
+          "value": "djE="
+        }
+      }
+    },
+    {
+      "name": "tenant isolation",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t2",
+        "token": "$TOKEN_T2",
+        "key": "k"
+      },
+      "expect": {
+        "ok": true,
+        "result": {
+          "value": null
+        }
+      }
+    },
+    {
+      "name": "cross-tenant token refused",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN_T2",
+        "key": "k"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_TOKEN_INVALID"
+      }
+    },
+    {
+      "name": "absent token refused",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "",
+        "key": "k"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_TOKEN_INVALID"
+      }
+    },
+    {
+      "name": "transact",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "transact",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "operations": [
+          [
+            "set",
+            "a",
+            "MQ=="
+          ],
+          [
+            "delete",
+            "k",
+            null
+          ]
+        ]
+      },
+      "expect": {
+        "ok": true,
+        "result": {}
+      }
+    },
+    {
+      "name": "transact applied",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "key": "k"
+      },
+      "expect": {
+        "ok": true,
+        "result": {
+          "value": null
+        }
+      }
+    },
+    {
+      "name": "bad verb schema reject",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "transact",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "operations": [
+          [
+            "upsert",
+            "a",
+            null
+          ]
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVALID_ARGUMENT"
+      }
+    },
+    {
+      "name": "unknown field rejected",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "key": "k",
+        "admin": true
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVALID_ARGUMENT"
+      }
+    },
+    {
+      "name": "tenant separator rejected",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1/../t2",
+        "token": "$TOKEN",
+        "key": "k"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVALID_ARGUMENT"
+      }
+    },
+    {
+      "name": "publish",
+      "request": {
+        "interface": "PK_MESSAGE/1",
+        "op": "publish",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "topic": "orders",
+        "payload": "bTE=",
+        "idempotency_key": "i1"
+      },
+      "expect": {
+        "ok": true,
+        "result": {
+          "accepted": true,
+          "delivery": "success"
+        }
+      }
+    },
+    {
+      "name": "duplicate publish suppressed",
+      "request": {
+        "interface": "PK_MESSAGE/1",
+        "op": "publish",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "topic": "orders",
+        "payload": "bVg=",
+        "idempotency_key": "i1"
+      },
+      "expect": {
+        "ok": true,
+        "result": {
+          "accepted": false,
+          "delivery": "success"
+        }
+      }
+    },
+    {
+      "name": "subscribe",
+      "request": {
+        "interface": "PK_MESSAGE/1",
+        "op": "subscribe",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "topic": "orders"
+      },
+      "expect": {
+        "ok": true,
+        "result": {
+          "messages": [
+            "bTE="
+          ]
+        }
+      }
+    },
+    {
+      "name": "secret missing",
+      "request": {
+        "interface": "PK_SECRET/1",
+        "op": "fetch",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "reference": "nope"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_SECRET_NOT_FOUND"
+      }
+    },
+    {
+      "name": "invoke unregistered",
+      "request": {
+        "interface": "PK_INVOKE/1",
+        "op": "invoke",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "component": "svc",
+        "payload": "eA=="
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVOKE_TARGET_UNAVAILABLE"
+      }
+    },
+    {
+      "name": "bad base64",
+      "request": {
+        "interface": "PK_INVOKE/1",
+        "op": "invoke",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "component": "svc",
+        "payload": "!!!"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVALID_ARGUMENT"
+      }
+    },
+    {
+      "name": "unknown interface",
+      "request": {
+        "interface": "PK_STATE/9",
+        "op": "get"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVALID_ARGUMENT"
+      }
+    },
+    {
+      "name": "deadline above max rejected",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "$TOKEN",
+        "key": "k",
+        "deadline_s": 99
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_INVALID_ARGUMENT"
+      }
+    },
+    {
+      "name": "traceparent echoed on error",
+      "request": {
+        "interface": "PK_STATE/1",
+        "op": "get",
+        "workload": "api",
+        "tenant": "t1",
+        "token": "",
+        "key": "k",
+        "traceparent": "00-abababababababababababababababab-cdcdcdcdcdcdcdcd-01"
+      },
+      "expect": {
+        "ok": false,
+        "code": "PK_TOKEN_INVALID",
+        "trace_id": "abababababababababababababababab"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# systemd unit for bare-metal / VM installs (MC-028).  One instance per site per environment.
+[Unit]
+Description=INV-66 enterprise Wasm control plane
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=inv66
+EnvironmentFile=/etc/inv66/inv66.env
+ExecStart=/opt/inv66/venv/bin/inv66 serve --config /etc/inv66/config.json --store /var/lib/inv66/store \
+  --node-id %H --org ${INV66_ORG} --host 0.0.0.0 --port 8466 \
+  --tls-cert /etc/inv66/tls/server.crt --tls-key /etc/inv66/tls/server.key --tls-client-ca /etc/inv66/tls/clients-ca.pem \
+  --policy-url ${INV66_POLICY_URL} --policy-version ${INV66_POLICY_VERSION} --deploy-url ${INV66_DEPLOY_URL} \
+  --anchor-worm /var/lib/inv66-worm/anchors.jsonl
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/inv66 /var/lib/inv66-worm
+CapabilityBoundingSet=
+LimitNOFILE=65536
+MemoryMax=2G
+
+[Install]
+WantedBy=multi-user.target

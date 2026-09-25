@@ -1,0 +1,71 @@
+{
+ "component": 32,
+ "title": "Secrets boundary",
+ "priority": "P1",
+ "subparts": [
+  {
+   "name": "opaque secret-reference format",
+   "state": "IMPLEMENTED",
+   "spec": "production/secrets.py::module docstring (PK_DYN_SECRETREF/1)",
+   "modules": [
+    "production/secrets.py::SecretRef"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestSecrets.test_reference_format"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "supported secret-manager integration",
+   "state": "PARTIAL",
+   "spec": "production/secrets.py::SecretProvider",
+   "modules": [
+    "production/secrets.py::EnvSecretProvider",
+    "production/secrets.py::FileSecretProvider"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestSecrets.test_env_and_file_provider_doubles"
+   ],
+   "blocker": "a real secret manager / KMS endpoint to integrate (only env/file doubles exist)"
+  },
+  {
+   "name": "runtime secret retrieval/cache policy",
+   "state": "IMPLEMENTED",
+   "spec": "production/secrets.py::SecretResolver",
+   "modules": [
+    "production/secrets.py::SecretResolver.resolve"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestSecrets.test_cache_ttl_and_bounds"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "redaction and log-scrubbing rules",
+   "state": "IMPLEMENTED",
+   "spec": "production/secrets.py::SecretValue",
+   "modules": [
+    "production/secrets.py::SecretValue",
+    "production/secrets.py::SecretResolver.scrub",
+    "production/core.py::redact"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestSecrets.test_redaction"
+   ],
+   "blocker": null
+  },
+  {
+   "name": "secret rotation/revocation without full redeploy",
+   "state": "IMPLEMENTED",
+   "spec": "production/secrets.py::SecretResolver",
+   "modules": [
+    "production/secrets.py::SecretResolver.revoke"
+   ],
+   "tests": [
+    "inv08_dynamic_infrastructure_model.production.tests.test_controlplane.TestSecrets.test_rotation_and_revocation_without_redeploy"
+   ],
+   "blocker": null
+  }
+ ],
+ "notes": "No encryption at rest attempted (BLOCKED on vetted cipher/KMS)."
+}

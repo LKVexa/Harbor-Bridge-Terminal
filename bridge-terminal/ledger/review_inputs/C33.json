@@ -1,0 +1,1680 @@
+{
+"component": "C33",
+"items": [
+{
+"id": "C33-001",
+"task_class": "DOCUMENT",
+"area": "01. Operation model",
+"req": "Record the article's one-send-and-one-receive concurrency constraint.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Header comment records the one-send/one-receive-path constraint per connection. [downgraded: RECORD item without a written record]",
+"prior_evidence": [
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C33-002",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Define the socket's single receive owner.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Single 'data' listener registered in the constructor is the sole receive owner.",
+"prior_evidence": [
+"gateway/ws.js:9-11,61"
+]
+},
+{
+"id": "C33-003",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Define the socket's single send owner.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Single _write() path (cork/write/uncork) is the sole send owner.",
+"prior_evidence": [
+"gateway/ws.js:9-11,81-88"
+]
+},
+{
+"id": "C33-004",
+"task_class": "IMPLEMENT",
+"area": "01. Operation model",
+"req": "Distinguish send-receive overlap from duplicate operations of one direction.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_parse rejects a new message inside a fragmented one and CLOSING-state frames are handled distinctly from normal duplicates.",
+"prior_evidence": [
+"gateway/ws.js:182,214"
+]
+},
+{
+"id": "C33-005",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Identify all code paths that invoke ReceiveAsync.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "ReceiveAsync is a .NET ClientWebSocket API; the Node gateway reads via the socket 'data' event, not this method.",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C33-006",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Identify all code paths that invoke SendAsync.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "SendAsync is a .NET ClientWebSocket API; the Node gateway writes via socket.write(), not this method.",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C33-007",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Identify all code paths that initiate closure.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "close()/terminate()/_fail() are the only paths that initiate closure.",
+"prior_evidence": [
+"gateway/ws.js:104-127"
+]
+},
+{
+"id": "C33-008",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Identify all code paths that dispose the socket.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_destroy() is the single idempotent disposal path, guarded by this.destroyed.",
+"prior_evidence": [
+"gateway/ws.js:131-140"
+]
+},
+{
+"id": "C33-009",
+"task_class": "SPECIFY",
+"area": "01. Operation model",
+"req": "Define ownership changes during shutdown.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Comment states disposal releases buffers, timers and the socket together.",
+"prior_evidence": [
+"gateway/ws.js:11,131-140"
+]
+},
+{
+"id": "C33-010",
+"task_class": "IMPLEMENT",
+"area": "01. Operation model",
+"req": "Approve the per-socket operation state model.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit approval record of the per-socket operation state model.",
+"prior_evidence": []
+},
+{
+"id": "C33-011",
+"task_class": "IMPLEMENT",
+"area": "02. State representation",
+"req": "Represent whether an application send is pending.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut/congested state implies an in-flight send but there is no explicit 'send pending' flag.",
+"prior_evidence": [
+"gateway/connection.js:28,71-77"
+]
+},
+{
+"id": "C33-012",
+"task_class": "IMPLEMENT",
+"area": "02. State representation",
+"req": "Represent whether an application receive is pending.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "this.frag represents an in-progress fragmented receive, but not a general 'receive pending' flag (Node reads continuously).",
+"prior_evidence": [
+"gateway/ws.js:51"
+]
+},
+{
+"id": "C33-013",
+"task_class": "IMPLEMENT",
+"area": "02. State representation",
+"req": "Represent whether closure has been requested.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "this.closeSent / state CLOSING represent closure requested.",
+"prior_evidence": [
+"gateway/ws.js:54,107"
+]
+},
+{
+"id": "C33-014",
+"task_class": "IMPLEMENT",
+"area": "02. State representation",
+"req": "Represent whether peer closure has been observed.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_onClose distinguishes weInitiated to represent peer closure observed.",
+"prior_evidence": [
+"gateway/ws.js:198,211-224"
+]
+},
+{
+"id": "C33-015",
+"task_class": "IMPLEMENT",
+"area": "02. State representation",
+"req": "Represent whether disposal is complete.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "this.destroyed boolean represents disposal complete.",
+"prior_evidence": [
+"gateway/ws.js:56,131-133"
+]
+},
+{
+"id": "C33-016",
+"task_class": "SPECIFY",
+"area": "02. State representation",
+"req": "Define synchronization protecting shared state.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Relies implicitly on the single-threaded event loop; not documented as an explicit synchronization strategy.",
+"prior_evidence": [
+"gateway/ws.js:9-11"
+]
+},
+{
+"id": "C33-017",
+"task_class": "SPECIFY",
+"area": "02. State representation",
+"req": "Define legal combinations of send and receive state.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit matrix of legal send/receive state combinations is documented.",
+"prior_evidence": []
+},
+{
+"id": "C33-018",
+"task_class": "SPECIFY",
+"area": "02. State representation",
+"req": "Define illegal duplicate-operation states.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit list of illegal duplicate-operation states is documented, though some guards exist (e.g. fragmentation rejection).",
+"prior_evidence": []
+},
+{
+"id": "C33-019",
+"task_class": "SPECIFY",
+"area": "02. State representation",
+"req": "Define how state changes are observed across runspaces.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "Runspaces are a PowerShell-specific concurrency concept with no meaning in the single-threaded Node event loop.",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C33-020",
+"task_class": "DOCUMENT",
+"area": "02. State representation",
+"req": "Document invariants checked in diagnostic builds or tests.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Tests assert many invariants (close codes, framing) but there is no separate 'diagnostic build assertions' document.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C33-021",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Admit sends through the serialized outbound path.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "All application sends go through _send -> pendingOut -> _flush.",
+"prior_evidence": [
+"gateway/connection.js:59-70"
+]
+},
+{
+"id": "C33-022",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Prevent a second producer from bypassing the send owner.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "No direct socket.write calls exist outside _send/_flush/ws.sendText; single admitted path.",
+"prior_evidence": [
+"gateway/connection.js"
+]
+},
+{
+"id": "C33-023",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Mark send admission and completion consistently.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "push=admission, shift=completion, but there is no distinct tracked 'sent' state beyond array membership.",
+"prior_evidence": [
+"gateway/connection.js:67,73-74"
+]
+},
+{
+"id": "C33-024",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Keep the payload owned until send completion.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Text remains in pendingOut until sendText succeeds and it is shifted out.",
+"prior_evidence": [
+"gateway/connection.js:73-74"
+]
+},
+{
+"id": "C33-025",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Clear pending-send state after success.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "shift() clears the item once accepted (success).",
+"prior_evidence": [
+"gateway/connection.js:73-74"
+]
+},
+{
+"id": "C33-026",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Clear or terminate pending-send state after failure.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "On failure (sendText false) the loop just stops; item is retried on next drain rather than being explicitly terminated/failed.",
+"prior_evidence": [
+"gateway/connection.js:73"
+]
+},
+{
+"id": "C33-027",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Coordinate outbound queue draining with close requests.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_closeSocket drains pendingOut within a bounded grace period before closing.",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C33-028",
+"task_class": "TEST",
+"area": "03. Send coordination",
+"req": "Test a send completing while another producer enqueues.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test for a send completing while another producer enqueues.",
+"prior_evidence": []
+},
+{
+"id": "C33-029",
+"task_class": "TEST",
+"area": "03. Send coordination",
+"req": "Test a send failing while shutdown begins.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test for a send failing while shutdown begins.",
+"prior_evidence": []
+},
+{
+"id": "C33-030",
+"task_class": "IMPLEMENT",
+"area": "03. Send coordination",
+"req": "Preserve exact send-operation accounting.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "outSeq/unackedBytes accounting exists but is tied to client acks, not strictly to send-operation completion.",
+"prior_evidence": [
+"gateway/connection.js:238-240"
+]
+},
+{
+"id": "C33-031",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Start receives only through the owning receive loop.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Single socket.on('data', ...) listener registered in the constructor is the only receive starter.",
+"prior_evidence": [
+"gateway/ws.js:61"
+]
+},
+{
+"id": "C33-032",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Prevent helper code from creating a competing receive.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "No other code adds a 'data' listener; design comment states one receive path per connection.",
+"prior_evidence": [
+"gateway/ws.js:9-11,61"
+]
+},
+{
+"id": "C33-033",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Mark receive start and completion consistently.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_onData/_parse process synchronously; no explicit start/complete flag pair is tracked.",
+"prior_evidence": [
+"gateway/ws.js:144-149"
+]
+},
+{
+"id": "C33-034",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Interpret the result before starting the next receive.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_parse loop fully interprets each frame/result before looping to the next; event-loop ordering prevents overlap.",
+"prior_evidence": [
+"gateway/ws.js:144-202"
+]
+},
+{
+"id": "C33-035",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Keep the reusable buffer owned during the pending receive.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "this.buf is the single owned accumulation buffer.",
+"prior_evidence": [
+"gateway/ws.js:50,147"
+]
+},
+{
+"id": "C33-036",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Clear pending-receive state after completion.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Buffer is sliced/reset after each frame is consumed.",
+"prior_evidence": [
+"gateway/ws.js:176-177"
+]
+},
+{
+"id": "C33-037",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Handle cancellation without scheduling another receive.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "_destroy tears down the socket so no further 'data' events fire, but there is no explicit cancellation-vs-reschedule code path documented.",
+"prior_evidence": [
+"gateway/ws.js:131-140"
+]
+},
+{
+"id": "C33-038",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Coordinate peer-close observation with local close intent.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "weInitiated logic coordinates peer-close observation with local close intent.",
+"prior_evidence": [
+"gateway/ws.js:219-223"
+]
+},
+{
+"id": "C33-039",
+"task_class": "TEST",
+"area": "04. Receive coordination",
+"req": "Test a receive completing while shutdown begins.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'data after our close is ignored; abrupt TCP loss releases the connection'.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js:61"
+]
+},
+{
+"id": "C33-040",
+"task_class": "IMPLEMENT",
+"area": "04. Receive coordination",
+"req": "Preserve exact receive-operation accounting.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "stats.rxBytes/rxMessages are tracked precisely per received chunk/message.",
+"prior_evidence": [
+"gateway/ws.js:58,146,205"
+]
+},
+{
+"id": "C33-041",
+"task_class": "IMPLEMENT",
+"area": "05. Full-duplex behavior",
+"req": "Send while a receive operation is awaiting data.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Independent write and read code paths on one TCP socket support sending while a receive is pending.",
+"prior_evidence": [
+"gateway/ws.js:81-88,144-149"
+]
+},
+{
+"id": "C33-042",
+"task_class": "IMPLEMENT",
+"area": "05. Full-duplex behavior",
+"req": "Receive while an application send is pending.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_onText (receive) is independent of _flush/_flow (send), allowing receive while a send is pending.",
+"prior_evidence": [
+"gateway/connection.js:38,71-77,103"
+]
+},
+{
+"id": "C33-043",
+"task_class": "TEST",
+"area": "05. Full-duplex behavior",
+"req": "Test simultaneous large inbound and outbound messages.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'health stays responsive (< 250 ms) while a session streams bulk output and large inbound messages arrive'.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js:67"
+]
+},
+{
+"id": "C33-044",
+"task_class": "TEST",
+"area": "05. Full-duplex behavior",
+"req": "Test a slow sender with a fast outbound response stream.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test for a slow sender combined with a fast outbound response stream was found.",
+"prior_evidence": []
+},
+{
+"id": "C33-045",
+"task_class": "TEST",
+"area": "05. Full-duplex behavior",
+"req": "Test a slow reader with active inbound traffic.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Bulk-output + concurrent-inbound and slow-consumer tests together cover this.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js:67",
+"tests/chaos/lifecycle.test.js:64"
+]
+},
+{
+"id": "C33-046",
+"task_class": "REVIEW",
+"area": "05. Full-duplex behavior",
+"req": "Confirm one direction's queue does not block the other unnecessarily.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Comment: 'Keep receive processing independent of queue draining' plus the health-responsive test. [downgraded: VERIFY item without a test or measurement citatio",
+"prior_evidence": [
+"gateway/connection.js:35"
+]
+},
+{
+"id": "C33-047",
+"task_class": "REVIEW",
+"area": "05. Full-duplex behavior",
+"req": "Confirm the master dispatcher remains independent of both directions.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit 'master dispatcher' abstraction is documented or tested independently of send/receive.",
+"prior_evidence": []
+},
+{
+"id": "C33-048",
+"task_class": "VERIFY",
+"area": "05. Full-duplex behavior",
+"req": "Verify message integrity during simultaneous operations.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "150000-line gapless delivery and UTF-8 fragment reassembly verify integrity under concurrent traffic.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:80-84",
+"tests/gateway/ws-conformance.test.js:44"
+]
+},
+{
+"id": "C33-049",
+"task_class": "MEASURE",
+"area": "05. Full-duplex behavior",
+"req": "Measure memory while both directions are active.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "W3_concurrency measures per-session worker RSS under concurrent sessions, but not memory specifically while both directions are simultaneously active.",
+"prior_evidence": [
+"e/I053/bench.json"
+]
+},
+{
+"id": "C33-050",
+"task_class": "DOCUMENT",
+"area": "05. Full-duplex behavior",
+"req": "Document any application-level ordering guarantees beyond transport ownership.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'Open acknowledgement precedes every terminal byte (same ordered queue as output)' documents an app-level ordering guarantee. [downgraded: RECORD item without a",
+"prior_evidence": [
+"gateway/connection.js:218"
+]
+},
+{
+"id": "C33-051",
+"task_class": "SPECIFY",
+"area": "06. Close coordination",
+"req": "Define which owner starts the closing handshake.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Both local (end()/close()) and peer-driven (_onClose) closing paths are defined.",
+"prior_evidence": [
+"gateway/ws.js:104-121",
+"gateway/connection.js:286-301"
+]
+},
+{
+"id": "C33-052",
+"task_class": "VERIFY",
+"area": "06. Close coordination",
+"req": "VERIFY CloseAsync interaction with a pending receive in the selected design.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "CloseAsync is a .NET ClientWebSocket API with no equivalent method in the Node implementation.",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C33-053",
+"task_class": "IMPLEMENT",
+"area": "06. Close coordination",
+"req": "Avoid introducing a second receive owner during closure.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "CLOSING state changes how existing frames are handled in the same _parse loop; no second receive listener is created.",
+"prior_evidence": [
+"gateway/ws.js:179"
+]
+},
+{
+"id": "C33-054",
+"task_class": "SPECIFY",
+"area": "06. Close coordination",
+"req": "Define how queued application sends are treated when closure begins.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Design: queued sends are drained within a bounded grace period rather than discarded.",
+"prior_evidence": [
+"gateway/connection.js:303-309"
+]
+},
+{
+"id": "C33-055",
+"task_class": "IMPLEMENT",
+"area": "06. Close coordination",
+"req": "Stop new application send admission at the selected close boundary.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "sendText refuses new admissions once state !== 'OPEN'.",
+"prior_evidence": [
+"gateway/ws.js:95"
+]
+},
+{
+"id": "C33-056",
+"task_class": "SPECIFY",
+"area": "06. Close coordination",
+"req": "Define how the receive loop observes peer close.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Peer close (OP.CLOSE) is observed within the same _parse loop via _onClose.",
+"prior_evidence": [
+"gateway/ws.js:198,211-224"
+]
+},
+{
+"id": "C33-057",
+"task_class": "IMPLEMENT",
+"area": "06. Close coordination",
+"req": "Bound waiting for pending operations before disposal.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "closeWaitMs (3000ms) bounds waiting for the close handshake before forced _destroy.",
+"prior_evidence": [
+"gateway/ws.js:49,117-118"
+]
+},
+{
+"id": "C33-058",
+"task_class": "IMPLEMENT",
+"area": "06. Close coordination",
+"req": "Handle peer close racing with local close.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "weInitiated distinguishes and handles peer-close racing local close.",
+"prior_evidence": [
+"gateway/ws.js:219-223"
+]
+},
+{
+"id": "C33-059",
+"task_class": "IMPLEMENT",
+"area": "06. Close coordination",
+"req": "Handle two local close requests idempotently.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "closeSent / destroyed guards make repeated close() calls idempotent.",
+"prior_evidence": [
+"gateway/ws.js:106,131-133"
+]
+},
+{
+"id": "C33-060",
+"task_class": "DOCUMENT",
+"area": "06. Close coordination",
+"req": "Record the tested close sequence rather than assuming it is race-free.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Close-handshake variants are tested, but there is no written record calling out the sequence as race-tested rather than assumed race-free.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C33-061",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race send completion against socket disposal.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'abrupt TCP loss' exercises disposal during activity generally; no test isolates send-completion vs disposal specifically.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:36"
+]
+},
+{
+"id": "C33-062",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race receive completion against socket disposal.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'abrupt TCP loss: worker is stopped, session released, no orphan process' races receive/disposal.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:36"
+]
+},
+{
+"id": "C33-063",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race enqueue against shutdown.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "end() sets closing before worker teardown, but no dedicated named test races enqueue against shutdown.",
+"prior_evidence": [
+"gateway/connection.js:59-70,286-301"
+]
+},
+{
+"id": "C33-064",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race peer close against outbound admission.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "No dedicated test races peer close against outbound admission specifically.",
+"prior_evidence": []
+},
+{
+"id": "C33-065",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race local cancellation against receive completion.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No dedicated test races local cancellation against receive completion.",
+"prior_evidence": []
+},
+{
+"id": "C33-066",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race worker failure against coordinated cleanup.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'worker killed (-9) -> exactly one session.exit{worker_failure} -> close 1011; capacity released'.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:13"
+]
+},
+{
+"id": "C33-067",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race repeated close requests from different components.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "closeSent and this.closing guards make repeated close requests from different callers idempotent.",
+"prior_evidence": [
+"gateway/ws.js:106",
+"gateway/connection.js:287"
+]
+},
+{
+"id": "C33-068",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Race timeout handling against successful I/O completion.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Heartbeat pong clears its timeout on success (connection.js:150), but no dedicated race test between timeout and successful completion.",
+"prior_evidence": [
+"gateway/connection.js:150"
+]
+},
+{
+"id": "C33-069",
+"task_class": "VERIFY",
+"area": "07. Race tests",
+"req": "Verify each race produces one final connection outcome.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'Exactly one authoritative session.exit' is a design comment, verified by the worker-kill test.",
+"prior_evidence": [
+"gateway/connection.js:274-283",
+"tests/chaos/lifecycle.test.js:13"
+]
+},
+{
+"id": "C33-070",
+"task_class": "IMPLEMENT",
+"area": "07. Race tests",
+"req": "Preserve repeatable stress-test settings and observed failures.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No record of repeatable stress-test seeds/settings or observed failures was found.",
+"prior_evidence": []
+},
+{
+"id": "C33-071",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Keep one socket's operation failure from corrupting another socket's state.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'the other tenant is unaffected' / 'a fast tenant is unaffected' verify cross-connection isolation.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:22,64"
+]
+},
+{
+"id": "C33-072",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Detect attempts to use the wrong connection's buffer.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "this.buf is a per-instance field; separate WsConnection objects structurally cannot share a buffer.",
+"prior_evidence": [
+"gateway/ws.js:50"
+]
+},
+{
+"id": "C33-073",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Detect attempts to use a disposed socket.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_write checks this.destroyed || this.socket.destroyed before writing.",
+"prior_evidence": [
+"gateway/ws.js:82"
+]
+},
+{
+"id": "C33-074",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Classify duplicate-operation attempts as internal errors.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit classification of duplicate-operation attempts as internal errors is documented.",
+"prior_evidence": []
+},
+{
+"id": "C33-075",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Stop retries when the socket is terminally unusable.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "State/destroyed checks in _write and sendText stop further use once the socket is terminally unusable.",
+"prior_evidence": [
+"gateway/ws.js:82,95"
+]
+},
+{
+"id": "C33-076",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Notify both direction owners when terminal failure occurs.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "A single 'close' event is emitted on terminal failure; not modeled as separately notifying distinct send/receive owners.",
+"prior_evidence": [
+"gateway/ws.js:139"
+]
+},
+{
+"id": "C33-077",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Release queued payloads after terminal send failure.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "pendingOut.length = 0 releases queued payloads after connection teardown.",
+"prior_evidence": [
+"gateway/connection.js:331"
+]
+},
+{
+"id": "C33-078",
+"task_class": "IMPLEMENT",
+"area": "08. Failure isolation",
+"req": "Release partial inbound messages after terminal receive failure.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "_dropFragments() is called from _destroy(), releasing partial inbound message state.",
+"prior_evidence": [
+"gateway/ws.js:136"
+]
+},
+{
+"id": "C33-079",
+"task_class": "TEST",
+"area": "08. Failure isolation",
+"req": "Test a failed connection alongside healthy connections.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'the other tenant is unaffected' verifies a failed connection alongside healthy ones.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:22"
+]
+},
+{
+"id": "C33-080",
+"task_class": "DOCUMENT",
+"area": "08. Failure isolation",
+"req": "Record whether any fault requires service-wide termination.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Startup config errors cause process exit (78), but runtime per-connection faults are documented as connection-scoped, not explicitly recorded as a design decisi",
+"prior_evidence": [
+"docs/OPERATIONS.md"
+]
+},
+{
+"id": "C33-081",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track send and receive starts separately.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "stats.rxMessages/txMessages count totals; starts are not tracked separately from completions.",
+"prior_evidence": [
+"gateway/ws.js:58"
+]
+},
+{
+"id": "C33-082",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track send and receive completions separately.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Same counters conflate start and completion (single synchronous step).",
+"prior_evidence": [
+"gateway/ws.js:58"
+]
+},
+{
+"id": "C33-083",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track current pending-operation counts.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "pendingOut.length reflects pending count in memory but is not exposed as a tracked metric.",
+"prior_evidence": [
+"gateway/connection.js:28"
+]
+},
+{
+"id": "C33-084",
+"task_class": "DOCUMENT",
+"area": "09. Diagnostics",
+"req": "Record illegal state transitions safely.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No logging of illegal state transitions was found.",
+"prior_evidence": []
+},
+{
+"id": "C33-085",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Correlate operation records with the owning connection.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Every log call includes conn: this.id, correlating records with the owning connection.",
+"prior_evidence": [
+"gateway/connection.js:62,64,160,224,263,281,315"
+]
+},
+{
+"id": "C33-086",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Track close initiation and completion.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "conn.closed log records code/clean/initiator at close.",
+"prior_evidence": [
+"gateway/connection.js:315"
+]
+},
+{
+"id": "C33-087",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Avoid logging every payload byte during race diagnosis.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'logger: single-line JSON, secret-like fields dropped' -- payload bytes are not logged.",
+"prior_evidence": [
+"tests/gateway/config.test.js"
+]
+},
+{
+"id": "C33-088",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Include runtime version in concurrency failure reports.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No runtime/Node version field found in failure log records.",
+"prior_evidence": []
+},
+{
+"id": "C33-089",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Provide a reproducible full-duplex stress scenario.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Chaos tests provide reproducible scenarios, but there is no documented standalone full-duplex stress harness.",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js"
+]
+},
+{
+"id": "C33-090",
+"task_class": "IMPLEMENT",
+"area": "09. Diagnostics",
+"req": "Assign ownership for invariant failures.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit design doc assigning ownership for invariant failures.",
+"prior_evidence": []
+},
+{
+"id": "C33-091",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the operation state model.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "State machine (CONNECTING..CLOSED) is published in PROTOCOL.md and the connection.js header comment.",
+"prior_evidence": [
+"docs/PROTOCOL.md#state-machine",
+"gateway/connection.js:6"
+]
+},
+{
+"id": "C33-092",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish send and receive ownership boundaries.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Send/receive ownership boundaries are published in the ws.js header comment referenced by PROTOCOL.md.",
+"prior_evidence": [
+"gateway/ws.js:9-11",
+"docs/PROTOCOL.md"
+]
+},
+{
+"id": "C33-093",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Publish the tested close sequence.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "Close-sequence behavior is tested but not separately published as a handover document.",
+"prior_evidence": [
+"tests/gateway/ws-conformance.test.js"
+]
+},
+{
+"id": "C33-094",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link simultaneous-direction integrity tests.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "Simultaneous bulk-output/large-inbound test is linked via EVIDENCE_INDEX.md.",
+"prior_evidence": [
+"tests/gateway/e2e.test.js:67"
+]
+},
+{
+"id": "C33-095",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link duplicate-operation rejection tests.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'stale epoch, replayed rid, ... second session.open' verifies duplicate-operation rejection.",
+"prior_evidence": [
+"tests/security/authz.test.js:59"
+]
+},
+{
+"id": "C33-096",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link race-condition stress results.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No race-condition stress-test results are linked/published.",
+"prior_evidence": []
+},
+{
+"id": "C33-097",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Link cross-connection failure-isolation tests.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "IN_PROGRESS",
+"prior_note": "'the other tenant is unaffected' is the cross-connection failure-isolation evidence. [downgraded on manual spot-check: no written link record]",
+"prior_evidence": [
+"tests/chaos/lifecycle.test.js:22"
+]
+},
+{
+"id": "C33-098",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Document limits of the tested concurrency model.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "PASS",
+"prior_note": "'Soak, >8 sessions, memory under sustained fabric load' is explicitly listed as OPEN / out of time-box, documenting a concurrency-model limit.",
+"prior_evidence": [
+"docs/VALIDATION.md#not-run"
+]
+},
+{
+"id": "C33-099",
+"task_class": "DOCUMENT",
+"area": "10. Acceptance and handover",
+"req": "Record unresolved CloseAsync interaction questions.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "NOT_APPLICABLE",
+"prior_note": "CloseAsync is a .NET-specific API; there is no equivalent method whose interaction questions could be recorded.",
+"prior_evidence": [
+"D-001"
+]
+},
+{
+"id": "C33-100",
+"task_class": "IMPLEMENT",
+"area": "10. Acceptance and handover",
+"req": "Approve coordination only when ownership remains consistent through completion and shutdown.",
+"ram_overlay": "Coordinate a single receive owner and single send owner with a common lifecycle authority. Separate close deadlines from application queue saturation.",
+"challenge": "Race simultaneous send, receive, close, and cancellation and verify one terminal cleanup outcome.",
+"ref_work": [
+"R11",
+"R12"
+],
+"prior_status": "OPEN",
+"prior_note": "No explicit approval record gating coordination on ownership consistency through completion and shutdown.",
+"prior_evidence": []
+}
+]
+}

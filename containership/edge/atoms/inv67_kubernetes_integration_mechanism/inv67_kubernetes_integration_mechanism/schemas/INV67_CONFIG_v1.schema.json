@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:inv67:CONFIG:1",
+  "title": "INV-67 controller runtime configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "INV67_CONFIG/1"
+    },
+    "watchNamespaces": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "maxInflight": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tenantInflight": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "defaultTenantInflight": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tenantRatePerSec": {
+      "type": "number",
+      "minimum": 0
+    },
+    "tenantBurst": {
+      "type": "number",
+      "minimum": 0
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cap": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        }
+      }
+    },
+    "circuit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "threshold": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "resetAfter": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "leaseDurationSec": {
+      "type": "number",
+      "minimum": 2
+    },
+    "staleObservationSec": {
+      "type": "number",
+      "minimum": 0
+    },
+    "allowedRegistries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requireImageDigest": {
+      "type": "boolean"
+    },
+    "requireSignature": {
+      "type": "boolean"
+    },
+    "certifiedFeatures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "downstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "pattern": "^(https://.*)?$"
+        },
+        "tokenSecretRef": {
+          "type": "string",
+          "pattern": "^(secretRef:.+)?$"
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "logLevel": {
+          "enum": [
+            "debug",
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "metricsPort": {
+          "type": "integer"
+        },
+        "healthPort": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

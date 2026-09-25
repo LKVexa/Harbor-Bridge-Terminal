@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:schema:PK_GRAVITY_RECOMMENDATION:1",
+  "title": "PK_GRAVITY_RECOMMENDATION/1",
+  "type": "object",
+  "required": [
+    "schema", "direction", "to", "cost", "cost_breakdown", "reason_code",
+    "reason", "options", "eliminated", "elimination_details"
+  ],
+  "properties": {
+    "schema": {"const": "PK_GRAVITY_RECOMMENDATION/1"},
+    "direction": {"enum": ["move-data", "move-compute", "none"]},
+    "to": {"type": "string", "minLength": 1},
+    "cost": {"type": "number", "minimum": 0},
+    "cost_breakdown": {"$ref": "PK_MOVE_COST-1.schema.json"},
+    "reason_code": {"type": "string", "minLength": 1},
+    "reason": {"type": "string", "minLength": 1},
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["direction", "to", "cost", "cost_breakdown"],
+        "properties": {
+          "direction": {"enum": ["move-data", "move-compute"]},
+          "to": {"type": "string", "minLength": 1},
+          "cost": {"type": "number", "minimum": 0},
+          "cost_breakdown": {"$ref": "PK_MOVE_COST-1.schema.json"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "eliminated": {"type": "array", "items": {"type": "string"}},
+    "elimination_details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["direction", "code", "reason"],
+        "properties": {
+          "direction": {"enum": ["move-data", "move-compute"]},
+          "code": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

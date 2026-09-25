@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools==79.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv37-bulk-data-plane"
+version = "4.3.0"
+description = "INV-37 dependency-free bulk data-plane integrity and resume primitives"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Proprietary/unspecified in source repository"}
+dependencies = []  # runtime is stdlib-only by policy (tools/check_pins.py enforces)
+
+[project.scripts]
+inv37-conformance = "inv37_bulk_data_plane.conformance.run:main"
+
+[tool.setuptools]
+packages = ["inv37_bulk_data_plane", "inv37_bulk_data_plane.conformance"]
+package-dir = {inv37_bulk_data_plane = ".", "inv37_bulk_data_plane.conformance" = "conformance"}
+include-package-data = true
+
+[tool.setuptools.package-data]
+inv37_bulk_data_plane = ["VERSION", "CHECKLIST.json", "schemas/*.json", "config/profiles/*.json", "policy/*.json"]
+"inv37_bulk_data_plane.conformance" = ["FIXTURES.lock", "fixtures/*.json", "golden/*.json"]

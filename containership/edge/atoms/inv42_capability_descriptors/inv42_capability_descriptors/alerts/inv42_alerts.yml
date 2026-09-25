@@ -1,0 +1,47 @@
+# MC-026 / MC-035 - Prometheus alert rules. Classes: load, degradation, policy rejection, dependency failure, attack.
+groups:
+- name: inv42
+  rules:
+  - alert: INV42SecurityInvariant
+    expr: sum(rate(inv42_operations_total{outcome=~"invalid_descriptor|foreign_descriptor|type_mismatch|forked_table"}[5m])) > 1
+    for: 5m
+    labels: {severity: sev2, class: attack}
+    annotations: {summary: "Forged/foreign/type-confused descriptors presented - possible attack", runbook: "INCIDENT_RUNBOOK.md#attack"}
+  - alert: INV42ClosedReplay
+    expr: sum(rate(inv42_operations_total{outcome="descriptor_closed"}[5m])) > 5
+    for: 10m
+    labels: {severity: sev3, class: policy_rejection}
+    annotations: {summary: "Elevated stale-descriptor replay (client bug or replay attack)"}
+  - alert: INV42TableSaturation
+    expr: max(inv42_table_saturation_ratio) > 0.9
+    for: 10m
+    labels: {severity: sev3, class: load}
+    annotations: {summary: "Descriptor table >90% full; table_full rejections imminent"}
+  - alert: INV42SessionSaturation
+    expr: max(inv42_session_saturation_ratio) > 0.9
+    for: 30m
+    labels: {severity: sev3, class: load}
+    annotations: {summary: "Session allocation space >90% used; plan table rotation"}
+  - alert: INV42DependencyFailure
+    expr: sum(rate(inv42_operations_total{outcome="key_unavailable"}[5m])) > 0
+    labels: {severity: sev2, class: dependency_failure}
+    annotations: {summary: "Key provider failing; new tables cannot be created"}
+  - alert: INV42EmergencyDisabled
+    expr: max(inv42_emergency_disabled) == 1
+    labels: {severity: sev2, class: degradation}
+    annotations: {summary: "INV-42 emergency-disabled", runbook: "ROLLOUT.md#emergency-disable"}
+  - alert: INV42AvailabilityFastBurn
+    expr: |
+      (sum(rate(inv42_operations_total{outcome=~"internal_error|component_disabled|key_unavailable"}[1h]))
+       / sum(rate(inv42_operations_total[1h]))) > (14.4 * 0.0001)
+    labels: {severity: sev2, class: degradation}
+    annotations: {summary: "Availability error budget burning 14.4x"}
+  - alert: INV42AvailabilitySlowBurn
+    expr: |
+      (sum(rate(inv42_operations_total{outcome=~"internal_error|component_disabled|key_unavailable"}[6h]))
+       / sum(rate(inv42_operations_total[6h]))) > (6 * 0.0001)
+    labels: {severity: sev3, class: degradation}
+  - alert: INV42LatencyP99
+    expr: histogram_quantile(0.99, sum by (le) (rate(inv42_operation_duration_seconds_bucket{op="resolve"}[5m]))) > 0.00017
+    for: 15m
+    labels: {severity: sev3, class: degradation}

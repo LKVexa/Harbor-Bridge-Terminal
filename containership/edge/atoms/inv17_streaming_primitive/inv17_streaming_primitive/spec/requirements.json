@@ -1,0 +1,182 @@
+{
+  "schema": "urn:pk:inv17:requirements:1",
+  "source": "spec/requirements.md",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "controls": "C011",
+      "shall": "A stream SHALL carry elements of exactly one runtime type declared at construction; `bool` SHALL NOT satisfy a non-`bool` numeric type.",
+      "implementation": "`stream::Stream.__init__`, `stream::Stream.write`",
+      "verification": [
+        "tests/test_stream_ops.py",
+        "tests/test_property.py"
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "controls": "C011",
+      "shall": "A write of a mistyped element SHALL raise `ElementTypeMismatch` (`PK_STREAM_TYPE_MISMATCH`) and SHALL NOT consume credit or buffer.",
+      "implementation": "`stream::Stream.write`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "controls": "C012",
+      "shall": "A writer SHALL NOT enqueue without reader-granted credit; a creditless write SHALL raise `CreditExhausted` and increment `credit_stalls`.",
+      "implementation": "`stream::Stream.write`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "controls": "C012",
+      "shall": "`grant(n)` SHALL accept only positive `int` (not `bool`) and SHALL raise `CreditLimitExceeded` if outstanding credit would exceed `StreamConfig.max_credit`, leaving credit unchanged.",
+      "implementation": "`stream::Stream.grant`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-005",
+      "controls": "C013",
+      "shall": "The in-flight buffer SHALL never exceed `StreamConfig.max_buffer`; a write at the ceiling SHALL raise `BufferLimitExceeded` without consuming credit.",
+      "implementation": "`stream::Stream.write`",
+      "verification": [
+        "tests/test_stream_ops.py",
+        "tests/test_adversarial.py"
+      ]
+    },
+    {
+      "id": "REQ-006",
+      "controls": "C013",
+      "shall": "`StreamConfig` fields SHALL be positive integers; invalid values SHALL raise `ValueError` at construction.",
+      "implementation": "`stream::StreamConfig.__post_init__`",
+      "verification": [
+        "tests/test_config.py"
+      ]
+    },
+    {
+      "id": "REQ-007",
+      "controls": "C014",
+      "shall": "Graceful end-of-stream SHALL be explicit (`end()`); `read()` SHALL return `None` only after `end()` and after the buffer is drained.",
+      "implementation": "`stream::Stream.end`, `stream::Stream.read`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-008",
+      "controls": "C014",
+      "shall": "`read()` SHALL return `NOT_READY` (not `None`) when the writer is live and the buffer is empty.",
+      "implementation": "`stream::Stream.read`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-009",
+      "controls": "C015",
+      "shall": "Dropping the reader SHALL discard buffered elements, count them in `dropped_items`, zero credit, and make every subsequent operation except `drop_*` raise `EndDropped(end=\"reader\")`.",
+      "implementation": "`stream::Stream.drop_reader`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-010",
+      "controls": "C015",
+      "shall": "Dropping the writer SHALL keep buffered elements drainable; once drained, `read()` SHALL raise `EndDropped(end=\"writer\")` (distinguishable from graceful EOF).",
+      "implementation": "`stream::Stream.drop_writer`, `stream::Stream.read`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-011",
+      "controls": "C015",
+      "shall": "`drop_reader`/`drop_writer` SHALL be idempotent.",
+      "implementation": "`stream::Stream.drop_*`",
+      "verification": [
+        "tests/test_stream_ops.py"
+      ]
+    },
+    {
+      "id": "REQ-012",
+      "controls": "C016",
+      "shall": "Interface versions SHALL be negotiated to the highest mutually supported integer; with no overlap the open SHALL be refused with `VersionUnsupported` (never guessed).",
+      "implementation": "`control::negotiate`, `control::StreamRegistry.open`",
+      "verification": [
+        "tests/test_control.py"
+      ]
+    },
+    {
+      "id": "REQ-013",
+      "controls": "C017",
+      "shall": "Per-tenant stream count and buffered elements SHALL be bounded by `TenantQuota`; excess SHALL raise `QuotaExceeded`.",
+      "implementation": "`control::StreamRegistry.open`, `control::StreamRegistry.write`",
+      "verification": [
+        "tests/test_control.py"
+      ]
+    },
+    {
+      "id": "REQ-014",
+      "controls": "C017",
+      "shall": "Shared credit pools SHALL be allocated by weighted deficit round-robin such that every tenant with demand receives a share while the pool lasts; the registry applies this via `rebalance(pool)` with weights from `TenantQuota.weight`.",
+      "implementation": "`control::FairCreditScheduler.allocate`, `control::StreamRegistry.rebalance`",
+      "verification": [
+        "tests/test_control.py",
+        "tests/test_property.py"
+      ]
+    },
+    {
+      "id": "REQ-015",
+      "controls": "C018",
+      "shall": "All state mutations on a stream SHALL be serialized by a per-stream `RLock`; `stats()` SHALL return a consistent snapshot.",
+      "implementation": "`stream::Stream._lock`, `stream::Stream.stats`",
+      "verification": [
+        "tests/test_soak.py"
+      ]
+    },
+    {
+      "id": "REQ-016",
+      "controls": "C018",
+      "shall": "Bounded waits SHALL honour a timeout (`StreamTimeout`) and a `CancelToken` (`StreamCancelled`); a timeout SHALL NOT imply end-of-stream.",
+      "implementation": "`stream::Stream._wait`, `read_wait`, `write_wait`",
+      "verification": [
+        "tests/test_stream_ops.py",
+        "tests/test_fault_injection.py"
+      ]
+    },
+    {
+      "id": "REQ-017",
+      "controls": "C019",
+      "shall": "A write retried with an `idempotency_key` already accepted within `idempotency_window` SHALL return `False`, consume no credit and enqueue nothing.",
+      "implementation": "`stream::Stream.write`, `stream::Stream._remember`",
+      "verification": [
+        "tests/test_stream_ops.py",
+        "tests/test_property.py"
+      ]
+    },
+    {
+      "id": "REQ-018",
+      "controls": "C019",
+      "shall": "Every error SHALL carry a stable machine code and details via `StreamError.as_dict()`.",
+      "implementation": "`stream::StreamError` and subclasses",
+      "verification": [
+        "tests/test_schemas.py"
+      ]
+    },
+    {
+      "id": "REQ-019",
+      "controls": "C011\u2013C019",
+      "shall": "A frozen stream SHALL refuse `grant` and `write` with `StreamFrozen`; buffered elements SHALL remain readable.",
+      "implementation": "`stream::Stream.freeze`, `_check_frozen`",
+      "verification": [
+        "tests/test_control.py"
+      ]
+    }
+  ]
+}

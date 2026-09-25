@@ -1,0 +1,939 @@
+{
+  "schema": "PK_PLN04_RTM/1",
+  "version": "4.3.0",
+  "source_checklist": "PLN04_v4.2.0_MISSING_COMPONENTS_IMPLEMENTATION_CHECKLIST.md",
+  "status_vocabulary": {
+    "PRESENT": "implemented and tested in-tree; residual notes are scope boundaries, not gaps in the M-item",
+    "PARTIAL": "in-tree part implemented and tested; acceptance gate needs an external dependency or human approval",
+    "BLOCKED": "cannot progress without an owner-supplied artifact or decision"
+  },
+  "owner": "UNASSIGNED",
+  "items": [
+    {
+      "id": "M01",
+      "title": "`MASTER.md` source prompt/workflow artifact",
+      "controls": [
+        "PLN-04-C011",
+        "PLN-04-C020"
+      ],
+      "priority": "P2 / documentation-control blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "MASTER.md",
+        "tools/rtm.py"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "Original MASTER.md unrecoverable from supplied archives; MASTER.md is a clearly labelled REPLACEMENT specification (MR-001..MR-030) awaiting owner approval."
+    },
+    {
+      "id": "M02",
+      "title": "Pinned/installable `pk_core` dependency",
+      "controls": [
+        "PLN-04-C031",
+        "PLN-04-C093",
+        "PLN-04-C094"
+      ],
+      "priority": "P0 / certification dependency blocker",
+      "status": "BLOCKED",
+      "implementation": [
+        "ops/EXTERNAL_DEPENDENCIES.json",
+        "pyproject.toml"
+      ],
+      "tests": [
+        "tests/test_component.py"
+      ],
+      "residual": "pk_core source/version not supplied; certification lane declared SKIP until the owner supplies and pins it."
+    },
+    {
+      "id": "M03",
+      "title": "Real execution-tier provider adapter layer",
+      "controls": [
+        "PLN-04-C021",
+        "PLN-04-C030",
+        "PLN-04-C031",
+        "PLN-04-C040",
+        "PLN-04-C083"
+      ],
+      "priority": "P0 / core runtime capability blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "providers.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tests/test_plane.py"
+      ],
+      "residual": "Contract, registry, lifecycle, compensation and a real POSIX process provider ship; version-pinned unikernel/microVM/VM providers are operator drivers behind CommandProvider and are not in-tree."
+    },
+    {
+      "id": "M04",
+      "title": "Explicit Wasm provider binding",
+      "controls": [
+        "PLN-04-C031",
+        "PLN-04-C083"
+      ],
+      "priority": "P0 / explicit tier gap",
+      "status": "PARTIAL",
+      "implementation": [
+        "providers.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "WasmProvider binding (wasmtime CLI, fuel+memory caps, no preopens) written and fail-closed; not executed because wasmtime is absent in the build environment (declared lane)."
+    },
+    {
+      "id": "M05",
+      "title": "Hardware capability discovery integration",
+      "controls": [
+        "PLN-04-C003",
+        "PLN-04-C030",
+        "PLN-04-C083"
+      ],
+      "priority": "P0 / capability truthfulness blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "security.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "Local Linux discovery + tier gating implemented; GAP-02 fleet adapter external."
+    },
+    {
+      "id": "M06",
+      "title": "Hardware-rooted node/tier attestation implementation",
+      "controls": [
+        "PLN-04-C044",
+        "PLN-04-C048",
+        "PLN-04-C050"
+      ],
+      "priority": "P0 / root-of-trust blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "security.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "Verification framework (signed evidence, reference measurements, nonce) done; TPM/SEV-SNP/TDX quote verifiers and asymmetric roots are external."
+    },
+    {
+      "id": "M07",
+      "title": "Signed workload-classification provenance",
+      "controls": [
+        "PLN-04-C023",
+        "PLN-04-C024",
+        "PLN-04-C041",
+        "PLN-04-C046"
+      ],
+      "priority": "P0 / authorization provenance blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "security.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "HMAC (HS256) reference algorithm; register an asymmetric Verifier for cross-organisation issuers."
+    },
+    {
+      "id": "M08",
+      "title": "Actor authentication and capability authorization",
+      "controls": [
+        "PLN-04-C023",
+        "PLN-04-C024",
+        "PLN-04-C042"
+      ],
+      "priority": "P0 / control-plane authorization blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "security.py",
+        "plane.py",
+        "transport.py"
+      ],
+      "tests": [
+        "tests/test_plane.py",
+        "tests/test_units.py"
+      ],
+      "residual": "Bearer capability tokens; mTLS termination is deployment-side."
+    },
+    {
+      "id": "M09",
+      "title": "Executable/policy artifact signature, digest, provenance, and allowlist verification",
+      "controls": [
+        "PLN-04-C045"
+      ],
+      "priority": "P0 / supply-chain execution blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "security.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "Digest allowlist + signed provenance + revocation + per-tier approval done; Sigstore/in-toto/SLSA verification not integrated."
+    },
+    {
+      "id": "M10",
+      "title": "Actual kernel/memory/network/storage/device isolation enforcement",
+      "controls": [
+        "PLN-04-C043",
+        "PLN-04-C046",
+        "PLN-04-C050"
+      ],
+      "priority": "P0 / isolation guarantee blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "providers.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "Process tier enforces rlimits/session/env/scratch only; syscall, network and filesystem isolation belong to stronger tiers' providers (external)."
+    },
+    {
+      "id": "M11",
+      "title": "Durable resident/catalogue state store",
+      "controls": [
+        "PLN-04-C057",
+        "PLN-04-C095"
+      ],
+      "priority": "P0 / restart correctness blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "store.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tests/test_plane.py",
+        "tools/fuzz.py"
+      ],
+      "residual": "Single-writer file store; multi-controller needs a StateStore over a replicated backend (see M12)."
+    },
+    {
+      "id": "M12",
+      "title": "Distributed ownership fencing and duplicate-execution prevention",
+      "controls": [
+        "PLN-04-C058"
+      ],
+      "priority": "P0 / duplicate-execution blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "store.py",
+        "providers.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "Leases, global monotonic epochs and provider stale-epoch rejection done and tested; a linearizable distributed StateStore backend is external."
+    },
+    {
+      "id": "M13",
+      "title": "Full provider lifecycle state machine",
+      "controls": [
+        "PLN-04-C014",
+        "PLN-04-C015",
+        "PLN-04-C025",
+        "PLN-04-C026",
+        "PLN-04-C051"
+      ],
+      "priority": "P0 / lifecycle correctness blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "providers.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M14",
+      "title": "Teardown failure detection, orphan reaper, and node-drain integration",
+      "controls": [
+        "PLN-04-C051",
+        "PLN-04-C052",
+        "PLN-04-C055",
+        "PLN-04-C059",
+        "PLN-04-C060"
+      ],
+      "priority": "P0 / resource-leak and unsafe-reuse blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M15",
+      "title": "Retry/backoff/jitter and circuit-breaker implementation",
+      "controls": [
+        "PLN-04-C025",
+        "PLN-04-C053",
+        "PLN-04-C054"
+      ],
+      "priority": "P1 / dependency resilience blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "resilience.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tests/test_plane.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M16",
+      "title": "Production fairness and resource-capacity model",
+      "controls": [
+        "PLN-04-C017",
+        "PLN-04-C028",
+        "PLN-04-C067",
+        "PLN-04-C069"
+      ],
+      "priority": "P1 / production capacity and fairness blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "resilience.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "CPU/memory dimensions; device/GPU dimensions not modelled."
+    },
+    {
+      "id": "M17",
+      "title": "Declarative site/environment configuration system",
+      "controls": [
+        "PLN-04-C032",
+        "PLN-04-C033",
+        "PLN-04-C034",
+        "PLN-04-C035",
+        "PLN-04-C036",
+        "PLN-04-C037",
+        "PLN-04-C038"
+      ],
+      "priority": "P1 / configuration safety blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "policy.py",
+        "schemas/PK_PLANE_CONFIG_1.schema.json",
+        "config/"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M18",
+      "title": "Secret/KMS and encryption integration",
+      "controls": [
+        "PLN-04-C039",
+        "PLN-04-C047"
+      ],
+      "priority": "P0 / secret and cryptographic data blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "security.py",
+        "observability.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "Env/file secret providers + redaction; KMS envelope encryption of state at rest not implemented (no stdlib AEAD)."
+    },
+    {
+      "id": "M19",
+      "title": "Durable/externally anchored tamper-evident audit sink",
+      "controls": [
+        "PLN-04-C049",
+        "PLN-04-C073",
+        "PLN-04-C079"
+      ],
+      "priority": "P0 / audit integrity blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "observability.py"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tests/test_plane.py"
+      ],
+      "residual": "Durable fsync'd hash chain + anchor interface + truncation detection; the shipped anchor is a local file, an external WORM/transparency anchor is external."
+    },
+    {
+      "id": "M20",
+      "title": "Metrics, structured logs, distributed tracing, health/readiness, and explain endpoint",
+      "controls": [
+        "PLN-04-C071",
+        "PLN-04-C072",
+        "PLN-04-C073",
+        "PLN-04-C074",
+        "PLN-04-C075",
+        "PLN-04-C076",
+        "PLN-04-C077",
+        "PLN-04-C078"
+      ],
+      "priority": "P1 / operability blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "observability.py",
+        "plane.py",
+        "transport.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "Prometheus text + JSON logs + W3C trace ids; no OTLP exporter."
+    },
+    {
+      "id": "M21",
+      "title": "Telemetry retention/privacy/sampling/export policy plus dashboards and alerts",
+      "controls": [
+        "PLN-04-C075",
+        "PLN-04-C079",
+        "PLN-04-C080"
+      ],
+      "priority": "P1 / production operations blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "observability.py",
+        "ops/alerts.json",
+        "ops/dashboard.json",
+        "docs/TELEMETRY.md"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tests/test_governance.py"
+      ],
+      "residual": "Policy enforced in code; dashboards/alerts are definitions, not deployed."
+    },
+    {
+      "id": "M22",
+      "title": "Reproducible performance baselines and release regression gates",
+      "controls": [
+        "PLN-04-C061",
+        "PLN-04-C062",
+        "PLN-04-C063",
+        "PLN-04-C064",
+        "PLN-04-C065",
+        "PLN-04-C066",
+        "PLN-04-C067",
+        "PLN-04-C068",
+        "PLN-04-C069",
+        "PLN-04-C070"
+      ],
+      "priority": "P1 / release performance blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "tools/perf.py",
+        "ops/PERF_THRESHOLDS.json"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "Gate works; thresholds PROPOSED until approved on reference hardware."
+    },
+    {
+      "id": "M23",
+      "title": "Fuzz/property testing of untrusted inputs and schemas",
+      "controls": [
+        "PLN-04-C085"
+      ],
+      "priority": "P1 / input robustness blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "tools/fuzz.py"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M24",
+      "title": "Integration tests against every execution tier/provider",
+      "controls": [
+        "PLN-04-C030",
+        "PLN-04-C083"
+      ],
+      "priority": "P0 / provider integration evidence blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "tests/test_units.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "Contract suite runs against reference + real process + JSON driver; real Wasm/unikernel/microVM/VM runs need hardware lanes."
+    },
+    {
+      "id": "M25",
+      "title": "CPU/runtime/hypervisor/protocol compatibility matrix and tests",
+      "controls": [
+        "PLN-04-C027",
+        "PLN-04-C084",
+        "PLN-04-C093"
+      ],
+      "priority": "P1 / compatibility blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/COMPATIBILITY.md"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "Python floor tested; CPU/hypervisor/protocol rows are declared, not executed."
+    },
+    {
+      "id": "M26",
+      "title": "Fault-injection, partition, reconnect, and disaster tests",
+      "controls": [
+        "PLN-04-C060",
+        "PLN-04-C089"
+      ],
+      "priority": "P1 / resilience evidence blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "tests/test_plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "In-process crash, store outage, provider failure, lease partition/pause tests; multi-node/disaster drills external."
+    },
+    {
+      "id": "M27",
+      "title": "Soak, burst, overload, scale, and fleet-scale tests",
+      "controls": [
+        "PLN-04-C063",
+        "PLN-04-C088"
+      ],
+      "priority": "P1 / scale and leak evidence blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "tools/perf.py"
+      ],
+      "tests": [
+        "tools/perf.py"
+      ],
+      "residual": "Single-node burst/overload/soak/scale; fleet-scale external."
+    },
+    {
+      "id": "M28",
+      "title": "CI production gate and machine-readable acceptance evidence",
+      "controls": [
+        "PLN-04-C090",
+        "PLN-04-C100"
+      ],
+      "priority": "P0 / production gate blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "tools/release_gate.py",
+        "ci/pipeline.yml"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "Gate emits evidence/RELEASE_GATE.json and returns NO_GO while human blockers remain."
+    },
+    {
+      "id": "M29",
+      "title": "Supply-chain bill of materials and dependency vulnerability scanning",
+      "controls": [
+        "PLN-04-C041",
+        "PLN-04-C045",
+        "PLN-04-C094"
+      ],
+      "priority": "P0 / software supply-chain blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "tools/sbom.py"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "CycloneDX SBOM + stdlib-only import scan; CPython CVE feed scanning is external."
+    },
+    {
+      "id": "M30",
+      "title": "Canary/staged rollout and automated rollback/emergency-disable implementation",
+      "controls": [
+        "PLN-04-C092"
+      ],
+      "priority": "P1 / safe deployment blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "policy.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M31",
+      "title": "Backup/restore/migration/reconstruction implementation and tests",
+      "controls": [
+        "PLN-04-C095"
+      ],
+      "priority": "P1 / data-recovery blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "store.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M32",
+      "title": "Accountable owner, on-call escalation, and incident-response runbook",
+      "controls": [
+        "PLN-04-C009",
+        "PLN-04-C097"
+      ],
+      "priority": "P1 / operational accountability blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/RUNBOOK.md",
+        "ops/OWNERS.json"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "Runbook written; owner/on-call UNASSIGNED."
+    },
+    {
+      "id": "M33",
+      "title": "Patch/EOL SLA, recurring-review process, and waiver/debt registry",
+      "controls": [
+        "PLN-04-C094",
+        "PLN-04-C098",
+        "PLN-04-C099"
+      ],
+      "priority": "P1 / lifecycle governance blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/PATCH_EOL_POLICY.md",
+        "ops/WAIVERS.json"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "Policy + registry written; waivers unapproved."
+    },
+    {
+      "id": "M34",
+      "title": "Concrete RPC/WIT/HTTP transport handlers",
+      "controls": [
+        "PLN-04-C021",
+        "PLN-04-C022",
+        "PLN-04-C023",
+        "PLN-04-C024",
+        "PLN-04-C025",
+        "PLN-04-C026",
+        "PLN-04-C027",
+        "PLN-04-C028",
+        "PLN-04-C029",
+        "PLN-04-C030"
+      ],
+      "priority": "P0 / external interface blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "transport.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "HTTP/JSON only; WIT/gRPC bindings not shipped."
+    },
+    {
+      "id": "M35",
+      "title": "Runtime validation/serialization against the shipped schemas",
+      "controls": [
+        "PLN-04-C022",
+        "PLN-04-C026",
+        "PLN-04-C029"
+      ],
+      "priority": "P0 / contract enforcement blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "validation.py",
+        "schemas/"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tools/fuzz.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M36",
+      "title": "External lifecycle/event export adapter",
+      "controls": [
+        "PLN-04-C021",
+        "PLN-04-C049",
+        "PLN-04-C072",
+        "PLN-04-C073",
+        "PLN-04-C074"
+      ],
+      "priority": "P1 / event interoperability blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "observability.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "JSONL sink shipped; broker adapters implement EventSink."
+    },
+    {
+      "id": "M37",
+      "title": "Attestation freshness, expiry, nonce binding, replay protection, and trusted-time policy",
+      "controls": [
+        "PLN-04-C044",
+        "PLN-04-C048",
+        "PLN-04-C050"
+      ],
+      "priority": "P0 / attestation replay/freshness blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "security.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M38",
+      "title": "Site/residency-aware policy enforcement",
+      "controls": [
+        "PLN-04-C012",
+        "PLN-04-C019",
+        "PLN-04-C055"
+      ],
+      "priority": "P1 / residency and placement policy blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "policy.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M39",
+      "title": "Side-channel/co-residency mitigation policy",
+      "controls": [
+        "PLN-04-C041",
+        "PLN-04-C043",
+        "PLN-04-C046",
+        "PLN-04-C050"
+      ],
+      "priority": "P1 / residual isolation risk blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "policy.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py"
+      ],
+      "residual": "Placement policy; SMT/cache-partitioning hardware mitigations are provider/host configuration."
+    },
+    {
+      "id": "M40",
+      "title": "Provider resource zeroization and reuse proof",
+      "controls": [
+        "PLN-04-C046",
+        "PLN-04-C051",
+        "PLN-04-C060"
+      ],
+      "priority": "P0 / cross-workload data-remanence blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "providers.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_plane.py",
+        "tests/test_units.py"
+      ],
+      "residual": "Receipts enforced and unverified zeroization withholds reuse; VM/microVM memory scrub proofs come from external drivers."
+    },
+    {
+      "id": "M41",
+      "title": "Approved architecture decision record",
+      "controls": [
+        "PLN-04-C010"
+      ],
+      "priority": "P0 / architectural authority blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "docs/ADR-0001-execution-tier-semantics.md"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "ADR status PROPOSED; needs approval."
+    },
+    {
+      "id": "M42",
+      "title": "Formal requirements traceability matrix",
+      "controls": [
+        "PLN-04-C020"
+      ],
+      "priority": "P1 / assurance traceability blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "traceability/rtm.json",
+        "docs/TRACEABILITY.md",
+        "tools/rtm.py"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M43",
+      "title": "Formal error-code taxonomy and retryability contract",
+      "controls": [
+        "PLN-04-C014",
+        "PLN-04-C026"
+      ],
+      "priority": "P0 / public failure-contract blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "errors.py",
+        "docs/ERRORS.md"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M44",
+      "title": "Admission latency instrumentation and SLO measurement",
+      "controls": [
+        "PLN-04-C013",
+        "PLN-04-C061",
+        "PLN-04-C062",
+        "PLN-04-C072",
+        "PLN-04-C091"
+      ],
+      "priority": "P1 / SLO measurement blocker",
+      "status": "PARTIAL",
+      "implementation": [
+        "observability.py",
+        "ops/SLO.json"
+      ],
+      "tests": [
+        "tests/test_units.py"
+      ],
+      "residual": "Instrumentation and evaluation done; SLO values PROPOSED."
+    },
+    {
+      "id": "M45",
+      "title": "Production-grade queue/backpressure model",
+      "controls": [
+        "PLN-04-C025",
+        "PLN-04-C028",
+        "PLN-04-C054",
+        "PLN-04-C067"
+      ],
+      "priority": "P0 / overload-safety blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "resilience.py",
+        "plane.py"
+      ],
+      "tests": [
+        "tests/test_units.py",
+        "tools/perf.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M46",
+      "title": "Release/build/install metadata and dependency lock",
+      "controls": [
+        "PLN-04-C031",
+        "PLN-04-C070",
+        "PLN-04-C094"
+      ],
+      "priority": "P0 / reproducible build/install blocker",
+      "status": "PRESENT",
+      "implementation": [
+        "pyproject.toml",
+        "requirements.lock",
+        "tools/build_info.py"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": ""
+    },
+    {
+      "id": "M47",
+      "title": "License/NOTICE provenance artifact",
+      "controls": [],
+      "priority": "P1 / redistribution/legal provenance blocker",
+      "status": "BLOCKED",
+      "implementation": [
+        "NOTICE.md",
+        "THIRD-PARTY-NOTICES.md"
+      ],
+      "tests": [
+        "tests/test_governance.py"
+      ],
+      "residual": "The owner has not declared a licence for this package; no LICENSE can be asserted on their behalf.",
+      "control_note": "Governance/repository completeness"
+    },
+    {
+      "id": "M48",
+      "title": "Full external-framework re-certification evidence",
+      "controls": [
+        "PLN-04-C090",
+        "PLN-04-C100"
+      ],
+      "priority": "P0 / final production-certification blocker",
+      "status": "BLOCKED",
+      "implementation": [
+        "component.py",
+        "contract.py"
+      ],
+      "tests": [
+        "tests/test_component.py"
+      ],
+      "residual": "Needs pk_core (M02) to run `pk_core run/gate/verify`."
+    }
+  ]
+}

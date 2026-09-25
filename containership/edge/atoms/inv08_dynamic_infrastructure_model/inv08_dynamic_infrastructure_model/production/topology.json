@@ -1,0 +1,26 @@
+{
+  "schema": "PK_DYN_TOPOLOGY/1",
+  "version": "0.1.0",
+  "status": "PROPOSED",
+  "tiers": {
+    "cloud":      {"allowed": ["pool_controller", "lease_store", "audit_sink"], "min_failure_domains": 3},
+    "datacenter": {"allowed": ["pool_controller", "lease_store", "audit_sink"], "min_failure_domains": 3},
+    "near_edge":  {"allowed": ["pool_controller", "lease_store"], "min_failure_domains": 1},
+    "far_edge":   {"allowed": ["pool_controller"], "min_failure_domains": 1, "requires_upstream_lease_store": true}
+  },
+  "sites": [
+    {"id": "site-a", "tier": "cloud", "failure_domains": ["fd-a1", "fd-a2", "fd-a3"],
+     "instances": [{"service": "pool_controller", "tenant": "tenant-x", "failure_domain": "fd-a1"},
+                   {"service": "lease_store", "tenant": "tenant-x", "failure_domain": "fd-a2"}]},
+    {"id": "site-e", "tier": "far_edge", "failure_domains": ["fd-e1"], "upstream": "site-a",
+     "instances": [{"service": "pool_controller", "tenant": "tenant-x", "failure_domain": "fd-e1"}]}
+  ],
+  "shared_services": [{"service": "audit_sink", "tenant_isolation": "per-tenant stream + per-tenant key id"}],
+  "dependencies": [
+    {"from": "pool_controller", "to": "lease_store", "plane": "control", "interface": "PK_DYN_LEASE/1", "on_failure": "freeze scale-in, keep leases of busy nodes, no new admissions"},
+    {"from": "pool_controller", "to": "provider_api", "plane": "control", "interface": "provider adapter (absent)", "on_failure": "RETRYABLE_FAILURE, bounded retries, no partial commit"},
+    {"from": "pool_controller", "to": "PLN-05 elasticity plane", "plane": "control", "interface": "PK_DYN_SCALE/1 demand signal", "on_failure": "hold last target, never exceed max_nodes"},
+    {"from": "pool_controller", "to": "audit_sink", "plane": "data", "interface": "PK_DYN_AUDIT/1", "on_failure": "fail closed for privileged actions"},
+    {"from": "INV-68 packer", "to": "pool_controller", "plane": "data", "interface": "PK_DYN_COST/1 + pool membership", "on_failure": "consumer sees stale membership"}
+  ]
+}

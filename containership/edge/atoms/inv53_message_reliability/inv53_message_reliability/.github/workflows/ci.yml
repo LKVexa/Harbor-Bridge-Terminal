@@ -1,0 +1,20 @@
+# INV-53 CI. The pipeline logic lives in tools/ci.py so it runs identically on a laptop.
+name: inv53-ci
+on: [push, pull_request]
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: inv53_message_reliability }
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      # pk_core is private: provide it as a checked-out path and set PK_CORE_PATH, otherwise the lane is NOT_RUN.
+      - run: python inv53_message_reliability/tools/ci.py --out ci-evidence.json
+        env: { PK_CORE_PATH: "${{ vars.PK_CORE_PATH }}" }
+      - uses: actions/upload-artifact@v4
+        with: { name: "ci-evidence-${{ matrix.os }}-${{ matrix.python }}", path: ci-evidence.json }

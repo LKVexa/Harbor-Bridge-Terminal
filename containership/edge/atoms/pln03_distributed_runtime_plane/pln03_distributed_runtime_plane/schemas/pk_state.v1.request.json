@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.pk.invalid/pln03/PK_STATE/1 request.json",
+  "title": "PK_STATE/1 request",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "workload": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000:]+$"
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000/]+$"
+    },
+    "token": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "deadline_s": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 30
+    },
+    "traceparent": {
+      "type": "string",
+      "pattern": "^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$"
+    },
+    "interface": {
+      "const": "PK_STATE/1"
+    },
+    "op": {
+      "enum": [
+        "get",
+        "set",
+        "delete",
+        "transact"
+      ]
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^\\u0000]+$"
+    },
+    "value": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "maxLength": 1398104
+    },
+    "operations": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "enum": [
+              "set",
+              "delete"
+            ]
+          },
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024,
+            "pattern": "^[^\\u0000]+$"
+          },
+          {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ],
+        "minItems": 3,
+        "maxItems": 3
+      }
+    }
+  },
+  "required": [
+    "workload",
+    "tenant",
+    "token",
+    "interface",
+    "op"
+  ]
+}

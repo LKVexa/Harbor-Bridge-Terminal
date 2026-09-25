@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pk:gap13:PK_POLICY_EXPLANATION/1",
+  "title": "PK_POLICY_EXPLANATION/1",
+  "description": "Redaction: request attribute VALUES are never included; only attribute names each matched rule used. The 'matched' list is empty unless the caller holds policy.explain.detailed. Bounded by limits.max_explanation_matches (truncated=true when cut).",
+  "type": "object",
+  "required": ["schema", "version", "environment", "bundle", "stale", "effect", "winner", "reason", "tie_break", "precedence", "matched", "matched_total", "truncated"],
+  "properties": {
+    "schema": {"const": "PK_POLICY_EXPLANATION/1"},
+    "version": {"type": "string"},
+    "environment": {"type": "string"},
+    "bundle": {"type": ["object", "null"]},
+    "stale": {"type": "boolean"},
+    "effect": {"enum": ["allow", "deny"]},
+    "winner": {"type": ["string", "null"]},
+    "reason": {"type": "string"},
+    "tie_break": {"type": "boolean"},
+    "precedence": {"const": "specificity-desc, deny-before-allow, rule-name-asc"},
+    "matched": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+      "required": ["rule", "effect", "scope", "specificity", "attributes"],
+      "properties": {"rule": {"type": "string"}, "effect": {"enum": ["allow", "deny"]}, "scope": {"enum": ["estate", "tenant"]},
+        "specificity": {"type": "integer", "minimum": 0}, "attributes": {"type": "array", "items": {"type": "string"}}}}},
+    "matched_total": {"type": "integer", "minimum": 0},
+    "truncated": {"type": "boolean"},
+    "detail": {"type": "string"}
+  }
+}

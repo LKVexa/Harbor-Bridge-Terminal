@@ -1,0 +1,15 @@
+{
+  "schema": "INV62_ALERTS/1",
+  "taxonomy": ["load", "degradation", "policy_rejection", "dependency_failure", "attack", "software_defect"],
+  "alerts": [
+    {"id": "A-LOAD-1", "class": "load", "severity": "warning", "expr": "rate(inv62_errors_total{code=~\"TOPO.RATE_LIMITED|TOPO.OVERLOADED\"}[10m]) / rate(inv62_requests_total[10m]) > 0.01", "runbook": "RUNBOOKS.md#r-load"},
+    {"id": "A-LAT-1", "class": "load", "severity": "warning", "expr": "histogram_quantile(0.99, rate(inv62_request_latency_ms_bucket[5m])) > 2.5", "runbook": "RUNBOOKS.md#r-load"},
+    {"id": "A-DEG-1", "class": "degradation", "severity": "page", "expr": "increase(inv62_partitions_total[5m]) > 0", "runbook": "RUNBOOKS.md#r-partition"},
+    {"id": "A-DEG-2", "class": "degradation", "severity": "warning", "expr": "inv62_links_down > 0 for 15m", "runbook": "RUNBOOKS.md#r-links"},
+    {"id": "A-POL-1", "class": "policy_rejection", "severity": "ticket", "expr": "rate(inv62_errors_total{code=\"TOPO.NO_CAPABLE_NODE\"}[30m]) > 0.05 * rate(inv62_requests_total{family=\"PK_TOPO_NEAREST\"}[30m])", "runbook": "RUNBOOKS.md#r-policy"},
+    {"id": "A-DEP-1", "class": "dependency_failure", "severity": "page", "expr": "increase(inv62_errors_total{code=\"TOPO.DEPENDENCY_UNAVAILABLE\"}[5m]) > 0", "runbook": "RUNBOOKS.md#r-dependency"},
+    {"id": "A-DEP-2", "class": "dependency_failure", "severity": "page", "expr": "inv62_ready == 0 for 2m", "runbook": "RUNBOOKS.md#r-dependency"},
+    {"id": "A-ATK-1", "class": "attack", "severity": "page", "expr": "rate(inv62_errors_total{code=~\"TOPO.UNAUTHENTICATED|TOPO.REPLAYED|TOPO.FORBIDDEN\"}[5m]) > 1", "runbook": "INCIDENT_RESPONSE.md"},
+    {"id": "A-DEF-1", "class": "software_defect", "severity": "page", "expr": "increase(inv62_errors_total{code=\"TOPO.INTERNAL\"}[5m]) > 0", "runbook": "INCIDENT_RESPONSE.md"}
+  ]
+}

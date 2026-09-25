@@ -1,0 +1,30 @@
+name: inv40-ci
+on: [push, pull_request]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy: {matrix: {python: ["3.10", "3.11", "3.12"]}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: python tools/ci.py --out evidence/ci_run.json
+      - run: python -O -m unittest discover -s tests
+      - uses: actions/upload-artifact@v4
+        with: {name: evidence-${{ matrix.python }}, path: evidence/}
+  kvm:
+    # hardware lane: requires a self-hosted runner with /dev/kvm and qemu-system-x86_64
+    runs-on: [self-hosted, kvm]
+    if: ${{ vars.INV40_KVM_RUNNER == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/ci.py --lane kvm --out evidence/ci_kvm.json
+  release:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/ci.py --gate --out evidence/ci_run.json
+      # signing/attestation step intentionally absent: blocker SEC-SIGN (no signing identity provisioned)
