@@ -27,7 +27,7 @@ if errorlevel 1 (
 
 REM --- Ensure full QVM copies exist (QN-01 has local qvm\cli.py) ---
 if not exist "%QNODE_ROOT%\QN-01\qvm\cli.py" (
-  echo [START_HARBOR] Qnode full copies missing — materializing from seed...
+  echo [START_HARBOR] Qnode full copies missing - materializing from seed...
   call "%~dp0scripts\materialize-qnode-copies.cmd"
   if errorlevel 1 (
     echo [START_HARBOR] warning: materialize failed; Qnodes will show incomplete until fixed.
@@ -43,8 +43,20 @@ echo   Focus codes: qn01..qn50  ns nm nl nx nf
 echo.
 
 cd /d "%HARBOR_ROOT%\bridge-terminal"
-where node >nul 2>&1 || (echo Node.js 20+ required. & popd & pause & exit /b 2)
+where node >nul 2>&1 || (
+  echo Node.js 20+ required. Nothing was started.
+  popd
+  echo.
+  pause
+  exit /b 2
+)
 node tools\start-local.js %*
 set RC=%ERRORLEVEL%
+if not "%RC%"=="0" (
+  echo.
+  echo [START_HARBOR] bridge exited with code %RC%.
+  echo.
+  pause
+)
 popd
 exit /b %RC%
