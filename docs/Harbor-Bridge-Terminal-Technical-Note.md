@@ -177,6 +177,15 @@ Bound when `DF_ROOT` points at the folder containing `DF_Fabric/adapter/dfabric/
 
 ---
 
+### 5.6 Mobile platform (Bottle Rocket VMs + compiler)
+
+- **Rule:** each mobile application node is a **Bottle Rocket VM**; **RODEO** is a **sidecar to Linear Android** (Gradle substitute), not a peer app node.
+- **Substrate:** `mobile-platform/bottle-rocket/` junctions to Desktop `BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K`.
+- **App nodes:** `nodes/ios-lctl/` (iOS735_LCTL), `nodes/android-lctl/` (LinearAndroid_LCTL); RODEO under `android-lctl/sidecar-rodeo/`.
+- **Compiler:** `mobile-platform/compiler/` - reproducible content-addressed node packages; trigger `scripts/on-mobile-auth.cmd` when a mobile platform authenticates / enters Harbor; `deliver` stages or uses `adb` when present (does not fake device install).
+- **Fleet:** `fleet/MOBILE_PLATFORM.json`. Operator detail: `mobile-platform/README.md`, `mobile-platform/compiler/README.md`.
+
+---
 ## 6. Data / fleet model
 
 ### 6.1 `fleet/HARBOR_FLEET.json`
