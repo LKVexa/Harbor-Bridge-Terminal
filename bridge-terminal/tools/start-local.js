@@ -106,7 +106,8 @@ function startMobileAuthQueueWatcher() {
     env: { ...process.env, HARBOR_ROOT: harborRoot }
   });
   child.unref();
-  console.log('  mobile-auth-hook: ON (ws-ticket -> auth-queue; watcher pid ' + child.pid + ')');
+  console.log('  mobile-auth-hook: ON (ws-ticket -> MC cubby + projection on 127; watcher pid ' + child.pid + ')');
+  console.log('                   primary: cubby projection (not VM download); adb sideload demoted');
   console.log('                   disable: set HARBOR_MOBILE_AUTH_HOOK=0');
   return child;
 }

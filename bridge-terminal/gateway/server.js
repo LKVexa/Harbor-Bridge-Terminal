@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * HERMIT virtual WebSocket gateway â€” Node profile (architecture decision D-001)
+ * HERMIT virtual WebSocket gateway Ã¢â‚¬â€ Node profile (architecture decision D-001)
  * ---------------------------------------------------------------------------
  * One ingress port: health, public config, ticket API, static web client and the
  * WebSocket upgrade. Owns admission, identity, Origin policy, session mapping,
@@ -27,6 +27,7 @@ const { detectBoundary, plan } = require('../ram/allowance');
 const { createObserver, readStatus } = require('../ram/residency');
 const { createTraffic } = require('../ram/traffic');
 const mobileAuthHook = require('./mobile-auth-hook');
+const cubbyProjection = require('./cubby-projection');
 
 const PROTOCOL = 'hermit.vws.v2';
 const TICKET_COOKIE = 'vws_ticket';
@@ -169,13 +170,16 @@ function createGateway(cfg, { logSink } = {}) {
         const t = tickets.issue(principal, cors.origin);
         if (!t) return json(res, 503, { error: 'busy' }, cors.headers);
         counters.tickets++;
-        try { mobileAuthHook.onTicketIssued({ cfg, log, req, principal, ticketMeta: { expiresInMs: cfg.ticketTtlMs } }); } catch (hookErr) { try { log.error('mobile.auth_hook_throw', { reason: hookErr && hookErr.message }); } catch { /* noop */ } }
+        let mobileHookResult = null;
+        try { mobileHookResult = mobileAuthHook.onTicketIssued({ cfg, log, req, principal, ticketMeta: { expiresInMs: cfg.ticketTtlMs } }); } catch (hookErr) { try { log.error('mobile.auth_hook_throw', { reason: hookErr && hookErr.message }); } catch { /* noop */ } }
         const cookie = `${TICKET_COOKIE}=${t}; Max-Age=${Math.ceil(cfg.ticketTtlMs / 1000)}; Path=/ws/terminal; HttpOnly; SameSite=Strict${cfg.secureCookies ? '; Secure' : ''}`;
         const body = { expiresInMs: cfg.ticketTtlMs };
+        if (mobileHookResult && mobileHookResult.cubby_id) { body.cubby_id = mobileHookResult.cubby_id; body.projection_url = mobileHookResult.projection_url; body.device_download = false; body.primary = 'cubby-projection'; }
         if (cfg.allowQueryTicket) body.ticket = t; // only when the operator has confirmed query redaction on the whole path
         return json(res, 200, body, { 'Set-Cookie': cookie, ...cors.headers });
       }
       if (p === '/ws/terminal') return json(res, 426, { error: 'upgrade required' }, { Upgrade: 'websocket' });
+      if (cubbyProjection.handle(req, res, { cfg, json })) return;
       const a = assets.get(p);
       if (a && (req.method === 'GET' || req.method === 'HEAD')) {
         const body = fs.readFileSync(a.abs);

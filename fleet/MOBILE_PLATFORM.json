@@ -1,16 +1,26 @@
 {
-  "version": 3,
+  "version": 4,
   "generated": "2026-09-25T14:30:00-07:00",
   "architecture": {
     "rules": [
       "Each mobile platform application node is a Bottle Rocket VM.",
-      "RODEO is a sidecar to Linear Android because RODEO is a Gradle substitute."
+      "RODEO is a sidecar to Linear Android because RODEO is a Gradle substitute.",
+      "Mobile browser login spins a Bottle Rocket VM session as a mobile cubby (MC-NNN) projected to the device browser on local 127 — the device does not download the VM.",
+      "QVM Qnodes and Containership/DF slots are cubbies in the same family; desktop projects them on local 127 directly.",
+      "Mobile must hold a live BR mobile cubby before attaching to QVM or containership cubbies (access gate)."
     ],
+    "primary_story": "cubby spawn + browser projection on local 127",
+    "device_download": false,
     "vm_substrate": "mobile-platform/bottle-rocket",
     "vm_product": "BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K",
     "vm_version": "3.0.0-MODEL_OPERATIONAL_110K",
     "app_node_kind": "bottle-rocket-vm-app-node",
-    "sidecar_kind": "linear-android-sidecar"
+    "sidecar_kind": "linear-android-sidecar",
+    "cubby_family": "fleet/CUBBIES.json",
+    "entry": {
+      "desktop": "QVM + containership cubbies on local 127 directly (no BR mobile cubby)",
+      "mobile": "SPIRAL auth → allocate MC-* BR cubby → project to browser → then gate allows QN/CS attach via BR cubby"
+    }
   },
   "vm_substrate": {
     "id": "BOTTLE_ROCKET_VM",
@@ -73,13 +83,16 @@
     "operator_surface_linked": true,
     "rodeo_is_peer_app_node": false,
     "rodeo_is_linear_android_sidecar": true,
-    "future_device_bridge": "adb deliver + --wait-device implemented; iOS remains staged",
-    "brctl_assemble": "attempted when mobile-platform/compiler/bin/brctl.exe or product/.build/brctl exists",
-    "spiral_login_auto_wires_mobile_auth": true
+    "primary_enter_harbor": "cubby-projection-local-127",
+    "device_vm_download": false,
+    "future_device_bridge": "adb sideload optional/advanced; not enter-Harbor",
+    "brctl_assemble": "cubby materializer — prepares VM image for cubby; not phone storage download",
+    "spiral_login_auto_wires_mobile_auth": true,
+    "mobile_br_cubby_gate_for_qvm_cs": true
   },
   "compiler": {
-    "name": "harbor-mobile-vm-node-compiler",
-    "version": "0.2.0",
+    "name": "harbor-cubby-materializer",
+    "version": "0.3.0",
     "entrypoint": "mobile-platform/compiler/compile-mobile-vm-node.js",
     "scripts": [
       "scripts/compile-mobile-vm-node.cmd",
@@ -92,10 +105,11 @@
     "auth_hook": "mobile-platform/compiler/hooks/on-mobile-auth.js",
     "auth_queue": "mobile-platform/compiler/auth-queue",
     "contract": {
-      "on_mobile_auth": "compile Bottle Rocket VM app-node package for platform, then stage/deliver",
+      "on_mobile_auth": "ensure/allocate Bottle Rocket mobile cubby + projection on local 127; optionally materialize image via brctl assemble",
       "android_path": "LinearAndroid_LCTL app node + RODEO gradle-substitute sidecar",
       "ios_path": "iOS735_LCTL app node",
-      "substrate": "BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K"
+      "substrate": "BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K",
+      "sideload": "optional --deliver / HARBOR_MOBILE_AUTH_DELIVER=1 (adb); demoted"
     },
     "brctl": {
       "build_script": "scripts/build-brctl.cmd",
@@ -104,8 +118,11 @@
       "windows_toolchain": "MSYS2 UCRT64 gcc+make+openssl (wincompat.h shim)"
     },
     "delivery": {
+      "role": "optional-sideload",
+      "demoted": true,
       "entrypoint": "mobile-platform/compiler/deliver-mobile-vm-node.js",
       "wait_device_flag": "--wait-device",
+      "note": "Not the enter-Harbor path. Primary path is cubby + browser projection.",
       "evidence_dirs": [
         "docs/verification/mobile-delivery/",
         "mobile-platform/compiler/logs/"
@@ -114,12 +131,28 @@
     "spiral_auth_hook": {
       "module": "bridge-terminal/gateway/mobile-auth-hook.js",
       "fires_on": "POST /api/ws-ticket success (principal authenticated, ticket minted)",
+      "primary_action": "allocate MC-* cubby + bind projection session on 127.0.0.1",
       "enabled_by_default": true,
       "disable_env": "HARBOR_MOBILE_AUTH_HOOK=0",
-      "mode_env": "HARBOR_MOBILE_AUTH_HOOK_MODE=queue|compile",
+      "mode_env": "HARBOR_MOBILE_AUTH_HOOK_MODE=queue|compile|materialize",
       "default_platform_env": "HARBOR_MOBILE_AUTH_DEFAULT_PLATFORM=android|ios",
+      "sideload_env": "HARBOR_MOBILE_AUTH_DELIVER=1 (optional advanced)",
       "start_local": "starts watch-auth-queue.js when hook enabled",
-      "queue": "mobile-platform/compiler/auth-queue/"
-    }
+      "queue": "mobile-platform/compiler/auth-queue/",
+      "ticket_body_fields": [
+        "cubby_id",
+        "projection_url",
+        "device_download",
+        "primary"
+      ]
+    },
+    "role": "cubby-materializer"
+  },
+  "cubbies": {
+    "registry": "fleet/CUBBIES.json",
+    "mobile_id_format": "MC-{seq:03d}",
+    "projection_url_pattern": "http://127.0.0.1:{gateway_port}/cubby/{cubby_id}/projection",
+    "access_gate": "bridge-terminal/gateway/cubby-access-gate.js",
+    "sessions_dir": "mobile-platform/compiler/cubbies/sessions/"
   }
 }

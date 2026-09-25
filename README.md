@@ -1,6 +1,6 @@
 # Harbor Bridge Terminal
 
-A combined workspace that puts **Unikernel Containership UC-2.8.0** (edge atoms) beside a **live virtual console** — the HERMIT / SPIRAL terminal with its RAM-resident virtual WebSocket bridge — plus a **50× QVM Qnode fleet** (full independent copies), the **DF fabric** containers, **VB-JA21 Portable Optical Desktop 9.8.7** as the Harbor browser (omni-bin window), and a **mobile platform** whose application nodes are **Bottle Rocket VMs** (iOS735_LCTL + LinearAndroid_LCTL), with **RODEO** as the Linear Android Gradle-substitute **sidecar**, plus a **reproducible mobile VM node compiler** for auth/enter-Harbor.
+A combined workspace that puts **Unikernel Containership UC-2.8.0** (edge atoms) beside a **live virtual console** — the HERMIT / SPIRAL terminal with its RAM-resident virtual WebSocket bridge — plus a **50× QVM Qnode fleet** (full independent copies), the **DF fabric** containers, **VB-JA21 Portable Optical Desktop 9.8.7** as the Harbor browser (omni-bin window), and a **mobile platform** whose application nodes are **Bottle Rocket VMs** (iOS735_LCTL + LinearAndroid_LCTL), with **RODEO** as the Linear Android Gradle-substitute **sidecar**, plus **mobile cubbies** (Bottle Rocket sessions projected on local 127; cubby materializer; no VM download).
 
 Think of the containership as the harbor yard and the virtual console as the bridge: one place to inspect the ship, run edge checks, talk to sessions over a bounded, ledgered websocket, and focus into individual Qnodes or DF containers. The local gateway URL opens inside JA21, **not** the system default browser.
 
@@ -140,34 +140,53 @@ npm test
 - **Electron `vendor/browser`:** optional secondary slot for an in-process BrowserView adapter. Primary UX is the standalone WPF omni-bin window above.
 
 
-## Mobile platform (Bottle Rocket VMs + reproducible compiler)
+## Mobile platform + cubbies (projection on local 127)
 
-**Rules:** (1) each mobile **application node** is a **Bottle Rocket VM**; (2) **RODEO is a sidecar to Linear Android** (Gradle substitute), not a peer app node.
+**Primary story:** when a mobile browser logs into Harbor, a **Bottle Rocket VM session** spins up as a **mobile cubby** (`MC-NNN`) on the Harbor gateway and is **projected** to the device browser on **local 127**. The device does **not** download the VM.
+
+**Same family:** QVM Qnodes (`QN-01`…`QN-50`) and Containership/DF slots (`CS-*`) are also **cubbies**. Desktop opens them on local 127 **directly**. Mobile must hold a **live BR mobile cubby** before attaching to QVM/containership cubbies (access gate `mobile_br_cubby_required`).
+
+**Rules:** (1) each mobile **application node** is a **Bottle Rocket VM**; (2) **RODEO is a sidecar to Linear Android** (Gradle substitute), not a peer app node; (3) compiler = **cubby materializer** (`brctl assemble` image prep for the cubby — not phone storage).
 
 | Piece | Harbor path | Role |
 |-------|-------------|------|
-| Bottle Rocket 3.0.0 MODEL OPERATIONAL 110K | `mobile-platform/bottle-rocket/` | Shared **VM substrate** |
+| Bottle Rocket 3.0.0 MODEL OPERATIONAL 110K | `mobile-platform/bottle-rocket/` | Shared **VM substrate** / cubby image source |
 | iOS735_LCTL v0.1.0 | `mobile-platform/nodes/ios-lctl/` | **iOS** app node = Bottle Rocket VM |
 | LinearAndroid_LCTL v0.1.0 | `mobile-platform/nodes/android-lctl/` | **Android** app node = Bottle Rocket VM |
 | RODEO 0.1.0 | `mobile-platform/nodes/android-lctl/sidecar-rodeo/` | **Sidecar** to Linear Android (Gradle substitute) |
+| Cubby registry | `fleet/CUBBIES.json` | QN + CS + growing `MC-*` mobile cubbies |
 
 **Link:** `scripts\link-mobile-platform.cmd` (also from `START_HARBOR.cmd`; missing sources warn).
 
-**Compiler (auth / enter Harbor):** SPIRAL login (`POST /api/ws-ticket` success) auto-wires the mobile-auth path (auth-queue + optional compile). Manual:
+**Mobile login → cubby + projection:**
+
+```bat
+REM SPIRAL: POST /api/ws-ticket with header X-Harbor-Mobile-Platform: android|ios
+REM Ticket body includes cubby_id + projection_url (device_download=false)
+REM Open http://127.0.0.1:{port}/cubby/MC-001/projection
+```
+
+**Cubby materializer (optional image prep):**
 
 ```bat
 scripts\build-brctl.cmd
-scripts\on-mobile-auth.cmd --platform android --session <id> --device <id>
+scripts\on-mobile-auth.cmd --platform android --session <id> --cubby MC-001
 scripts\compile-mobile-vm-node.cmd --platform ios --dry-run
+```
+
+**Optional sideload (demoted — not enter-Harbor):**
+
+```bat
 scripts\deliver-mobile-vm-node.cmd --manifest <COMPILE_MANIFEST.json> --platform android [--wait-device]
 ```
 
-- Contract + reproducibility: [`mobile-platform/compiler/README.md`](mobile-platform/compiler/README.md)
-- Fleet record: [`fleet/MOBILE_PLATFORM.json`](fleet/MOBILE_PLATFORM.json)
-- **brctl:** `scripts\build-brctl.cmd` → `mobile-platform/compiler/bin/brctl.exe` (MSYS2 UCRT64). Compile runs `assemble` when present.
-- **Delivery:** `adb` push when a device is online; `--wait-device` polls. Evidence under `docs/verification/mobile-delivery/`. iOS stays staged.
-- **SPIRAL hook:** `bridge-terminal/gateway/mobile-auth-hook.js` (enabled by default from `START_HARBOR` / `start-local`). Disable: `set HARBOR_MOBILE_AUTH_HOOK=0`.
-- Honest scope: does **not** claim phones are flashed without a real `adb`/`idevice` exit code.
+- Model + gate: [`docs/MOBILE_CUBBY_PROJECTION.md`](docs/MOBILE_CUBBY_PROJECTION.md)
+- Fleet: [`fleet/CUBBIES.json`](fleet/CUBBIES.json), [`fleet/MOBILE_PLATFORM.json`](fleet/MOBILE_PLATFORM.json)
+- Compiler contract: [`mobile-platform/compiler/README.md`](mobile-platform/compiler/README.md)
+- **brctl:** `assemble` = cubby image prep; `serve` = advanced host-state hint. Harbor projection page is the browser path.
+- **SPIRAL hook:** `bridge-terminal/gateway/mobile-auth-hook.js` (default ON). Disable: `set HARBOR_MOBILE_AUTH_HOOK=0`.
+- **Access gate:** `bridge-terminal/gateway/cubby-access-gate.js` — mobile → QN/CS without live `MC-*` → **403** `mobile_br_cubby_required`.
+- Honest scope: projection stub proves cubby + session; full BR UI-in-browser is optional/gap. Sideload never fakes success without real `adb`/`idevice`.
 
 ## Qnode fleet (50× full QVM 8.1.0-alpha copies)
 
@@ -221,7 +240,7 @@ Optional: `set QNODE_AUDIT_PARALLEL=5` (default) before running. If inventory fa
 | Qnode fleet | 50 full copies of `QVM_Quantum_VM_v8.1.0-alpha` under `qnodes/` |
 | DF fabric | Bound from Desktop `New folder` (`DF_Fabric` + node containers) |
 | Optical desktop | VB-JA21 Portable Desktop 9.8.7 (junction from Downloads; start URL → Harbor) |
-| Mobile platform | Bottle Rocket 110K VM + iOS/Android LCTL app nodes; RODEO=Android Gradle sidecar; reproducible compiler on mobile auth |
+| Mobile / cubbies | BR 110K mobile cubbies projected on local 127; QN+CS same cubby family; mobile BR gate before QVM/CS; adb sideload demoted |
 
 Neither upstream QVM, DF archive, nor the Downloads JA21 portable was modified in place; this repo is the integrated working tree.
 

@@ -1,14 +1,15 @@
 ﻿"use strict";
 /**
- * Harbor reproducible mobile VM node compiler.
+ * Harbor cubby materializer (reproducible Bottle Rocket VM image prep).
  *
  * Architecture:
  *   Bottle Rocket 3.0 = VM substrate
  *   iOS735_LCTL / LinearAndroid_LCTL = application nodes (Bottle Rocket VMs)
- *   RODEO = sidecar to Linear Android (Gradle substitute) â€” not a peer app node
+ *   RODEO = sidecar to Linear Android (Gradle substitute) - not a peer app node
+ *   Mobile login -> allocate mobile cubby (MC-NNN) -> VM runs in cubby -> project to browser local 127
  *
- * Trigger concept: mobile platform authenticating / entering Harbor â†’ compile a
- * Bottle Rocket-based mobile VM node package â†’ stage/deliver toward that device.
+ * Role: prepare/assemble the VM image for the cubby (brctl assemble). This does NOT
+ * mean "download VM to phone storage." Optional --deliver is advanced sideload only.
  *
  * Honest limits: does not flash phones. Uses real trees (junctions). If brctl/adb
  * are absent, packages + manifests and prints next-command handoff.
@@ -109,6 +110,7 @@ function parseArgs(argv) {
     deviceId: null,
     authPrincipal: null,
     deliver: false,
+    cubbyId: null,
     dryRun: false,
     trigger: "manual",
     outRoot: null,
@@ -121,6 +123,7 @@ function parseArgs(argv) {
     else if (a === "--principal") out.authPrincipal = argv[++i];
     else if (a === "--trigger") out.trigger = argv[++i] || "manual";
     else if (a === "--deliver") out.deliver = true;
+    else if (a === "--cubby") out.cubbyId = argv[++i];
     else if (a === "--dry-run") out.dryRun = true;
     else if (a === "--out") out.outRoot = argv[++i];
     else if (a === "--help" || a === "-h") out.help = true;
@@ -137,7 +140,8 @@ function usage() {
     "  --device ID        target mobile device id",
     "  --principal NAME   auth principal label (never a secret/token)",
     "  --trigger EVENT    e.g. mobile-auth, manual, dry-run (default manual)",
-    "  --deliver          after compile, run deliver step (adb if present, else stage)",
+    "  --cubby ID         mobile cubby id (MC-NNN) this image materializes for",
+    "  --deliver          OPTIONAL sideload (adb); demoted - not enter-Harbor",
     "  --dry-run          same as compile; forces deterministic SOURCE_DATE_EPOCH=0 if unset",
     "  --out DIR          override output root (default mobile-platform/compiler/out)",
     "",
@@ -459,7 +463,8 @@ function main() {
     },
     trigger: {
       event: args.trigger || (args.dryRun ? "dry-run" : "manual"),
-      session_id: args.sessionId || null,
+      session_id: args.sessionId,
+      cubby_id: args.cubbyId || null,
       device_id: args.deviceId || null,
       auth_principal: args.authPrincipal || null,
     },

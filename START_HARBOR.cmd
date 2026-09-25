@@ -55,7 +55,7 @@ echo   QNODE_ROOT=%QNODE_ROOT%
 echo   DF_ROOT=%DF_ROOT%
 echo   Focus codes: qn01..qn50  ns nm nl nx nf
 echo   Browser: VB-JA21 Portable Optical Desktop (not system default)
-echo   Mobile: Bottle Rocket VM + iOS/Android nodes (RODEO=Android sidecar)
+echo   Mobile/cubbies: BR projection on local 127 (MC-*); QN/CS cubbies; adb sideload demoted
 echo.
 
 cd /d "%HARBOR_ROOT%\bridge-terminal"

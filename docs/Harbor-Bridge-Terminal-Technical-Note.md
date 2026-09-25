@@ -177,16 +177,18 @@ Bound when `DF_ROOT` points at the folder containing `DF_Fabric/adapter/dfabric/
 
 ---
 
-### 5.6 Mobile platform (Bottle Rocket VMs + compiler)
+### 5.6 Mobile platform + cubbies (projection on local 127)
 
+- **Primary story:** mobile browser login → allocate **mobile cubby** `MC-NNN` → Bottle Rocket VM runs **in the cubby** → **project** to device browser on `127.0.0.1`. **No VM download** to phone storage.
+- **Cubby family:** QVM Qnodes and Containership/DF slots are cubbies too (`fleet/CUBBIES.json`). Desktop projects QN/CS on local 127 **directly**. Mobile must have a **live BR mobile cubby** before QVM/containership attach (gate `mobile_br_cubby_required` / 403).
 - **Rule:** each mobile application node is a **Bottle Rocket VM**; **RODEO** is a **sidecar to Linear Android** (Gradle substitute), not a peer app node.
 - **Substrate:** `mobile-platform/bottle-rocket/` junctions to Desktop `BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K`.
-- **App nodes:** `nodes/ios-lctl/` (iOS735_LCTL), `nodes/android-lctl/` (LinearAndroid_LCTL); RODEO under `android-lctl/sidecar-rodeo/`.
-- **brctl:** `scripts/build-brctl.cmd` builds via MSYS2 UCRT64 into `mobile-platform/compiler/bin/brctl.exe`. Compiler runs `brctl assemble` when the binary exists (no longer skipped after a successful build).
-- **Delivery:** `deliver-mobile-vm-node.js` probes `adb` (PATH + SDK locations); real push when a device is online; `--wait-device` polls. Evidence: `docs/verification/mobile-delivery/`. iOS remains staged.
-- **SPIRAL auto-wire:** `bridge-terminal/gateway/mobile-auth-hook.js` fires on successful `POST /api/ws-ticket` (principal auth + ticket mint), enqueues `mobile-platform/compiler/auth-queue/`. `start-local` / `START_HARBOR` enable the hook and start `watch-auth-queue.js`. Disable with `HARBOR_MOBILE_AUTH_HOOK=0`.
-- **Fleet:** `fleet/MOBILE_PLATFORM.json`. Operator detail: `mobile-platform/README.md`, `mobile-platform/compiler/README.md`.
-- **Verification pointer:** `docs/verification/mobile-auth-hook/`, `docs/verification/mobile-delivery/`.
+- **Cubby materializer:** `brctl assemble` prepares the cubby image (`scripts/build-brctl.cmd` → `compiler/bin/brctl.exe`). Not a phone-storage download path.
+- **Sideload (demoted):** `deliver-mobile-vm-node.js` / `adb` optional advanced only — not enter-Harbor.
+- **SPIRAL auto-wire:** `mobile-auth-hook.js` on successful `POST /api/ws-ticket` allocates cubby + projection; ticket may include `cubby_id` / `projection_url`. Queue watcher may run materializer. Disable `HARBOR_MOBILE_AUTH_HOOK=0`.
+- **Projection routes:** `/cubby/:id/projection`, `/api/cubbies`, `/api/cubbies/:id/attach`, `/api/cubbies/access-check`.
+- **Docs:** `docs/MOBILE_CUBBY_PROJECTION.md`. Fleet: `fleet/CUBBIES.json`, `fleet/MOBILE_PLATFORM.json`.
+- **Verification:** `docs/verification/mobile-cubby/`.
 
 
 ---
@@ -210,9 +212,11 @@ Commit `b256b3c0` converted thin shared instances to **50 independent trees** so
 
 ---
 
-### 6.4 `fleet/MOBILE_PLATFORM.json`
+### 6.4 `fleet/CUBBIES.json` + `fleet/MOBILE_PLATFORM.json`
 
-Records VM substrate, iOS/Android Bottle Rocket app nodes, RODEO sidecar binding, and the reproducible compiler / `on-mobile-auth` contract. Junction targets are not inventoried as git content.
+- **CUBBIES:** Qnode cubbies (50) + containership cubbies (5) + growing `mobile_cubbies` (`MC-*`). Documents desktop vs mobile entry and access gate.
+- **MOBILE_PLATFORM:** VM substrate, app nodes, RODEO sidecar, cubby materializer, projection primary path, demoted sideload.
+
 
 ## 7. Operator surface
 
