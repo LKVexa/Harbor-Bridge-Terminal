@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * Local quick start (loopback only). Creates an operator principal on first run, prints its access token ONCE,
+ * Local quick start (loopback only). Creates an operator principal on first run, always prints ACCESS_TOKEN in the boot console (from mint or ACCESS_TOKEN.txt),
  * finds the DF containers (DF_ROOT, or a folder beside/above this one holding DF_Fabric), binds Qnode fleet
  * roots, and starts the gateway. After the gateway listens on 127.0.0.1, launches VB-JA21 Portable Optical
  * Desktop with JA21_START_URL pointing at the Harbor URL (omni-bin / start navigation) - never the Windows
@@ -22,15 +22,45 @@ const args = process.argv.slice(2);
 const dataDir = path.join(root, '.vws-local');
 fs.mkdirSync(dataDir, { recursive: true });
 const pf = path.join(dataDir, 'principals.json');
+const tokenFile = path.join(harborRoot, 'ACCESS_TOKEN.txt');
+
+function printAccessTokenBanner(token, opts) {
+  const minted = !!(opts && opts.minted);
+  const savedPath = opts && opts.tokenFilePath;
+  console.log('\n  ACCESS_TOKEN (paste into the Harbor sign-in box):\n');
+  console.log('    ' + token + '\n');
+  if (savedPath) console.log('  Saved at: ' + savedPath);
+  if (minted) console.log('  First-run mint: principals.json + ACCESS_TOKEN.txt created.');
+  console.log('  Lost it? Delete bridge-terminal/.vws-local/principals.json and ACCESS_TOKEN.txt, then start again.\n');
+}
+
+function printRegenerateInstructions() {
+  console.log('\n  ACCESS_TOKEN: not available (only a hash remains in principals.json).');
+  console.log('  Regenerate: delete bridge-terminal/.vws-local/principals.json');
+  console.log('             and ACCESS_TOKEN.txt (if present), then re-run START_HARBOR.cmd.\n');
+}
+
 if (!fs.existsSync(pf)) {
   const token = crypto.randomBytes(32).toString('base64url');
   fs.writeFileSync(pf, JSON.stringify([{ sub: 'operator', tenant: 'local', tokenSha256: crypto.createHash('sha256').update(token).digest('hex'), capabilities: ['terminal', 'fabric'] }], null, 2), { mode: 0o600 });
   try {
-    const tokenFile = path.join(harborRoot, 'ACCESS_TOKEN.txt');
     fs.writeFileSync(tokenFile, token + '\n', { mode: 0o600 });
-    console.log('\n  Access token (shown once; paste it into the sign-in box):\n\n    ' + token + '\n\n  Also saved to: ' + tokenFile + '\n  Lost it? Delete bridge-terminal/.vws-local/principals.json and ACCESS_TOKEN.txt, then start again.\n');
+    printAccessTokenBanner(token, { minted: true, tokenFilePath: tokenFile });
   } catch (e) {
-    console.log('\n  Access token (shown once; paste it into the sign-in box):\n\n    ' + token + '\n\n  Lost it? Delete .vws-local/principals.json and start again.\n');
+    printAccessTokenBanner(token, { minted: true, tokenFilePath: null });
+  }
+} else {
+  // Returning start: always echo plaintext from ACCESS_TOKEN.txt when present.
+  try {
+    if (fs.existsSync(tokenFile)) {
+      const token = String(fs.readFileSync(tokenFile, 'utf8')).trim();
+      if (token) printAccessTokenBanner(token, { minted: false, tokenFilePath: tokenFile });
+      else printRegenerateInstructions();
+    } else {
+      printRegenerateInstructions();
+    }
+  } catch (e) {
+    printRegenerateInstructions();
   }
 }
 
