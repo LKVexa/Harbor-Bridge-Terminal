@@ -157,4 +157,12 @@ Neither upstream QVM, DF archive, nor the Downloads JA21 portable was modified i
 
 ## License
 
-See `containership\LICENSE` and `bridge-terminal\LICENSE` for the respective components. JA21 licensing lives under `optical-desktop\portable\` (when linked).
+**Harbor Bridge Terminal** is distributed under the **Product Preview Tester License**
+(see root `LICENSE`): evaluation and tester use only — not a production grant,
+not an OSI open-source license.
+
+Component notices still apply to their own trees:
+
+- `containership\LICENSE`
+- `bridge-terminal\LICENSE`
+- `optical-desktop\portable\LICENSE` / `LICENSING.md` (when linked)
