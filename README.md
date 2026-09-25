@@ -1,4 +1,4 @@
-# Harbor Bridge Terminal
+﻿# Harbor Bridge Terminal
 
 >Harbor Bridge Terminal: UC containership + HERMIT/SPIRAL bridge on local 127. 50+ cubbies (QVM Qnodes, DF/containership slots, mobile Bottle Rocket MC-*). Browser projects cubbies on 127.0.0.1 — no VM download. Mobile requires a live BR cubby before QVM/CS access. Product Preview Tester License (evaluation).
 
@@ -18,6 +18,10 @@ Supporting artifacts:
 - [docs/verification/spiral-landing/](docs/verification/spiral-landing/) — SPIRAL/landing HTTP + WS admission
 - [docs/MOBILE_CUBBY_PROJECTION.md](docs/MOBILE_CUBBY_PROJECTION.md), [docs/verification/mobile-cubby/](docs/verification/mobile-cubby/), [docs/verification/brctl-serve-proxy/](docs/verification/brctl-serve-proxy/) — mobile cubby gate + serve proxy (**12/12** and **8/8** PASS cited in the note)
 - [fleet/CUBBIES.json](fleet/CUBBIES.json), [fleet/MOBILE_PLATFORM.json](fleet/MOBILE_PLATFORM.json)
+- [docs/reviews/](docs/reviews/) — attached independent expository reviews (PDFs):
+  - [cubby-mobile-expository.pdf](docs/reviews/cubby-mobile-expository.pdf) — *Harbor Bridge Terminal Platform Technical Expository Note* (Cubby Mobile Edition, 2026-09-25)
+  - [HBT-EXP-002.pdf](docs/reviews/HBT-EXP-002.pdf) — *Harbor Bridge Terminal / HBT-EXP-002* (platform-at-a-glance expository note)
+
 
 Metrics in that note are taken only from repo files and commands that were actually run — no fabricated trading backtests.
 

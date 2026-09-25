@@ -1,4 +1,4 @@
-# Harbor Bridge Terminal Platform — Technical Expository Note
+﻿# Harbor Bridge Terminal Platform — Technical Expository Note
 
 | Field | Value |
 |-------|-------|
@@ -9,9 +9,19 @@
 | **Authors / Attribution** | David Paul Russell / Russell Philip Smithson (LK/Vexa, Linear Finance) |
 | **Repository** | https://github.com/LKVexa/Harbor-Bridge-Terminal |
 | **License** | Product Preview Tester License 1.0 (root `LICENSE`) |
-| **Companion artifacts** | `docs/figures/`, `docs/verification/`, `docs/MOBILE_CUBBY_PROJECTION.md`, `fleet/CUBBIES.json`, `fleet/MOBILE_PLATFORM.json`, `fleet/HARBOR_FLEET.json`, `fleet/QNODE_LOAD_AUDIT.*` |
+| **Companion artifacts** | `docs/figures/`, `docs/verification/`, `docs/MOBILE_CUBBY_PROJECTION.md`, `docs/reviews/` (PDF expository reviews: `cubby-mobile-expository.pdf`, `HBT-EXP-002.pdf`), `fleet/CUBBIES.json`, `fleet/MOBILE_PLATFORM.json`, `fleet/HARBOR_FLEET.json`, `fleet/QNODE_LOAD_AUDIT.*` |
 
 ---
+
+
+## Attached reviews (PDF)
+
+Independent expository reviews checked into `docs/reviews/` (short Windows-safe paths):
+
+| File | Title |
+|------|-------|
+| [cubby-mobile-expository.pdf](reviews/cubby-mobile-expository.pdf) | Harbor Bridge Terminal Platform Technical Expository Note (Cubby Mobile Edition) — Architecture, RAMWS v2, Security, Cubby Mobile Integration, Verification, Performance Backtesting, Qnode Fleet Audit (2026-09-25) |
+| [HBT-EXP-002.pdf](reviews/HBT-EXP-002.pdf) | Harbor Bridge Terminal / HBT-EXP-002 — Expository note: the platform at a glance (HERMIT/SPIRAL, RAMWS v2, DF fabric, QVM Qnode fleet, VB-JA21, Unikernel Containership UC-2.8.0) |
 
 ## 1. Abstract / executive technical summary
 
