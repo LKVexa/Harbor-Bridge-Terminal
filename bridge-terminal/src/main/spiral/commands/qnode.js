@@ -83,13 +83,17 @@ async function attachQnode(ctx, code) {
   const loc = makeQLoc(ctx);
   const node = loc.roster().nodes.find((n) => n.code === code);
   if (!node) return fail(ctx, code, `unknown qnode ${code}`);
+  const copyHint = node.operable
+    ? ''
+    : ' \x1b[33m(full copy missing — run scripts\\\\materialize-qnode-copies.cmd)\x1b[0m';
   const lines = [
     `\x1b[1mQnode ${node.id}\x1b[0m  \x1b[2m(${code})\x1b[0m`,
     `  product   : ${node.product}${node.version ? ' · ' + node.version : ''}`,
     `  backend   : ${node.backend}`,
-    `  operable  : ${node.operable ? '\x1b[38;5;114myes\x1b[0m' : '\x1b[31mno\x1b[0m'}${node.product_bound ? '' : ' \x1b[33m(product unbound — run scripts\\\\link-qvm.cmd)\x1b[0m'}`,
+    `  operable  : ${node.operable ? '\x1b[38;5;114myes\x1b[0m' : '\x1b[31mno\x1b[0m'}${copyHint}`,
+    `  copy      : ${node.copy ? '\x1b[38;5;114mfull\x1b[0m' : '\x1b[33mincomplete\x1b[0m'}`,
     `  path      : ${node.path || '—'}`,
-    `  product   : ${loc.productRoot() || '—'}`,
+    `  product_root : ${node.product_root || loc.nodeProductRoot(code) || '—'}`,
     '',
     `\x1b[2mcommands:\x1b[0m info · capabilities · resources · run <circuit.json> · bell · selftest · status · where · exit`
   ];
@@ -130,9 +134,9 @@ async function attachDF(ctx, code) {
 async function runQnodeSub(ctx, code, sub, rest) {
   const loc = makeQLoc(ctx);
   const dir = loc.nodeDir(code);
-  const product = loc.productRoot();
+  const product = loc.nodeProductRoot(code) || (dir && loc.isFullCopy(dir) ? dir : null);
   if (!dir) return fail(ctx, code, `instance directory missing for ${code}`);
-  if (!product) return fail(ctx, code, 'QVM product unbound — run scripts\\link-qvm.cmd or set QVM_PRODUCT_ROOT');
+  if (!product) return fail(ctx, code, 'QVM full copy missing — run scripts\\materialize-qnode-copies.cmd');
 
   const argv = (() => {
     switch (sub) {
@@ -243,7 +247,7 @@ const hfCmd = {
           `${node.id} (${code})`,
           `  operable : ${node.operable ? 'yes' : 'no'}`,
           `  path     : ${node.path}`,
-          `  product  : ${loc.productRoot() || '(unbound)'}`,
+          `  product_root : ${node.product_root || loc.nodeProductRoot(code) || '(incomplete)'}`,
           `  version  : ${node.version || '?'}`,
           ''
         ].join('\n'));
@@ -271,7 +275,7 @@ const qnCmd = {
           '\x1b[1mQnode fleet (50 × QVM 8.1.0-alpha)\x1b[0m',
           '  \x1b[38;5;79mqn status\x1b[0m              fleet operability board',
           '  \x1b[38;5;79mqn list\x1b[0m                codes qn01…qn50',
-          '  \x1b[38;5;79mqn where\x1b[0m               QNODE_ROOT + product link',
+          '  \x1b[38;5;79mqn where\x1b[0m               QNODE_ROOT + full-copy status',
           '  \x1b[38;5;79mqn attach <qnNN>\x1b[0m       interactive focus (or type qnNN)',
           '  \x1b[38;5;79mqn info <qnNN>\x1b[0m         run qvm.cli info on instance',
           '  \x1b[38;5;79mqn run <qnNN> <json>\x1b[0m   run a circuit on instance',
@@ -293,16 +297,18 @@ const qnCmd = {
 
       case 'where': {
         const r = loc.root();
-        const p = loc.productRoot();
+        const seed = loc.seedProductRoot();
         const h = loc.harborRoot();
+        const roster = loc.roster();
         ctx.stdout.write([
           `\x1b[1mHarbor\x1b[0m     : ${h || '\x1b[31m(not found)\x1b[0m'}`,
           `QNODE_ROOT : ${r || '\x1b[31m(not found)\x1b[0m'}`,
-          `product    : ${p || '\x1b[31m(unbound — scripts\\\\link-qvm.cmd)\x1b[0m'}`,
+          `mode       : full-copies (${roster.operable}/${roster.count} operable)`,
+          `seed       : ${seed || '\x1b[33m(optional — for rematerialize)\x1b[0m'}`,
           `version    : ${loc.productVersion() || '—'}`,
           ''
         ].join('\n'));
-        return r && p ? 0 : 1;
+        return roster.operable === roster.count ? 0 : 1;
       }
 
       case 'list': {
@@ -319,7 +325,8 @@ const qnCmd = {
         const roster = loc.roster();
         ctx.stdout.write(`\x1b[1mQnode fleet\x1b[0m  ${loc.summaryLine()}\n`);
         ctx.stdout.write(`  root    : ${roster.root || '\x1b[31munbound\x1b[0m'}\n`);
-        ctx.stdout.write(`  product : ${roster.product || '\x1b[31munbound\x1b[0m'}\n\n`);
+        ctx.stdout.write(`  mode    : full-copies\n`);
+        ctx.stdout.write(`  seed    : ${roster.seed || roster.product || '\x1b[33m(none)\x1b[0m'}\n\n`);
         for (let row = 0; row < 10; row++) {
           const parts = [];
           for (let col = 0; col < 5; col++) {

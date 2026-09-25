@@ -361,9 +361,9 @@ class SpiralKernel extends EventEmitter {
 
       const q = qLoc.roster();
       lines.push('');
-      lines.push(`  ${B}Qnodes${R}  ${q.product_bound ? Ok : Bad}${q.operable}/${q.count} operable${R}  QVM ${q.version || '?'}  statevector`);
-      if (!q.product_bound) {
-        lines.push(`  ${Warn}product unbound${R}${D} — run scripts\\link-qvm.cmd or START_HARBOR.cmd${R}`);
+      lines.push(`  ${B}Qnodes${R}  ${q.operable === q.count ? Ok : (q.operable ? Warn : Bad)}${q.operable}/${q.count} operable${R}  QVM ${q.version || '?'}  full-copies`);
+      if (q.operable < q.count) {
+        lines.push(`  ${Warn}copies incomplete${R}${D} — run scripts\\materialize-qnode-copies.cmd${R}`);
       }
       // 5 columns × 10 rows of "qnNN ok"
       for (let row = 0; row < 10; row++) {

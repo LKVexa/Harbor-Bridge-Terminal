@@ -19,10 +19,19 @@ REM --- Qnode fleet ---
 set "QNODE_ROOT=%HARBOR_ROOT%\qnodes"
 set "HARBOR_ROOT=%HARBOR_ROOT%"
 
-REM --- Link shared QVM product (junction) if missing ---
+REM --- Optional seed junction for rematerializing copies ---
 call "%~dp0scripts\link-qvm.cmd"
 if errorlevel 1 (
-  echo [START_HARBOR] warning: QVM product link missing; Qnodes will show unbound until fixed.
+  echo [START_HARBOR] warning: QVM seed link missing; rematerialize will need PRODUCT_LINK.txt.
+)
+
+REM --- Ensure full QVM copies exist (QN-01 has local qvm\cli.py) ---
+if not exist "%QNODE_ROOT%\QN-01\qvm\cli.py" (
+  echo [START_HARBOR] Qnode full copies missing — materializing from seed...
+  call "%~dp0scripts\materialize-qnode-copies.cmd"
+  if errorlevel 1 (
+    echo [START_HARBOR] warning: materialize failed; Qnodes will show incomplete until fixed.
+  )
 )
 
 echo.

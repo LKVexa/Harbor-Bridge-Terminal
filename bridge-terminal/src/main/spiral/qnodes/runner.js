@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * SPIRAL — QVM CLI runner for a single Qnode instance.
- * Spawns `python -m qvm.cli …` with PYTHONPATH = shared product root and
- * cwd = the instance's runtime/ directory.
+ * SPIRAL — QVM CLI runner for a single Qnode full copy.
+ * Spawns `python -m qvm.cli …` with PYTHONPATH = that copy's root and
+ * cwd = the copy root (QN-XX). Each QN-XX is an independent QVM tree.
  */
 
 const { spawn } = require('node:child_process');
@@ -12,15 +12,14 @@ const fs = require('node:fs');
 
 function resolvePython() {
   if (process.env.PYTHON) return process.env.PYTHON;
-  // Prefer the Windows py launcher when present (checked at spawn time via shell-less path).
   return process.platform === 'win32' ? 'py' : 'python3';
 }
 
 /**
  * @param {object} o
- * @param {string} o.productRoot
- * @param {string} o.instanceDir   QN-XX directory
- * @param {string[]} o.argv        args after `qvm.cli` (e.g. ['info'] or ['run','x.json'])
+ * @param {string} o.productRoot   QN-XX copy root (contains qvm/cli.py)
+ * @param {string} o.instanceDir   QN-XX directory (same as productRoot for full copies)
+ * @param {string[]} o.argv        args after `qvm.cli`
  * @param {{write:(s:string)=>void}} o.stdout
  * @param {{write:(s:string)=>void}} o.stderr
  * @param {AbortSignal} [o.signal]
@@ -29,13 +28,14 @@ function resolvePython() {
  */
 function runQvm(o) {
   return new Promise((resolve) => {
-    const cli = path.join(o.productRoot, 'qvm', 'cli.py');
+    const productRoot = o.productRoot || o.instanceDir;
+    const cli = path.join(productRoot, 'qvm', 'cli.py');
     if (!fs.existsSync(cli)) {
-      o.stderr.write(`\x1b[31mqnode: QVM product CLI missing at ${cli}\x1b[0m\n`);
+      o.stderr.write(`\x1b[31mqnode: QVM copy CLI missing at ${cli}\x1b[0m\n`);
       return resolve(127);
     }
-    const runtime = path.join(o.instanceDir, 'runtime');
-    try { fs.mkdirSync(runtime, { recursive: true }); } catch { /* ignore */ }
+    const cwd = o.instanceDir || productRoot;
+    try { fs.mkdirSync(path.join(cwd, 'runtime'), { recursive: true }); } catch { /* ignore */ }
 
     const py = resolvePython();
     const usePyLauncher = py === 'py' || /[/\\]py(\.exe)?$/i.test(py);
@@ -45,26 +45,25 @@ function runQvm(o) {
 
     const env = {
       ...(o.env || process.env),
-      PYTHONPATH: o.productRoot + (process.env.PYTHONPATH ? path.delimiter + process.env.PYTHONPATH : ''),
-      QNODE_HOME: o.instanceDir,
-      QNODE_ID: path.basename(o.instanceDir)
+      PYTHONPATH: productRoot + (process.env.PYTHONPATH ? path.delimiter + process.env.PYTHONPATH : ''),
+      QNODE_HOME: o.instanceDir || productRoot,
+      QNODE_ID: path.basename(o.instanceDir || productRoot)
     };
 
     let child;
     try {
       child = spawn(py, args, {
-        cwd: runtime,
+        cwd,
         env,
         shell: false,
         windowsHide: true,
         stdio: ['ignore', 'pipe', 'pipe']
       });
     } catch (err) {
-      // Retry with plain python if py launcher missing.
       if (usePyLauncher) {
         try {
           child = spawn(process.env.PYTHON || 'python', ['-m', 'qvm.cli', ...o.argv], {
-            cwd: runtime, env, shell: false, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe']
+            cwd, env, shell: false, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe']
           });
         } catch (err2) {
           o.stderr.write(`\x1b[31mqnode: cannot start Python: ${err2.message}\x1b[0m\n`);

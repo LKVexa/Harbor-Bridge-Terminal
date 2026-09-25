@@ -3,9 +3,10 @@
 /**
  * SPIRAL — Qnode fleet locator
  * ---------------------------------------------------------------------------
- * Finds the Harbor Qnode roster (QN-01..QN-50 thin instances) and the shared
- * QVM product link. HERMIT does not embed QVM; it points at Harbor's
- * qvm/product junction (see qvm/PRODUCT_LINK.txt) and per-instance IDENTITY.
+ * Finds the Harbor Qnode roster (QN-01..QN-50 FULL independent QVM copies)
+ * under qnodes/. Each operable node has its own qvm/ package + VERSION;
+ * runtime does not depend on the shared qvm/product junction (that junction
+ * remains only as an optional seed for rematerializing copies).
  *
  * Resolution order for QNODE_ROOT (directory holding QN-01..QN-50):
  *   1. session/host env QNODE_ROOT
@@ -14,7 +15,7 @@
  *   4. <appDir>/../qnodes beside bridge-terminal
  *   5. cwd/qnodes
  *
- * Status probes are cached (TTL) — IDENTITY + VERSION / last_probe only.
+ * Status probes are cached (TTL) — IDENTITY + local VERSION / last_probe only.
  * Never spawn 50 QVM processes on a status poll.
  */
 
@@ -81,7 +82,11 @@ class QnodeLocator {
     return null;
   }
 
-  productRoot() {
+  /**
+   * Optional seed source for rematerializing copies (junction / PRODUCT_LINK).
+   * Runtime operability does NOT require this.
+   */
+  seedProductRoot() {
     const h = this.harborRoot();
     const candidates = [];
     if (h) {
@@ -101,10 +106,36 @@ class QnodeLocator {
     return null;
   }
 
+  /** @deprecated alias — prefer seedProductRoot(); kept for older call sites */
+  productRoot() {
+    return this.seedProductRoot();
+  }
+
+  /** Per-node product root = the QN-XX copy itself when it contains qvm/cli.py. */
+  nodeProductRoot(codeOrId) {
+    const d = this.nodeDir(codeOrId);
+    if (!d) return null;
+    if (exists(path.join(d, 'qvm', 'cli.py'))) return d;
+    return null;
+  }
+
+  isFullCopy(dir) {
+    if (!dir) return false;
+    return exists(path.join(dir, 'qvm', 'cli.py')) && exists(path.join(dir, 'VERSION'));
+  }
+
   productVersion() {
-    const p = this.productRoot();
-    if (!p) return null;
-    return readText(path.join(p, 'VERSION')) || PRODUCT_NAME.replace(/^QVM\s+/, '');
+    const r = this.root();
+    if (r) {
+      for (let i = 1; i <= COUNT; i++) {
+        const d = path.join(r, 'QN-' + String(i).padStart(2, '0'));
+        const v = readText(path.join(d, 'VERSION'));
+        if (v) return v;
+      }
+    }
+    const seed = this.seedProductRoot();
+    if (seed) return readText(path.join(seed, 'VERSION')) || PRODUCT_NAME.replace(/^QVM\s+/, '');
+    return null;
   }
 
   nodeDir(codeOrId) {
@@ -137,9 +168,8 @@ class QnodeLocator {
     if (!force && this._cache && (now - this._cacheAt) < CACHE_TTL_MS) return this._cache;
 
     const r = this.root();
-    const product = this.productRoot();
+    const seed = this.seedProductRoot();
     const version = this.productVersion();
-    const productOk = !!product;
     const nodes = [];
 
     for (let i = 1; i <= COUNT; i++) {
@@ -150,29 +180,37 @@ class QnodeLocator {
       const present = dir ? isDir(dir) : false;
       const ident = present ? readJSON(path.join(dir, 'IDENTITY.json')) : null;
       const lastProbe = present ? readJSON(path.join(dir, 'runtime', 'last_probe.json')) : null;
-      const operable = !!(present && ident && productOk);
+      const copyOk = present && this.isFullCopy(dir);
+      const operable = !!(present && ident && copyOk);
+      const nodeVer = present ? readText(path.join(dir, 'VERSION')) : null;
       nodes.push({
         id,
         code,
         index: i,
         present,
         operable,
+        copy: copyOk,
         product: (ident && ident.product) || PRODUCT_NAME,
-        version: version || null,
+        version: nodeVer || version || null,
         backend: (ident && ident.backend_default) || 'statevector',
         path: dir,
+        product_root: copyOk ? dir : null,
         last_probe: lastProbe,
-        product_bound: productOk
+        product_bound: copyOk
       });
     }
 
+    const operableCount = nodes.filter((n) => n.operable).length;
     this._cache = {
       root: r,
-      product,
+      product: seed,
+      seed,
       version,
-      product_bound: productOk,
+      product_bound: operableCount > 0,
+      copies_complete: operableCount === COUNT,
+      mode: 'full-copies',
       count: COUNT,
-      operable: nodes.filter((n) => n.operable).length,
+      operable: operableCount,
       present: nodes.filter((n) => n.present).length,
       nodes
     };
@@ -183,9 +221,11 @@ class QnodeLocator {
   summaryLine() {
     const r = this.roster();
     const ver = r.version || '?';
-    const state = r.product_bound
-      ? `${r.operable}/${r.count} operable`
-      : `${r.present}/${r.count} present · product unbound`;
+    const state = r.copies_complete
+      ? `${r.operable}/${r.count} operable (full copies)`
+      : (r.operable > 0
+        ? `${r.operable}/${r.count} operable · rematerialize remaining`
+        : `${r.present}/${r.count} present · run scripts\\materialize-qnode-copies.cmd`);
     return `Qnodes ${state}  QVM ${ver}  statevector`;
   }
 
