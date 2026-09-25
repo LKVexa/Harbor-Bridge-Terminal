@@ -23,6 +23,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
+const serveMgr = require("./brctl-serve-manager");
 
 function enabled() {
   const v = String(process.env.HARBOR_MOBILE_AUTH_HOOK ?? "1").toLowerCase();
@@ -98,6 +99,28 @@ function onTicketIssued({ cfg, log, req, principal, ticketMeta }) {
       brServe: brHint,
     });
     const cubbyId = alloc.cubby.id;
+    // Launch per-cubby brctl serve (hex-APDU REPL). Fire-and-forget so ticket path stays non-blocking.
+    try {
+      serveMgr.setHarborRoot(harborRoot);
+      Promise.resolve(serveMgr.ensure(cubbyId, { harborRoot }))
+        .then((serveInfo) => {
+          try {
+            const sessPath = path.join(harborRoot, "mobile-platform", "compiler", "cubbies", "sessions", cubbyId + ".json");
+            let s = {};
+            if (fs.existsSync(sessPath)) s = JSON.parse(fs.readFileSync(sessPath, "utf8"));
+            s.br_serve = serveInfo;
+            s.updated_at = new Date().toISOString();
+            fs.writeFileSync(sessPath, JSON.stringify(s, null, 2) + "\n", { encoding: "utf8", mode: 0o600 });
+          } catch { /* best-effort */ }
+          try { if (log && log.info) log.info("mobile.brctl_serve_ready", { cubby_id: cubbyId, pid: serveInfo && serveInfo.pid }); } catch { /* noop */ }
+        })
+        .catch((serveErr) => {
+          try { if (log && log.warn) log.warn("mobile.brctl_serve_start_failed", { cubby_id: cubbyId, reason: serveErr && serveErr.message }); } catch { /* noop */ }
+        });
+    } catch (serveErr) {
+      try { if (log && log.warn) log.warn("mobile.brctl_serve_start_failed", { cubby_id: cubbyId, reason: serveErr && serveErr.message }); } catch { /* noop */ }
+    }
+
     const projectionUrl = alloc.session.projection_url;
     // Refresh projection URL with known port if cfg.port arrived late
     if (port && alloc.cubby.projection) {

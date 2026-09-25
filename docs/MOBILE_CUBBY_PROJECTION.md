@@ -10,7 +10,7 @@
 | **Cubby** | Harbor execution slot. QVM Qnodes (`QN-01`…`QN-50`), containership/DF slots (`CS-NS`…), and mobile Bottle Rocket sessions (`MC-001`…) are all cubbies. |
 | **Mobile cubby** | Bottle Rocket VM session allocated on mobile browser SPIRAL login. VM runs in the cubby on the Harbor gateway; the device browser gets a **projected** view on local 127. |
 | **Cubby materializer** | Reproducible compiler (`brctl assemble` + pins). Prepares the VM **image for the cubby** — does not mean download to phone storage. |
-| **Projection** | `http://127.0.0.1:{port}/cubby/{id}/projection` (HTML session page; optional `brctl serve` for advanced host state). |
+| **Projection** | `http://127.0.0.1:{port}/cubby/{id}/projection` (HTML session page; for `MC-*`, proxies live `brctl serve` hex-APDU REPL). |
 | **Sideload** | Optional `adb`/`idevice` push — **demoted**; not the enter-Harbor path. |
 
 Registry: [`fleet/CUBBIES.json`](../fleet/CUBBIES.json) (grows past 50 when mobile logins create `MC-*` nodes).
@@ -57,18 +57,36 @@ Routes: `/api/cubbies/:id/attach`, `/api/cubbies/access-check?target=`, `/cubby/
 
 ## Compiler role
 
-Rebranded as **cubby materializer**. `brctl assemble` prepares the BRIM for the cubby. Keep `scripts\build-brctl.cmd` / `brctl assemble`. `brctl serve` is an advanced host-state hook; Harbor’s projection page is the browser enter path.
+Rebranded as **cubby materializer**. `brctl assemble` prepares the BRIM for the cubby. Keep `scripts\build-brctl.cmd` / `brctl assemble`. `brctl serve` is launched per mobile cubby and proxied into the projection page (APDU REPL; not a framebuffer).
 
 ## Operability on landing / fleet board
 
 Mobile cubbies appear in `fleet/CUBBIES.json` → `mobile_cubbies[]` with `status: "live"` and `operable: true` when the projection session file exists. API: `GET /api/cubbies`.
 
+## `brctl serve` proxy (real REPL, not a stub)
+
+`brctl serve --state <prefix>` is a **stdio hex-APDU REPL** (banner: `READY hex-APDU per line; EOF stops`). It is **not** an HTTP server and does **not** expose a framebuffer.
+
+Harbor therefore:
+
+1. Launches **one `brctl serve` per mobile cubby** (`MC-*`) via `bridge-terminal/gateway/brctl-serve-manager.js`
+   - Args: `serve --state mobile-platform/compiler/cubbies/serve-states/<MC-id>/br`
+   - Bound to process stdio (localhost-only by construction; no listen port from brctl itself)
+2. Tracks `pid` + state prefix in the cubby session registry; **reaps** on session end / gateway shutdown (`stopAll`)
+3. Proxies APDUs into the browser projection page:
+   - `GET  /cubby/:id/serve/status` — process readiness / pid / state
+   - `POST /cubby/:id/serve/apdu` — body `{ "hex": "..." }` → one APDU request/response
+   - `WS   /cubby/:id/serve/ws` — optional streaming of READY/responses
+4. Projection HTML for `MC-*` embeds an interactive APDU console (HELLO / STATUS / CAPS presets)
+
+QN/CS projection remains Harbor fabric HTML; live serve proxy is attached to **mobile BR cubbies**. Mobile BR gate for QN/CS is unchanged. `device_download: false` remains.
+
 ## Honest gaps
 
-- Projection page is a **contract stub** proving cubby id + session + “projected, not downloaded.” Full Bottle Rocket host UI embedded in the browser is not claimed complete in this pass.
-- `brctl serve` is detected/recorded as a hint; Harbor does not yet proxy a full BR framebuffer into the page.
+- ~~Projection page is a contract stub~~ **Superseded:** projection now proxies `brctl serve` APDU REPL for MC-* proving cubby id + session + “projected, not downloaded.” Full Bottle Rocket host UI embedded in the browser is not claimed complete in this pass.
+- `brctl serve` is a stdio hex-APDU REPL (not a framebuffer); Harbor now launches + proxies it per MC cubby.
 - Physical `adb` push remains optional and was already staged-only when `adb`/device absent.
 
 ## Verification
 
-See `docs/verification/mobile-cubby/`.
+See `docs/verification/mobile-cubby/` and `docs/verification/brctl-serve-proxy/`.

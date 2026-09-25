@@ -178,17 +178,28 @@ function readSession(harborRoot, cubbyId) {
 }
 
 function tryBindBrServe(harborRoot, cubbyId, statePath) {
-  // Optional: if brctl serve exists, record a serve hint. Full BR UI in browser is a gap;
-  // Harbor always serves the projection stub on gateway /cubby/:id/projection.
+  // Record brctl serve bind hint. Harbor gateway brctl-serve-manager.js launches
+  // `brctl serve --state <prefix>` per MC cubby and proxies the hex-APDU REPL into
+  // /cubby/:id/projection (stdio — not a native HTTP framebuffer).
   const brctl = path.join(harborRoot, "mobile-platform", "compiler", "bin", "brctl.exe");
   const alt = path.join(harborRoot, "mobile-platform", "compiler", "bin", "brctl");
   const hit = fs.existsSync(brctl) ? brctl : fs.existsSync(alt) ? alt : null;
   if (!hit) return { attempted: false, reason: "brctl missing" };
+  const prefix = statePath || path.join(
+    harborRoot, "mobile-platform", "compiler", "cubbies", "serve-states", String(cubbyId), "br"
+  );
   return {
     attempted: true,
     brctl: hit,
-    serve_args: ["serve", "--state", statePath || `cubby-${cubbyId}.state`],
-    note: "brctl serve available; Harbor projection page is the browser enter path. Full BR host UI embedding is optional/advanced.",
+    state_prefix: prefix,
+    serve_args: ["serve", "--state", prefix],
+    proxy: {
+      http_status: `/cubby/${cubbyId}/serve/status`,
+      http_apdu: `/cubby/${cubbyId}/serve/apdu`,
+      ws: `/cubby/${cubbyId}/serve/ws`,
+    },
+    surface: "hex-APDU REPL (not a framebuffer)",
+    note: "Gateway brctl-serve-manager launches serve per cubby; projection page proxies APDUs.",
   };
 }
 

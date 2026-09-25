@@ -28,6 +28,7 @@ const { createObserver, readStatus } = require('../ram/residency');
 const { createTraffic } = require('../ram/traffic');
 const mobileAuthHook = require('./mobile-auth-hook');
 const cubbyProjection = require('./cubby-projection');
+const brctlServeManager = require('./brctl-serve-manager');
 
 const PROTOCOL = 'hermit.vws.v2';
 const TICKET_COOKIE = 'vws_ticket';
@@ -201,6 +202,17 @@ function createGateway(cfg, { logSink } = {}) {
   /* ---- WebSocket admission: path -> draining -> Origin -> handshake -> identity -> upgrade ---- */
   server.on('upgrade', (req, socket, head) => {
     socket.on('error', () => {});
+    // Cubby brctl-serve WS proxy (hex-APDU) — handled before terminal admit
+    try {
+      if (cubbyProjection.handleServeUpgrade && cubbyProjection.handleServeUpgrade(req, socket, head, { cfg })) {
+        return;
+      }
+    } catch (e) {
+      try { log.error('cubby.serve_ws_upgrade_error', { reason: e && e.message }); } catch { /* noop */ }
+      try { socket.destroy(); } catch { /* noop */ }
+      return;
+    }
+
     counters.upgrades++;
     // An exception anywhere in admission or hand-off must not escape into the process: the socket is
     // released, capacity is returned, and the accept path keeps serving other clients.
@@ -294,6 +306,7 @@ function createGateway(cfg, { logSink } = {}) {
     if (shutdownPromise) return shutdownPromise;
     const t0 = Date.now();
     registry.draining = true;                       // /health -> 503, tickets + upgrades refused from now on
+    try { brctlServeManager.stopAll(); } catch { /* noop */ }
     log.info('gateway.draining', { reason, connections: registry.conns.size, budgetMs: cfg.shutdownMs });
     shutdownPromise = new Promise((resolve) => {
       const finish = (forced) => {

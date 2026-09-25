@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Harbor cubby MC-004 — projection</title>
+<style>
+  :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+  body { margin: 0; background: #0b1220; color: #e8eefc; }
+  main { max-width: 52rem; margin: 1.5rem auto; padding: 1.25rem; border: 1px solid #243049; border-radius: 12px; background: #121a2b; }
+  h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; background: #1d4ed8; font-size: 0.75rem; margin-right: 0.35rem; }
+  .ok { background: #15803d; }
+  .warn-tag { background: #a16207; }
+  dl { display: grid; grid-template-columns: 9rem 1fr; gap: 0.35rem 0.75rem; margin: 1rem 0; font-size: 0.95rem; }
+  dt { color: #93a4c3; } dd { margin: 0; word-break: break-all; }
+  .banner { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 8px; background: #052e1a; border: 1px solid #166534; line-height: 1.45; }
+  .note { background: #1a2336; border-color: #334155; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 0.85em; }
+  .console { background: #060b14; border: 1px solid #243049; border-radius: 8px; padding: 0.75rem; min-height: 12rem; max-height: 22rem; overflow: auto; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 0.8rem; line-height: 1.4; }
+  .row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.75rem 0; }
+  input[type=text] { flex: 1; min-width: 12rem; background: #0b1220; color: #e8eefc; border: 1px solid #334155; border-radius: 6px; padding: 0.45rem 0.6rem; font-family: ui-monospace, Consolas, monospace; }
+  button { background: #1d4ed8; color: white; border: 0; border-radius: 6px; padding: 0.45rem 0.75rem; cursor: pointer; font-size: 0.85rem; }
+  button.secondary { background: #334155; }
+  .err { color: #fca5a5; }
+  .okline { color: #86efac; }
+</style>
+</head>
+<body>
+<main>
+  <span class="tag ok">operable · live</span>
+  <span class="tag">desktop-direct</span>
+  <span class="tag ok">brctl serve · ready</span>
+  <h1>Cubby MC-004</h1>
+  <p>VM / fabric session projected to this browser on <code>127.0.0.1</code> — not downloaded.</p>
+  <dl>
+    <dt>Cubby id</dt><dd><code>MC-004</code></dd>
+    <dt>Session</dt><dd><code>ws-ticket-muhheekr-operator</code></dd>
+    <dt>Platform</dt><dd>android</dd>
+    <dt>Entry path</dt><dd><code>desktop-direct</code></dd>
+    <dt>Via BR cubby</dt><dd><code>n/a (desktop direct or MC self)</code></dd>
+    <dt>Bind</dt><dd><code>127.0.0.1:52930</code></dd>
+    <dt>Projection URL</dt><dd><code>http://127.0.0.1:52930/cubby/MC-004/projection</code></dd>
+    <dt>VM location</dt><dd>Harbor cubby (gateway side)</dd>
+  </dl>
+  <div class="banner">
+    <strong>Projected from Harbor cubby — not downloaded.</strong>
+    QVM nodes, containership slots, and mobile Bottle Rocket sessions are all cubbies.
+    Desktop opens them on local 127 directly. Mobile must hold a live BR mobile cubby before QVM/containership attach.
+  </div>
+  
+  <h2 style="font-size:1rem;margin:1.25rem 0 0.5rem;color:#c7d2fe">Bottle Rocket <code>brctl serve</code> (proxied)</h2>
+  <div class="banner note">
+    Upstream <code>brctl serve --state …</code> is a <strong>hex-APDU REPL over stdio</strong>
+    (banner: <code>READY hex-APDU per line; EOF stops</code>) — not an HTTP framebuffer.
+    Harbor launches one process per mobile cubby and proxies APDUs here via
+    <code>POST /cubby/MC-004/serve/apdu</code> (optional WS <code>/cubby/MC-004/serve/ws</code>).
+  </div>
+  <dl>
+    <dt>serve pid</dt><dd><code>29560</code></dd>
+    <dt>serve state</dt><dd><code>mobile-platform/compiler/cubbies/serve-states/MC-004/br</code></dd>
+    <dt>serve ready</dt><dd><code>true</code></dd>
+    <dt>surface</dt><dd>hex-APDU REPL (not a framebuffer)</dd>
+  </dl>
+  <div class="row">
+    <button type="button" id="btn-hello" class="secondary">HELLO 010c</button>
+    <button type="button" id="btn-status" class="secondary">STATUS 0102…</button>
+    <button type="button" id="btn-caps" class="secondary">CAPS 010b…</button>
+    <button type="button" id="btn-refresh" class="secondary">Refresh status</button>
+  </div>
+  <div class="row">
+    <input id="apdu" type="text" spellcheck="false" placeholder="hex APDU e.g. 010200000000000000000000" value="010200000000000000000000"/>
+    <button type="button" id="btn-send">Send APDU</button>
+  </div>
+  <div id="log" class="console" aria-live="polite"></div>
+  <script>
+  (function () {
+    var cubbyId = "MC-004";
+    var logEl = document.getElementById("log");
+    function line(cls, text) {
+      var d = document.createElement("div");
+      if (cls) d.className = cls;
+      d.textContent = text;
+      logEl.appendChild(d);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    function showServe(info) {
+      line("okline", "serve ready=" + !!(info && info.ready) + " pid=" + ((info && info.pid) || "?") +
+        " state=" + ((info && (info.state_rel || info.state_prefix)) || "?"));
+      if (info && info.surface) line("", "surface: " + info.surface);
+    }
+    async function refresh() {
+      try {
+        var r = await fetch("/cubby/" + encodeURIComponent(cubbyId) + "/serve/status", { cache: "no-store" });
+        var j = await r.json();
+        if (!r.ok) { line("err", "status HTTP " + r.status + " " + JSON.stringify(j)); return; }
+        showServe(j.serve || j);
+      } catch (e) { line("err", String(e)); }
+    }
+    async function sendHex(hex) {
+      line("", "> " + hex);
+      try {
+        var r = await fetch("/cubby/" + encodeURIComponent(cubbyId) + "/serve/apdu", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hex: hex })
+        });
+        var j = await r.json();
+        if (!r.ok) { line("err", "APDU HTTP " + r.status + " " + JSON.stringify(j)); return; }
+        line("okline", "< " + (j.response || JSON.stringify(j)));
+      } catch (e) { line("err", String(e)); }
+    }
+    document.getElementById("btn-send").onclick = function () {
+      sendHex(document.getElementById("apdu").value);
+    };
+    document.getElementById("btn-hello").onclick = function () { sendHex("010c"); };
+    document.getElementById("btn-status").onclick = function () { sendHex("010200000000000000000000"); };
+    document.getElementById("btn-caps").onclick = function () { sendHex("010b00000000000000000000"); };
+    document.getElementById("btn-refresh").onclick = refresh;
+    line("", "Harbor ↔ brctl serve proxy for " + cubbyId);
+    showServe({"ready":true,"pid":29560,"state_rel":"mobile-platform/compiler/cubbies/serve-states/MC-004/br","surface":"hex-APDU REPL (not a framebuffer)"});
+  })();
+  </script>
+</main>
+</body>
+</html>
