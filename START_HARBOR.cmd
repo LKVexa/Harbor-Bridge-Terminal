@@ -25,6 +25,13 @@ if errorlevel 1 (
   echo [START_HARBOR] warning: QVM seed link missing; rematerialize will need PRODUCT_LINK.txt.
 )
 
+REM --- VB-JA21 portable optical desktop (omni-bin browser for Harbor URL) ---
+call "%~dp0scripts\link-optical-desktop.cmd"
+if errorlevel 1 (
+  echo [START_HARBOR] warning: optical desktop not linked; Harbor URL will not open in JA21.
+  echo               Update optical-desktop\PRODUCT_LINK.txt then re-run scripts\link-optical-desktop.cmd
+)
+
 REM --- Ensure full QVM copies exist (QN-01 has local qvm\cli.py) ---
 if not exist "%QNODE_ROOT%\QN-01\qvm\cli.py" (
   echo [START_HARBOR] Qnode full copies missing - materializing from seed...
@@ -40,6 +47,7 @@ echo   HARBOR_ROOT=%HARBOR_ROOT%
 echo   QNODE_ROOT=%QNODE_ROOT%
 echo   DF_ROOT=%DF_ROOT%
 echo   Focus codes: qn01..qn50  ns nm nl nx nf
+echo   Browser: VB-JA21 Portable Optical Desktop (not system default)
 echo.
 
 cd /d "%HARBOR_ROOT%\bridge-terminal"

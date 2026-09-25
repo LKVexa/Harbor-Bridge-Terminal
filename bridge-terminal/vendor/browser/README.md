@@ -4,13 +4,28 @@ HERMIT's browser pane is engine-agnostic. It ships with a working fallback
 (plain Chromium `BrowserView`) so the app runs immediately, and it auto-detects
 a vendored browser here.
 
-## Drop-in steps
+## Primary Harbor path (standalone omni-bin)
 
-1. Unzip your build into this folder, e.g.
+For `START_HARBOR.cmd`, Harbor does **not** rely on this Electron slot. The
+gateway URL is opened in the **standalone VB-JA21 Portable Optical Desktop**
+(WPF/WebView2) via:
+
+- `optical-desktop\portable\` (junction) + `JA21_START_URL` / `-StartUrl`
+- see repo-root `optical-desktop\README.md` and `START_HARBOR_BROWSER.cmd`
+
+That is the supported way to put `http://127.0.0.1:<port>/` into JA21's omni-bin.
+
+## Optional Electron drop-in (secondary)
+
+Use this folder only if you want an **in-process** BrowserView adapter inside
+the Electron HERMIT shell. The portable JA21 build is WPF-based, so there is
+no ready HTML/WASM bundle to point `BUNDLE_ENTRY` at unless you supply one.
+
+1. Unzip a compatible bundle into this folder, e.g.
 
    ```
    vendor/browser/
-     app/               <- your VB-JA21-VEC1-Portable-Optical-Desktop-9.8.7 bundle
+     app/               <- bootstrap HTML / optical surface
        index.html
        ...
      index.js           <- the adapter (from index.example.js)
@@ -18,12 +33,10 @@ a vendored browser here.
 
 2. Copy `index.example.js` to `index.js`.
 
-3. Edit `BUNDLE_ENTRY` in `index.js` to point at your bundle's bootstrap page,
-   and choose **Mode A** (URL navigation) or **Mode B** (optical/WASM surface)
-   per the comments in that file.
+3. Edit `BUNDLE_ENTRY` in `index.js` and choose **Mode A** or **Mode B**.
 
-That's it — restart HERMIT. The pane header will report `VB-JA21/9.8.7` and the
-terminal's `browser info` command will show the active engine.
+Restart HERMIT. The pane header will report `VB-JA21/9.8.7` when the adapter
+loads.
 
 ## The contract
 
