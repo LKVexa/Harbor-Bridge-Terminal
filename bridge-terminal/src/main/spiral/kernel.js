@@ -29,6 +29,7 @@ const { Environment } = require('./env');
 const { parse } = require('./pipeline');
 const { LineReader } = require('./line-reader');
 const { DFLocator } = require('./dfabric/locator');
+const { QnodeLocator } = require('./qnodes/locator');
 const builtins = require('./commands');
 
 let SESSION_SEQ = 0;
@@ -302,20 +303,86 @@ class SpiralKernel extends EventEmitter {
   _banner(session) {
     const v = (this.host.version && this.host.version()) || '1.0.0';
     const C = '\x1b[38;5;44m', G = '\x1b[38;5;240m', I = '\x1b[38;5;252m', D = '\x1b[2m', R = '\x1b[0m', B = '\x1b[1m';
-    // Hub-and-spoke mark in text (graphite nodes, cyan core), mirroring the LK/Vexa logo.
-    return [
+    const Ok = '\x1b[38;5;114m', Bad = '\x1b[31m', Warn = '\x1b[33m';
+    const lines = [
       '',
       `  ${C}⌜${R}                                                        ${C}⌝${R}`,
       `        ${G}▪${R}      ${G}▪${R}      ${G}▪${R}        ${B}${I}HERMIT${R}  ${G}/${R}  ${C}${B}LK/Vexa${R}`,
       `          ${G}╲  ┆  ╱${R}              ${D}virtual terminal · v${v}${R}`,
-      `        ${G}▪ ┄┄ ${R}${C}◆${R}${G} ┄┄ ▪${R}            ${D}SPIRAL backend · VT engine: internal${R}`,
-      `          ${G}╱  ┆  ╲${R}              ${D}DF fabric · VEC1 Photon delegation${R}`,
+      `        ${G}▪ ┄┄ ${R}${C}◆${R}${G} ┄┄ ▪${R}            ${D}SPIRAL backend · Harbor fleet board${R}`,
+      `          ${G}╱  ┆  ╲${R}              ${D}DF fabric · 50× QVM Qnodes${R}`,
       `        ${G}▪${R}      ${G}▪${R}      ${G}▪${R}`,
       `  ${C}⌞${R}                                                        ${C}⌟${R}`,
       '',
-      `  ${D}Type${R} ${C}help${R} ${D}for commands ·${R} ${C}about${R} ${D}for architecture ·${R} ${C}fabric status${R} ${D}for the nodes${R}`,
-      '', ''
-    ].join('\r\n');
+      `  ${D}Type${R} ${C}help${R} ${D}for commands ·${R} ${C}qn status${R} ${D}·${R} ${C}fabric status${R} ${D}· focus codes below${R}`,
+      ''
+    ];
+
+    // ---- Harbor fleet board (DF containers + Qnodes) ----
+    try {
+      const pol = this.host.fabricPolicy || null;
+      const dfLoc = pol ? new DFLocator({ fixedRoot: pol.root })
+        : new DFLocator({ envRoot: () => session.env.get('DF_ROOT'), resourcesPath: process.resourcesPath });
+      const qLoc = new QnodeLocator({
+        envRoot: () => session.env.get('QNODE_ROOT'),
+        envHarbor: () => session.env.get('HARBOR_ROOT'),
+        appDir: (() => { try { return require('node:path').resolve(__dirname, '..', '..', '..'); } catch { return undefined; } })()
+      });
+
+      lines.push(`  ${B}${I}Harbor fleet${R}`);
+      lines.push(`  ${B}` + 'CODE'.padEnd(6) + 'KIND'.padEnd(10) + 'ID'.padEnd(12) + 'OPERABILITY'.padEnd(14) + `RUNTIME${R}`);
+
+      const dfRoot = dfLoc.root();
+      const dfRoster = dfRoot ? dfLoc.roster() : [];
+      const dfCodes = [
+        { code: 'ns', kind: 'df-node', id: 'N_SMALL', key: 'small' },
+        { code: 'nm', kind: 'df-node', id: 'N_MEDIUM', key: 'medium' },
+        { code: 'nl', kind: 'df-node', id: 'N_LARGE', key: 'large' },
+        { code: 'nx', kind: 'df-node', id: 'N_XLARGE', key: 'xlarge' },
+        { code: 'nf', kind: 'df-fabric', id: 'DF_Fabric', key: null }
+      ];
+      for (const c of dfCodes) {
+        let op, runtime;
+        if (!dfRoot) {
+          op = `${Bad}unbound${R}`;
+          runtime = '—';
+        } else if (c.kind === 'df-fabric') {
+          const p = dfLoc.fabricDir();
+          op = p ? `${Ok}present${R}` : `${Bad}absent${R}`;
+          runtime = p ? 'fabric' : '—';
+        } else {
+          const n = dfRoster.find((x) => x.key === c.key);
+          if (!n || !n.present) { op = `${Bad}absent${R}`; runtime = '—'; }
+          else if (n.built) { op = `${Ok}built${R}`; runtime = 'vm/.build'; }
+          else { op = `${Warn}not built${R}`; runtime = 'present'; }
+        }
+        lines.push(`  ${C}${c.code.padEnd(6)}${R}${c.kind.padEnd(10)}${c.id.padEnd(12)}${op}  ${runtime}`);
+      }
+
+      const q = qLoc.roster();
+      lines.push('');
+      lines.push(`  ${B}Qnodes${R}  ${q.product_bound ? Ok : Bad}${q.operable}/${q.count} operable${R}  QVM ${q.version || '?'}  statevector`);
+      if (!q.product_bound) {
+        lines.push(`  ${Warn}product unbound${R}${D} — run scripts\\link-qvm.cmd or START_HARBOR.cmd${R}`);
+      }
+      // 5 columns × 10 rows of "qnNN ok"
+      for (let row = 0; row < 10; row++) {
+        const parts = [];
+        for (let col = 0; col < 5; col++) {
+          const n = q.nodes[row + col * 10];
+          if (!n) continue;
+          const mark = n.operable ? `${Ok}ok${R}` : (n.present ? `${Warn}?${R}` : `${Bad}-${R}`);
+          parts.push(`${C}${n.code}${R} ${mark}`);
+        }
+        lines.push('  ' + parts.join('   '));
+      }
+      lines.push(`  ${D}focus: type qn07   containers: ns nm nl nx nf   · qn status for details${R}`);
+    } catch (err) {
+      lines.push(`  ${Warn}fleet board unavailable:${R} ${err.message}`);
+    }
+
+    lines.push('', '');
+    return lines.join('\r\n');
   }
 
   /* ---- status (for the renderer status bar / hub widget) --------------- */
@@ -332,6 +399,23 @@ class SpiralKernel extends EventEmitter {
       dfRoot = loc.root();
       nodes = loc.roster().map((n) => ({ key: n.key, node: n.node, present: n.present, built: n.built }));
     } catch { /* ignore */ }
+    let qnodes = null;
+    try {
+      const qLoc = new QnodeLocator({
+        envRoot: () => s.env.get('QNODE_ROOT'),
+        envHarbor: () => s.env.get('HARBOR_ROOT'),
+        appDir: (() => { try { return require('node:path').resolve(__dirname, '..', '..', '..'); } catch { return undefined; } })()
+      });
+      const q = qLoc.roster();
+      qnodes = {
+        root: q.root,
+        product_bound: q.product_bound,
+        version: q.version,
+        operable: q.operable,
+        count: q.count,
+        focus: s.env.get('HARBOR_FOCUS') || null
+      };
+    } catch { /* ignore */ }
     const home = s.env.get('HOME');
     let cwd = s.cwd;
     if (home && (cwd === home || cwd.startsWith(home + '/'))) cwd = '~' + cwd.slice(home.length);
@@ -346,6 +430,9 @@ class SpiralKernel extends EventEmitter {
       dfRoot: pol && dfRoot ? '$DF_ROOT' : dfRoot,
       photon: pol ? { url: null, token: false } : { url: s.env.get('VEC1_API') || null, token: !!s.env.get('VEC1_TOKEN') },
       nodes,
+      containers: nodes,
+      qnodes,
+      focus: s.env.get('HARBOR_FOCUS') || null,
       commands: this.registry.list().length
     };
   }
@@ -390,6 +477,24 @@ class SpiralKernel extends EventEmitter {
           const exp = session.aliases[name].split(/\s+/).filter(Boolean);
           name = exp.shift();
           argv = exp.concat(argv);
+        }
+
+        // Harbor interactive focus: exit/detach leave focus; focus-local verbs
+        // (and unknown names) route through the __hf__ dispatcher.
+        const harborFocus = session.env.get('HARBOR_FOCUS');
+        if (harborFocus) {
+          const focusLocal = new Set([
+            'info', 'capabilities', 'resources', 'run', 'bell', 'selftest',
+            'status', 'where', 'help', 'detach', 'validate',
+            'build', 'verify', 'doctor', 'attest'
+          ]);
+          if (name === 'exit' || name === 'detach' || name === 'logout' || name === 'quit') {
+            name = '__hf__';
+            argv = [harborFocus, 'detach'];
+          } else if (focusLocal.has(name) || !this.registry.resolve(name)) {
+            argv = [harborFocus, name, ...argv];
+            name = '__hf__';
+          }
         }
 
         const descriptor = this.registry.resolve(name);

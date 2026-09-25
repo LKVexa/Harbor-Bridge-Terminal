@@ -245,6 +245,10 @@ class Connection {
     for (const k of ['HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'TEMP', 'TMP', 'SystemRoot', 'SYSTEMROOT', 'JAVA_HOME', 'PATHEXT', 'COMSPEC']) if (process.env[k] !== undefined) env[k] = process.env[k];
     if (fabric) Object.assign(env, { VWS_W_FABRIC: '1', VWS_W_DF_ROOT: cfg.dfRoot, VWS_W_FABRIC_BUILD: cfg.fabricBuild ? '1' : '0', VWS_W_FABRIC_SLOTS: String(cfg.fabricSlots) });
     if (cfg.python) env.VWS_W_PYTHON = cfg.python;
+    // Harbor Qnode fleet roots (read-only discovery in the worker process env).
+    if (process.env.QNODE_ROOT) env.QNODE_ROOT = process.env.QNODE_ROOT;
+    if (process.env.HARBOR_ROOT) env.HARBOR_ROOT = process.env.HARBOR_ROOT;
+    if (process.env.QVM_PRODUCT_ROOT) env.QVM_PRODUCT_ROOT = process.env.QVM_PRODUCT_ROOT;
     const g = this.gen;
     const hooks = { root: cfg.root, env, heapBytes: cfg.workerHeapBytes, assemblyMs: cfg.bridgeAssemblyMs, log: this.log,
       onRecord: (rec, bytes, info) => { if (g === this.gen) this._fromWorker(rec, bytes, info); },

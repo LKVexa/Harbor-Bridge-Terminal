@@ -104,6 +104,11 @@ function bootKernel() {
       browserState: () => (browserPane ? browserPane.state() : { visible: false }),
       setTitle: (t) => win && win.setTitle(t ? `HERMIT — ${t}` : 'HERMIT'),
       version: () => app.getVersion()
+    },
+    baseEnv: {
+      ...(process.env.DF_ROOT ? { DF_ROOT: process.env.DF_ROOT } : {}),
+      ...(process.env.QNODE_ROOT ? { QNODE_ROOT: process.env.QNODE_ROOT } : {}),
+      ...(process.env.HARBOR_ROOT ? { HARBOR_ROOT: process.env.HARBOR_ROOT } : {})
     }
   });
 

@@ -14,6 +14,7 @@ const system = require('./system');
 const browser = require('./browser');
 const dfabric = require('./dfabric');
 const photon = require('./photon');
+const qnode = require('./qnode');
 
 module.exports = [
   ...system,
@@ -21,5 +22,6 @@ module.exports = [
   ...coreutils,
   ...browser,
   ...dfabric,
-  ...photon
+  ...photon,
+  ...qnode
 ];
