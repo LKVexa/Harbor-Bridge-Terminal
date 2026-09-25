@@ -1,6 +1,6 @@
 # Harbor Bridge Terminal
 
-A combined workspace that puts **Unikernel Containership UC-2.8.0** (edge atoms) beside a **live virtual console** — the HERMIT / SPIRAL terminal with its RAM-resident virtual WebSocket bridge — plus a **50× QVM Qnode fleet** (full independent copies), the **DF fabric** containers, and **VB-JA21 Portable Optical Desktop 9.8.7** as the Harbor browser (omni-bin window).
+A combined workspace that puts **Unikernel Containership UC-2.8.0** (edge atoms) beside a **live virtual console** — the HERMIT / SPIRAL terminal with its RAM-resident virtual WebSocket bridge — plus a **50× QVM Qnode fleet** (full independent copies), the **DF fabric** containers, **VB-JA21 Portable Optical Desktop 9.8.7** as the Harbor browser (omni-bin window), and a **mobile platform** whose application nodes are **Bottle Rocket VMs** (iOS735_LCTL + LinearAndroid_LCTL), with **RODEO** as the Linear Android Gradle-substitute **sidecar**, plus a **reproducible mobile VM node compiler** for auth/enter-Harbor.
 
 Think of the containership as the harbor yard and the virtual console as the bridge: one place to inspect the ship, run edge checks, talk to sessions over a bounded, ledgered websocket, and focus into individual Qnodes or DF containers. The local gateway URL opens inside JA21, **not** the system default browser.
 
@@ -23,6 +23,10 @@ Harbor-Bridge-Terminal/
 │   ├── VERSION
 │   ├── README.md
 │   └── portable/       junction → Downloads JA21-Portable-Desktop-9.8.7 (gitignored)
+├── mobile-platform/   Bottle Rocket VM + iOS/Android app nodes + compiler
+│   ├── bottle-rocket/  VM substrate (junction)
+│   ├── nodes/          ios-lctl, android-lctl (+ sidecar-rodeo)
+│   └── compiler/       reproducible mobile VM node compiler + auth hook
 ├── qvm/
 │   ├── PRODUCT_LINK.txt  absolute path to the QVM 8.1.0-alpha seed
 │   └── product/          optional junction → QVM seed (rematerialize only)
@@ -31,10 +35,13 @@ Harbor-Bridge-Terminal/
 │   └── QN-01/ … QN-50/   FULL independent QVM trees + IDENTITY.json + QNODE.cmd
 ├── fleet/
 │   ├── HARBOR_FLEET.json DF containers + Qnodes + focus codes
+│   ├── MOBILE_PLATFORM.json  Bottle Rocket VM + app nodes + compiler
 │   └── QNODE_LOAD_AUDIT.md  latest load-carry audit (all 50)
 ├── scripts/
 │   ├── link-qvm.cmd
 │   ├── link-optical-desktop.cmd
+│   ├── link-mobile-platform.cmd
+│   ├── compile-mobile-vm-node.cmd / on-mobile-auth.cmd / deliver-mobile-vm-node.cmd
 │   ├── materialize-qnode-copies.cmd
 │   ├── audit-qnode-load.cmd / .js
 │   └── generate-qnodes.js
@@ -52,7 +59,7 @@ Harbor-Bridge-Terminal/
 START_HARBOR.cmd
 ```
 
-1. Ensures QVM + **optical-desktop** junctions exist.
+1. Ensures QVM + **optical-desktop** + **mobile-platform** junctions exist (warns if mobile sources missing).
 2. Starts the HERMIT gateway on `http://127.0.0.1:10000/` (or the next free port if busy — the console prints the URL).
 3. When the gateway is listening, launches **VB-JA21 Portable Desktop** with that URL as `JA21_START_URL` / `-StartUrl` so the **omni-bin** navigates to Harbor.
 4. Does **not** call `start http://...` or open Edge/Chrome.
@@ -132,6 +139,30 @@ npm test
 - **Bulk tree (~800 MB)** is gitignored; clone + `link-optical-desktop.cmd` restores operability when the portable exists under Downloads (or update `PRODUCT_LINK.txt`).
 - **Electron `vendor/browser`:** optional secondary slot for an in-process BrowserView adapter. Primary UX is the standalone WPF omni-bin window above.
 
+
+## Mobile platform (Bottle Rocket VMs + reproducible compiler)
+
+**Rules:** (1) each mobile **application node** is a **Bottle Rocket VM**; (2) **RODEO is a sidecar to Linear Android** (Gradle substitute), not a peer app node.
+
+| Piece | Harbor path | Role |
+|-------|-------------|------|
+| Bottle Rocket 3.0.0 MODEL OPERATIONAL 110K | `mobile-platform/bottle-rocket/` | Shared **VM substrate** |
+| iOS735_LCTL v0.1.0 | `mobile-platform/nodes/ios-lctl/` | **iOS** app node = Bottle Rocket VM |
+| LinearAndroid_LCTL v0.1.0 | `mobile-platform/nodes/android-lctl/` | **Android** app node = Bottle Rocket VM |
+| RODEO 0.1.0 | `mobile-platform/nodes/android-lctl/sidecar-rodeo/` | **Sidecar** to Linear Android (Gradle substitute) |
+
+**Link:** `scripts\link-mobile-platform.cmd` (also from `START_HARBOR.cmd`; missing sources warn).
+
+**Compiler (auth / enter Harbor):** when another mobile platform authenticates into Harbor, compile a Bottle Rocket-based VM node package and stage/deliver it:
+
+```bat
+scripts\on-mobile-auth.cmd --platform android --session <id> --device <id>
+scripts\compile-mobile-vm-node.cmd --platform ios --dry-run
+```
+
+- Contract + reproducibility: [`mobile-platform/compiler/README.md`](mobile-platform/compiler/README.md)
+- Fleet record: [`fleet/MOBILE_PLATFORM.json`](fleet/MOBILE_PLATFORM.json)
+- Honest scope: linked operator surface + compile/package pipeline. Does **not** claim phones are flashed; `deliver` uses `adb` when present or stages with next-command.
 ## Qnode fleet (50× full QVM 8.1.0-alpha copies)
 
 - **Full copies:** each `qnodes\QN-XX\` is a complete independent QVM product tree (`qvm/`, `examples/`, `PHOTON/`, `RUN_QVM.cmd`, `VERSION`, …) plus Harbor `IDENTITY.json` and `QNODE.cmd`.
@@ -184,6 +215,7 @@ Optional: `set QNODE_AUDIT_PARALLEL=5` (default) before running. If inventory fa
 | Qnode fleet | 50 full copies of `QVM_Quantum_VM_v8.1.0-alpha` under `qnodes/` |
 | DF fabric | Bound from Desktop `New folder` (`DF_Fabric` + node containers) |
 | Optical desktop | VB-JA21 Portable Desktop 9.8.7 (junction from Downloads; start URL → Harbor) |
+| Mobile platform | Bottle Rocket 110K VM + iOS/Android LCTL app nodes; RODEO=Android Gradle sidecar; reproducible compiler on mobile auth |
 
 Neither upstream QVM, DF archive, nor the Downloads JA21 portable was modified in place; this repo is the integrated working tree.
 

@@ -1,0 +1,98 @@
+{
+  "version": 2,
+  "generated": "2026-09-25T14:05:00-07:00",
+  "architecture": {
+    "rules": [
+      "Each mobile platform application node is a Bottle Rocket VM.",
+      "RODEO is a sidecar to Linear Android because RODEO is a Gradle substitute."
+    ],
+    "vm_substrate": "mobile-platform/bottle-rocket",
+    "vm_product": "BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K",
+    "vm_version": "3.0.0-MODEL_OPERATIONAL_110K",
+    "app_node_kind": "bottle-rocket-vm-app-node",
+    "sidecar_kind": "linear-android-sidecar"
+  },
+  "vm_substrate": {
+    "id": "BOTTLE_ROCKET_VM",
+    "role": "vm-substrate",
+    "harbor_dir": "mobile-platform/bottle-rocket",
+    "link_target": "mobile-platform/bottle-rocket/product",
+    "product_link": "mobile-platform/bottle-rocket/PRODUCT_LINK.txt",
+    "default_source": "C:\\Users\\russe\\OneDrive\\Desktop\\New folder\\BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K\\BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K",
+    "marker": "MANIFEST.json",
+    "version_file": "mobile-platform/bottle-rocket/VERSION"
+  },
+  "application_nodes": [
+    {
+      "id": "BR-VM-IOS735-LCTL",
+      "kind": "bottle-rocket-vm-app-node",
+      "platform": "ios",
+      "display_name": "iOS735_LCTL",
+      "product_version": "0.1.0",
+      "harbor_dir": "mobile-platform/nodes/ios-lctl",
+      "link_target": "mobile-platform/nodes/ios-lctl/product",
+      "identity": "mobile-platform/nodes/ios-lctl/IDENTITY.json",
+      "vm_substrate": "mobile-platform/bottle-rocket",
+      "default_source": "C:\\Users\\russe\\OneDrive\\Desktop\\New folder\\iOS735_LCTL_v0.1.0\\iOS735_LCTL_v0.1.0",
+      "marker": "README.md",
+      "sidecars": []
+    },
+    {
+      "id": "BR-VM-LINEARANDROID-LCTL",
+      "kind": "bottle-rocket-vm-app-node",
+      "platform": "android",
+      "display_name": "LinearAndroid_LCTL",
+      "product_version": "0.1.0",
+      "harbor_dir": "mobile-platform/nodes/android-lctl",
+      "link_target": "mobile-platform/nodes/android-lctl/product",
+      "identity": "mobile-platform/nodes/android-lctl/IDENTITY.json",
+      "vm_substrate": "mobile-platform/bottle-rocket",
+      "default_source": "C:\\Users\\russe\\OneDrive\\Desktop\\New folder\\LinearAndroid_LCTL_v0.1.0\\LinearAndroid_LCTL_v0.1.0",
+      "marker": "TRANSLATION_REPORT.md",
+      "sidecars": [
+        {
+          "id": "RODEO-GRADLE-SUBSTITUTE",
+          "kind": "linear-android-sidecar",
+          "role": "gradle-substitute-build-toolchain",
+          "display_name": "RODEO",
+          "product_version": "0.1.0",
+          "harbor_dir": "mobile-platform/nodes/android-lctl/sidecar-rodeo",
+          "link_target": "mobile-platform/nodes/android-lctl/sidecar-rodeo/product",
+          "identity": "mobile-platform/nodes/android-lctl/sidecar-rodeo/IDENTITY.json",
+          "pairs_with": "BR-VM-LINEARANDROID-LCTL",
+          "default_source": "C:\\Users\\russe\\OneDrive\\Desktop\\New folder\\RODEO",
+          "marker": "rodeo.cmd"
+        }
+      ]
+    }
+  ],
+  "link_script": "scripts/link-mobile-platform.cmd",
+  "start_harbor_hook": true,
+  "runtime_claims": {
+    "hermit_launches_mobile_binaries": false,
+    "operator_surface_linked": true,
+    "rodeo_is_peer_app_node": false,
+    "rodeo_is_linear_android_sidecar": true,
+    "future_device_bridge": "documented as possible direction only; not implemented in this integration"
+  },
+  "compiler": {
+    "name": "harbor-mobile-vm-node-compiler",
+    "version": "0.1.0",
+    "entrypoint": "mobile-platform/compiler/compile-mobile-vm-node.js",
+    "scripts": [
+      "scripts/compile-mobile-vm-node.cmd",
+      "scripts/on-mobile-auth.cmd",
+      "scripts/deliver-mobile-vm-node.cmd"
+    ],
+    "schema": "mobile-platform/compiler/schema/compile-manifest.schema.json",
+    "out_dir": "mobile-platform/compiler/out",
+    "auth_hook": "mobile-platform/compiler/hooks/on-mobile-auth.js",
+    "auth_queue": "mobile-platform/compiler/auth-queue",
+    "contract": {
+      "on_mobile_auth": "compile Bottle Rocket VM app-node package for platform, then stage/deliver",
+      "android_path": "LinearAndroid_LCTL app node + RODEO gradle-substitute sidecar",
+      "ios_path": "iOS735_LCTL app node",
+      "substrate": "BOTTLE_ROCKET_3.0.0_MODEL_OPERATIONAL_110K"
+    }
+  }
+}

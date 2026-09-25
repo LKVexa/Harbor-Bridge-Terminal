@@ -197,6 +197,10 @@ Commit `b256b3c0` converted thin shared instances to **50 independent trees** so
 
 ---
 
+### 6.4 `fleet/MOBILE_PLATFORM.json`
+
+Records VM substrate, iOS/Android Bottle Rocket app nodes, RODEO sidecar binding, and the reproducible compiler / `on-mobile-auth` contract. Junction targets are not inventoried as git content.
+
 ## 7. Operator surface
 
 ### 7.1 Focus command codes

@@ -32,6 +32,13 @@ if errorlevel 1 (
   echo               Update optical-desktop\PRODUCT_LINK.txt then re-run scripts\link-optical-desktop.cmd
 )
 
+REM --- Mobile platform: Bottle Rocket VM + iOS/Android app nodes; RODEO=Linear Android sidecar ---
+call "%~dp0scripts\link-mobile-platform.cmd"
+if errorlevel 1 (
+  echo [START_HARBOR] warning: mobile-platform link incomplete; Harbor continues.
+  echo               Update mobile-platform\*\PRODUCT_LINK.txt then re-run scripts\link-mobile-platform.cmd
+)
+
 REM --- Ensure full QVM copies exist (QN-01 has local qvm\cli.py) ---
 if not exist "%QNODE_ROOT%\QN-01\qvm\cli.py" (
   echo [START_HARBOR] Qnode full copies missing - materializing from seed...
@@ -48,6 +55,7 @@ echo   QNODE_ROOT=%QNODE_ROOT%
 echo   DF_ROOT=%DF_ROOT%
 echo   Focus codes: qn01..qn50  ns nm nl nx nf
 echo   Browser: VB-JA21 Portable Optical Desktop (not system default)
+echo   Mobile: Bottle Rocket VM + iOS/Android nodes (RODEO=Android sidecar)
 echo.
 
 cd /d "%HARBOR_ROOT%\bridge-terminal"

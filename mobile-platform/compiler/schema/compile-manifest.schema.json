@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "harbor-mobile-vm-node-compile-manifest.schema.json",
+  "title": "Harbor Mobile VM Node Compile Manifest",
+  "type": "object",
+  "required": ["schema_version", "compiler", "platform", "node_id", "reproducibility", "inputs", "output", "created"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "compiler": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "entrypoint": { "type": "string" }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "properties": {
+        "event": { "type": "string" },
+        "session_id": { "type": ["string", "null"] },
+        "device_id": { "type": ["string", "null"] },
+        "auth_principal": { "type": ["string", "null"] }
+      }
+    },
+    "platform": { "enum": ["android", "ios"] },
+    "node_id": { "type": "string" },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "vm_substrate": { "type": "string" },
+        "app_node_kind": { "const": "bottle-rocket-vm-app-node" },
+        "android_sidecar": { "type": ["string", "null"] }
+      }
+    },
+    "reproducibility": {
+      "type": "object",
+      "required": ["content_hash", "source_date_epoch", "deterministic_path"],
+      "properties": {
+        "content_hash": { "type": "string", "description": "SHA-256 of canonical input pin set" },
+        "source_date_epoch": { "type": ["string", "integer"] },
+        "deterministic_path": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "required": ["pins"],
+      "properties": {
+        "pins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role", "path", "sha256"],
+            "properties": {
+              "role": { "type": "string" },
+              "path": { "type": "string" },
+              "sha256": { "type": "string" },
+              "bytes": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "build_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "enum": ["ok", "skipped", "failed"] },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["dir", "bundle", "bundle_sha256"],
+      "properties": {
+        "dir": { "type": "string" },
+        "bundle": { "type": "string" },
+        "bundle_sha256": { "type": "string" },
+        "delivery_staged": { "type": "string" }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["staged", "sent", "failed", "not_attempted"] },
+        "tool": { "type": ["string", "null"] },
+        "next_command": { "type": ["string", "null"] },
+        "detail": { "type": "string" }
+      }
+    },
+    "created": { "type": "string" }
+  }
+}
