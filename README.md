@@ -4,6 +4,14 @@ A combined workspace that puts **Unikernel Containership UC-2.8.0** (edge atoms)
 
 Think of the containership as the harbor yard and the virtual console as the bridge: one place to inspect the ship, run edge checks, talk to sessions over a bounded, ledgered websocket, and focus into individual Qnodes or DF containers. The local gateway URL opens inside JA21, **not** the system default browser.
 
+
+## Technical note
+
+**Full platform monograph (architecture, figures, verification / historical replay results):**
+[docs/Harbor-Bridge-Terminal-Technical-Note.md](docs/Harbor-Bridge-Terminal-Technical-Note.md)
+
+Supporting artifacts: [docs/figures/](docs/figures/) (charts from the Qnode load audit JSON) and [docs/verification/](docs/verification/) (session probe outputs). Metrics in that note are taken only from repo files and commands that were actually run — no fabricated trading backtests.
+
 ## Layout
 
 ```
