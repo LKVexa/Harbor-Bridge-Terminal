@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document** | Harbor Bridge Terminal Technical Note |
-| **Version** | 1.0 (Product Preview) |
+| **Version** | 1.1 (Product Preview) |
 | **Date** | 2026-09-25 (America/Los_Angeles / PT) |
 | **Classification** | Product Preview — Tester evaluation |
 | **Authors / Attribution** | David Paul Russell / Russell Philip Smithson (LK/Vexa, Linear Finance) |
@@ -25,7 +25,7 @@
 
 The primary operator entry is `START_HARBOR.cmd` → `bridge-terminal/tools/start-local.js`, which mints (or reuses) a loopback access token, binds fleet roots, starts `gateway/server.js` on `127.0.0.1` (preferred port **10000**, auto-advancing if busy), then launches JA21 with `JA21_START_URL` and `JA21_ALLOW_PRIVATE_HOSTS=1`.
 
-**Verification posture (honest):** On 2026-09-25 PT a full Qnode load audit recorded **50/50** inventory + load-carry passes (`fleet/QNODE_LOAD_AUDIT.*`). This note’s verification chapter **re-ran** presence, inventory, independence, fleet alignment, start-path dry checks, a **3-node load spot-check (9/9)**, and a **bridge unit subset (30/30)**. It does **not** invent trading PnL, Sharpe ratios, or synthetic throughput. Where a class of result does not exist (market backtester), we define **“backtesting”** as **historical / regression verification** of platform behaviors against the fixed fleet snapshot.
+**Verification posture (honest):** On 2026-09-25 PT a full Qnode load audit recorded **50/50** inventory + load-carry passes (`fleet/QNODE_LOAD_AUDIT.*`). This note’s verification chapters **re-ran** presence, inventory, independence, fleet alignment, start-path dry checks, a **3-node load spot-check (9/9)**, a **bridge unit subset (30/30)**, and a **live SPIRAL/landing HTTP + WebSocket-admission probe** on a controlled `--no-browser` gateway (see §13). It does **not** invent trading PnL, Sharpe ratios, or synthetic throughput. Where a class of result does not exist (market backtester), we define **“backtesting”** as **historical / regression verification** of platform behaviors against the fixed fleet snapshot.
 
 ---
 
@@ -329,6 +329,7 @@ Source: `docs/verification/audit-timing-stats.json`. Each selftest run reported 
 | Bridge unit subset | **30/30 PASS** in 192.5 ms | `docs/verification/bridge-unit-subset.txt` |
 | Optical desktop link | start cmd + ps1 **present** | `docs/verification/optical-desktop-link.json` |
 | Containership EDGE status | cited recorded evidence (59 green / 27 red atoms) | `docs/verification/containership-edge-summary.json` |
+| SPIRAL/landing HTTP+WS (later same day) | **PASS** controlled gateway `:10003` — see §13 | `docs/verification/spiral-landing/` |
 
 Consolidated: `docs/verification/SESSION_VERIFICATION_SUMMARY.json`.
 
@@ -415,24 +416,122 @@ All exit codes **0**.
 
 ---
 
-## 13. Limitations, known gaps, future work
+## 13. SPIRAL / landing verification
 
-| Gap | Notes |
-|-----|-------|
-| Live SPIRAL landing not interactively exercised | Banner code inspected; interactive session not opened |
-| Full `npm test` / chaos / fabric e2e | Not run end-to-end (subset only); e2e may need long-lived gateway |
-| Full 50-node audit re-run | Deferred; prior same-day audit + spot-check used |
-| `uc.py verify --quick` full battery | Not run; EDGE status cited instead |
-| DF fabric live build/verify | Depends on external `DF_ROOT` tree; not asserted green here |
-| Multi-audit trend | Only one audit JSON snapshot exists |
-| JA21 bulk not in git | Requires Downloads portable + `link-optical-desktop.cmd` |
-| Preview license | Not production; no warranty |
+### 13.1 What "landing" means in Harbor
 
-**Future work (suggested):** dated audit append; CI job for inventory+spot-check; optional hermetic DF fixture; document EDGE_RED atom triage.
+Harbor's operator landing is two layers:
+
+1. **HTTP landing page** — static HERMIT web client (`bridge-terminal/web/index.html`) served by `gateway/server.js` at `http://127.0.0.1:<port>/` (sign-in shell + terminal surface). Public JSON: `/health`, `/live`, `/config.json`.
+2. **SPIRAL session banner** — after authenticated WebSocket upgrade (`/ws/terminal`, subprotocol `hermit.vws.v2`) and session open, `SpiralKernel._banner` prints the **Harbor fleet board**: DF rows (`ns`/`nm`/`nl`/`nx`/`nf`) with OPERABILITY + RUNTIME, then **Qnodes** `operable/count` and a 5×10 `qnNN` grid (`kernel.js` ~303–386). Focus shorts are registered in `commands/qnode.js` (loop `qn01`…`qn50` + `DF_FOCUS`).
+
+The fleet board is **not** embedded in the static HTML; HTTP alone cannot show operable counts. Operability for documentation was therefore measured by running the **same** `QnodeLocator` / `DFLocator` classes the banner uses, plus live HTTP/WS admission against a running gateway.
+
+### 13.2 Methodology (2026-09-25 ~13:35–13:40 PT)
+
+| Step | Action | Honesty rule |
+|------|--------|--------------|
+| Port survey | `Get-NetTCPConnection` on `127.0.0.1:10000`–`10019` | Record owners; do not invent listeners |
+| Attach vs start | Pre-existing Harbor on **10001** and **10002**; non-Harbor hermit on **10000** | Prefer Harbor instances; avoid killing operator sessions |
+| Controlled start | `node tools/start-local.js --no-browser --port 10003` | Skip JA21 UI; bind `QNODE_ROOT` + `DF_ROOT` |
+| HTTP probes | `Invoke-WebRequest` `/`, `/health`, `/live`, `/config.json`, CSS, `/index.html` | Record status, bytes, ms |
+| Ticket API | `POST /api/ws-ticket` Bearer vs no-auth | Redact token/ticket values in artifacts |
+| WS admission | Raw upgrade with `Sec-WebSocket-Protocol: hermit.vws.v2` | Cookie+Origin and Bearer+no-Origin → expect **101** |
+| Fleet board | Node script requiring locator modules | Same OPERABILITY/RUNTIME fields as `_banner` |
+| Focus codes | Structural scan of `commands/qnode.js` | Loop registration for 50 Qnode shorts + DF keys |
+| Cleanup | Stopped probe start-local + gateway PIDs | Left **10000/10001/10002** running |
+
+Raw evidence: `docs/verification/spiral-landing/` (see `COMMAND_LOG.md`, `SPIRAL_LANDING_VERIFICATION_SUMMARY.json`).
+
+### 13.3 Results — HTTP / config (port **10003**, controlled start)
+
+| Path | HTTP | ms | bytes | Pass |
+|------|-----:|---:|------:|:----:|
+| `/` | 200 | 50 | 7906 | yes |
+| `/health` | 200 | 17 | 15 | yes (`{"status":"ok"}`) |
+| `/live` | 200 | 14 | 2297 | yes (profile `LOCAL_VOLATILE`) |
+| `/config.json` | 200 | 19 | 269 | yes (`protocol: hermit.vws.v2`, `capabilities.fabric: true`) |
+| `/styles.css` | 200 | 24 | 11804 | yes |
+| `/web.css` | 200 | 16 | 2271 | yes |
+| `/index.html` | 200 | 25 | 7906 | yes |
+
+Landing HTML title observed: **HERMIT — virtual WebSocket terminal**; sign-in / terminal surface markers present (`port10003-html-markers.json`).
+
+Pre-existing Harbor **10001** / **10002** also returned `/health` **200** and `/config.json` with `fabric: true` (spot-checked; artifacts under `port10001_*` / `port10002_*`).
+
+### 13.4 Results — auth + WebSocket admission (10003)
+
+| Probe | Result |
+|-------|--------|
+| `POST /api/ws-ticket` + Bearer | **200**, `Set-Cookie` `vws_ticket` Path=`/ws/terminal`, body `expiresInMs` (ticket value redacted) |
+| `POST /api/ws-ticket` no auth | **401** (expected) |
+| WS upgrade Cookie + `Origin: http://127.0.0.1:10003` | **101** Switching Protocols |
+| WS upgrade Bearer + no Origin (`VWS_ALLOW_NO_ORIGIN`) | **101** Switching Protocols |
+
+Full VT banner text over the wire was **not** decoded (would require completing the `hermit.vws.v2` session-open handshake after upgrade). Admission to the SPIRAL transport path is verified; interactive banner rendering remains an optional JA21 check (§14).
+
+### 13.5 Results — fleet board fields (locator = banner logic)
+
+Measured via `QnodeLocator` + `DFLocator` with `HARBOR_ROOT` / `QNODE_ROOT` / `DF_ROOT` matching start-local (28 ms):
+
+| Surface | Code | Operability | Runtime |
+|---------|------|-------------|---------|
+| DF node | `ns` | not built | present |
+| DF node | `nm` | not built | present |
+| DF node | `nl` | not built | present |
+| DF node | `nx` | not built | present |
+| DF fabric | `nf` | present | fabric |
+| Qnodes | `qn01`…`qn50` | **50/50 operable** | QVM **8.1.0-alpha** full-copies |
+
+Focus registration (source): loop builds `qn01`…`qn50` shorts; `DF_FOCUS` keys `ns`/`nm`/`nl`/`nx`/`nf` present — **PASS** (`fleet-board-locator.json`).
+
+### 13.6 Harbor process lifecycle this session
+
+| Action | Detail |
+|--------|--------|
+| Started | `start-local.js --no-browser --port 10003` (parent + `gateway/server.js` child) |
+| Stopped | Yes — probe PIDs terminated after probes; **10003** no longer listening |
+| Left running | Pre-existing **10000** (other hermit), Harbor **10001**, Harbor **10002** |
+
+### 13.7 Residual gaps (SPIRAL-specific)
+
+- JA21 omni-window interactive sign-in and visual confirmation of the fleet board
+- End-to-end decode of SPIRAL banner VT bytes after session-open
+- DF node **build** / **verify** (dirs present; operability "not built")
 
 ---
 
-## 14. References
+## 14. Limitations, deferred verification, and skipped work
+
+### 14.1 Known platform gaps
+
+| Gap | Notes |
+|-----|-------|
+| DF fabric live build/verify | `DF_ROOT` bound; nodes **present** but **not built** (see §13.5); not asserted green |
+| Multi-audit trend | Only one full audit JSON snapshot exists |
+| JA21 bulk not in git | Requires Downloads portable + `link-optical-desktop.cmd` |
+| Preview license | Not production; no warranty |
+
+### 14.2 Deferred verification / skipped work (prior documentation session + residual)
+
+These items were **explicitly skipped** (or only partially covered) so readers are not misled. Rationale and how to run later:
+
+| Skipped item | Why skipped | How a reader can run later |
+|--------------|-------------|----------------------------|
+| Full `scripts/audit-qnode-load` re-run of all 50 | Same-day full audit already green (`fleet/QNODE_LOAD_AUDIT.*`, 13:23:42 PDT); session used inventory + **3-node spot-check** | `scripts\audit-qnode-load.cmd` (set `QNODE_AUDIT_PARALLEL` if desired) |
+| Live `START_HARBOR` + JA21 interactive session / live SPIRAL landing UI | Long-lived optical desktop UI; interactive sign-in | `START_HARBOR.cmd` (or `START_HARBOR.cmd --no-browser` then `START_HARBOR_BROWSER.cmd`); paste `ACCESS_TOKEN.txt` |
+| Full `npm test` / chaos / fabric e2e | Long runtime; some suites need services | `cd bridge-terminal && npm test` (see `bridge-terminal/package.json` scripts) |
+| `uc.py verify --quick` full battery | EDGE recorded evidence cited instead of fresh pytest | `cd containership && uc.py verify --quick --no-hull` or `VERIFY.cmd` / `EDGE.cmd` |
+| PDF/HTML export of this note | Optional; markdown is primary | Any Pandoc/Markdown toolchain against this file |
+| `bridge-terminal/package-lock.json` left untracked | Created as `npm install` side-effect; lockfile policy still open for Electron desktop | Decide deliberately whether to commit after a clean `npm install` |
+
+**Partial coverage this revision:** HTTP landing + WS admission + locator fleet board (§13) **were** run. Remaining SPIRAL UI gap is JA21 visual / full session-open banner decode (§13.7).
+
+**Future work (suggested):** dated audit append; CI job for inventory+spot-check+HTTP `/health`; optional hermetic DF fixture; document EDGE_RED atom triage; optional session-open banner capture harness.
+
+---
+
+## 15. References
 
 | Ref | Location |
 |-----|----------|
@@ -448,6 +547,7 @@ All exit codes **0**.
 | Audit script | `scripts/audit-qnode-load.js` |
 | This note’s figures | `docs/figures/` |
 | This note’s verification | `docs/verification/` |
+| SPIRAL/landing probes | `docs/verification/spiral-landing/` |
 | Containership | `containership/README_START_HERE.md`, `ARCHITECTURE.md` |
 | Bridge README | `bridge-terminal/README.md` |
 | Bridge SECURITY | `bridge-terminal/docs/SECURITY.md`, `docs/RAMWS.md` |
@@ -507,9 +607,10 @@ Inside SPIRAL (after sign-in): `qn status`, `qn07`, `bell`, `ns`, `fabric status
 | Item | Value |
 |------|-------|
 | Generated | 2026-09-25 PT |
-| HEAD at authoring start | `d68fc5bf036f311e1065cf7eccdd777794dd4691` |
+| SPIRAL landing probes | 2026-09-25 ~13:35–13:40 PT; artifacts `docs/verification/spiral-landing/` |
+| HEAD at authoring start | `2824d2ad` (technical note v1.0); SPIRAL chapter added in v1.1 |
 | Metrics policy | No invented statistics; N/A stated where absent |
 
 ---
 
-*End of Harbor Bridge Terminal Technical Note v1.0 (Product Preview).*
+*End of Harbor Bridge Terminal Technical Note v1.1 (Product Preview).*

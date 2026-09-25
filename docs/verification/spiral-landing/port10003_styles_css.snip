@@ -1,0 +1,119 @@
+﻿/* ==========================================================================
+   HERMIT — LK/Vexa house design
+   --------------------------------------------------------------------------
+   Derived from the LK/Vexa mark: graphite cubes on a hub-and-spoke around a
+   single glowing cyan core, dashed connectors, cyan viewfinder brackets, and a
+   heavy geometric wordmark. In the UI that becomes:
+
+     • a deep graphite field with one disciplined cyan "signal" colour
+     • cyan corner brackets framing every live surface (terminal, browser)
+     • dashed hairlines for structure, never solid heavy borders
+     • the hub-and-spoke reused functionally: DF0 core + four node cubes
+   ========================================================================== */
+
+:root {
+  /* graphite scale (the cubes) */
+  --graphite-0: #0c0f13;   /* field */
+  --graphite-1: #12161b;   /* titlebar / statusbar */
+  --graphite-2: #1a1f26;   /* raised: tabs, pills, node cubes */
+  --graphite-3: #262d36;   /* hairlines, dashed connectors */
+  --graphite-4: #343d48;   /* strokes, hover edges */
+  --graphite-5: #4a5563;   /* muted glyphs */
+
+  /* ice (the wordmark on white, inverted for dark) */
+  --ice:        #e9eff4;
+  --ice-2:      #b9c3cd;
+  --muted:      #7b8794;
+
+  /* the signal */
+  --cyan:        #2fd0e4;
+  --cyan-bright: #8beefb;
+  --cyan-deep:   #0f8fa1;
+  --cyan-glow:   rgba(47, 208, 228, .28);
+  --cyan-tint:   rgba(47, 208, 228, .08);
+
+  /* semantics (kept cool so cyan remains the accent) */
+  --ok:    #58d6a9;
+  --warn:  #e4c26a;
+  --err:   #ef6b73;
+
+  --ui-font: "Inter", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono:    "Cascadia Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+
+  --titlebar-h: 44px;
+  --statusbar-h: 28px;
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; height: 100%;
+  background: var(--graphite-0);
+  color: var(--ice);
+  font-family: var(--ui-font);
+  font-size: 12.5px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: var(--titlebar-h) 1fr var(--statusbar-h);
+  /* the field: graphite with a faint node-grid and a cyan wash from the core */
+  background:
+    radial-gradient(900px 420px at 18% -10%, var(--cyan-tint), transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.035) 1px, transparent 1.2px) 0 0 / 22px 22px,
+    var(--graphite-0);
+}
+
+/* ─────────────────────────── titlebar ─────────────────────────── */
+
+#titlebar {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 0 0 0 14px;
+  background: linear-gradient(180deg, #151a21, var(--graphite-1));
+  border-bottom: 1px dashed var(--graphite-3);
+  -webkit-app-region: drag;
+}
+#titlebar > * { -webkit-app-region: no-drag; }
+#titlebar .brand { -webkit-app-region: drag; }
+
+.brand {
+  display: flex; align-items: center; gap: 9px;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+.brand .mark { filter: drop-shadow(0 0 6px var(--cyan-glow)); }
+.brand .word {
+  font-weight: 800; letter-spacing: .18em; font-size: 12px;
+  color: var(--ice);
+}
+.brand .slash { color: var(--graphite-5); font-weight: 300; font-size: 15px; margin: 0 -2px; }
+.brand .house {
+  font-weight: 800; letter-spacing: .02em; font-size: 13px;
+  color: var(--cyan);
+  text-shadow: 0 0 12px var(--cyan-glow);
+}
+
+/* tabs — each is a session; the active tab carries the cyan underline */
+#tabs {
+  display: flex; align-items: flex-end; align-self: stretch;
+  gap: 2px; min-width: 0; overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; padding-top: 8px;
+}
+#tabs::-webkit-scrollbar { display: none; }
+.tab {
+  position: relative;
+  display: flex; align-items: center; gap: 8px;
+  height: calc(var(--titlebar-h) - 8px);
+  padding: 0 12px 0 12px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent; border-bottom: none;
+  border-ra

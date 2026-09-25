@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <title>HERMIT — virtual WebSocket terminal</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/web.css" />
+</head>
+<body>
+  <div id="signin" hidden role="dialog" aria-modal="true" aria-labelledby="signin-title">
+    <form id="signin-form" autocomplete="off">
+      <h1 id="signin-title">HERMIT</h1>
+      <p>Virtual WebSocket terminal. Paste the access token issued by the operator. It is held in this page's memory only.</p>
+      <label for="signin-token">Access token</label>
+      <input id="signin-token" type="password" spellcheck="false" autocomplete="off" required />
+      <button type="submit">Open terminal</button>
+      <div id="signin-msg" role="alert"></div>
+    </form>
+  </div>
+  <div id="app">
+
+    <!-- ───────────── titlebar (frameless; drag region) ───────────── -->
+    <header id="titlebar">
+      <div class="brand" title="HERMIT · LK/Vexa">
+        <!-- House mark: graphite nodes on a hub-and-spoke around a cyan core,
+             framed by viewfinder brackets. Inline so it ships with the app. -->
+        <svg class="mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+          <g class="brackets" fill="none" stroke="var(--cyan)" stroke-width="3" stroke-linecap="square">
+            <path d="M4 16 V4 H16"/><path d="M48 4 H60 V16"/><path d="M60 48 V60 H48"/><path d="M16 60 H4 V48"/>
+          </g>
+          <g class="spokes" stroke="var(--graphite-3)" stroke-width="1.6" stroke-dasharray="2 2.4">
+            <line x1="32" y1="32" x2="32" y2="12"/><line x1="32" y1="32" x2="52" y2="32"/>
+            <line x1="32" y1="32" x2="32" y2="52"/><line x1="32" y1="32" x2="12" y2="32"/>
+            <line x1="32" y1="32" x2="46" y2="18"/><line x1="32" y1="32" x2="46" y2="46"/>
+            <line x1="32" y1="32" x2="18" y2="46"/><line x1="32" y1="32" x2="18" y2="18"/>
+          </g>
+          <g class="nodes" fill="var(--graphite-2)" stroke="var(--graphite-4)" stroke-width="1">
+            <rect x="28" y="6" width="8" height="8" rx="1.5"/><rect x="50" y="28" width="8" height="8" rx="1.5"/>
+            <rect x="28" y="50" width="8" height="8" rx="1.5"/><rect x="6" y="28" width="8" height="8" rx="1.5"/>
+            <rect x="43" y="15" width="6" height="6" rx="1.2"/><rect x="43" y="43" width="6" height="6" rx="1.2"/>
+            <rect x="15" y="43" width="6" height="6" rx="1.2"/><rect x="15" y="15" width="6" height="6" rx="1.2"/>
+          </g>
+          <!-- cyan core cube (isometric) -->
+          <g class="core">
+            <polygon points="32,24 39,28 32,32 25,28" fill="var(--cyan-bright)"/>
+            <polygon points="25,28 32,32 32,40 25,36" fill="var(--cyan)"/>
+            <polygon points="39,28 32,32 32,40 39,36" fill="var(--cyan-deep)"/>
+          </g>
+        </svg>
+        <span class="word">HERMIT</span>
+        <span class="slash">/</span>
+        <span class="house">LK/Vexa</span>
+      </div>
+
+      <nav id="tabs" aria-label="sessions">
+        <!-- tabs are rendered by renderer.js -->
+        <button id="tab-add" class="tab-add" title="New session (Ctrl+Shift+T)">+</button>
+      </nav>
+
+      <div class="omni">
+        <button id="btn-browser" class="pill" title="Toggle browser pane (VB-JA21)">
+          <span class="pill-dot"></span> browser
+        </button>
+        <div class="urlwrap">
+          <span class="urlicon">⌕</span>
+          <input id="url" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="url or search — Enter loads in the pane" />
+        </div>
+      </div>
+      <button id="signout" type="button" title="Forget the access token held in this page">sign out</button>
+    </header>
+
+    <!-- ───────────── stage ───────────── -->
+    <main id="stage">
+      <section id="terminal" class="frame">
+        <span class="corner tl"></span><
